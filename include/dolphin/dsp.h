@@ -35,10 +35,4 @@ u32 DSPReadMailFromDSP(void);
 void DSPSendMailToDSP(u32 msg);
 DSPTaskInfo *DSPAddTask(DSPTaskInfo *task);
 
-#ifdef __MWERKS__
-volatile u16 __DSPRegs[] : 0xCC005000;
-#else
-#define __DSPRegs ((volatile u16 *)0xCC005000)
-#endif
-
 #endif

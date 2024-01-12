@@ -4,20 +4,6 @@
 
 #include "__card.h"
 
-typedef struct CARDDirCheck
-{
-    u8 padding0[64 - 2 * 4];
-    u16 padding1;
-    s16 checkCode;
-    u16 checkSum;
-    u16 checkSumInv;
-} CARDDirCheck;
-
-static CARDDirCheck *__CARDGetDirCheck(CARDDir *dir)
-{
-    return ((CARDDirCheck*)&(dir)[CARD_MAX_FILE]);
-}
-
 CARDDir *__CARDGetDirBlock(CARDControl* card)
 {
     return card->currentDir;
@@ -96,7 +82,7 @@ s32 __CARDUpdateDir(s32 chan, CARDCallback callback)
     dir = __CARDGetDirBlock(card);
     check = __CARDGetDirCheck(dir);
     ++check->checkCode;
-    __CARDUpdateSum(dir, 0x2000 - sizeof(u32), &check->checkSum, &check->checkSumInv);
+    __CARDCheckSum(dir, 0x2000 - sizeof(u32), &check->checkSum, &check->checkSumInv);
     DCStoreRange(dir, 0x2000);
 
     card->eraseCallback = callback;

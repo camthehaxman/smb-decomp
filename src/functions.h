@@ -1039,7 +1039,7 @@ void sel_stage_draw(void);
 // ? WriteCallback_2();
 // ? EraseCallback_2();
 // ? __CARDUpdateDir();
-// ? __CARDUpdateSum();
+// ? __CARDCheckSum();
 // ? VerifyID();
 // ? VerifyDir();
 // ? VerifyFAT();

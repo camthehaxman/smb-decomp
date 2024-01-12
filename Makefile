@@ -258,7 +258,7 @@ SOURCES := \
 	libraries/card/CARDDir.c \
 	libraries/card/asm/CARDCheck.s \
 	libraries/card/asm/CARDMount.s \
-	libraries/card/asm/CARDFormat.s \
+	libraries/card/CARDFormat.c \
 	libraries/card/CARDOpen.c \
 	libraries/card/asm/CARDCreate.s \
 	libraries/card/CARDRead.c \

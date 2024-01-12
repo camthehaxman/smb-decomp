@@ -1,6 +1,6 @@
 #include <dolphin/ai.h>
 
-#include <dolphin/dsp.h>
+#include <dolphin/hw_regs.h>
 #include <dolphin/os.h>
 #include <stddef.h>
 

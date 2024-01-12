@@ -2,8 +2,8 @@
 
 .section .text, "ax"  # 0x800065A0 - 0x8010F860
 
-.global __CARDUpdateSum
-__CARDUpdateSum:
+.global __CARDCheckSum
+__CARDCheckSum:
 /* 800D8004 000D3F24  38 00 00 00 */	li r0, 0
 /* 800D8008 000D3F28  7C 84 0E 70 */	srawi r4, r4, 1
 /* 800D800C 000D3F2C  B0 06 00 00 */	sth r0, 0(r6)

@@ -5,8 +5,6 @@
 #include <dolphin/dsp.h>
 #include <dolphin/dvd.h>
 
-#define CARD_FAT_FREEBLOCKS 0x0003U
-
 #define CARD_RESULT_UNLOCKED       1
 #define CARD_RESULT_READY          0
 #define CARD_RESULT_BUSY          -1
@@ -39,8 +37,6 @@ typedef struct CARDFileInfo
 #define CARD_FILENAME_MAX 32
 #define CARD_MAX_FILE 127
 #define CARD_ICON_MAX 8
-#define CARD_NUM_SYSTEM_BLOCK 5
-#define CARD_MAX_MOUNT_STEP (CARD_NUM_SYSTEM_BLOCK + 2)
 
 typedef struct CARDStat
 {

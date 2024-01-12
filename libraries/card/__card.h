@@ -4,8 +4,22 @@
 #define CARD_ATTR_GLOBAL  0x20u
 #define CARD_ATTR_COMPANY 0x40u
 
+#define CARD_FAT_AVAIL 0x0000u
+#define CARD_FAT_CHECKSUM 0x0000u
+#define CARD_FAT_CHECKSUMINV 0x0001u
+#define CARD_FAT_CHECKCODE 0x0002u
+#define CARD_FAT_FREEBLOCKS 0x0003u
+#define CARD_FAT_LASTSLOT 0x0004u
+
+#define CARD_WORKAREA_SIZE (5 * 8 * 1024)
+
 #define CARD_SEG_SIZE 0x200
 #define CARD_PAGE_SIZE 0x80
+
+#define CARD_NUM_SYSTEM_BLOCK 5
+#define CARD_SYSTEM_BLOCK_SIZE (8 * 1024u)
+
+#define CARD_MAX_MOUNT_STEP (CARD_NUM_SYSTEM_BLOCK + 2)
 
 #define __CARDIsValidBlockNo(card, blockNo) ((blockNo) >= CARD_NUM_SYSTEM_BLOCK && (blockNo) < (card)->cBlock)
 
@@ -24,6 +38,20 @@ typedef struct CARDID
     u16 checkSum;
     u16 checkSumInv;
 } CARDID;
+
+typedef struct CARDDirCheck
+{
+    u8 padding0[64 - 2 * 4];
+    u16 padding1;
+    s16 checkCode;
+    u16 checkSum;
+    u16 checkSumInv;
+} CARDDirCheck;
+
+static CARDDirCheck *__CARDGetDirCheck(CARDDir *dir)
+{
+    return ((CARDDirCheck*)&(dir)[CARD_MAX_FILE]);
+}
 
 /* CARDBios.c */
 
@@ -74,8 +102,9 @@ s32 __CARDSeek(CARDFileInfo *fileInfo, s32 length, s32 offset, CARDControl **pca
 
 /* other */
 
-s32 __CARDFormatRegionAsync();
+s32 __CARDFormatRegionAsync(s32 chan, CARDCallback callback);
 void *__CARDGetFatBlock(CARDControl *);
 void __CARDUpdateSum(void* ptr, int length, u16* checksum, u16* checksumInv);
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
 void __CARDMountCallback(s32 chan, s32 result);
+void __CARDCheckSum(void* ptr, int length, u16* checkSum, u16* checkSumInv);
