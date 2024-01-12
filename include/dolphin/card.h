@@ -63,13 +63,13 @@ typedef struct CARDStat
 
 typedef struct CARDDir
 {
-    u8 gameName[4];
-    u8 company[2];
-    u8 _padding0;
-    u8 bannerFormat;
-    u8 fileName[CARD_FILENAME_MAX];
-    u32 time;     // seconds since 01/01/2000 midnight
-    u32 iconAddr; // 0xffffffff if not used
+    /*0x00*/ u8 gameName[4];
+    /*0x04*/ u8 company[2];
+    /*0x06*/ u8 _padding0;
+    /*0x07*/ u8 bannerFormat;
+    /*0x08*/ u8 fileName[CARD_FILENAME_MAX];
+    /*0x28*/ u32 time;     // seconds since 01/01/2000 midnight
+    /*0x2C*/ u32 iconAddr; // 0xffffffff if not used
     u16 iconFormat;
     u16 iconSpeed;
     u8 permission;
@@ -82,21 +82,21 @@ typedef struct CARDDir
 
 typedef struct CARDControl
 {
-    BOOL attached;
-    s32 result;
-    u16 size;
-    u16 pageSize;
-    s32 sectorSize;
-    u16 cBlock;
-    u16 vendorID;
-    s32 latency;
-    u8 id[12];
-    int mountStep;
-    int formatStep;
-    u32 scramble;
+    /*0x00*/ BOOL attached;
+    /*0x04*/ s32 result;
+    /*0x08*/ u16 size;
+    /*0x0A*/ u16 pageSize;
+    /*0x0C*/ s32 sectorSize;
+    /*0x10*/ u16 cBlock;
+    /*0x12*/ u16 vendorID;
+    /*0x14*/ s32 latency;
+    /*0x18*/ u8 id[12];
+    /*0x24*/ int mountStep;
+    /*0x28*/ int formatStep;
+    /*0x2C*/ u32 scramble;
     DSPTaskInfo task;
     void *workArea;
-    CARDDir *currentDir;
+    /*0x84*/ CARDDir *currentDir;
     u16 *currentFat;
     OSThreadQueue threadQueue;
     u8 cmd[9];
@@ -143,14 +143,5 @@ s32 CARDRenameAsync(s32 chan, char *oldName, char *newName, CARDCallback callbac
 s32 CARDMount(s32 chan, void *workArea, CARDCallback detachCallback);
 s32 CARDDelete(s32 chan, char *fileName);
 s32 CARDRename(s32 chan, char *oldName, char *newName);
-
-// private
-s32 __CARDFormatRegionAsync();
-
-s32 __CARDReadStatus(s32 chan, u8 *status);
-s32 __CARDClearStatus(s32 chan);
-void *__CARDGetDirBlock(CARDControl *);
-void *__CARDGetFatBlock(CARDControl *);
-void __CARDSetDiskID(const DVDDiskID *);
 
 #endif
