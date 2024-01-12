@@ -110,9 +110,13 @@ s32 __CARDFormatRegionAsync(s32 chan, CARDCallback callback);
 
 s32 __CARDUnlock(s32 chan, u8 flashID[12]);
 
+/* CARDBlock.c */
+void *__CARDGetFatBlock(CARDControl *card);
+s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback);
+s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
+s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback);
+
 /* other */
 
 extern u16 __CARDVendorID;
-void *__CARDGetFatBlock(CARDControl *);
-s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
 void __CARDMountCallback(s32 chan, s32 result);

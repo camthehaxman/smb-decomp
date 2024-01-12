@@ -42,7 +42,7 @@ static void FormatCallback(s32 chan, s32 result)
 
 error:
     callback = card->apiCallback;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
     __CARDPutControlBlock(card, result);
     callback(chan, result);
 }

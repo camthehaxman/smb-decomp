@@ -1,6 +1,8 @@
 #include <dolphin/card.h>
 #include <dolphin/exi.h>
 
+#include <stddef.h>
+
 #include "../os/__os.h"
 #include "__card.h"
 
@@ -195,7 +197,7 @@ void __CARDMountCallback(s32 chan, s32 result)
     }
 
     callback = card->apiCallback;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
     __CARDPutControlBlock(card, result);
     callback(chan, result);
 }

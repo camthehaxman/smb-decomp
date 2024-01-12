@@ -11,7 +11,7 @@ static void DeleteCallback(s32 chan, s32 result)
 
     card = &__CARDBlock[chan];
     callback = card->apiCallback;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
 
     if (result < 0)
         goto error;

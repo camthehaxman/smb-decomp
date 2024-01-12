@@ -116,7 +116,7 @@ void __CARDTxHandler(s32 chan, OSContext *context)
     callback = card->txCallback;
     if (callback)
     {
-        card->txCallback = 0;
+        card->txCallback = NULL;
         callback(chan, (!err && EXIProbe(chan)) ? CARD_RESULT_READY : CARD_RESULT_NOCARD);
     }
 }
@@ -338,7 +338,7 @@ static void UnlockedCallback(s32 chan, s32 result)
             callback = card->txCallback;
             if (callback)
             {
-                card->txCallback = 0;
+                card->txCallback = NULL;
                 callback(chan, result);
             }
 
@@ -438,7 +438,7 @@ s32 __CARDReadSegment(s32 chan, CARDCallback callback)
                   1) || // XXX use DMA if possible
         !EXIDma(chan, card->buffer, 512, card->mode, __CARDTxHandler))
     {
-        card->txCallback = 0;
+        card->txCallback = NULL;
         EXIDeselect(chan);
         EXIUnlock(chan);
         return CARD_RESULT_NOCARD;
@@ -573,7 +573,7 @@ s32 __CARDGetControlBlock(s32 chan, CARDControl **pcard)
     {
         card->result = CARD_RESULT_BUSY;
         result = CARD_RESULT_READY;
-        card->apiCallback = 0;
+        card->apiCallback = NULL;
         *pcard = card;
     }
     OSRestoreInterrupts(enabled);

@@ -1,5 +1,7 @@
 #include <dolphin/card.h>
 
+#include <stddef.h>
+
 #include "__card.h"
 
 static void EraseCallback(s32 chan, s32 result);
@@ -30,7 +32,7 @@ static void WriteCallback(s32 chan, s32 result)
         ent = &dir[fileInfo->fileNo];
         ent->time = (u32)OSTicksToSeconds(OSGetTime());
         callback = card->apiCallback;
-        card->apiCallback = 0;
+        card->apiCallback = NULL;
         result = __CARDUpdateDir(chan, callback);
     }
     else
@@ -52,7 +54,7 @@ static void WriteCallback(s32 chan, s32 result)
 
 error:
     callback = card->apiCallback;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
     __CARDPutControlBlock(card, result);
     callback(chan, result);
 }
@@ -74,7 +76,7 @@ static void EraseCallback(s32 chan, s32 result)
 
 error:
     callback = card->apiCallback;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
     __CARDPutControlBlock(card, result);
     callback(chan, result);
 }

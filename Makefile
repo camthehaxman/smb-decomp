@@ -254,7 +254,7 @@ SOURCES := \
 	libraries/card/CARDBios.c \
 	libraries/card/CARDUnlock.c \
 	libraries/card/CARDRdwr.c \
-	libraries/card/asm/CARDBlock.s \
+	libraries/card/CARDBlock.c \
 	libraries/card/CARDDir.c \
 	libraries/card/CARDCheck.c \
 	libraries/card/CARDMount.c \

@@ -1,5 +1,7 @@
 #include <dolphin/card.h>
 
+#include <stddef.h>
+
 #include "__card.h"
 
 s32 __CARDSeek(CARDFileInfo *fileInfo, s32 length, s32 offset, CARDControl **pcard)
@@ -89,7 +91,7 @@ static void ReadCallback(s32 chan, s32 result)
 
 error:
     callback = card->apiCallback;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
     __CARDPutControlBlock(card, result);
     callback(chan, result);
 }
