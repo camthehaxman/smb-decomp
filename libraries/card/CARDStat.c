@@ -23,16 +23,8 @@
 #define CARD_STAT_BANNER_RGB5A3 2
 #define CARD_STAT_BANNER_MASK 3
 
-#define CARD_STAT_SPEED_END 0
-#define CARD_STAT_SPEED_FAST 1
-#define CARD_STAT_SPEED_MIDDLE 2
-#define CARD_STAT_SPEED_SLOW 3
-#define CARD_STAT_SPEED_MASK 3
-
 #define CARDGetBannerFormat(stat) (((stat)->bannerFormat) & CARD_STAT_BANNER_MASK)
 #define CARDGetIconFormat(stat, n) (((stat)->iconFormat >> (2 * (n))) & CARD_STAT_ICON_MASK)
-#define CARDSetIconSpeed(stat, n, f)                                                                                   \
-    ((stat)->iconSpeed = (u16)(((stat)->iconSpeed & ~(CARD_STAT_SPEED_MASK << (2 * (n)))) | ((f) << (2 * (n)))))
 
 static void UpdateIconOffsets(CARDDir *ent, CARDStat *stat)
 {
@@ -167,7 +159,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat *stat, CARDCallback callba
     UpdateIconOffsets(ent, stat);
 
     if (ent->iconAddr == 0xffffffff)
-        CARDSetIconSpeed(ent, 0, CARD_STAT_SPEED_FAST);
+        __CARDSetIconSpeed(ent, 0, CARD_STAT_SPEED_FAST);
 
     ent->time = (u32)OSTicksToSeconds(OSGetTime());
     result = __CARDUpdateDir(chan, callback);

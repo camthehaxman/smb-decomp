@@ -21,7 +21,11 @@
 
 #define CARD_MAX_MOUNT_STEP (CARD_NUM_SYSTEM_BLOCK + 2)
 
-#define __CARDIsValidBlockNo(card, blockNo) ((blockNo) >= CARD_NUM_SYSTEM_BLOCK && (blockNo) < (card)->cBlock)
+#define CARD_STAT_SPEED_END 0
+#define CARD_STAT_SPEED_FAST 1
+#define CARD_STAT_SPEED_MIDDLE 2
+#define CARD_STAT_SPEED_SLOW 3
+#define CARD_STAT_SPEED_MASK 3
 
 #define TRUNC(n, a) (((u32)(n)) & ~((a)-1))
 #define OFFSET(n, a) (((u32)(n)) & ((a)-1))
@@ -32,9 +36,7 @@ typedef struct CARDID
     u16 deviceID;
     u16 size;
     u16 encode; // character set -- 0: S-JIS, 1: ANSI
-
     u8 padding[512 - 32 - 5 * 2];
-
     u16 checkSum;
     u16 checkSumInv;
 } CARDID;
@@ -49,6 +51,9 @@ typedef struct CARDDirCheck
 } CARDDirCheck;
 
 #define __CARDGetDirCheck(dir) ((CARDDirCheck *)&(dir)[CARD_MAX_FILE])
+#define __CARDIsValidBlockNo(card, blockNo) ((blockNo) >= CARD_NUM_SYSTEM_BLOCK && (blockNo) < (card)->cBlock)
+#define __CARDSetIconSpeed(stat, n, f)                                                                                   \
+    ((stat)->iconSpeed = (u16)(((stat)->iconSpeed & ~(CARD_STAT_SPEED_MASK << (2 * (n)))) | ((f) << (2 * (n)))))
 
 /* CARDBios.c */
 
@@ -116,7 +121,6 @@ s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback);
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
 s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback);
 
-/* other */
+/* CARDMount.c */
 
-extern u16 __CARDVendorID;
 void __CARDMountCallback(s32 chan, s32 result);

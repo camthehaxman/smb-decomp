@@ -260,7 +260,7 @@ SOURCES := \
 	libraries/card/CARDMount.c \
 	libraries/card/CARDFormat.c \
 	libraries/card/CARDOpen.c \
-	libraries/card/asm/CARDCreate.s \
+	libraries/card/CARDCreate.c \
 	libraries/card/CARDRead.c \
 	libraries/card/CARDWrite.c \
 	libraries/card/CARDDelete.c \
