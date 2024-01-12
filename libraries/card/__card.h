@@ -48,10 +48,7 @@ typedef struct CARDDirCheck
     u16 checkSumInv;
 } CARDDirCheck;
 
-static CARDDirCheck *__CARDGetDirCheck(CARDDir *dir)
-{
-    return ((CARDDirCheck*)&(dir)[CARD_MAX_FILE]);
-}
+#define __CARDGetDirCheck(dir) ((CARDDirCheck *)&(dir)[CARD_MAX_FILE])
 
 /* CARDBios.c */
 
@@ -100,11 +97,17 @@ s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback
 
 s32 __CARDSeek(CARDFileInfo *fileInfo, s32 length, s32 offset, CARDControl **pcard);
 
-/* other */
+/* CARDCheck.c */
+
+void __CARDCheckSum(void* ptr, int length, u16* checkSum, u16* checkSumInv);
+s32 __CARDVerify(CARDControl* card);
+
+/* CARDFormat.c */
 
 s32 __CARDFormatRegionAsync(s32 chan, CARDCallback callback);
+
+/* other */
+
 void *__CARDGetFatBlock(CARDControl *);
-void __CARDUpdateSum(void* ptr, int length, u16* checksum, u16* checksumInv);
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
 void __CARDMountCallback(s32 chan, s32 result);
-void __CARDCheckSum(void* ptr, int length, u16* checkSum, u16* checkSumInv);

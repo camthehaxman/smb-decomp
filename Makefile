@@ -256,7 +256,7 @@ SOURCES := \
 	libraries/card/CARDRdwr.c \
 	libraries/card/asm/CARDBlock.s \
 	libraries/card/CARDDir.c \
-	libraries/card/asm/CARDCheck.s \
+	libraries/card/CARDCheck.c \
 	libraries/card/asm/CARDMount.s \
 	libraries/card/CARDFormat.c \
 	libraries/card/CARDOpen.c \
@@ -264,7 +264,7 @@ SOURCES := \
 	libraries/card/CARDRead.c \
 	libraries/card/CARDWrite.c \
 	libraries/card/CARDDelete.c \
-	libraries/card/asm/CARDStat.s \
+	libraries/card/CARDStat.c \
 	libraries/card/CARDRename.c \
 	libraries/hio/hio.c \
 	libraries/gx/asm/GXInit.s \
