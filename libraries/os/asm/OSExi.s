@@ -1391,8 +1391,8 @@ lbl_800C527C:
 /* 800C5294 000C11B4  38 21 00 20 */	addi r1, r1, 0x20
 /* 800C5298 000C11B8  4E 80 00 20 */	blr
 
-.global EXIGetStage
-EXIGetStage:
+.global EXIGetState
+EXIGetState:
 /* 800C529C 000C11BC  1C 83 00 38 */	mulli r4, r3, 0x38
 /* 800C52A0 000C11C0  3C 60 80 2C */	lis r3, Ecb@ha
 /* 800C52A4 000C11C4  38 03 6C 28 */	addi r0, r3, Ecb@l

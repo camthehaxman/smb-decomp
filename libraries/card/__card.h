@@ -106,8 +106,13 @@ s32 __CARDVerify(CARDControl* card);
 
 s32 __CARDFormatRegionAsync(s32 chan, CARDCallback callback);
 
+/* CARDUnlock.c */
+
+s32 __CARDUnlock(s32 chan, u8 flashID[12]);
+
 /* other */
 
+extern u16 __CARDVendorID;
 void *__CARDGetFatBlock(CARDControl *);
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
 void __CARDMountCallback(s32 chan, s32 result);

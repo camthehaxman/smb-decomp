@@ -710,7 +710,7 @@ void sel_stage_draw(void);
 // ? EXIInit();
 // ? EXILock();
 // ? EXIUnlock();
-// ? EXIGetStage();
+// ? EXIGetState();
 // ? EXIGetID();
 // ? GetFontCode();
 // ? Decode();
