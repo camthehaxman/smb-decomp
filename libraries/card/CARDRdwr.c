@@ -4,9 +4,6 @@
 
 #include "__card.h"
 
-#define CARD_SEG_SIZE 0x200
-#define CARD_PAGE_SIZE 0x80
-
 static void BlockReadCallback(s32 chan, s32 result)
 {
 	CARDControl *card = &__CARDBlock[chan];

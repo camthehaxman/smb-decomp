@@ -109,7 +109,7 @@ typedef struct CARDControl
     s32 xferred;
     u16 freeNo;
     u16 startBlock;
-    CARDFileInfo *fileInfo;
+    /*0xC0*/ CARDFileInfo *fileInfo;
     CARDCallback extCallback;
     CARDCallback txCallback;
     CARDCallback exiCallback;

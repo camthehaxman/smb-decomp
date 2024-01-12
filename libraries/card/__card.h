@@ -4,8 +4,12 @@
 #define CARD_ATTR_GLOBAL  0x20u
 #define CARD_ATTR_COMPANY 0x40u
 
+#define CARD_SEG_SIZE 0x200
+#define CARD_PAGE_SIZE 0x80
+
 #define __CARDIsValidBlockNo(card, blockNo) ((blockNo) >= CARD_NUM_SYSTEM_BLOCK && (blockNo) < (card)->cBlock)
 
+#define TRUNC(n, a) (((u32)(n)) & ~((a)-1))
 #define OFFSET(n, a) (((u32)(n)) & ((a)-1))
 
 /* CARDBios.c */
@@ -51,10 +55,13 @@ BOOL __CARDIsOpened(CARDControl *card, s32 fileNo);
 s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback);
 s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback);
 
+/* CARDRead.c */
+
+s32 __CARDSeek(CARDFileInfo *fileInfo, s32 length, s32 offset, CARDControl **pcard);
+
 /* other */
 
 s32 __CARDFormatRegionAsync();
 void *__CARDGetFatBlock(CARDControl *);
 void __CARDUpdateSum(void* ptr, int length, u16* checksum, u16* checksumInv);
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
-s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pcard);
