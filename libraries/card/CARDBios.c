@@ -5,6 +5,8 @@
 #include <dolphin/os.h>
 #include <stddef.h>
 
+#include "__card.h"
+
 CARDControl __CARDBlock[2];
 DVDDiskID __CARDDiskNone;
 const DVDDiskID *__CARDDiskID;
@@ -17,9 +19,9 @@ void __CARDDefaultApiCallback(s32 chan, s32 result)
 {
 }
 
-void __CARDSyncCallback(int i)
+void __CARDSyncCallback(s32 chan, s32 result)
 {
-    OSWakeupThread(&__CARDBlock[i].threadQueue);
+    OSWakeupThread(&__CARDBlock[chan].threadQueue);
 }
 
 void __CARDExtHandler(s32 chan, OSContext *context)
@@ -683,15 +685,15 @@ s32 CARDGetSectorSize(s32 chan, u32 *size)
     return 0;
 }
 
-s32 __CARDSync(s32 i)
+s32 __CARDSync(s32 chan)
 {
     CARDControl *block;
     s32 result;
     s32 enabled;
 
-    block = &__CARDBlock[i];
+    block = &__CARDBlock[chan];
     enabled = OSDisableInterrupts();
-    while ((result = CARDGetResultCode(i)) == -1)
+    while ((result = CARDGetResultCode(chan)) == -1)
     {
         OSSleepThread(&block->threadQueue);
     }

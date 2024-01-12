@@ -265,7 +265,7 @@ SOURCES := \
 	libraries/card/asm/CARDWrite.s \
 	libraries/card/asm/CARDDelete.s \
 	libraries/card/asm/CARDStat.s \
-	libraries/card/asm/CARDRename.s \
+	libraries/card/CARDRename.c \
 	libraries/hio/hio.c \
 	libraries/gx/asm/GXInit.s \
 	libraries/gx/GXFifo.c \

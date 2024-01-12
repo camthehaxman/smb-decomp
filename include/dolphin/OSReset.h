@@ -18,6 +18,7 @@ struct OSResetFunctionInfo
     OSResetFunctionInfo *prev;
 };
 
+void OSRegisterResetFunction(OSResetFunctionInfo *info);
 void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu);
 
 #endif

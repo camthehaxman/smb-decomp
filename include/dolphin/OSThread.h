@@ -54,6 +54,8 @@ typedef struct OSThread
     /*0x308*/ u32 *stackEnd;  
 } OSThread;
 
+void OSInitThreadQueue(OSThreadQueue *queue);
+void OSSleepThread(OSThreadQueue *queue);
 void OSWakeupThread(OSThreadQueue *queue);
 s32 OSSuspendThread(OSThread *thread);
 s32 OSResumeThread(OSThread* thread);
