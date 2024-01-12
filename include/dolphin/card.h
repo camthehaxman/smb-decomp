@@ -92,8 +92,8 @@ typedef struct CARDControl
     /*0x14*/ s32 latency;
     /*0x18*/ u8 id[12];
     /*0x24*/ int mountStep;
-    /*0x28*/ int formatStep;
-    /*0x2C*/ u32 scramble;
+    /*0x28*/ u32 scramble;
+    /*0x2C*/ int formatStep;
     DSPTaskInfo task;
     void *workArea;
     /*0x84*/ CARDDir *currentDir;

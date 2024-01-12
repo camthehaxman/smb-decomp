@@ -12,6 +12,19 @@
 #define TRUNC(n, a) (((u32)(n)) & ~((a)-1))
 #define OFFSET(n, a) (((u32)(n)) & ((a)-1))
 
+typedef struct CARDID
+{
+    u8 serial[32]; // flashID[12] + timebase[8] + counterBias[4] + language[4] + XXX[4]
+    u16 deviceID;
+    u16 size;
+    u16 encode; // character set -- 0: S-JIS, 1: ANSI
+
+    u8 padding[512 - 32 - 5 * 2];
+
+    u16 checkSum;
+    u16 checkSumInv;
+} CARDID;
+
 /* CARDBios.c */
 
 extern CARDControl __CARDBlock[2];
@@ -65,3 +78,4 @@ s32 __CARDFormatRegionAsync();
 void *__CARDGetFatBlock(CARDControl *);
 void __CARDUpdateSum(void* ptr, int length, u16* checksum, u16* checksumInv);
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
+void __CARDMountCallback(s32 chan, s32 result);

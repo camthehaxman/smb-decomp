@@ -1,7 +1,7 @@
-#include <dolphin/card.h>
-
 #include <dolphin/OSReset.h>
+#include <dolphin/card.h>
 #include <dolphin/dsp.h>
+#include <dolphin/exi.h>
 #include <dolphin/os.h>
 #include <stddef.h>
 
@@ -117,7 +117,7 @@ void __CARDTxHandler(s32 chan, OSContext *context)
     if (callback)
     {
         card->txCallback = 0;
-        callback(chan, (!err && __EXIProbe(chan)) ? CARD_RESULT_READY : CARD_RESULT_NOCARD);
+        callback(chan, (!err && EXIProbe(chan)) ? CARD_RESULT_READY : CARD_RESULT_NOCARD);
     }
 }
 
@@ -131,7 +131,7 @@ void __CARDUnlockedHandler(s32 chan, OSContext *context)
     if (callback)
     {
         card->unlockCallback = 0;
-        callback(chan, __EXIProbe(chan) ? CARD_RESULT_UNLOCKED : CARD_RESULT_NOCARD);
+        callback(chan, EXIProbe(chan) ? CARD_RESULT_UNLOCKED : CARD_RESULT_NOCARD);
     }
 }
 
@@ -263,19 +263,6 @@ static void SetupTimeoutAlarm(CARDControl *card)
         break;
     }
 }
-
-typedef struct CARDID
-{
-    u8 serial[32]; // flashID[12] + timebase[8] + counterBias[4] + language[4] + XXX[4]
-    u16 deviceID;
-    u16 size;
-    u16 encode; // character set -- 0: S-JIS, 1: ANSI
-
-    u8 padding[512 - 32 - 5 * 2];
-
-    u16 checkSum;
-    u16 checkSumInv;
-} CARDID;
 
 static s32 Retry(s32 chan)
 {

@@ -252,7 +252,7 @@ SOURCES := \
 	libraries/dsp/dsp_debug.c \
 	libraries/dsp/dsp_task.c \
 	libraries/card/CARDBios.c \
-	libraries/card/asm/CARDUnlock.s \
+	libraries/card/CARDUnlock.c \
 	libraries/card/CARDRdwr.c \
 	libraries/card/asm/CARDBlock.s \
 	libraries/card/CARDDir.c \

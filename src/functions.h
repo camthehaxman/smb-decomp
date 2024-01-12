@@ -698,7 +698,7 @@ void sel_stage_draw(void);
 // ? EXISync();
 // ? EXIClearInterrupts();
 // ? EXISetExiCallback();
-// ? __EXIProbe();
+// ? EXIProbe();
 // ? EXIProbeEx();
 // ? EXIAttach();
 // ? EXIDetach();
