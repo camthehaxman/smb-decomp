@@ -1,4 +1,11 @@
+#define CARD_ATTR_PUBLIC  0x04u
+#define CARD_ATTR_NO_COPY 0x08u
+#define CARD_ATTR_NO_MOVE 0x10u
+#define CARD_ATTR_GLOBAL  0x20u
+#define CARD_ATTR_COMPANY 0x40u
+
 extern CARDControl __CARDBlock[2];
+extern DVDDiskID __CARDDiskNone;
 extern const DVDDiskID *__CARDDiskID;
 
 void __CARDSyncCallback(s32 chan, s32 result);

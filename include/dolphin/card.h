@@ -70,11 +70,11 @@ typedef struct CARDDir
     /*0x08*/ u8 fileName[CARD_FILENAME_MAX];
     /*0x28*/ u32 time;     // seconds since 01/01/2000 midnight
     /*0x2C*/ u32 iconAddr; // 0xffffffff if not used
-    u16 iconFormat;
-    u16 iconSpeed;
-    u8 permission;
+    /*0x30*/ u16 iconFormat;
+    /*0x32*/ u16 iconSpeed;
+    /*0x34*/ u8 permission;
     u8 copyTimes;
-    u16 startBlock;
+    /*0x36*/ u16 startBlock;
     u16 length;
     u8 _padding1[2];
     u32 commentAddr; // 0xffffffff if not used

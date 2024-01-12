@@ -660,18 +660,18 @@ s32 CARDFreeBlocks(s32 chan, s32 *byteNotUsed, s32 *filesNotUsed)
 
 s32 CARDGetSectorSize(s32 chan, u32 *size)
 {
-    CARDControl *sp10;
+    CARDControl *card;
     s32 status;
     BOOL enabled;
     CARDControl *tmp;
 
-    status = __CARDGetControlBlock(chan, &sp10);
+    status = __CARDGetControlBlock(chan, &card);
     if (status < 0)
     {
         return status;
     }
-    *size = sp10->sectorSize;
-    tmp = sp10;
+    *size = card->sectorSize;
+    tmp = card;
     enabled = OSDisableInterrupts();
     if (tmp->attached)
     {

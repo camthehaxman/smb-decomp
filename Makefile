@@ -259,7 +259,7 @@ SOURCES := \
 	libraries/card/asm/CARDCheck.s \
 	libraries/card/asm/CARDMount.s \
 	libraries/card/asm/CARDFormat.s \
-	libraries/card/asm/CARDOpen.s \
+	libraries/card/CARDOpen.c \
 	libraries/card/asm/CARDCreate.s \
 	libraries/card/asm/CARDRead.s \
 	libraries/card/asm/CARDWrite.s \
