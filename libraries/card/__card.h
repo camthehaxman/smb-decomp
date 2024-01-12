@@ -4,6 +4,8 @@ extern const DVDDiskID *__CARDDiskID;
 void __CARDSyncCallback(s32 chan, s32 result);
 s32 __CARDReadStatus(s32 chan, u8 *status);
 s32 __CARDClearStatus(s32 chan);
+s32 __CARDReadSegment(s32 chan, CARDCallback callback);
+s32 __CARDWritePage(s32 chan, CARDCallback callback);
 s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback);
 s32 __CARDGetControlBlock(s32 chan, CARDControl** pcard);
 s32 __CARDPutControlBlock(CARDControl* card, s32 result);
