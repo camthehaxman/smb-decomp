@@ -4,6 +4,10 @@
 #define CARD_ATTR_GLOBAL  0x20u
 #define CARD_ATTR_COMPANY 0x40u
 
+#define __CARDIsValidBlockNo(card, blockNo) ((blockNo) >= CARD_NUM_SYSTEM_BLOCK && (blockNo) < (card)->cBlock)
+
+#define OFFSET(n, a) (((u32)(n)) & ((a)-1))
+
 /* CARDBios.c */
 
 extern CARDControl __CARDBlock[2];
@@ -53,3 +57,4 @@ s32 __CARDFormatRegionAsync();
 void *__CARDGetFatBlock(CARDControl *);
 void __CARDUpdateSum(void* ptr, int length, u16* checksum, u16* checksumInv);
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback);
+s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pcard);

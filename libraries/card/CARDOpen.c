@@ -95,7 +95,7 @@ s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo *fileInfo)
         result = __CARDIsPublic(ent);
     if (result >= 0)
     {
-        if (ent->startBlock < CARD_NUM_SYSTEM_BLOCK || ent->startBlock >= card->cBlock)
+        if (!__CARDIsValidBlockNo(card, ent->startBlock))
             result = CARD_RESULT_BROKEN;
         else
         {
@@ -126,7 +126,7 @@ s32 CARDOpen(s32 chan, char *fileName, CARDFileInfo *fileInfo)
     {
         dir = __CARDGetDirBlock(card);
         ent = &dir[fileNo];
-        if (ent->startBlock < CARD_NUM_SYSTEM_BLOCK || ent->startBlock >= card->cBlock)
+        if (!__CARDIsValidBlockNo(card, ent->startBlock))
             result = CARD_RESULT_BROKEN;
         else
         {

@@ -262,7 +262,7 @@ SOURCES := \
 	libraries/card/CARDOpen.c \
 	libraries/card/asm/CARDCreate.s \
 	libraries/card/asm/CARDRead.s \
-	libraries/card/asm/CARDWrite.s \
+	libraries/card/CARDWrite.c \
 	libraries/card/CARDDelete.c \
 	libraries/card/asm/CARDStat.s \
 	libraries/card/CARDRename.c \
