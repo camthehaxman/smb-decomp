@@ -36,30 +36,6 @@
 // returns a random float between 0.0 and 1.0, inclusive
 #define RAND_FLOAT() (rand() / (float)RAND_MAX)
 
-// intrinsics
-#ifndef __MWERKS__
-static inline u32 __cntlzw(u32 n)
-{
-    u32 ret;
-    asm("cntlzw %0, %1" : "=r"(ret) : "r"(n));
-    return ret;
-}
-
-static inline u32 __lwbrx(void *ptr, u32 offset)
-{
-    u32 ret;
-    asm("lwbrx %0, %1, %2" : "=r"(ret) : "r"(ptr), "r"(offset));
-    return ret;
-}
-
-static inline float __frsqrte(float n)
-{
-    float ret;
-    asm("frsqrte %0, %1" : "=f"(ret) : "f"(n));
-    return ret;
-}
-#endif
-
 #define qr0 0
 #define qr2 2
 

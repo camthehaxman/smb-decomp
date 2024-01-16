@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <dolphin.h>
+#include <ppcintrinsic.h>
 #include <string.h>
 #include <dolphin/GXEnum.h>
 

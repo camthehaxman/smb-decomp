@@ -4,6 +4,8 @@
 
 #include <string.h>
 
+#include <ppcintrinsic.h>
+
 #include "../os/__os.h"
 #include "../si/__si.h"
 

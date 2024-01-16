@@ -8,6 +8,8 @@
 #include <dolphin/GXLighting.h>
 #include <dolphin/GXVert.h>
 
+#include <ppcintrinsic.h>
+
 #include "global.h"
 #include "gma.h"
 #include "gxcache.h"

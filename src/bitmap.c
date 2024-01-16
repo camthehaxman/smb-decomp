@@ -1,4 +1,5 @@
 #include <string.h>
+#include <ppcintrinsic.h>
 
 #include <dolphin.h>
 

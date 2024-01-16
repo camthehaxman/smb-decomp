@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dolphin.h>
+#include <ppcintrinsic.h>
 
 #include "global.h"
 #include "ball.h"

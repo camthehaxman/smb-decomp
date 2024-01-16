@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ppcintrinsic.h>
 
 #include <dolphin.h>
 
