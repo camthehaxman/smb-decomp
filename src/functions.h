@@ -945,7 +945,7 @@ void sel_stage_draw(void);
 // ? SPEC1_MakeStatus();
 // ? SPEC2_MakeStatus();
 // ? PADSetAnalogMode();
-// ? func_800D27C8();
+// ? OnReset();
 // ? AIRegisterDMACallback();
 // ? AIInitDMA();
 // ? AIStartDMA();
