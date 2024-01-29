@@ -228,7 +228,7 @@ SOURCES := \
 	libraries/os/asm/OSRtc.s \
 	libraries/si/asm/SIBios.s \
 	libraries/os/OSSync.c \
-	libraries/os/asm/OSThread.s \
+	libraries/os/OSThread.c \
 	libraries/os/asm/OSTime.s \
 	libraries/exi/asm/EXIUart.s \
 	libraries/os/__ppc_eabi_init.c \

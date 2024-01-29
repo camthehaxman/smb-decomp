@@ -27,8 +27,9 @@ OSSram *__OSLockSram(void);
 OSSramEx *__OSLockSramEx(void);
 BOOL __OSUnlockSram(BOOL commit);
 BOOL __OSUnlockSramEx(BOOL commit);
-
 u32 __OSGetDIConfig(void);
+void __OSUnlockAllMutex(OSThread* thread);
+
 // TODO: EXI header
 /*
 BOOL EXILock(int chan, int, int);
