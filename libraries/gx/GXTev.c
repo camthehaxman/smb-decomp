@@ -41,7 +41,7 @@ void GXSetTevOp(GXTevStageID id, GXTevMode mode)
 
 void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTevColorArg c, GXTevColorArg d)
 {
-    u32 *temp_r9 = &gx->unk130[stage];
+    u32 *temp_r9 = &gx->tevc[stage];
 
     INSERT_FIELD(*temp_r9, a, 4, 12);
     INSERT_FIELD(*temp_r9, b, 4,  8);
@@ -54,7 +54,7 @@ void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTev
 
 void GXSetTevAlphaIn(GXTevStageID stage, GXTevAlphaArg a, GXTevAlphaArg b, GXTevAlphaArg c, GXTevAlphaArg d)
 {
-    u32 *temp_r9 = &gx->unk170[stage];
+    u32 *temp_r9 = &gx->teva[stage];
 
     INSERT_FIELD(*temp_r9, a, 3, 13);
     INSERT_FIELD(*temp_r9, b, 3, 10);
@@ -67,7 +67,7 @@ void GXSetTevAlphaIn(GXTevStageID stage, GXTevAlphaArg a, GXTevAlphaArg b, GXTev
 
 void GXSetTevColorOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID out_reg)
 {
-    u32 *temp_r3 = &gx->unk130[stage];
+    u32 *temp_r3 = &gx->tevc[stage];
 
     INSERT_FIELD(*temp_r3, op & 1, 1, 18);
     if (op <= 1)
@@ -90,7 +90,7 @@ void GXSetTevColorOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
 
 void GXSetTevAlphaOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID out_reg)
 {
-    u32 *temp_r3 = &gx->unk170[stage];
+    u32 *temp_r3 = &gx->teva[stage];
 
     INSERT_FIELD(*temp_r3, op & 1, 1, 18);
     if (op <= 1)
@@ -163,7 +163,7 @@ void GXSetTevKColor(GXTevKColorID id, GXColor color)
 
 void GXSetTevKColorSel(GXTevStageID stage, GXTevKColorSel sel)
 {
-    u32 *temp_r7 = &gx->unk1B0[stage >> 1];
+    u32 *temp_r7 = &gx->tevKsel[stage >> 1];
 
     if (stage & 1)
         INSERT_FIELD(*temp_r7, sel, 5, 14);
@@ -176,7 +176,7 @@ void GXSetTevKColorSel(GXTevStageID stage, GXTevKColorSel sel)
 
 void GXSetTevKAlphaSel(GXTevStageID stage, GXTevKAlphaSel sel)
 {
-    u32 *temp_r7 = &gx->unk1B0[stage >> 1];
+    u32 *temp_r7 = &gx->tevKsel[stage >> 1];
 
     if (stage & 1)
         INSERT_FIELD(*temp_r7, sel, 5, 19);
@@ -189,7 +189,7 @@ void GXSetTevKAlphaSel(GXTevStageID stage, GXTevKAlphaSel sel)
 
 void GXSetTevSwapMode(GXTevStageID stage, GXTevSwapSel ras_sel, GXTevSwapSel tex_sel)
 {
-    u32 *temp_r7 = &gx->unk170[stage];
+    u32 *temp_r7 = &gx->teva[stage];
 
     INSERT_FIELD(*temp_r7, ras_sel, 2, 0);
     INSERT_FIELD(*temp_r7, tex_sel, 2, 2);
@@ -204,13 +204,13 @@ void GXSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red, GXTevColorCha
     int index2 = table * 2 + 1;
     u32 *temp_r11;
 
-    temp_r11 = &gx->unk1B0[index1];
+    temp_r11 = &gx->tevKsel[index1];
     INSERT_FIELD(*temp_r11, red,   2, 0);
     INSERT_FIELD(*temp_r11, green, 2, 2);
     GX_WRITE_U8(0x61);
     GX_WRITE_U32(*temp_r11);
 
-    temp_r11 = &gx->unk1B0[index2];
+    temp_r11 = &gx->tevKsel[index2];
     INSERT_FIELD(*temp_r11, blue,  2, 0);
     INSERT_FIELD(*temp_r11, alpha, 2, 2);
     GX_WRITE_U8(0x61);
@@ -271,13 +271,13 @@ u32 lbl_801E9198[] = { 0, 1, 0, 1, 0, 1, 7, 5, 6, 0 };
 
 void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXChannelID color)
 {
-    u32 *temp_r7 = &gx->unk100[stage / 2];
+    u32 *temp_r7 = &gx->tref[stage / 2];
     int var_r0;
     int var_r4;
     u32 temp_r10;
     int var_r9;
 
-    gx->unk49C[stage] = map;
+    gx->texmapId[stage] = map;
     temp_r10 = map & ~0x100;
     var_r9 = temp_r10 >= 8 ? 0 : temp_r10;
     if (coord >= 8)
@@ -303,11 +303,11 @@ void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXCha
     GX_WRITE_U8(0x61);
     GX_WRITE_U32(*temp_r7);
     gx->unk2 = 1;
-    gx->unk4F0 |= 1;
+    gx->dirtyState |= 1;
 }
 
 void GXSetNumTevStages(u8 nStages)
 {
-    INSERT_FIELD(gx->unk204, nStages - 1, 4, 10);
-    gx->unk4F0 |= 4;
+    INSERT_FIELD(gx->genMode, nStages - 1, 4, 10);
+    gx->dirtyState |= 4;
 }

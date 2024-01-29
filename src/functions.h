@@ -1200,7 +1200,7 @@ void __GXSetDirtyState(void);
 // ? GXLoadTexObjPreLoaded();
 // ? GXLoadTexObj();
 // ? GXInitTexCacheRegion();
-// ? GXInitTlutObj();
+// ? GXInitTlutRegion();
 // ? GXInvalidateTexAll();
 // ? GXSetTexRegionCallback();
 // ? GXSetTlutRegionCallback();

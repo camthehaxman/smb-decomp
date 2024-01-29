@@ -6,7 +6,7 @@
 // 0x800E2B9C
 void GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color);
 // 0x800E2D50
-// ? GXSetFogRangeAdj();
+void GXSetFogRangeAdj(GXBool enable, u16 center, GXFogAdjTable *table);
 // 0x800E2E50
 void GXSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor dst_factor, GXLogicOp op);
 // 0x800E2F54
@@ -22,10 +22,10 @@ void GXSetZCompLoc(GXBool before_tex);
 // 0x800E319C
 void GXSetDither(GXBool dither);
 // 0x800E31DC
-// ? GXSetDstAlpha();
+void GXSetDstAlpha(GXBool enable, u8 alpha);
 // 0x800E3230
-// ? GXSetFieldMask();
+void GXSetFieldMask(GXBool odd_mask, GXBool even_mask);
 // 0x800E3268
-// ? GXSetFieldMode();
+void GXSetFieldMode(GXBool field_mode, GXBool half_aspect_ratio);
 
 #endif

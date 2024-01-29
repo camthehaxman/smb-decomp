@@ -39,4 +39,19 @@ typedef struct
     u32 dummy[16];
 } GXLightObj;
 
+typedef struct
+{
+    u32 dummy[4];
+} GXTexRegion;
+
+typedef struct
+{
+    u32 dummy[4];
+} GXTlutRegion;
+
+typedef struct
+{
+    u16 r[10];
+} GXFogAdjTable;
+
 #endif

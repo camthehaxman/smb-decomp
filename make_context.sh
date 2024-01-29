@@ -13,5 +13,6 @@ if [ "${2:-}" = "-c" ]; then
     def=-DC_ONLY
 fi
 
-"$WINE" mwcc_compiler/1.1/mwcceppc.exe -EP -i src -i libraries/musyx -i "$(dirname $src_file)" -I- -i include "$def" "$src_file"
+MWCIncludes='' "$WINE" mwcc_compiler/1.1/mwcceppc.exe -EP -i src -i libraries/musyx -i "$(dirname $src_file)" -I- -i include "$def" "$src_file" |
+sed '/GXWGFifo : 0x/s@^@//@'
 

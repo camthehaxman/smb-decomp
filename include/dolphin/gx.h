@@ -20,5 +20,6 @@
 #include <dolphin/GXGet.h>
 #include <dolphin/GXDraw.h>
 #include <dolphin/GXPerf.h>
+#include <dolphin/GXCpu2Efb.h>
 
 #endif

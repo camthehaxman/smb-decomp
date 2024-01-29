@@ -1040,6 +1040,7 @@ lbl_802F6864:
 
 .section .bss
 
+	.balign 8
 .global lbl_802C8408
 lbl_802C8408:
 	.skip 0x288

@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_BASE_PPCARCH_H_
 #define _DOLPHIN_BASE_PPCARCH_H_
 
+#include <dolphin/types.h>
+
 // GEKKO registers
 #define GQR0 0x390
 #define GQR1 0x391
@@ -13,5 +15,8 @@
 
 void PPCHalt(void);
 void PPCSync(void);
+void PPCMthid2(u32 newhid2);
+u32 PPCMfhid2(void);
+void PPCMtwpar(u32 newwpar);
 
 #endif

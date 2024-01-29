@@ -267,7 +267,7 @@ SOURCES := \
 	libraries/card/CARDStat.c \
 	libraries/card/CARDRename.c \
 	libraries/hio/hio.c \
-	libraries/gx/asm/GXInit.s \
+	libraries/gx/GXInit.c \
 	libraries/gx/GXFifo.c \
 	libraries/gx/asm/GXAttr.s \
 	libraries/gx/asm/GXMisc.s \
