@@ -2542,8 +2542,8 @@ lbl_000023A4:
 /* 000023AC 41820008 */ beq lbl_000023B4
 /* 000023B0 38A50001 */ addi r5, r5, 1
 lbl_000023B4:
-/* 000023B4 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 000023B8 38630000 */ addi r3, r3, lbl_80206BD0@l
+/* 000023B4 3C600000 */ lis r3, playerControllerIDs@ha
+/* 000023B8 38630000 */ addi r3, r3, playerControllerIDs@l
 /* 000023BC 54A0103A */ slwi r0, r5, 2
 /* 000023C0 7C630214 */ add r3, r3, r0
 /* 000023C4 8003FFFC */ lwz r0, -4(r3)
@@ -2555,8 +2555,8 @@ lbl_000023D8:
 /* 000023D8 3C600000 */ lis r3, lbl_801EEDA8@ha
 /* 000023DC 38A30000 */ addi r5, r3, lbl_801EEDA8@l
 /* 000023E0 80050048 */ lwz r0, 0x48(r5)
-/* 000023E4 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 000023E8 38630000 */ addi r3, r3, lbl_80206BD0@l
+/* 000023E4 3C600000 */ lis r3, playerControllerIDs@ha
+/* 000023E8 38630000 */ addi r3, r3, playerControllerIDs@l
 /* 000023EC 2C000000 */ cmpwi r0, 0
 /* 000023F0 41820018 */ beq lbl_00002408
 /* 000023F4 80030000 */ lwz r0, 0(r3)
@@ -2611,9 +2611,9 @@ lbl_00002484:
 /* 000024A4 3BE40000 */ addi r31, r4, 0
 /* 000024A8 57EA103A */ slwi r10, r31, 2
 /* 000024AC 93C10018 */ stw r30, 0x18(r1)
-/* 000024B0 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 000024B0 3C800000 */ lis r4, playerControllerIDs@ha
 /* 000024B4 7D085214 */ add r8, r8, r10
-/* 000024B8 38E40000 */ addi r7, r4, lbl_80206BD0@l
+/* 000024B8 38E40000 */ addi r7, r4, playerControllerIDs@l
 /* 000024BC 91280048 */ stw r9, 0x48(r8)
 /* 000024C0 3C800000 */ lis r4, playerCharacterSelection@ha
 /* 000024C4 38040000 */ addi r0, r4, playerCharacterSelection@l
@@ -3542,10 +3542,10 @@ lbl_000031E0:
 /* 00003200 40816618 */ ble lbl_00009818
 /* 00003204 38A70007 */ addi r5, r7, 7
 /* 00003208 54A5E8FE */ srwi r5, r5, 3
-/* 0000320C 3CC00000 */ lis r6, lbl_80206BD0@ha
+/* 0000320C 3CC00000 */ lis r6, playerControllerIDs@ha
 /* 00003210 7CA903A6 */ mtctr r5
 /* 00003214 28070000 */ cmplwi r7, 0
-/* 00003218 39860000 */ addi r12, r6, lbl_80206BD0@l
+/* 00003218 39860000 */ addi r12, r6, playerControllerIDs@l
 /* 0000321C 408165FC */ ble lbl_00009818
 lbl_00003220:
 /* 00003220 80AC0000 */ lwz r5, 0(r12)
@@ -5218,12 +5218,12 @@ lbl_000049A0:
 /* 000049A0 2C040000 */ cmpwi r4, 0
 /* 000049A4 40810090 */ ble lbl_00004A34
 /* 000049A8 38A4FFFF */ addi r5, r4, -1  ;# fixed addi
-/* 000049AC 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 000049AC 3C800000 */ lis r4, playerControllerIDs@ha
 /* 000049B0 3C600000 */ lis r3, lbl_801EEDA8@ha
 /* 000049B4 38000004 */ li r0, 4
 /* 000049B8 54A6103A */ slwi r6, r5, 2
 /* 000049BC 7C0903A6 */ mtctr r0
-/* 000049C0 38840000 */ addi r4, r4, lbl_80206BD0@l
+/* 000049C0 38840000 */ addi r4, r4, playerControllerIDs@l
 /* 000049C4 38030000 */ addi r0, r3, lbl_801EEDA8@l
 /* 000049C8 7C843214 */ add r4, r4, r6
 /* 000049CC 7C603214 */ add r3, r0, r6
@@ -10755,9 +10755,9 @@ lbl_000097D4:
 /* 00009810 B0030000 */ sth r0, gameSubmodeRequest@l(r3)
 /* 00009814 48000040 */ b lbl_00009854
 lbl_00009818:
-/* 00009818 3CA00000 */ lis r5, lbl_80206BD0@ha
+/* 00009818 3CA00000 */ lis r5, playerControllerIDs@ha
 /* 0000981C 5466103A */ slwi r6, r3, 2
-/* 00009820 38A50000 */ addi r5, r5, lbl_80206BD0@l
+/* 00009820 38A50000 */ addi r5, r5, playerControllerIDs@l
 /* 00009824 7CC53214 */ add r6, r5, r6
 /* 00009828 4BFF9A6C */ b lbl_00003294
 lbl_0000982C:
@@ -18507,8 +18507,8 @@ lbl_00010898:
 /* 00010A44 3CA00000 */ lis r5, playerCharacterSelection@ha
 /* 00010A48 38060000 */ addi r0, r6, lbl_100009D8@l
 /* 00010A4C 3A650000 */ addi r19, r5, playerCharacterSelection@l
-/* 00010A50 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 00010A54 3BC30000 */ addi r30, r3, lbl_80206BD0@l
+/* 00010A50 3C600000 */ lis r3, playerControllerIDs@ha
+/* 00010A54 3BC30000 */ addi r30, r3, playerControllerIDs@l
 /* 00010A58 3C600000 */ lis r3, bitmapGroups@ha
 /* 00010A5C 3C800000 */ lis r4, unpausedFrameCounter@ha
 /* 00010A60 7C1C0378 */ mr r28, r0

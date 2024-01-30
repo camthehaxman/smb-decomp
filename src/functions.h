@@ -520,12 +520,7 @@ void func_800B0B48(void);
 // ? func_800B55E4();
 // ? func_800B5B5C();
 // ? func_800B5C54();
-void ev_vibration_init(void);
-void ev_vibration_main(void);
-void ev_vibration_dest(void);
-void func_800B60F4(int, int, int);
-// ? func_800B6224();
-// ? func_800B622C();
+
 void func_800B6234(void);
 int func_800B62FC(void);
 void func_800B6430(void);

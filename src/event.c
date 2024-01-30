@@ -11,6 +11,7 @@
 #include "info.h"
 #include "item.h"
 #include "minimap.h"
+#include "mouse.h"
 #include "name_entry.h"
 #include "obj_collision.h"
 #include "perf.h"
@@ -20,8 +21,8 @@
 #include "sprite.h"
 #include "stage.h"
 #include "stobj.h"
+#include "vibration.h"
 #include "world.h"
-#include "mouse.h"
 
 struct Event eventInfo[] =
 {

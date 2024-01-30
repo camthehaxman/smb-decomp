@@ -4217,7 +4217,7 @@ lbl_00003DD8:
 /* 00003DDC 90010004 */ stw r0, 4(r1)
 /* 00003DE0 9421FFE0 */ stwu r1, -0x20(r1)
 /* 00003DE4 BF61000C */ stmw r27, 0xc(r1)
-/* 00003DE8 4BFFC3C5 */ bl func_800B622C
+/* 00003DE8 4BFFC3C5 */ bl vibration_get_cont_enable_mask
 /* 00003DEC 3C800000 */ lis r4, g_currPlayerButtons@ha
 /* 00003DF0 38840000 */ addi r4, r4, g_currPlayerButtons@l
 /* 00003DF4 A0A40004 */ lhz r5, 4(r4)
@@ -4282,7 +4282,7 @@ lbl_00003EBC:
 /* 00003EC4 7C030040 */ cmplw r3, r0
 /* 00003EC8 4182000C */ beq lbl_00003ED4
 /* 00003ECC 7FA3EB78 */ mr r3, r29
-/* 00003ED0 4BFFC2DD */ bl func_800B6224
+/* 00003ED0 4BFFC2DD */ bl vibration_set_cont_enable_mask
 lbl_00003ED4:
 /* 00003ED4 A01F0000 */ lhz r0, 0(r31)
 /* 00003ED8 540005AD */ rlwinm. r0, r0, 0, 0x16, 0x16
@@ -10830,7 +10830,7 @@ lbl_00009F0C:
 /* 0000A190 4BFF601D */ bl u_draw_text
 /* 0000A194 C01F0060 */ lfs f0, 0x60(r31)
 /* 0000A198 D0010054 */ stfs f0, 0x54(r1)
-/* 0000A19C 4BFF6011 */ bl func_800B622C
+/* 0000A19C 4BFF6011 */ bl vibration_get_cont_enable_mask
 /* 0000A1A0 5479063E */ clrlwi r25, r3, 0x18
 lbl_0000A1A4:
 /* 0000A1A4 801B0000 */ lwz r0, 0(r27)

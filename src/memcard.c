@@ -18,6 +18,7 @@
 #include "recplay.h"
 #include "sound.h"
 #include "sprite.h"
+#include "vibration.h"
 
 struct StringEntry
 {
@@ -3571,9 +3572,6 @@ void func_800A4DF0(void)
 extern u8 lbl_801D5A20[];
 extern u32 lbl_802F22C8;
 
-extern void func_800B6224(u8);
-extern u8 func_800B622C(void);
-
 void func_800A4E70(void)
 {
     memcardGameData->unk5844.unk4E = lbl_802F21A8;
@@ -3583,7 +3581,7 @@ void func_800A4E70(void)
     func_80067FD0(memcardGameData);
     memcardGameData->unk5844.unkAC = modeCtrl.splitscreenMode;
     memcpy(memcardGameData->unk5844.unkB0, lbl_801D5A20, sizeof(memcardGameData->unk5844.unkB0));
-    memcardGameData->unk5844.unkAD = func_800B622C();
+    memcardGameData->unk5844.unkAD = vibration_get_cont_enable_mask();
     func_800AFC1C(memcardGameData);
     memcardGameData->unk5844.unk3BC = lbl_802F22C8;
 }
@@ -3597,7 +3595,7 @@ void func_800A4F04(void)
     func_8006800C(memcardGameData);
     modeCtrl.splitscreenMode = memcardGameData->unk5844.unkAC;
     memcpy(lbl_801D5A20, memcardGameData->unk5844.unkB0, sizeof(memcardGameData->unk5844.unkB0));
-    func_800B6224(memcardGameData->unk5844.unkAD);
+    vibration_set_cont_enable_mask(memcardGameData->unk5844.unkAD);
     func_800AFC4C(memcardGameData);
     lbl_802F22C8 = memcardGameData->unk5844.unk3BC;
 }

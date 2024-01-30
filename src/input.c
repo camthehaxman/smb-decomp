@@ -11,6 +11,7 @@
 #include "input.h"
 #include "mode.h"
 #include "pool.h"
+#include "vibration.h"
 
 struct ControllerInfo controllerInfo[4];
 struct ControllerInfo lbl_801F3C60[4];
@@ -516,8 +517,8 @@ void func_80025640(void)
 
             for (j = 0; j < 5; j++)
             {
-                g_currPlayerButtons[j] |= controllerInfo[lbl_80206BD0[i]].unk0[j].button;
-                g_currPlayerAnalogButtons[j] |= analogButtonInfo[lbl_80206BD0[i]][j];
+                g_currPlayerButtons[j] |= controllerInfo[playerControllerIDs[i]].unk0[j].button;
+                g_currPlayerAnalogButtons[j] |= analogButtonInfo[playerControllerIDs[i]][j];
             }
         }
         break;

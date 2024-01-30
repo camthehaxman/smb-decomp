@@ -16,6 +16,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "vibration.h"
 #include "world.h"
 
 #include "../data/bg_jun.gma.h"
@@ -753,10 +754,10 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
     Vec sp24;
     float temp_f1;
     float temp_f2;
-    struct Ball *temp_r31;
-    int phi_r4;
+    struct Ball *ball;
+    BOOL rumble;
 
-    temp_r31 = currentBallStructPtr;
+    ball = currentBallStructPtr;
     stobj->state = 1;
     sp30 = stobj->position;
     func_8006AAEC(&arg1->prevPos, &arg1->pos, &stobj->position_2, &sp30, arg1->radius, stobj->model->boundSphereRadius);
@@ -783,7 +784,7 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
     arg1->pos.y = stobj->position.y + sp24.y;
     arg1->pos.z = stobj->position.z + sp24.z;
     u_play_sound_0(0x5011);
-    temp_r31->flags |= 0x20;
+    ball->flags |= 0x20;
 
     {
         s16 sp14[] =
@@ -795,16 +796,16 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
         };
         u8 dummy[4];
 
-        lbl_802F1DFC = temp_r31->ape->charaId;
+        lbl_802F1DFC = ball->ape->charaId;
         u_play_sound_0(sp14[unpausedFrameCounter & 7]);
-        phi_r4 = 1;
+        rumble = TRUE;
         if (modeCtrl.gameType == GAMETYPE_MINI_RACE)
         {
-            if (temp_r31->unk144 != NULL && (temp_r31->unk144->unk14 & 0x20))
-                phi_r4 = 0;
+            if (ball->unk144 != NULL && (ball->unk144->unk14 & 0x20))
+                rumble = FALSE;
         }
-        if (phi_r4 != 0)
-            func_800B60F4(lbl_80206BD0[temp_r31->playerId], 1, 0x1E);
+        if (rumble)
+            vibration_control(playerControllerIDs[ball->playerId], VIBRATION_STATE_1, 30);
     }
 }
 

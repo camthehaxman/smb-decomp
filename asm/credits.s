@@ -268,9 +268,9 @@ lbl_800B003C:
 /* 800B008C 000ABFAC  80 0D A0 E8 */	lwz r0, lbl_802F22C8@sda21(r13)
 /* 800B0090 000ABFB0  54 00 07 BD */	rlwinm. r0, r0, 0, 0x1e, 0x1e
 /* 800B0094 000ABFB4  41 82 00 74 */	beq lbl_800B0108
-/* 800B0098 000ABFB8  3C 60 80 20 */	lis r3, lbl_80206BD0@ha
+/* 800B0098 000ABFB8  3C 60 80 20 */	lis r3, playerControllerIDs@ha
 /* 800B009C 000ABFBC  54 C4 10 3A */	slwi r4, r6, 2
-/* 800B00A0 000ABFC0  38 03 6B D0 */	addi r0, r3, lbl_80206BD0@l
+/* 800B00A0 000ABFC0  38 03 6B D0 */	addi r0, r3, playerControllerIDs@l
 /* 800B00A4 000ABFC4  7C 60 22 14 */	add r3, r0, r4
 /* 800B00A8 000ABFC8  80 03 00 00 */	lwz r0, 0(r3)
 /* 800B00AC 000ABFCC  3C 60 80 1F */	lis r3, controllerInfo@ha
@@ -415,11 +415,11 @@ lbl_800B02A0:
 /* 800B02B0 000AC1D0  2C 00 00 00 */	cmpwi r0, 0
 /* 800B02B4 000AC1D4  41 82 00 F0 */	beq lbl_800B03A4
 /* 800B02B8 000AC1D8  80 1D 00 00 */	lwz r0, 0(r29)
-/* 800B02BC 000AC1DC  3C 60 80 20 */	lis r3, lbl_80206BD0@ha
+/* 800B02BC 000AC1DC  3C 60 80 20 */	lis r3, playerControllerIDs@ha
 /* 800B02C0 000AC1E0  3C A0 80 1F */	lis r5, controllerInfo@ha
 /* 800B02C4 000AC1E4  C8 62 BA 28 */	lfd f3, lbl_802F6228@sda21(r2)
 /* 800B02C8 000AC1E8  54 04 10 3A */	slwi r4, r0, 2
-/* 800B02CC 000AC1EC  38 03 6B D0 */	addi r0, r3, lbl_80206BD0@l
+/* 800B02CC 000AC1EC  38 03 6B D0 */	addi r0, r3, playerControllerIDs@l
 /* 800B02D0 000AC1F0  C0 02 B9 18 */	lfs f0, lbl_802F6118@sda21(r2)
 /* 800B02D4 000AC1F4  7C 60 22 14 */	add r3, r0, r4
 /* 800B02D8 000AC1F8  80 63 00 00 */	lwz r3, 0(r3)
@@ -5327,9 +5327,9 @@ func_800B4A50:
 /* 800B4AB0 000B09D0  3B 83 69 18 */	addi r28, r3, lbl_802C6918@l
 /* 800B4AB4 000B09D4  3B 64 6E 00 */	addi r27, r4, lbl_801D6E00@l
 /* 800B4AB8 000B09D8  3C 80 80 1F */	lis r4, modeCtrl@ha
-/* 800B4ABC 000B09DC  3C 60 80 20 */	lis r3, lbl_80206BD0@ha
+/* 800B4ABC 000B09DC  3C 60 80 20 */	lis r3, playerControllerIDs@ha
 /* 800B4AC0 000B09E0  3B A4 EC 20 */	addi r29, r4, modeCtrl@l
-/* 800B4AC4 000B09E4  3B C3 6B D0 */	addi r30, r3, lbl_80206BD0@l
+/* 800B4AC4 000B09E4  3B C3 6B D0 */	addi r30, r3, playerControllerIDs@l
 /* 800B4AC8 000B09E8  3B 5C 00 0C */	addi r26, r28, 0xc
 /* 800B4ACC 000B09EC  3F E0 43 30 */	lis r31, 0x4330
 /* 800B4AD0 000B09F0  80 0D A0 4C */	lwz r0, lbl_802F222C@sda21(r13)
@@ -5552,7 +5552,7 @@ lbl_800B4B48:
 /* 800B4E30 000B0D50  54 00 10 3A */	slwi r0, r0, 2
 /* 800B4E34 000B0D54  7C 7E 02 14 */	add r3, r30, r0
 /* 800B4E38 000B0D58  80 63 00 00 */	lwz r3, 0(r3)
-/* 800B4E3C 000B0D5C  48 00 12 B9 */	bl func_800B60F4
+/* 800B4E3C 000B0D5C  48 00 12 B9 */	bl vibration_control
 /* 800B4E40 000B0D60  38 60 00 17 */	li r3, 0x17
 /* 800B4E44 000B0D64  4B F7 67 61 */	bl u_play_sound_0
 /* 800B4E48 000B0D68  38 7C 00 E8 */	addi r3, r28, 0xe8
@@ -5723,9 +5723,9 @@ func_800B5020:
 /* 800B50BC 000B0FDC  90 0D A0 AC */	stw r0, lbl_802F228C@sda21(r13)
 /* 800B50C0 000B0FE0  CB 82 BC 98 */	lfd f28, lbl_802F6498@sda21(r2)
 /* 800B50C4 000B0FE4  80 A3 FF FC */	lwz r5, -4(r3)
-/* 800B50C8 000B0FE8  3C 60 80 20 */	lis r3, lbl_80206BD0@ha
+/* 800B50C8 000B0FE8  3C 60 80 20 */	lis r3, playerControllerIDs@ha
 /* 800B50CC 000B0FEC  80 0D A0 AC */	lwz r0, lbl_802F228C@sda21(r13)
-/* 800B50D0 000B0FF0  3B 63 6B D0 */	addi r27, r3, lbl_80206BD0@l
+/* 800B50D0 000B0FF0  3B 63 6B D0 */	addi r27, r3, playerControllerIDs@l
 /* 800B50D4 000B0FF4  90 AD A0 B0 */	stw r5, lbl_802F2290@sda21(r13)
 /* 800B50D8 000B0FF8  CB 62 BC 80 */	lfd f27, lbl_802F6480@sda21(r2)
 /* 800B50DC 000B0FFC  90 0D A0 40 */	stw r0, lbl_802F2220@sda21(r13)
@@ -6023,7 +6023,7 @@ lbl_800B5538:
 /* 800B555C 000B147C  54 00 10 3A */	slwi r0, r0, 2
 /* 800B5560 000B1480  7C 7B 02 14 */	add r3, r27, r0
 /* 800B5564 000B1484  80 63 00 00 */	lwz r3, 0(r3)
-/* 800B5568 000B1488  48 00 0B 8D */	bl func_800B60F4
+/* 800B5568 000B1488  48 00 0B 8D */	bl vibration_control
 lbl_800B556C:
 /* 800B556C 000B148C  80 6D A0 40 */	lwz r3, lbl_802F2220@sda21(r13)
 /* 800B5570 000B1490  38 03 00 01 */	addi r0, r3, 1
@@ -6705,73 +6705,6 @@ lbl_802F18B0:
 lbl_802F18B4:
 	# ROM: 0x1EBFF4
 	.4byte 0x25640000
-
-.global lbl_802F18B8
-lbl_802F18B8:
-	# ROM: 0x1EBFF8
-	.4byte 0x0F000000
-	.4byte 0
-
-.global lbl_802F18C0
-lbl_802F18C0:
-	# ROM: 0x1EC000
-	.4byte 0x00EA0102
-	.4byte 0x01420173
-
-.global lbl_802F18C8
-lbl_802F18C8:
-	# ROM: 0x1EC008
-	.4byte 0x00B70102
-	.4byte 0x0141018B
-
-.global lbl_802F18D0
-lbl_802F18D0:
-	# ROM: 0x1EC010
-	.4byte 0x00EC0115
-	.4byte 0x016D0173
-
-.global lbl_802F18D8
-lbl_802F18D8:
-	# ROM: 0x1EC018
-	.4byte 0x00B500FF
-	.4byte 0x01380192
-
-.global lbl_802F18E0
-lbl_802F18E0:
-	# ROM: 0x1EC020
-	.4byte 0x00EA0102
-	.4byte 0x016D0173
-
-.global lbl_802F18E8
-lbl_802F18E8:
-	# ROM: 0x1EC028
-	.4byte 0x00E40127
-	.4byte 0x014A0000
-
-.global lbl_802F18F0
-lbl_802F18F0:
-	# ROM: 0x1EC030
-	.4byte 0x00E80101
-	.4byte 0x016B0000
-
-.global lbl_802F18F8
-lbl_802F18F8:
-	# ROM: 0x1EC038
-	.4byte 0x00E80102
-	.4byte 0x016D0000
-glabel string_of__b_
-	.asciz "of %b!"
-	.balign 4
-glabel string_Oh_wow_
-	.asciz "Oh wow!"
-glabel string__point
-	.asciz " point"
-	.balign 4
-glabel string__points
-	.asciz " points"
-glabel lbl_802F1920
-	.4byte 0
-	.4byte 0
 
 .section .sdata2
 

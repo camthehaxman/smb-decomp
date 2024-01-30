@@ -139,7 +139,7 @@ void u_open_pause_menu(struct Sprite *menuSprite)
     {
         for (i = 0; i < modeCtrl.playerCount; i++)
         {
-            if (pauseMenuState.padId == lbl_80206BD0[i])
+            if (pauseMenuState.padId == playerControllerIDs[i])
             {
                 pauseMenuState.playerId = i;
                 break;
@@ -155,7 +155,7 @@ void u_open_pause_menu(struct Sprite *menuSprite)
             else if (pauseMenuState.unk16 == -1)
                 pauseMenuState.playerId = 0;
             else
-                pauseMenuState.playerId = (pauseMenuState.padId == lbl_80206BD0[lbl_802F1C32]) ? lbl_802F1C32 : 1 - lbl_802F1C32;
+                pauseMenuState.playerId = (pauseMenuState.padId == playerControllerIDs[lbl_802F1C32]) ? lbl_802F1C32 : 1 - lbl_802F1C32;
         }
         else
             pauseMenuState.playerId = modeCtrl.currPlayer;

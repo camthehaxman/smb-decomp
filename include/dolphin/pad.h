@@ -57,6 +57,8 @@ BOOL PADRecalibrate(u32 mask);
 BOOL PADReset(u32 mask);
 void PADSetAnalogMode(u32 mode);
 void PADSetSamplingRate(u32 msec);
+void PADControlAllMotors(const u32 *commandArray);
+void PADControlMotor(s32 chan, u32 command);
 void PADSetSpec(u32 spec);
 
 #endif

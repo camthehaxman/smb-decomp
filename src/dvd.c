@@ -8,6 +8,7 @@
 #include "preview.h"
 #include "sound.h"
 #include "sprite.h"
+#include "vibration.h"
 
 static s32 lbl_802F21F8;
 static s32 lbl_802F21FC;

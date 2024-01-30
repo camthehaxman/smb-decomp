@@ -3701,10 +3701,10 @@ lbl_000035B4:
 /* 000035BC 4180FFAC */ blt lbl_00003568
 /* 000035C0 3C600000 */ lis r3, currentBallStructPtr@ha
 /* 000035C4 3B830000 */ addi r28, r3, currentBallStructPtr@l
-/* 000035C8 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 000035C8 3C800000 */ lis r4, playerControllerIDs@ha
 /* 000035CC 821C0000 */ lwz r16, 0(r28)
 /* 000035D0 3C600000 */ lis r3, modeCtrl@ha
-/* 000035D4 3BC40000 */ addi r30, r4, lbl_80206BD0@l
+/* 000035D4 3BC40000 */ addi r30, r4, playerControllerIDs@l
 /* 000035D8 3B2100B8 */ addi r25, r1, 0xb8
 /* 000035DC 3B01005C */ addi r24, r1, 0x5c
 /* 000035E0 3A430000 */ addi r18, r3, modeCtrl@l
@@ -3903,7 +3903,7 @@ lbl_00003698:
 /* 000038CC 5400103A */ slwi r0, r0, 2
 /* 000038D0 7C7E0214 */ add r3, r30, r0
 /* 000038D4 80630000 */ lwz r3, 0(r3)
-/* 000038D8 4BFFC8A5 */ bl func_800B60F4
+/* 000038D8 4BFFC8A5 */ bl vibration_control
 lbl_000038DC:
 /* 000038DC 92DC0000 */ stw r22, 0(r28)
 /* 000038E0 38600018 */ li r3, 0x18
@@ -3918,7 +3918,7 @@ lbl_000038DC:
 /* 00003904 5400103A */ slwi r0, r0, 2
 /* 00003908 7C7E0214 */ add r3, r30, r0
 /* 0000390C 80630000 */ lwz r3, 0(r3)
-/* 00003910 4BFFC86D */ bl func_800B60F4
+/* 00003910 4BFFC86D */ bl vibration_control
 lbl_00003914:
 /* 00003914 809C0000 */ lwz r4, 0(r28)
 /* 00003918 38A10009 */ addi r5, r1, 9
@@ -6348,11 +6348,11 @@ lbl_00005CEC:
 /* 00005D30 48000044 */ b lbl_00005D74
 lbl_00005D34:
 /* 00005D34 881E002E */ lbz r0, 0x2e(r30)
-/* 00005D38 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00005D38 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00005D3C 3CA00000 */ lis r5, controllerInfo@ha
 /* 00005D40 7C000774 */ extsb r0, r0
 /* 00005D44 5404103A */ slwi r4, r0, 2
-/* 00005D48 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00005D48 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00005D4C 7C602214 */ add r3, r0, r4
 /* 00005D50 80030000 */ lwz r0, 0(r3)
 /* 00005D54 38650000 */ addi r3, r5, controllerInfo@l
@@ -6770,15 +6770,15 @@ lbl_000062F8:
 /* 0000632C 540006B5 */ rlwinm. r0, r0, 0, 0x1a, 0x1a
 /* 00006330 4082002C */ bne lbl_0000635C
 /* 00006334 889D002E */ lbz r4, 0x2e(r29)
-/* 00006338 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 0000633C 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00006338 3C600000 */ lis r3, playerControllerIDs@ha
+/* 0000633C 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00006340 7C830774 */ extsb r3, r4
 /* 00006344 5463103A */ slwi r3, r3, 2
 /* 00006348 7C601A14 */ add r3, r0, r3
 /* 0000634C 80630000 */ lwz r3, 0(r3)
 /* 00006350 38800001 */ li r4, 1
 /* 00006354 38A0001E */ li r5, 0x1e
-/* 00006358 4BFF9E25 */ bl func_800B60F4
+/* 00006358 4BFF9E25 */ bl vibration_control
 lbl_0000635C:
 /* 0000635C 881E0263 */ lbz r0, 0x263(r30)
 /* 00006360 2C000006 */ cmpwi r0, 6
@@ -7641,10 +7641,10 @@ lbl_00006FF4:
 /* 00007004 BF610024 */ stmw r27, 0x24(r1)
 /* 00007008 7C7F1B78 */ mr r31, r3
 /* 0000700C 8803002E */ lbz r0, 0x2e(r3)
-/* 00007010 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00007010 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00007014 7C000774 */ extsb r0, r0
 /* 00007018 5404103A */ slwi r4, r0, 2
-/* 0000701C 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 0000701C 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00007020 7C602214 */ add r3, r0, r4
 /* 00007024 80030000 */ lwz r0, 0(r3)
 /* 00007028 3C600000 */ lis r3, lbl_000137B8@ha
@@ -9497,10 +9497,10 @@ lbl_00008B60:
 /* 00008B68 90010004 */ stw r0, 4(r1)
 /* 00008B6C 9421FFE0 */ stwu r1, -0x20(r1)
 /* 00008B70 8803002E */ lbz r0, 0x2e(r3)
-/* 00008B74 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00008B74 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00008B78 7C000774 */ extsb r0, r0
 /* 00008B7C 5405103A */ slwi r5, r0, 2
-/* 00008B80 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00008B80 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00008B84 7C602A14 */ add r3, r0, r5
 /* 00008B88 80030000 */ lwz r0, 0(r3)
 /* 00008B8C 3C600000 */ lis r3, lbl_000137B8@ha

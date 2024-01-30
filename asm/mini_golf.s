@@ -426,10 +426,10 @@ lbl_00000688:
 /* 00000688 3C600000 */ lis r3, modeCtrl@ha
 /* 0000068C 38A30000 */ addi r5, r3, modeCtrl@l
 /* 00000690 8005002C */ lwz r0, 0x2c(r5)
-/* 00000694 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00000694 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00000698 3CC00000 */ lis r6, controllerInfo@ha
 /* 0000069C 5404103A */ slwi r4, r0, 2
-/* 000006A0 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 000006A0 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 000006A4 7C602214 */ add r3, r0, r4
 /* 000006A8 80030000 */ lwz r0, 0(r3)
 /* 000006AC 38660000 */ addi r3, r6, controllerInfo@l
@@ -981,14 +981,14 @@ lbl_00000E7C:
 /* 00000E7C 3C600000 */ lis r3, modeCtrl@ha
 /* 00000E80 38630000 */ addi r3, r3, modeCtrl@l
 /* 00000E84 8083002C */ lwz r4, 0x2c(r3)
-/* 00000E88 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 00000E8C 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00000E88 3C600000 */ lis r3, playerControllerIDs@ha
+/* 00000E8C 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00000E90 5483103A */ slwi r3, r4, 2
 /* 00000E94 7C601A14 */ add r3, r0, r3
 /* 00000E98 80630000 */ lwz r3, 0(r3)
 /* 00000E9C 38800004 */ li r4, 4
 /* 00000EA0 38A0FFFF */ li r5, -1
-/* 00000EA4 4BFFF32D */ bl func_800B60F4
+/* 00000EA4 4BFFF32D */ bl vibration_control
 /* 00000EA8 48004794 */ b lbl_0000563C
 lbl_00000EAC:
 /* 00000EAC 38000000 */ li r0, 0
@@ -1454,10 +1454,10 @@ lbl_00001500:
 /* 0000153C B0030026 */ sth r0, 0x26(r3)
 lbl_00001540:
 /* 00001540 3CA00000 */ lis r5, controllerInfo@ha
-/* 00001544 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 00001544 3C800000 */ lis r4, playerControllerIDs@ha
 /* 00001548 3C600000 */ lis r3, modeCtrl@ha
 /* 0000154C 3BE50000 */ addi r31, r5, controllerInfo@l
-/* 00001550 3BC40000 */ addi r30, r4, lbl_80206BD0@l
+/* 00001550 3BC40000 */ addi r30, r4, playerControllerIDs@l
 /* 00001554 3B630000 */ addi r27, r3, modeCtrl@l
 /* 00001558 3B000000 */ li r24, 0
 /* 0000155C 3B400000 */ li r26, 0
@@ -1572,10 +1572,10 @@ lbl_000016DC:
 lbl_000016F0:
 /* 000016F0 3C600000 */ lis r3, modeCtrl@ha
 /* 000016F4 3CA00000 */ lis r5, controllerInfo@ha
-/* 000016F8 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 000016F8 3C800000 */ lis r4, playerControllerIDs@ha
 /* 000016FC 3B830000 */ addi r28, r3, modeCtrl@l
 /* 00001700 3B250000 */ addi r25, r5, controllerInfo@l
-/* 00001704 3BE40000 */ addi r31, r4, lbl_80206BD0@l
+/* 00001704 3BE40000 */ addi r31, r4, playerControllerIDs@l
 /* 00001708 3B000000 */ li r24, 0
 /* 0000170C 3B400000 */ li r26, 0
 /* 00001710 3BC0003C */ li r30, 0x3c
@@ -1773,10 +1773,10 @@ lbl_000019B0:
 /* 000019CC 28000000 */ cmplwi r0, 0
 /* 000019D0 40820060 */ bne lbl_00001A30
 /* 000019D4 3CA00000 */ lis r5, controllerInfo@ha
-/* 000019D8 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 000019D8 3C800000 */ lis r4, playerControllerIDs@ha
 /* 000019DC 3C600000 */ lis r3, modeCtrl@ha
 /* 000019E0 39050000 */ addi r8, r5, controllerInfo@l
-/* 000019E4 38E40000 */ addi r7, r4, lbl_80206BD0@l
+/* 000019E4 38E40000 */ addi r7, r4, playerControllerIDs@l
 /* 000019E8 38830000 */ addi r4, r3, modeCtrl@l
 /* 000019EC 39200000 */ li r9, 0
 /* 000019F0 38600000 */ li r3, 0
@@ -2105,10 +2105,10 @@ lbl_00001EAC:
 /* 00001EBC 28000000 */ cmplwi r0, 0
 /* 00001EC0 40820060 */ bne lbl_00001F20
 /* 00001EC4 3CA00000 */ lis r5, controllerInfo@ha
-/* 00001EC8 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 00001EC8 3C800000 */ lis r4, playerControllerIDs@ha
 /* 00001ECC 3C600000 */ lis r3, modeCtrl@ha
 /* 00001ED0 39050000 */ addi r8, r5, controllerInfo@l
-/* 00001ED4 38E40000 */ addi r7, r4, lbl_80206BD0@l
+/* 00001ED4 38E40000 */ addi r7, r4, playerControllerIDs@l
 /* 00001ED8 38830000 */ addi r4, r3, modeCtrl@l
 /* 00001EDC 39200000 */ li r9, 0
 /* 00001EE0 38600000 */ li r3, 0
@@ -2594,10 +2594,10 @@ lbl_000025A0:
 /* 000025A0 3C600000 */ lis r3, modeCtrl@ha
 /* 000025A4 38630000 */ addi r3, r3, modeCtrl@l
 /* 000025A8 8003002C */ lwz r0, 0x2c(r3)
-/* 000025AC 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 000025AC 3C600000 */ lis r3, playerControllerIDs@ha
 /* 000025B0 3CA00000 */ lis r5, controllerInfo@ha
 /* 000025B4 5404103A */ slwi r4, r0, 2
-/* 000025B8 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 000025B8 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 000025BC 7C602214 */ add r3, r0, r4
 /* 000025C0 80030000 */ lwz r0, 0(r3)
 /* 000025C4 38650000 */ addi r3, r5, controllerInfo@l
@@ -3613,10 +3613,10 @@ lbl_000034E8:
 /* 000034E8 3C600000 */ lis r3, modeCtrl@ha
 /* 000034EC 38630000 */ addi r3, r3, modeCtrl@l
 /* 000034F0 8003002C */ lwz r0, 0x2c(r3)
-/* 000034F4 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 000034F4 3C600000 */ lis r3, playerControllerIDs@ha
 /* 000034F8 3CA00000 */ lis r5, controllerInfo@ha
 /* 000034FC 5404103A */ slwi r4, r0, 2
-/* 00003500 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00003500 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00003504 7C602214 */ add r3, r0, r4
 /* 00003508 80030000 */ lwz r0, 0(r3)
 /* 0000350C 38650000 */ addi r3, r5, controllerInfo@l
@@ -3790,10 +3790,10 @@ lbl_00003758:
 /* 00003788 28000000 */ cmplwi r0, 0
 /* 0000378C 40820648 */ bne lbl_00003DD4
 /* 00003790 8004002C */ lwz r0, 0x2c(r4)
-/* 00003794 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00003794 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00003798 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000379C 5404103A */ slwi r4, r0, 2
-/* 000037A0 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 000037A0 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 000037A4 7C602214 */ add r3, r0, r4
 /* 000037A8 80030000 */ lwz r0, 0(r3)
 /* 000037AC 38650000 */ addi r3, r5, controllerInfo@l
@@ -3847,10 +3847,10 @@ lbl_00003868:
 /* 00003868 3C600000 */ lis r3, modeCtrl@ha
 /* 0000386C 38630000 */ addi r3, r3, modeCtrl@l
 /* 00003870 8003002C */ lwz r0, 0x2c(r3)
-/* 00003874 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00003874 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00003878 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000387C 5404103A */ slwi r4, r0, 2
-/* 00003880 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00003880 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00003884 7C602214 */ add r3, r0, r4
 /* 00003888 80030000 */ lwz r0, 0(r3)
 /* 0000388C 38650000 */ addi r3, r5, controllerInfo@l
@@ -3882,10 +3882,10 @@ lbl_000038EC:
 /* 000038EC 3C600000 */ lis r3, modeCtrl@ha
 /* 000038F0 38630000 */ addi r3, r3, modeCtrl@l
 /* 000038F4 8003002C */ lwz r0, 0x2c(r3)
-/* 000038F8 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 000038F8 3C600000 */ lis r3, playerControllerIDs@ha
 /* 000038FC 3CA00000 */ lis r5, controllerInfo@ha
 /* 00003900 5404103A */ slwi r4, r0, 2
-/* 00003904 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00003904 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00003908 7C602214 */ add r3, r0, r4
 /* 0000390C 80030000 */ lwz r0, 0(r3)
 /* 00003910 38650000 */ addi r3, r5, controllerInfo@l
@@ -3939,10 +3939,10 @@ lbl_000039CC:
 /* 000039CC 3C600000 */ lis r3, modeCtrl@ha
 /* 000039D0 38630000 */ addi r3, r3, modeCtrl@l
 /* 000039D4 8003002C */ lwz r0, 0x2c(r3)
-/* 000039D8 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 000039D8 3C600000 */ lis r3, playerControllerIDs@ha
 /* 000039DC 3CA00000 */ lis r5, controllerInfo@ha
 /* 000039E0 5404103A */ slwi r4, r0, 2
-/* 000039E4 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 000039E4 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 000039E8 7C602214 */ add r3, r0, r4
 /* 000039EC 80030000 */ lwz r0, 0(r3)
 /* 000039F0 38650000 */ addi r3, r5, controllerInfo@l
@@ -3978,8 +3978,8 @@ lbl_00003A58:
 /* 00003A60 3B830000 */ addi r28, r3, modeCtrl@l
 /* 00003A64 C81E0090 */ lfd f0, 0x90(r30)
 /* 00003A68 80DC002C */ lwz r6, 0x2c(r28)
-/* 00003A6C 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 00003A70 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00003A6C 3C600000 */ lis r3, playerControllerIDs@ha
+/* 00003A70 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00003A74 54C4103A */ slwi r4, r6, 2
 /* 00003A78 7C602214 */ add r3, r0, r4
 /* 00003A7C 80030000 */ lwz r0, 0(r3)
@@ -4064,10 +4064,10 @@ lbl_00003BB4:
 /* 00003BB4 3C600000 */ lis r3, modeCtrl@ha
 /* 00003BB8 38630000 */ addi r3, r3, modeCtrl@l
 /* 00003BBC 8003002C */ lwz r0, 0x2c(r3)
-/* 00003BC0 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 00003BC0 3C800000 */ lis r4, playerControllerIDs@ha
 /* 00003BC4 3C600000 */ lis r3, controllerInfo@ha
 /* 00003BC8 5405103A */ slwi r5, r0, 2
-/* 00003BCC 38040000 */ addi r0, r4, lbl_80206BD0@l
+/* 00003BCC 38040000 */ addi r0, r4, playerControllerIDs@l
 /* 00003BD0 7C802A14 */ add r4, r0, r5
 /* 00003BD4 80840000 */ lwz r4, 0(r4)
 /* 00003BD8 38030000 */ addi r0, r3, controllerInfo@l
@@ -4092,9 +4092,9 @@ lbl_00003BF8:
 /* 00003C20 8803001F */ lbz r0, 0x1f(r3)
 /* 00003C24 2C00000C */ cmpwi r0, 0xc
 /* 00003C28 41820114 */ beq lbl_00003D3C
-/* 00003C2C 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00003C2C 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00003C30 54A4103A */ slwi r4, r5, 2
-/* 00003C34 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00003C34 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00003C38 7C602214 */ add r3, r0, r4
 /* 00003C3C 80830000 */ lwz r4, 0(r3)
 /* 00003C40 3C600000 */ lis r3, controllerInfo@ha
@@ -4115,8 +4115,8 @@ lbl_00003C78:
 /* 00003C78 3C600000 */ lis r3, modeCtrl@ha
 /* 00003C7C 38630000 */ addi r3, r3, modeCtrl@l
 /* 00003C80 80C3002C */ lwz r6, 0x2c(r3)
-/* 00003C84 3C800000 */ lis r4, lbl_80206BD0@ha
-/* 00003C88 38040000 */ addi r0, r4, lbl_80206BD0@l
+/* 00003C84 3C800000 */ lis r4, playerControllerIDs@ha
+/* 00003C88 38040000 */ addi r0, r4, playerControllerIDs@l
 /* 00003C8C 54C5103A */ slwi r5, r6, 2
 /* 00003C90 7C802A14 */ add r4, r0, r5
 /* 00003C94 80840000 */ lwz r4, 0(r4)
@@ -4166,8 +4166,8 @@ lbl_00003D3C:
 /* 00003D3C 3C600000 */ lis r3, modeCtrl@ha
 /* 00003D40 38E30000 */ addi r7, r3, modeCtrl@l
 /* 00003D44 80A7002C */ lwz r5, 0x2c(r7)
-/* 00003D48 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 00003D4C 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00003D48 3C600000 */ lis r3, playerControllerIDs@ha
+/* 00003D4C 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00003D50 54A4103A */ slwi r4, r5, 2
 /* 00003D54 7C602214 */ add r3, r0, r4
 /* 00003D58 80030000 */ lwz r0, 0(r3)
@@ -4540,11 +4540,11 @@ lbl_000042E0:
 /* 000042E0 C03D0040 */ lfs f1, 0x40(r29)
 /* 000042E4 3C800000 */ lis r4, modeCtrl@ha
 /* 000042E8 C81E00D8 */ lfd f0, 0xd8(r30)
-/* 000042EC 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 000042EC 3C600000 */ lis r3, playerControllerIDs@ha
 /* 000042F0 3CA00000 */ lis r5, controllerInfo@ha
 /* 000042F4 FC010024 */ fdiv f0, f1, f0
 /* 000042F8 38840000 */ addi r4, r4, modeCtrl@l
-/* 000042FC 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 000042FC 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00004300 38A50000 */ addi r5, r5, controllerInfo@l
 /* 00004304 FC000018 */ frsp f0, f0
 /* 00004308 D01D0040 */ stfs f0, 0x40(r29)
@@ -4579,10 +4579,10 @@ lbl_00004374:
 /* 00004374 3C600000 */ lis r3, modeCtrl@ha
 /* 00004378 38A30000 */ addi r5, r3, modeCtrl@l
 /* 0000437C 8005002C */ lwz r0, 0x2c(r5)
-/* 00004380 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00004380 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00004384 3CC00000 */ lis r6, controllerInfo@ha
 /* 00004388 5404103A */ slwi r4, r0, 2
-/* 0000438C 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 0000438C 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00004390 7C602214 */ add r3, r0, r4
 /* 00004394 80030000 */ lwz r0, 0(r3)
 /* 00004398 38660000 */ addi r3, r6, controllerInfo@l
@@ -5846,14 +5846,14 @@ lbl_0000563C:
 /* 00005670 28000000 */ cmplwi r0, 0
 /* 00005674 40820038 */ bne lbl_000056AC
 /* 00005678 809A002C */ lwz r4, 0x2c(r26)
-/* 0000567C 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 00005680 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 0000567C 3C600000 */ lis r3, playerControllerIDs@ha
+/* 00005680 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00005684 5483103A */ slwi r3, r4, 2
 /* 00005688 7C601A14 */ add r3, r0, r3
 /* 0000568C 80630000 */ lwz r3, 0(r3)
 /* 00005690 38800001 */ li r4, 1
 /* 00005694 38A0001E */ li r5, 0x1e
-/* 00005698 4BFFAB39 */ bl func_800B60F4
+/* 00005698 4BFFAB39 */ bl vibration_control
 /* 0000569C 386000B7 */ li r3, 0xb7
 /* 000056A0 4BFFAB31 */ bl u_play_sound_0
 /* 000056A4 38000001 */ li r0, 1
@@ -7170,8 +7170,8 @@ lbl_00006A30:
 /* 00006A6C 3C600000 */ lis r3, modeCtrl@ha
 /* 00006A70 38630000 */ addi r3, r3, modeCtrl@l
 /* 00006A74 80A3002C */ lwz r5, 0x2c(r3)
-/* 00006A78 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 00006A7C 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00006A78 3C600000 */ lis r3, playerControllerIDs@ha
+/* 00006A7C 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00006A80 54A4103A */ slwi r4, r5, 2
 /* 00006A84 7C602214 */ add r3, r0, r4
 /* 00006A88 80030000 */ lwz r0, 0(r3)
@@ -7207,10 +7207,10 @@ lbl_00006AF0:
 /* 00006AFC 3C600000 */ lis r3, modeCtrl@ha
 /* 00006B00 38630000 */ addi r3, r3, modeCtrl@l
 /* 00006B04 8003002C */ lwz r0, 0x2c(r3)
-/* 00006B08 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 00006B08 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00006B0C 3CA00000 */ lis r5, controllerInfo@ha
 /* 00006B10 5404103A */ slwi r4, r0, 2
-/* 00006B14 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00006B14 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00006B18 7C602214 */ add r3, r0, r4
 /* 00006B1C 80030000 */ lwz r0, 0(r3)
 /* 00006B20 38650000 */ addi r3, r5, controllerInfo@l
@@ -13290,8 +13290,8 @@ lbl_0000C33C:
 /* 0000C36C 3BC70000 */ addi r30, r7, lbl_00026378@l
 /* 0000C370 3BE60000 */ addi r31, r6, lbl_10000130@l
 /* 0000C374 C0030000 */ lfs f0, 0(r3)
-/* 0000C378 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 0000C37C 3B430000 */ addi r26, r3, lbl_80206BD0@l
+/* 0000C378 3C600000 */ lis r3, playerControllerIDs@ha
+/* 0000C37C 3B430000 */ addi r26, r3, playerControllerIDs@l
 /* 0000C380 D0010044 */ stfs f0, 0x44(r1)
 /* 0000C384 C01D0004 */ lfs f0, 4(r29)
 /* 0000C388 D0010048 */ stfs f0, 0x48(r1)
@@ -13409,10 +13409,10 @@ lbl_0000C53C:
 /* 0000C53C 3C600000 */ lis r3, modeCtrl@ha
 /* 0000C540 3B630000 */ addi r27, r3, modeCtrl@l
 /* 0000C544 801B002C */ lwz r0, 0x2c(r27)
-/* 0000C548 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 0000C548 3C600000 */ lis r3, playerControllerIDs@ha
 /* 0000C54C 3C800000 */ lis r4, controllerInfo@ha
 /* 0000C550 5400103A */ slwi r0, r0, 2
-/* 0000C554 3B430000 */ addi r26, r3, lbl_80206BD0@l
+/* 0000C554 3B430000 */ addi r26, r3, playerControllerIDs@l
 /* 0000C558 7C7A0214 */ add r3, r26, r0
 /* 0000C55C 80030000 */ lwz r0, 0(r3)
 /* 0000C560 3B840000 */ addi r28, r4, controllerInfo@l
@@ -13570,10 +13570,10 @@ lbl_0000C7BC:
 /* 0000C7BC 3C600000 */ lis r3, modeCtrl@ha
 /* 0000C7C0 38630000 */ addi r3, r3, modeCtrl@l
 /* 0000C7C4 8003002C */ lwz r0, 0x2c(r3)
-/* 0000C7C8 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 0000C7C8 3C600000 */ lis r3, playerControllerIDs@ha
 /* 0000C7CC 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000C7D0 5404103A */ slwi r4, r0, 2
-/* 0000C7D4 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 0000C7D4 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 0000C7D8 7C602214 */ add r3, r0, r4
 /* 0000C7DC 80030000 */ lwz r0, 0(r3)
 /* 0000C7E0 38650000 */ addi r3, r5, controllerInfo@l
@@ -13616,10 +13616,10 @@ lbl_0000C86C:
 /* 0000C86C 3C600000 */ lis r3, modeCtrl@ha
 /* 0000C870 3B630000 */ addi r27, r3, modeCtrl@l
 /* 0000C874 801B002C */ lwz r0, 0x2c(r27)
-/* 0000C878 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 0000C878 3C600000 */ lis r3, playerControllerIDs@ha
 /* 0000C87C 3C800000 */ lis r4, controllerInfo@ha
 /* 0000C880 5400103A */ slwi r0, r0, 2
-/* 0000C884 3B430000 */ addi r26, r3, lbl_80206BD0@l
+/* 0000C884 3B430000 */ addi r26, r3, playerControllerIDs@l
 /* 0000C888 7C7A0214 */ add r3, r26, r0
 /* 0000C88C 80030000 */ lwz r0, 0(r3)
 /* 0000C890 3B840000 */ addi r28, r4, controllerInfo@l
@@ -13798,10 +13798,10 @@ lbl_0000CB3C:
 /* 0000CB3C 3C600000 */ lis r3, modeCtrl@ha
 /* 0000CB40 3B430000 */ addi r26, r3, modeCtrl@l
 /* 0000CB44 801A002C */ lwz r0, 0x2c(r26)
-/* 0000CB48 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 0000CB48 3C600000 */ lis r3, playerControllerIDs@ha
 /* 0000CB4C 3C800000 */ lis r4, controllerInfo@ha
 /* 0000CB50 5400103A */ slwi r0, r0, 2
-/* 0000CB54 3B630000 */ addi r27, r3, lbl_80206BD0@l
+/* 0000CB54 3B630000 */ addi r27, r3, playerControllerIDs@l
 /* 0000CB58 7C7B0214 */ add r3, r27, r0
 /* 0000CB5C 80030000 */ lwz r0, 0(r3)
 /* 0000CB60 3B240000 */ addi r25, r4, controllerInfo@l
@@ -13973,12 +13973,12 @@ lbl_0000CDA8:
 /* 0000CDF4 D01D0014 */ stfs f0, 0x14(r29)
 lbl_0000CDF8:
 /* 0000CDF8 C03D000C */ lfs f1, 0xc(r29)
-/* 0000CDFC 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 0000CDFC 3C600000 */ lis r3, playerControllerIDs@ha
 /* 0000CE00 C01D0000 */ lfs f0, 0(r29)
 /* 0000CE04 3C800000 */ lis r4, modeCtrl@ha
 /* 0000CE08 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000CE0C EC010028 */ fsubs f0, f1, f0
-/* 0000CE10 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 0000CE10 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 0000CE14 38840000 */ addi r4, r4, modeCtrl@l
 /* 0000CE18 38A50000 */ addi r5, r5, controllerInfo@l
 /* 0000CE1C D001005C */ stfs f0, 0x5c(r1)
@@ -14030,10 +14030,10 @@ lbl_0000CED0:
 /* 0000CED0 3C600000 */ lis r3, modeCtrl@ha
 /* 0000CED4 38630000 */ addi r3, r3, modeCtrl@l
 /* 0000CED8 8003002C */ lwz r0, 0x2c(r3)
-/* 0000CEDC 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 0000CEDC 3C600000 */ lis r3, playerControllerIDs@ha
 /* 0000CEE0 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000CEE4 5404103A */ slwi r4, r0, 2
-/* 0000CEE8 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 0000CEE8 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 0000CEEC 7C602214 */ add r3, r0, r4
 /* 0000CEF0 80030000 */ lwz r0, 0(r3)
 /* 0000CEF4 38650000 */ addi r3, r5, controllerInfo@l
@@ -14050,10 +14050,10 @@ lbl_0000CF1C:
 /* 0000CF1C 3C600000 */ lis r3, modeCtrl@ha
 /* 0000CF20 38630000 */ addi r3, r3, modeCtrl@l
 /* 0000CF24 8003002C */ lwz r0, 0x2c(r3)
-/* 0000CF28 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 0000CF28 3C800000 */ lis r4, playerControllerIDs@ha
 /* 0000CF2C 3C600000 */ lis r3, controllerInfo@ha
 /* 0000CF30 5405103A */ slwi r5, r0, 2
-/* 0000CF34 38040000 */ addi r0, r4, lbl_80206BD0@l
+/* 0000CF34 38040000 */ addi r0, r4, playerControllerIDs@l
 /* 0000CF38 7C802A14 */ add r4, r0, r5
 /* 0000CF3C 80840000 */ lwz r4, 0(r4)
 /* 0000CF40 38030000 */ addi r0, r3, controllerInfo@l
@@ -14104,10 +14104,10 @@ lbl_0000CFEC:
 /* 0000CFEC 3C600000 */ lis r3, modeCtrl@ha
 /* 0000CFF0 38630000 */ addi r3, r3, modeCtrl@l
 /* 0000CFF4 8003002C */ lwz r0, 0x2c(r3)
-/* 0000CFF8 3C800000 */ lis r4, lbl_80206BD0@ha
+/* 0000CFF8 3C800000 */ lis r4, playerControllerIDs@ha
 /* 0000CFFC 3C600000 */ lis r3, controllerInfo@ha
 /* 0000D000 5405103A */ slwi r5, r0, 2
-/* 0000D004 38040000 */ addi r0, r4, lbl_80206BD0@l
+/* 0000D004 38040000 */ addi r0, r4, playerControllerIDs@l
 /* 0000D008 7C802A14 */ add r4, r0, r5
 /* 0000D00C 80840000 */ lwz r4, 0(r4)
 /* 0000D010 38030000 */ addi r0, r3, controllerInfo@l
@@ -15276,11 +15276,11 @@ lbl_0000E174:
 /* 0000E17C 3C600000 */ lis r3, modeCtrl@ha
 /* 0000E180 38630000 */ addi r3, r3, modeCtrl@l
 /* 0000E184 8003002C */ lwz r0, 0x2c(r3)
-/* 0000E188 3C600000 */ lis r3, lbl_80206BD0@ha
+/* 0000E188 3C600000 */ lis r3, playerControllerIDs@ha
 /* 0000E18C 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000E190 C85D00D0 */ lfd f2, 0xd0(r29)
 /* 0000E194 5404103A */ slwi r4, r0, 2
-/* 0000E198 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 0000E198 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 0000E19C 7C602214 */ add r3, r0, r4
 /* 0000E1A0 80030000 */ lwz r0, 0(r3)
 /* 0000E1A4 3C600000 */ lis r3, lbl_000263B0@ha
@@ -19309,8 +19309,8 @@ lbl_00011CAC:
 /* 00011D44 4CC63182 */ crclr 6
 /* 00011D48 38630000 */ addi r3, r3, modeCtrl@l
 /* 00011D4C 8083002C */ lwz r4, 0x2c(r3)
-/* 00011D50 3C600000 */ lis r3, lbl_80206BD0@ha
-/* 00011D54 38030000 */ addi r0, r3, lbl_80206BD0@l
+/* 00011D50 3C600000 */ lis r3, playerControllerIDs@ha
+/* 00011D54 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00011D58 5483103A */ slwi r3, r4, 2
 /* 00011D5C 7C601A14 */ add r3, r0, r3
 /* 00011D60 80A30000 */ lwz r5, 0(r3)

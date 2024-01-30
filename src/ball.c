@@ -26,6 +26,7 @@
 #include "sound.h"
 #include "stage.h"
 #include "stcoli.h"
+#include "vibration.h"
 #include "world.h"
 
 #include "../data/common.gma.h"
@@ -42,7 +43,7 @@ Mtx lbl_80205E30;
 struct Ball ballInfo[8];
 s32 lbl_80206B80[16];
 s32 playerCharacterSelection[MAX_PLAYERS];
-s32 lbl_80206BD0[4];
+s32 playerControllerIDs[4];
 s32 lbl_80206BE0[4];
 
 FORCE_BSS_ORDER(lbl_80205E20)
@@ -50,7 +51,7 @@ FORCE_BSS_ORDER(lbl_80205E30)
 FORCE_BSS_ORDER(ballInfo)
 FORCE_BSS_ORDER(lbl_80206B80)
 FORCE_BSS_ORDER(playerCharacterSelection)
-FORCE_BSS_ORDER(lbl_80206BD0)
+FORCE_BSS_ORDER(playerControllerIDs)
 FORCE_BSS_ORDER(lbl_80206BE0)
 
 void func_8003699C(struct Ape *ape)
@@ -2418,13 +2419,13 @@ void update_ball_ape_transform(struct Ball *ball, struct PhysicsBall *physBall, 
 
     if (ball->unk130 < -0.11f && !(ball->flags & BALL_FLAG_25))
     {
-        int r4 = 1;
+        BOOL rumble = TRUE;
 
         if (modeCtrl.gameType == GAMETYPE_MINI_RACE && ball->unk144 != NULL && (ball->unk144->unk14 & (1 << 5)))
-            r4 = 0;
+            rumble = FALSE;
 
-        if (r4)
-            func_800B60F4(lbl_80206BD0[ball->playerId], 1, (0.2f - ball->unk130) * 60.0f);
+        if (rumble)
+            vibration_control(playerControllerIDs[ball->playerId], VIBRATION_STATE_1, (0.2f - ball->unk130) * 60.0f);
     }
 }
 

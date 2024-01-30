@@ -635,8 +635,8 @@ lbl_800A7DCC:
 /* 800A7E28 000A3D48  54 60 07 FF */	clrlwi. r0, r3, 0x1f
 /* 800A7E2C 000A3D4C  41 82 04 90 */	beq lbl_800A82BC
 /* 800A7E30 000A3D50  88 1F 00 0A */	lbz r0, 0xa(r31)
-/* 800A7E34 000A3D54  3C 80 80 20 */	lis r4, lbl_80206BD0@ha
-/* 800A7E38 000A3D58  38 84 6B D0 */	addi r4, r4, lbl_80206BD0@l
+/* 800A7E34 000A3D54  3C 80 80 20 */	lis r4, playerControllerIDs@ha
+/* 800A7E38 000A3D58  38 84 6B D0 */	addi r4, r4, playerControllerIDs@l
 /* 800A7E3C 000A3D5C  7C 06 07 74 */	extsb r6, r0
 /* 800A7E40 000A3D60  54 C5 10 3A */	slwi r5, r6, 2
 /* 800A7E44 000A3D64  7C 84 2A 14 */	add r4, r4, r5

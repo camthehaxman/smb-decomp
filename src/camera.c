@@ -1110,7 +1110,7 @@ void camera_func_13(struct Camera *camera, struct Ball *ball)
         {
             for (i = 0; i < modeCtrl.playerCount; i++)
             {
-                r10 = lbl_80206BD0[i];
+                r10 = playerControllerIDs[i];
                 if (camera->unk80 > -0.3 && (analogButtonInfo[r10][0] & (1 << 7)))
                     camera->unk80 -= 0.01;
                 if (camera->unk80 < 0.2 && (analogButtonInfo[r10][0] & (1 << 6)))
@@ -1129,7 +1129,7 @@ void camera_func_13(struct Camera *camera, struct Ball *ball)
 
         for (i = 0; i < modeCtrl.playerCount; i++)
         {
-            r10 = lbl_80206BD0[i];
+            r10 = playerControllerIDs[i];
             if (camera->unk8C < 256 && (analogButtonInfo[r10][0] & (1 << 5)))
                 camera->unk8C += 8;
             if (camera->unk8C > -256 && (analogButtonInfo[r10][0] & (1 << 4)))
@@ -1854,7 +1854,7 @@ void camera_func_16(struct Camera *camera, struct Ball *ball)
     camera->unk26 = 4;
     camera->flags |= 4;
 
-    if ((controllerInfo[lbl_80206BD0[ball->playerId]].unk0[0].button & PAD_BUTTON_A)
+    if ((controllerInfo[playerControllerIDs[ball->playerId]].unk0[0].button & PAD_BUTTON_A)
      && (g_currPlayerButtons[0] & PAD_BUTTON_A))
     {
         camera->state = 48;

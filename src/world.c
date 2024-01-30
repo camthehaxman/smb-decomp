@@ -364,8 +364,8 @@ void world_sub_input_main(struct World *world)
 
             world->xrotPrev = world->xrot;
             world->zrotPrev = world->zrot;
-            stickX = controllerInfo[lbl_80206BD0[world->playerId]].unk0[0].stickX / 60.0;
-            stickY = -(float)controllerInfo[lbl_80206BD0[world->playerId]].unk0[0].stickY / 60.0;
+            stickX = controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickX / 60.0;
+            stickY = -(float)controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickY / 60.0;
 
             if (stickX < -1.0)
                 stickX = -1.0f;
@@ -495,7 +495,7 @@ void world_sub_11(struct World *world)
     if (gamePauseStatus & 0xA)
         return;
 
-    f1 = controllerInfo[lbl_80206BD0[world->playerId]].unk0[0].stickX / 60.0;
+    f1 = controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickX / 60.0;
     if (f1 < -1.0)
         f1 = -1.0f;
     else if (f1 > 1.0)

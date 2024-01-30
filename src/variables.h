@@ -969,7 +969,7 @@ extern float lbl_802F16B8;
 // extern ? lbl_802F18A8;
 // extern ? lbl_802F18B0;
 // extern ? lbl_802F18B4;
-// extern ? lbl_802F18B8;
+
 // extern ? lbl_802F18C0;
 // extern ? lbl_802F18C8;
 // extern ? lbl_802F18D0;

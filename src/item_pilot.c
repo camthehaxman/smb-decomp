@@ -16,6 +16,7 @@
 #include "mode.h"
 #include "sound.h"
 #include "stage.h"
+#include "vibration.h"
 
 #include "../data/common.gma.h"
 
@@ -399,7 +400,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
             lbl_802F1FF4 = 15;
         u_play_sound_0(0x10B);
         u_play_sound_0(0x1C);
-        func_800B60F4(lbl_80206BD0[r31->playerId], 1, 0x1C);
+        vibration_control(playerControllerIDs[r31->playerId], VIBRATION_STATE_1, 28);
         ball->vel.y += 0.92592592592592582;
         lbl_802F1FE0 = 0x78;
         lbl_802F1FD8 = 0.6f;
@@ -423,7 +424,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
         u_play_sound_0(0x1C);
         if (lbl_802F1FF6 == 14)
             u_play_sound_0(0x16C);
-        func_800B60F4(lbl_80206BD0[r31->playerId], 1, 0x1C);
+        vibration_control(playerControllerIDs[r31->playerId], VIBRATION_STATE_1, 28);
         ball->vel.y += 0.1388888888888889;
         ball->vel.x += RAND_FLOAT() * 0.64814814814814814;
         ball->vel.z += RAND_FLOAT() * 0.64814814814814814;

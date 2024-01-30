@@ -144,7 +144,7 @@ struct Ball
 extern struct Ball ballInfo[];
 // extern ? lbl_80206B80;
 extern s32 playerCharacterSelection[4];
-extern s32 lbl_80206BD0[];
+extern s32 playerControllerIDs[];
 
 void func_8003699C(struct Ape *a);
 float func_80036CAC(struct Ape *a);
