@@ -206,6 +206,7 @@ SOURCES := \
 	src/name_entry.c \
 	asm/credits.s \
 	src/vibration.c \
+	src/ending.c \
 	asm/ending.s \
 	libraries/base/asm/PPCArch.s \
 	libraries/os/__start.c \

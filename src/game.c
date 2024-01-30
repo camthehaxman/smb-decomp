@@ -1310,7 +1310,7 @@ void submode_game_roll_main_func(void)
     if (modeCtrl.submodeTimer <= 0)
     {
         credits_finish();
-        lbl_802F1B7C = 0;
+        lbl_802F1B7C = NULL;
         gameSubmodeRequest = SMD_GAME_NAMEENTRY_READY_INIT;
         lbl_802F22C8 |= 2;
     }
