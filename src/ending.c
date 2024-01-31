@@ -27,16 +27,24 @@ struct SomeBigEndingStruct_sub2_sub
     u8 filler0[0x38];
     u16 unk38;
     u16 unk3A;
+    u8 filler3C[0x8EC8-0x3C];
+    Mtx unk8EC8;
 };
 
-struct SomeBigEndingStruct_sub2
+struct SomeBigEndingStruct_sub2  // probably Ape
 {
     struct SomeBigEndingStruct_sub2_sub *unk0;
     u8 filler4[0x10-0x4];
     u32 unk10;
     u32 unk14;
-    u16 filler18;
-    u8 filler1A[0x9C-0x1A];
+    u8 filler18[0x30-0x18];
+    Vec unk30;
+    Vec unk3C;
+    u8 filler48[0x58-0x48];
+    float unk58;
+    u8 filler5C[0x60-0x5C];
+    Quaternion unk60;
+    u8 filler70[0x9c-0x70];
     u32 unk9C;
     u8 fillerA0[0xB4-0xA0];
     u32 unkB4;
@@ -47,7 +55,7 @@ struct SomeBigEndingStruct_sub3
     struct SomeBigEndingStruct_sub2 *unk0;  // -0x57fc
     u16 unk4;
     u16 unk6;
-    /*0x08*/ u8 fillerA808[2];
+    s16 unk8;
     /*0x0A*/ u16 unkA;
     /*0x0C*/ Vec unkC;
     /*0x18*/ Vec unk18;
@@ -86,14 +94,32 @@ struct SomeBigEndingStruct_sub
     Vec unk48;
 };  // size = 0x54
 
+struct SomeStruct
+{
+    s8 unk0;
+    s16 unk2;
+    s16 unk4;
+    Vec unk8;
+    Vec unk14;
+    Vec unk20;
+    Vec unk2C;
+    s16 unk38;
+    s16 unk3A;
+    s16 unk3C;
+    s16 unk3E;
+    s16 unk40;
+    s16 unk42;
+    Vec unk44;
+};  // size = 0x50
+
+static_assert(sizeof(struct SomeStruct) == 0x50, bad);
+
 struct SomeBigEndingStruct
 {
     float unk0;
     u8 filler4[0xA804-0x4];
     struct SomeBigEndingStruct_sub3 unkA804[4];
-    u8 fillerAA04[0xAA0C-0xAA04];
-    Vec unkAA0C;
-    u8 fillerAA18[0xAA54-0xAA18];
+    struct SomeStruct unkAA04;
     struct SomeBigEndingStruct_sub unkAA54;
     float unkAAA8;
     float unkAAAC;
@@ -1288,7 +1314,7 @@ void func_800B8E1C(void)
         temp->unkAA54.unk10.y = (1.5f - temp->unkAA54.unk4.y) * temp_f3;
         temp->unkAA54.unk10.z = (6.0f - temp->unkAA54.unk4.z) * temp_f3;
         temp->unkAA54.unk2 = 1;
-        temp->unkAA54.unk2C = lbl_802C6BD8.unk8->unkAA0C;
+        temp->unkAA54.unk2C = lbl_802C6BD8.unk8->unkAA04.unk8;
         temp->unkAA54.unk38.x = 0.0f;
         temp->unkAA54.unk38.y = 0.0f;
         temp->unkAA54.unk38.z = 0.0f;
@@ -1351,7 +1377,7 @@ void func_800B8E1C(void)
         break;
     }
     if (modeCtrl.submodeTimer < 0x1DF && modeCtrl.submodeTimer > 0x1A4)
-        lbl_802C6BD8.unk8->unkAA54.unk2C = lbl_802C6BD8.unk8->unkAA0C;
+        lbl_802C6BD8.unk8->unkAA54.unk2C = lbl_802C6BD8.unk8->unkAA04.unk8;
     if (modeCtrl.submodeTimer < 0x1A4 && modeCtrl.submodeTimer > 0.0f)
     {
         float t = -0.0023809525f * -(float)modeCtrl.submodeTimer;
@@ -1595,6 +1621,527 @@ void func_800B9EA4(void)
     lbl_802C6BD8.unk8->unkA804[0].unk36 &= ~0x1;
     lbl_802C6BD8.unk8->unkA804[1].unk36 &= ~0x1;
     lbl_802C6BD8.unk8->unkA804[2].unk36 &= ~0x1;
+}
+
+void func_800B9FDC(void)
+{
+    struct SomeBigEndingStruct_sub3 *temp_r29 = &lbl_802C6BD8.unk8->unkA804[3];
+    int temp_r28 = temp_r29->unk0->unk0->unk38;
+
+    if (temp_r29->unk0->unk9C == 8 && temp_r28 == 0x2A)
+        SoundReq(0x181U);
+    if (temp_r29->unk0->unk9C == 0xA)
+    {
+        if (temp_r28 == 1)
+            SoundReq(0x185U);
+        if (temp_r28 == 0x14 || temp_r28 == 0x24 || temp_r28 == 0x34 || temp_r28 == 0x44)
+            u_play_sound_0(0x238);
+    }
+    if (temp_r29->unk0->unk9C == 0xBU && temp_r28 == 0xB2)
+        SoundReq(0x199U);
+    if (temp_r29->unk0->unk9C == 0xEU && (temp_r28 == 0x10 || temp_r28 == 0x2E))
+        SoundReq(0x186U);
+    if (temp_r29->unk8 == 0xB && temp_r28 > 0xC3)
+    {
+        func_800BF658();
+        lbl_802C6BD8.unk2 = 0x19;
+        lbl_802C6BD8.unk4 |= 2;
+        lbl_802C6BD8.unk8->unk0 = 0.0f;
+        u_play_sound_0(0x238);
+    }
+}
+
+void func_800BA124(void)
+{
+    lbl_802C6BD8.unk2 = 0x1A;
+    modeCtrl.submodeTimer = 0x1E0;
+    modeCtrl.unk18 = 0;
+    lbl_802C6BD8.unk8->unkAA04.unk2 = 4;
+}
+
+void func_800BA160(void)
+{
+    struct SomeBigEndingStruct_sub *temp_r4 = &lbl_802C6BD8.unk8->unkAA54;
+    float temp_f2;
+
+    switch (modeCtrl.submodeTimer)
+    {
+    case 0x1D1:
+        SOME_CAMERA_MACRO();
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x12C);
+        temp_r4->unk0 = 0;
+        temp_r4->unk4.x = 0.0f;
+        temp_r4->unk4.y = -0.34f;
+        temp_r4->unk4.z = 5.0f;
+        temp_r4->unk10.x = -temp_r4->unk4.x * temp_f2;
+        temp_r4->unk10.y = (-0.25f - temp_r4->unk4.y) * temp_f2;
+        temp_r4->unk10.z = (7.8f - temp_r4->unk4.z) * temp_f2;
+        temp_r4->unk2 = 2;
+        temp_r4->unk44 = 3;
+        temp_r4->unk46 = 5;
+        temp_r4->unk48.x = 0.0f;
+        temp_r4->unk48.y = 0.0f;
+        temp_r4->unk48.z = 0.6f;
+        break;
+    case 0x195:
+        temp_r4->unk0 = 1;
+        break;
+    case 0x186:
+        func_800BF774();
+        break;
+    case 0x12C:
+        temp_r4->unk10.x = 0.0f;
+        temp_r4->unk10.y = 0.0f;
+        temp_r4->unk10.z = 0.0f;
+        break;
+    case 0xD2:
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x96);
+        temp_r4->unk0 = 1;
+        temp_r4->unk10.x = -temp_r4->unk4.x * temp_f2;
+        temp_r4->unk10.y = (0.7f - temp_r4->unk4.y) * temp_f2;
+        temp_r4->unk10.z = (4.2f - temp_r4->unk4.z) * temp_f2;
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x5A);
+        temp_r4->unk2 = 1;
+        temp_r4->unk2C = cameraInfo[modeCtrl.currPlayer].lookAt;
+        temp_r4->unk38.x = -temp_r4->unk2C.x * temp_f2;
+        temp_r4->unk38.y = (0.1f - temp_r4->unk2C.y) * temp_f2;
+        temp_r4->unk38.z = -temp_r4->unk2C.z * temp_f2;
+        break;
+    case 0x96:
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x5A);
+        temp_r4->unk10.x = -temp_r4->unk4.x * temp_f2;
+        temp_r4->unk10.y = (-0.4f - temp_r4->unk4.y) * temp_f2;
+        temp_r4->unk10.z = (2.6f - temp_r4->unk4.z) * temp_f2;
+        SoundReq(0xEEU);
+        SoundReq(0x102U);
+        SoundReq(0x16DU);
+        break;
+    case 0x5A:
+        temp_r4->unk10.x = 0.0f;
+        temp_r4->unk10.y = 0.0f;
+        temp_r4->unk10.z = 0.0f;
+        temp_r4->unk38.x = 0.0f;
+        temp_r4->unk38.y = 0.0f;
+        temp_r4->unk38.z = 0.0f;
+        break;
+    }
+    if ( modeCtrl.submodeTimer != 0)
+        modeCtrl.submodeTimer--;
+    if (modeCtrl.submodeTimer == 0)
+    {
+        if (playerCharacterSelection[modeCtrl.currPlayer] != 3)
+            lbl_802C6BD8.unk2 = 0x1B;
+        else
+            lbl_802C6BD8.unk2 = 0x1D;
+    }
+}
+
+void func_800BA4F4(void)
+{
+    lbl_802C6BD8.unk2 = 0x1E;
+    modeCtrl.submodeTimer = 0x14A;
+    modeCtrl.unk18 = 0;
+}
+
+void func_800BA51C(void)
+{
+    float temp_f2;
+    int charaId;
+    struct SomeBigEndingStruct_sub *var_r31 = &lbl_802C6BD8.unk8->unkAA54;
+    struct SomeBigEndingStruct_sub3 *temp_r6;
+    Vec sp8;
+
+    switch (modeCtrl.submodeTimer)
+    {
+    case 0x14A:
+        SOME_CAMERA_MACRO();
+        var_r31 = &lbl_802C6BD8.unk8->unkAA54;
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
+        charaId = playerCharacterSelection[modeCtrl.currPlayer];
+        temp_r6 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        var_r31->unk0 = 1;
+        var_r31->unk4.x = temp_r6->unkC.x;
+        var_r31->unk4.y = temp_r6->unkC.y - 0.5f;
+        var_r31->unk4.z = temp_r6->unkC.z - 2.0f;
+        var_r31->unk10.x = 0.0f;
+        var_r31->unk10.y = 0.15f * temp_f2;
+        var_r31->unk10.z = temp_f2;
+        var_r31->unk2 = 2;
+        var_r31->unk44 = charaId;
+        var_r31->unk46 = 5;
+        var_r31->unk48.x = 0.0f;
+        var_r31->unk48.y = 0.0f;
+        var_r31->unk48.z = 0.6f;
+        SoundReq(0x199U);
+        break;
+    case 0xD2:
+        var_r31->unk10.x = 0.0f;
+        var_r31->unk10.y = 0.0f;
+        var_r31->unk10.z = 0.0f;
+        break;
+    case 0xB4:
+        charaId = playerCharacterSelection[modeCtrl.currPlayer];
+        lbl_802C6BD8.unk8->unkA804[3].unkA = 0x11;
+        temp_r6 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        SOME_CAMERA_MACRO();
+        var_r31->unk0 = 1;
+        var_r31->unk4.x = temp_r6->unkC.x;
+        var_r31->unk4.y = 0.5f + temp_r6->unkC.y;
+        var_r31->unk4.z = 2.5f + temp_r6->unkC.z;
+        var_r31->unk10.x = 0.0f;
+        var_r31->unk10.y = 0.0f;
+        var_r31->unk10.z = 0.0f;
+        var_r31->unk2 = 1;
+        var_r31->unk2C.x = temp_r6->unkC.x;
+        var_r31->unk2C.y = 0.25f + temp_r6->unkC.y;
+        var_r31->unk2C.z = temp_r6->unkC.z;
+        var_r31->unk38.x = 0.0f;
+        var_r31->unk38.y = 0.0f;
+        var_r31->unk38.z = 0.0f;
+        break;
+    case 0x42:
+        SoundReq(0x188U);
+        break;
+    }
+    if (modeCtrl.submodeTimer != 0)
+        modeCtrl.submodeTimer--;
+    if (modeCtrl.submodeTimer == 0 && modeCtrl.unk18 == 0)
+    {
+        modeCtrl.unk18 = 0x78;
+        start_screen_fade(1, 0xFFFFFFU, modeCtrl.unk18);
+        temp_f2 = 1.0f / modeCtrl.unk18;
+        var_r31->unk0 = 1;
+        var_r31->unk4 = cameraInfo[modeCtrl.currPlayer].eye;
+        sp8.x = var_r31->unk4.x;
+        sp8.y = 0.0f;
+        sp8.z = var_r31->unk4.z;
+        mathutil_vec_set_len(&sp8, &sp8, 8.0f);
+        var_r31->unk10.x = temp_f2 * (sp8.x - var_r31->unk4.y);
+        var_r31->unk10.y = (4.5f - var_r31->unk4.y) * temp_f2;
+        var_r31->unk10.z = temp_f2 * (sp8.z - var_r31->unk4.y);
+    }
+    if (modeCtrl.unk18 != 0)
+    {
+        modeCtrl.unk18--;
+        if (modeCtrl.unk18 == 0)
+            lbl_802C6BD8.unk2 = 0x1F;
+    }
+}
+
+void func_800BA928(void)
+{
+    lbl_802C6BD8.unk2 = 0x1C;
+    modeCtrl.submodeTimer = 0x276;
+    modeCtrl.unk18 = 0;
+}
+
+s16 lbl_802F18F8[4] = { 0x00E8, 0x0102, 0x016D, 0x0000 };
+
+void func_800BA950(void)
+{
+    struct SomeBigEndingStruct_sub2 *temp_r27_4;
+    struct SomeBigEndingStruct_sub3 *temp_r27;
+    int charaId;
+    struct SomeBigEndingStruct_sub *temp_r30;
+    Point3d sp38;
+    Mtx sp8;
+    float temp_f31;
+
+    temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
+    switch (modeCtrl.submodeTimer)
+    {
+    case 0x276:
+        lbl_802C6BD8.unk4 |= 0x10;
+        SOME_CAMERA_MACRO();
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x1FE);
+        charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 2) % 3;
+        temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
+        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        lbl_802C6BD8.unk8->unkAA54.unk0 = 1;
+        sp38.x = temp_r27->unkC.x;
+        sp38.y = 0.0f;
+        sp38.z = temp_r27->unkC.z;
+        mathutil_vec_set_len(&sp38, &sp38, 1.25f);
+        temp_r30->unk4.x = temp_r27->unkC.x + sp38.x;
+        temp_r30->unk4.y = temp_r27->unkC.y;
+        temp_r30->unk4.z = temp_r27->unkC.z + sp38.z;
+        temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
+        temp_r30->unk10.y = 0.5f * temp_f31;
+        temp_r30->unk10.z = temp_f31 * (1.0f + temp_r27->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk2 = 2;
+        temp_r30->unk44 = charaId;
+        temp_r30->unk46 = 0;
+        temp_r30->unk48.x = 0.0f;
+        temp_r30->unk48.y = 0.0f;
+        temp_r30->unk48.z = 0.0f;
+        break;
+    case 0x1E0:
+        SOME_CAMERA_MACRO();
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x168);
+        charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 1) % 3;
+        temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
+        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        lbl_802C6BD8.unk8->unkAA54.unk0 = 1;
+        sp38.x = temp_r27->unkC.x;
+        sp38.y = 0.0f;
+        sp38.z = temp_r27->unkC.z;
+        mathutil_vec_set_len(&sp38, &sp38, 1.25f);
+        temp_r30->unk4.x = temp_r27->unkC.x + sp38.x;
+        temp_r30->unk4.y = temp_r27->unkC.y;
+        temp_r30->unk4.z = temp_r27->unkC.z + sp38.z;
+        temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
+        temp_r30->unk10.y = 0.5f * temp_f31;
+        temp_r30->unk10.z = temp_f31 * (1.0f + temp_r27->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk2 = 2;
+        temp_r30->unk44 = charaId;
+        temp_r30->unk46 = 0;
+        temp_r30->unk48.x = 0.0f;
+        temp_r30->unk48.y = 0.0f;
+        temp_r30->unk48.z = 0.0f;
+        break;
+    case 0x14A:
+        SOME_CAMERA_MACRO();
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
+        charaId = playerCharacterSelection[modeCtrl.currPlayer];
+        temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
+        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        lbl_802C6BD8.unk8->unkAA54.unk0 = 1;
+        sp38.x = temp_r27->unkC.x;
+        sp38.y = 0.0f;
+        sp38.z = temp_r27->unkC.z;
+        mathutil_vec_set_len(&sp38, &sp38, 1.25f);
+        temp_r30->unk4.x = temp_r27->unkC.x + sp38.x;
+        temp_r30->unk4.y = temp_r27->unkC.y;
+        temp_r30->unk4.z = temp_r27->unkC.z + sp38.z;
+        temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
+        temp_r30->unk10.y = 0.5f * temp_f31;
+        temp_r30->unk10.z = temp_f31 * (1.0f + temp_r27->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk2 = 2;
+        temp_r30->unk44 = charaId;
+        temp_r30->unk46 = 0;
+        temp_r30->unk48.x = 0.0f;
+        temp_r30->unk48.y = 0.0f;
+        temp_r30->unk48.z = 0.0f;
+        break;
+    case 0x168:
+    case 0x1FE:
+    case 0xD2:
+        temp_r30->unk10.x = 0.0f;
+        temp_r30->unk10.y = 0.0f;
+        temp_r30->unk10.z = 0.0f;
+        break;
+    case 0xB4:
+        charaId = playerCharacterSelection[modeCtrl.currPlayer];
+        lbl_802C6BD8.unk8->unkA804[charaId].unkA = 0x10;
+        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        temp_r30->unk0 = 1;
+        temp_r27_4 = temp_r27->unk0;
+        mathutil_mtxA_from_quat(&temp_r27_4->unk60);
+        mathutil_mtxA_to_mtx(sp8);
+        mathutil_mtxA_from_translate(&temp_r27_4->unk30);
+        mathutil_mtxA_scale_s(temp_r27_4->unk58);
+        mathutil_mtxA_translate(&temp_r27_4->unk3C);
+        mathutil_mtxA_mult_right(sp8);
+        mathutil_mtxA_mult_right(temp_r27_4->unk0->unk8EC8);
+        mathutil_mtxA_tf_point_xyz(&sp38, 0.0f, 0.0f, 0.3f);
+        sp38.y += -0.3f;
+        sp38.z += 1.0f;
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x42);
+        temp_r30->unk10.x = temp_f31 * (sp38.x - temp_r30->unk4.x);
+        temp_r30->unk10.y = temp_f31 * (sp38.y - temp_r30->unk4.y);
+        temp_r30->unk10.z = temp_f31 * (sp38.z - temp_r30->unk4.z);
+        break;
+    case 0x42:
+        SoundReq(lbl_802F18F8[playerCharacterSelection[modeCtrl.currPlayer]]);
+        temp_r30->unk10.x = 0.0f;
+        temp_r30->unk10.y = 0.0f;
+        temp_r30->unk10.z = 0.0f;
+        break;
+    }
+    if (modeCtrl.submodeTimer != 0)
+        modeCtrl.submodeTimer--;
+    if (modeCtrl.submodeTimer == 0 && modeCtrl.unk18 == 0)
+    {
+        modeCtrl.unk18 = 0x78;
+        start_screen_fade(1, 0xFFFFFFU, modeCtrl.unk18);
+    }
+    if (modeCtrl.unk18 != 0)
+    {
+        modeCtrl.unk18--;
+        if (modeCtrl.unk18 == 0)
+            lbl_802C6BD8.unk2 = 0x1F;
+    }
+}
+
+void func_800BB050(void)
+{
+    lbl_802C6BD8.unk2 = 0x20;
+}
+
+void func_800BB064(void) {}
+
+void func_800BB068(void)
+{
+    lbl_802C6BD8.unk8->unkAA04.unk0 = 0;
+}
+
+void func_800BB084(void)
+{
+    struct SomeStruct *temp_r30 = &lbl_802C6BD8.unk8->unkAA04;
+    float temp_f5;
+
+    if (temp_r30->unk0 != 0)
+    {
+        switch (temp_r30->unk2)
+        {
+        case 1:
+            temp_r30->unk2 = 2;
+            temp_r30->unk14.x = 0.0f;
+            temp_r30->unk14.y = -0.1f;
+            temp_r30->unk14.z = 0.0f;
+            temp_f5 = temp_r30->unk4;
+            temp_r30->unk8.x = 0.0f;
+            temp_r30->unk8.y = -0.5f * (temp_f5 * ((2.0f * temp_r30->unk14.y) + (-0.002f * temp_f5)));
+            temp_r30->unk8.z = 0.0f;
+            /* fallthrough */
+        case 2:
+            temp_r30->unk14.y += -0.002f;
+            temp_r30->unk8.y += temp_r30->unk14.y;
+            if (temp_r30->unk8.y <= 0.0f)
+            {
+                temp_r30->unk8.y = 0.0f;
+                temp_r30->unk14.y = 0.0f;
+                temp_r30->unk2 = 3;
+                temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+            }
+            temp_r30->unk20.x = 0.4f + temp_r30->unk8.x;
+            temp_r30->unk20.y = temp_r30->unk8.y;
+            temp_r30->unk20.z = 2.95f + temp_r30->unk8.z;
+            break;
+        case 3:
+            if (lbl_802C6BD8.unk4 & 4)
+            {
+                temp_r30->unk40 = (-0x4000 - temp_r30->unk3A) >> 7;
+                temp_r30->unk3A += temp_r30->unk40;
+            }
+            else
+            {
+                temp_r30->unk40 += (int)(-0.05f * temp_r30->unk3A);
+                temp_r30->unk3A += temp_r30->unk40;
+                if (temp_r30->unk3A > 0)
+                {
+                    temp_r30->unk3A = 0;
+                    if (temp_r30->unk40 > 0)
+                    {
+                        if (temp_r30->unk40 > 0x800)
+                        {
+                            temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                            temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                            temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                        }
+                        temp_r30->unk40 = temp_r30->unk40 * -0.4f;
+                    }
+                }
+            }
+            break;
+        case 4:
+            temp_r30->unk2 = 5;
+            temp_r30->unk4 = 0x3C;
+            temp_r30->unk3E += 768.0f * ((rand() / 32767.0f) - 0.5f);
+            temp_r30->unk40 += 768.0f * ((rand() / 32767.0f) - 0.5f);
+            temp_r30->unk42 += 2304.0f * ((rand() / 32767.0f) - 0.5f);
+            temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
+            temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
+            temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+            /* fallthrough */
+        case 5:
+            temp_r30->unk3E = 0.8f * temp_r30->unk3E;
+            temp_r30->unk40 = 0.8f * temp_r30->unk3E;  // BUG: should be unk40?
+            temp_r30->unk42 = 0.9f * temp_r30->unk3E;  // BUG: should be unk42?
+            temp_r30->unk38 += temp_r30->unk3E;
+            temp_r30->unk3A += temp_r30->unk40;
+            temp_r30->unk3C += temp_r30->unk42;
+            temp_r30->unk4--;
+            if (temp_r30->unk4 < 0)
+            {
+                temp_r30->unk2 = 6;
+                temp_r30->unk3E += 2304.0f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk40 += -2304.0f * -(rand() / 32767.0f);
+                temp_r30->unk42 += 2304.0f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+            }
+            break;
+        case 6:
+            temp_r30->unk2C.x *= 0.98f;
+            temp_r30->unk2C.y *= 0.98f;
+            temp_r30->unk2C.z *= 0.98f;
+            temp_r30->unk2C.y += -0.001f;
+            temp_r30->unk20.x += temp_r30->unk2C.x;
+            temp_r30->unk20.y += temp_r30->unk2C.y;
+            temp_r30->unk20.z += temp_r30->unk2C.z;
+            temp_r30->unk3E = 0.95f * temp_r30->unk3E;
+            temp_r30->unk40 = 0.95f * temp_r30->unk3E;  // BUG: should be unk40?
+            temp_r30->unk42 = 0.95f * temp_r30->unk3E;  // BUG: should be unk42?
+            temp_r30->unk38 += temp_r30->unk3E;
+            temp_r30->unk3A += temp_r30->unk40;
+            temp_r30->unk3C += temp_r30->unk42;
+            break;
+        }
+        temp_r30->unk44.x *= -0.85f;
+        temp_r30->unk44.y *= -0.85f;
+        temp_r30->unk44.z *= -0.85f;
+    }
+}
+
+void func_800BBA54(void) {}
+
+void func_800BBA58(void)
+{
+    struct GMAModel *model;
+    struct SomeStruct *temp_r31 = &lbl_802C6BD8.unk8->unkAA04;
+
+    if (temp_r31->unk0 != 0)
+    {
+        model = decodedBgGma->modelEntries[6].model;
+        mathutil_mtxA_from_mtxB_translate(&temp_r31->unk8);
+        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        avdisp_draw_model_unculled_sort_translucent(model);
+        model = decodedBgGma->modelEntries[30].model;
+        mathutil_mtxA_from_mtxB_translate(&temp_r31->unk20);
+        mathutil_mtxA_translate(&temp_r31->unk44);
+        mathutil_mtxA_rotate_y(temp_r31->unk3A);
+        mathutil_mtxA_rotate_x(temp_r31->unk38);
+        mathutil_mtxA_rotate_z(temp_r31->unk3C);
+        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        avdisp_draw_model_unculled_sort_translucent(model);
+    }
+}
+
+void func_800BBB10(int arg0)
+{
+    struct SomeStruct *temp_r31 = &lbl_802C6BD8.unk8->unkAA04;
+
+    memset(temp_r31, 0, sizeof(*temp_r31));
+    temp_r31->unk0 = 1;
+    temp_r31->unk2 = 1;
+    temp_r31->unk4 = arg0;
+}
+
+void func_800BBB78(void)
+{
+    struct SomeBigEndingStruct *temp = lbl_802C6BD8.unk8;
+
+    if (temp != NULL)
+    {
+        temp->unkA804[0].unk56 = -1;
+        temp->unkA804[1].unk56 = -1;
+        temp->unkA804[2].unk56 = -1;
+        temp->unkA804[3].unk56 = -1;
+    }
 }
 
 /*
