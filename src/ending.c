@@ -20,7 +20,15 @@
 #include "sound.h"
 #include "sprite.h"
 #include "stage.h"
+#include "stcoli.h"
 #include "textbox.h"
+
+struct SomeStruct2
+{
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+};
 
 struct SomeBigEndingStruct_sub2_sub
 {
@@ -53,20 +61,30 @@ struct SomeBigEndingStruct_sub2  // probably Ape
 struct SomeBigEndingStruct_sub3
 {
     struct SomeBigEndingStruct_sub2 *unk0;  // -0x57fc
-    u16 unk4;
-    u16 unk6;
+    s16 unk4;
+    s16 unk6;
     s16 unk8;
     /*0x0A*/ u16 unkA;
     /*0x0C*/ Vec unkC;
     /*0x18*/ Vec unk18;
              u8 filler24[0x30-0x24];
+             /*
              s16 unk30;
              s16 unk32;
              s16 unk34;
+             */
+             struct SomeStruct2 unk30;
              u16 unk36;
     /*0x38*/ s16 unk38;
     /*0x3A*/ s16 unk3A;
-    /*0x3C*/ u8 fillerA83E[0x56-0x3C];
+    void *unk3C;
+    u32 unk40;
+    float unk44;
+    float unk48;
+    float unk4C;
+    s16 unk50;
+    s16 unk52;
+    s16 unk54;
     s16 unk56;
     s16 unk58;
     s16 unk5A;
@@ -177,23 +195,17 @@ void func_800BA51C(void);
 void func_800BB050(void);
 void func_800BB064(void);
 
-u32 lbl_801E2A98[] =
+struct Struct801E2A98
 {
-    0x3F333333,
-    0xBECCCCCD,
-    0x3F333333,
-    0x00008000,
-    0,
-    0xBF2CCCCD,
-    0,
-    0x3F400000,
-    0x00008000,
-    0,
-    0x3CA3D70B,
-    0xBECCCCCD,
-    0x3F8CCCCD,
-    0x00008000,
-    0,
+    Vec unk0;
+    struct SomeStruct2 unkC;
+};
+
+struct Struct801E2A98 lbl_801E2A98[] =
+{
+    {{0.7f, -0.4f, 0.7f}, {0, 0x8000, 0}},
+    {{-0.675, 0.0f, 0.75f}, {0, 0x8000, 0}},
+    {{0.0200000014156, -0.4f, 1.1f}, {0, 0x8000, 0}},
 };
 
 Vec lbl_801E2AD4[] =
@@ -201,6 +213,10 @@ Vec lbl_801E2AD4[] =
     {  0.0f, 10.0f, 5.5f },
     { -1.2f, 10.0f, 5.0f },
     {  1.2f, 10.0f, 5.0f },
+};
+
+Vec lbl_801E2AD4_2[] =
+{
     {  0.0f, 10.0f, 4.0f },
     { -0.1f, 10.0f, 5.5f },
     {  0.1f, 10.0f, 6.5f },
@@ -510,7 +526,7 @@ void func_800B69F8(void)
     modeCtrl.submodeTimer = 60;
     modeCtrl.unk18 = 0x1E;
     SOME_CAMERA_MACRO();
-    temp_r29 = (void *)&lbl_802C6BD8.unk8->unkAA54;
+    temp_r29 = &lbl_802C6BD8.unk8->unkAA54;
     memset(temp_r29, 0, 0x54U);
     temp_r29->unk0 = 1;
     mathutil_mtxA_from_rotate_z((s16) (unpausedFrameCounter << 6));
@@ -1178,9 +1194,9 @@ void func_800B8780(void)
     temp_r27 = &lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
     mathutil_mtxA_from_translate(&temp_r27->unkC);
-    mathutil_mtxA_rotate_y((s32) temp_r27->unk32);
-    mathutil_mtxA_rotate_x((s32) temp_r27->unk30);
-    mathutil_mtxA_rotate_z((s32) temp_r27->unk34);
+    mathutil_mtxA_rotate_y((s32) temp_r27->unk30.unk2);
+    mathutil_mtxA_rotate_x((s32) temp_r27->unk30.unk0);
+    mathutil_mtxA_rotate_z((s32) temp_r27->unk30.unk4);
     temp_r26->unk0 = 1;
     mathutil_mtxA_tf_point_xyz(&temp_r26->unk4, -4.0f * (temp_f31 - 0.5f), -0.2f, -2.0f);
     temp_r26->unk10.x = 0.0f;
@@ -1236,9 +1252,9 @@ void func_800B8AA4(void)
     temp_r30 = &lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
     mathutil_mtxA_from_translate(&temp_r30->unkC);
-    mathutil_mtxA_rotate_y(temp_r30->unk32);
-    mathutil_mtxA_rotate_x(temp_r30->unk30);
-    mathutil_mtxA_rotate_z(temp_r30->unk34);
+    mathutil_mtxA_rotate_y(temp_r30->unk30.unk2);
+    mathutil_mtxA_rotate_x(temp_r30->unk30.unk0);
+    mathutil_mtxA_rotate_z(temp_r30->unk30.unk4);
     mathutil_mtxA_tf_point_xyz(&temp_r28->unk4, -4.0f * (temp_f31 - 0.5f), -0.2f, -2.0f);
     temp_r30->unk38--;
     if (temp_r30->unk38 < 0)
@@ -1335,9 +1351,9 @@ void func_800B8E1C(void)
         temp_r27 = &temp->unkA804[playerCharacterSelection[modeCtrl.currPlayer] % 3];
         memset(temp_r26, 0, sizeof(*temp_r26));
         mathutil_mtxA_from_translate(&temp_r27->unkC);
-        mathutil_mtxA_rotate_y(temp_r27->unk32);
-        mathutil_mtxA_rotate_x(temp_r27->unk30);
-        mathutil_mtxA_rotate_z(temp_r27->unk34);
+        mathutil_mtxA_rotate_y(temp_r27->unk30.unk2);
+        mathutil_mtxA_rotate_x(temp_r27->unk30.unk0);
+        mathutil_mtxA_rotate_z(temp_r27->unk30.unk4);
         temp_r26->unk0 = 1;
         mathutil_mtxA_tf_point_xyz(&temp_r26->unk4, 1.0f, 3.0f, -4.0f);
         temp_r26->unk10.y = (8.0f - temp_r26->unk4.y) * (1.0f / modeCtrl.submodeTimer);
@@ -1843,7 +1859,7 @@ void func_800BA950(void)
     struct SomeBigEndingStruct_sub3 *temp_r27;
     int charaId;
     struct SomeBigEndingStruct_sub *temp_r30;
-    Point3d sp38;
+    Vec sp38;
     Mtx sp8;
     float temp_f31;
 
@@ -2141,6 +2157,312 @@ void func_800BBB78(void)
         temp->unkA804[1].unk56 = -1;
         temp->unkA804[2].unk56 = -1;
         temp->unkA804[3].unk56 = -1;
+    }
+}
+
+#define lbl_802F6644 -4.5f
+#define lbl_802F664C 0.12999999523162842f
+#define lbl_802F6650 0.12000000476837158f
+#define lbl_802F6654 -0.094000004231929779f
+#define lbl_802F65E4 -0.10000000149011612f
+#define lbl_802F65A0 -0.60000002384185791f
+#define lbl_802F6528 0.20000000298023224f
+#define lbl_802F6634 30.0f
+#define lbl_802F6568 -0.20000000298023224f
+#define lbl_802F6638 -15.0f
+#define lbl_802F663C 0.012000000104308128f
+#define lbl_802F6640 -0.0080000003799796104f
+
+void func_800BBBA8(void)
+{
+    int i;
+    struct Struct801E2A98 spD0;
+    struct Effect effect;
+    struct RaycastHit sp8;
+    int playerId = modeCtrl.currPlayer;
+    struct SomeBigEndingStruct_sub3 *var_r16 = lbl_802C6BD8.unk8->unkA804;
+    float temp_f0;
+
+    for (i = 0; i < 4; i++, var_r16++)
+    {
+        if (var_r16->unk0 != NULL)
+        {
+            switch (var_r16->unk4)
+            {
+            case 1:
+                var_r16->unk4 = 2;
+                var_r16->unk0->unk14 &= 0xFFFFFFDF;
+                var_r16->unkA = 0;
+                var_r16->unk30.unk0 = 0;
+                var_r16->unk30.unk2 = 0;
+                var_r16->unk30.unk4 = 0;
+                temp_f0 = var_r16->unk6;
+                var_r16->unkC.x = 0.0f;
+                var_r16->unkC.y = 20.0f - (0.5f * (-0.004f * (temp_f0 * temp_f0)));
+                var_r16->unkC.z = -60.0f;
+                var_r16->unk18.x = 0.0f;
+                var_r16->unk18.y = 0.0f;
+                var_r16->unk18.z = 0.0f;
+                break;
+            case 2:
+                var_r16->unk18.y += -0.004f;
+                var_r16->unkC.y += var_r16->unk18.y;
+                var_r16->unk6--;
+                if (var_r16->unk6 <= 0)
+                {
+                    var_r16->unk4 = 3;
+                    var_r16->unkC.x = 0.0f;
+                    var_r16->unkC.y = 20.0f;
+                    var_r16->unkC.z = -60.0f;
+                }
+                break;
+            case 3:
+                var_r16->unk18.x *= 0.92f;
+                var_r16->unk18.y *= 0.92f;
+                var_r16->unk18.z *= 0.92f;
+                var_r16->unk18.y += -0.004f;
+                var_r16->unk18.x += 0.05f * -var_r16->unkC.x;
+                var_r16->unk18.y += 0.05f * (20.0f - var_r16->unkC.y);
+                var_r16->unk18.z += 0.05f * (-60.0f - var_r16->unkC.z);
+                var_r16->unkC.x += var_r16->unk18.x;
+                var_r16->unkC.y += var_r16->unk18.y;
+                var_r16->unkC.z += var_r16->unk18.z;
+                break;
+            case 4:
+                var_r16->unk4 = 5;
+                var_r16->unk6 = 0;
+                var_r16->unk18.z = 0.0f;
+                /* fallthrough */
+            case 5:
+                var_r16->unk18.z += 0.000075f * var_r16->unk6;
+                var_r16->unkC.z += var_r16->unk18.z;
+                var_r16->unk6++;
+                break;
+            case 6:
+                var_r16->unk4 = 7;
+                //temp_r3 = var_r16->unk0;
+                var_r16->unk0->unk14 &= 0xFFFFFFDF;
+                var_r16->unkA = 3;
+                var_r16->unk30.unk0 = 0;
+                var_r16->unk30.unk2 = (rand() / 32767.0f);
+                var_r16->unk30.unk4 = 0;
+                var_r16->unkC.x = 0.0f;
+                var_r16->unkC.y = 0.0f;
+                var_r16->unkC.z = 0.0f;
+                var_r16->unk18.x = 0.0f;
+                var_r16->unk18.y = 0.0f;
+                var_r16->unk18.z = 0.0f;
+                if (modeCtrl.playerCount == 1)
+                    var_r16->unk56 = 3;
+                else
+                    var_r16->unk56 = modeCtrl.currPlayer;
+                var_r16->unk58 = rand() & 0x7FFF;
+                var_r16->unk5A = rand() & 0x7FFF;
+                var_r16->unk5C = rand() & 0x7FFF;
+                /* fallthrough */
+            case 7:
+                if (var_r16->unk6 > 0)
+                {
+                    var_r16->unk6--;
+                    var_r16->unk18.y += 0.009799992;
+                    memset(&effect, 0, sizeof(effect));
+                    effect.type = 0xA;
+                    effect.playerId = playerId;
+                    effect.pos = var_r16->unkC;
+                    spawn_effect(&effect);
+                }
+                else
+                {
+                    var_r16->unk18.x *= 0.92f;
+                    var_r16->unk18.y *= 0.92f;
+                    var_r16->unk18.z *= 0.92f;
+                }
+                var_r16->unkC.x += var_r16->unk18.x;
+                var_r16->unkC.y += var_r16->unk18.y;
+                var_r16->unkC.z += var_r16->unk18.z;
+                var_r16->unk30.unk2 -= 0x30;
+                var_r16->unk5A -= 0x40;
+                break;
+            case 8:
+                var_r16->unk18.y += 0.009799992;
+                var_r16->unkC.y += var_r16->unk18.y;
+                var_r16->unk6--;
+                if (var_r16->unk6 < 0)
+                {
+                    var_r16->unk4 = 0;
+                    var_r16->unk0->unk14 |= 0x20;
+                }
+                memset(&effect, 0, sizeof(effect));
+                effect.type = 0xA;
+                effect.playerId = playerId;
+                effect.pos = var_r16->unkC;
+                spawn_effect(&effect);
+                break;
+            case 9:
+                var_r16->unk4 = 0xA;
+                var_r16->unk0->unk14 &= 0xFFFFFFDF;
+                var_r16->unkA = 0x12;
+                var_r16->unk30.unk0 = 0;
+                var_r16->unk30.unk2 = i * 0x10000 / 3;
+                var_r16->unk30.unk4 = 0;
+                mathutil_mtxA_from_rotate_y(var_r16->unk30.unk2 + 0x8000);
+                mathutil_mtxA_tf_vec_xyz(&var_r16->unkC, 0.0f, 0.0f, -5.0f);
+                var_r16->unkC.y += lbl_802F6634 + (5.0f * (rand() / 32767.0f));
+                var_r16->unk18.x = 0.0f;
+                var_r16->unk18.y = lbl_802F6568;
+                var_r16->unk18.z = 0.0f;
+                if (i == playerCharacterSelection[playerId])
+                {
+                    if (modeCtrl.playerCount == 1)
+                        var_r16->unk56 = 3;
+                    else
+                        var_r16->unk56 = i;
+                }
+                else
+                    var_r16->unk56 = rand() & 3;
+                var_r16->unk58 = rand() & 0x7FFF;
+                var_r16->unk5A = rand() & 0x7FFF;
+                var_r16->unk5C = rand() & 0x7FFF;
+                /* fallthrough */
+            case 10:
+                raycast_stage_down(&var_r16->unkC, &sp8, NULL);
+                if (var_r16->unk18.y < 0.0f
+                 && (0.5f + (var_r16->unkC.y - sp8.pos.y) < lbl_802F6638 * var_r16->unk18.y))
+                    var_r16->unk18.y += lbl_802F663C;
+                memset(&effect, 0, sizeof(effect));
+                effect.type = 0xA;
+                effect.playerId = playerId;
+                effect.pos = var_r16->unkC;
+                spawn_effect(&effect);
+                /* fallthrough */
+            case 11:
+                raycast_stage_down(&var_r16->unkC, &sp8, NULL);
+                var_r16->unk18.x *= 0.99f;
+                var_r16->unk18.y *= 0.99f;
+                var_r16->unk18.z *= 0.99f;
+                var_r16->unk18.y += lbl_802F6640;
+                var_r16->unkC.x += var_r16->unk18.x;
+                var_r16->unkC.y += var_r16->unk18.y;
+                var_r16->unkC.z += var_r16->unk18.z;
+                if (sp8.pos.y > var_r16->unkC.y - 0.5f - 0.1f)
+                {
+                    if (var_r16->unk18.y < lbl_802F65E4)
+                        u_play_sound_0(0x69);
+                    var_r16->unkC.y = 0.5f + sp8.pos.y - 0.1f;
+                    if (var_r16->unk18.y < 0.0f)
+                        var_r16->unk18.y *= lbl_802F65A0;
+                    if (var_r16->unk4 != 0xB)
+                    {
+                        var_r16->unk4 = 0xB;
+                        memset(&effect, 0, sizeof(effect));
+                        effect.playerId = playerId;
+                        effect.type = 0x1B;
+                        effect.pos = var_r16->unkC;
+                        effect.pos.y -= 0.4f;
+                        effect.unk88.x = 0.0f;
+                        effect.unk88.y = 1.0f;
+                        effect.unk88.z = 0.0f;
+                        effect.colorFactor = lbl_802F6528;
+                        spawn_effect(&effect);
+                    }
+                }
+                break;
+            case 16:
+                var_r16->unk4 = 0;
+                var_r16->unkA = 0xC;
+                var_r16->unkC = lbl_801E2AD4[i];
+                if (raycast_stage_down(&var_r16->unkC, &sp8, NULL) != 0U)
+                {
+                    var_r16->unkC = sp8.pos;
+                    var_r16->unkC.y += 0.4f;
+                }
+                var_r16->unk30.unk0 = 0;
+                var_r16->unk30.unk2 = mathutil_atan2(var_r16->unkC.x, var_r16->unkC.z);
+                var_r16->unk30.unk4 = 0;
+                var_r16->unk56 = -1;
+                break;
+            case 17:
+                var_r16->unk4 = 0x12;
+                var_r16->unkA = 0xD;
+                if (playerCharacterSelection[playerId] == 3)
+                    var_r16->unkC = lbl_801E2AD4_2[i];
+                else
+                    var_r16->unkC = lbl_801E2AD4_2[(i + 3 - playerCharacterSelection[playerId]) % 3];
+                if (raycast_stage_down(&var_r16->unkC, &sp8, NULL) != 0U)
+                {
+                    var_r16->unkC = sp8.pos;
+                    var_r16->unkC.y += 0.4f;
+                }
+                var_r16->unk30.unk0 = 0;
+                var_r16->unk30.unk2 = 0;
+                var_r16->unk30.unk4 = 0;
+                temp_f0 = 1.0f / modeCtrl.submodeTimer;
+                var_r16->unk18.x = -var_r16->unkC.x * temp_f0;
+                var_r16->unk18.y = 0.0f;
+                var_r16->unk18.z = lbl_802F6644 * temp_f0 * (1.0f + (0.1f * (rand() / 32767.0f)));
+                break;
+            case 18:
+                var_r16->unkC.x += var_r16->unk18.x;
+                var_r16->unkC.y += var_r16->unk18.y;
+                var_r16->unkC.z += var_r16->unk18.z;
+                break;
+            case 19:
+                var_r16->unk4 = 0x14;
+                var_r16->unk6 = modeCtrl.submodeTimer;
+                var_r16->unkA = 0xD;
+                var_r16->unkC = lbl_801E2AD4_2[i];
+                var_r16->unkC.y = 0.0f;
+                var_r16->unk30.unk0 = 0;
+                var_r16->unk30.unk2 = 0;
+                var_r16->unk30.unk4 = 0;
+                temp_f0 = 1.0f / var_r16->unk6;
+                var_r16->unk18.x = -var_r16->unkC.x * temp_f0;
+                var_r16->unk18.y = 0.0f;
+                var_r16->unk18.z = (3.45f - var_r16->unkC.z) * temp_f0;
+                break;
+            case 20:
+                var_r16->unkC.x += var_r16->unk18.x;
+                var_r16->unkC.y += var_r16->unk18.y;
+                var_r16->unkC.z += var_r16->unk18.z;
+                if (var_r16->unkC.z < 3.45f)
+                {
+                    var_r16->unk4 = 0;
+                    var_r16->unkA = 9;
+                    var_r16->unkC.z = 3.45f;
+                }
+                break;
+            case 21:
+                var_r16->unk4 = 0;
+                var_r16->unkA = 0xE;
+                spD0 = lbl_801E2A98[i];
+                var_r16->unkC = spD0.unk0;
+                var_r16->unk30 = spD0.unkC;
+                switch (i)
+                {
+                case 0:
+                    var_r16->unk3C = decodedBgGma->modelEntries[1].model;
+                    var_r16->unk40 = 0xA;
+                    var_r16->unk44 = 0.05f;
+                    var_r16->unk48 = lbl_802F664C;
+                    var_r16->unk4C = lbl_802F6650;
+                    var_r16->unk50 = -0x58E3;
+                    var_r16->unk52 = -0x1555;
+                    var_r16->unk54 = 0x438E;
+                    break;
+                case 1:
+                    var_r16->unk3C = decodedBgGma->modelEntries[0x17].model;
+                    var_r16->unk40 = 0xF;
+                    var_r16->unk44 = 0.05f;
+                    var_r16->unk48 = 0.0f;
+                    var_r16->unk4C = lbl_802F6654;
+                    var_r16->unk50 = 0x20B7;
+                    var_r16->unk52 = -0x6BE1;
+                    var_r16->unk54 = -0x26E9;
+                    break;
+                }
+                break;
+            }
+        }
     }
 }
 
