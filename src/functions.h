@@ -567,7 +567,7 @@ void func_800BBB78(void);
 void func_800BBBA8(void);
 void func_800BC820(void);
 void func_800BC8B8(void);
-void func_800BCE54(int, int);
+int func_800BCE54(int, int);
 void func_800BD470(void);
 void func_800BD4B8(void);
 // ? func_800BEEE8();

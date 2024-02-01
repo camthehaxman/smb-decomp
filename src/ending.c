@@ -15,6 +15,7 @@
 #include "light.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "mot_ape.h"
 #include "ord_tbl.h"
 #include "rend_efc.h"
 #include "sound.h"
@@ -30,58 +31,23 @@ struct SomeStruct2
     s16 unk4;
 };
 
-struct SomeBigEndingStruct_sub2_sub
-{
-    u8 filler0[0x38];
-    u16 unk38;
-    u16 unk3A;
-    u8 filler3C[0x8EC8-0x3C];
-    Mtx unk8EC8;
-};
-
-struct SomeBigEndingStruct_sub2  // probably Ape
-{
-    struct SomeBigEndingStruct_sub2_sub *unk0;
-    u8 filler4[0x10-0x4];
-    u32 unk10;
-    u32 unk14;
-    u8 filler18[0x30-0x18];
-    Vec unk30;
-    Vec unk3C;
-    u8 filler48[0x58-0x48];
-    float unk58;
-    u8 filler5C[0x60-0x5C];
-    Quaternion unk60;
-    u8 filler70[0x9c-0x70];
-    u32 unk9C;
-    u8 fillerA0[0xB4-0xA0];
-    u32 unkB4;
-};
-
 struct SomeBigEndingStruct_sub3
 {
-    struct SomeBigEndingStruct_sub2 *unk0;  // -0x57fc
+    struct Ape *unk0;
     s16 unk4;
     s16 unk6;
     s16 unk8;
-    /*0x0A*/ u16 unkA;
+    /*0x0A*/ s16 unkA;
     /*0x0C*/ Vec unkC;
     /*0x18*/ Vec unk18;
              u8 filler24[0x30-0x24];
-             /*
-             s16 unk30;
-             s16 unk32;
-             s16 unk34;
-             */
              struct SomeStruct2 unk30;
              u16 unk36;
     /*0x38*/ s16 unk38;
     /*0x3A*/ s16 unk3A;
     void *unk3C;
     u32 unk40;
-    float unk44;
-    float unk48;
-    float unk4C;
+    Vec unk44;
     s16 unk50;
     s16 unk52;
     s16 unk54;
@@ -132,10 +98,16 @@ struct SomeStruct
 
 static_assert(sizeof(struct SomeStruct) == 0x50, bad);
 
+struct SomeBigEndingStruct_sub4
+{
+    u8 unk0;
+    u8 filler1[0x54-0x1];
+};
+
 struct SomeBigEndingStruct
 {
     float unk0;
-    u8 filler4[0xA804-0x4];
+    struct SomeBigEndingStruct_sub4 unk4[512];
     struct SomeBigEndingStruct_sub3 unkA804[4];
     struct SomeStruct unkAA04;
     struct SomeBigEndingStruct_sub unkAA54;
@@ -458,7 +430,7 @@ void func_800B6608(void)
     r28->unk2C.y = sp8.y + lbl_802F64D4;
     r28->unk2C.z = sp8.z + lbl_802F64E0;
     if (lbl_802C6BD8.unk8->unkA804[0].unk0 != NULL)
-        lbl_802C6BD8.unk8->unkA804[0].unk0->unkB4 = modeCtrl.currPlayer;
+        lbl_802C6BD8.unk8->unkA804[0].unk0->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0, 0x1E);
     u_play_music(0x44, 0);
 }
@@ -492,7 +464,7 @@ void func_800B6848(void)
         temp_r6->unk10.z = (-61.0f - temp_r6->unk4.z) * temp_f2;
         break;
     case 0x87:
-        SoundReq(lbl_802F18C0[temp_r4->unk0->unk10]);
+        SoundReq(lbl_802F18C0[temp_r4->unk0->charaId]);
         break;
     case 0x78:
         func_800BFA2C();
@@ -585,7 +557,7 @@ void func_800B6C14(void)
     temp_r30->unk38--;
     if (temp_r30->unk38 < 0)
     {
-        SoundReq(lbl_801E2B28[temp_r30->unk0->unk10][temp_r30->unk3A & 1]);
+        SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
         temp_r30->unk38 = 240.0f * (0.8f + (0.4f * (rand() / 32767.0f)));
         temp_r30->unk3A++;
     }
@@ -671,7 +643,7 @@ void func_800B7078(void)
     int stageId;
     float temp_f31;
     struct SomeBigEndingStruct_sub *temp_r31;
-    struct SomeBigEndingStruct_sub2 *temp_r3;
+    struct Ape *temp_r3;
 
     lbl_802C6BD8.unk2 = 8;
     modeCtrl.submodeTimer = 0x186;
@@ -721,7 +693,7 @@ void func_800B7078(void)
     temp_r31->unk2C.z = 0.0f;
     temp_r3 = lbl_802C6BD8.unk8->unkA804[0].unk0;
     if (temp_r3 != NULL)
-        temp_r3->unkB4 = modeCtrl.currPlayer;
+        temp_r3->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0U, 0x1E);
     u_play_music(0x44U, 0);
     u_play_sound_0(0x232);
@@ -763,7 +735,7 @@ void func_800B72D4(void)
     case 0xB4:
         break;
     case 0x43:
-        temp_r30->unk0->unk14 &= 0xFFFFCFFF;
+        temp_r30->unk0->flags &= 0xFFFFCFFF;
         if (modeCtrl.playerCount > 1)
             temp_r30->unk56 = modeCtrl.currPlayer;
         else
@@ -787,7 +759,7 @@ void func_800B72D4(void)
         temp_r29->unk10.z = temp_f31 * ((spB4.z + temp_r30->unkC.z) - temp_r29->unk4.z);
         break;
     case 0x3C:
-        temp_r30->unk0->unk14 &= 0xFFFFCFFF;
+        temp_r30->unk0->flags &= 0xFFFFCFFF;
         if (modeCtrl.playerCount > 1)
             temp_r30->unk56 = modeCtrl.currPlayer;
         else
@@ -821,7 +793,7 @@ void func_800B72D4(void)
         if (temp_r30->unk0->unk9C != 4U)
             modeCtrl.submodeTimer++;
         else
-            temp_r30->unk0->unk14 |= 0x1000;
+            temp_r30->unk0->flags |= 0x1000;
         break;
     case 0x4B:
     case 0x40:
@@ -942,7 +914,7 @@ void func_800B7B6C(void)
 
     temp_r3_2 = &lbl_802C6BD8.unk8->unkA804[0];
     temp_r3_2->unkA = 6;
-    temp_r3_2->unk0->unk14 &= 0xFFFFEFFF;
+    temp_r3_2->unk0->flags &= 0xFFFFEFFF;
     temp_r3_2->unk38 = 0;
 }
 
@@ -957,7 +929,7 @@ void func_800B7D38(void)
     temp_r30->unk38--;
     if (temp_r30->unk38 < 0)
     {
-        SoundReq(lbl_801E2B28[temp_r30->unk0->unk10][temp_r30->unk3A & 1]);
+        SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
         temp_r30->unk38 = 240.0f * (0.8f + (0.4f * (rand() / 32767.0f)));
         temp_r30->unk3A++;
     }
@@ -996,13 +968,13 @@ void func_800B7D38(void)
 
 void func_800B7F6C(void)
 {
-    struct SomeBigEndingStruct_sub2 *temp_r3;
+    struct Ape *temp_r3;
 
     lbl_802C6BD8.unk2 = 0xC;
     modeCtrl.submodeTimer = 0x21C;
     lbl_802C6BD8.unk8->unkA804[0].unkA = 7;
     temp_r3 = lbl_802C6BD8.unk8->unkA804[0].unk0;
-    temp_r3->unk14 &= 0xFFFFBFFF;
+    temp_r3->flags &= 0xFFFFBFFF;
 }
 
 s16 lbl_802F18E0[4] = { 0x00EA, 0x0102, 0x016D, 0x0173 };
@@ -1024,7 +996,7 @@ void func_800B7FB4(void)
             modeCtrl.submodeTimer += 1;
         else
         {
-            temp_r7->unk0->unk14 |= 0x1000;
+            temp_r7->unk0->flags |= 0x1000;
             temp_r28->unk2 = 2;
             temp_r28->unk44 = 0;
             temp_r28->unk46 = 5;
@@ -1090,7 +1062,7 @@ void func_800B83EC(void)
 {
     int temp_r0;
     struct SomeBigEndingStruct_sub *temp_r28;
-    struct SomeBigEndingStruct_sub2 *temp_r3;
+    struct Ape *temp_r3;
     int stageId;
 
     lbl_802C6BD8.unk2 = 14;
@@ -1144,7 +1116,7 @@ void func_800B83EC(void)
     if (temp_r0 == 3)
     {
         struct SomeBigEndingStruct_sub3 *temp_r28_2 = &lbl_802C6BD8.unk8->unkA804[temp_r0];
-        temp_r28_2->unk0->unk14 &= 0xFFFFFFDF;
+        temp_r28_2->unk0->flags &= 0xFFFFFFDF;
         temp_r28_2->unkA = 0x12;
         temp_r28_2->unkC.x = -20.38f;
         temp_r28_2->unkC.y = -2.34f;
@@ -1159,7 +1131,7 @@ void func_800B83EC(void)
     }
     temp_r3 = lbl_802C6BD8.unk8->unkA804[modeCtrl.currPlayer].unk0;
     if (temp_r3 != NULL)
-        temp_r3->unkB4 = modeCtrl.currPlayer;
+        temp_r3->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0U, 0x1E);
     u_play_music(0x44U, 0);
 }
@@ -1259,7 +1231,7 @@ void func_800B8AA4(void)
     temp_r30->unk38--;
     if (temp_r30->unk38 < 0)
     {
-        SoundReq(lbl_801E2B28[temp_r30->unk0->unk10][temp_r30->unk3A & 1]);
+        SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
         temp_r30->unk38 = 240.0f * (0.8f + (0.4f * (rand() / 32767.0f)));
         temp_r30->unk3A++;
     }
@@ -1312,7 +1284,7 @@ void func_800B8E1C(void)
     f32 temp_f3;
     struct SomeBigEndingStruct_sub *temp_r26;
     struct SomeBigEndingStruct_sub3 *temp_r27;
-    struct SomeBigEndingStruct_sub2 *temp_r4;
+    struct Ape *temp_r4;
     struct SomeBigEndingStruct *temp;
     Vec sp8;
 
@@ -1337,7 +1309,7 @@ void func_800B8E1C(void)
         break;
     case 0x1A4:
         temp_r4 = lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk0;
-        temp_r4->unk14 &= 0xFFFFFFBF;
+        temp_r4->flags &= 0xFFFFFFBF;
         u_play_sound_0(0x234);
         break;
     case 0x168:
@@ -1481,7 +1453,7 @@ void func_800B9724(void)
         {
             var_r28->unk38--;
             if (var_r28->unk38 == 0)
-                SoundReq(lbl_802F18F0[var_r28->unk0->unk10]);
+                SoundReq(lbl_802F18F0[var_r28->unk0->charaId]);
         }
     }
     modeCtrl.submodeTimer--;
@@ -1497,10 +1469,10 @@ void func_800B9920(void)
 
     lbl_802C6BD8.unk2 = 0x16;
     modeCtrl.submodeTimer = 0x2D0;
-    lbl_802C6BD8.unk8->unkA804[0].unk0->unk14 |= 0x20;
-    lbl_802C6BD8.unk8->unkA804[1].unk0->unk14 |= 0x20;
-    lbl_802C6BD8.unk8->unkA804[2].unk0->unk14 |= 0x20;
-    lbl_802C6BD8.unk8->unkA804[3].unk0->unk14 |= 0x20;
+    lbl_802C6BD8.unk8->unkA804[0].unk0->flags |= 0x20;
+    lbl_802C6BD8.unk8->unkA804[1].unk0->flags |= 0x20;
+    lbl_802C6BD8.unk8->unkA804[2].unk0->flags |= 0x20;
+    lbl_802C6BD8.unk8->unkA804[3].unk0->flags |= 0x20;
     SOME_CAMERA_MACRO();
     temp_r4 = &lbl_802C6BD8.unk8->unkAA54;
     temp_f3 = 0.008333334f;
@@ -1538,9 +1510,9 @@ void func_800B9A8C(void)
         lbl_802C6BD8.unk8->unkA804[2].unk4 = 0x11;
         break;
     case 0x257:
-        lbl_802C6BD8.unk8->unkA804[0].unk0->unk14 &= ~0x20;
-        lbl_802C6BD8.unk8->unkA804[1].unk0->unk14 &= ~0x20;
-        lbl_802C6BD8.unk8->unkA804[2].unk0->unk14 &= ~0x20;
+        lbl_802C6BD8.unk8->unkA804[0].unk0->flags &= ~0x20;
+        lbl_802C6BD8.unk8->unkA804[1].unk0->flags &= ~0x20;
+        lbl_802C6BD8.unk8->unkA804[2].unk0->flags &= ~0x20;
         SOME_CAMERA_MACRO();
         temp = &lbl_802C6BD8.unk8->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD8);
@@ -1559,7 +1531,7 @@ void func_800B9A8C(void)
         temp->unk48.z = 0.0f;
         break;
     case 0x1E0:
-        lbl_802C6BD8.unk8->unkA804[3].unk0->unk14 &= ~0x20;
+        lbl_802C6BD8.unk8->unkA804[3].unk0->flags &= ~0x20;
         lbl_802C6BD8.unk8->unkA804[3].unk4 = 0x13;
         break;
     case 0xD8:
@@ -1855,7 +1827,7 @@ s16 lbl_802F18F8[4] = { 0x00E8, 0x0102, 0x016D, 0x0000 };
 
 void func_800BA950(void)
 {
-    struct SomeBigEndingStruct_sub2 *temp_r27_4;
+    struct Ape *ape;
     struct SomeBigEndingStruct_sub3 *temp_r27;
     int charaId;
     struct SomeBigEndingStruct_sub *temp_r30;
@@ -1951,14 +1923,14 @@ void func_800BA950(void)
         lbl_802C6BD8.unk8->unkA804[charaId].unkA = 0x10;
         temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
         temp_r30->unk0 = 1;
-        temp_r27_4 = temp_r27->unk0;
-        mathutil_mtxA_from_quat(&temp_r27_4->unk60);
+        ape = temp_r27->unk0;
+        mathutil_mtxA_from_quat(&ape->unk60);
         mathutil_mtxA_to_mtx(sp8);
-        mathutil_mtxA_from_translate(&temp_r27_4->unk30);
-        mathutil_mtxA_scale_s(temp_r27_4->unk58);
-        mathutil_mtxA_translate(&temp_r27_4->unk3C);
+        mathutil_mtxA_from_translate(&ape->unk30);
+        mathutil_mtxA_scale_s(ape->modelScale);
+        mathutil_mtxA_translate(&ape->unk3C);
         mathutil_mtxA_mult_right(sp8);
-        mathutil_mtxA_mult_right(temp_r27_4->unk0->unk8EC8);
+        mathutil_mtxA_mult_right(ape->unk0->joints[5].transformMtx);
         mathutil_mtxA_tf_point_xyz(&sp38, 0.0f, 0.0f, 0.3f);
         sp38.y += -0.3f;
         sp38.z += 1.0f;
@@ -2191,7 +2163,7 @@ void func_800BBBA8(void)
             {
             case 1:
                 var_r16->unk4 = 2;
-                var_r16->unk0->unk14 &= 0xFFFFFFDF;
+                var_r16->unk0->flags &= 0xFFFFFFDF;
                 var_r16->unkA = 0;
                 var_r16->unk30.unk0 = 0;
                 var_r16->unk30.unk2 = 0;
@@ -2240,8 +2212,7 @@ void func_800BBBA8(void)
                 break;
             case 6:
                 var_r16->unk4 = 7;
-                //temp_r3 = var_r16->unk0;
-                var_r16->unk0->unk14 &= 0xFFFFFFDF;
+                var_r16->unk0->flags &= 0xFFFFFFDF;
                 var_r16->unkA = 3;
                 var_r16->unk30.unk0 = 0;
                 var_r16->unk30.unk2 = (rand() / 32767.0f);
@@ -2290,7 +2261,7 @@ void func_800BBBA8(void)
                 if (var_r16->unk6 < 0)
                 {
                     var_r16->unk4 = 0;
-                    var_r16->unk0->unk14 |= 0x20;
+                    var_r16->unk0->flags |= 0x20;
                 }
                 memset(&effect, 0, sizeof(effect));
                 effect.type = 0xA;
@@ -2300,7 +2271,7 @@ void func_800BBBA8(void)
                 break;
             case 9:
                 var_r16->unk4 = 0xA;
-                var_r16->unk0->unk14 &= 0xFFFFFFDF;
+                var_r16->unk0->flags &= 0xFFFFFFDF;
                 var_r16->unkA = 0x12;
                 var_r16->unk30.unk0 = 0;
                 var_r16->unk30.unk2 = i * 0x10000 / 3;
@@ -2442,9 +2413,9 @@ void func_800BBBA8(void)
                 case 0:
                     var_r16->unk3C = decodedBgGma->modelEntries[1].model;
                     var_r16->unk40 = 0xA;
-                    var_r16->unk44 = 0.05f;
-                    var_r16->unk48 = lbl_802F664C;
-                    var_r16->unk4C = lbl_802F6650;
+                    var_r16->unk44.x = 0.05f;
+                    var_r16->unk44.y = lbl_802F664C;
+                    var_r16->unk44.z = lbl_802F6650;
                     var_r16->unk50 = -0x58E3;
                     var_r16->unk52 = -0x1555;
                     var_r16->unk54 = 0x438E;
@@ -2452,9 +2423,9 @@ void func_800BBBA8(void)
                 case 1:
                     var_r16->unk3C = decodedBgGma->modelEntries[0x17].model;
                     var_r16->unk40 = 0xF;
-                    var_r16->unk44 = 0.05f;
-                    var_r16->unk48 = 0.0f;
-                    var_r16->unk4C = lbl_802F6654;
+                    var_r16->unk44.x = 0.05f;
+                    var_r16->unk44.y = 0.0f;
+                    var_r16->unk44.z = lbl_802F6654;
                     var_r16->unk50 = 0x20B7;
                     var_r16->unk52 = -0x6BE1;
                     var_r16->unk54 = -0x26E9;
@@ -2464,6 +2435,413 @@ void func_800BBBA8(void)
             }
         }
     }
+}
+
+void func_800BC820(void)
+{
+    int i;
+    struct SomeBigEndingStruct_sub3 *var_r28;
+
+    if (lbl_802C6BD8.unk8 == NULL)
+        return;
+    var_r28 = &lbl_802C6BD8.unk8->unkA804[3];
+    for (i = 3; i >= 0; i--, var_r28--)
+    {
+        if (var_r28->unk0 != NULL)
+        {
+            func_8008D29C(lbl_80206B80[i]);
+            var_r28->unk0 = NULL;
+        }
+    }
+}
+
+struct Blah
+{
+    s8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 unk3;
+    u32 filler4;
+    Vec unk8;
+    float unk14;
+};  // size = 0x18
+
+struct Blah lbl_801E2C44[] =
+{
+    {0x00, 0x23, 0x25, 0x26, 0, {0, 0, 0}, 0.32f},
+};
+
+struct Blah *lbl_801E31E4[4] = {lbl_801E2C44};
+
+struct MyDrawNode
+{
+    struct OrdTblNode node;
+    struct SomeBigEndingStruct_sub3 *unk8;
+};
+
+void lbl_800BCD30(struct MyDrawNode *);
+
+void func_800BC8B8(void)
+{
+    Vec *new_var;
+    //u8 unused[8];
+    f32 temp_f21 ;
+    f32 temp_f0;
+    f32 temp_f4;
+    s32 var_r28;
+    struct SomeBigEndingStruct_sub3 *var_r27;
+    struct Ape *temp_r26;
+    struct Blah *var_r25;
+    struct GMAModel *temp_r21;
+    struct OrdTblNode *temp_r21_2;
+    struct MyDrawNode *temp_r3;
+    Mtx sp38;
+    Vec sp2C;
+    Vec sp20;
+    Vec sp14;
+    Vec sp8;
+
+    mathutil_mtxA_from_rotate_y(s_bgLightInfo.infLightRotY);
+    mathutil_mtxA_rotate_x(s_bgLightInfo.infLightRotX);
+    mathutil_mtxA_tf_vec_xyz(&sp2C, 0.0f, 0.0f, -1.0f);
+
+    var_r27 = lbl_802C6BD8.unk8->unkA804;
+    for (var_r28 = 4; var_r28 > 0; var_r28--, var_r27++)
+    {
+        temp_f0 = temp_f21 + -1.0f;  // needed to match
+
+        temp_r26 = var_r27->unk0;
+        if (temp_r26 == NULL)
+            continue;
+
+        temp_r21 = var_r27->unk3C;
+        if (temp_r21 != NULL)
+        {
+            mathutil_mtxA_from_quat(&temp_r26->unk60);
+            mathutil_mtxA_to_mtx(sp38);
+            mathutil_mtxA_from_mtxB_translate(&temp_r26->unk30);
+            mathutil_mtxA_scale_s(temp_r26->modelScale);
+            mathutil_mtxA_translate(&temp_r26->unk3C);
+            mathutil_mtxA_mult_right(sp38);
+            mathutil_mtxA_mult_right(temp_r26->unk0->joints[var_r27->unk40].transformMtx);
+            mathutil_mtxA_translate(&var_r27->unk44);
+            mathutil_mtxA_rotate_z(var_r27->unk54);
+            mathutil_mtxA_rotate_y(var_r27->unk52);
+            mathutil_mtxA_rotate_x(var_r27->unk50);
+            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            avdisp_set_bound_sphere_scale(temp_r26->modelScale);
+            avdisp_draw_model_culled_sort_translucent(temp_r21);
+        }
+        if (var_r27->unk56 >= 0)
+        {
+            mathutil_mtxA_from_mtxB();
+            temp_r21_2 = ord_tbl_get_entry_for_pos(&var_r27->unkC);
+            temp_r3 = ord_tbl_alloc_node(0xCU);
+            temp_r3->node.drawFunc = (OrdTblDrawFunc)lbl_800BCD30;
+            temp_r3->unk8 = var_r27;
+            ord_tbl_insert_node(temp_r21_2, &temp_r3->node);
+        }
+        if (var_r27->unk36 & 1)
+        {
+            sp20 = var_r27->unkC;
+            mathutil_mtxA_from_quat(&temp_r26->unk60);
+            mathutil_mtxA_to_mtx(sp38);
+            mathutil_mtxA_from_translate(&temp_r26->unk30);
+            mathutil_mtxA_scale_s(temp_r26->modelScale);
+            mathutil_mtxA_translate(&temp_r26->unk3C);
+            new_var = &sp14;
+            mathutil_mtxA_mult_right(sp38);
+            avdisp_set_z_mode(1, GX_LEQUAL, 0);
+            var_r25 = lbl_801E31E4[temp_r26->charaId];
+            while (var_r25->unk0 != -1)
+            {
+                mathutil_mtxA_push();
+                mathutil_mtxA_mult_right(temp_r26->unk0->joints[var_r25->unk0].transformMtx);
+                mathutil_mtxA_translate(&var_r25->unk8);
+                mathutil_mtxA_sq_from_identity();
+                mathutil_mtxA_get_translate_alt(new_var);
+                temp_f21 = sp14.y - (sp20.y - 0.4f);
+                temp_f4 = sp20.y - 0.4f;
+                if (temp_f21 > 0.6f)
+                {
+                    mathutil_mtxA_pop();
+                }
+                else
+                {
+                    temp_f0 = -(temp_f21 / sp2C.y);
+                    sp14.x += (sp2C.x * temp_f0);
+                    sp14.y = temp_f4;
+                    sp14.z += (sp2C.z * temp_f0);
+                    mathutil_mtxA_set_translate(&sp14);
+                    mathutil_mtxA_mult_left(mathutilData->mtxB);
+                    mathutil_mtxA_get_translate_alt(&sp14);
+                    if (sp14.z < -0.01f)
+                    {
+                        temp_f21 = 1.6666666f * temp_f21;
+                        temp_f0 = 0.003921569f * (1.0f - temp_f21);
+                        sp8.x = var_r25->unk1 * temp_f0;
+                        sp8.y = var_r25->unk2 * temp_f0;
+                        sp8.z = var_r25->unk3 * temp_f0;
+                        avdisp_set_post_mult_color(sp8.x, sp8.y, sp8.z, 1.0f);
+                        temp_f21 = (var_r25->unk14 + (0.2f * temp_f21));
+                        temp_f0 = (0.005f + sp14.z) / sp14.z;
+                        sp14.x *= temp_f0;
+                        sp14.y *= temp_f0;
+                        sp14.z *= temp_f0;
+                        mathutil_mtxA_set_translate(&sp14);
+                        temp_f21 *= temp_f0;
+                        mathutil_mtxA_scale_s(temp_f21);
+                        mathutil_mtxA_rotate_x(0x4000);
+                        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                        avdisp_set_bound_sphere_scale(temp_f21);
+                        avdisp_draw_model_culled_sort_all(commonGma->modelEntries[0x4E].model);
+                    }
+                    mathutil_mtxA_pop();
+                }
+                var_r25++;
+            }
+            u_reset_post_mult_color();
+            avdisp_set_z_mode(1, GX_LEQUAL, 1);
+        }
+    }
+}
+
+#define lbl_802F652C 0.10000000149011612f
+
+void lbl_800BCD30(struct MyDrawNode *node)
+{
+    struct SomeBigEndingStruct_sub3 *r30 = node->unk8;
+    s16 *r29 = coloredBallPartModelIDs[r30->unk56];
+    struct GMAModelEntry *r31 = commonGma->modelEntries;
+
+    mathutil_mtxA_from_mtxB();
+    load_light_group_uncached(0);
+    mathutil_mtxA_translate_xyz(r30->unkC.x, r30->unkC.y + lbl_802F652C, r30->unkC.z);
+    mathutil_mtxA_rotate_y(r30->unk5A);
+    mathutil_mtxA_rotate_x(r30->unk58);
+    mathutil_mtxA_rotate_z(r30->unk5C);
+    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+    avdisp_set_z_mode(1, 3, 0);
+    avdisp_draw_model_unculled_sort_none(r31[clearHemisphereInsideParts[0]].model);
+    avdisp_draw_model_unculled_sort_none(r31[r29[0]].model);
+    avdisp_draw_model_unculled_sort_none(r31[r29[6]].model);
+    avdisp_set_z_mode(1, 3, 1);
+    avdisp_draw_model_unculled_sort_none(r31[clearHemisphereOutsideParts[0]].model);
+    avdisp_draw_model_unculled_sort_none(r31[r29[3]].model);
+    avdisp_set_z_mode(1, 3, 1);
+}
+
+void lbl_800BCF6C(struct Ape *, int);
+
+int func_800BCE54(int arg0, int arg1)
+{
+    struct SomeBigEndingStruct_sub3 *temp_r31;
+    struct Ape *ape;
+
+    temp_r31 = &lbl_802C6BD8.unk8->unkA804[arg0];
+    if (temp_r31->unk0 != NULL)
+    {
+        func_8008D29C(lbl_80206B80[arg0]);
+        temp_r31->unk0 = NULL;
+    }
+    if (arg1 >= 0)
+    {
+        temp_r31->unk0 = (void *)func_800380A8(arg0, arg1, &lbl_800BCF6C);
+        ape = temp_r31->unk0;
+        if (ape == NULL)
+            return 0;
+        ape->unk0->unk3C = 1.0f;
+        ape->flags |= 0x20;
+        temp_r31->unk8 = 0xC;
+        temp_r31->unkA = -1;
+        mathutil_mtxA_from_identity();
+        mathutil_mtxA_get_translate_alt2(&ape->unk30);
+        mathutil_mtxA_to_quat(&ape->unk60);
+    }
+    return 1;
+}
+
+void lbl_800BCF6C(struct Ape *arg0, int arg1)
+{
+    int var_r4;
+    struct SomeBigEndingStruct_sub3 *var_r30;
+    int i;
+    int b = (arg1 == 3);
+    Vec sp10;
+
+    if (b)
+    {
+        u_ape_free(arg0);
+        if (arg1 != 3)
+            func_8008D240();
+        return;
+    }
+    if (gamePauseStatus & 0xA)
+        return;
+
+    var_r30 = &lbl_802C6BD8.unk8->unkA804[0];
+    for (var_r4 = 4; var_r4 > 0; var_r4--, var_r30++)
+    {
+        if (var_r30->unk0 == arg0)
+            break;
+    }
+
+    if (var_r4 == 0)
+        return;
+    switch (arg0->charaId)
+    {
+    case 3:
+        switch (var_r30->unk8)
+        {
+        case 9:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 8;
+            break;
+        case 8:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 0xA;
+            break;
+        case 10:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 0xE;
+            break;
+        case 14:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 0xB;
+            break;
+        case 11:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 0xF;
+            break;
+        case 15:
+            if (var_r30->unkA != -1 && arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+            {
+                var_r30->unk8 = var_r30->unkA;
+                var_r30->unkA = -1;
+            }
+            break;
+        case 17:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 0x10;
+            break;
+        default:
+            if (var_r30->unkA != -1)
+            {
+                var_r30->unk8 = var_r30->unkA;
+                var_r30->unkA = -1;
+            }
+            break;
+        }
+        break;
+    default:
+        switch (var_r30->unk8)
+        {
+        case 14:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 0xF;
+            break;
+        case 15:
+            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+                var_r30->unk8 = 0xE;
+            if (var_r30->unkA != -1)
+            {
+                var_r30->unk8 = var_r30->unkA;
+                var_r30->unkA = -1;
+            }
+            break;
+        default:
+            if (var_r30->unkA != -1)
+            {
+                var_r30->unk8 = var_r30->unkA;
+                var_r30->unkA = -1;
+            }
+            break;
+        }
+    }
+
+    if (var_r30->unk8 < 0x12)
+        u_set_ape_anim(arg0, 7, var_r30->unk8, 0, lbl_802F64D0);
+    else
+    {
+        int temp_r5_3 = var_r30->unk8 - 0x12;
+        u_set_ape_anim(arg0, 1, temp_r5_3, temp_r5_3 + 1, lbl_802F64D0);
+    }
+    u_do_ape_anim(arg0);
+    switch (var_r30->unk70)
+    {
+    case 2:
+        func_8008C090(arg0, &var_r30->unk74);
+        break;
+    case 1:
+        mathutil_mtxA_from_mtx(cameraInfo[modeCtrl.currPlayer].unk144);
+        mathutil_mtxA_rigid_inv_tf_tl(&sp10);
+        func_8008C090(arg0, &sp10);
+        break;
+    }
+
+    mathutil_mtxA_from_translate(&var_r30->unkC);
+    mathutil_mtxA_rotate_z((s32) var_r30->unk30.unk4);
+    mathutil_mtxA_rotate_y(var_r30->unk30.unk2 - 0x4000);
+    mathutil_mtxA_rotate_x((s32) var_r30->unk30.unk0);
+    mathutil_mtxA_get_translate_alt2(&arg0->unk30);
+    mathutil_mtxA_to_quat(&arg0->unk60);
+
+    switch (arg0->charaId)
+    {
+    case 0:
+        switch (arg0->unk9C)
+        {
+        case 0xE:
+            if (lbl_802C6BD8.unk4 & 0x10)
+            {
+                if (arg0->unk0->unk38 == 0x16)
+                    SoundReq(0xB3U);
+                else if (arg0->unk0->unk38 == 0x44)
+                    SoundReq(0xE8U);
+            }
+            break;
+        }
+        break;
+    case 1:
+        switch (arg0->unk9C)
+        {
+        case 15:
+            if (lbl_802C6BD8.unk4 & 0x10)
+            {
+                if (arg0->unk0->unk38 == 0xC)
+                    SoundReq(0x105U);
+                else if (arg0->unk0->unk38 == 0x50 || arg0->unk0->unk38 == 0x66)
+                    SoundReq(0x12FU);
+                else if (arg0->unk0->unk38 == 0x76)
+                    u_play_sound_0(0x1FF);
+            }
+            break;
+        case 14:
+            if ((lbl_802C6BD8.unk4 & 0x10) && arg0->unk0->unk38 == 0x12)
+                SoundReq(0xFCU);
+            break;
+        }
+        break;
+    case 2:
+        switch (arg0->unk9C)
+        {
+        case 0xE:
+            if ((lbl_802C6BD8.unk4 & 0x10) && arg0->unk0->unk38 == 0x24)
+                SoundReq(0x16BU);
+            break;
+        }
+        break;
+    }
+}
+
+void func_800BD470(void)
+{
+    int i;
+    struct SomeBigEndingStruct_sub4 *ptr;
+
+    ptr = lbl_802C6BD8.unk8->unk4;
+    for (i = 0; i < 512; i++, ptr++)
+        ptr->unk0 = 0;
 }
 
 /*

@@ -6147,8 +6147,6 @@ lbl_800BBD0C:
 /* 800BBD1C 000B7C3C  28 00 00 15 */	cmplwi r0, 0x15
 /* 800BBD20 000B7C40  41 81 0A 84 */	bgt lbl_800BC7A4
 /* 800BBD24 000B7C44  54 00 10 3A */	slwi r0, r0, 2
-/*lis r4, lbl_801E2BEC@ha
-addi r26, r4, lbl_801E2BEC@l*/
 /* 800BBD28 000B7C48  7C 1A 00 2E */	lwzx r0, r26, r0
 /* 800BBD2C 000B7C4C  7C 09 03 A6 */	mtctr r0
 /* 800BBD30 000B7C50  4E 80 04 20 */	bctr
@@ -7228,6 +7226,8 @@ lbl_800BCCE4:
 /* 800BCD24 000B8C44  CA A1 00 B0 */	lfd f21, 0xb0(r1)
 /* 800BCD28 000B8C48  38 21 01 08 */	addi r1, r1, 0x108
 /* 800BCD2C 000B8C4C  4E 80 00 20 */	blr
+
+.global lbl_800BCD30
 lbl_800BCD30:
 /* 800BCD30 000B8C50  7C 08 02 A6 */	mflr r0
 /* 800BCD34 000B8C54  3C 80 80 1B */	lis r4, coloredBallPartModelIDs@ha
@@ -7303,6 +7303,7 @@ lbl_800BCD30:
 /* 800BCE4C 000B8D6C  38 21 00 20 */	addi r1, r1, 0x20
 /* 800BCE50 000B8D70  4E 80 00 20 */	blr
 
+.if 0
 .global func_800BCE54
 func_800BCE54:
 /* 800BCE54 000B8D74  7C 08 02 A6 */	mflr r0
@@ -7379,6 +7380,9 @@ lbl_800BCF50:
 /* 800BCF60 000B8E80  83 A1 00 14 */	lwz r29, 0x14(r1)
 /* 800BCF64 000B8E84  38 21 00 20 */	addi r1, r1, 0x20
 /* 800BCF68 000B8E88  4E 80 00 20 */	blr
+.endif
+
+.global lbl_800BCF6C
 lbl_800BCF6C:
 /* 800BCF6C 000B8E8C  7C 08 02 A6 */	mflr r0
 /* 800BCF70 000B8E90  90 01 00 04 */	stw r0, 4(r1)
@@ -7442,8 +7446,7 @@ lbl_800BD030:
 /* 800BD04C 000B8F6C  7C 03 00 2E */	lwzx r0, r3, r0
 /* 800BD050 000B8F70  7C 09 03 A6 */	mtctr r0
 /* 800BD054 000B8F74  4E 80 04 20 */	bctr
-.global lbl_800BD058
-lbl_800BD058:
+lbl_800BD058:  ;# 9
 /* 800BD058 000B8F78  80 9D 00 00 */	lwz r4, 0(r29)
 /* 800BD05C 000B8F7C  A0 64 00 3A */	lhz r3, 0x3a(r4)
 /* 800BD060 000B8F80  A0 84 00 38 */	lhz r4, 0x38(r4)
@@ -7453,8 +7456,7 @@ lbl_800BD058:
 /* 800BD070 000B8F90  38 00 00 08 */	li r0, 8
 /* 800BD074 000B8F94  B0 1E 00 08 */	sth r0, 8(r30)
 /* 800BD078 000B8F98  48 00 01 9C */	b lbl_800BD214
-.global lbl_800BD07C
-lbl_800BD07C:
+lbl_800BD07C:  ;# 8
 /* 800BD07C 000B8F9C  80 9D 00 00 */	lwz r4, 0(r29)
 /* 800BD080 000B8FA0  A0 64 00 3A */	lhz r3, 0x3a(r4)
 /* 800BD084 000B8FA4  A0 84 00 38 */	lhz r4, 0x38(r4)
@@ -7464,7 +7466,6 @@ lbl_800BD07C:
 /* 800BD094 000B8FB4  38 00 00 0A */	li r0, 0xa
 /* 800BD098 000B8FB8  B0 1E 00 08 */	sth r0, 8(r30)
 /* 800BD09C 000B8FBC  48 00 01 78 */	b lbl_800BD214
-.global lbl_800BD0A0
 lbl_800BD0A0:
 /* 800BD0A0 000B8FC0  80 9D 00 00 */	lwz r4, 0(r29)
 /* 800BD0A4 000B8FC4  A0 64 00 3A */	lhz r3, 0x3a(r4)
@@ -7475,7 +7476,6 @@ lbl_800BD0A0:
 /* 800BD0B8 000B8FD8  38 00 00 0E */	li r0, 0xe
 /* 800BD0BC 000B8FDC  B0 1E 00 08 */	sth r0, 8(r30)
 /* 800BD0C0 000B8FE0  48 00 01 54 */	b lbl_800BD214
-.global lbl_800BD0C4
 lbl_800BD0C4:
 /* 800BD0C4 000B8FE4  80 9D 00 00 */	lwz r4, 0(r29)
 /* 800BD0C8 000B8FE8  A0 64 00 3A */	lhz r3, 0x3a(r4)
@@ -7486,7 +7486,6 @@ lbl_800BD0C4:
 /* 800BD0DC 000B8FFC  38 00 00 0B */	li r0, 0xb
 /* 800BD0E0 000B9000  B0 1E 00 08 */	sth r0, 8(r30)
 /* 800BD0E4 000B9004  48 00 01 30 */	b lbl_800BD214
-.global lbl_800BD0E8
 lbl_800BD0E8:
 /* 800BD0E8 000B9008  80 9D 00 00 */	lwz r4, 0(r29)
 /* 800BD0EC 000B900C  A0 64 00 3A */	lhz r3, 0x3a(r4)
@@ -7497,7 +7496,6 @@ lbl_800BD0E8:
 /* 800BD100 000B9020  38 00 00 0F */	li r0, 0xf
 /* 800BD104 000B9024  B0 1E 00 08 */	sth r0, 8(r30)
 /* 800BD108 000B9028  48 00 01 0C */	b lbl_800BD214
-.global lbl_800BD10C
 lbl_800BD10C:
 /* 800BD10C 000B902C  A8 BE 00 0A */	lha r5, 0xa(r30)
 /* 800BD110 000B9030  2C 05 FF FF */	cmpwi r5, -1
@@ -7512,7 +7510,6 @@ lbl_800BD10C:
 /* 800BD134 000B9054  38 00 FF FF */	li r0, -1
 /* 800BD138 000B9058  B0 1E 00 0A */	sth r0, 0xa(r30)
 /* 800BD13C 000B905C  48 00 00 D8 */	b lbl_800BD214
-.global lbl_800BD140
 lbl_800BD140:
 /* 800BD140 000B9060  80 9D 00 00 */	lwz r4, 0(r29)
 /* 800BD144 000B9064  A0 64 00 3A */	lhz r3, 0x3a(r4)
@@ -7524,7 +7521,6 @@ lbl_800BD140:
 /* 800BD15C 000B907C  B0 1E 00 08 */	sth r0, 8(r30)
 /* 800BD160 000B9080  48 00 00 B4 */	b lbl_800BD214
 lbl_800BD164:
-.global lbl_800BD164
 /* 800BD164 000B9084  A8 1E 00 0A */	lha r0, 0xa(r30)
 /* 800BD168 000B9088  2C 00 FF FF */	cmpwi r0, -1
 /* 800BD16C 000B908C  41 82 00 A8 */	beq lbl_800BD214
@@ -7915,10 +7911,11 @@ lbl_800BD6DC:
 /* 800BD6F0 000B9610  28 00 00 0A */	cmplwi r0, 0xa
 /* 800BD6F4 000B9614  41 81 0F E0 */	bgt lbl_800BE6D4
 /* 800BD6F8 000B9618  54 00 10 3A */	slwi r0, r0, 2
+lis r3, lbl_801E321C@ha
+addi r24, r3, lbl_801E321C@l
 /* 800BD6FC 000B961C  7C 18 00 2E */	lwzx r0, r24, r0
 /* 800BD700 000B9620  7C 09 03 A6 */	mtctr r0
 /* 800BD704 000B9624  4E 80 04 20 */	bctr
-.global lbl_800BD708
 lbl_800BD708:
 /* 800BD708 000B9628  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
 /* 800BD70C 000B962C  C3 7D 00 10 */	lfs f27, 0x10(r29)
@@ -12800,19 +12797,18 @@ lbl_801E31E4:
 	.4byte lbl_801E2F14  ;# ptr
 	.4byte lbl_801E307C  ;# ptr
 
-.global lbl_801E31F4
 lbl_801E31F4:
 	# ROM: 0x1E01F4
-	.4byte lbl_800BD07C  ;# ptr
-	.4byte lbl_800BD058  ;# ptr
-	.4byte lbl_800BD0A0  ;# ptr
-	.4byte lbl_800BD0E8  ;# ptr
-	.4byte lbl_800BD164  ;# ptr
-	.4byte lbl_800BD164  ;# ptr
-	.4byte lbl_800BD0C4  ;# ptr
-	.4byte lbl_800BD10C  ;# ptr
-	.4byte lbl_800BD164  ;# ptr
-	.4byte lbl_800BD140  ;# ptr
+	.4byte lbl_800BD07C  ;# ptr  8
+	.4byte lbl_800BD058  ;# ptr  9
+	.4byte lbl_800BD0A0  ;# ptr  10
+	.4byte lbl_800BD0E8  ;# ptr  11
+	.4byte lbl_800BD164  ;# ptr  12
+	.4byte lbl_800BD164  ;# ptr  13
+	.4byte lbl_800BD0C4  ;# ptr  14
+	.4byte lbl_800BD10C  ;# ptr  15
+	.4byte lbl_800BD164  ;# ptr  16
+	.4byte lbl_800BD140  ;# ptr  17
 
 .global lbl_801E321C
 lbl_801E321C:
