@@ -61,7 +61,7 @@ struct Camera
     /*0x1A*/ s16 rotY;  // rotation about Y axis (yaw)
     /*0x1C*/ s16 rotZ;  // rotation about Z axis (roll)
     /*0x1E*/ s8 state;
-    u8 unk1F;
+    s8 unk1F;
     float unk20;
     /*0x24*/ s16 flags;
     s8 unk26;
@@ -111,6 +111,20 @@ struct Camera
     u8 unk208;
     u8 filler20C[0x284-0x20C];
 };  // size=0x284
+
+// runs 'code' for each camera
+#define CAMERA_FOREACH(code) \
+{ \
+    struct Camera *camera = &cameraInfo[0]; \
+    struct Camera *cameraBackup = currentCameraStructPtr; \
+    int i; \
+    for (i = 0; i < 4; i++, camera++) \
+    { \
+        currentCameraStructPtr = camera; \
+        { code } \
+    } \
+    currentCameraStructPtr = cameraBackup; \
+}
 
 extern s16 lbl_802F1C30;
 //extern s8 lbl_802F1C32;

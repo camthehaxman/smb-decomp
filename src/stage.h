@@ -470,6 +470,22 @@ struct StageMirror
     struct GMAModel *model;  // filled in at runtime
 };
 
+struct Stage_Child90  // some model?
+{
+    u32 unk0;
+    Vec unk4;
+    
+    s16 unk10;
+    s16 unk12;
+    s16 unk14;
+    
+    Vec unk18;
+    /*
+    float unk18;
+    float unk1C;
+    float unk20;*/
+};
+
 struct Stage
 {
     s32 loopStartSeconds;
@@ -507,8 +523,8 @@ struct Stage
     /*0x80*/ s32 mirrorCount;
     /*0x84*/ void *mirrors;
     struct DecodedStageLzPtr_child6 *unk88;
-    u8 filler8C[4];
-    void *unk90;
+    s32 unk8C;
+    struct Stage_Child90 *unk90;
 };
 
 void ev_stage_init(void);
