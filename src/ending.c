@@ -3211,10 +3211,8 @@ void func_800BD4B8(void)
             }
             if (var_r29->unk8 & 0x10)
             {
-                //float f;
                 float f;
-                //double new_var2;
-                temp_f26 = temp_r27->unk14;
+                float g = temp_r27->unk14;
                 sp8.sp20.x = 0.0f;
                 sp8.sp20.y = sp1D8;
                 sp8.sp20.z = 0.0f;
@@ -3223,18 +3221,13 @@ void func_800BD4B8(void)
                 sp8.sp2C.y = 1.0f;
                 sp8.sp10.y = 0.0f;
                 sp8.sp2C.z = 0.0f;
-                 sp8.sp10.z = 0.0f;
+                sp8.sp10.z = 0.0f;
                 mathutil_mtxA_from_rotate_y(var_r29->unk30.y);
                 mathutil_mtxA_rotate_x((s32) var_r29->unk30.x);
                 mathutil_mtxA_rotate_z((s32) var_r29->unk30.z);
                 mathutil_mtxA_tf_vec_xyz(&spFC, 0.70710677f, 0.70710677f, 0.0f);
-        //temp_f0_10 = sp8.sp20.y;
-        //new_var2 = ;
-        f = (0.30000001192092896 + 0.69999998807907104 * __fabs(spFC.y)) * (temp_f26 * var_r29->unk24.x);
-        //f = temp_f0_10 + f;
-        temp_f1 = var_r29->unkC.y;
-        if (temp_f1 < sp8.sp20.y + f)
-                //if (var_r29->unkC.y < temp_f0_10)
+                f = g * var_r29->unk24.x * (0.30000001192092896 + 0.69999998807907104 * __fabs(spFC.y));
+                if (var_r29->unkC.y < sp8.sp20.y + f)
                 {
                     var_r29->unkC.y = sp8.sp20.y + f;
                     temp_f26 = mathutil_vec_dot_prod(&sp8.sp2C, &var_r29->unk18);
