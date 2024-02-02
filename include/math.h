@@ -51,8 +51,10 @@ extern inline float sqrtf(float x)
 
 #ifdef __MWERKS__
 #define fabs(x) __fabs(x)
+#define fabsf(x) __fabsf(x)
 #else
 double fabs(double x);
+float fabsf(float x);
 #endif
 
 long __fpclassifyf(float x);
@@ -66,6 +68,19 @@ long __fpclassifyd(double x);
 
 #define fpclassify(x) (sizeof(x) == sizeof(float) ? __fpclassifyf((float)(x)) : __fpclassifyd((double)(x)))
 #define isfinite(x) ((fpclassify(x) > FP_INFINITE))
+
+inline float fmodf(float x, float m)
+{
+    float a = fabsf(m);
+    float b = fabsf(x);
+    if (a > b)
+        return x;
+    else
+    {
+        long long c = (long long)(x / m);
+        return x - m * c;
+    }
+}
 
 #ifdef __MWERKS__
 #pragma cplusplus reset

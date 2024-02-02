@@ -2164,6 +2164,7 @@ lbl_80171C38:
 
 .section .data
 
+	.balign 8
 .global lbl_801EA5B8
 lbl_801EA5B8:
 	# ROM: 0x1E75B8

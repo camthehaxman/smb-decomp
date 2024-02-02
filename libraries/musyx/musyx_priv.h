@@ -275,7 +275,7 @@ void salDeactivateVoice(struct DSPVoice *);
 bool salAddStudioInput(struct DSPStudio *, void *);
 bool salRemoveStudioInput(struct DSPStudio *, void *);
 void salHandleAuxProcessing(void);
-void salCalcVolume(u8, SND_FVECTOR *, int, int, int, int, float, float, float);
+void salCalcVolume(u8 voltab_index, SAL_VOLINFO* vi, float vol, u32 pan, u32 span, float auxa, float auxb, u32 itd, u32 dpl2);
 // ? UpdateRoomDistances();
 // ? CheckRoomStatus();
 // ? CheckDoorStatus();
@@ -473,3 +473,6 @@ extern void *synthAuxAUser[];
 extern void *synthAuxBUser[];
 extern u8 synthAuxAMIDISet[8];
 extern u8 synthAuxBMIDISet[8];
+
+/* synth_dbtab.c */
+extern float dspDLSVolTab[129];

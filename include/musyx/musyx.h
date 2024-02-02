@@ -114,6 +114,35 @@ typedef struct SND_PARAMETER_INFO
     SND_PARAMETER *paraArray;
 } SND_PARAMETER_INFO;
 
+typedef struct SAL_VOLINFO {
+  // total size: 0x24
+  f32 volL;     // offset 0x0, size 0x4
+  f32 volR;     // offset 0x4, size 0x4
+  f32 volS;     // offset 0x8, size 0x4
+  f32 volAuxAL; // offset 0xC, size 0x4
+  f32 volAuxAR; // offset 0x10, size 0x4
+  f32 volAuxAS; // offset 0x14, size 0x4
+  f32 volAuxBL; // offset 0x18, size 0x4
+  f32 volAuxBR; // offset 0x1C, size 0x4
+  f32 volAuxBS; // offset 0x20, size 0x4
+} SAL_VOLINFO;
+
+typedef struct SAL_PANINFO {
+  // total size: 0x30
+  u32 pan_i;   // offset 0x0, size 0x4
+  u32 pan_im;  // offset 0x4, size 0x4
+  u32 span_i;  // offset 0x8, size 0x4
+  u32 span_im; // offset 0xC, size 0x4
+  u32 rpan_i;  // offset 0x10, size 0x4
+  u32 rpan_im; // offset 0x14, size 0x4
+  f32 pan_f;   // offset 0x18, size 0x4
+  f32 pan_fm;  // offset 0x1C, size 0x4
+  f32 span_f;  // offset 0x20, size 0x4
+  f32 span_fm; // offset 0x24, size 0x4
+  f32 rpan_f;  // offset 0x28, size 0x4
+  f32 rpan_fm; // offset 0x2C, size 0x4
+} SAL_PANINFO;
+
 SND_VOICEID sndFXStartParaInfo(SND_FXID fid, u8 vol, u8 pan, u8 studio, SND_PARAMETER_INFO *paraInfo);
 int sndFXCtrl(SND_VOICEID vid, u8 ctrl, u8 value);
 int sndFXCtrl14(SND_VOICEID vid, u8 ctrl, u16 value);

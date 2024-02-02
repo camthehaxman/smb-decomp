@@ -301,7 +301,7 @@ SOURCES := \
 	libraries/musyx/synth_dbtab.c \
 	libraries/musyx/asm/s_data.s \
 	libraries/musyx/asm/hw_dspctrl.s \
-	libraries/musyx/asm/hw_volconv.s \
+	libraries/musyx/hw_volconv.c \
 	libraries/musyx/asm/snd3d.s \
 	libraries/musyx/asm/synth_2.s \
 	libraries/musyx/snd_math.c \

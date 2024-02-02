@@ -404,7 +404,7 @@ const u16 lbl_80171CC0[128] =
 
 void hwSetVolume(int arg0, u8 arg1, u32 arg2, int arg3, float arg8, float arg9, float argA)
 {
-    SND_FVECTOR sp24[3];
+    SAL_VOLINFO sp24;
     u16 temp_r4;
     u16 temp_r5;
     u16 temp_r6;
@@ -417,18 +417,18 @@ void hwSetVolume(int arg0, u8 arg1, u32 arg2, int arg3, float arg8, float arg9, 
     if (argA >= 1.0f)
         argA = 1.0f;
     salCalcVolume(arg1,
-                  sp24,
+                  &sp24,
+                  arg8,
                   arg2,
                   arg3,
-                  (temp_r31->unkEC & 0x80000000) != 0,
-                  dspStudio[temp_r31->unkEA].unk54 == 1,
-                  arg8,
                   arg9,
-                  argA);
+                  argA,
+                  (temp_r31->unkEC & 0x80000000) != 0,
+                  dspStudio[temp_r31->unkEA].unk54 == 1);
 
-    temp_r4 = 32767.0f * sp24[0].x;
-    temp_r5 = 32767.0f * sp24[0].y;
-    temp_r6 = 32767.0f * sp24[0].z;
+    temp_r4 = 32767.0f * sp24.volL;
+    temp_r5 = 32767.0f * sp24.volR;
+    temp_r6 = 32767.0f * sp24.volS;
     if (temp_r31->unkE5 == 0xFF
      || temp_r31->unk4C != temp_r4
      || temp_r31->unk4E != temp_r5
@@ -441,9 +441,9 @@ void hwSetVolume(int arg0, u8 arg1, u32 arg2, int arg3, float arg8, float arg9, 
         temp_r31->unkE5 = 0;
     }
 
-    temp_r4 = 32767.0f * sp24[1].x;
-    temp_r5 = 32767.0f * sp24[1].y;
-    temp_r6 = 32767.0f * sp24[1].z;
+    temp_r4 = 32767.0f * sp24.volAuxAL;
+    temp_r5 = 32767.0f * sp24.volAuxAR;
+    temp_r6 = 32767.0f * sp24.volAuxAS;
     if (temp_r31->unkE6 == 0xFF
      || temp_r31->unk52 != temp_r4
      || temp_r31->unk54 != temp_r5
@@ -456,9 +456,9 @@ void hwSetVolume(int arg0, u8 arg1, u32 arg2, int arg3, float arg8, float arg9, 
         temp_r31->unkE6 = 0;
     }
 
-    temp_r4 = 32767.0f * sp24[2].x;
-    temp_r5 = 32767.0f * sp24[2].y;
-    temp_r6 = 32767.0f * sp24[2].z;
+    temp_r4 = 32767.0f * sp24.volAuxBL;
+    temp_r5 = 32767.0f * sp24.volAuxBR;
+    temp_r6 = 32767.0f * sp24.volAuxBS;
     if (temp_r31->unkE7 == 0xFF
      || temp_r31->unk58 != temp_r4
      || temp_r31->unk5A != temp_r5
