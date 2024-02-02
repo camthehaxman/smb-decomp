@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "course.h"
 #include "effect.h"
+#include "ending.h"
 #include "event.h"
 #include "game.h"
 #include "hud.h"

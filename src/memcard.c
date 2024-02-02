@@ -2785,7 +2785,7 @@ void save_sequence(void)
         check_create_memcard_file_result();
         break;
     case 0x13:
-        memset(&cardStat, 0, 0x6C);
+        memset(&cardStat, 0, sizeof(cardStat));
         memcardInfo.unk40 = 0x4B0;
         memcardInfo.state = 0x14;
         break;

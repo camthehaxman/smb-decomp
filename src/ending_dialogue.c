@@ -33,91 +33,81 @@ struct GameResultInfo
     s32 unk34;
 };
 
-struct Struct800C1418
+void effect_ending_ballfrag_init(struct Effect *effect)
 {
-	u32 unk0;
-	void *unk4[6];
-};
-
-void get_game_results(struct GameResultInfo *arg0);
-char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***arg1);
-void copy_dialogue_string(struct GameResultInfo *res, struct Struct800C1418 *out, char *dest, char **lines);
-
-void effect_ending_ballfrag_init(struct Effect *arg0)
-{
-    arg0->timer = 0xE10;
-    arg0->cameras = 0xFFFF;
+    effect->timer = 0xE10;
+    effect->cameras = 0xFFFF;
 }
 
-void effect_ending_ballfrag_main(struct Effect *arg0)
+void effect_ending_ballfrag_main(struct Effect *effect)
 {
     Vec spC;
     float temp_f2;
 
     if (!(endingInfo.unk4 & 8))
     {
-        mathutil_mtxA_from_rotate_y(arg0->rotY);
-        mathutil_mtxA_rotate_x(arg0->rotX);
-        mathutil_mtxA_rotate_z(arg0->rotZ);
-        mathutil_mtxA_rigid_inv_tf_vec(&arg0->vel, &spC);
-        temp_f2 = mathutil_vec_dot_prod(&arg0->unk88, &spC);
+        mathutil_mtxA_from_rotate_y(effect->rotY);
+        mathutil_mtxA_rotate_x(effect->rotX);
+        mathutil_mtxA_rotate_z(effect->rotZ);
+        mathutil_mtxA_rigid_inv_tf_vec(&effect->vel, &spC);
+        temp_f2 = mathutil_vec_dot_prod(&effect->unk88, &spC);
         if (temp_f2 < 0.0f)
         {
             temp_f2 *= -0.3f;
-            spC.x += temp_f2 * arg0->unk88.x;
-            spC.y += temp_f2 * arg0->unk88.y;
-            spC.z += temp_f2 * arg0->unk88.z;
+            spC.x += temp_f2 * effect->unk88.x;
+            spC.y += temp_f2 * effect->unk88.y;
+            spC.z += temp_f2 * effect->unk88.z;
         }
         else
         {
             temp_f2 *= -0.05f;
-            spC.x += temp_f2 * arg0->unk88.x;
-            spC.y += temp_f2 * arg0->unk88.y;
-            spC.z += temp_f2 * arg0->unk88.z;
+            spC.x += temp_f2 * effect->unk88.x;
+            spC.y += temp_f2 * effect->unk88.y;
+            spC.z += temp_f2 * effect->unk88.z;
         }
         spC.x *= 0.99f;
         spC.y *= 0.99f;
         spC.z *= 0.99f;
-        mathutil_mtxA_tf_vec(&spC, &arg0->vel);
-        arg0->vel.y += -0.004899996f;
-        arg0->pos.x += arg0->vel.x;
-        arg0->pos.y += arg0->vel.y;
-        arg0->pos.z += arg0->vel.z;
-        arg0->rotX = (0.96f * arg0->rotX) + (6144.0f * arg0->vel.y);
-        arg0->rotY = (0.96f * arg0->rotY) + (6144.0f * arg0->vel.z);
-        arg0->rotZ = (0.96f * arg0->rotZ) + (6144.0f * arg0->vel.x);
+        mathutil_mtxA_tf_vec(&spC, &effect->vel);
+        effect->vel.y += -0.004899996f;
+        effect->pos.x += effect->vel.x;
+        effect->pos.y += effect->vel.y;
+        effect->pos.z += effect->vel.z;
+        effect->rotX = (0.96f * effect->rotX) + (6144.0f * effect->vel.y);
+        effect->rotY = (0.96f * effect->rotY) + (6144.0f * effect->vel.z);
+        effect->rotZ = (0.96f * effect->rotZ) + (6144.0f * effect->vel.x);
     }
 }
 
 struct MyNode
 {
     struct OrdTblNode node;
-    u32 unk8;
+    u32 lightGroup;
     struct Effect *effect;
 };
 
-void lbl_800C0C94(struct MyNode *);
+static void ballfrag_draw_func(struct MyNode *);
 
 void effect_ending_ballfrag_draw(struct Effect *effect)
 {
-    struct MyNode *temp_r3;
-    struct OrdTblNode *temp_r30;
+    struct MyNode *node;
+    struct OrdTblNode *entry;
 
     mathutil_mtxA_from_mtxB();
-    temp_r30 = ord_tbl_get_entry_for_pos(&effect->pos);
-    temp_r3 = ord_tbl_alloc_node(0x10U);
-    temp_r3->node.drawFunc = (OrdTblDrawFunc)lbl_800C0C94;
-    temp_r3->unk8 = peek_light_group();
-    temp_r3->effect = effect;
-    ord_tbl_insert_node(temp_r30, &temp_r3->node);
+    entry = ord_tbl_get_entry_for_pos(&effect->pos);
+    node = ord_tbl_alloc_node(0x10U);
+    node->node.drawFunc = (OrdTblDrawFunc)ballfrag_draw_func;
+    node->lightGroup = peek_light_group();
+    node->effect = effect;
+    ord_tbl_insert_node(entry, &node->node);
 }
 
-void lbl_800C0C94(struct MyNode *node)
+static void ballfrag_draw_func(struct MyNode *node)
 {
     struct Effect *effect;
     struct GMAModelEntry *modelEntries;
 
-    load_light_group_cached(node->unk8);
+    load_light_group_cached(node->lightGroup);
     effect = node->effect;
     mathutil_mtxA_from_mtxB_translate(&effect->pos);
     mathutil_mtxA_rotate_y(effect->rotY);
@@ -146,63 +136,51 @@ void lbl_800C0C94(struct MyNode *node)
 
 void effect_ending_ballfrag_destroy(struct Effect *effect) {}
 
-void func_800C0DC0(s32 *arg0, char *arg1)
-{
-    struct GameResultInfo sp10;
-    char **r3;
-
-    get_game_results(&sp10);
-    r3 = get_ending_dlg_lines(&sp10, NULL);
-    copy_dialogue_string(&sp10, (void *)arg0, arg1, r3);
-}
-
-#pragma force_active on
-
 // AiAi Dialogue
 
-char *lbl_801E32B8_jp[] =
+static char *aiaiDialogue0_jp[] =
 {
     "h/KONNDOHA SARANI",
     "h/UENOk/REBERUh/DE ASONNDENE",
     NULL,
 };
 
-char *lbl_801E32B8[] =
+static char *aiaiDialogue0_en[] =
 {
     "Try a higher level",
     "next time",
     NULL,
 };
 
-char *lbl_801E3330_jp[] =
+static char *aiaiDialogue1_jp[] =
 {
     "h/KOREDE k/KIMIh/MO",
     "h/ICHININNMAENO Ok/SARUh/SANNDAYO",
     NULL,
 };
 
-char *lbl_801E3330[] =
+static char *aiaiDialogue1_en[] =
 {
     "Now you've become",
     "cool monkey like me",
     NULL,
 };
 
-char *lbl_801E33D0_jp[] =
+static char *aiaiDialogue2_jp[] =
 {
     "k/KIMIh/TTEk/SUGOIh/NE! KOREKARAMO",
     "k/MONNKI-BO-RUh/WO YOROSIKU!",
     NULL,
 };
 
-char *lbl_801E33D0[] =
+static char *aiaiDialogue2_en[] =
 {
     "You are so cool! Remember,",
     "Monkey Ball is the best game for you!",
     NULL,
 };
 
-char *lbl_801E3518_jp[] =
+static char *aiaiDialogue3_jp[] =
 {
     "h/KOKOMADE, k/PUREIh/DEKITAk/KIMIh/HAk/SUGOIh/YO!",
     "h/KOKOMADENOk/PUREIh/, OTUKARESAMADESITA!",
@@ -211,7 +189,7 @@ char *lbl_801E3518_jp[] =
     NULL,
 };
 
-char *lbl_801E3518[] =
+static char *aiaiDialogue3_en[] =
 {
     "Wow! You've made it this far!",
     "You're incredible!",
@@ -221,7 +199,7 @@ char *lbl_801E3518[] =
     NULL,
 };
 
-char *lbl_801E3614_jp[] =
+static char *aiaiDialogue4_jp[] =
 {
     "h/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/ZENBUDE%tk/POINNTOh/DANE!",
@@ -230,7 +208,7 @@ char *lbl_801E3614_jp[] =
     NULL,
 };
 
-char *lbl_801E3614[] =
+static char *aiaiDialogue4_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -239,7 +217,7 @@ char *lbl_801E3614[] =
     NULL,
 };
 
-char *lbl_801E36E8_jp[] =
+static char *aiaiDialogue5_jp[] =
 {
     "h/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/ZENNBUDE%tk/POINNTOh/DANE!",
@@ -248,7 +226,7 @@ char *lbl_801E36E8_jp[] =
     NULL,
 };
 
-char *lbl_801E36E8[] =
+static char *aiaiDialogue5_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -257,7 +235,7 @@ char *lbl_801E36E8[] =
     NULL,
 };
 
-char *lbl_801E3784_jp[] =
+static char *aiaiDialogue6_jp[] =
 {
     "%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/ZENBUDE%tk/POINNTOh/DANE!",
@@ -266,7 +244,7 @@ char *lbl_801E3784_jp[] =
     NULL,
 };
 
-char *lbl_801E3784[] =
+static char *aiaiDialogue6_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -275,7 +253,7 @@ char *lbl_801E3784[] =
     NULL,
 };
 
-char *lbl_801E3820_jp[] =
+static char *aiaiDialogue7_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/ZENNBUDE%tk/POINNTOh/DANE!",
@@ -284,7 +262,7 @@ char *lbl_801E3820_jp[] =
     NULL,
 };
 
-char *lbl_801E3820[] =
+static char *aiaiDialogue7_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -293,7 +271,7 @@ char *lbl_801E3820[] =
     NULL,
 };
 
-char *lbl_801E38AC_jp[] =
+static char *aiaiDialogue8_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/ZENBUDE%tk/POINNTOh/DANE!",
@@ -302,7 +280,7 @@ char *lbl_801E38AC_jp[] =
     NULL,
 };
 
-char *lbl_801E38AC[] =
+static char *aiaiDialogue8_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -312,7 +290,7 @@ char *lbl_801E38AC[] =
     NULL,
 };
 
-char *lbl_801E3948_jp[] =
+static char *aiaiDialogue9_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/ZENBUDE%tk/POINNTOh/DANE!",
@@ -321,7 +299,7 @@ char *lbl_801E3948_jp[] =
     NULL,
 };
 
-char *lbl_801E3948[] =
+static char *aiaiDialogue9_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -330,7 +308,7 @@ char *lbl_801E3948[] =
     NULL,
 };
 
-char *lbl_801E3A58_jp[] =
+static char *aiaiDialogue10_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "k/KIMIh/HA, SUBETENOMONOWOk/GETTOh/SHITEIRUYO!",
@@ -339,7 +317,7 @@ char *lbl_801E3A58_jp[] =
     NULL,
 };
 
-char *lbl_801E3A58[] =
+static char *aiaiDialogue10_en[] =
 {
     "You got %p!",
     "You've unlocked everything!",
@@ -348,7 +326,7 @@ char *lbl_801E3A58[] =
     NULL,
 };
 
-char *lbl_801E3B34_jp[] =
+static char *aiaiDialogue11_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "k/SAIKO-h/HA, %bk/POINNTOh/DANE!",
@@ -357,7 +335,7 @@ char *lbl_801E3B34_jp[] =
     NULL,
 };
 
-char *lbl_801E3B34[] =
+static char *aiaiDialogue11_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -366,7 +344,7 @@ char *lbl_801E3B34[] =
     NULL,
 };
 
-char *lbl_801E3C14_jp[] =
+static char *aiaiDialogue12_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/KORETTE, k/SAIKO-h/KIROKUDAYO!",
@@ -375,7 +353,7 @@ char *lbl_801E3C14_jp[] =
     NULL,
 };
 
-char *lbl_801E3C14[] =
+static char *aiaiDialogue12_en[] =
 {
     "You got %p!",
     "That's a new high score!",
@@ -384,7 +362,7 @@ char *lbl_801E3C14[] =
     NULL,
 };
 
-char *lbl_801E3CE4_jp[] =
+static char *aiaiDialogue13_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "h/KOREYORIk/SUGOIh/KIROKUHANAIYO!",
@@ -393,7 +371,7 @@ char *lbl_801E3CE4_jp[] =
     NULL,
 };
 
-char *lbl_801E3CE4[] =
+static char *aiaiDialogue13_en[] =
 {
     "You got %p!",
     "There's no record better than this!",
@@ -402,7 +380,7 @@ char *lbl_801E3CE4[] =
     NULL,
 };
 
-char *lbl_801E3D7C_jp[] =
+static char *aiaiDialogue14_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAYO!",
     "k/SAIKO-h/HA, %bk/POINNTOh/DANE!",
@@ -411,7 +389,7 @@ char *lbl_801E3D7C_jp[] =
     NULL,
 };
 
-char *lbl_801E3D7C[] =
+static char *aiaiDialogue14_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -420,7 +398,7 @@ char *lbl_801E3D7C[] =
     NULL,
 };
 
-char *lbl_801E3DD0_jp[] =
+static char *meemeeDialogue0_jp[] =
 {
     "h/KONNDOHA MOTTO",
     "h/UENOk/REBERUh/WO MEZASHITENE",
@@ -429,42 +407,42 @@ char *lbl_801E3DD0_jp[] =
 
 // MeeMee Dialogue
 
-char *lbl_801E3DD0[] =
+static char *meemeeDialogue0_en[] =
 {
     "Try a higher level",
     "next time",
     NULL,
 };
 
-char *lbl_801E3E34_jp[] =
+static char *meemeeDialogue1_jp[] =
 {
     "h/ANATAMO KOREDE",
     "h/ICHININNMAENO Ok/SARUh/SANNNE",
     NULL,
 };
 
-char *lbl_801E3E34[] =
+static char *meemeeDialogue1_en[] =
 {
     "Now you've become",
     "pretty monkey like me",
     NULL,
 };
 
-char *lbl_801E3EA8_jp[] =
+static char *meemeeDialogue2_jp[] =
 {
     "h/ANATATTEk/SUGOIh/WA! KOREKARAMO",
     "k/PUREI h/SHIMAKUTTENE",
     NULL,
 };
 
-char *lbl_801E3EA8[] =
+static char *meemeeDialogue2_en[] =
 {
     "You are so fantastic! Remember,",
     "Monkey Ball is the best game for you!",
     NULL,
 };
 
-char *lbl_801E3FE8_jp[] =
+static char *meemeeDialogue3_jp[] =
 {
     "h/KOKOMADEk/PUREIh/DEKITAANATAHA, k/ERAIh/WA!",
     "p/JIBUNN/h/DEp/JIBUNN/h/WOHOMETEAGETEMOIIKAMO!",
@@ -473,7 +451,7 @@ char *lbl_801E3FE8_jp[] =
     NULL,
 };
 
-char *lbl_801E3FE8[] =
+static char *meemeeDialogue3_en[] =
 {
     "Wow! You've made it this far!",
     "You really are something!",
@@ -483,7 +461,7 @@ char *lbl_801E3FE8[] =
     NULL,
 };
 
-char *lbl_801E40D8_jp[] =
+static char *meemeeDialogue4_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/ZE~NBUDE%tk/POINNTOh/YO.",
@@ -492,7 +470,7 @@ char *lbl_801E40D8_jp[] =
     NULL,
 };
 
-char *lbl_801E40D8[] =
+static char *meemeeDialogue4_en[] =
 {
     "You got %p!",
     "All together, that's %t!",
@@ -501,7 +479,7 @@ char *lbl_801E40D8[] =
     NULL,
 };
 
-char *lbl_801E41A8_jp[] =
+static char *meemeeDialogue5_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/ZE~NBUDE%tk/POINNTOh/YO.",
@@ -510,7 +488,7 @@ char *lbl_801E41A8_jp[] =
     NULL,
 };
 
-char *lbl_801E41A8[] =
+static char *meemeeDialogue5_en[] =
 {
     "You got %p!",
     "All together, that's %t!",
@@ -520,7 +498,7 @@ char *lbl_801E41A8[] =
     NULL,
 };
 
-char *lbl_801E4234_jp[] =
+static char *meemeeDialogue6_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/ZE~NBUDE%tk/POINNTOh/YO.",
@@ -529,7 +507,7 @@ char *lbl_801E4234_jp[] =
     NULL,
 };
 
-char *lbl_801E4234[] =
+static char *meemeeDialogue6_en[] =
 {
     "You got %p!",
     "All together, that's %t!",
@@ -539,7 +517,7 @@ char *lbl_801E4234[] =
     NULL,
 };
 
-char *lbl_801E42D8_jp[] =
+static char *meemeeDialogue7_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/ZE~NBUDE%tk/POINNTOh/YO.",
@@ -548,7 +526,7 @@ char *lbl_801E42D8_jp[] =
     NULL,
 };
 
-char *lbl_801E42D8[] =
+static char *meemeeDialogue7_en[] =
 {
     "You got %p!",
     "All together, that's %t!",
@@ -558,7 +536,7 @@ char *lbl_801E42D8[] =
     NULL,
 };
 
-char *lbl_801E4374_jp[] =
+static char *meemeeDialogue8_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/ZE~NBUDE%tk/POINNTOh/YO.",
@@ -567,7 +545,7 @@ char *lbl_801E4374_jp[] =
     NULL,
 };
 
-char *lbl_801E4374[] =
+static char *meemeeDialogue8_en[] =
 {
     "You got %p!",
     "All together, that's %t!",
@@ -577,7 +555,7 @@ char *lbl_801E4374[] =
     NULL,
 };
 
-char *lbl_801E43B8_jp[] =
+static char *meemeeDialogue9_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/ZE~NBUDE%tk/POINNTOh/YO.",
@@ -586,7 +564,7 @@ char *lbl_801E43B8_jp[] =
     NULL,
 };
 
-char *lbl_801E43B8[] =
+static char *meemeeDialogue9_en[] =
 {
     "You got %p!",
     "All together, that's %t!",
@@ -595,7 +573,7 @@ char *lbl_801E43B8[] =
     NULL,
 };
 
-char *lbl_801E44A4_jp[] =
+static char *meemeeDialogue10_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/ANATANIAGERARERUMONOHA, MOUNAIWA!",
@@ -604,7 +582,7 @@ char *lbl_801E44A4_jp[] =
     NULL,
 };
 
-char *lbl_801E44A4[] =
+static char *meemeeDialogue10_en[] =
 {
     "You got %p!",
     "You've unlocked everything!",
@@ -613,7 +591,7 @@ char *lbl_801E44A4[] =
     NULL,
 };
 
-char *lbl_801E4558_jp[] =
+static char *meemeeDialogue11_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "k/SAIKO-h/HA, %bk/POINNTOh/YO!",
@@ -622,7 +600,7 @@ char *lbl_801E4558_jp[] =
     NULL,
 };
 
-char *lbl_801E4558[] =
+static char *meemeeDialogue11_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -631,7 +609,7 @@ char *lbl_801E4558[] =
     NULL,
 };
 
-char *lbl_801E4640_jp[] =
+static char *meemeeDialogue12_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/KOREHA, k/SAIKO-h/KIROKUDAWA!",
@@ -640,7 +618,7 @@ char *lbl_801E4640_jp[] =
     NULL,
 };
 
-char *lbl_801E4640[] =
+static char *meemeeDialogue12_en[] =
 {
     "You got %p!",
     "You got the high score!",
@@ -650,7 +628,7 @@ char *lbl_801E4640[] =
     NULL,
 };
 
-char *lbl_801E46F8_jp[] =
+static char *meemeeDialogue13_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/KOREIJYOUNOKIROKUHA, DENAIWAYO!",
@@ -659,7 +637,7 @@ char *lbl_801E46F8_jp[] =
     NULL,
 };
 
-char *lbl_801E46F8[] =
+static char *meemeeDialogue13_en[] =
 {
     "You got %p!",
     "There's no record better than this!",
@@ -668,7 +646,7 @@ char *lbl_801E46F8[] =
     NULL,
 };
 
-char *lbl_801E47A4_jp[] =
+static char *meemeeDialogue14_jp[] =
 {
     "k/%pk/POINNTOh/WOk/GETTOh/SHITAWA!",
     "h/KIROKUHA,%bk/POINNTOh/YO!",
@@ -677,7 +655,7 @@ char *lbl_801E47A4_jp[] =
     NULL,
 };
 
-char *lbl_801E47A4[] =
+static char *meemeeDialogue14_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -687,7 +665,7 @@ char *lbl_801E47A4[] =
     NULL,
 };
 
-char *lbl_801E4814_jp[] =
+static char *lbl_801E4814_jp[] =
 {
     "h/MOTTO UENOk/REBERUh/DE",
     "h/ASOBITAIDEk/CHU",
@@ -696,42 +674,42 @@ char *lbl_801E4814_jp[] =
 
 // Baby Dialogue
 
-char *lbl_801E4814[] =
+static char *babyDialogue0_en[] =
 {
     "I want to play higher level",
     "next time",
     NULL,
 };
 
-char *lbl_801E487C_jp[] =
+static char *lbl_801E487C_jp[] =
 {
     "h/KOREDE RIPPANA Ok/SARUh/SANNNO",
     "h/NAKAMAIRIDEk/CHU",
     NULL,
 };
 
-char *lbl_801E487C[] =
+static char *babyDialogue1_en[] =
 {
     "Now you've become",
     "grown up monkey like me",
     NULL,
 };
 
-char *lbl_801E48F4_jp[] =
+static char *lbl_801E48F4_jp[] =
 {
     "k/SUGOIh/DEk/CHU! h/KOREKARAMO",
     "h/ZUTTO ASONNDEHOSIIDEk/CHU",
     NULL,
 };
 
-char *lbl_801E48F4[] =
+static char *babyDialogue2_en[] =
 {
     "You are such grown up! Remember,",
     "Monkey Ball is the best game for you!",
     NULL,
 };
 
-char *lbl_801E4A10_jp[] =
+static char *lbl_801E4A10_jp[] =
 {
     "h/KONOk/SUTE-JIh/MADEk/PUREIh/DEKIRUNANNTE",
     "k/SUGOIh/DEk/TYU! ODOROKIh/DEk/TYU!",
@@ -740,7 +718,7 @@ char *lbl_801E4A10_jp[] =
     NULL,
 };
 
-char *lbl_801E4A10[] =
+static char *babyDialogue3_en[] =
 {
     "Wow! You've made it this far!",
     "You are weally good!",
@@ -749,7 +727,7 @@ char *lbl_801E4A10[] =
     NULL,
 };
 
-char *lbl_801E4AE4_jp[] =
+static char *lbl_801E4AE4_jp[] =
 {
     "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "h/ZENBUDE%tk/POINNTOh/DEk/TYU!",
@@ -758,7 +736,7 @@ char *lbl_801E4AE4_jp[] =
     NULL,
 };
 
-char *lbl_801E4AE4[] =
+static char *babyDialogue4_en[] =
 {
     "You got %p!",
     "All togeder, you have %t!",
@@ -767,7 +745,7 @@ char *lbl_801E4AE4[] =
     NULL,
 };
 
-char *lbl_801E4B6C_jp[] =
+static char *lbl_801E4B6C_jp[] =
 {
     "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "h/ZENBUDE%tk/POINNTOh/DEk/TYU!",
@@ -776,7 +754,7 @@ char *lbl_801E4B6C_jp[] =
     NULL,
 };
 
-char *lbl_801E4B6C[] =
+static char *babyDialogue5_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -785,7 +763,7 @@ char *lbl_801E4B6C[] =
     NULL,
 };
 
-char *lbl_801E4C28_jp[] =
+static char *lbl_801E4C28_jp[] =
 {
     "h/%pk/POINNTO,GETTOh/DEk/TYU!",
     "h/ZENBUDE%tk/POINNTOh/DEk/TYU!",
@@ -794,7 +772,7 @@ char *lbl_801E4C28_jp[] =
     NULL,
 };
 
-char *lbl_801E4C28[] =
+static char *babyDialogue6_en[] =
 {
     "You got %p!",
     "All togeder, you have %t!",
@@ -803,7 +781,7 @@ char *lbl_801E4C28[] =
     NULL,
 };
 
-char *lbl_801E4CB4_jp[] =
+static char *lbl_801E4CB4_jp[] =
 {
     "h/%pk/POINNTO,GETTOh/DEk/TYU!",
     "h/ZENBUDE%tk/POINNTOh/DEk/TYU!",
@@ -812,7 +790,7 @@ char *lbl_801E4CB4_jp[] =
     NULL,
 };
 
-char *lbl_801E4CB4[] =
+static char *babyDialogue7_en[] =
 {
     "You got %p!",
     "All togedder, you have %p!",
@@ -821,7 +799,7 @@ char *lbl_801E4CB4[] =
     NULL,
 };
 
-char *lbl_801E4D34_jp[] =
+static char *lbl_801E4D34_jp[] =
 {
     "h/%pk/POINNTO,GETTOh/DEk/TYU!",
     "h/ZENBUDE%tk/POINNTOh/DEk/TYU!",
@@ -830,7 +808,7 @@ char *lbl_801E4D34_jp[] =
     NULL,
 };
 
-char *lbl_801E4D34[] =
+static char *babyDialogue8_en[] =
 {
     "You got %p!",
     "All togeder, you have %t!",
@@ -840,7 +818,7 @@ char *lbl_801E4D34[] =
     NULL,
 };
 
-char *lbl_801E4DBC_jp[] =
+static char *lbl_801E4DBC_jp[] =
 {
     "h/%pk/POINNTO,GETTOh/DEk/TYU!",
     "h/ZENBUDE%tk/POINNTOh/DEk/TYU!",
@@ -849,7 +827,7 @@ char *lbl_801E4DBC_jp[] =
     NULL,
 };
 
-char *lbl_801E4DBC[] =
+static char *babyDialogue9_en[] =
 {
     "You got %p!",
     "All togeder, you have %t!",
@@ -858,7 +836,7 @@ char *lbl_801E4DBC[] =
     NULL,
 };
 
-char *lbl_801E4E5C_jp[] =
+static char *lbl_801E4E5C_jp[] =
 {
     "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "h/MOU, k/PUREZENNTOh/SURUMONOHANAIDEk/TYU!",
@@ -867,7 +845,7 @@ char *lbl_801E4E5C_jp[] =
     NULL,
 };
 
-char *lbl_801E4E5C[] =
+static char *babyDialogue10_en[] =
 {
     "You got %p!",
     "You've unwocked everyting!",
@@ -876,7 +854,7 @@ char *lbl_801E4E5C[] =
     NULL,
 };
 
-char *lbl_801E4F04_jp[] =
+static char *lbl_801E4F04_jp[] =
 {
     "h/%pk/POINNTO,GETTOh/DEk/TYU!",
     "k/SAIKO-h/HA%bk/POINNTOh/DEk/TYU!",
@@ -885,7 +863,7 @@ char *lbl_801E4F04_jp[] =
     NULL,
 };
 
-char *lbl_801E4F04[] =
+static char *babyDialogue11_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -894,7 +872,7 @@ char *lbl_801E4F04[] =
     NULL,
 };
 
-char *lbl_801E4FCC_jp[] =
+static char *lbl_801E4FCC_jp[] =
 {
     "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "h/KOREHA, k/SAIKO-h/KIROKUDEk/TYU!",
@@ -903,7 +881,7 @@ char *lbl_801E4FCC_jp[] =
     NULL,
 };
 
-char *lbl_801E4FCC[] =
+static char *babyDialogue12_en[] =
 {
     "You got %p!",
     "That's a new high score!",
@@ -912,7 +890,7 @@ char *lbl_801E4FCC[] =
     NULL,
 };
 
-char *lbl_801E5078_jp[] =
+static char *lbl_801E5078_jp[] =
 {
     "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "k/PA-FEKUTOh/NAKIROKUDEk/TYU!",
@@ -921,7 +899,7 @@ char *lbl_801E5078_jp[] =
     NULL,
 };
 
-char *lbl_801E5078[] =
+static char *babyDialogue13_en[] =
 {
     "You got %p!",
     "There's no wecord better than this!",
@@ -930,7 +908,7 @@ char *lbl_801E5078[] =
     NULL,
 };
 
-char *lbl_801E5134_jp[] =
+static char *lbl_801E5134_jp[] =
 {
     "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "k/SAIKO-h/HA,%bk/POINNTOh/DEk/TYU!",
@@ -939,7 +917,7 @@ char *lbl_801E5134_jp[] =
     NULL,
 };
 
-char *lbl_801E5134[] =
+static char *babyDialogue14_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -948,7 +926,7 @@ char *lbl_801E5134[] =
     NULL,
 };
 
-char *lbl_801E51D8_jp[] =
+static char *gogonDialogue0_jp[] =
 {
     "k/SAIKYO~NOSARU MEZASHITE MOTTO",
     "k/UENO REBERUDE ASONDEKURE~!",
@@ -957,21 +935,21 @@ char *lbl_801E51D8_jp[] =
 
 // GonGon dialogue
 
-char *lbl_801E51D8[] =
+static char *gogonDialogue0_en[] =
 {
     "Try to be the greatest monkey ever!",
     "Play the more difficult levels!",
     NULL,
 };
 
-char *lbl_801E5298_jp[] =
+static char *gogonDialogue1_jp[] =
 {
     "k/SUGOIJYANE~KA! ODOROKIDAZE!",
     "k/DAXA~KEDO UEHA MADA ARUZE!",
     NULL,
 };
 
-char *lbl_801E5298[] =
+static char *gogonDialogue1_en[] =
 {
     "Wow! You're really good!",
     "I'm surprised!",
@@ -980,14 +958,14 @@ char *lbl_801E5298[] =
     NULL,
 };
 
-char *lbl_801E5334_jp[] =
+static char *gogonDialogue2_jp[] =
 {
     "k/UHOUHO UHOHO~I! YATTA~!",
     "k/KOREDE SAIKYO~NOSARU DAZE~!",
     NULL,
 };
 
-char *lbl_801E5334[] =
+static char *gogonDialogue2_en[] =
 {
     "Oh wow!",
     "I can't believe it!",
@@ -996,7 +974,7 @@ char *lbl_801E5334[] =
     NULL,
 };
 
-char *lbl_801E5468_jp[] =
+static char *gogonDialogue3_jp[] =
 {
     "k/KONOSUTE~JIMADE KORETA OMAEHA",
     "k/KANARINO UDEMAEDA~XTU! UHOUHO!",
@@ -1005,7 +983,7 @@ char *lbl_801E5468_jp[] =
     NULL,
 };
 
-char *lbl_801E5468[] =
+static char *gogonDialogue3_en[] =
 {
     "You really are something to have",
     "made it this far! Congratulations!!",
@@ -1014,7 +992,7 @@ char *lbl_801E5468[] =
     NULL,
 };
 
-char *lbl_801E552C_jp[] =
+static char *gogonDialogue4_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/ZENBUDE %tk/POINNTOXO~XTU!",
@@ -1023,7 +1001,7 @@ char *lbl_801E552C_jp[] =
     NULL,
 };
 
-char *lbl_801E552C[] =
+static char *gogonDialogue4_en[] =
 {
     "You got %p! Alright!!!",
     "All together, you have %t!",
@@ -1033,7 +1011,7 @@ char *lbl_801E552C[] =
     NULL,
 };
 
-char *lbl_801E55BC_jp[] =
+static char *gogonDialogue5_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/ZENBUDE %tk/POINNTOXO~XTU!",
@@ -1042,7 +1020,7 @@ char *lbl_801E55BC_jp[] =
     NULL,
 };
 
-char *lbl_801E55BC[] =
+static char *gogonDialogue5_en[] =
 {
     "You got %p! Alright!!!",
     "All together, you have %t!",
@@ -1051,7 +1029,7 @@ char *lbl_801E55BC[] =
     NULL,
 };
 
-char *lbl_801E5634_jp[] =
+static char *gogonDialogue6_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/ZENBUDE %tk/POINNTOXO~XTU!",
@@ -1060,7 +1038,7 @@ char *lbl_801E5634_jp[] =
     NULL,
 };
 
-char *lbl_801E5634[] =
+static char *gogonDialogue6_en[] =
 {
     "You got %p!",
     "All together, you have %t",
@@ -1070,7 +1048,7 @@ char *lbl_801E5634[] =
     NULL,
 };
 
-char *lbl_801E5680_jp[] =
+static char *gogonDialogue7_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/ZENBUDE %tk/POINNTOXO~XTU!",
@@ -1079,7 +1057,7 @@ char *lbl_801E5680_jp[] =
     NULL,
 };
 
-char *lbl_801E5680[] =
+static char *gogonDialogue7_en[] =
 {
     "You got %p! Alright!!!",
     "All together, you have %t!",
@@ -1088,7 +1066,7 @@ char *lbl_801E5680[] =
     NULL,
 };
 
-char *lbl_801E56D0_jp[] =
+static char *gogonDialogue8_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/ZENBUDE %tk/POINNTOXO~XTU!",
@@ -1097,7 +1075,7 @@ char *lbl_801E56D0_jp[] =
     NULL,
 };
 
-char *lbl_801E56D0[] =
+static char *gogonDialogue8_en[] =
 {
     "You got %p! Alright!!!",
     "All together, you have %t!",
@@ -1107,7 +1085,7 @@ char *lbl_801E56D0[] =
     NULL,
 };
 
-char *lbl_801E5760_jp[] =
+static char *gogonDialogue9_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/ZENBUDE %tk/POINNTOXO~XTU!",
@@ -1116,7 +1094,7 @@ char *lbl_801E5760_jp[] =
     NULL,
 };
 
-char *lbl_801E5760[] =
+static char *gogonDialogue9_en[] =
 {
     "You got %p!",
     "All together, you have %t!",
@@ -1125,7 +1103,7 @@ char *lbl_801E5760[] =
     NULL,
 };
 
-char *lbl_801E5838_jp[] =
+static char *gogonDialogue10_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/MOU OMAENI YARERUMONO NAI!",
@@ -1134,7 +1112,7 @@ char *lbl_801E5838_jp[] =
     NULL,
 };
 
-char *lbl_801E5838[] =
+static char *gogonDialogue10_en[] =
 {
     "You got %p!",
     "You've unlocked everything! Wow!!!",
@@ -1143,7 +1121,7 @@ char *lbl_801E5838[] =
     NULL,
 };
 
-char *lbl_801E58E8_jp[] =
+static char *gogonDialogue11_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/SAIKO~%bk/POINNTO! ZANNNENN!",
@@ -1152,7 +1130,7 @@ char *lbl_801E58E8_jp[] =
     NULL,
 };
 
-char *lbl_801E58E8[] =
+static char *gogonDialogue11_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -1161,7 +1139,7 @@ char *lbl_801E58E8[] =
     NULL,
 };
 
-char *lbl_801E5998_jp[] =
+static char *gogonDialogue12_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/SAIKO~KIROKU DETTA~! DETTA~!",
@@ -1170,7 +1148,7 @@ char *lbl_801E5998_jp[] =
     NULL,
 };
 
-char *lbl_801E5998[] =
+static char *gogonDialogue12_en[] =
 {
     "You got %p!",
     "That's a new high score!",
@@ -1179,7 +1157,7 @@ char *lbl_801E5998[] =
     NULL,
 };
 
-char *lbl_801E5A54_jp[] =
+static char *gogonDialogue13_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/KO KOREHA ODOROKINO DA~IKIROKU!",
@@ -1188,7 +1166,7 @@ char *lbl_801E5A54_jp[] =
     NULL,
 };
 
-char *lbl_801E5A54[] =
+static char *gogonDialogue13_en[] =
 {
     "You got %p!",
     "There's no record better than this!",
@@ -1197,7 +1175,7 @@ char *lbl_801E5A54[] =
     NULL,
 };
 
-char *lbl_801E5B08_jp[] =
+static char *gogonDialogue14_jp[] =
 {
     "k/%pk/POINNTO GETTOXO~XTU!",
     "k/SAIKO~%bk/POINNTO! ZANNNENN",
@@ -1206,7 +1184,7 @@ char *lbl_801E5B08_jp[] =
     NULL,
 };
 
-char *lbl_801E5B08[] =
+static char *gogonDialogue14_en[] =
 {
     "You got %p!",
     "The high score is %b!",
@@ -1215,85 +1193,84 @@ char *lbl_801E5B08[] =
     "Readyp/TENNTENN/a/ Go!!!",
     NULL,
 };
-#pragma force_active reset
 
-char **aiaiDialogue[] =
+static char **aiaiDialogue[] =
 {
-    lbl_801E32B8,
-    lbl_801E3330,
-    lbl_801E33D0,
-    lbl_801E3518,
-    lbl_801E3614,
-    lbl_801E36E8,
-    lbl_801E3784,
-    lbl_801E3820,
-    lbl_801E38AC,
-    lbl_801E3948,
-    lbl_801E3A58,
-    lbl_801E3B34,
-    lbl_801E3C14,
-    lbl_801E3CE4,
-    lbl_801E3D7C,
+    aiaiDialogue0_en,
+    aiaiDialogue1_en,
+    aiaiDialogue2_en,
+    aiaiDialogue3_en,
+    aiaiDialogue4_en,
+    aiaiDialogue5_en,
+    aiaiDialogue6_en,
+    aiaiDialogue7_en,
+    aiaiDialogue8_en,
+    aiaiDialogue9_en,
+    aiaiDialogue10_en,
+    aiaiDialogue11_en,
+    aiaiDialogue12_en,
+    aiaiDialogue13_en,
+    aiaiDialogue14_en,
 };
 
-char **meemeeDialogue[] =
+static char **meemeeDialogue[] =
 {
-    lbl_801E3DD0,
-    lbl_801E3E34,
-    lbl_801E3EA8,
-    lbl_801E3FE8,
-    lbl_801E40D8,
-    lbl_801E41A8,
-    lbl_801E4234,
-    lbl_801E42D8,
-    lbl_801E4374,
-    lbl_801E43B8,
-    lbl_801E44A4,
-    lbl_801E4558,
-    lbl_801E4640,
-    lbl_801E46F8,
-    lbl_801E47A4,
+    meemeeDialogue0_en,
+    meemeeDialogue1_en,
+    meemeeDialogue2_en,
+    meemeeDialogue3_en,
+    meemeeDialogue4_en,
+    meemeeDialogue5_en,
+    meemeeDialogue6_en,
+    meemeeDialogue7_en,
+    meemeeDialogue8_en,
+    meemeeDialogue9_en,
+    meemeeDialogue10_en,
+    meemeeDialogue11_en,
+    meemeeDialogue12_en,
+    meemeeDialogue13_en,
+    meemeeDialogue14_en,
 };
 
-char **babyDialogue[] =
+static char **babyDialogue[] =
 {
-    lbl_801E4814,
-    lbl_801E487C,
-    lbl_801E48F4,
-    lbl_801E4A10,
-    lbl_801E4AE4,
-    lbl_801E4B6C,
-    lbl_801E4C28,
-    lbl_801E4CB4,
-    lbl_801E4D34,
-    lbl_801E4DBC,
-    lbl_801E4E5C,
-    lbl_801E4F04,
-    lbl_801E4FCC,
-    lbl_801E5078,
-    lbl_801E5134,
+    babyDialogue0_en,
+    babyDialogue1_en,
+    babyDialogue2_en,
+    babyDialogue3_en,
+    babyDialogue4_en,
+    babyDialogue5_en,
+    babyDialogue6_en,
+    babyDialogue7_en,
+    babyDialogue8_en,
+    babyDialogue9_en,
+    babyDialogue10_en,
+    babyDialogue11_en,
+    babyDialogue12_en,
+    babyDialogue13_en,
+    babyDialogue14_en,
 };
 
-char **gongonDialogue[] =
+static char **gongonDialogue[] =
 {
-    lbl_801E51D8,
-    lbl_801E5298,
-    lbl_801E5334,
-    lbl_801E5468,
-    lbl_801E552C,
-    lbl_801E55BC,
-    lbl_801E5634,
-    lbl_801E5680,
-    lbl_801E56D0,
-    lbl_801E5760,
-    lbl_801E5838,
-    lbl_801E58E8,
-    lbl_801E5998,
-    lbl_801E5A54,
-    lbl_801E5B08,
+    gogonDialogue0_en,
+    gogonDialogue1_en,
+    gogonDialogue2_en,
+    gogonDialogue3_en,
+    gogonDialogue4_en,
+    gogonDialogue5_en,
+    gogonDialogue6_en,
+    gogonDialogue7_en,
+    gogonDialogue8_en,
+    gogonDialogue9_en,
+    gogonDialogue10_en,
+    gogonDialogue11_en,
+    gogonDialogue12_en,
+    gogonDialogue13_en,
+    gogonDialogue14_en,
 };
 
-char ***characterDialogues[] =
+static char ***characterDialogues[] =
 {
     aiaiDialogue,
     meemeeDialogue,
@@ -1301,7 +1278,21 @@ char ***characterDialogues[] =
     gongonDialogue,
 };
 
-void func_800C0E1C(s32 index, void *arg1, char *arg2)
+static void get_game_results(struct GameResultInfo *arg0);
+static char **get_ending_dlg_lines(const struct GameResultInfo *arg0, char ***arg1);
+static void expand_dialogue_placeholders(const struct GameResultInfo *result, struct EndingCharaDialogue *out, char *buffer, char **lines);
+
+void ending_prepare_chara_dialogue(struct EndingCharaDialogue *out, char *buffer)
+{
+    struct GameResultInfo result;
+    char **lines;
+
+    get_game_results(&result);
+    lines = get_ending_dlg_lines(&result, NULL);
+    expand_dialogue_placeholders(&result, out, buffer, lines);
+}
+
+void ending_prepare_chara_dialogue_test(int index, struct EndingCharaDialogue *out, char *buffer)
 {
     struct GameResultInfo result;
     char ***charaDlg;
@@ -1332,10 +1323,10 @@ void func_800C0E1C(s32 index, void *arg1, char *arg2)
     case 13: lines = charaDlg[13]; break;
     case 14: lines = charaDlg[14]; break;
     }
-    copy_dialogue_string(&result, arg1, arg2, lines);
+    expand_dialogue_placeholders(&result, out, buffer, lines);
 }
 
-void get_game_results(struct GameResultInfo *out)
+static void get_game_results(struct GameResultInfo *out)
 {
     struct GameResultInfo result;
 
@@ -1370,9 +1361,9 @@ void get_game_results(struct GameResultInfo *out)
     *out = result;
 }
 
-char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***out)
+static char **get_ending_dlg_lines(const struct GameResultInfo *result, char ***out)
 {
-    struct GameResultInfo sp10 = *arg0;
+    struct GameResultInfo res = *result;
     char ***charaDlg = characterDialogues[playerCharacterSelection[modeCtrl.currPlayer]];
     char **lines;
 
@@ -1394,37 +1385,37 @@ char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***out)
     }
     else if (modeCtrl.courseFlags & COURSE_FLAG_FAILED_EXTRA)
         lines = charaDlg[3];
-    else if (sp10.lockedMinigames != 0)
+    else if (res.lockedMinigames != 0)
     {
-        if (sp10.canUnlockMinigame == 0)
+        if (res.canUnlockMinigame == 0)
             lines = charaDlg[4];
-        else if (sp10.lockedMinigames > 1)
+        else if (res.lockedMinigames > 1)
             lines = charaDlg[5];
         else
             lines = charaDlg[6];
     }
-    else if (sp10.unk14 == 0)
+    else if (res.unk14 == 0)
     {
-        if (sp10.unk18 == 0)
+        if (res.unk18 == 0)
             lines = charaDlg[7];
-        else if (!sp10.hasMaxContinues)
+        else if (!res.hasMaxContinues)
             lines = charaDlg[8];
         else
             lines = charaDlg[9];
     }
-    else if (sp10.unk2C != 0)
+    else if (res.unk2C != 0)
     {
         lines = charaDlg[10];
         lbl_802F22C8 |= 1;
     }
-    else if (sp10.playPoints >= sp10.unk30)
+    else if (res.playPoints >= res.unk30)
     {
-        if (sp10.playPoints >= sp10.unk34)
+        if (res.playPoints >= res.unk34)
             lines = charaDlg[13];
         else
             lines = charaDlg[12];
     }
-    else if (sp10.unk30 >= sp10.unk34)
+    else if (res.unk30 >= res.unk34)
         lines = charaDlg[14];
     else
         lines = charaDlg[11];
@@ -1433,24 +1424,22 @@ char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***out)
     return lines;
 }
 
-void copy_dialogue_string(struct GameResultInfo *res, struct Struct800C1418 *out, char *dest, char **lines)
+static void expand_dialogue_placeholders(const struct GameResultInfo *result, struct EndingCharaDialogue *out, char *buffer, char **lines)
 {
 	static char *pointsTexts[] = { " point", " points", "" };
-	struct Struct800C1418 sp50;
-	struct GameResultInfo result;
+	struct EndingCharaDialogue dialogue;
+	const struct GameResultInfo res = *result;
 	char **pSrcLine;
-	char *src;
+	const char *src;
 	char *dst;
-	char *p;
+	const char *p;
 
-	result = *res;
-	memset(&sp50, 0, sizeof(sp50));
+	memset(&dialogue, 0, sizeof(dialogue));
 	pSrcLine = lines;
-	dst = dest;
-
+	dst = buffer;
 	while (*pSrcLine != NULL)
 	{
-		sp50.unk4[sp50.unk0] = dst;
+		dialogue.lines[dialogue.numLines] = dst;
 		src = *pSrcLine;
 		while (*src != 0)
 		{
@@ -1460,13 +1449,13 @@ void copy_dialogue_string(struct GameResultInfo *res, struct Struct800C1418 *out
 				switch (*++src)
 				{
 				case 'p':
-					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.playPoints, (result.playPoints != 1) ? pointsTexts[1] : pointsTexts[0]);
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", res.playPoints, (res.playPoints != 1) ? pointsTexts[1] : pointsTexts[0]);
 					break;
 				case 't':
-					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk4, (result.unk4 != 1) ? pointsTexts[1] : pointsTexts[0]);
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", res.unk4, (res.unk4 != 1) ? pointsTexts[1] : pointsTexts[0]);
 					break;
 				case 'n':
-					if (result.unk24 != 1)
+					if (res.unk24 != 1)
 						p = pointsTexts[1];
 					else
 						p = pointsTexts[0];
@@ -1475,16 +1464,16 @@ void copy_dialogue_string(struct GameResultInfo *res, struct Struct800C1418 *out
 						p = pointsTexts[2];
 						src++;
 					}
-					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk24, p);
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", res.unk24, p);
 					break;
 				case 'c':
-					sprintf(dst, "c/0xff0000/%dc/0x000000/", result.continues);
+					sprintf(dst, "c/0xff0000/%dc/0x000000/", res.continues);
 					break;
 				case 'b':
-					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk30, (result.unk30 != 1) ? pointsTexts[1] : pointsTexts[0]);
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", res.unk30, (res.unk30 != 1) ? pointsTexts[1] : pointsTexts[0]);
 					break;
 				case 'm':
-					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk34, (result.unk34 != 1) ? pointsTexts[1] : pointsTexts[0]);
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", res.unk34, (res.unk34 != 1) ? pointsTexts[1] : pointsTexts[0]);
 					break;
 				default:
 					*dst = 0;
@@ -1501,10 +1490,9 @@ void copy_dialogue_string(struct GameResultInfo *res, struct Struct800C1418 *out
 				break;
 			}
 		}
-		*dst = 0;
-		dst++;
+		*dst++ = 0;
 		pSrcLine++;
-		sp50.unk0++;
+		dialogue.numLines++;
 	}
-	*out = sp50;
+	*out = dialogue;
 }

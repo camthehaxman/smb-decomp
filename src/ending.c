@@ -176,14 +176,14 @@ void ending_init(void)
     endingInfo.state = 0;
     endingInfo.nextState = -1;
     event_finish_all();
-    endingInfo.unk8 = OSAllocFromHeap(stageHeap, sizeof(*endingInfo.unk8));
-    if (endingInfo.unk8 == NULL)
+    endingInfo.work = OSAllocFromHeap(stageHeap, sizeof(*endingInfo.work));
+    if (endingInfo.work == NULL)
     {
         printf("fail to alloc memory for ending-management!\n");
         endingInfo.state = 31;
         return;
     }
-    memset(endingInfo.unk8, 0, sizeof(*endingInfo.unk8));
+    memset(endingInfo.work, 0, sizeof(*endingInfo.work));
     SoundGroupLoad(SOUND_GRPending);
     func_800BBB78();
     func_800BD470();
@@ -195,9 +195,9 @@ void ending_init(void)
 
 int ending_main(void)
 {
-    struct SomeBigEndingStruct *r3;
+    struct EndingWork *work;
 
-    if (endingInfo.unk8 == NULL)
+    if (endingInfo.work == NULL)
         return 0;
     if (gamePauseStatus & 0xA)
         return 1;
@@ -208,17 +208,17 @@ int ending_main(void)
     func_800BD4B8();
     func_800BB084();
     if (endingInfo.unk4 & 2)
-        endingInfo.unk8->unk0 += 0.01666666753590107f;
+        endingInfo.work->unk0 += 0.01666666753590107f;
 
-    r3 = endingInfo.unk8;
+    work = endingInfo.work;
 
-    r3->unkAA54.unk4.x += r3->unkAA54.unk10.x;
-    r3->unkAA54.unk4.y += r3->unkAA54.unk10.y;
-    r3->unkAA54.unk4.z += r3->unkAA54.unk10.z;
+    work->unkAA54.unk4.x += work->unkAA54.unk10.x;
+    work->unkAA54.unk4.y += work->unkAA54.unk10.y;
+    work->unkAA54.unk4.z += work->unkAA54.unk10.z;
 
-    r3->unkAA54.unk2C.x += r3->unkAA54.unk38.x;
-    r3->unkAA54.unk2C.y += r3->unkAA54.unk38.y;
-    r3->unkAA54.unk2C.z += r3->unkAA54.unk38.z;
+    work->unkAA54.unk2C.x += work->unkAA54.unk38.x;
+    work->unkAA54.unk2C.y += work->unkAA54.unk38.y;
+    work->unkAA54.unk2C.z += work->unkAA54.unk38.z;
 
     return endingInfo.state != 32;
 }
@@ -230,8 +230,8 @@ void ending_finish(void)
     func_800BBA54();
     func_800BF2D0();
     func_800BC820();
-    OSFreeToHeap(stageHeap, endingInfo.unk8);
-    endingInfo.unk8 = NULL;
+    OSFreeToHeap(stageHeap, endingInfo.work);
+    endingInfo.work = NULL;
     event_finish_all();
     SoundGroupFree();
     if (lbl_802F1B7C == ending_finish)
@@ -240,7 +240,7 @@ void ending_finish(void)
 
 void u_ending_draw(void)
 {
-    if (endingInfo.unk8 == NULL)
+    if (endingInfo.work == NULL)
         return;
     u_call_camera_apply_viewport(modeCtrl.currPlayer);
     u_draw_ball_shadow();
@@ -319,9 +319,9 @@ static void ending_state_beginner_init(void)
     light_init(currStageId);
     rend_efc_mirror_enable();
     func_800BCE54(0, playerCharacterSelection[modeCtrl.currPlayer]);
-    endingInfo.unk8->unkA804[0].unk70 = 1;
+    endingInfo.work->unkA804[0].unk70 = 1;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    r28 = &endingInfo.unk8->unkAA54;
+    r28 = &endingInfo.work->unkAA54;
     memset(r28, 0, sizeof(*r28));
     r28->unk0 = 1;
     r28->unk4.x = 0.0f;
@@ -333,8 +333,8 @@ static void ending_state_beginner_init(void)
     r28->unk2C.x = sp8.x;
     r28->unk2C.y = sp8.y + 20.0f;
     r28->unk2C.z = sp8.z + 100.0f;
-    if (endingInfo.unk8->unkA804[0].unk0 != NULL)
-        endingInfo.unk8->unkA804[0].unk0->colorId = modeCtrl.currPlayer;
+    if (endingInfo.work->unkA804[0].unk0 != NULL)
+        endingInfo.work->unkA804[0].unk0->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0, 0x1E);
     u_play_music(0x44, 0);
 }
@@ -347,8 +347,8 @@ static void ending_state_2(void)
     struct SomeBigEndingStruct_sub3 *temp_r4;
     struct SomeBigEndingStruct_sub *temp_r6;
 
-    temp_r6 = &endingInfo.unk8->unkAA54;
-    temp_r4 = &endingInfo.unk8->unkA804[0];
+    temp_r6 = &endingInfo.work->unkAA54;
+    temp_r4 = &endingInfo.work->unkA804[0];
     switch (modeCtrl.submodeTimer)
     {
     case 0x19E:
@@ -391,7 +391,7 @@ static void ending_state_2(void)
 
 static void ending_state_3(void)
 {
-    struct SomeBigEndingStruct *temp_r30;
+    struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r29;
     Vec sp30;
     struct TextBox tbox;
@@ -402,7 +402,7 @@ static void ending_state_3(void)
     modeCtrl.submodeTimer = 60;
     modeCtrl.unk18 = 0x1E;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r29 = &endingInfo.unk8->unkAA54;
+    temp_r29 = &endingInfo.work->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
     temp_r29->unk0 = 1;
     mathutil_mtxA_from_rotate_z((s16) (unpausedFrameCounter << 6));
@@ -417,27 +417,27 @@ static void ending_state_3(void)
     temp_r29->unk48.y = 0.0f;
     temp_r29->unk48.z = 0.0f;
 
-    temp_r30 = endingInfo.unk8;
-    temp_r30->unkAACC = 0;
+    work = endingInfo.work;
+    work->unkAACC = 0;
 
-    func_800C0DC0(&temp_r30->unkAAB0, (char *)&temp_r30->unkAAD0);
-    if (temp_r30->unkAAB0 > 0)
+    ending_prepare_chara_dialogue(&work->charaDialogue, work->dialogueBuf);
+    if (work->charaDialogue.numLines > 0)
     {
         memset(&tbox, 0, sizeof(tbox));
         tbox.style = TEXTBOX_STYLE_CENTER_UP;
         tbox.x = 320;
         tbox.y = 322;
-        tbox.numRows = MIN(temp_r30->unkAAB0, 2);
+        tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
         textbox_set_properties(0, 1, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
-            textbox_add_text(0, temp_r30->textboxStrings[temp_r30->unkAACC]);
-            temp_r30->unkAAB0--;
-            temp_r30->unkAACC++;
+            textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
+            work->charaDialogue.numLines--;
+            work->unkAACC++;
         }
     }
-    temp_r4 = &endingInfo.unk8->unkA804[0];
+    temp_r4 = &endingInfo.work->unkA804[0];
     temp_r4->unkA = 1;
     temp_r4->unk38 = 0;
 }
@@ -446,13 +446,13 @@ static void ending_state_4(void)
 {
     Vec sp30;
     struct TextBox tbox;
-    struct SomeBigEndingStruct *temp_r30_2;
+    struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r29;
     struct SomeBigEndingStruct_sub3 *temp_r30;
     int i2;
 
-    temp_r29 = &endingInfo.unk8->unkAA54;
-    temp_r30 = &endingInfo.unk8->unkA804[0];
+    temp_r29 = &endingInfo.work->unkAA54;
+    temp_r30 = &endingInfo.work->unkA804[0];
     mathutil_mtxA_from_rotate_z(unpausedFrameCounter << 6);
     mathutil_mtxA_tf_vec_xyz(&sp30, 0.0f, 0.5f, 0.0f);
     temp_r29->unk4.x = sp30.x;
@@ -470,22 +470,22 @@ static void ending_state_4(void)
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
         modeCtrl.unk18 = 0x1E;
-        temp_r30_2 = endingInfo.unk8;
-        if (temp_r30_2->unkAAB0 != 0)
+        work = endingInfo.work;
+        if (work->charaDialogue.numLines != 0)
         {
             textbox_set_properties(0, 0x14, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_UP;
             tbox.x = 320;
             tbox.y = 322;
-            tbox.numRows = temp_r30_2->unkAAB0;
+            tbox.numRows = work->charaDialogue.numLines;
             tbox.callback = NULL;
             textbox_set_properties(0, 1, &tbox);
             for (i2 = 0; i2 < tbox.numRows; i2++)
             {
-                textbox_add_text(0, temp_r30_2->textboxStrings[temp_r30_2->unkAACC]);
-                temp_r30_2->unkAAB0--;
-                temp_r30_2->unkAACC++;
+                textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
+                work->charaDialogue.numLines--;
+                work->unkAACC++;
             }
         }
         else
@@ -505,7 +505,7 @@ static void ending_state_5(void)
     endingInfo.nextState = 6;
     modeCtrl.submodeTimer = 0x168;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r29 = &endingInfo.unk8->unkAA54;
+    temp_r29 = &endingInfo.work->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
     temp_r29->unk0 = 1;
     temp_r29->unk4.x = 0.0f;
@@ -517,7 +517,7 @@ static void ending_state_5(void)
     temp_r29->unk48.x = 0.0f;
     temp_r29->unk48.y = 0.0f;
     temp_r29->unk48.z = 0.0f;
-    endingInfo.unk8->unkA804[0].unkA = 2;
+    endingInfo.work->unkA804[0].unkA = 2;
 }
 
 static s16 lbl_802F18C8[4] = { 0x00B7, 0x0102, 0x0141, 0x018B };
@@ -527,7 +527,7 @@ static void ending_state_6(void)
     switch (modeCtrl.submodeTimer)
     {
     case 0xF0:
-        endingInfo.unk8->unkA804[0].unk4 = 4;
+        endingInfo.work->unkA804[0].unk4 = 4;
         break;
     case 0x117:
         SoundReq(lbl_802F18C8[playerCharacterSelection[modeCtrl.currPlayer]]);
@@ -580,11 +580,11 @@ static void ending_state_advanced_init(void)
     light_init(currStageId);
     rend_efc_mirror_enable();
     func_800BCE54(0, playerCharacterSelection[modeCtrl.currPlayer]);
-    endingInfo.unk8->unkA804[0].unk4 = 6;
-    endingInfo.unk8->unkA804[0].unk6 = modeCtrl.submodeTimer - 0xB4;
+    endingInfo.work->unkA804[0].unk4 = 6;
+    endingInfo.work->unkA804[0].unk6 = modeCtrl.submodeTimer - 0xB4;
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x12C);
-    temp_r31 = &endingInfo.unk8->unkAA54;
+    temp_r31 = &endingInfo.work->unkAA54;
     memset(temp_r31, 0, sizeof(*temp_r31));
     temp_r31->unk0 = 1;
     temp_r31->unk4.x = -1.0f;
@@ -595,7 +595,7 @@ static void ending_state_advanced_init(void)
     temp_r31->unk2C.x = 0.0f;
     temp_r31->unk2C.y = 0.0f;
     temp_r31->unk2C.z = 0.0f;
-    ape = endingInfo.unk8->unkA804[0].unk0;
+    ape = endingInfo.work->unkA804[0].unk0;
     if (ape != NULL)
         ape->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0U, 0x1E);
@@ -615,8 +615,8 @@ static void ending_state_8(void)
     struct SomeBigEndingStruct_sub3 *temp_r30;
     struct SomeBigEndingStruct_sub *temp_r29;
 
-    temp_r29 = &endingInfo.unk8->unkAA54;
-    temp_r30 = &endingInfo.unk8->unkA804[0];
+    temp_r29 = &endingInfo.work->unkAA54;
+    temp_r30 = &endingInfo.work->unkA804[0];
     switch (modeCtrl.submodeTimer)
     {
     case 0x177:
@@ -775,33 +775,33 @@ static void ending_state_9(void)
     struct TextBox tbox;
     int i;
     u8 unused[4];
-    struct SomeBigEndingStruct *temp_r30;
+    struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r28;
     struct SomeBigEndingStruct_sub3 *temp_r3_2;
 
     endingInfo.nextState = 0xA;
     modeCtrl.submodeTimer = 0x3C;
     modeCtrl.unk18 = 0x1E;
-    temp_r30 = endingInfo.unk8;
-    temp_r30->unkAACC = 0;
-    func_800C0DC0(&temp_r30->unkAAB0, (char *)&temp_r30->unkAAD0);
-    if (temp_r30->unkAAB0 > 0)
+    work = endingInfo.work;
+    work->unkAACC = 0;
+    ending_prepare_chara_dialogue(&work->charaDialogue, work->dialogueBuf);
+    if (work->charaDialogue.numLines > 0)
     {
         memset(&tbox, 0, sizeof(tbox));
         tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
         tbox.x = 0x140;
         tbox.y = 0xA0;
-        tbox.numRows = MIN(temp_r30->unkAAB0, 2);
+        tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
         textbox_set_properties(0, 1, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
-            textbox_add_text(0, temp_r30->textboxStrings[temp_r30->unkAACC]);
-            temp_r30->unkAAB0--;
-            temp_r30->unkAACC++;
+            textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
+            work->charaDialogue.numLines--;
+            work->unkAACC++;
         }
     }
-    temp_r28 = &endingInfo.unk8->unkAA54;
+    temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_r28->unk0 = 2;
     temp_r28->unk1C = 0;
@@ -816,7 +816,7 @@ static void ending_state_9(void)
     temp_r28->unk48.y = 0.0f;
     temp_r28->unk48.z = 0.3f;
 
-    temp_r3_2 = &endingInfo.unk8->unkA804[0];
+    temp_r3_2 = &endingInfo.work->unkA804[0];
     temp_r3_2->unkA = 6;
     temp_r3_2->unk0->flags &= 0xFFFFEFFF;
     temp_r3_2->unk38 = 0;
@@ -826,10 +826,10 @@ static void ending_state_10(void)
 {
     struct TextBox tbox;
     int i;
-    struct SomeBigEndingStruct *temp_r30_2;
+    struct EndingWork *work;
     struct SomeBigEndingStruct_sub3 *temp_r30;
 
-    temp_r30 = &endingInfo.unk8->unkA804[0];
+    temp_r30 = &endingInfo.work->unkA804[0];
     temp_r30->unk38--;
     if (temp_r30->unk38 < 0)
     {
@@ -842,22 +842,22 @@ static void ending_state_10(void)
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
         modeCtrl.unk18 = 0x1E;
-        temp_r30_2 = endingInfo.unk8;
-        if (temp_r30_2->unkAAB0 != 0)
+        work = endingInfo.work;
+        if (work->charaDialogue.numLines != 0)
         {
             textbox_set_properties(0, 0x14, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
             tbox.x = 0x140;
             tbox.y = 0xA0;
-            tbox.numRows = temp_r30_2->unkAAB0;
+            tbox.numRows = work->charaDialogue.numLines;
             tbox.callback = NULL;
             textbox_set_properties(0, 1, &tbox);
             for (i = 0; i < tbox.numRows; i++)
             {
-                textbox_add_text(0, temp_r30_2->textboxStrings[temp_r30_2->unkAACC]);
-                temp_r30_2->unkAAB0--;
-                temp_r30_2->unkAACC++;
+                textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
+                work->charaDialogue.numLines--;
+                work->unkAACC++;
             }
         }
         else
@@ -876,8 +876,8 @@ static void ending_state_11(void)
 
     endingInfo.nextState = 0xC;
     modeCtrl.submodeTimer = 0x21C;
-    endingInfo.unk8->unkA804[0].unkA = 7;
-    ape = endingInfo.unk8->unkA804[0].unk0;
+    endingInfo.work->unkA804[0].unkA = 7;
+    ape = endingInfo.work->unkA804[0].unk0;
     ape->flags &= 0xFFFFBFFF;
 }
 
@@ -891,8 +891,8 @@ void ending_state_12(void)
     int tm;
     u8 unused[8];
 
-    temp_r28 = &endingInfo.unk8->unkAA54;
-    temp_r7 = &endingInfo.unk8->unkA804[0];
+    temp_r28 = &endingInfo.work->unkAA54;
+    temp_r7 = &endingInfo.work->unkA804[0];
     switch (modeCtrl.submodeTimer)
     {
     case 0x21B:
@@ -939,11 +939,11 @@ void ending_state_12(void)
     }
     tm = modeCtrl.submodeTimer;
     if (tm < 420 && tm > 360)
-        endingInfo.unk8->unkAAA8 = 0.5f + 0.5f * (-0.016666668f * (float)(360 - tm));
+        endingInfo.work->unkAAA8 = 0.5f + 0.5f * (-0.016666668f * (float)(360 - tm));
     else if (tm < 300 && tm > 240)
-        endingInfo.unk8->unkAAA8 = 0.5f + 0.5f * (1.0f - (-0.016666668f * (float)(240 - tm)));
+        endingInfo.work->unkAAA8 = 0.5f + 0.5f * (1.0f - (-0.016666668f * (float)(240 - tm)));
     if (modeCtrl.submodeTimer < 420 && modeCtrl.submodeTimer > 240)
-        endingInfo.unk8->unkAAAC = 0.6f + 0.19999999f * (-0.0055555557f * (float)(240 - modeCtrl.submodeTimer));
+        endingInfo.work->unkAAAC = 0.6f + 0.19999999f * (-0.0055555557f * (float)(240 - modeCtrl.submodeTimer));
     if (modeCtrl.submodeTimer < 300 && modeCtrl.submodeTimer > 0)
     {
         float t = -0.0033333334f * -modeCtrl.submodeTimer;
@@ -1003,11 +1003,11 @@ static void ending_state_expert_init(void)
     func_800BCE54(1, 1);
     func_800BCE54(2, 2);
     func_800BCE54(3, 3);
-    endingInfo.unk8->unkA804[0].unk4 = 9;
-    endingInfo.unk8->unkA804[1].unk4 = 9;
-    endingInfo.unk8->unkA804[2].unk4 = 9;
+    endingInfo.work->unkA804[0].unk4 = 9;
+    endingInfo.work->unkA804[1].unk4 = 9;
+    endingInfo.work->unkA804[2].unk4 = 9;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r28 = &endingInfo.unk8->unkAA54;
+    temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_r28->unk0 = 1;
     mathutil_mtxA_from_rotate_y(modeCtrl.submodeTimer * 4);
@@ -1019,7 +1019,7 @@ static void ending_state_expert_init(void)
     temp_r0 = playerCharacterSelection[modeCtrl.currPlayer];
     if (temp_r0 == 3)
     {
-        struct SomeBigEndingStruct_sub3 *temp_r28_2 = &endingInfo.unk8->unkA804[temp_r0];
+        struct SomeBigEndingStruct_sub3 *temp_r28_2 = &endingInfo.work->unkA804[temp_r0];
         temp_r28_2->unk0->flags &= 0xFFFFFFDF;
         temp_r28_2->unkA = 0x12;
         temp_r28_2->unkC.x = -20.38f;
@@ -1033,7 +1033,7 @@ static void ending_state_expert_init(void)
         temp_r28_2->unk5A = (rand() & 0x7FFF);
         temp_r28_2->unk5C = (rand() & 0x7FFF);
     }
-    temp_r3 = endingInfo.unk8->unkA804[modeCtrl.currPlayer].unk0;
+    temp_r3 = endingInfo.work->unkA804[modeCtrl.currPlayer].unk0;
     if (temp_r3 != NULL)
         temp_r3->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0U, 0x1E);
@@ -1042,7 +1042,7 @@ static void ending_state_expert_init(void)
 
 static void ending_state_14(void)
 {
-    struct SomeBigEndingStruct_sub *temp_r30 = &endingInfo.unk8->unkAA54;
+    struct SomeBigEndingStruct_sub *temp_r30 = &endingInfo.work->unkAA54;
 
     mathutil_mtxA_from_rotate_y(modeCtrl.submodeTimer * 4);
     mathutil_mtxA_tf_vec_xyz(&temp_r30->unk4, 0.0f, 20.0f, 12.0f);
@@ -1056,7 +1056,7 @@ static void ending_state_15(void)
 {
     struct TextBox tbox;
     float temp_f31;
-    struct SomeBigEndingStruct *temp_r28;
+    struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r26;
     struct SomeBigEndingStruct_sub3 *temp_r27;
     struct SomeBigEndingStruct_sub3 *temp_r6;
@@ -1066,8 +1066,8 @@ static void ending_state_15(void)
     modeCtrl.submodeTimer = 0x12C;
     modeCtrl.unk18 = 0x1E;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r26 = &endingInfo.unk8->unkAA54;
-    temp_r27 = &endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    temp_r26 = &endingInfo.work->unkAA54;
+    temp_r27 = &endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
     mathutil_mtxA_from_translate(&temp_r27->unkC);
     mathutil_mtxA_rotate_y(temp_r27->unk30.y);
@@ -1083,49 +1083,49 @@ static void ending_state_15(void)
     temp_r26->unk38.x = 0.0f;
     temp_r26->unk38.y = 0.0f;
     temp_r26->unk38.z = 0.0f;
-    endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk70 = 1;
-    temp_r28 = endingInfo.unk8;
-    temp_r28->unkAACC = 0;
-    func_800C0DC0(&temp_r28->unkAAB0, (char *)&temp_r28->unkAAD0);
-    if (temp_r28->unkAAB0 > 0)
+    endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk70 = 1;
+    work = endingInfo.work;
+    work->unkAACC = 0;
+    ending_prepare_chara_dialogue(&work->charaDialogue, work->dialogueBuf);
+    if (work->charaDialogue.numLines > 0)
     {
         memset(&tbox, 0, sizeof(tbox));
         tbox.style = TEXTBOX_STYLE_CENTER_UP;
         tbox.x = 0x140;
         tbox.y = 0x142;
-        tbox.numRows = MIN(temp_r28->unkAAB0, 2);
+        tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
         textbox_set_properties(0, 1, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
-            textbox_add_text(0, temp_r28->textboxStrings[temp_r28->unkAACC]);
-            temp_r28->unkAAB0--;
-            temp_r28->unkAACC++;
+            textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
+            work->charaDialogue.numLines--;
+            work->unkAACC++;
         }
     }
-    temp_r6 = &endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    temp_r6 = &endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_r6->unk38 = 0;
     if (playerCharacterSelection[modeCtrl.currPlayer] != 3)
         temp_r6->unkA = 0xB;
     else
         temp_r6->unkA = 0xC;
-    endingInfo.unk8->unkA804[0].unk36 |= 1;
-    endingInfo.unk8->unkA804[1].unk36 |= 1;
-    endingInfo.unk8->unkA804[2].unk36 |= 1;
-    endingInfo.unk8->unkA804[3].unk36 |= 1;
+    endingInfo.work->unkA804[0].unk36 |= 1;
+    endingInfo.work->unkA804[1].unk36 |= 1;
+    endingInfo.work->unkA804[2].unk36 |= 1;
+    endingInfo.work->unkA804[3].unk36 |= 1;
 }
 
 static void ending_state_16(void)
 {
     struct TextBox tbox;
     float temp_f31;
-    struct SomeBigEndingStruct *temp_r30_2;
+    struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r28;
     struct SomeBigEndingStruct_sub3 *temp_r30;
     int i;
 
-    temp_r28 = &endingInfo.unk8->unkAA54;
-    temp_r30 = &endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    temp_r28 = &endingInfo.work->unkAA54;
+    temp_r30 = &endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
     mathutil_mtxA_from_translate(&temp_r30->unkC);
     mathutil_mtxA_rotate_y(temp_r30->unk30.y);
@@ -1144,22 +1144,22 @@ static void ending_state_16(void)
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
         modeCtrl.unk18 = 0x1E;
-        temp_r30_2 = endingInfo.unk8;
-        if (temp_r30_2->unkAAB0 != 0)
+        work = endingInfo.work;
+        if (work->charaDialogue.numLines != 0)
         {
             textbox_set_properties(0, 0x14, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_UP;
             tbox.x = 0x140;
             tbox.y = 0x142;
-            tbox.numRows = temp_r30_2->unkAAB0;
+            tbox.numRows = work->charaDialogue.numLines;
             tbox.callback = NULL;
             textbox_set_properties(0, 1, &tbox);
             for (i = 0; i < tbox.numRows; i++)
             {
-                textbox_add_text(0, temp_r30_2->textboxStrings[temp_r30_2->unkAACC]);
-                temp_r30_2->unkAAB0--;
-                temp_r30_2->unkAACC++;
+                textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
+                work->charaDialogue.numLines--;
+                work->unkAACC++;
             }
         }
         else
@@ -1177,7 +1177,7 @@ static void ending_state_17(void)
     endingInfo.nextState = 0x12;
     modeCtrl.submodeTimer = 0x1E0;
     func_800BBB10(modeCtrl.submodeTimer - 0x1A4);
-    endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk74 = cameraInfo[0].eye;
+    endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk74 = cameraInfo[0].eye;
 }
 
 static s16 lbl_802F18E8[3] = { 0x00E4, 0x0127, 0x014A };
@@ -1189,7 +1189,7 @@ static void ending_state_18(void)
     struct SomeBigEndingStruct_sub *temp_r26;
     struct SomeBigEndingStruct_sub3 *temp_r27;
     struct Ape *ape;
-    struct SomeBigEndingStruct *temp;
+    struct EndingWork *work;
     Vec sp8;
 
     switch (modeCtrl.submodeTimer)
@@ -1197,34 +1197,34 @@ static void ending_state_18(void)
     case 0x1DF:
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f3 = 1.0f / (modeCtrl.submodeTimer - 0x168);
-        temp = endingInfo.unk8;
-        temp->unkAA54.unk0 = 1;
-        temp->unkAA54.unk4.x = 0.0f;
-        temp->unkAA54.unk4.y = 0.0f;
-        temp->unkAA54.unk4.z = 6.5f;
-        temp->unkAA54.unk10.x = -temp->unkAA54.unk4.x * temp_f3;
-        temp->unkAA54.unk10.y = (1.5f - temp->unkAA54.unk4.y) * temp_f3;
-        temp->unkAA54.unk10.z = (6.0f - temp->unkAA54.unk4.z) * temp_f3;
-        temp->unkAA54.unk2 = 1;
-        temp->unkAA54.unk2C = endingInfo.unk8->unkAA04.unk8;
-        temp->unkAA54.unk38.x = 0.0f;
-        temp->unkAA54.unk38.y = 0.0f;
-        temp->unkAA54.unk38.z = 0.0f;
+        work = endingInfo.work;
+        work->unkAA54.unk0 = 1;
+        work->unkAA54.unk4.x = 0.0f;
+        work->unkAA54.unk4.y = 0.0f;
+        work->unkAA54.unk4.z = 6.5f;
+        work->unkAA54.unk10.x = -work->unkAA54.unk4.x * temp_f3;
+        work->unkAA54.unk10.y = (1.5f - work->unkAA54.unk4.y) * temp_f3;
+        work->unkAA54.unk10.z = (6.0f - work->unkAA54.unk4.z) * temp_f3;
+        work->unkAA54.unk2 = 1;
+        work->unkAA54.unk2C = endingInfo.work->unkAA04.unk8;
+        work->unkAA54.unk38.x = 0.0f;
+        work->unkAA54.unk38.y = 0.0f;
+        work->unkAA54.unk38.z = 0.0f;
         break;
     case 0x1A4:
-        ape = endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk0;
+        ape = endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk0;
         ape->flags &= 0xFFFFFFBF;
         u_play_sound_0(0x234);
         break;
     case 0x168:
-        endingInfo.unk8->unkA804[0].unkA = 8;
-        endingInfo.unk8->unkA804[1].unkA = 8;
-        endingInfo.unk8->unkA804[2].unkA = 8;
+        endingInfo.work->unkA804[0].unkA = 8;
+        endingInfo.work->unkA804[1].unkA = 8;
+        endingInfo.work->unkA804[2].unkA = 8;
         SoundReq(lbl_802F18E8[playerCharacterSelection[modeCtrl.currPlayer] % 3]);
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp = endingInfo.unk8;
-        temp_r26 = &temp->unkAA54;
-        temp_r27 = &temp->unkA804[playerCharacterSelection[modeCtrl.currPlayer] % 3];
+        work = endingInfo.work;
+        temp_r26 = &work->unkAA54;
+        temp_r27 = &work->unkA804[playerCharacterSelection[modeCtrl.currPlayer] % 3];
         memset(temp_r26, 0, sizeof(*temp_r26));
         mathutil_mtxA_from_translate(&temp_r27->unkC);
         mathutil_mtxA_rotate_y(temp_r27->unk30.y);
@@ -1237,7 +1237,7 @@ static void ending_state_18(void)
         break;
     case 0x12C:
         func_800BF948(1, modeCtrl.submodeTimer - 0x1E);
-        temp_r26 = &endingInfo.unk8->unkAA54;
+        temp_r26 = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / modeCtrl.submodeTimer;
         temp_r26->unk10.x = temp_r26->unk4.x * temp_f2;
         temp_r26->unk10.z = temp_r26->unk4.z * temp_f2;
@@ -1246,22 +1246,22 @@ static void ending_state_18(void)
         temp_r26->unk38.z = -temp_r26->unk2C.z * temp_f2;
         break;
     case 0x78:
-        endingInfo.unk8->unkA804[0].unk4 = 0x10;
-        endingInfo.unk8->unkA804[1].unk4 = 0x10;
-        endingInfo.unk8->unkA804[2].unk4 = 0x10;
-        endingInfo.unk8->unkA804[3].unk56 = -1;
+        endingInfo.work->unkA804[0].unk4 = 0x10;
+        endingInfo.work->unkA804[1].unk4 = 0x10;
+        endingInfo.work->unkA804[2].unk4 = 0x10;
+        endingInfo.work->unkA804[3].unk56 = -1;
         sp8.x = 0.0f;
         sp8.y = 4.0f;
         sp8.z = 0.0f;
-        endingInfo.unk8->unkA804[0].unk70 = 2;
-        endingInfo.unk8->unkA804[1].unk70 = 2;
-        endingInfo.unk8->unkA804[2].unk70 = 2;
-        endingInfo.unk8->unkA804[0].unk74 = sp8;
-        endingInfo.unk8->unkA804[1].unk74 = sp8;
-        endingInfo.unk8->unkA804[2].unk74 = sp8;
-        endingInfo.unk8->unkA804[0].unkA = 0xC;
-        endingInfo.unk8->unkA804[1].unkA = 0xC;
-        endingInfo.unk8->unkA804[2].unkA = 0xC;
+        endingInfo.work->unkA804[0].unk70 = 2;
+        endingInfo.work->unkA804[1].unk70 = 2;
+        endingInfo.work->unkA804[2].unk70 = 2;
+        endingInfo.work->unkA804[0].unk74 = sp8;
+        endingInfo.work->unkA804[1].unk74 = sp8;
+        endingInfo.work->unkA804[2].unk74 = sp8;
+        endingInfo.work->unkA804[0].unkA = 0xC;
+        endingInfo.work->unkA804[1].unkA = 0xC;
+        endingInfo.work->unkA804[2].unkA = 0xC;
         break;
     case 0x1E:
         start_screen_fade(1, 0xFFFFFFU, modeCtrl.submodeTimer);
@@ -1269,7 +1269,7 @@ static void ending_state_18(void)
         break;
     }
     if (modeCtrl.submodeTimer < 0x1DF && modeCtrl.submodeTimer > 0x1A4)
-        endingInfo.unk8->unkAA54.unk2C = endingInfo.unk8->unkAA04.unk8;
+        endingInfo.work->unkAA54.unk2C = endingInfo.work->unkAA04.unk8;
     if (modeCtrl.submodeTimer < 0x1A4 && modeCtrl.submodeTimer > 0.0f)
     {
         float t = -0.0023809525f * -(float)modeCtrl.submodeTimer;
@@ -1296,7 +1296,7 @@ static void ending_state_19(void)
     func_800BD470();
     func_800BF4F4();
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r28 = &endingInfo.unk8->unkAA54;
+    temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_f4 = 1.0f / (modeCtrl.submodeTimer - 0xF0);
     temp_r28->unk0 = 1;
@@ -1312,9 +1312,9 @@ static void ending_state_19(void)
     temp_r28->unk38.x = 2.0f * -temp_r28->unk2C.x * temp_f4;
     temp_r28->unk38.y = (0.4f - temp_r28->unk2C.y) * temp_f4;
     temp_r28->unk38.z = (6.0f - temp_r28->unk2C.z) * temp_f4;
-    endingInfo.unk8->unkA804[0].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
-    endingInfo.unk8->unkA804[1].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
-    endingInfo.unk8->unkA804[2].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.work->unkA804[0].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.work->unkA804[1].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.work->unkA804[2].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
 }
 
 static s16 lbl_802F18F0[4] = { 0x00E8, 0x0101, 0x016B, 0x0000 };
@@ -1332,7 +1332,7 @@ static void ending_state_20(void)
         break;
     case 0xF0:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_r4 = &endingInfo.unk8->unkAA54;
+        temp_r4 = &endingInfo.work->unkAA54;
         temp_f3 = 1.0f / modeCtrl.submodeTimer;
         temp_r4->unk0 = 1;
         temp_r4->unk4.x = -0.4f;
@@ -1350,7 +1350,7 @@ static void ending_state_20(void)
         temp_r4->unk38.z = (2.0f - temp_r4->unk2C.z) * temp_f3;
         break;
     }
-    var_r28 = endingInfo.unk8->unkA804;
+    var_r28 = endingInfo.work->unkA804;
     for (i = 3; i > 0; i--, var_r28++)  // BUG: maybe should be >= 0 instead?
     {
         if (var_r28->unk38 != 0)
@@ -1367,18 +1367,17 @@ static void ending_state_20(void)
 
 static void ending_state_21(void)
 {
-    struct SomeBigEndingStruct *temp_r3;
     float temp_f3;
     struct SomeBigEndingStruct_sub *temp_r4;
 
     endingInfo.nextState = 0x16;
     modeCtrl.submodeTimer = 0x2D0;
-    endingInfo.unk8->unkA804[0].unk0->flags |= 0x20;
-    endingInfo.unk8->unkA804[1].unk0->flags |= 0x20;
-    endingInfo.unk8->unkA804[2].unk0->flags |= 0x20;
-    endingInfo.unk8->unkA804[3].unk0->flags |= 0x20;
+    endingInfo.work->unkA804[0].unk0->flags |= 0x20;
+    endingInfo.work->unkA804[1].unk0->flags |= 0x20;
+    endingInfo.work->unkA804[2].unk0->flags |= 0x20;
+    endingInfo.work->unkA804[3].unk0->flags |= 0x20;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r4 = &endingInfo.unk8->unkAA54;
+    temp_r4 = &endingInfo.work->unkAA54;
     temp_f3 = 0.008333334f;
     temp_r4->unk0 = 1;
     temp_r4->unk4.x = 0.0f;
@@ -1409,16 +1408,16 @@ static void ending_state_22(void)
         u_play_sound_0(0x235);
         break;
     case 0x258:
-        endingInfo.unk8->unkA804[0].unk4 = 0x11;
-        endingInfo.unk8->unkA804[1].unk4 = 0x11;
-        endingInfo.unk8->unkA804[2].unk4 = 0x11;
+        endingInfo.work->unkA804[0].unk4 = 0x11;
+        endingInfo.work->unkA804[1].unk4 = 0x11;
+        endingInfo.work->unkA804[2].unk4 = 0x11;
         break;
     case 0x257:
-        endingInfo.unk8->unkA804[0].unk0->flags &= ~0x20;
-        endingInfo.unk8->unkA804[1].unk0->flags &= ~0x20;
-        endingInfo.unk8->unkA804[2].unk0->flags &= ~0x20;
+        endingInfo.work->unkA804[0].unk0->flags &= ~0x20;
+        endingInfo.work->unkA804[1].unk0->flags &= ~0x20;
+        endingInfo.work->unkA804[2].unk0->flags &= ~0x20;
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp = &endingInfo.unk8->unkAA54;
+        temp = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD8);
         temp->unk0 = 1;
         temp->unk4.x = -2.0f;
@@ -1435,11 +1434,11 @@ static void ending_state_22(void)
         temp->unk48.z = 0.0f;
         break;
     case 0x1E0:
-        endingInfo.unk8->unkA804[3].unk0->flags &= ~0x20;
-        endingInfo.unk8->unkA804[3].unk4 = 0x13;
+        endingInfo.work->unkA804[3].unk0->flags &= ~0x20;
+        endingInfo.work->unkA804[3].unk4 = 0x13;
         break;
     case 0xD8:
-        temp = &endingInfo.unk8->unkAA54;
+        temp = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x3C);
         temp->unk0 = 1;
         temp->unk10.x = (2.0f - temp->unk4.x) * temp_f2;
@@ -1454,7 +1453,7 @@ static void ending_state_22(void)
         SoundReq(0x199U);
         break;
     case 0x8A:
-        temp = &endingInfo.unk8->unkAA54;
+        temp = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x3C);
         temp->unk0 = 1;
         temp->unk10.x = (2.0f - temp->unk4.x) * temp_f2;
@@ -1470,7 +1469,7 @@ static void ending_state_22(void)
     case 0x3C:
         endingInfo.unk4 &= 0xFFFFFFFB;
         u_play_sound_0(0x236);
-        temp = &endingInfo.unk8->unkAA54;
+        temp = &endingInfo.work->unkAA54;
         temp->unk0 = 1;
         temp->unk10.x = 0.0f;
         temp->unk10.y = 0.0f;
@@ -1488,13 +1487,13 @@ static void ending_state_23(void)
 
     endingInfo.nextState = 0x18;
     modeCtrl.submodeTimer = 0x12C;
-    endingInfo.unk8->unkA804[0].unk4 = 0x15;
-    endingInfo.unk8->unkA804[1].unk4 = 0x15;
-    endingInfo.unk8->unkA804[2].unk4 = 0x15;
-    endingInfo.unk8->unkA804[0].unk70 = 0;
-    endingInfo.unk8->unkA804[1].unk70 = 0;
-    endingInfo.unk8->unkA804[2].unk70 = 0;
-    temp = &endingInfo.unk8->unkAA54;
+    endingInfo.work->unkA804[0].unk4 = 0x15;
+    endingInfo.work->unkA804[1].unk4 = 0x15;
+    endingInfo.work->unkA804[2].unk4 = 0x15;
+    endingInfo.work->unkA804[0].unk70 = 0;
+    endingInfo.work->unkA804[1].unk70 = 0;
+    endingInfo.work->unkA804[2].unk70 = 0;
+    temp = &endingInfo.work->unkAA54;
     temp->unk0 = 1;
     temp->unk4.x = 2.0f;
     temp->unk4.y = 0.3f;
@@ -1510,14 +1509,14 @@ static void ending_state_23(void)
     temp->unk48.z = 0.0f;
     u_play_sound_0(0x238);
     SoundReq(0x17BU);
-    endingInfo.unk8->unkA804[0].unk36 &= ~0x1;
-    endingInfo.unk8->unkA804[1].unk36 &= ~0x1;
-    endingInfo.unk8->unkA804[2].unk36 &= ~0x1;
+    endingInfo.work->unkA804[0].unk36 &= ~0x1;
+    endingInfo.work->unkA804[1].unk36 &= ~0x1;
+    endingInfo.work->unkA804[2].unk36 &= ~0x1;
 }
 
 static void ending_state_24(void)
 {
-    struct SomeBigEndingStruct_sub3 *temp_r29 = &endingInfo.unk8->unkA804[3];
+    struct SomeBigEndingStruct_sub3 *temp_r29 = &endingInfo.work->unkA804[3];
     int temp_r28 = temp_r29->unk0->unk0->unk38;
 
     if (temp_r29->unk0->unk9C == 8 && temp_r28 == 0x2A)
@@ -1538,7 +1537,7 @@ static void ending_state_24(void)
         func_800BF658();
         endingInfo.nextState = 0x19;
         endingInfo.unk4 |= 2;
-        endingInfo.unk8->unk0 = 0.0f;
+        endingInfo.work->unk0 = 0.0f;
         u_play_sound_0(0x238);
     }
 }
@@ -1548,12 +1547,12 @@ static void ending_state_25(void)
     endingInfo.nextState = 0x1A;
     modeCtrl.submodeTimer = 0x1E0;
     modeCtrl.unk18 = 0;
-    endingInfo.unk8->unkAA04.unk2 = 4;
+    endingInfo.work->unkAA04.unk2 = 4;
 }
 
 static void ending_state_26(void)
 {
-    struct SomeBigEndingStruct_sub *temp_r4 = &endingInfo.unk8->unkAA54;
+    struct SomeBigEndingStruct_sub *temp_r4 = &endingInfo.work->unkAA54;
     float temp_f2;
 
     switch (modeCtrl.submodeTimer)
@@ -1639,7 +1638,7 @@ static void ending_state_30(void)
 {
     float temp_f2;
     int charaId;
-    struct SomeBigEndingStruct_sub *var_r31 = &endingInfo.unk8->unkAA54;
+    struct SomeBigEndingStruct_sub *var_r31 = &endingInfo.work->unkAA54;
     struct SomeBigEndingStruct_sub3 *temp_r6;
     Vec sp8;
 
@@ -1647,10 +1646,10 @@ static void ending_state_30(void)
     {
     case 0x14A:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        var_r31 = &endingInfo.unk8->unkAA54;
+        var_r31 = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        temp_r6 = &endingInfo.unk8->unkA804[charaId];
+        temp_r6 = &endingInfo.work->unkA804[charaId];
         var_r31->unk0 = 1;
         var_r31->unk4.x = temp_r6->unkC.x;
         var_r31->unk4.y = temp_r6->unkC.y - 0.5f;
@@ -1673,8 +1672,8 @@ static void ending_state_30(void)
         break;
     case 0xB4:
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        endingInfo.unk8->unkA804[3].unkA = 0x11;
-        temp_r6 = &endingInfo.unk8->unkA804[charaId];
+        endingInfo.work->unkA804[3].unkA = 0x11;
+        temp_r6 = &endingInfo.work->unkA804[charaId];
         CAMERA_FOREACH(camera->unk1F = 0;)
         var_r31->unk0 = 1;
         var_r31->unk4.x = temp_r6->unkC.x;
@@ -1739,7 +1738,7 @@ static void ending_state_28(void)
     Mtx sp8;
     float temp_f31;
 
-    temp_r30 = &endingInfo.unk8->unkAA54;
+    temp_r30 = &endingInfo.work->unkAA54;
     switch (modeCtrl.submodeTimer)
     {
     case 0x276:
@@ -1747,9 +1746,9 @@ static void ending_state_28(void)
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x1FE);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 2) % 3;
-        temp_r30 = &endingInfo.unk8->unkAA54;
-        temp_r27 = &endingInfo.unk8->unkA804[charaId];
-        endingInfo.unk8->unkAA54.unk0 = 1;
+        temp_r30 = &endingInfo.work->unkAA54;
+        temp_r27 = &endingInfo.work->unkA804[charaId];
+        endingInfo.work->unkAA54.unk0 = 1;
         sp38.x = temp_r27->unkC.x;
         sp38.y = 0.0f;
         sp38.z = temp_r27->unkC.z;
@@ -1771,9 +1770,9 @@ static void ending_state_28(void)
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x168);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 1) % 3;
-        temp_r30 = &endingInfo.unk8->unkAA54;
-        temp_r27 = &endingInfo.unk8->unkA804[charaId];
-        endingInfo.unk8->unkAA54.unk0 = 1;
+        temp_r30 = &endingInfo.work->unkAA54;
+        temp_r27 = &endingInfo.work->unkA804[charaId];
+        endingInfo.work->unkAA54.unk0 = 1;
         sp38.x = temp_r27->unkC.x;
         sp38.y = 0.0f;
         sp38.z = temp_r27->unkC.z;
@@ -1795,9 +1794,9 @@ static void ending_state_28(void)
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        temp_r30 = &endingInfo.unk8->unkAA54;
-        temp_r27 = &endingInfo.unk8->unkA804[charaId];
-        endingInfo.unk8->unkAA54.unk0 = 1;
+        temp_r30 = &endingInfo.work->unkAA54;
+        temp_r27 = &endingInfo.work->unkA804[charaId];
+        endingInfo.work->unkAA54.unk0 = 1;
         sp38.x = temp_r27->unkC.x;
         sp38.y = 0.0f;
         sp38.z = temp_r27->unkC.z;
@@ -1824,8 +1823,8 @@ static void ending_state_28(void)
         break;
     case 0xB4:
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        endingInfo.unk8->unkA804[charaId].unkA = 0x10;
-        temp_r27 = &endingInfo.unk8->unkA804[charaId];
+        endingInfo.work->unkA804[charaId].unkA = 0x10;
+        temp_r27 = &endingInfo.work->unkA804[charaId];
         temp_r30->unk0 = 1;
         ape = temp_r27->unk0;
         mathutil_mtxA_from_quat(&ape->unk60);
@@ -1874,12 +1873,12 @@ static void ending_state_32(void) {}
 
 static void func_800BB068(void)
 {
-    endingInfo.unk8->unkAA04.unk0 = 0;
+    endingInfo.work->unkAA04.unk0 = 0;
 }
 
 static void func_800BB084(void)
 {
-    struct SomeStruct *temp_r30 = &endingInfo.unk8->unkAA04;
+    struct SomeStruct *temp_r30 = &endingInfo.work->unkAA04;
     float temp_f5;
 
     if (temp_r30->unk0 != 0)
@@ -1994,7 +1993,7 @@ static void func_800BBA54(void) {}
 static void func_800BBA58(void)
 {
     struct GMAModel *model;
-    struct SomeStruct *temp_r31 = &endingInfo.unk8->unkAA04;
+    struct SomeStruct *temp_r31 = &endingInfo.work->unkAA04;
 
     if (temp_r31->unk0 != 0)
     {
@@ -2015,7 +2014,7 @@ static void func_800BBA58(void)
 
 static void func_800BBB10(int arg0)
 {
-    struct SomeStruct *temp_r31 = &endingInfo.unk8->unkAA04;
+    struct SomeStruct *temp_r31 = &endingInfo.work->unkAA04;
 
     memset(temp_r31, 0, sizeof(*temp_r31));
     temp_r31->unk0 = 1;
@@ -2025,14 +2024,14 @@ static void func_800BBB10(int arg0)
 
 static void func_800BBB78(void)
 {
-    struct SomeBigEndingStruct *temp = endingInfo.unk8;
+    struct EndingWork *work = endingInfo.work;
 
-    if (temp != NULL)
+    if (work != NULL)
     {
-        temp->unkA804[0].unk56 = -1;
-        temp->unkA804[1].unk56 = -1;
-        temp->unkA804[2].unk56 = -1;
-        temp->unkA804[3].unk56 = -1;
+        work->unkA804[0].unk56 = -1;
+        work->unkA804[1].unk56 = -1;
+        work->unkA804[2].unk56 = -1;
+        work->unkA804[3].unk56 = -1;
     }
 }
 
@@ -2043,7 +2042,7 @@ static void func_800BBBA8(void)
     struct Effect effect;
     struct RaycastHit sp8;
     int playerId = modeCtrl.currPlayer;
-    struct SomeBigEndingStruct_sub3 *var_r16 = endingInfo.unk8->unkA804;
+    struct SomeBigEndingStruct_sub3 *var_r16 = endingInfo.work->unkA804;
     float temp_f0;
 
     for (i = 0; i < 4; i++, var_r16++)
@@ -2333,9 +2332,9 @@ static void func_800BC820(void)
     int i;
     struct SomeBigEndingStruct_sub3 *var_r28;
 
-    if (endingInfo.unk8 == NULL)
+    if (endingInfo.work == NULL)
         return;
-    var_r28 = &endingInfo.unk8->unkA804[3];
+    var_r28 = &endingInfo.work->unkA804[3];
     for (i = 3; i >= 0; i--, var_r28--)
     {
         if (var_r28->unk0 != NULL)
@@ -2472,7 +2471,7 @@ static void func_800BC8B8(void)
     mathutil_mtxA_rotate_x(s_bgLightInfo.infLightRotX);
     mathutil_mtxA_tf_vec_xyz(&sp2C, 0.0f, 0.0f, -1.0f);
 
-    var_r27 = endingInfo.unk8->unkA804;
+    var_r27 = endingInfo.work->unkA804;
     for (var_r28 = 4; var_r28 > 0; var_r28--, var_r27++)
     {
         temp_f0 = temp_f21 + -1.0f;  // needed to match
@@ -2503,7 +2502,7 @@ static void func_800BC8B8(void)
         {
             mathutil_mtxA_from_mtxB();
             temp_r21_2 = ord_tbl_get_entry_for_pos(&var_r27->unkC);
-            temp_r3 = ord_tbl_alloc_node(0xCU);
+            temp_r3 = ord_tbl_alloc_node(sizeof(*temp_r3));
             temp_r3->node.drawFunc = (OrdTblDrawFunc)lbl_800BCD30;
             temp_r3->unk8 = var_r27;
             ord_tbl_insert_node(temp_r21_2, &temp_r3->node);
@@ -2601,7 +2600,7 @@ static int func_800BCE54(int arg0, int charaId)
     struct SomeBigEndingStruct_sub3 *temp_r31;
     struct Ape *ape;
 
-    temp_r31 = &endingInfo.unk8->unkA804[arg0];
+    temp_r31 = &endingInfo.work->unkA804[arg0];
     if (temp_r31->unk0 != NULL)
     {
         func_8008D29C(lbl_80206B80[arg0]);
@@ -2642,7 +2641,7 @@ static void lbl_800BCF6C(struct Ape *arg0, int arg1)
     if (gamePauseStatus & 0xA)
         return;
 
-    var_r30 = &endingInfo.unk8->unkA804[0];
+    var_r30 = &endingInfo.work->unkA804[0];
     for (var_r4 = 4; var_r4 > 0; var_r4--, var_r30++)
     {
         if (var_r30->unk0 == arg0)
@@ -2802,7 +2801,7 @@ static void func_800BD470(void)
     int i;
     struct SomeBigEndingStruct_sub4 *ptr;
 
-    ptr = endingInfo.unk8->unk4;
+    ptr = endingInfo.work->unk4;
     for (i = 0; i < 512; i++, ptr++)
         ptr->unk0 = 0;
 }
@@ -2839,7 +2838,7 @@ static void func_800BD4B8(void)
     mathutil_mtxA_rigid_inv_tf_vec_xyz(&spF0, 0.0f, 0.0f, -1.0f);
     mathutil_mtxA_rigid_inv_tf_tl(&spE4);
 
-    var_r29 = endingInfo.unk8->unk4;
+    var_r29 = endingInfo.work->unk4;
     for (var_r30 = 512; var_r30 > 0; var_r30--, var_r29++)
     {
         if (var_r29->unk0 != 0)
@@ -2850,10 +2849,10 @@ static void func_800BD4B8(void)
             case 2:
                 alt_f26 = var_r29->unkC.y;
                 mathutil_mtxA_from_rotate_y((unpausedFrameCounter << 0xA) + var_r30);
-                alt_f27 = 0.25f * alt_f26 * endingInfo.unk8->unk0;
+                alt_f27 = 0.25f * alt_f26 * endingInfo.work->unk0;
                 mathutil_mtxA_tf_vec_xyz(&spFC, alt_f27, 0.0f, 0.0f);
                 mathutil_mtxA_from_translate(&spFC);
-                alt_f27 = 1024.f * alt_f26 * endingInfo.unk8->unk0;
+                alt_f27 = 1024.f * alt_f26 * endingInfo.work->unk0;
                 mathutil_mtxA_rotate_x(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30));
                 mathutil_mtxA_rotate_z(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30 + 0x4000));
                 mathutil_mtxA_tf_point(&var_r29->unk4C->unk4, &spFC);
@@ -3000,12 +2999,12 @@ static void func_800BD4B8(void)
                 var_r29->unk36 += 256.0f * (RAND_FLOAT() - 0.5f);
                 var_r29->unk38 += 16.0f * (RAND_FLOAT() - 0.5f);
                 var_r29->unk3A += 4096.0f * (0.5f + RAND_FLOAT());
-                var_r29->unkC = endingInfo.unk8->unkAA54.unk2C;
+                var_r29->unkC = endingInfo.work->unkAA54.unk2C;
                 /* fall through */
             case 9:
                 if (var_r29->unk4 != 0)
                     var_r29->unk4--;
-                endingInfo.unk8->unkAA54.unk2C = var_r29->unkC;
+                endingInfo.work->unkAA54.unk2C = var_r29->unkC;
                 if (var_r29->unk4 < 0x3C)
                 {
                     temp_f0_5 = 1.0f / (var_r29->unk4 + 1);
@@ -3049,11 +3048,11 @@ static void func_800BD4B8(void)
                 break;
             case 10:
                 {
-                    struct SomeBigEndingStruct *temp = endingInfo.unk8;
-                    var_r29->unkC.x = 0.15016f + temp->unkA804[0].unkC.x;
-                    var_r29->unkC.y = 0.07f + temp->unkA804[0].unkC.y;
-                    var_r29->unkC.z = temp->unkA804[0].unkC.z;
-                    var_r29->unk30 = temp->unkA804[0].unk30;
+                    struct EndingWork *work = endingInfo.work;
+                    var_r29->unkC.x = 0.15016f + work->unkA804[0].unkC.x;
+                    var_r29->unkC.y = 0.07f + work->unkA804[0].unkC.y;
+                    var_r29->unkC.z = work->unkA804[0].unkC.z;
+                    var_r29->unk30 = work->unkA804[0].unk30;
                 }
                 break;
             }
@@ -3110,10 +3109,10 @@ static void func_800BD4B8(void)
                 }
                 temp_f27 = 1.0f + temp_f26;
                 {
-                    struct SomeBigEndingStruct *temp = endingInfo.unk8;
-                    spFC.x = var_r29->unkC.x - temp->unkA804[3].unkC.x;
-                    spFC.y = var_r29->unkC.y - temp->unkA804[3].unkC.y;
-                    spFC.z = var_r29->unkC.z - temp->unkA804[3].unkC.z;
+                    struct EndingWork *work = endingInfo.work;
+                    spFC.x = var_r29->unkC.x - work->unkA804[3].unkC.x;
+                    spFC.y = var_r29->unkC.y - work->unkA804[3].unkC.y;
+                    spFC.z = var_r29->unkC.z - work->unkA804[3].unkC.z;
                 }
                 if (mathutil_vec_sq_len(&spFC) < (temp_f27 * temp_f27))
                 {
@@ -3197,7 +3196,7 @@ static void func_800BEEE8(void)
     unused_f30 = 0.5f;
     unused_f31 = 0.25f;
 
-    var_r29 = endingInfo.unk8->unk4;
+    var_r29 = endingInfo.work->unk4;
     for (i = 512; i > 0; i--, var_r29++)
     {
         if (var_r29->unk0 != 0 && (var_r29->unk8 & 8))
@@ -3277,7 +3276,7 @@ static void func_800BF2D4(void)
     struct SomeBigEndingStruct_sub4 *var_r30;
     struct SomeBigEndingStruct_sub4_sub2 *model;
 
-    var_r30 = endingInfo.unk8->unk4;
+    var_r30 = endingInfo.work->unk4;
     for (i = 512; i > 0; i--, var_r30++)
     {
         if (var_r30->unk0 != 0)
@@ -3350,7 +3349,7 @@ static void func_800BF4F4(void)
     endingInfo.unk4 |= 1;
     var_r29 = decodedStageLzPtr->unk90;
     j = decodedStageLzPtr->unk8C;
-    var_r28 = endingInfo.unk8->unk4;
+    var_r28 = endingInfo.work->unk4;
 
     for (i = 512; i > 0 && j > 0; i--, var_r28++)
     {
@@ -3389,7 +3388,7 @@ static void func_800BF658(void)
     int i;
     struct SomeBigEndingStruct_sub4 *ptr;
 
-    ptr = endingInfo.unk8->unk4;
+    ptr = endingInfo.work->unk4;
     for (i = 512; i > 0; i--, ptr++)
     {
         if (ptr->unk0 != 0 && ptr->unk2 == 1)
@@ -3412,7 +3411,7 @@ static void func_800BF774(void)
     mathutil_mtxA_from_rotate_y((rand() & 0x3FF) - 0x200);
     mathutil_mtxA_rotate_z((rand() & 0x7FFF) - 0x4000);
     mathutil_mtxA_tf_vec_xyz(&sp8, 0.0f, -1.0f, 0.0f);
-    var_r29 = endingInfo.unk8->unk4;
+    var_r29 = endingInfo.work->unk4;
     for (i = 512; i > 0; i--, var_r29++)
     {
         if (var_r29->unk0 != 0 && var_r29->unk2 == 2 && var_r29->unk4 <= 0)
@@ -3429,7 +3428,7 @@ static void func_800BF8C4(int arg0)
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = endingInfo.unk8->unk4;
+    var_r6 = endingInfo.work->unk4;
     for (i = 512; i > 0 && arg0 > 0; i--, var_r6++)
     {
         if (var_r6->unk0 == 0)
@@ -3453,7 +3452,7 @@ static void func_800BF948(int arg0, int arg1)
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = endingInfo.unk8->unk4;
+    var_r6 = endingInfo.work->unk4;
     for (i = 512; i > 0 && arg0 > 0; i--, var_r6++)
     {
         if (var_r6->unk0 == 0)
@@ -3476,7 +3475,7 @@ static void func_800BF9CC(int arg0)
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = endingInfo.unk8->unk4;
+    var_r6 = endingInfo.work->unk4;
     for (i = 512; i > 0; i--, var_r6++)
     {
         if (var_r6->unk0 == 0)
@@ -3496,7 +3495,7 @@ static void func_800BFA2C(void)
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = endingInfo.unk8->unk4;
+    var_r6 = endingInfo.work->unk4;
     for (i = 512; i > 0; i--, var_r6++)
     {
         if ((var_r6->unk2 == 8 || var_r6->unk2 == 9) && var_r6->unk0 != 0)
@@ -3518,15 +3517,15 @@ static void func_800BFC2C(void)
     Mtx sp14;
     struct Ape *ape;
     struct SomeBigEndingStruct_sub3 *temp_r29;
-    struct SomeBigEndingStruct *temp;
+    struct EndingWork *work;
     float x1, y1, x2, y2;
 
-    temp = endingInfo.unk8;
-    if (temp == NULL)
+    work = endingInfo.work;
+    if (work == NULL)
         return;
-    if (temp->unkAAA8 <= 0.0f)
+    if (work->unkAAA8 <= 0.0f)
         return;
-    temp_r29 = &temp->unkA804[0];
+    temp_r29 = &work->unkA804[0];
     ape = temp_r29->unk0;
     if (ape == NULL)
         return;
@@ -3544,7 +3543,7 @@ static void func_800BFC2C(void)
     mathutil_mtxA_mult_right(ape->unk0->joints[5].transformMtx);
     mathutil_mtxA_get_translate_alt(&cameraTarget);
     mathutil_mtxA_tf_point_xyz(&cameraTarget, 0.0f, 0.0f, 0.1f);
-    mathutil_mtxA_tf_point_xyz(&cameraPos, temp->unkAAAC, 0.0f, 0.2f);
+    mathutil_mtxA_tf_point_xyz(&cameraPos, work->unkAAAC, 0.0f, 0.2f);
     upVec.x = 0.0f;
     upVec.y = 1.0f;
     upVec.z = 0.0f;
@@ -3559,7 +3558,7 @@ static void func_800BFC2C(void)
     kcolor.r = 255;
     kcolor.g = 255;
     kcolor.b = 255;
-    kcolor.a = temp->unkAAA8 * 255.0f;
+    kcolor.a = work->unkAAA8 * 255.0f;
     GXSetTevKColor_cached(GX_KCOLOR0, kcolor);
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevKAlphaSel_cached(GX_TEVSTAGE0, GX_TEV_KASEL_K0_A);

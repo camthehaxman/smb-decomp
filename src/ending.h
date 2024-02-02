@@ -95,7 +95,13 @@ struct SomeBigEndingStruct_sub4
     struct SomeBigEndingStruct_sub4_sub2 *unk50;
 };
 
-struct SomeBigEndingStruct
+struct EndingCharaDialogue
+{
+	s32 numLines;
+	char *lines[6];
+};
+
+struct EndingWork
 {
     float unk0;
     struct SomeBigEndingStruct_sub4 unk4[512];
@@ -104,11 +110,9 @@ struct SomeBigEndingStruct
     struct SomeBigEndingStruct_sub unkAA54;
     float unkAAA8;
     float unkAAAC;
-    s32 unkAAB0;
-    /*0xAAB4*/ char *textboxStrings[6];
+    /*0xAAB0*/ struct EndingCharaDialogue charaDialogue;
     u32 unkAACC;
-    s32 unkAAD0;
-    u8 fillerAAD4[0xC2D0-0xAAD4];
+    char dialogueBuf[0x1800];
 };
 
 struct EndingInfo
@@ -116,9 +120,29 @@ struct EndingInfo
     s16 state;
     s16 nextState;
     u32 unk4;
-    struct SomeBigEndingStruct *unk8;
+    struct EndingWork *work;
 };
 
 extern struct EndingInfo endingInfo;
+
+// ending.c
+void ending_init(void);
+int ending_main(void);
+void ending_finish(void);
+void u_ending_draw(void);
+
+// ending_2.c
+void func_800C008C(void);
+void func_800C00F0(void);
+void func_800C09B0(void);
+void func_800C09B4(void);
+
+// ending_dialogue.c
+void effect_ending_ballfrag_init(struct Effect *);
+void effect_ending_ballfrag_main(struct Effect *);
+void effect_ending_ballfrag_draw(struct Effect *);
+void effect_ending_ballfrag_destroy(struct Effect *);
+void ending_prepare_chara_dialogue(struct EndingCharaDialogue *out, char *buffer);
+void ending_prepare_chara_dialogue_test(int index, struct EndingCharaDialogue *out, char *buffer);
 
 #endif

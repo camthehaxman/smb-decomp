@@ -4,6 +4,7 @@
 #include "global.h"
 #include "ball.h"
 #include "camera.h"
+#include "ending.h"
 #include "event.h"
 #include "input.h"
 #include "mode.h"
