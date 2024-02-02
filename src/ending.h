@@ -131,7 +131,7 @@ int ending_main(void);
 void ending_finish(void);
 void u_ending_draw(void);
 
-// ending_2.c
+// ending_camera.c
 void func_800C008C(void);
 void func_800C00F0(void);
 void func_800C09B0(void);
