@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 #include <dolphin.h>
 
@@ -32,8 +33,15 @@ struct GameResultInfo
     s32 unk34;
 };
 
+struct Struct800C1418
+{
+	u32 unk0;
+	void *unk4[6];
+};
+
 void get_game_results(struct GameResultInfo *arg0);
 char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***arg1);
+void copy_dialogue_string(struct GameResultInfo *res, struct Struct800C1418 *out, char *dest, char **lines);
 
 void effect_ending_ballfrag_init(struct Effect *arg0)
 {
@@ -138,14 +146,14 @@ void lbl_800C0C94(struct MyNode *node)
 
 void effect_ending_ballfrag_destroy(struct Effect *effect) {}
 
-void func_800C0DC0(s32 *arg0, s32 *arg1)
+void func_800C0DC0(s32 *arg0, char *arg1)
 {
     struct GameResultInfo sp10;
     char **r3;
 
     get_game_results(&sp10);
     r3 = get_ending_dlg_lines(&sp10, NULL);
-    func_800C1418(&sp10, arg0, arg1, r3);
+    copy_dialogue_string(&sp10, (void *)arg0, arg1, r3);
 }
 
 #pragma force_active on
@@ -280,7 +288,7 @@ char *lbl_801E3820[] =
 {
     "You got %p!",
     "All together, you have %t!",
-    "Since you got a lot of points,",
+    "Only %n left to",
     "increase your number of continues!",
     NULL,
 };
@@ -825,7 +833,7 @@ char *lbl_801E4D34_jp[] =
 char *lbl_801E4D34[] =
 {
     "You got %p!",
-    "All togedder, you have %p!",
+    "All togeder, you have %t!",
     "Since you got a wot of points,",
     "you incwease your number",
     "of continues!",
@@ -844,7 +852,7 @@ char *lbl_801E4DBC_jp[] =
 char *lbl_801E4DBC[] =
 {
     "You got %p!",
-    "All togedder, you have %p!",
+    "All togeder, you have %t!",
     "Now, you can pway with",
     "infinite continues!",
     NULL,
@@ -888,7 +896,7 @@ char *lbl_801E4F04[] =
 
 char *lbl_801E4FCC_jp[] =
 {
-    "h/%pk/POINNTO,GETTOh/DEk/TYU!",
+    "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "h/KOREHA, k/SAIKO-h/KIROKUDEk/TYU!",
     "h/YATTADEk/TYU! h/URETIIDEk/TYU!",
     "k/SUGOIh/DEk/TYU! UKIUKIh/DEk/TYU!",
@@ -906,7 +914,7 @@ char *lbl_801E4FCC[] =
 
 char *lbl_801E5078_jp[] =
 {
-    "h/%pk/POINNTO,GETTOh/DEk/TYU!",
+    "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "k/PA-FEKUTOh/NAKIROKUDEk/TYU!",
     "h/KOREYORIk/SUGOIh/KIROKUHA",
     "h/MOUNAIDEk/TYU! ODOROKIh/DEk/TYU!",
@@ -924,7 +932,7 @@ char *lbl_801E5078[] =
 
 char *lbl_801E5134_jp[] =
 {
-    "h/%pk/POINNTO,GETTOh/DEk/TYU!",
+    "h/%pk/POINNTO, GETTOh/DEk/TYU!",
     "k/SAIKO-h/HA,%bk/POINNTOh/DEk/TYU!",
     "h/%bk/POINNTOh/WOMATAk/GETTOh/DEKIRUKA",
     "k/TYARENNJIh/TITEHOSIIDEk/TYU! BABU~!",
@@ -1111,7 +1119,7 @@ char *lbl_801E5760_jp[] =
 char *lbl_801E5760[] =
 {
     "You got %p!",
-    "All together, you have %t",
+    "All together, you have %t!",
     "Now, you can play with",
     "infinite continues! Good job!!",
     NULL,
@@ -1203,7 +1211,7 @@ char *lbl_801E5B08[] =
     "You got %p!",
     "The high score is %b!",
     "Try one more time to see",
-    "if you can get %b! Goo goo!!!",
+    "if you can get %b!",
     "Readyp/TENNTENN/a/ Go!!!",
     NULL,
 };
@@ -1293,7 +1301,7 @@ char ***characterDialogues[] =
     gongonDialogue,
 };
 
-void func_800C0E1C(s32 index, s32 arg1, s32 arg2)
+void func_800C0E1C(s32 index, void *arg1, char *arg2)
 {
     struct GameResultInfo result;
     char ***charaDlg;
@@ -1324,7 +1332,7 @@ void func_800C0E1C(s32 index, s32 arg1, s32 arg2)
     case 13: lines = charaDlg[13]; break;
     case 14: lines = charaDlg[14]; break;
     }
-    func_800C1418(&result, arg1, arg2, lines);
+    copy_dialogue_string(&result, arg1, arg2, lines);
 }
 
 void get_game_results(struct GameResultInfo *out)
@@ -1423,4 +1431,80 @@ char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***out)
     if (out != NULL)
         *out = lines;
     return lines;
+}
+
+void copy_dialogue_string(struct GameResultInfo *res, struct Struct800C1418 *out, char *dest, char **lines)
+{
+	static char *pointsTexts[] = { " point", " points", "" };
+	struct Struct800C1418 sp50;
+	struct GameResultInfo result;
+	char **pSrcLine;
+	char *src;
+	char *dst;
+	char *p;
+
+	result = *res;
+	memset(&sp50, 0, sizeof(sp50));
+	pSrcLine = lines;
+	dst = dest;
+
+	while (*pSrcLine != NULL)
+	{
+		sp50.unk4[sp50.unk0] = dst;
+		src = *pSrcLine;
+		while (*src != 0)
+		{
+			switch (*src)
+			{
+			case '%':
+				switch (*++src)
+				{
+				case 'p':
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.playPoints, (result.playPoints != 1) ? pointsTexts[1] : pointsTexts[0]);
+					break;
+				case 't':
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk4, (result.unk4 != 1) ? pointsTexts[1] : pointsTexts[0]);
+					break;
+				case 'n':
+					if (result.unk24 != 1)
+						p = pointsTexts[1];
+					else
+						p = pointsTexts[0];
+					if (src[1] == '_')
+					{
+						p = pointsTexts[2];
+						src++;
+					}
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk24, p);
+					break;
+				case 'c':
+					sprintf(dst, "c/0xff0000/%dc/0x000000/", result.continues);
+					break;
+				case 'b':
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk30, (result.unk30 != 1) ? pointsTexts[1] : pointsTexts[0]);
+					break;
+				case 'm':
+					sprintf(dst, "c/0xff0000/%dc/0x000000/%s", result.unk34, (result.unk34 != 1) ? pointsTexts[1] : pointsTexts[0]);
+					break;
+				default:
+					*dst = 0;
+					break;
+				}
+				src++;
+				while (*dst != 0)
+					dst++;
+				break;  
+			default:
+				*dst = *src;
+				src++;
+				dst++;
+				break;
+			}
+		}
+		*dst = 0;
+		dst++;
+		pSrcLine++;
+		sp50.unk0++;
+	}
+	*out = sp50;
 }

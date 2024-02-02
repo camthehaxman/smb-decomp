@@ -534,6 +534,7 @@ __OSGetDIConfig:
 
 .section .data
 
+	.balign 8
 .global lbl_801E5CF0
 lbl_801E5CF0:
 	# ROM: 0x1E2CF0

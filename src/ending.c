@@ -420,7 +420,7 @@ static void ending_state_3(void)
     temp_r30 = endingInfo.unk8;
     temp_r30->unkAACC = 0;
 
-    func_800C0DC0(&temp_r30->unkAAB0, &temp_r30->unkAAD0);
+    func_800C0DC0(&temp_r30->unkAAB0, (char *)&temp_r30->unkAAD0);
     if (temp_r30->unkAAB0 > 0)
     {
         memset(&tbox, 0, sizeof(tbox));
@@ -784,7 +784,7 @@ static void ending_state_9(void)
     modeCtrl.unk18 = 0x1E;
     temp_r30 = endingInfo.unk8;
     temp_r30->unkAACC = 0;
-    func_800C0DC0(&temp_r30->unkAAB0, &temp_r30->unkAAD0);
+    func_800C0DC0(&temp_r30->unkAAB0, (char *)&temp_r30->unkAAD0);
     if (temp_r30->unkAAB0 > 0)
     {
         memset(&tbox, 0, sizeof(tbox));
@@ -1086,7 +1086,7 @@ static void ending_state_15(void)
     endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk70 = 1;
     temp_r28 = endingInfo.unk8;
     temp_r28->unkAACC = 0;
-    func_800C0DC0(&temp_r28->unkAAB0, &temp_r28->unkAAD0);
+    func_800C0DC0(&temp_r28->unkAAB0, (char *)&temp_r28->unkAAD0);
     if (temp_r28->unkAAB0 > 0)
     {
         memset(&tbox, 0, sizeof(tbox));
