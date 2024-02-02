@@ -28,6 +28,8 @@
 #include "textbox.h"
 
 #include "../data/common.nlobj.h"
+#include "../data/common.gma.h"
+#include "../data/bg_ending.gma.h"
 
 struct EndingInfo endingInfo;
 
@@ -73,9 +75,9 @@ static void func_800BBB78(void);
 static void func_800BBBA8(void);
 static void func_800BC820(void);
 static void func_800BC8B8(void);
-static int func_800BCE54(int, int);
-static void lbl_800BCF6C(struct Ape *, int);
-static void func_800BD470(void);
+static int init_ending_scene_ape(int, int);
+static void u_some_ape_callback(struct Ape *, int);
+static void clear_scene_objects(void);
 static void func_800BD4B8(void);
 static void func_800BEEE8(void);
 static void func_800BF2D0(void);
@@ -83,9 +85,9 @@ static void func_800BF2D4(void);
 static void func_800BF4F4(void);
 static void func_800BF658(void);
 static void func_800BF774(void);
-static void func_800BF8C4(int);
-static void func_800BF948(int, int);
-static void func_800BF9CC(int);
+static void spawn_lots_of_bananas_1(int);
+static void spawn_lots_of_bananas_2(int, int);
+static void spawn_beginner_banana(int);
 static void func_800BFA2C(void);
 static void func_800BFC2C(void);
 
@@ -186,28 +188,29 @@ void ending_init(void)
     memset(endingInfo.work, 0, sizeof(*endingInfo.work));
     SoundGroupLoad(SOUND_GRPending);
     func_800BBB78();
-    func_800BD470();
+    clear_scene_objects();
     func_800BB068();
-    func_800C008C();
-    func_800C09B0();
+    ending_camera_init();
+    ending_camera_emptyfunc2();
     lbl_802F1B7C = ending_finish;
 }
 
+// runs the ending. returns FALSE when done
 int ending_main(void)
 {
     struct EndingWork *work;
 
     if (endingInfo.work == NULL)
-        return 0;
+        return FALSE;
     if (gamePauseStatus & 0xA)
-        return 1;
+        return TRUE;
     if (endingInfo.nextState != -1)
         endingInfo.state = endingInfo.nextState;
     endingFuncs[endingInfo.state]();
     func_800BBBA8();
     func_800BD4B8();
     func_800BB084();
-    if (endingInfo.unk4 & 2)
+    if (endingInfo.flags & 2)
         endingInfo.work->unk0 += 0.01666666753590107f;
 
     work = endingInfo.work;
@@ -220,13 +223,13 @@ int ending_main(void)
     work->unkAA54.unk2C.y += work->unkAA54.unk38.y;
     work->unkAA54.unk2C.z += work->unkAA54.unk38.z;
 
-    return endingInfo.state != 32;
+    return (endingInfo.state != 32);
 }
 
 void ending_finish(void)
 {
-    func_800C09B4();
-    func_800C00F0();
+    ending_camera_emptyfunc3();
+    ending_camera_emptyfunc1();
     func_800BBA54();
     func_800BF2D0();
     func_800BC820();
@@ -246,11 +249,11 @@ void u_ending_draw(void)
     u_draw_ball_shadow();
     func_80054FF0();
     func_800BF2D4();
-    if (endingInfo.unk4 & 1)
+    if (endingInfo.flags & 1)
     {
         mathutil_mtxA_from_mtxB();
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-        avdisp_draw_model_culled_sort_translucent(decodedBgGma->modelEntries[4].model);
+        avdisp_draw_model_culled_sort_translucent(decodedBgGma->modelEntries[INSIDE_BANANA].model);
     }
     func_800BC8B8();
     func_800BBA58();
@@ -267,7 +270,7 @@ void u_ending_draw(void)
         effect_draw();
     draw_monkey();
     ord_tbl_draw_nodes();
-    if (endingInfo.unk4 & 0x20)
+    if (endingInfo.flags & 0x20)
         func_800BFC2C();
 }
 
@@ -318,8 +321,8 @@ static void ending_state_beginner_init(void)
     event_start(EVENT_VIBRATION);
     light_init(currStageId);
     rend_efc_mirror_enable();
-    func_800BCE54(0, playerCharacterSelection[modeCtrl.currPlayer]);
-    endingInfo.work->unkA804[0].unk70 = 1;
+    init_ending_scene_ape(0, playerCharacterSelection[modeCtrl.currPlayer]);
+    endingInfo.work->characters[0].unk70 = 1;
     CAMERA_FOREACH(camera->unk1F = 0;)
     r28 = &endingInfo.work->unkAA54;
     memset(r28, 0, sizeof(*r28));
@@ -333,9 +336,9 @@ static void ending_state_beginner_init(void)
     r28->unk2C.x = sp8.x;
     r28->unk2C.y = sp8.y + 20.0f;
     r28->unk2C.z = sp8.z + 100.0f;
-    if (endingInfo.work->unkA804[0].unk0 != NULL)
-        endingInfo.work->unkA804[0].unk0->colorId = modeCtrl.currPlayer;
-    start_screen_fade(0x100, 0, 0x1E);
+    if (endingInfo.work->characters[0].ape != NULL)
+        endingInfo.work->characters[0].ape->colorId = modeCtrl.currPlayer;
+    start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
     u_play_music(0x44, 0);
 }
 
@@ -344,37 +347,37 @@ static s16 lbl_802F18C0[4] = { 0x00EA, 0x0102, 0x0142, 0x0173 };
 static void ending_state_2(void)
 {
     float temp_f2;
-    struct SomeBigEndingStruct_sub3 *temp_r4;
+    struct EndingSceneCharacter *chara;
     struct SomeBigEndingStruct_sub *temp_r6;
 
     temp_r6 = &endingInfo.work->unkAA54;
-    temp_r4 = &endingInfo.work->unkA804[0];
+    chara = &endingInfo.work->characters[0];
     switch (modeCtrl.submodeTimer)
     {
-    case 0x19E:
-        func_800BF9CC(modeCtrl.submodeTimer - 0xB4);
+    case 414:
+        spawn_beginner_banana(modeCtrl.submodeTimer - 180);
         break;
-    case 0x134:
+    case 308:
         u_play_sound_0(0x230);
         break;
-    case 0xF0:
-        temp_r4->unk4 = 1;
-        temp_r4->unk6 = modeCtrl.submodeTimer - 0x78;
+    case 240:
+        chara->unk4 = 1;
+        chara->unk6 = modeCtrl.submodeTimer - 120;
         break;
-    case 0xB4:
+    case 180:
         temp_f2 = 1.0f / modeCtrl.submodeTimer;
         temp_r6->unk10.x = -temp_r6->unk4.x * temp_f2;
         temp_r6->unk10.y = (20.0f - temp_r6->unk4.y) * temp_f2;
         temp_r6->unk10.z = (-61.0f - temp_r6->unk4.z) * temp_f2;
         break;
-    case 0x87:
-        SoundReq(lbl_802F18C0[temp_r4->unk0->charaId]);
+    case 135:
+        SoundReq(lbl_802F18C0[chara->ape->charaId]);
         break;
-    case 0x78:
+    case 120:
         func_800BFA2C();
         u_play_sound_0(0x231);
         break;
-    case 0x69:
+    case 105:
         temp_r6->unk2 = 2;
         temp_r6->unk44 = 0;
         temp_r6->unk46 = 0;
@@ -395,12 +398,12 @@ static void ending_state_3(void)
     struct SomeBigEndingStruct_sub *temp_r29;
     Vec sp30;
     struct TextBox tbox;
-    struct SomeBigEndingStruct_sub3 *temp_r4;
+    struct EndingSceneCharacter *chara;
     int i;
 
     endingInfo.nextState = 4;
     modeCtrl.submodeTimer = 60;
-    modeCtrl.unk18 = 0x1E;
+    modeCtrl.unk18 = 30;
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_r29 = &endingInfo.work->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
@@ -437,9 +440,9 @@ static void ending_state_3(void)
             work->unkAACC++;
         }
     }
-    temp_r4 = &endingInfo.work->unkA804[0];
-    temp_r4->unkA = 1;
-    temp_r4->unk38 = 0;
+    chara = &endingInfo.work->characters[0];
+    chara->unkA = 1;
+    chara->unk38 = 0;
 }
 
 static void ending_state_4(void)
@@ -448,28 +451,28 @@ static void ending_state_4(void)
     struct TextBox tbox;
     struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r29;
-    struct SomeBigEndingStruct_sub3 *temp_r30;
+    struct EndingSceneCharacter *chara;
     int i2;
 
     temp_r29 = &endingInfo.work->unkAA54;
-    temp_r30 = &endingInfo.work->unkA804[0];
+    chara = &endingInfo.work->characters[0];
     mathutil_mtxA_from_rotate_z(unpausedFrameCounter << 6);
     mathutil_mtxA_tf_vec_xyz(&sp30, 0.0f, 0.5f, 0.0f);
     temp_r29->unk4.x = sp30.x;
     temp_r29->unk4.y = 20.75f + (0.5f * sp30.y);
     temp_r29->unk4.z = -61.0f + sp30.z;
-    temp_r30->unk38--;
-    if (temp_r30->unk38 < 0)
+    chara->unk38--;
+    if (chara->unk38 < 0)
     {
-        SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
-        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
-        temp_r30->unk3A++;
+        SoundReq(lbl_801E2B28[chara->ape->charaId][chara->unk3A & 1]);
+        chara->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
+        chara->unk3A++;
     }
     if (modeCtrl.unk18 != 0)
         modeCtrl.unk18--;
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
-        modeCtrl.unk18 = 0x1E;
+        modeCtrl.unk18 = 30;
         work = endingInfo.work;
         if (work->charaDialogue.numLines != 0)
         {
@@ -503,7 +506,7 @@ static void ending_state_5(void)
     struct SomeBigEndingStruct_sub *temp_r29;
 
     endingInfo.nextState = 6;
-    modeCtrl.submodeTimer = 0x168;
+    modeCtrl.submodeTimer = 360;
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_r29 = &endingInfo.work->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
@@ -517,7 +520,7 @@ static void ending_state_5(void)
     temp_r29->unk48.x = 0.0f;
     temp_r29->unk48.y = 0.0f;
     temp_r29->unk48.z = 0.0f;
-    endingInfo.work->unkA804[0].unkA = 2;
+    endingInfo.work->characters[0].unkA = 2;
 }
 
 static s16 lbl_802F18C8[4] = { 0x00B7, 0x0102, 0x0141, 0x018B };
@@ -526,20 +529,20 @@ static void ending_state_6(void)
 {
     switch (modeCtrl.submodeTimer)
     {
-    case 0xF0:
-        endingInfo.work->unkA804[0].unk4 = 4;
+    case 240:
+        endingInfo.work->characters[0].unk4 = 4;
         break;
-    case 0x117:
+    case 279:
         SoundReq(lbl_802F18C8[playerCharacterSelection[modeCtrl.currPlayer]]);
         break;
-    case 0x1E:
-        start_screen_fade(1, 0xFFFFFFU, modeCtrl.submodeTimer);
+    case 30:
+        start_screen_fade(FADE_OUT, RGBA(255, 255, 255, 0), modeCtrl.submodeTimer);
         break;
     }
     if (modeCtrl.submodeTimer != 0)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
-        endingInfo.nextState = 0x1F;
+        endingInfo.nextState = 31;
 }
 
 static void ending_state_advanced_init(void)
@@ -550,7 +553,7 @@ static void ending_state_advanced_init(void)
     struct Ape *ape;
 
     endingInfo.nextState = 8;
-    modeCtrl.submodeTimer = 0x186;
+    modeCtrl.submodeTimer = 390;
     event_finish_all();
     switch (modeCtrl.difficulty)
     {
@@ -579,11 +582,11 @@ static void ending_state_advanced_init(void)
     event_start(EVENT_VIBRATION);
     light_init(currStageId);
     rend_efc_mirror_enable();
-    func_800BCE54(0, playerCharacterSelection[modeCtrl.currPlayer]);
-    endingInfo.work->unkA804[0].unk4 = 6;
-    endingInfo.work->unkA804[0].unk6 = modeCtrl.submodeTimer - 0xB4;
+    init_ending_scene_ape(0, playerCharacterSelection[modeCtrl.currPlayer]);
+    endingInfo.work->characters[0].unk4 = 6;
+    endingInfo.work->characters[0].unk6 = modeCtrl.submodeTimer - 180;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x12C);
+    temp_f31 = 1.0f / (modeCtrl.submodeTimer - 300);
     temp_r31 = &endingInfo.work->unkAA54;
     memset(temp_r31, 0, sizeof(*temp_r31));
     temp_r31->unk0 = 1;
@@ -595,10 +598,10 @@ static void ending_state_advanced_init(void)
     temp_r31->unk2C.x = 0.0f;
     temp_r31->unk2C.y = 0.0f;
     temp_r31->unk2C.z = 0.0f;
-    ape = endingInfo.work->unkA804[0].unk0;
+    ape = endingInfo.work->characters[0].ape;
     if (ape != NULL)
         ape->colorId = modeCtrl.currPlayer;
-    start_screen_fade(0x100, 0U, 0x1E);
+    start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
     u_play_music(0x44U, 0);
     u_play_sound_0(0x232);
 }
@@ -609,17 +612,17 @@ static s16 lbl_802F18D8[4] = { 0x00B5, 0x00FF, 0x0138, 0x0192 };
 static void ending_state_8(void)
 {
     Vec spB4;
-    struct Effect sp8;
+    struct Effect effect;
     float temp_f30;
     float temp_f31;
-    struct SomeBigEndingStruct_sub3 *temp_r30;
+    struct EndingSceneCharacter *chara;
     struct SomeBigEndingStruct_sub *temp_r29;
 
     temp_r29 = &endingInfo.work->unkAA54;
-    temp_r30 = &endingInfo.work->unkA804[0];
+    chara = &endingInfo.work->characters[0];
     switch (modeCtrl.submodeTimer)
     {
-    case 0x177:
+    case 375:
         temp_r29->unk2 = 2;
         temp_r29->unk44 = 0;
         temp_r29->unk46 = 0;
@@ -628,7 +631,7 @@ static void ending_state_8(void)
         temp_r29->unk48.z = 0.0f;
         SoundReq(lbl_802F18D0[playerCharacterSelection[modeCtrl.currPlayer]]);
         break;
-    case 0x12C:
+    case 300:
         temp_r29->unk0 = 2;
         temp_r29->unk1C = 0;
         temp_r29->unk1E = 0;
@@ -636,38 +639,38 @@ static void ending_state_8(void)
         temp_r29->unk20.y = 0.0f;
         temp_r29->unk20.z = -2.0f;
         break;
-    case 0xB4:
+    case 180:
         break;
-    case 0x43:
-        temp_r30->unk0->flags &= 0xFFFFCFFF;
+    case 67:
+        chara->ape->flags &= 0xFFFFCFFF;
         if (modeCtrl.playerCount > 1)
-            temp_r30->unk56 = modeCtrl.currPlayer;
+            chara->unk56 = modeCtrl.currPlayer;
         else
-            temp_r30->unk56 = 3;
+            chara->unk56 = 3;
         func_8004CFF0(0x2E);
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x38);
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 56);
         temp_f30 = 1.25f * (0.9f + (0.2f * RAND_FLOAT()));
         temp_r29->unk0 = 1;
         mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
         mathutil_mtxA_rotate_x(rand() & 0x7FFF);
         mathutil_mtxA_tf_vec_xyz(&temp_r29->unk4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk4.x += temp_r30->unkC.x;
-        temp_r29->unk4.y += temp_r30->unkC.y;
-        temp_r29->unk4.z += temp_r30->unkC.z;
+        temp_r29->unk4.x += chara->unkC.x;
+        temp_r29->unk4.y += chara->unkC.y;
+        temp_r29->unk4.z += chara->unkC.z;
         mathutil_mtxA_rotate_y((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_rotate_x((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_tf_vec_xyz(&spB4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk10.x = temp_f31 * ((spB4.x + temp_r30->unkC.x) - temp_r29->unk4.x);
-        temp_r29->unk10.y = temp_f31 * ((spB4.y + temp_r30->unkC.y) - temp_r29->unk4.y);
-        temp_r29->unk10.z = temp_f31 * ((spB4.z + temp_r30->unkC.z) - temp_r29->unk4.z);
+        temp_r29->unk10.x = temp_f31 * ((spB4.x + chara->unkC.x) - temp_r29->unk4.x);
+        temp_r29->unk10.y = temp_f31 * ((spB4.y + chara->unkC.y) - temp_r29->unk4.y);
+        temp_r29->unk10.z = temp_f31 * ((spB4.z + chara->unkC.z) - temp_r29->unk4.z);
         break;
-    case 0x3C:
-        temp_r30->unk0->flags &= 0xFFFFCFFF;
+    case 60:
+        chara->ape->flags &= 0xFFFFCFFF;
         if (modeCtrl.playerCount > 1)
-            temp_r30->unk56 = modeCtrl.currPlayer;
+            chara->unk56 = modeCtrl.currPlayer;
         else
-            temp_r30->unk56 = 3;
+            chara->unk56 = 3;
         func_8004CFF0(0x2E);
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / modeCtrl.submodeTimer;
@@ -676,82 +679,82 @@ static void ending_state_8(void)
         mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
         mathutil_mtxA_rotate_x(rand() & 0x7FFF);
         mathutil_mtxA_tf_vec_xyz(&temp_r29->unk4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk4.x += temp_r30->unkC.x;
-        temp_r29->unk4.y += temp_r30->unkC.y;
-        temp_r29->unk4.z += temp_r30->unkC.z;
+        temp_r29->unk4.x += chara->unkC.x;
+        temp_r29->unk4.y += chara->unkC.y;
+        temp_r29->unk4.z += chara->unkC.z;
         mathutil_mtxA_rotate_y((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_rotate_x((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_tf_vec_xyz(&spB4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk10.x = temp_f31 * ((spB4.x + temp_r30->unkC.x) - temp_r29->unk4.x);
-        temp_r29->unk10.y = temp_f31 * ((spB4.y + temp_r30->unkC.y) - temp_r29->unk4.y);
-        temp_r29->unk10.z = temp_f31 * ((spB4.z + temp_r30->unkC.z) - temp_r29->unk4.z);
+        temp_r29->unk10.x = temp_f31 * ((spB4.x + chara->unkC.x) - temp_r29->unk4.x);
+        temp_r29->unk10.y = temp_f31 * ((spB4.y + chara->unkC.y) - temp_r29->unk4.y);
+        temp_r29->unk10.z = temp_f31 * ((spB4.z + chara->unkC.z) - temp_r29->unk4.z);
         break;
-    case 0x69:
-    case 0x42:
-    case 0x3B:
-        temp_r30->unkA = 4;
+    case 105:
+    case 66:
+    case 59:
+        chara->unkA = 4;
         break;
-    case 0x68:
-    case 0x41:
-    case 0x3A:
-        if (temp_r30->unk0->unk9C != 4U)
+    case 104:
+    case 65:
+    case 58:
+        if (chara->ape->unk9C != 4)
             modeCtrl.submodeTimer++;
         else
-            temp_r30->unk0->flags |= 0x1000;
+            chara->ape->flags |= 0x1000;
         break;
-    case 0x4B:
-    case 0x40:
-    case 0x39:
-        if (temp_r30->unk0->unk0->unk38 == (temp_r30->unk0->unk0->unk3A >> 1))
+    case 75:
+    case 64:
+    case 57:
+        if (chara->ape->unk0->unk38 == (chara->ape->unk0->unk3A >> 1))
             SoundReq(lbl_802F18D8[playerCharacterSelection[modeCtrl.currPlayer]]);
-        if (temp_r30->unk0->unk0->unk38 > temp_r30->unk0->unk0->unk3A - 0x10)
+        if (chara->ape->unk0->unk38 > chara->ape->unk0->unk3A - 0x10)
         {
-            memset(&sp8, 0, sizeof(sp8));
-            sp8.type = 0x2E;
-            sp8.pos.x = temp_r30->unkC.x;
-            sp8.pos.y = 0.1f + temp_r30->unkC.y;
-            sp8.pos.z = temp_r30->unkC.z;
-            sp8.rotX = temp_r30->unk58;
-            sp8.rotY = temp_r30->unk5A;
-            sp8.rotZ = temp_r30->unk5C;
-            mathutil_mtxA_from_rotate_y(sp8.rotY);
-            mathutil_mtxA_rotate_x(sp8.rotX);
-            mathutil_mtxA_rotate_z(sp8.rotZ);
-            sp8.unkA0 = -1;
-            sp8.unk88.x = 0.0f;
-            sp8.unk88.y = 0.0f;
-            sp8.unk88.z = -1.0f;
-            mathutil_mtxA_tf_vec(&sp8.unk88, &sp8.vel);
+            memset(&effect, 0, sizeof(effect));
+            effect.type = ET_ENDING_BALLFRAG;
+            effect.pos.x = chara->unkC.x;
+            effect.pos.y = 0.1f + chara->unkC.y;
+            effect.pos.z = chara->unkC.z;
+            effect.rotX = chara->unk58;
+            effect.rotY = chara->unk5A;
+            effect.rotZ = chara->unk5C;
+            mathutil_mtxA_from_rotate_y(effect.rotY);
+            mathutil_mtxA_rotate_x(effect.rotX);
+            mathutil_mtxA_rotate_z(effect.rotZ);
+            effect.unkA0 = -1;
+            effect.unk88.x = 0.0f;
+            effect.unk88.y = 0.0f;
+            effect.unk88.z = -1.0f;
+            mathutil_mtxA_tf_vec(&effect.unk88, &effect.vel);
             temp_f31 = 0.2f * (1.0f + (0.2f * RAND_FLOAT()));
-            sp8.vel.x *= temp_f31;
-            sp8.vel.y *= temp_f31;
-            sp8.vel.z *= temp_f31;
-            sp8.vel.x += temp_r30->unk18.x;
-            sp8.vel.y += temp_r30->unk18.y;
-            sp8.vel.z += temp_r30->unk18.z;
-            spawn_effect(&sp8);
-            sp8.unkA0 = temp_r30->unk56;
-            sp8.unk88.x = 0.0f;
-            sp8.unk88.y = 0.0f;
-            sp8.unk88.z = 1.0f;
-            mathutil_mtxA_tf_vec(&sp8.unk88, &sp8.vel);
-            sp8.vel.x *= temp_f31;
-            sp8.vel.y *= temp_f31;
-            sp8.vel.z *= temp_f31;
-            sp8.vel.x += temp_r30->unk18.x;
-            sp8.vel.y += temp_r30->unk18.y;
-            sp8.vel.z += temp_r30->unk18.z;
-            spawn_effect(&sp8);
-            temp_r30->unk56 = -1;
+            effect.vel.x *= temp_f31;
+            effect.vel.y *= temp_f31;
+            effect.vel.z *= temp_f31;
+            effect.vel.x += chara->unk18.x;
+            effect.vel.y += chara->unk18.y;
+            effect.vel.z += chara->unk18.z;
+            spawn_effect(&effect);
+            effect.unkA0 = chara->unk56;
+            effect.unk88.x = 0.0f;
+            effect.unk88.y = 0.0f;
+            effect.unk88.z = 1.0f;
+            mathutil_mtxA_tf_vec(&effect.unk88, &effect.vel);
+            effect.vel.x *= temp_f31;
+            effect.vel.y *= temp_f31;
+            effect.vel.z *= temp_f31;
+            effect.vel.x += chara->unk18.x;
+            effect.vel.y += chara->unk18.y;
+            effect.vel.z += chara->unk18.z;
+            spawn_effect(&effect);
+            chara->unk56 = -1;
             u_play_sound_0(0x233);
         }
         else
             modeCtrl.submodeTimer++;
         break;
-    case 0x4A:
-    case 0x3F:
-    case 0x38:
-        if (temp_r30->unk0->unk0->unk38 != temp_r30->unk0->unk0->unk3A - 1)
+    case 74:
+    case 63:
+    case 56:
+        if (chara->ape->unk0->unk38 != chara->ape->unk0->unk3A - 1)
             modeCtrl.submodeTimer++;
         else
         {
@@ -766,7 +769,7 @@ static void ending_state_8(void)
     if (modeCtrl.submodeTimer == 0)
     {
         endingInfo.nextState = 9;
-        endingInfo.unk4 &= 0xFFFFFFF7;
+        endingInfo.flags &= 0xFFFFFFF7;
     }
 }
 
@@ -777,11 +780,11 @@ static void ending_state_9(void)
     u8 unused[4];
     struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r28;
-    struct SomeBigEndingStruct_sub3 *temp_r3_2;
+    struct EndingSceneCharacter *chara;
 
-    endingInfo.nextState = 0xA;
-    modeCtrl.submodeTimer = 0x3C;
-    modeCtrl.unk18 = 0x1E;
+    endingInfo.nextState = 10;
+    modeCtrl.submodeTimer = 60;
+    modeCtrl.unk18 = 30;
     work = endingInfo.work;
     work->unkAACC = 0;
     ending_prepare_chara_dialogue(&work->charaDialogue, work->dialogueBuf);
@@ -789,8 +792,8 @@ static void ending_state_9(void)
     {
         memset(&tbox, 0, sizeof(tbox));
         tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
-        tbox.x = 0x140;
-        tbox.y = 0xA0;
+        tbox.x = 320;
+        tbox.y = 160;
         tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
         textbox_set_properties(0, 1, &tbox);
@@ -816,10 +819,10 @@ static void ending_state_9(void)
     temp_r28->unk48.y = 0.0f;
     temp_r28->unk48.z = 0.3f;
 
-    temp_r3_2 = &endingInfo.work->unkA804[0];
-    temp_r3_2->unkA = 6;
-    temp_r3_2->unk0->flags &= 0xFFFFEFFF;
-    temp_r3_2->unk38 = 0;
+    chara = &endingInfo.work->characters[0];
+    chara->unkA = 6;
+    chara->ape->flags &= 0xFFFFEFFF;
+    chara->unk38 = 0;
 }
 
 static void ending_state_10(void)
@@ -827,29 +830,29 @@ static void ending_state_10(void)
     struct TextBox tbox;
     int i;
     struct EndingWork *work;
-    struct SomeBigEndingStruct_sub3 *temp_r30;
+    struct EndingSceneCharacter *chara;
 
-    temp_r30 = &endingInfo.work->unkA804[0];
-    temp_r30->unk38--;
-    if (temp_r30->unk38 < 0)
+    chara = &endingInfo.work->characters[0];
+    chara->unk38--;
+    if (chara->unk38 < 0)
     {
-        SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
-        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
-        temp_r30->unk3A++;
+        SoundReq(lbl_801E2B28[chara->ape->charaId][chara->unk3A & 1]);
+        chara->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
+        chara->unk3A++;
     }
     if (modeCtrl.unk18 != 0)
         modeCtrl.unk18--;
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
-        modeCtrl.unk18 = 0x1E;
+        modeCtrl.unk18 = 30;
         work = endingInfo.work;
         if (work->charaDialogue.numLines != 0)
         {
-            textbox_set_properties(0, 0x14, NULL);
+            textbox_set_properties(0, 20, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
-            tbox.x = 0x140;
-            tbox.y = 0xA0;
+            tbox.x = 320;
+            tbox.y = 160;
             tbox.numRows = work->charaDialogue.numLines;
             tbox.callback = NULL;
             textbox_set_properties(0, 1, &tbox);
@@ -862,8 +865,8 @@ static void ending_state_10(void)
         }
         else
         {
-            endingInfo.nextState = 0xB;
-            textbox_set_properties(0, 0x14, NULL);
+            endingInfo.nextState = 11;
+            textbox_set_properties(0, 20, NULL);
         }
     }
     if (modeCtrl.submodeTimer != 0)
@@ -874,10 +877,10 @@ static void ending_state_11(void)
 {
     struct Ape *ape;
 
-    endingInfo.nextState = 0xC;
-    modeCtrl.submodeTimer = 0x21C;
-    endingInfo.work->unkA804[0].unkA = 7;
-    ape = endingInfo.work->unkA804[0].unk0;
+    endingInfo.nextState = 12;
+    modeCtrl.submodeTimer = 540;
+    endingInfo.work->characters[0].unkA = 7;
+    ape = endingInfo.work->characters[0].ape;
     ape->flags &= 0xFFFFBFFF;
 }
 
@@ -886,21 +889,21 @@ static s16 lbl_802F18E0[4] = { 0x00EA, 0x0102, 0x016D, 0x0173 };
 void ending_state_12(void)
 {
     struct SomeBigEndingStruct_sub *temp_r28;
-    struct SomeBigEndingStruct_sub3 *temp_r7;
+    struct EndingSceneCharacter *chara;
     void *temp_r4;
     int tm;
     u8 unused[8];
 
     temp_r28 = &endingInfo.work->unkAA54;
-    temp_r7 = &endingInfo.work->unkA804[0];
+    chara = &endingInfo.work->characters[0];
     switch (modeCtrl.submodeTimer)
     {
-    case 0x21B:
-        if (temp_r7->unk0->unk9C != 7)
-            modeCtrl.submodeTimer += 1;
+    case 539:
+        if (chara->ape->unk9C != 7)
+            modeCtrl.submodeTimer++;
         else
         {
-            temp_r7->unk0->flags |= 0x1000;
+            chara->ape->flags |= 0x1000;
             temp_r28->unk2 = 2;
             temp_r28->unk44 = 0;
             temp_r28->unk46 = 5;
@@ -909,11 +912,11 @@ void ending_state_12(void)
             temp_r28->unk48.z = 0.0f;
         }
         break;
-    case 0x21A:
-        if (temp_r7->unk0->unk0->unk38 > temp_r7->unk0->unk0->unk3A - 8)
+    case 538:
+        if (chara->ape->unk0->unk38 > chara->ape->unk0->unk3A - 8)
         {
-            temp_r7->unk4 = 8;
-            temp_r7->unk6 = modeCtrl.submodeTimer - 0x1A4;
+            chara->unk4 = 8;
+            chara->unk6 = modeCtrl.submodeTimer - 420;
             temp_r28->unk0 = 1;
             temp_r28->unk4 = cameraInfo[modeCtrl.currPlayer].eye;
             temp_r28->unk10 = cameraInfo[modeCtrl.currPlayer].eyeVel;
@@ -923,17 +926,17 @@ void ending_state_12(void)
         else
             modeCtrl.submodeTimer++;
         break;
-    case 0x1A4:
-        endingInfo.unk4 |= 0x20;
+    case 420:
+        endingInfo.flags |= 0x20;
         break;
-    case 0xF0:
-        endingInfo.unk4 &= 0xFFFFFFDF;
+    case 240:
+        endingInfo.flags &= 0xFFFFFFDF;
         break;
-    case 0x10E:
-        func_800BF948(1, modeCtrl.submodeTimer - 0x1E);
+    case 270:
+        spawn_lots_of_bananas_2(1, modeCtrl.submodeTimer - 30);
         break;
-    case 0x1E:
-        start_screen_fade(1, 0xFFFFFFU, modeCtrl.submodeTimer);
+    case 30:
+        start_screen_fade(FADE_OUT, RGBA(255, 255, 255, 0), modeCtrl.submodeTimer);
         u_play_sound_0(0x22F);
         break;
     }
@@ -949,7 +952,7 @@ void ending_state_12(void)
         float t = -0.0033333334f * -modeCtrl.submodeTimer;
         t = 1.0f - t;
         if (RAND_FLOAT() < t)
-            func_800BF8C4(1);
+            spawn_lots_of_bananas_1(1);
         if (unpausedFrameCounter % 90 == 0)
             u_play_sound_0(0x22E);
     }
@@ -959,7 +962,7 @@ void ending_state_12(void)
     if (modeCtrl.submodeTimer != 0)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
-        endingInfo.nextState = 0x1F;
+        endingInfo.nextState = 31;
 }
 
 static void ending_state_expert_init(void)
@@ -970,7 +973,7 @@ static void ending_state_expert_init(void)
     int stageId;
 
     endingInfo.nextState = 14;
-    modeCtrl.submodeTimer = 0xB4;
+    modeCtrl.submodeTimer = 180;
     event_finish_all();
     switch (modeCtrl.difficulty)
     {
@@ -999,13 +1002,13 @@ static void ending_state_expert_init(void)
     event_start(EVENT_VIBRATION);
     light_init(currStageId);
     rend_efc_mirror_enable();
-    func_800BCE54(0, 0);
-    func_800BCE54(1, 1);
-    func_800BCE54(2, 2);
-    func_800BCE54(3, 3);
-    endingInfo.work->unkA804[0].unk4 = 9;
-    endingInfo.work->unkA804[1].unk4 = 9;
-    endingInfo.work->unkA804[2].unk4 = 9;
+    init_ending_scene_ape(0, 0);
+    init_ending_scene_ape(1, 1);
+    init_ending_scene_ape(2, 2);
+    init_ending_scene_ape(3, 3);
+    endingInfo.work->characters[0].unk4 = 9;
+    endingInfo.work->characters[1].unk4 = 9;
+    endingInfo.work->characters[2].unk4 = 9;
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
@@ -1019,24 +1022,24 @@ static void ending_state_expert_init(void)
     temp_r0 = playerCharacterSelection[modeCtrl.currPlayer];
     if (temp_r0 == 3)
     {
-        struct SomeBigEndingStruct_sub3 *temp_r28_2 = &endingInfo.work->unkA804[temp_r0];
-        temp_r28_2->unk0->flags &= 0xFFFFFFDF;
-        temp_r28_2->unkA = 0x12;
-        temp_r28_2->unkC.x = -20.38f;
-        temp_r28_2->unkC.y = -2.34f;
-        temp_r28_2->unkC.z = -20.39f;
+        struct EndingSceneCharacter *chara = &endingInfo.work->characters[temp_r0];
+        chara->ape->flags &= 0xFFFFFFDF;
+        chara->unkA = 0x12;
+        chara->unkC.x = -20.38f;
+        chara->unkC.y = -2.34f;
+        chara->unkC.z = -20.39f;
         if (modeCtrl.playerCount == 1)
-            temp_r28_2->unk56 = 3;
+            chara->unk56 = 3;
         else
-            temp_r28_2->unk56 = modeCtrl.currPlayer;
-        temp_r28_2->unk58 = (rand() & 0x7FFF);
-        temp_r28_2->unk5A = (rand() & 0x7FFF);
-        temp_r28_2->unk5C = (rand() & 0x7FFF);
+            chara->unk56 = modeCtrl.currPlayer;
+        chara->unk58 = (rand() & 0x7FFF);
+        chara->unk5A = (rand() & 0x7FFF);
+        chara->unk5C = (rand() & 0x7FFF);
     }
-    temp_r3 = endingInfo.work->unkA804[modeCtrl.currPlayer].unk0;
+    temp_r3 = endingInfo.work->characters[modeCtrl.currPlayer].ape;
     if (temp_r3 != NULL)
         temp_r3->colorId = modeCtrl.currPlayer;
-    start_screen_fade(0x100, 0U, 0x1E);
+    start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
     u_play_music(0x44U, 0);
 }
 
@@ -1049,7 +1052,7 @@ static void ending_state_14(void)
     if (modeCtrl.submodeTimer != 0)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
-        endingInfo.nextState = 0xF;
+        endingInfo.nextState = 15;
 }
 
 static void ending_state_15(void)
@@ -1058,21 +1061,20 @@ static void ending_state_15(void)
     float temp_f31;
     struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r26;
-    struct SomeBigEndingStruct_sub3 *temp_r27;
-    struct SomeBigEndingStruct_sub3 *temp_r6;
+    struct EndingSceneCharacter *chara;
     int i;
 
-    endingInfo.nextState = 0x10;
-    modeCtrl.submodeTimer = 0x12C;
-    modeCtrl.unk18 = 0x1E;
+    endingInfo.nextState = 16;
+    modeCtrl.submodeTimer = 300;
+    modeCtrl.unk18 = 30;
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_r26 = &endingInfo.work->unkAA54;
-    temp_r27 = &endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    chara = &endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
-    mathutil_mtxA_from_translate(&temp_r27->unkC);
-    mathutil_mtxA_rotate_y(temp_r27->unk30.y);
-    mathutil_mtxA_rotate_x(temp_r27->unk30.x);
-    mathutil_mtxA_rotate_z(temp_r27->unk30.z);
+    mathutil_mtxA_from_translate(&chara->unkC);
+    mathutil_mtxA_rotate_y(chara->unk30.y);
+    mathutil_mtxA_rotate_x(chara->unk30.x);
+    mathutil_mtxA_rotate_z(chara->unk30.z);
     temp_r26->unk0 = 1;
     mathutil_mtxA_tf_point_xyz(&temp_r26->unk4, -4.0f * (temp_f31 - 0.5f), -0.2f, -2.0f);
     temp_r26->unk10.x = 0.0f;
@@ -1083,7 +1085,7 @@ static void ending_state_15(void)
     temp_r26->unk38.x = 0.0f;
     temp_r26->unk38.y = 0.0f;
     temp_r26->unk38.z = 0.0f;
-    endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk70 = 1;
+    endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]].unk70 = 1;
     work = endingInfo.work;
     work->unkAACC = 0;
     ending_prepare_chara_dialogue(&work->charaDialogue, work->dialogueBuf);
@@ -1091,8 +1093,8 @@ static void ending_state_15(void)
     {
         memset(&tbox, 0, sizeof(tbox));
         tbox.style = TEXTBOX_STYLE_CENTER_UP;
-        tbox.x = 0x140;
-        tbox.y = 0x142;
+        tbox.x = 320;
+        tbox.y = 322;
         tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
         textbox_set_properties(0, 1, &tbox);
@@ -1103,16 +1105,16 @@ static void ending_state_15(void)
             work->unkAACC++;
         }
     }
-    temp_r6 = &endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
-    temp_r6->unk38 = 0;
+    chara = &endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]];
+    chara->unk38 = 0;
     if (playerCharacterSelection[modeCtrl.currPlayer] != 3)
-        temp_r6->unkA = 0xB;
+        chara->unkA = 0xB;
     else
-        temp_r6->unkA = 0xC;
-    endingInfo.work->unkA804[0].unk36 |= 1;
-    endingInfo.work->unkA804[1].unk36 |= 1;
-    endingInfo.work->unkA804[2].unk36 |= 1;
-    endingInfo.work->unkA804[3].unk36 |= 1;
+        chara->unkA = 0xC;
+    endingInfo.work->characters[0].unk36 |= 1;
+    endingInfo.work->characters[1].unk36 |= 1;
+    endingInfo.work->characters[2].unk36 |= 1;
+    endingInfo.work->characters[3].unk36 |= 1;
 }
 
 static void ending_state_16(void)
@@ -1121,37 +1123,37 @@ static void ending_state_16(void)
     float temp_f31;
     struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r28;
-    struct SomeBigEndingStruct_sub3 *temp_r30;
+    struct EndingSceneCharacter *chara;
     int i;
 
     temp_r28 = &endingInfo.work->unkAA54;
-    temp_r30 = &endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    chara = &endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
-    mathutil_mtxA_from_translate(&temp_r30->unkC);
-    mathutil_mtxA_rotate_y(temp_r30->unk30.y);
-    mathutil_mtxA_rotate_x(temp_r30->unk30.x);
-    mathutil_mtxA_rotate_z(temp_r30->unk30.z);
+    mathutil_mtxA_from_translate(&chara->unkC);
+    mathutil_mtxA_rotate_y(chara->unk30.y);
+    mathutil_mtxA_rotate_x(chara->unk30.x);
+    mathutil_mtxA_rotate_z(chara->unk30.z);
     mathutil_mtxA_tf_point_xyz(&temp_r28->unk4, -4.0f * (temp_f31 - 0.5f), -0.2f, -2.0f);
-    temp_r30->unk38--;
-    if (temp_r30->unk38 < 0)
+    chara->unk38--;
+    if (chara->unk38 < 0)
     {
-        SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
-        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
-        temp_r30->unk3A++;
+        SoundReq(lbl_801E2B28[chara->ape->charaId][chara->unk3A & 1]);
+        chara->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
+        chara->unk3A++;
     }
     if (modeCtrl.unk18 != 0)
         modeCtrl.unk18--;
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
-        modeCtrl.unk18 = 0x1E;
+        modeCtrl.unk18 = 30;
         work = endingInfo.work;
         if (work->charaDialogue.numLines != 0)
         {
-            textbox_set_properties(0, 0x14, NULL);
+            textbox_set_properties(0, 20, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_UP;
-            tbox.x = 0x140;
-            tbox.y = 0x142;
+            tbox.x = 320;
+            tbox.y = 322;
             tbox.numRows = work->charaDialogue.numLines;
             tbox.callback = NULL;
             textbox_set_properties(0, 1, &tbox);
@@ -1164,8 +1166,8 @@ static void ending_state_16(void)
         }
         else
         {
-            endingInfo.nextState = 0x11;
-            textbox_set_properties(0, 0x14, NULL);
+            endingInfo.nextState = 17;
+            textbox_set_properties(0, 20, NULL);
         }
     }
     if (modeCtrl.submodeTimer != 0)
@@ -1174,10 +1176,10 @@ static void ending_state_16(void)
 
 static void ending_state_17(void)
 {
-    endingInfo.nextState = 0x12;
-    modeCtrl.submodeTimer = 0x1E0;
-    func_800BBB10(modeCtrl.submodeTimer - 0x1A4);
-    endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk74 = cameraInfo[0].eye;
+    endingInfo.nextState = 18;
+    modeCtrl.submodeTimer = 480;
+    func_800BBB10(modeCtrl.submodeTimer - 420);
+    endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]].unk74 = cameraInfo[0].eye;
 }
 
 static s16 lbl_802F18E8[3] = { 0x00E4, 0x0127, 0x014A };
@@ -1187,16 +1189,16 @@ static void ending_state_18(void)
     f32 temp_f2;
     f32 temp_f3;
     struct SomeBigEndingStruct_sub *temp_r26;
-    struct SomeBigEndingStruct_sub3 *temp_r27;
+    struct EndingSceneCharacter *chara;
     struct Ape *ape;
     struct EndingWork *work;
     Vec sp8;
 
     switch (modeCtrl.submodeTimer)
     {
-    case 0x1DF:
+    case 479:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f3 = 1.0f / (modeCtrl.submodeTimer - 0x168);
+        temp_f3 = 1.0f / (modeCtrl.submodeTimer - 360);
         work = endingInfo.work;
         work->unkAA54.unk0 = 1;
         work->unkAA54.unk4.x = 0.0f;
@@ -1211,32 +1213,32 @@ static void ending_state_18(void)
         work->unkAA54.unk38.y = 0.0f;
         work->unkAA54.unk38.z = 0.0f;
         break;
-    case 0x1A4:
-        ape = endingInfo.work->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk0;
+    case 420:
+        ape = endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]].ape;
         ape->flags &= 0xFFFFFFBF;
         u_play_sound_0(0x234);
         break;
-    case 0x168:
-        endingInfo.work->unkA804[0].unkA = 8;
-        endingInfo.work->unkA804[1].unkA = 8;
-        endingInfo.work->unkA804[2].unkA = 8;
+    case 360:
+        endingInfo.work->characters[0].unkA = 8;
+        endingInfo.work->characters[1].unkA = 8;
+        endingInfo.work->characters[2].unkA = 8;
         SoundReq(lbl_802F18E8[playerCharacterSelection[modeCtrl.currPlayer] % 3]);
         CAMERA_FOREACH(camera->unk1F = 0;)
         work = endingInfo.work;
         temp_r26 = &work->unkAA54;
-        temp_r27 = &work->unkA804[playerCharacterSelection[modeCtrl.currPlayer] % 3];
+        chara = &work->characters[playerCharacterSelection[modeCtrl.currPlayer] % 3];
         memset(temp_r26, 0, sizeof(*temp_r26));
-        mathutil_mtxA_from_translate(&temp_r27->unkC);
-        mathutil_mtxA_rotate_y(temp_r27->unk30.y);
-        mathutil_mtxA_rotate_x(temp_r27->unk30.x);
-        mathutil_mtxA_rotate_z(temp_r27->unk30.z);
+        mathutil_mtxA_from_translate(&chara->unkC);
+        mathutil_mtxA_rotate_y(chara->unk30.y);
+        mathutil_mtxA_rotate_x(chara->unk30.x);
+        mathutil_mtxA_rotate_z(chara->unk30.z);
         temp_r26->unk0 = 1;
         mathutil_mtxA_tf_point_xyz(&temp_r26->unk4, 1.0f, 3.0f, -4.0f);
         temp_r26->unk10.y = (8.0f - temp_r26->unk4.y) * (1.0f / modeCtrl.submodeTimer);
         mathutil_mtxA_tf_point_xyz(&temp_r26->unk2C, 0.0f, 0.2f, 0.0f);
         break;
-    case 0x12C:
-        func_800BF948(1, modeCtrl.submodeTimer - 0x1E);
+    case 300:
+        spawn_lots_of_bananas_2(1, modeCtrl.submodeTimer - 30);
         temp_r26 = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / modeCtrl.submodeTimer;
         temp_r26->unk10.x = temp_r26->unk4.x * temp_f2;
@@ -1245,43 +1247,43 @@ static void ending_state_18(void)
         temp_r26->unk38.y = (40.0f - temp_r26->unk2C.y) * temp_f2;
         temp_r26->unk38.z = -temp_r26->unk2C.z * temp_f2;
         break;
-    case 0x78:
-        endingInfo.work->unkA804[0].unk4 = 0x10;
-        endingInfo.work->unkA804[1].unk4 = 0x10;
-        endingInfo.work->unkA804[2].unk4 = 0x10;
-        endingInfo.work->unkA804[3].unk56 = -1;
+    case 120:
+        endingInfo.work->characters[0].unk4 = 0x10;
+        endingInfo.work->characters[1].unk4 = 0x10;
+        endingInfo.work->characters[2].unk4 = 0x10;
+        endingInfo.work->characters[3].unk56 = -1;
         sp8.x = 0.0f;
         sp8.y = 4.0f;
         sp8.z = 0.0f;
-        endingInfo.work->unkA804[0].unk70 = 2;
-        endingInfo.work->unkA804[1].unk70 = 2;
-        endingInfo.work->unkA804[2].unk70 = 2;
-        endingInfo.work->unkA804[0].unk74 = sp8;
-        endingInfo.work->unkA804[1].unk74 = sp8;
-        endingInfo.work->unkA804[2].unk74 = sp8;
-        endingInfo.work->unkA804[0].unkA = 0xC;
-        endingInfo.work->unkA804[1].unkA = 0xC;
-        endingInfo.work->unkA804[2].unkA = 0xC;
+        endingInfo.work->characters[0].unk70 = 2;
+        endingInfo.work->characters[1].unk70 = 2;
+        endingInfo.work->characters[2].unk70 = 2;
+        endingInfo.work->characters[0].unk74 = sp8;
+        endingInfo.work->characters[1].unk74 = sp8;
+        endingInfo.work->characters[2].unk74 = sp8;
+        endingInfo.work->characters[0].unkA = 0xC;
+        endingInfo.work->characters[1].unkA = 0xC;
+        endingInfo.work->characters[2].unkA = 0xC;
         break;
-    case 0x1E:
-        start_screen_fade(1, 0xFFFFFFU, modeCtrl.submodeTimer);
+    case 30:
+        start_screen_fade(FADE_OUT, RGBA(255, 255, 255, 0), modeCtrl.submodeTimer);
         u_play_sound_0(0x22F);
         break;
     }
-    if (modeCtrl.submodeTimer < 0x1DF && modeCtrl.submodeTimer > 0x1A4)
+    if (modeCtrl.submodeTimer < 479 && modeCtrl.submodeTimer > 420)
         endingInfo.work->unkAA54.unk2C = endingInfo.work->unkAA04.unk8;
-    if (modeCtrl.submodeTimer < 0x1A4 && modeCtrl.submodeTimer > 0.0f)
+    if (modeCtrl.submodeTimer < 420 && modeCtrl.submodeTimer > 0.0f)
     {
         float t = -0.0023809525f * -(float)modeCtrl.submodeTimer;
         t = 1.0f - t;
         if (RAND_FLOAT() < t)
-            func_800BF8C4(1);
+            spawn_lots_of_bananas_1(1);
         if (unpausedFrameCounter % 90 == 0)
             u_play_sound_0(0x22E);
     }
     modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer < 0)
-        endingInfo.nextState = 0x13;
+        endingInfo.nextState = 19;
 }
 
 static void ending_state_19(void)
@@ -1290,15 +1292,15 @@ static void ending_state_19(void)
     struct SomeBigEndingStruct_sub *temp_r28;
     u8 unused[8];
 
-    endingInfo.nextState = 0x14;
-    modeCtrl.submodeTimer = 0x168;
-    start_screen_fade(0, 0U, 0x1E);
-    func_800BD470();
+    endingInfo.nextState = 20;
+    modeCtrl.submodeTimer = 360;
+    start_screen_fade(FADE_IN, RGBA(0, 0, 0, 0), 30);
+    clear_scene_objects();
     func_800BF4F4();
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
-    temp_f4 = 1.0f / (modeCtrl.submodeTimer - 0xF0);
+    temp_f4 = 1.0f / (modeCtrl.submodeTimer - 240);
     temp_r28->unk0 = 1;
     temp_r28->unk4.x = 0.0f;
     temp_r28->unk4.y = 0.5f;
@@ -1312,9 +1314,9 @@ static void ending_state_19(void)
     temp_r28->unk38.x = 2.0f * -temp_r28->unk2C.x * temp_f4;
     temp_r28->unk38.y = (0.4f - temp_r28->unk2C.y) * temp_f4;
     temp_r28->unk38.z = (6.0f - temp_r28->unk2C.z) * temp_f4;
-    endingInfo.work->unkA804[0].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
-    endingInfo.work->unkA804[1].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
-    endingInfo.work->unkA804[2].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.work->characters[0].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.work->characters[1].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.work->characters[2].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
 }
 
 static s16 lbl_802F18F0[4] = { 0x00E8, 0x0101, 0x016B, 0x0000 };
@@ -1324,13 +1326,13 @@ static void ending_state_20(void)
     float temp_f3;
     struct SomeBigEndingStruct_sub *temp_r4;
     int i;
-    struct SomeBigEndingStruct_sub3 *var_r28;
+    struct EndingSceneCharacter *chara;
 
     switch (modeCtrl.submodeTimer)
     {
-    case 0x0:
+    case 0:
         break;
-    case 0xF0:
+    case 240:
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_r4 = &endingInfo.work->unkAA54;
         temp_f3 = 1.0f / modeCtrl.submodeTimer;
@@ -1350,19 +1352,19 @@ static void ending_state_20(void)
         temp_r4->unk38.z = (2.0f - temp_r4->unk2C.z) * temp_f3;
         break;
     }
-    var_r28 = endingInfo.work->unkA804;
-    for (i = 3; i > 0; i--, var_r28++)  // BUG: maybe should be >= 0 instead?
+    chara = &endingInfo.work->characters[0];
+    for (i = 3; i > 0; i--, chara++)  // BUG: maybe should be >= 0 instead?
     {
-        if (var_r28->unk38 != 0)
+        if (chara->unk38 != 0)
         {
-            var_r28->unk38--;
-            if (var_r28->unk38 == 0)
-                SoundReq(lbl_802F18F0[var_r28->unk0->charaId]);
+            chara->unk38--;
+            if (chara->unk38 == 0)
+                SoundReq(lbl_802F18F0[chara->ape->charaId]);
         }
     }
     modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer < 0)
-        endingInfo.nextState = 0x15;
+        endingInfo.nextState = 21;
 }
 
 static void ending_state_21(void)
@@ -1370,12 +1372,12 @@ static void ending_state_21(void)
     float temp_f3;
     struct SomeBigEndingStruct_sub *temp_r4;
 
-    endingInfo.nextState = 0x16;
-    modeCtrl.submodeTimer = 0x2D0;
-    endingInfo.work->unkA804[0].unk0->flags |= 0x20;
-    endingInfo.work->unkA804[1].unk0->flags |= 0x20;
-    endingInfo.work->unkA804[2].unk0->flags |= 0x20;
-    endingInfo.work->unkA804[3].unk0->flags |= 0x20;
+    endingInfo.nextState = 22;
+    modeCtrl.submodeTimer = 720;
+    endingInfo.work->characters[0].ape->flags |= 0x20;
+    endingInfo.work->characters[1].ape->flags |= 0x20;
+    endingInfo.work->characters[2].ape->flags |= 0x20;
+    endingInfo.work->characters[3].ape->flags |= 0x20;
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_r4 = &endingInfo.work->unkAA54;
     temp_f3 = 0.008333334f;
@@ -1403,22 +1405,22 @@ static void ending_state_22(void)
 
     switch (modeCtrl.submodeTimer)
     {
-    case 0x2B2:
-        endingInfo.unk4 |= 4;
+    case 690:
+        endingInfo.flags |= 4;
         u_play_sound_0(0x235);
         break;
-    case 0x258:
-        endingInfo.work->unkA804[0].unk4 = 0x11;
-        endingInfo.work->unkA804[1].unk4 = 0x11;
-        endingInfo.work->unkA804[2].unk4 = 0x11;
+    case 600:
+        endingInfo.work->characters[0].unk4 = 0x11;
+        endingInfo.work->characters[1].unk4 = 0x11;
+        endingInfo.work->characters[2].unk4 = 0x11;
         break;
-    case 0x257:
-        endingInfo.work->unkA804[0].unk0->flags &= ~0x20;
-        endingInfo.work->unkA804[1].unk0->flags &= ~0x20;
-        endingInfo.work->unkA804[2].unk0->flags &= ~0x20;
+    case 599:
+        endingInfo.work->characters[0].ape->flags &= ~0x20;
+        endingInfo.work->characters[1].ape->flags &= ~0x20;
+        endingInfo.work->characters[2].ape->flags &= ~0x20;
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp = &endingInfo.work->unkAA54;
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD8);
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 216);
         temp->unk0 = 1;
         temp->unk4.x = -2.0f;
         temp->unk4.y = 0.3f;
@@ -1433,13 +1435,13 @@ static void ending_state_22(void)
         temp->unk48.y = 0.0f;
         temp->unk48.z = 0.0f;
         break;
-    case 0x1E0:
-        endingInfo.work->unkA804[3].unk0->flags &= ~0x20;
-        endingInfo.work->unkA804[3].unk4 = 0x13;
+    case 480:
+        endingInfo.work->characters[3].ape->flags &= ~0x20;
+        endingInfo.work->characters[3].unk4 = 0x13;
         break;
-    case 0xD8:
+    case 216:
         temp = &endingInfo.work->unkAA54;
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x3C);
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 60);
         temp->unk0 = 1;
         temp->unk10.x = (2.0f - temp->unk4.x) * temp_f2;
         temp->unk10.y = (0.3f - temp->unk4.y) * temp_f2;
@@ -1452,9 +1454,9 @@ static void ending_state_22(void)
         temp->unk48.z = 0.0f;
         SoundReq(0x199U);
         break;
-    case 0x8A:
+    case 138:
         temp = &endingInfo.work->unkAA54;
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x3C);
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 60);
         temp->unk0 = 1;
         temp->unk10.x = (2.0f - temp->unk4.x) * temp_f2;
         temp->unk10.y = (0.3f - temp->unk4.y) * temp_f2;
@@ -1466,8 +1468,8 @@ static void ending_state_22(void)
         temp->unk48.y = 0.0f;
         temp->unk48.z = 0.0f;
         break;
-    case 0x3C:
-        endingInfo.unk4 &= 0xFFFFFFFB;
+    case 60:
+        endingInfo.flags &= 0xFFFFFFFB;
         u_play_sound_0(0x236);
         temp = &endingInfo.work->unkAA54;
         temp->unk0 = 1;
@@ -1478,21 +1480,21 @@ static void ending_state_22(void)
     }
     modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer < 0)
-        endingInfo.nextState = 0x17;
+        endingInfo.nextState = 23;
 }
 
 static void ending_state_23(void)
 {
     struct SomeBigEndingStruct_sub *temp;
 
-    endingInfo.nextState = 0x18;
-    modeCtrl.submodeTimer = 0x12C;
-    endingInfo.work->unkA804[0].unk4 = 0x15;
-    endingInfo.work->unkA804[1].unk4 = 0x15;
-    endingInfo.work->unkA804[2].unk4 = 0x15;
-    endingInfo.work->unkA804[0].unk70 = 0;
-    endingInfo.work->unkA804[1].unk70 = 0;
-    endingInfo.work->unkA804[2].unk70 = 0;
+    endingInfo.nextState = 24;
+    modeCtrl.submodeTimer = 300;
+    endingInfo.work->characters[0].unk4 = 0x15;
+    endingInfo.work->characters[1].unk4 = 0x15;
+    endingInfo.work->characters[2].unk4 = 0x15;
+    endingInfo.work->characters[0].unk70 = 0;
+    endingInfo.work->characters[1].unk70 = 0;
+    endingInfo.work->characters[2].unk70 = 0;
     temp = &endingInfo.work->unkAA54;
     temp->unk0 = 1;
     temp->unk4.x = 2.0f;
@@ -1509,34 +1511,34 @@ static void ending_state_23(void)
     temp->unk48.z = 0.0f;
     u_play_sound_0(0x238);
     SoundReq(0x17BU);
-    endingInfo.work->unkA804[0].unk36 &= ~0x1;
-    endingInfo.work->unkA804[1].unk36 &= ~0x1;
-    endingInfo.work->unkA804[2].unk36 &= ~0x1;
+    endingInfo.work->characters[0].unk36 &= ~0x1;
+    endingInfo.work->characters[1].unk36 &= ~0x1;
+    endingInfo.work->characters[2].unk36 &= ~0x1;
 }
 
 static void ending_state_24(void)
 {
-    struct SomeBigEndingStruct_sub3 *temp_r29 = &endingInfo.work->unkA804[3];
-    int temp_r28 = temp_r29->unk0->unk0->unk38;
+    struct EndingSceneCharacter *chara = &endingInfo.work->characters[3];
+    int temp_r28 = chara->ape->unk0->unk38;
 
-    if (temp_r29->unk0->unk9C == 8 && temp_r28 == 0x2A)
+    if (chara->ape->unk9C == 8 && temp_r28 == 0x2A)
         SoundReq(0x181U);
-    if (temp_r29->unk0->unk9C == 0xA)
+    if (chara->ape->unk9C == 0xA)
     {
         if (temp_r28 == 1)
             SoundReq(0x185U);
         if (temp_r28 == 0x14 || temp_r28 == 0x24 || temp_r28 == 0x34 || temp_r28 == 0x44)
             u_play_sound_0(0x238);
     }
-    if (temp_r29->unk0->unk9C == 0xBU && temp_r28 == 0xB2)
+    if (chara->ape->unk9C == 0xBU && temp_r28 == 0xB2)
         SoundReq(0x199U);
-    if (temp_r29->unk0->unk9C == 0xEU && (temp_r28 == 0x10 || temp_r28 == 0x2E))
+    if (chara->ape->unk9C == 0xEU && (temp_r28 == 0x10 || temp_r28 == 0x2E))
         SoundReq(0x186U);
-    if (temp_r29->unk8 == 0xB && temp_r28 > 0xC3)
+    if (chara->unk8 == 0xB && temp_r28 > 0xC3)
     {
         func_800BF658();
-        endingInfo.nextState = 0x19;
-        endingInfo.unk4 |= 2;
+        endingInfo.nextState = 25;
+        endingInfo.flags |= 2;
         endingInfo.work->unk0 = 0.0f;
         u_play_sound_0(0x238);
     }
@@ -1544,8 +1546,8 @@ static void ending_state_24(void)
 
 static void ending_state_25(void)
 {
-    endingInfo.nextState = 0x1A;
-    modeCtrl.submodeTimer = 0x1E0;
+    endingInfo.nextState = 26;
+    modeCtrl.submodeTimer = 480;
     modeCtrl.unk18 = 0;
     endingInfo.work->unkAA04.unk2 = 4;
 }
@@ -1557,9 +1559,9 @@ static void ending_state_26(void)
 
     switch (modeCtrl.submodeTimer)
     {
-    case 0x1D1:
+    case 465:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x12C);
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 300);
         temp_r4->unk0 = 0;
         temp_r4->unk4.x = 0.0f;
         temp_r4->unk4.y = -0.34f;
@@ -1574,32 +1576,32 @@ static void ending_state_26(void)
         temp_r4->unk48.y = 0.0f;
         temp_r4->unk48.z = 0.6f;
         break;
-    case 0x195:
+    case 405:
         temp_r4->unk0 = 1;
         break;
-    case 0x186:
+    case 390:
         func_800BF774();
         break;
-    case 0x12C:
+    case 300:
         temp_r4->unk10.x = 0.0f;
         temp_r4->unk10.y = 0.0f;
         temp_r4->unk10.z = 0.0f;
         break;
-    case 0xD2:
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x96);
+    case 210:
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 150);
         temp_r4->unk0 = 1;
         temp_r4->unk10.x = -temp_r4->unk4.x * temp_f2;
         temp_r4->unk10.y = (0.7f - temp_r4->unk4.y) * temp_f2;
         temp_r4->unk10.z = (4.2f - temp_r4->unk4.z) * temp_f2;
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x5A);
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 90);
         temp_r4->unk2 = 1;
         temp_r4->unk2C = cameraInfo[modeCtrl.currPlayer].lookAt;
         temp_r4->unk38.x = -temp_r4->unk2C.x * temp_f2;
         temp_r4->unk38.y = (0.1f - temp_r4->unk2C.y) * temp_f2;
         temp_r4->unk38.z = -temp_r4->unk2C.z * temp_f2;
         break;
-    case 0x96:
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x5A);
+    case 150:
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 90);
         temp_r4->unk10.x = -temp_r4->unk4.x * temp_f2;
         temp_r4->unk10.y = (-0.4f - temp_r4->unk4.y) * temp_f2;
         temp_r4->unk10.z = (2.6f - temp_r4->unk4.z) * temp_f2;
@@ -1607,7 +1609,7 @@ static void ending_state_26(void)
         SoundReq(0x102U);
         SoundReq(0x16DU);
         break;
-    case 0x5A:
+    case 90:
         temp_r4->unk10.x = 0.0f;
         temp_r4->unk10.y = 0.0f;
         temp_r4->unk10.z = 0.0f;
@@ -1621,16 +1623,16 @@ static void ending_state_26(void)
     if (modeCtrl.submodeTimer == 0)
     {
         if (playerCharacterSelection[modeCtrl.currPlayer] != 3)
-            endingInfo.nextState = 0x1B;
+            endingInfo.nextState = 27;
         else
-            endingInfo.nextState = 0x1D;
+            endingInfo.nextState = 29;
     }
 }
 
 static void ending_state_29(void)
 {
-    endingInfo.nextState = 0x1E;
-    modeCtrl.submodeTimer = 0x14A;
+    endingInfo.nextState = 30;
+    modeCtrl.submodeTimer = 330;
     modeCtrl.unk18 = 0;
 }
 
@@ -1639,21 +1641,21 @@ static void ending_state_30(void)
     float temp_f2;
     int charaId;
     struct SomeBigEndingStruct_sub *var_r31 = &endingInfo.work->unkAA54;
-    struct SomeBigEndingStruct_sub3 *temp_r6;
+    struct EndingSceneCharacter *chara;
     Vec sp8;
 
     switch (modeCtrl.submodeTimer)
     {
-    case 0x14A:
+    case 330:
         CAMERA_FOREACH(camera->unk1F = 0;)
         var_r31 = &endingInfo.work->unkAA54;
-        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
+        temp_f2 = 1.0f / (modeCtrl.submodeTimer - 210);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        temp_r6 = &endingInfo.work->unkA804[charaId];
+        chara = &endingInfo.work->characters[charaId];
         var_r31->unk0 = 1;
-        var_r31->unk4.x = temp_r6->unkC.x;
-        var_r31->unk4.y = temp_r6->unkC.y - 0.5f;
-        var_r31->unk4.z = temp_r6->unkC.z - 2.0f;
+        var_r31->unk4.x = chara->unkC.x;
+        var_r31->unk4.y = chara->unkC.y - 0.5f;
+        var_r31->unk4.z = chara->unkC.z - 2.0f;
         var_r31->unk10.x = 0.0f;
         var_r31->unk10.y = 0.15f * temp_f2;
         var_r31->unk10.z = temp_f2;
@@ -1665,32 +1667,32 @@ static void ending_state_30(void)
         var_r31->unk48.z = 0.6f;
         SoundReq(0x199U);
         break;
-    case 0xD2:
+    case 210:
         var_r31->unk10.x = 0.0f;
         var_r31->unk10.y = 0.0f;
         var_r31->unk10.z = 0.0f;
         break;
-    case 0xB4:
+    case 180:
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        endingInfo.work->unkA804[3].unkA = 0x11;
-        temp_r6 = &endingInfo.work->unkA804[charaId];
+        endingInfo.work->characters[3].unkA = 0x11;
+        chara = &endingInfo.work->characters[charaId];
         CAMERA_FOREACH(camera->unk1F = 0;)
         var_r31->unk0 = 1;
-        var_r31->unk4.x = temp_r6->unkC.x;
-        var_r31->unk4.y = 0.5f + temp_r6->unkC.y;
-        var_r31->unk4.z = 2.5f + temp_r6->unkC.z;
+        var_r31->unk4.x = chara->unkC.x;
+        var_r31->unk4.y = 0.5f + chara->unkC.y;
+        var_r31->unk4.z = 2.5f + chara->unkC.z;
         var_r31->unk10.x = 0.0f;
         var_r31->unk10.y = 0.0f;
         var_r31->unk10.z = 0.0f;
         var_r31->unk2 = 1;
-        var_r31->unk2C.x = temp_r6->unkC.x;
-        var_r31->unk2C.y = 0.25f + temp_r6->unkC.y;
-        var_r31->unk2C.z = temp_r6->unkC.z;
+        var_r31->unk2C.x = chara->unkC.x;
+        var_r31->unk2C.y = 0.25f + chara->unkC.y;
+        var_r31->unk2C.z = chara->unkC.z;
         var_r31->unk38.x = 0.0f;
         var_r31->unk38.y = 0.0f;
         var_r31->unk38.z = 0.0f;
         break;
-    case 0x42:
+    case 66:
         SoundReq(0x188U);
         break;
     }
@@ -1698,8 +1700,8 @@ static void ending_state_30(void)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0 && modeCtrl.unk18 == 0)
     {
-        modeCtrl.unk18 = 0x78;
-        start_screen_fade(1, 0xFFFFFFU, modeCtrl.unk18);
+        modeCtrl.unk18 = 120;
+        start_screen_fade(FADE_OUT, RGBA(255, 255, 255, 0), modeCtrl.unk18);
         temp_f2 = 1.0f / modeCtrl.unk18;
         var_r31->unk0 = 1;
         var_r31->unk4 = cameraInfo[modeCtrl.currPlayer].eye;
@@ -1715,14 +1717,14 @@ static void ending_state_30(void)
     {
         modeCtrl.unk18--;
         if (modeCtrl.unk18 == 0)
-            endingInfo.nextState = 0x1F;
+            endingInfo.nextState = 31;
     }
 }
 
 static void ending_state_27(void)
 {
-    endingInfo.nextState = 0x1C;
-    modeCtrl.submodeTimer = 0x276;
+    endingInfo.nextState = 28;
+    modeCtrl.submodeTimer = 630;
     modeCtrl.unk18 = 0;
 }
 
@@ -1731,7 +1733,7 @@ static s16 lbl_802F18F8[4] = { 0x00E8, 0x0102, 0x016D, 0x0000 };
 static void ending_state_28(void)
 {
     struct Ape *ape;
-    struct SomeBigEndingStruct_sub3 *temp_r27;
+    struct EndingSceneCharacter *chara;
     int charaId;
     struct SomeBigEndingStruct_sub *temp_r30;
     Vec sp38;
@@ -1741,24 +1743,24 @@ static void ending_state_28(void)
     temp_r30 = &endingInfo.work->unkAA54;
     switch (modeCtrl.submodeTimer)
     {
-    case 0x276:
-        endingInfo.unk4 |= 0x10;
+    case 630:
+        endingInfo.flags |= 0x10;
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x1FE);
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 510);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 2) % 3;
         temp_r30 = &endingInfo.work->unkAA54;
-        temp_r27 = &endingInfo.work->unkA804[charaId];
+        chara = &endingInfo.work->characters[charaId];
         endingInfo.work->unkAA54.unk0 = 1;
-        sp38.x = temp_r27->unkC.x;
+        sp38.x = chara->unkC.x;
         sp38.y = 0.0f;
-        sp38.z = temp_r27->unkC.z;
+        sp38.z = chara->unkC.z;
         mathutil_vec_set_len(&sp38, &sp38, 1.25f);
-        temp_r30->unk4.x = temp_r27->unkC.x + sp38.x;
-        temp_r30->unk4.y = temp_r27->unkC.y;
-        temp_r30->unk4.z = temp_r27->unkC.z + sp38.z;
+        temp_r30->unk4.x = chara->unkC.x + sp38.x;
+        temp_r30->unk4.y = chara->unkC.y;
+        temp_r30->unk4.z = chara->unkC.z + sp38.z;
         temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
         temp_r30->unk10.y = 0.5f * temp_f31;
-        temp_r30->unk10.z = temp_f31 * (1.0f + temp_r27->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk10.z = temp_f31 * (1.0f + chara->unkC.z - temp_r30->unk4.z);
         temp_r30->unk2 = 2;
         temp_r30->unk44 = charaId;
         temp_r30->unk46 = 0;
@@ -1766,23 +1768,23 @@ static void ending_state_28(void)
         temp_r30->unk48.y = 0.0f;
         temp_r30->unk48.z = 0.0f;
         break;
-    case 0x1E0:
+    case 480:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x168);
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 360);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 1) % 3;
         temp_r30 = &endingInfo.work->unkAA54;
-        temp_r27 = &endingInfo.work->unkA804[charaId];
+        chara = &endingInfo.work->characters[charaId];
         endingInfo.work->unkAA54.unk0 = 1;
-        sp38.x = temp_r27->unkC.x;
+        sp38.x = chara->unkC.x;
         sp38.y = 0.0f;
-        sp38.z = temp_r27->unkC.z;
+        sp38.z = chara->unkC.z;
         mathutil_vec_set_len(&sp38, &sp38, 1.25f);
-        temp_r30->unk4.x = temp_r27->unkC.x + sp38.x;
-        temp_r30->unk4.y = temp_r27->unkC.y;
-        temp_r30->unk4.z = temp_r27->unkC.z + sp38.z;
+        temp_r30->unk4.x = chara->unkC.x + sp38.x;
+        temp_r30->unk4.y = chara->unkC.y;
+        temp_r30->unk4.z = chara->unkC.z + sp38.z;
         temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
         temp_r30->unk10.y = 0.5f * temp_f31;
-        temp_r30->unk10.z = temp_f31 * (1.0f + temp_r27->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk10.z = temp_f31 * (1.0f + chara->unkC.z - temp_r30->unk4.z);
         temp_r30->unk2 = 2;
         temp_r30->unk44 = charaId;
         temp_r30->unk46 = 0;
@@ -1790,23 +1792,23 @@ static void ending_state_28(void)
         temp_r30->unk48.y = 0.0f;
         temp_r30->unk48.z = 0.0f;
         break;
-    case 0x14A:
+    case 330:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 210);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
         temp_r30 = &endingInfo.work->unkAA54;
-        temp_r27 = &endingInfo.work->unkA804[charaId];
+        chara = &endingInfo.work->characters[charaId];
         endingInfo.work->unkAA54.unk0 = 1;
-        sp38.x = temp_r27->unkC.x;
+        sp38.x = chara->unkC.x;
         sp38.y = 0.0f;
-        sp38.z = temp_r27->unkC.z;
+        sp38.z = chara->unkC.z;
         mathutil_vec_set_len(&sp38, &sp38, 1.25f);
-        temp_r30->unk4.x = temp_r27->unkC.x + sp38.x;
-        temp_r30->unk4.y = temp_r27->unkC.y;
-        temp_r30->unk4.z = temp_r27->unkC.z + sp38.z;
+        temp_r30->unk4.x = chara->unkC.x + sp38.x;
+        temp_r30->unk4.y = chara->unkC.y;
+        temp_r30->unk4.z = chara->unkC.z + sp38.z;
         temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
         temp_r30->unk10.y = 0.5f * temp_f31;
-        temp_r30->unk10.z = temp_f31 * (1.0f + temp_r27->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk10.z = temp_f31 * (1.0f + chara->unkC.z - temp_r30->unk4.z);
         temp_r30->unk2 = 2;
         temp_r30->unk44 = charaId;
         temp_r30->unk46 = 0;
@@ -1814,19 +1816,19 @@ static void ending_state_28(void)
         temp_r30->unk48.y = 0.0f;
         temp_r30->unk48.z = 0.0f;
         break;
-    case 0x168:
-    case 0x1FE:
-    case 0xD2:
+    case 360:
+    case 510:
+    case 210:
         temp_r30->unk10.x = 0.0f;
         temp_r30->unk10.y = 0.0f;
         temp_r30->unk10.z = 0.0f;
         break;
-    case 0xB4:
+    case 180:
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        endingInfo.work->unkA804[charaId].unkA = 0x10;
-        temp_r27 = &endingInfo.work->unkA804[charaId];
+        endingInfo.work->characters[charaId].unkA = 0x10;
+        chara = &endingInfo.work->characters[charaId];
         temp_r30->unk0 = 1;
-        ape = temp_r27->unk0;
+        ape = chara->ape;
         mathutil_mtxA_from_quat(&ape->unk60);
         mathutil_mtxA_to_mtx(sp8);
         mathutil_mtxA_from_translate(&ape->unk30);
@@ -1837,12 +1839,12 @@ static void ending_state_28(void)
         mathutil_mtxA_tf_point_xyz(&sp38, 0.0f, 0.0f, 0.3f);
         sp38.y += -0.3f;
         sp38.z += 1.0f;
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x42);
+        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 66);
         temp_r30->unk10.x = temp_f31 * (sp38.x - temp_r30->unk4.x);
         temp_r30->unk10.y = temp_f31 * (sp38.y - temp_r30->unk4.y);
         temp_r30->unk10.z = temp_f31 * (sp38.z - temp_r30->unk4.z);
         break;
-    case 0x42:
+    case 66:
         SoundReq(lbl_802F18F8[playerCharacterSelection[modeCtrl.currPlayer]]);
         temp_r30->unk10.x = 0.0f;
         temp_r30->unk10.y = 0.0f;
@@ -1853,20 +1855,20 @@ static void ending_state_28(void)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0 && modeCtrl.unk18 == 0)
     {
-        modeCtrl.unk18 = 0x78;
-        start_screen_fade(1, 0xFFFFFFU, modeCtrl.unk18);
+        modeCtrl.unk18 = 120;
+        start_screen_fade(FADE_OUT, RGBA(255, 255, 255, 0), modeCtrl.unk18);
     }
     if (modeCtrl.unk18 != 0)
     {
         modeCtrl.unk18--;
         if (modeCtrl.unk18 == 0)
-            endingInfo.nextState = 0x1F;
+            endingInfo.nextState = 31;
     }
 }
 
 static void ending_state_31(void)
 {
-    endingInfo.nextState = 0x20;
+    endingInfo.nextState = 32;
 }
 
 static void ending_state_32(void) {}
@@ -1912,7 +1914,7 @@ static void func_800BB084(void)
             temp_r30->unk20.z = 2.95f + temp_r30->unk8.z;
             break;
         case 3:
-            if (endingInfo.unk4 & 4)
+            if (endingInfo.flags & 4)
             {
                 temp_r30->unk40 = (-0x4000 - temp_r30->unk3A) >> 7;
                 temp_r30->unk3A += temp_r30->unk40;
@@ -1939,7 +1941,7 @@ static void func_800BB084(void)
             break;
         case 4:
             temp_r30->unk2 = 5;
-            temp_r30->unk4 = 0x3C;
+            temp_r30->unk4 = 60;
             temp_r30->unk3E += 768.0f * (RAND_FLOAT() - 0.5f);
             temp_r30->unk40 += 768.0f * (RAND_FLOAT() - 0.5f);
             temp_r30->unk42 += 2304.0f * (RAND_FLOAT() - 0.5f);
@@ -1997,11 +1999,11 @@ static void func_800BBA58(void)
 
     if (temp_r31->unk0 != 0)
     {
-        model = decodedBgGma->modelEntries[6].model;
+        model = decodedBgGma->modelEntries[STONE_GATE].model;
         mathutil_mtxA_from_mtxB_translate(&temp_r31->unk8);
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(model);
-        model = decodedBgGma->modelEntries[30].model;
+        model = decodedBgGma->modelEntries[WALL_PARTS].model;
         mathutil_mtxA_from_mtxB_translate(&temp_r31->unk20);
         mathutil_mtxA_translate(&temp_r31->unk44);
         mathutil_mtxA_rotate_y(temp_r31->unk3A);
@@ -2028,10 +2030,10 @@ static void func_800BBB78(void)
 
     if (work != NULL)
     {
-        work->unkA804[0].unk56 = -1;
-        work->unkA804[1].unk56 = -1;
-        work->unkA804[2].unk56 = -1;
-        work->unkA804[3].unk56 = -1;
+        work->characters[0].unk56 = -1;
+        work->characters[1].unk56 = -1;
+        work->characters[2].unk56 = -1;
+        work->characters[3].unk56 = -1;
     }
 }
 
@@ -2042,183 +2044,184 @@ static void func_800BBBA8(void)
     struct Effect effect;
     struct RaycastHit sp8;
     int playerId = modeCtrl.currPlayer;
-    struct SomeBigEndingStruct_sub3 *var_r16 = endingInfo.work->unkA804;
+    struct EndingSceneCharacter *chara;
     float temp_f0;
 
-    for (i = 0; i < 4; i++, var_r16++)
+    chara = &endingInfo.work->characters[0];
+    for (i = 0; i < 4; i++, chara++)
     {
-        if (var_r16->unk0 != NULL)
+        if (chara->ape != NULL)
         {
-            switch (var_r16->unk4)
+            switch (chara->unk4)
             {
             case 1:
-                var_r16->unk4 = 2;
-                var_r16->unk0->flags &= 0xFFFFFFDF;
-                var_r16->unkA = 0;
-                var_r16->unk30.x = 0;
-                var_r16->unk30.y = 0;
-                var_r16->unk30.z = 0;
-                temp_f0 = var_r16->unk6;
-                var_r16->unkC.x = 0.0f;
-                var_r16->unkC.y = 20.0f - (0.5f * (-0.004f * (temp_f0 * temp_f0)));
-                var_r16->unkC.z = -60.0f;
-                var_r16->unk18.x = 0.0f;
-                var_r16->unk18.y = 0.0f;
-                var_r16->unk18.z = 0.0f;
+                chara->unk4 = 2;
+                chara->ape->flags &= 0xFFFFFFDF;
+                chara->unkA = 0;
+                chara->unk30.x = 0;
+                chara->unk30.y = 0;
+                chara->unk30.z = 0;
+                temp_f0 = chara->unk6;
+                chara->unkC.x = 0.0f;
+                chara->unkC.y = 20.0f - (0.5f * (-0.004f * (temp_f0 * temp_f0)));
+                chara->unkC.z = -60.0f;
+                chara->unk18.x = 0.0f;
+                chara->unk18.y = 0.0f;
+                chara->unk18.z = 0.0f;
                 break;
             case 2:
-                var_r16->unk18.y += -0.004f;
-                var_r16->unkC.y += var_r16->unk18.y;
-                var_r16->unk6--;
-                if (var_r16->unk6 <= 0)
+                chara->unk18.y += -0.004f;
+                chara->unkC.y += chara->unk18.y;
+                chara->unk6--;
+                if (chara->unk6 <= 0)
                 {
-                    var_r16->unk4 = 3;
-                    var_r16->unkC.x = 0.0f;
-                    var_r16->unkC.y = 20.0f;
-                    var_r16->unkC.z = -60.0f;
+                    chara->unk4 = 3;
+                    chara->unkC.x = 0.0f;
+                    chara->unkC.y = 20.0f;
+                    chara->unkC.z = -60.0f;
                 }
                 break;
             case 3:
-                var_r16->unk18.x *= 0.92f;
-                var_r16->unk18.y *= 0.92f;
-                var_r16->unk18.z *= 0.92f;
-                var_r16->unk18.y += -0.004f;
-                var_r16->unk18.x += 0.05f * -var_r16->unkC.x;
-                var_r16->unk18.y += 0.05f * (20.0f - var_r16->unkC.y);
-                var_r16->unk18.z += 0.05f * (-60.0f - var_r16->unkC.z);
-                var_r16->unkC.x += var_r16->unk18.x;
-                var_r16->unkC.y += var_r16->unk18.y;
-                var_r16->unkC.z += var_r16->unk18.z;
+                chara->unk18.x *= 0.92f;
+                chara->unk18.y *= 0.92f;
+                chara->unk18.z *= 0.92f;
+                chara->unk18.y += -0.004f;
+                chara->unk18.x += 0.05f * -chara->unkC.x;
+                chara->unk18.y += 0.05f * (20.0f - chara->unkC.y);
+                chara->unk18.z += 0.05f * (-60.0f - chara->unkC.z);
+                chara->unkC.x += chara->unk18.x;
+                chara->unkC.y += chara->unk18.y;
+                chara->unkC.z += chara->unk18.z;
                 break;
             case 4:
-                var_r16->unk4 = 5;
-                var_r16->unk6 = 0;
-                var_r16->unk18.z = 0.0f;
+                chara->unk4 = 5;
+                chara->unk6 = 0;
+                chara->unk18.z = 0.0f;
                 /* fallthrough */
             case 5:
-                var_r16->unk18.z += 0.000075f * var_r16->unk6;
-                var_r16->unkC.z += var_r16->unk18.z;
-                var_r16->unk6++;
+                chara->unk18.z += 0.000075f * chara->unk6;
+                chara->unkC.z += chara->unk18.z;
+                chara->unk6++;
                 break;
             case 6:
-                var_r16->unk4 = 7;
-                var_r16->unk0->flags &= 0xFFFFFFDF;
-                var_r16->unkA = 3;
-                var_r16->unk30.x = 0;
-                var_r16->unk30.y = RAND_FLOAT();
-                var_r16->unk30.z = 0;
-                var_r16->unkC.x = 0.0f;
-                var_r16->unkC.y = 0.0f;
-                var_r16->unkC.z = 0.0f;
-                var_r16->unk18.x = 0.0f;
-                var_r16->unk18.y = 0.0f;
-                var_r16->unk18.z = 0.0f;
+                chara->unk4 = 7;
+                chara->ape->flags &= 0xFFFFFFDF;
+                chara->unkA = 3;
+                chara->unk30.x = 0;
+                chara->unk30.y = RAND_FLOAT();
+                chara->unk30.z = 0;
+                chara->unkC.x = 0.0f;
+                chara->unkC.y = 0.0f;
+                chara->unkC.z = 0.0f;
+                chara->unk18.x = 0.0f;
+                chara->unk18.y = 0.0f;
+                chara->unk18.z = 0.0f;
                 if (modeCtrl.playerCount == 1)
-                    var_r16->unk56 = 3;
+                    chara->unk56 = 3;
                 else
-                    var_r16->unk56 = modeCtrl.currPlayer;
-                var_r16->unk58 = rand() & 0x7FFF;
-                var_r16->unk5A = rand() & 0x7FFF;
-                var_r16->unk5C = rand() & 0x7FFF;
+                    chara->unk56 = modeCtrl.currPlayer;
+                chara->unk58 = rand() & 0x7FFF;
+                chara->unk5A = rand() & 0x7FFF;
+                chara->unk5C = rand() & 0x7FFF;
                 /* fallthrough */
             case 7:
-                if (var_r16->unk6 > 0)
+                if (chara->unk6 > 0)
                 {
-                    var_r16->unk6--;
-                    var_r16->unk18.y += 0.009799992;
+                    chara->unk6--;
+                    chara->unk18.y += 0.009799992;
                     memset(&effect, 0, sizeof(effect));
-                    effect.type = 0xA;
+                    effect.type = ET_LEVITATE;
                     effect.playerId = playerId;
-                    effect.pos = var_r16->unkC;
+                    effect.pos = chara->unkC;
                     spawn_effect(&effect);
                 }
                 else
                 {
-                    var_r16->unk18.x *= 0.92f;
-                    var_r16->unk18.y *= 0.92f;
-                    var_r16->unk18.z *= 0.92f;
+                    chara->unk18.x *= 0.92f;
+                    chara->unk18.y *= 0.92f;
+                    chara->unk18.z *= 0.92f;
                 }
-                var_r16->unkC.x += var_r16->unk18.x;
-                var_r16->unkC.y += var_r16->unk18.y;
-                var_r16->unkC.z += var_r16->unk18.z;
-                var_r16->unk30.y -= 0x30;
-                var_r16->unk5A -= 0x40;
+                chara->unkC.x += chara->unk18.x;
+                chara->unkC.y += chara->unk18.y;
+                chara->unkC.z += chara->unk18.z;
+                chara->unk30.y -= 0x30;
+                chara->unk5A -= 0x40;
                 break;
             case 8:
-                var_r16->unk18.y += 0.009799992;
-                var_r16->unkC.y += var_r16->unk18.y;
-                var_r16->unk6--;
-                if (var_r16->unk6 < 0)
+                chara->unk18.y += 0.009799992;
+                chara->unkC.y += chara->unk18.y;
+                chara->unk6--;
+                if (chara->unk6 < 0)
                 {
-                    var_r16->unk4 = 0;
-                    var_r16->unk0->flags |= 0x20;
+                    chara->unk4 = 0;
+                    chara->ape->flags |= 0x20;
                 }
                 memset(&effect, 0, sizeof(effect));
-                effect.type = 0xA;
+                effect.type = ET_LEVITATE;
                 effect.playerId = playerId;
-                effect.pos = var_r16->unkC;
+                effect.pos = chara->unkC;
                 spawn_effect(&effect);
                 break;
             case 9:
-                var_r16->unk4 = 0xA;
-                var_r16->unk0->flags &= 0xFFFFFFDF;
-                var_r16->unkA = 0x12;
-                var_r16->unk30.x = 0;
-                var_r16->unk30.y = i * 0x10000 / 3;
-                var_r16->unk30.z = 0;
-                mathutil_mtxA_from_rotate_y(var_r16->unk30.y + 0x8000);
-                mathutil_mtxA_tf_vec_xyz(&var_r16->unkC, 0.0f, 0.0f, -5.0f);
-                var_r16->unkC.y += 30.0f + (5.0f * RAND_FLOAT());
-                var_r16->unk18.x = 0.0f;
-                var_r16->unk18.y = -0.20000000298023224f;
-                var_r16->unk18.z = 0.0f;
+                chara->unk4 = 0xA;
+                chara->ape->flags &= 0xFFFFFFDF;
+                chara->unkA = 0x12;
+                chara->unk30.x = 0;
+                chara->unk30.y = i * 0x10000 / 3;
+                chara->unk30.z = 0;
+                mathutil_mtxA_from_rotate_y(chara->unk30.y + 0x8000);
+                mathutil_mtxA_tf_vec_xyz(&chara->unkC, 0.0f, 0.0f, -5.0f);
+                chara->unkC.y += 30.0f + (5.0f * RAND_FLOAT());
+                chara->unk18.x = 0.0f;
+                chara->unk18.y = -0.20000000298023224f;
+                chara->unk18.z = 0.0f;
                 if (i == playerCharacterSelection[playerId])
                 {
                     if (modeCtrl.playerCount == 1)
-                        var_r16->unk56 = 3;
+                        chara->unk56 = 3;
                     else
-                        var_r16->unk56 = i;
+                        chara->unk56 = i;
                 }
                 else
-                    var_r16->unk56 = rand() & 3;
-                var_r16->unk58 = rand() & 0x7FFF;
-                var_r16->unk5A = rand() & 0x7FFF;
-                var_r16->unk5C = rand() & 0x7FFF;
+                    chara->unk56 = rand() & 3;
+                chara->unk58 = rand() & 0x7FFF;
+                chara->unk5A = rand() & 0x7FFF;
+                chara->unk5C = rand() & 0x7FFF;
                 /* fallthrough */
             case 10:
-                raycast_stage_down(&var_r16->unkC, &sp8, NULL);
-                if (var_r16->unk18.y < 0.0f
-                 && (0.5f + (var_r16->unkC.y - sp8.pos.y) < -15.0f * var_r16->unk18.y))
-                    var_r16->unk18.y += 0.012000000104308128f;
+                raycast_stage_down(&chara->unkC, &sp8, NULL);
+                if (chara->unk18.y < 0.0f
+                 && (0.5f + (chara->unkC.y - sp8.pos.y) < -15.0f * chara->unk18.y))
+                    chara->unk18.y += 0.012000000104308128f;
                 memset(&effect, 0, sizeof(effect));
-                effect.type = 0xA;
+                effect.type = ET_LEVITATE;
                 effect.playerId = playerId;
-                effect.pos = var_r16->unkC;
+                effect.pos = chara->unkC;
                 spawn_effect(&effect);
                 /* fallthrough */
             case 11:
-                raycast_stage_down(&var_r16->unkC, &sp8, NULL);
-                var_r16->unk18.x *= 0.99f;
-                var_r16->unk18.y *= 0.99f;
-                var_r16->unk18.z *= 0.99f;
-                var_r16->unk18.y += -0.0080000003799796104f;
-                var_r16->unkC.x += var_r16->unk18.x;
-                var_r16->unkC.y += var_r16->unk18.y;
-                var_r16->unkC.z += var_r16->unk18.z;
-                if (sp8.pos.y > var_r16->unkC.y - 0.5f - 0.1f)
+                raycast_stage_down(&chara->unkC, &sp8, NULL);
+                chara->unk18.x *= 0.99f;
+                chara->unk18.y *= 0.99f;
+                chara->unk18.z *= 0.99f;
+                chara->unk18.y += -0.0080000003799796104f;
+                chara->unkC.x += chara->unk18.x;
+                chara->unkC.y += chara->unk18.y;
+                chara->unkC.z += chara->unk18.z;
+                if (sp8.pos.y > chara->unkC.y - 0.5f - 0.1f)
                 {
-                    if (var_r16->unk18.y < -0.10000000149011612f)
+                    if (chara->unk18.y < -0.10000000149011612f)
                         u_play_sound_0(0x69);
-                    var_r16->unkC.y = 0.5f + sp8.pos.y - 0.1f;
-                    if (var_r16->unk18.y < 0.0f)
-                        var_r16->unk18.y *= -0.60000002384185791f;
-                    if (var_r16->unk4 != 0xB)
+                    chara->unkC.y = 0.5f + sp8.pos.y - 0.1f;
+                    if (chara->unk18.y < 0.0f)
+                        chara->unk18.y *= -0.60000002384185791f;
+                    if (chara->unk4 != 0xB)
                     {
-                        var_r16->unk4 = 0xB;
+                        chara->unk4 = 0xB;
                         memset(&effect, 0, sizeof(effect));
                         effect.playerId = playerId;
-                        effect.type = 0x1B;
-                        effect.pos = var_r16->unkC;
+                        effect.type = ET_COLIFLASH;
+                        effect.pos = chara->unkC;
                         effect.pos.y -= 0.4f;
                         effect.unk88.x = 0.0f;
                         effect.unk88.y = 1.0f;
@@ -2229,96 +2232,96 @@ static void func_800BBBA8(void)
                 }
                 break;
             case 16:
-                var_r16->unk4 = 0;
-                var_r16->unkA = 0xC;
-                var_r16->unkC = lbl_801E2AD4[i];
-                if (raycast_stage_down(&var_r16->unkC, &sp8, NULL) != 0U)
+                chara->unk4 = 0;
+                chara->unkA = 0xC;
+                chara->unkC = lbl_801E2AD4[i];
+                if (raycast_stage_down(&chara->unkC, &sp8, NULL) != 0U)
                 {
-                    var_r16->unkC = sp8.pos;
-                    var_r16->unkC.y += 0.4f;
+                    chara->unkC = sp8.pos;
+                    chara->unkC.y += 0.4f;
                 }
-                var_r16->unk30.x = 0;
-                var_r16->unk30.y = mathutil_atan2(var_r16->unkC.x, var_r16->unkC.z);
-                var_r16->unk30.z = 0;
-                var_r16->unk56 = -1;
+                chara->unk30.x = 0;
+                chara->unk30.y = mathutil_atan2(chara->unkC.x, chara->unkC.z);
+                chara->unk30.z = 0;
+                chara->unk56 = -1;
                 break;
             case 17:
-                var_r16->unk4 = 0x12;
-                var_r16->unkA = 0xD;
+                chara->unk4 = 0x12;
+                chara->unkA = 0xD;
                 if (playerCharacterSelection[playerId] == 3)
-                    var_r16->unkC = lbl_801E2AD4_2[i];
+                    chara->unkC = lbl_801E2AD4_2[i];
                 else
-                    var_r16->unkC = lbl_801E2AD4_2[(i + 3 - playerCharacterSelection[playerId]) % 3];
-                if (raycast_stage_down(&var_r16->unkC, &sp8, NULL) != 0U)
+                    chara->unkC = lbl_801E2AD4_2[(i + 3 - playerCharacterSelection[playerId]) % 3];
+                if (raycast_stage_down(&chara->unkC, &sp8, NULL) != 0U)
                 {
-                    var_r16->unkC = sp8.pos;
-                    var_r16->unkC.y += 0.4f;
+                    chara->unkC = sp8.pos;
+                    chara->unkC.y += 0.4f;
                 }
-                var_r16->unk30.x = 0;
-                var_r16->unk30.y = 0;
-                var_r16->unk30.z = 0;
+                chara->unk30.x = 0;
+                chara->unk30.y = 0;
+                chara->unk30.z = 0;
                 temp_f0 = 1.0f / modeCtrl.submodeTimer;
-                var_r16->unk18.x = -var_r16->unkC.x * temp_f0;
-                var_r16->unk18.y = 0.0f;
-                var_r16->unk18.z = -4.5f * temp_f0 * (1.0f + (0.1f * RAND_FLOAT()));
+                chara->unk18.x = -chara->unkC.x * temp_f0;
+                chara->unk18.y = 0.0f;
+                chara->unk18.z = -4.5f * temp_f0 * (1.0f + (0.1f * RAND_FLOAT()));
                 break;
             case 18:
-                var_r16->unkC.x += var_r16->unk18.x;
-                var_r16->unkC.y += var_r16->unk18.y;
-                var_r16->unkC.z += var_r16->unk18.z;
+                chara->unkC.x += chara->unk18.x;
+                chara->unkC.y += chara->unk18.y;
+                chara->unkC.z += chara->unk18.z;
                 break;
             case 19:
-                var_r16->unk4 = 0x14;
-                var_r16->unk6 = modeCtrl.submodeTimer;
-                var_r16->unkA = 0xD;
-                var_r16->unkC = lbl_801E2AD4_2[i];
-                var_r16->unkC.y = 0.0f;
-                var_r16->unk30.x = 0;
-                var_r16->unk30.y = 0;
-                var_r16->unk30.z = 0;
-                temp_f0 = 1.0f / var_r16->unk6;
-                var_r16->unk18.x = -var_r16->unkC.x * temp_f0;
-                var_r16->unk18.y = 0.0f;
-                var_r16->unk18.z = (3.45f - var_r16->unkC.z) * temp_f0;
+                chara->unk4 = 0x14;
+                chara->unk6 = modeCtrl.submodeTimer;
+                chara->unkA = 0xD;
+                chara->unkC = lbl_801E2AD4_2[i];
+                chara->unkC.y = 0.0f;
+                chara->unk30.x = 0;
+                chara->unk30.y = 0;
+                chara->unk30.z = 0;
+                temp_f0 = 1.0f / chara->unk6;
+                chara->unk18.x = -chara->unkC.x * temp_f0;
+                chara->unk18.y = 0.0f;
+                chara->unk18.z = (3.45f - chara->unkC.z) * temp_f0;
                 break;
             case 20:
-                var_r16->unkC.x += var_r16->unk18.x;
-                var_r16->unkC.y += var_r16->unk18.y;
-                var_r16->unkC.z += var_r16->unk18.z;
-                if (var_r16->unkC.z < 3.45f)
+                chara->unkC.x += chara->unk18.x;
+                chara->unkC.y += chara->unk18.y;
+                chara->unkC.z += chara->unk18.z;
+                if (chara->unkC.z < 3.45f)
                 {
-                    var_r16->unk4 = 0;
-                    var_r16->unkA = 9;
-                    var_r16->unkC.z = 3.45f;
+                    chara->unk4 = 0;
+                    chara->unkA = 9;
+                    chara->unkC.z = 3.45f;
                 }
                 break;
             case 21:
-                var_r16->unk4 = 0;
-                var_r16->unkA = 0xE;
+                chara->unk4 = 0;
+                chara->unkA = 0xE;
                 spD0 = lbl_801E2A98[i];
-                var_r16->unkC = spD0.unk0;
-                var_r16->unk30 = spD0.unkC;
+                chara->unkC = spD0.unk0;
+                chara->unk30 = spD0.unkC;
                 switch (i)
                 {
                 case 0:
-                    var_r16->unk3C = decodedBgGma->modelEntries[1].model;
-                    var_r16->unk40 = 0xA;
-                    var_r16->unk44.x = 0.05f;
-                    var_r16->unk44.y = 0.12999999523162842f;
-                    var_r16->unk44.z = 0.12000000476837158f;
-                    var_r16->unk50 = -0x58E3;
-                    var_r16->unk52 = -0x1555;
-                    var_r16->unk54 = 0x438E;
+                    chara->model = decodedBgGma->modelEntries[AIAI_BNN].model;
+                    chara->unk40 = 0xA;
+                    chara->unk44.x = 0.05f;
+                    chara->unk44.y = 0.12999999523162842f;
+                    chara->unk44.z = 0.12000000476837158f;
+                    chara->unk50 = -0x58E3;
+                    chara->unk52 = -0x1555;
+                    chara->unk54 = 0x438E;
                     break;
                 case 1:
-                    var_r16->unk3C = decodedBgGma->modelEntries[0x17].model;
-                    var_r16->unk40 = 0xF;
-                    var_r16->unk44.x = 0.05f;
-                    var_r16->unk44.y = 0.0f;
-                    var_r16->unk44.z = -0.094000004231929779f;
-                    var_r16->unk50 = 0x20B7;
-                    var_r16->unk52 = -0x6BE1;
-                    var_r16->unk54 = -0x26E9;
+                    chara->model = decodedBgGma->modelEntries[GAL_BNN].model;
+                    chara->unk40 = 0xF;
+                    chara->unk44.x = 0.05f;
+                    chara->unk44.y = 0.0f;
+                    chara->unk44.z = -0.094000004231929779f;
+                    chara->unk50 = 0x20B7;
+                    chara->unk52 = -0x6BE1;
+                    chara->unk54 = -0x26E9;
                     break;
                 }
                 break;
@@ -2330,17 +2333,17 @@ static void func_800BBBA8(void)
 static void func_800BC820(void)
 {
     int i;
-    struct SomeBigEndingStruct_sub3 *var_r28;
+    struct EndingSceneCharacter *chara;
 
     if (endingInfo.work == NULL)
         return;
-    var_r28 = &endingInfo.work->unkA804[3];
-    for (i = 3; i >= 0; i--, var_r28--)
+    chara = &endingInfo.work->characters[3];
+    for (i = 3; i >= 0; i--, chara--)
     {
-        if (var_r28->unk0 != NULL)
+        if (chara->ape != NULL)
         {
             func_8008D29C(lbl_80206B80[i]);
-            var_r28->unk0 = NULL;
+            chara->ape = NULL;
         }
     }
 }
@@ -2443,7 +2446,7 @@ static struct Blah *lbl_801E31E4[4] =
 struct MyDrawNode
 {
     struct OrdTblNode node;
-    struct SomeBigEndingStruct_sub3 *unk8;
+    struct EndingSceneCharacter *unk8;
 };
 
 static void lbl_800BCD30(struct MyDrawNode *);
@@ -2455,12 +2458,12 @@ static void func_800BC8B8(void)
     f32 temp_f0;
     f32 temp_f4;
     s32 var_r28;
-    struct SomeBigEndingStruct_sub3 *var_r27;
+    struct EndingSceneCharacter *chara;
     struct Ape *temp_r26;
     struct Blah *var_r25;
-    struct GMAModel *temp_r21;
-    struct OrdTblNode *temp_r21_2;
-    struct MyDrawNode *temp_r3;
+    struct GMAModel *model;
+    struct OrdTblNode *entry;
+    struct MyDrawNode *node;
     Mtx sp38;
     Vec sp2C;
     Vec sp20;
@@ -2471,17 +2474,17 @@ static void func_800BC8B8(void)
     mathutil_mtxA_rotate_x(s_bgLightInfo.infLightRotX);
     mathutil_mtxA_tf_vec_xyz(&sp2C, 0.0f, 0.0f, -1.0f);
 
-    var_r27 = endingInfo.work->unkA804;
-    for (var_r28 = 4; var_r28 > 0; var_r28--, var_r27++)
+    chara = &endingInfo.work->characters[0];
+    for (var_r28 = 4; var_r28 > 0; var_r28--, chara++)
     {
         temp_f0 = temp_f21 + -1.0f;  // needed to match
 
-        temp_r26 = var_r27->unk0;
+        temp_r26 = chara->ape;
         if (temp_r26 == NULL)
             continue;
 
-        temp_r21 = var_r27->unk3C;
-        if (temp_r21 != NULL)
+        model = chara->model;
+        if (model != NULL)
         {
             mathutil_mtxA_from_quat(&temp_r26->unk60);
             mathutil_mtxA_to_mtx(sp38);
@@ -2489,27 +2492,27 @@ static void func_800BC8B8(void)
             mathutil_mtxA_scale_s(temp_r26->modelScale);
             mathutil_mtxA_translate(&temp_r26->unk3C);
             mathutil_mtxA_mult_right(sp38);
-            mathutil_mtxA_mult_right(temp_r26->unk0->joints[var_r27->unk40].transformMtx);
-            mathutil_mtxA_translate(&var_r27->unk44);
-            mathutil_mtxA_rotate_z(var_r27->unk54);
-            mathutil_mtxA_rotate_y(var_r27->unk52);
-            mathutil_mtxA_rotate_x(var_r27->unk50);
+            mathutil_mtxA_mult_right(temp_r26->unk0->joints[chara->unk40].transformMtx);
+            mathutil_mtxA_translate(&chara->unk44);
+            mathutil_mtxA_rotate_z(chara->unk54);
+            mathutil_mtxA_rotate_y(chara->unk52);
+            mathutil_mtxA_rotate_x(chara->unk50);
             u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
             avdisp_set_bound_sphere_scale(temp_r26->modelScale);
-            avdisp_draw_model_culled_sort_translucent(temp_r21);
+            avdisp_draw_model_culled_sort_translucent(model);
         }
-        if (var_r27->unk56 >= 0)
+        if (chara->unk56 >= 0)
         {
             mathutil_mtxA_from_mtxB();
-            temp_r21_2 = ord_tbl_get_entry_for_pos(&var_r27->unkC);
-            temp_r3 = ord_tbl_alloc_node(sizeof(*temp_r3));
-            temp_r3->node.drawFunc = (OrdTblDrawFunc)lbl_800BCD30;
-            temp_r3->unk8 = var_r27;
-            ord_tbl_insert_node(temp_r21_2, &temp_r3->node);
+            entry = ord_tbl_get_entry_for_pos(&chara->unkC);
+            node = ord_tbl_alloc_node(sizeof(*node));
+            node->node.drawFunc = (OrdTblDrawFunc)lbl_800BCD30;
+            node->unk8 = chara;
+            ord_tbl_insert_node(entry, &node->node);
         }
-        if (var_r27->unk36 & 1)
+        if (chara->unk36 & 1)
         {
-            sp20 = var_r27->unkC;
+            sp20 = chara->unkC;
             mathutil_mtxA_from_quat(&temp_r26->unk60);
             mathutil_mtxA_to_mtx(sp38);
             mathutil_mtxA_from_translate(&temp_r26->unk30);
@@ -2560,7 +2563,7 @@ static void func_800BC8B8(void)
                         mathutil_mtxA_rotate_x(0x4000);
                         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
                         avdisp_set_bound_sphere_scale(temp_f21);
-                        avdisp_draw_model_culled_sort_all(commonGma->modelEntries[0x4E].model);
+                        avdisp_draw_model_culled_sort_all(commonGma->modelEntries[polyshadow01].model);
                     }
                     mathutil_mtxA_pop();
                 }
@@ -2574,48 +2577,49 @@ static void func_800BC8B8(void)
 
 static void lbl_800BCD30(struct MyDrawNode *node)
 {
-    struct SomeBigEndingStruct_sub3 *r30 = node->unk8;
-    s16 *r29 = coloredBallPartModelIDs[r30->unk56];
-    struct GMAModelEntry *r31 = commonGma->modelEntries;
+    struct EndingSceneCharacter *chara = node->unk8;
+    s16 *r29 = coloredBallPartModelIDs[chara->unk56];
+    struct GMAModelEntry *modelEntries = commonGma->modelEntries;
 
     mathutil_mtxA_from_mtxB();
     load_light_group_uncached(0);
-    mathutil_mtxA_translate_xyz(r30->unkC.x, r30->unkC.y + 0.1f, r30->unkC.z);
-    mathutil_mtxA_rotate_y(r30->unk5A);
-    mathutil_mtxA_rotate_x(r30->unk58);
-    mathutil_mtxA_rotate_z(r30->unk5C);
+    mathutil_mtxA_translate_xyz(chara->unkC.x, chara->unkC.y + 0.1f, chara->unkC.z);
+    mathutil_mtxA_rotate_y(chara->unk5A);
+    mathutil_mtxA_rotate_x(chara->unk58);
+    mathutil_mtxA_rotate_z(chara->unk5C);
     u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
     avdisp_set_z_mode(1, 3, 0);
-    avdisp_draw_model_unculled_sort_none(r31[clearHemisphereInsideParts[0]].model);
-    avdisp_draw_model_unculled_sort_none(r31[r29[0]].model);
-    avdisp_draw_model_unculled_sort_none(r31[r29[6]].model);
+    avdisp_draw_model_unculled_sort_none(modelEntries[clearHemisphereInsideParts[0]].model);
+    avdisp_draw_model_unculled_sort_none(modelEntries[r29[0]].model);
+    avdisp_draw_model_unculled_sort_none(modelEntries[r29[6]].model);
     avdisp_set_z_mode(1, 3, 1);
-    avdisp_draw_model_unculled_sort_none(r31[clearHemisphereOutsideParts[0]].model);
-    avdisp_draw_model_unculled_sort_none(r31[r29[3]].model);
+    avdisp_draw_model_unculled_sort_none(modelEntries[clearHemisphereOutsideParts[0]].model);
+    avdisp_draw_model_unculled_sort_none(modelEntries[r29[3]].model);
     avdisp_set_z_mode(1, 3, 1);
 }
 
-static int func_800BCE54(int arg0, int charaId)
+static int init_ending_scene_ape(int arg0, int charaId)
 {
-    struct SomeBigEndingStruct_sub3 *temp_r31;
+    struct EndingSceneCharacter *chara;
     struct Ape *ape;
 
-    temp_r31 = &endingInfo.work->unkA804[arg0];
-    if (temp_r31->unk0 != NULL)
+    chara = &endingInfo.work->characters[arg0];
+    if (chara->ape != NULL)
     {
         func_8008D29C(lbl_80206B80[arg0]);
-        temp_r31->unk0 = NULL;
+        chara->ape = NULL;
     }
+
     if (charaId >= 0)
     {
-        temp_r31->unk0 = (void *)func_800380A8(arg0, charaId, &lbl_800BCF6C);
-        ape = temp_r31->unk0;
+        chara->ape = u_init_ape(arg0, charaId, u_some_ape_callback);
+        ape = chara->ape;
         if (ape == NULL)
             return 0;
         ape->unk0->unk3C = 1.0f;
         ape->flags |= 0x20;
-        temp_r31->unk8 = 0xC;
-        temp_r31->unkA = -1;
+        chara->unk8 = 0xC;
+        chara->unkA = -1;
         mathutil_mtxA_from_identity();
         mathutil_mtxA_get_translate_alt2(&ape->unk30);
         mathutil_mtxA_to_quat(&ape->unk60);
@@ -2623,17 +2627,17 @@ static int func_800BCE54(int arg0, int charaId)
     return 1;
 }
 
-static void lbl_800BCF6C(struct Ape *arg0, int arg1)
+static void u_some_ape_callback(struct Ape *ape, int arg1)
 {
     int var_r4;
-    struct SomeBigEndingStruct_sub3 *var_r30;
+    struct EndingSceneCharacter *chara;
     int i;
     int b = (arg1 == 3);
     Vec sp10;
 
     if (b)
     {
-        u_ape_free(arg0);
+        u_ape_free(ape);
         if (arg1 != 3)
             func_8008D240();
         return;
@@ -2641,154 +2645,154 @@ static void lbl_800BCF6C(struct Ape *arg0, int arg1)
     if (gamePauseStatus & 0xA)
         return;
 
-    var_r30 = &endingInfo.work->unkA804[0];
-    for (var_r4 = 4; var_r4 > 0; var_r4--, var_r30++)
+    chara = &endingInfo.work->characters[0];
+    for (var_r4 = 4; var_r4 > 0; var_r4--, chara++)
     {
-        if (var_r30->unk0 == arg0)
+        if (chara->ape == ape)
             break;
     }
 
     if (var_r4 == 0)
         return;
-    switch (arg0->charaId)
+    switch (ape->charaId)
     {
     case 3:
-        switch (var_r30->unk8)
+        switch (chara->unk8)
         {
         case 9:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 8;
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 8;
             break;
         case 8:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 0xA;
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 0xA;
             break;
         case 10:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 0xE;
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 0xE;
             break;
         case 14:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 0xB;
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 0xB;
             break;
         case 11:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 0xF;
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 0xF;
             break;
         case 15:
-            if (var_r30->unkA != -1 && arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
+            if (chara->unkA != -1 && ape->unk0->unk38 == ape->unk0->unk3A - 1)
             {
-                var_r30->unk8 = var_r30->unkA;
-                var_r30->unkA = -1;
+                chara->unk8 = chara->unkA;
+                chara->unkA = -1;
             }
             break;
         case 17:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 0x10;
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 0x10;
             break;
         default:
-            if (var_r30->unkA != -1)
+            if (chara->unkA != -1)
             {
-                var_r30->unk8 = var_r30->unkA;
-                var_r30->unkA = -1;
+                chara->unk8 = chara->unkA;
+                chara->unkA = -1;
             }
             break;
         }
         break;
     default:
-        switch (var_r30->unk8)
+        switch (chara->unk8)
         {
         case 14:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 0xF;
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 0xF;
             break;
         case 15:
-            if (arg0->unk0->unk38 == arg0->unk0->unk3A - 1)
-                var_r30->unk8 = 0xE;
-            if (var_r30->unkA != -1)
+            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+                chara->unk8 = 0xE;
+            if (chara->unkA != -1)
             {
-                var_r30->unk8 = var_r30->unkA;
-                var_r30->unkA = -1;
+                chara->unk8 = chara->unkA;
+                chara->unkA = -1;
             }
             break;
         default:
-            if (var_r30->unkA != -1)
+            if (chara->unkA != -1)
             {
-                var_r30->unk8 = var_r30->unkA;
-                var_r30->unkA = -1;
+                chara->unk8 = chara->unkA;
+                chara->unkA = -1;
             }
             break;
         }
     }
 
-    if (var_r30->unk8 < 0x12)
-        u_set_ape_anim(arg0, 7, var_r30->unk8, 0, 0.0f);
+    if (chara->unk8 < 0x12)
+        u_set_ape_anim(ape, 7, chara->unk8, 0, 0.0f);
     else
     {
-        int temp_r5_3 = var_r30->unk8 - 0x12;
-        u_set_ape_anim(arg0, 1, temp_r5_3, temp_r5_3 + 1, 0.0f);
+        int temp_r5_3 = chara->unk8 - 0x12;
+        u_set_ape_anim(ape, 1, temp_r5_3, temp_r5_3 + 1, 0.0f);
     }
-    u_do_ape_anim(arg0);
-    switch (var_r30->unk70)
+    u_do_ape_anim(ape);
+    switch (chara->unk70)
     {
     case 2:
-        func_8008C090(arg0, &var_r30->unk74);
+        func_8008C090(ape, &chara->unk74);
         break;
     case 1:
         mathutil_mtxA_from_mtx(cameraInfo[modeCtrl.currPlayer].unk144);
         mathutil_mtxA_rigid_inv_tf_tl(&sp10);
-        func_8008C090(arg0, &sp10);
+        func_8008C090(ape, &sp10);
         break;
     }
 
-    mathutil_mtxA_from_translate(&var_r30->unkC);
-    mathutil_mtxA_rotate_z(var_r30->unk30.z);
-    mathutil_mtxA_rotate_y(var_r30->unk30.y - 0x4000);
-    mathutil_mtxA_rotate_x(var_r30->unk30.x);
-    mathutil_mtxA_get_translate_alt2(&arg0->unk30);
-    mathutil_mtxA_to_quat(&arg0->unk60);
+    mathutil_mtxA_from_translate(&chara->unkC);
+    mathutil_mtxA_rotate_z(chara->unk30.z);
+    mathutil_mtxA_rotate_y(chara->unk30.y - 0x4000);
+    mathutil_mtxA_rotate_x(chara->unk30.x);
+    mathutil_mtxA_get_translate_alt2(&ape->unk30);
+    mathutil_mtxA_to_quat(&ape->unk60);
 
-    switch (arg0->charaId)
+    switch (ape->charaId)
     {
     case 0:
-        switch (arg0->unk9C)
+        switch (ape->unk9C)
         {
-        case 0xE:
-            if (endingInfo.unk4 & 0x10)
+        case 14:
+            if (endingInfo.flags & 0x10)
             {
-                if (arg0->unk0->unk38 == 0x16)
+                if (ape->unk0->unk38 == 0x16)
                     SoundReq(0xB3U);
-                else if (arg0->unk0->unk38 == 0x44)
+                else if (ape->unk0->unk38 == 0x44)
                     SoundReq(0xE8U);
             }
             break;
         }
         break;
     case 1:
-        switch (arg0->unk9C)
+        switch (ape->unk9C)
         {
         case 15:
-            if (endingInfo.unk4 & 0x10)
+            if (endingInfo.flags & 0x10)
             {
-                if (arg0->unk0->unk38 == 0xC)
+                if (ape->unk0->unk38 == 0xC)
                     SoundReq(0x105U);
-                else if (arg0->unk0->unk38 == 0x50 || arg0->unk0->unk38 == 0x66)
+                else if (ape->unk0->unk38 == 0x50 || ape->unk0->unk38 == 0x66)
                     SoundReq(0x12FU);
-                else if (arg0->unk0->unk38 == 0x76)
+                else if (ape->unk0->unk38 == 0x76)
                     u_play_sound_0(0x1FF);
             }
             break;
         case 14:
-            if ((endingInfo.unk4 & 0x10) && arg0->unk0->unk38 == 0x12)
+            if ((endingInfo.flags & 0x10) && ape->unk0->unk38 == 0x12)
                 SoundReq(0xFCU);
             break;
         }
         break;
     case 2:
-        switch (arg0->unk9C)
+        switch (ape->unk9C)
         {
-        case 0xE:
-            if ((endingInfo.unk4 & 0x10) && arg0->unk0->unk38 == 0x24)
+        case 14:
+            if ((endingInfo.flags & 0x10) && ape->unk0->unk38 == 0x24)
                 SoundReq(0x16BU);
             break;
         }
@@ -2796,14 +2800,14 @@ static void lbl_800BCF6C(struct Ape *arg0, int arg1)
     }
 }
 
-static void func_800BD470(void)
+static void clear_scene_objects(void)
 {
     int i;
-    struct SomeBigEndingStruct_sub4 *ptr;
+    struct EndingSceneObject *obj;
 
-    ptr = endingInfo.work->unk4;
-    for (i = 0; i < 512; i++, ptr++)
-        ptr->unk0 = 0;
+    obj = endingInfo.work->objects;
+    for (i = 0; i < 512; i++, obj++)
+        obj->isActive = FALSE;
 }
 
 static void func_800BD4B8(void)
@@ -2811,7 +2815,7 @@ static void func_800BD4B8(void)
     Vec spFC;
     Vec spF0;
     Vec spE4;
-    struct Effect sp38;
+    struct Effect effect;
     float temp_f0_5;
     float temp_f1;
     float temp_f27;
@@ -2819,8 +2823,8 @@ static void func_800BD4B8(void)
     float alt_f26;
     float alt_f27;
     int var_r30;
-    struct SomeBigEndingStruct_sub4 *var_r29;
-    struct Camera *temp_r28;
+    struct EndingSceneObject *obj;
+    struct Camera *camera;
     struct SomeBigEndingStruct_sub4_sub2 *temp_r27;
     struct
     {
@@ -2833,21 +2837,21 @@ static void func_800BD4B8(void)
     } sp8;
 
     func_800BEEE8();
-    temp_r28 = &cameraInfo[modeCtrl.currPlayer];
-    mathutil_mtxA_from_mtx(temp_r28->unk144);
+    camera = &cameraInfo[modeCtrl.currPlayer];
+    mathutil_mtxA_from_mtx(camera->unk144);
     mathutil_mtxA_rigid_inv_tf_vec_xyz(&spF0, 0.0f, 0.0f, -1.0f);
     mathutil_mtxA_rigid_inv_tf_tl(&spE4);
 
-    var_r29 = endingInfo.work->unk4;
-    for (var_r30 = 512; var_r30 > 0; var_r30--, var_r29++)
+    obj = endingInfo.work->objects;
+    for (var_r30 = 512; var_r30 > 0; var_r30--, obj++)
     {
-        if (var_r29->unk0 != 0)
+        if (obj->isActive)
         {
-            temp_r27 = var_r29->unk50;
-            switch (var_r29->unk2)
+            temp_r27 = obj->model;
+            switch (obj->unk2)
             {
             case 2:
-                alt_f26 = var_r29->unkC.y;
+                alt_f26 = obj->unkC.y;
                 mathutil_mtxA_from_rotate_y((unpausedFrameCounter << 0xA) + var_r30);
                 alt_f27 = 0.25f * alt_f26 * endingInfo.work->unk0;
                 mathutil_mtxA_tf_vec_xyz(&spFC, alt_f27, 0.0f, 0.0f);
@@ -2855,37 +2859,37 @@ static void func_800BD4B8(void)
                 alt_f27 = 1024.f * alt_f26 * endingInfo.work->unk0;
                 mathutil_mtxA_rotate_x(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30));
                 mathutil_mtxA_rotate_z(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30 + 0x4000));
-                mathutil_mtxA_tf_point(&var_r29->unk4C->unk4, &spFC);
-                if (spFC.y < var_r29->unk4C->unk4.y)
-                    spFC.y = var_r29->unk4C->unk4.y;
-                var_r29->unk18.x = 0.1f * (spFC.x - var_r29->unkC.x);
-                var_r29->unk18.y = 0.1f * (spFC.y - var_r29->unkC.y);
-                var_r29->unk18.z = 0.05f * (spFC.z - var_r29->unkC.z);
-                var_r29->unk36 = 0;
-                var_r29->unk38 = 0;
-                var_r29->unk3A = 0;
-                if (var_r29->unk4 != 0)
+                mathutil_mtxA_tf_point(&obj->unk4C->unk4, &spFC);
+                if (spFC.y < obj->unk4C->unk4.y)
+                    spFC.y = obj->unk4C->unk4.y;
+                obj->unk18.x = 0.1f * (spFC.x - obj->unkC.x);
+                obj->unk18.y = 0.1f * (spFC.y - obj->unkC.y);
+                obj->unk18.z = 0.05f * (spFC.z - obj->unkC.z);
+                obj->unk36 = 0;
+                obj->unk38 = 0;
+                obj->unk3A = 0;
+                if (obj->unk4 != 0)
                 {
-                    var_r29->unk4--;
-                    if (var_r29->unk4 == 0)
+                    obj->unk4--;
+                    if (obj->unk4 == 0)
                     {
-                        var_r29->unk2 = 3;
-                        var_r29->unk8 &= 0xFFFFFFFC;
-                        var_r29->unk8 |= 0x34;
+                        obj->unk2 = 3;
+                        obj->unk8 &= 0xFFFFFFFC;
+                        obj->unk8 |= 0x34;
                         if (var_r30 & 1)
-                            var_r29->unk8 |= 8;
-                        mathutil_vec_set_len(&var_r29->unkC, &spFC, 0.001f + (0.05f * RAND_FLOAT()));
-                        var_r29->unk18.x += spFC.x;
-                        var_r29->unk18.y += 0.05f + (4.0f * spFC.y);
-                        var_r29->unk18.z += spFC.z;
-                        var_r29->unk36 += 2048.0f * (RAND_FLOAT() - 0.5f);
-                        var_r29->unk38 += 2048.0f * (RAND_FLOAT() - 0.5f);
-                        var_r29->unk3A += 2048.0f * (RAND_FLOAT() - 0.5f);
+                            obj->unk8 |= 8;
+                        mathutil_vec_set_len(&obj->unkC, &spFC, 0.001f + (0.05f * RAND_FLOAT()));
+                        obj->unk18.x += spFC.x;
+                        obj->unk18.y += 0.05f + (4.0f * spFC.y);
+                        obj->unk18.z += spFC.z;
+                        obj->unk36 += 2048.0f * (RAND_FLOAT() - 0.5f);
+                        obj->unk38 += 2048.0f * (RAND_FLOAT() - 0.5f);
+                        obj->unk3A += 2048.0f * (RAND_FLOAT() - 0.5f);
                     }
                 }
                 break;
             case 4:
-                var_r29->unk2 = 5;
+                obj->unk2 = 5;
                 mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
                 mathutil_mtxA_rotate_x(rand() & 0x7FFF);
                 mathutil_mtxA_tf_vec_xyz(&spFC, 0.0f, 0.0f, 30.0f * RAND_FLOAT());
@@ -2899,233 +2903,233 @@ static void func_800BD4B8(void)
                     if (mathutil_vec_len(&spFC) > 80.0f)
                         mathutil_vec_set_len(&spFC, &spFC, 80.0f * RAND_FLOAT());
                 }
-                var_r29->unkC.x = spE4.x + spFC.x;
-                var_r29->unkC.y = spE4.y + spFC.y;
-                var_r29->unkC.z = spE4.z + spFC.z;
-                var_r29->unk18.x = 0.2f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk18.y = -0.2f * RAND_FLOAT();
-                var_r29->unk18.z = 0.2f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk30.x = rand() & 0x7FFF;
-                var_r29->unk30.y = rand() & 0x7FFF;
-                var_r29->unk30.z = rand() & 0x7FFF;
-                var_r29->unk36 = 2048.0f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk38 = 2048.0f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk3A = 2048.0f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk24.x = 0.3f * (1.0f + RAND_FLOAT());
-                var_r29->unk24.y = var_r29->unk24.x;
-                var_r29->unk24.z = var_r29->unk24.x;
-                var_r29->unk48 = 0.0f;
+                obj->unkC.x = spE4.x + spFC.x;
+                obj->unkC.y = spE4.y + spFC.y;
+                obj->unkC.z = spE4.z + spFC.z;
+                obj->unk18.x = 0.2f * (RAND_FLOAT() - 0.5f);
+                obj->unk18.y = -0.2f * RAND_FLOAT();
+                obj->unk18.z = 0.2f * (RAND_FLOAT() - 0.5f);
+                obj->unk30.x = rand() & 0x7FFF;
+                obj->unk30.y = rand() & 0x7FFF;
+                obj->unk30.z = rand() & 0x7FFF;
+                obj->unk36 = 2048.0f * (RAND_FLOAT() - 0.5f);
+                obj->unk38 = 2048.0f * (RAND_FLOAT() - 0.5f);
+                obj->unk3A = 2048.0f * (RAND_FLOAT() - 0.5f);
+                obj->unk24.x = 0.3f * (1.0f + RAND_FLOAT());
+                obj->unk24.y = obj->unk24.x;
+                obj->unk24.z = obj->unk24.x;
+                obj->unk48 = 0.0f;
                 /* fall through */
             case 5:
-                mathutil_mtxA_from_mtx(temp_r28->unk144);
-                mathutil_mtxA_tf_point(&var_r29->unkC, &spFC);
+                mathutil_mtxA_from_mtx(camera->unk144);
+                mathutil_mtxA_tf_point(&obj->unkC, &spFC);
                 if (spFC.z > 5.f)
                 {
-                    var_r29->unk2 = 4;
-                    var_r29->unk48 = 0.0f;
+                    obj->unk2 = 4;
+                    obj->unk48 = 0.0f;
                 }
                 else if (mathutil_vec_len(&spFC) < 80.0f)
                 {
-                    var_r29->unk48 += 0.1f * (1.1f - var_r29->unk48);
+                    obj->unk48 += 0.1f * (1.1f - obj->unk48);
                 }
                 else
                 {
-                    var_r29->unk48 += 0.15f * (-0.1f - var_r29->unk48);
-                    if (var_r29->unk48 < 0.0f)
+                    obj->unk48 += 0.15f * (-0.1f - obj->unk48);
+                    if (obj->unk48 < 0.0f)
                     {
-                        var_r29->unk2 = 4;
-                        var_r29->unk48 = 0.0f;
+                        obj->unk2 = 4;
+                        obj->unk48 = 0.0f;
                     }
                 }
                 break;
             case 6:
-                var_r29->unk2 = 7;
-                var_r29->unk8 |= 3;
-                var_r29->unk48 = 0.0f;
-                var_r29->unk24.x = 2.0f * (1.0f + (0.5f * RAND_FLOAT()));
-                var_r29->unk24.y = var_r29->unk24.x;
-                var_r29->unk24.z = var_r29->unk24.x;
-                var_r29->unk30.x = rand() & 0x7FFF;
-                var_r29->unk30.y = rand() & 0x7FFF;
-                var_r29->unk30.z = rand() & 0x7FFF;
-                var_r29->unk36 += 4096.0f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
-                alt_f27 = var_r29->unk4;
-                var_r29->unk18.x = 0.0f;
-                var_r29->unk18.y = -0.2f * RAND_FLOAT();
-                var_r29->unk18.z = 0.0f;
-                var_r29->unk3C = RAND_FLOAT() - 0.5f;
-                var_r29->unk40 = -0.5f * (alt_f27 * ((2.0f * var_r29->unk18.y) + (-0.008f * alt_f27)));
-                var_r29->unk44 = RAND_FLOAT() - 0.5f;
+                obj->unk2 = 7;
+                obj->unk8 |= 3;
+                obj->unk48 = 0.0f;
+                obj->unk24.x = 2.0f * (1.0f + (0.5f * RAND_FLOAT()));
+                obj->unk24.y = obj->unk24.x;
+                obj->unk24.z = obj->unk24.x;
+                obj->unk30.x = rand() & 0x7FFF;
+                obj->unk30.y = rand() & 0x7FFF;
+                obj->unk30.z = rand() & 0x7FFF;
+                obj->unk36 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                obj->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                obj->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
+                alt_f27 = obj->unk4;
+                obj->unk18.x = 0.0f;
+                obj->unk18.y = -0.2f * RAND_FLOAT();
+                obj->unk18.z = 0.0f;
+                obj->unk3C = RAND_FLOAT() - 0.5f;
+                obj->unk40 = -0.5f * (alt_f27 * ((2.0f * obj->unk18.y) + (-0.008f * alt_f27)));
+                obj->unk44 = RAND_FLOAT() - 0.5f;
                 /* fall through */
             case 7:
-                var_r29->unk36 = 0.99f * var_r29->unk36;
-                var_r29->unk38 = 0.99f * var_r29->unk38;
-                var_r29->unk3A = 0.99f * var_r29->unk3A;
-                var_r29->unk30.x += var_r29->unk36;
-                var_r29->unk30.y += var_r29->unk38;
-                var_r29->unk30.z += var_r29->unk3A;
-                var_r29->unk18.y += -0.008f;
-                var_r29->unk40 += var_r29->unk18.y;
-                if (var_r29->unk40 <= 0.0f)
+                obj->unk36 = 0.99f * obj->unk36;
+                obj->unk38 = 0.99f * obj->unk38;
+                obj->unk3A = 0.99f * obj->unk3A;
+                obj->unk30.x += obj->unk36;
+                obj->unk30.y += obj->unk38;
+                obj->unk30.z += obj->unk3A;
+                obj->unk18.y += -0.008f;
+                obj->unk40 += obj->unk18.y;
+                if (obj->unk40 <= 0.0f)
                 {
-                    spFC.x = var_r29->unk18.x;
-                    spFC.y = var_r29->unk18.y;
-                    spFC.z = var_r29->unk18.z;
+                    spFC.x = obj->unk18.x;
+                    spFC.y = obj->unk18.y;
+                    spFC.z = obj->unk18.z;
                     func_8001898C(modeCtrl.currPlayer, 0xF, &spFC);
-                    var_r29->unk40 = 0.0f;
-                    if (var_r29->unk18.y < 0.0f)
-                        var_r29->unk18.y *= -0.125f;
-                    var_r29->unk36 += 4096.0f * (RAND_FLOAT() - 0.5f);
-                    var_r29->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
-                    var_r29->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
+                    obj->unk40 = 0.0f;
+                    if (obj->unk18.y < 0.0f)
+                        obj->unk18.y *= -0.125f;
+                    obj->unk36 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                    obj->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                    obj->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
                 }
-                var_r29->unkC.x = temp_r28->eye.x + var_r29->unk3C;
-                var_r29->unkC.y = var_r29->unk40 + (temp_r28->eye.y + (3.2000000476837158f * var_r29->unk24.x));
-                var_r29->unkC.z = temp_r28->eye.z + var_r29->unk44;
-                var_r29->unk48 += 0.1f * (1.1f - var_r29->unk48);
+                obj->unkC.x = camera->eye.x + obj->unk3C;
+                obj->unkC.y = obj->unk40 + (camera->eye.y + (3.2000000476837158f * obj->unk24.x));
+                obj->unkC.z = camera->eye.z + obj->unk44;
+                obj->unk48 += 0.1f * (1.1f - obj->unk48);
                 break;
             case 8:
-                var_r29->unk2 = 9;
-                var_r29->unk8 = 0x43;
-                var_r29->unk48 = 0.0f;
-                var_r29->unk24.x = 0.4f;
-                var_r29->unk24.y = var_r29->unk24.x;
-                var_r29->unk24.z = var_r29->unk24.x;
-                var_r29->unk30.x = rand() & 0x7FFF;
-                var_r29->unk30.y = rand() & 0x7FFF;
-                var_r29->unk30.z = rand() & 0x7FFF;
-                var_r29->unk36 += 256.0f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk38 += 16.0f * (RAND_FLOAT() - 0.5f);
-                var_r29->unk3A += 4096.0f * (0.5f + RAND_FLOAT());
-                var_r29->unkC = endingInfo.work->unkAA54.unk2C;
+                obj->unk2 = 9;
+                obj->unk8 = 67;
+                obj->unk48 = 0.0f;
+                obj->unk24.x = 0.4f;
+                obj->unk24.y = obj->unk24.x;
+                obj->unk24.z = obj->unk24.x;
+                obj->unk30.x = rand() & 0x7FFF;
+                obj->unk30.y = rand() & 0x7FFF;
+                obj->unk30.z = rand() & 0x7FFF;
+                obj->unk36 += 256.0f * (RAND_FLOAT() - 0.5f);
+                obj->unk38 += 16.0f * (RAND_FLOAT() - 0.5f);
+                obj->unk3A += 4096.0f * (0.5f + RAND_FLOAT());
+                obj->unkC = endingInfo.work->unkAA54.unk2C;
                 /* fall through */
             case 9:
-                if (var_r29->unk4 != 0)
-                    var_r29->unk4--;
-                endingInfo.work->unkAA54.unk2C = var_r29->unkC;
-                if (var_r29->unk4 < 0x3C)
+                if (obj->unk4 != 0)
+                    obj->unk4--;
+                endingInfo.work->unkAA54.unk2C = obj->unkC;
+                if (obj->unk4 < 60)
                 {
-                    temp_f0_5 = 1.0f / (var_r29->unk4 + 1);
-                    var_r29->unk18.x = (0.15016f - var_r29->unkC.x) * temp_f0_5;
-                    var_r29->unk18.y = (20.07f - var_r29->unkC.y) * temp_f0_5;
-                    var_r29->unk18.z = (-60.0f - var_r29->unkC.z) * temp_f0_5;
-                    var_r29->unkC.x += var_r29->unk18.x;
-                    var_r29->unkC.y += var_r29->unk18.y;
-                    var_r29->unkC.z += var_r29->unk18.z;
-                    if (var_r29->unk4 == 0)
+                    temp_f0_5 = 1.0f / (obj->unk4 + 1);
+                    obj->unk18.x = (0.15016f - obj->unkC.x) * temp_f0_5;
+                    obj->unk18.y = (20.07f - obj->unkC.y) * temp_f0_5;
+                    obj->unk18.z = (-60.0f - obj->unkC.z) * temp_f0_5;
+                    obj->unkC.x += obj->unk18.x;
+                    obj->unkC.y += obj->unk18.y;
+                    obj->unkC.z += obj->unk18.z;
+                    if (obj->unk4 == 0)
                     {
-                        var_r29->unk36 = 0.92f * var_r29->unk36;
-                        var_r29->unk38 = 0.92f * var_r29->unk38;
-                        var_r29->unk3A = 0.92f * var_r29->unk3A;
-                        var_r29->unk36 += -0.1f * var_r29->unk30.x;
-                        var_r29->unk38 += -0.1f * var_r29->unk30.y;
-                        var_r29->unk3A += -0.1f * var_r29->unk30.z;
+                        obj->unk36 = 0.92f * obj->unk36;
+                        obj->unk38 = 0.92f * obj->unk38;
+                        obj->unk3A = 0.92f * obj->unk3A;
+                        obj->unk36 += -0.1f * obj->unk30.x;
+                        obj->unk38 += -0.1f * obj->unk30.y;
+                        obj->unk3A += -0.1f * obj->unk30.z;
                     }
-                    var_r29->unk30.x += var_r29->unk36;
-                    var_r29->unk30.y += var_r29->unk38;
-                    var_r29->unk30.z += var_r29->unk3A;
+                    obj->unk30.x += obj->unk36;
+                    obj->unk30.y += obj->unk38;
+                    obj->unk30.z += obj->unk3A;
                 }
                 else
                 {
-                    var_r29->unk18.x = 0.025f * (0.15016f - var_r29->unkC.x);
-                    var_r29->unk18.y = 0.025f * (20.07f - var_r29->unkC.y);
-                    var_r29->unk18.z = 0.0f;
-                    var_r29->unkC.x += var_r29->unk18.x;
-                    var_r29->unkC.y += var_r29->unk18.y;
-                    var_r29->unkC.z += var_r29->unk18.z;
-                    var_r29->unk30.x += var_r29->unk36;
-                    var_r29->unk30.y += var_r29->unk38;
-                    var_r29->unk30.z += var_r29->unk3A;
-                    memset(&sp38, 0, sizeof(sp38));
-                    sp38.type = 0xA;
-                    sp38.playerId = modeCtrl.currPlayer;
-                    sp38.pos = var_r29->unkC;
-                    spawn_effect(&sp38);
+                    obj->unk18.x = 0.025f * (0.15016f - obj->unkC.x);
+                    obj->unk18.y = 0.025f * (20.07f - obj->unkC.y);
+                    obj->unk18.z = 0.0f;
+                    obj->unkC.x += obj->unk18.x;
+                    obj->unkC.y += obj->unk18.y;
+                    obj->unkC.z += obj->unk18.z;
+                    obj->unk30.x += obj->unk36;
+                    obj->unk30.y += obj->unk38;
+                    obj->unk30.z += obj->unk3A;
+                    memset(&effect, 0, sizeof(effect));
+                    effect.type = ET_LEVITATE;
+                    effect.playerId = modeCtrl.currPlayer;
+                    effect.pos = obj->unkC;
+                    spawn_effect(&effect);
                 }
-                var_r29->unk48 += (0.1f * (1.1f - var_r29->unk48));
+                obj->unk48 += (0.1f * (1.1f - obj->unk48));
                 break;
             case 10:
                 {
                     struct EndingWork *work = endingInfo.work;
-                    var_r29->unkC.x = 0.15016f + work->unkA804[0].unkC.x;
-                    var_r29->unkC.y = 0.07f + work->unkA804[0].unkC.y;
-                    var_r29->unkC.z = work->unkA804[0].unkC.z;
-                    var_r29->unk30 = work->unkA804[0].unk30;
+                    obj->unkC.x = 0.15016f + work->characters[0].unkC.x;
+                    obj->unkC.y = 0.07f + work->characters[0].unkC.y;
+                    obj->unkC.z = work->characters[0].unkC.z;
+                    obj->unk30 = work->characters[0].unk30;
                 }
                 break;
             }
-            if (!(var_r29->unk8 & 2))
+            if (!(obj->unk8 & 2))
             {
-                var_r29->unk18.x *= 0.99f;
-                var_r29->unk18.y *= 0.99f;
-                var_r29->unk18.z *= 0.99f;
-                var_r29->unk36 = 0.984375f * var_r29->unk36;
-                var_r29->unk38 = 0.984375f * var_r29->unk38;
-                var_r29->unk3A = 0.984375f * var_r29->unk3A;
+                obj->unk18.x *= 0.99f;
+                obj->unk18.y *= 0.99f;
+                obj->unk18.z *= 0.99f;
+                obj->unk36 = 0.984375f * obj->unk36;
+                obj->unk38 = 0.984375f * obj->unk38;
+                obj->unk3A = 0.984375f * obj->unk3A;
             }
-            if (!(var_r29->unk8 & 1))
+            if (!(obj->unk8 & 1))
             {
-                var_r29->unk18.y += -0.008f;
-                var_r29->unkC.x += var_r29->unk18.x;
-                var_r29->unkC.y += var_r29->unk18.y;
-                var_r29->unkC.z += var_r29->unk18.z;
-                var_r29->unk30.x += var_r29->unk36;
-                var_r29->unk30.y += var_r29->unk38;
-                var_r29->unk30.z += var_r29->unk3A;
+                obj->unk18.y += -0.008f;
+                obj->unkC.x += obj->unk18.x;
+                obj->unkC.y += obj->unk18.y;
+                obj->unkC.z += obj->unk18.z;
+                obj->unk30.x += obj->unk36;
+                obj->unk30.y += obj->unk38;
+                obj->unk30.z += obj->unk3A;
             }
-            if (var_r29->unk8 & 0x20)
+            if (obj->unk8 & 0x20)
             {
-                temp_f26 = temp_r27->unk14 * var_r29->unk24.x;
+                temp_f26 = temp_r27->unk14 * obj->unk24.x;
                 temp_f27 = 2.0f + temp_f26;
-                if (mathutil_vec_sq_len(&var_r29->unkC) < temp_f27 * temp_f27)
+                if (mathutil_vec_sq_len(&obj->unkC) < temp_f27 * temp_f27)
                 {
-                    mathutil_vec_set_len(&var_r29->unkC, &spFC, temp_f27);
-                    spFC.x -= var_r29->unkC.x;
-                    spFC.y -= var_r29->unkC.y;
-                    spFC.z -= var_r29->unkC.z;
-                    var_r29->unkC.x += 0.025f * spFC.x;
-                    var_r29->unkC.y += 0.025f * spFC.y;
-                    var_r29->unkC.z += 0.025f * spFC.z;
-                    var_r29->unk18.x += 0.01f * spFC.x;
-                    var_r29->unk18.y += 0.01f * spFC.y;
-                    var_r29->unk18.z += 0.01f * spFC.z;
+                    mathutil_vec_set_len(&obj->unkC, &spFC, temp_f27);
+                    spFC.x -= obj->unkC.x;
+                    spFC.y -= obj->unkC.y;
+                    spFC.z -= obj->unkC.z;
+                    obj->unkC.x += 0.025f * spFC.x;
+                    obj->unkC.y += 0.025f * spFC.y;
+                    obj->unkC.z += 0.025f * spFC.z;
+                    obj->unk18.x += 0.01f * spFC.x;
+                    obj->unk18.y += 0.01f * spFC.y;
+                    obj->unk18.z += 0.01f * spFC.z;
                 }
 
-                spFC.x = var_r29->unkC.x;
-                spFC.y = var_r29->unkC.y - 1.0f;
-                spFC.z = var_r29->unkC.z - 3.0f;
+                spFC.x = obj->unkC.x;
+                spFC.y = obj->unkC.y - 1.0f;
+                spFC.z = obj->unkC.z - 3.0f;
                 temp_f27 = 1.5f + temp_f26;
                 if (mathutil_vec_sq_len(&spFC) < temp_f27 * temp_f27)
                 {
                     mathutil_vec_set_len(&spFC, &spFC, temp_f27);
-                    var_r29->unkC.x += 0.05f * spFC.x;
-                    var_r29->unkC.y += 0.05f * spFC.y;
-                    var_r29->unkC.z += 0.05f * spFC.z;
-                    var_r29->unk18.x += 0.01f * spFC.x;
-                    var_r29->unk18.y += 0.01f * spFC.y;
-                    var_r29->unk18.z += 0.01f * spFC.z;
+                    obj->unkC.x += 0.05f * spFC.x;
+                    obj->unkC.y += 0.05f * spFC.y;
+                    obj->unkC.z += 0.05f * spFC.z;
+                    obj->unk18.x += 0.01f * spFC.x;
+                    obj->unk18.y += 0.01f * spFC.y;
+                    obj->unk18.z += 0.01f * spFC.z;
                 }
                 temp_f27 = 1.0f + temp_f26;
                 {
                     struct EndingWork *work = endingInfo.work;
-                    spFC.x = var_r29->unkC.x - work->unkA804[3].unkC.x;
-                    spFC.y = var_r29->unkC.y - work->unkA804[3].unkC.y;
-                    spFC.z = var_r29->unkC.z - work->unkA804[3].unkC.z;
+                    spFC.x = obj->unkC.x - work->characters[3].unkC.x;
+                    spFC.y = obj->unkC.y - work->characters[3].unkC.y;
+                    spFC.z = obj->unkC.z - work->characters[3].unkC.z;
                 }
                 if (mathutil_vec_sq_len(&spFC) < (temp_f27 * temp_f27))
                 {
                     mathutil_vec_set_len(&spFC, &spFC, temp_f27);
-                    var_r29->unkC.x += 0.05f * spFC.x;
-                    var_r29->unkC.y += 0.05f * spFC.y;
-                    var_r29->unkC.z += 0.05f * spFC.z;
-                    var_r29->unk18.x += 0.01f * spFC.x;
-                    var_r29->unk18.y += 0.01f * spFC.y;
-                    var_r29->unk18.z += 0.01f * spFC.z;
+                    obj->unkC.x += 0.05f * spFC.x;
+                    obj->unkC.y += 0.05f * spFC.y;
+                    obj->unkC.z += 0.05f * spFC.z;
+                    obj->unk18.x += 0.01f * spFC.x;
+                    obj->unk18.y += 0.01f * spFC.y;
+                    obj->unk18.z += 0.01f * spFC.z;
                 }
             }
-            if (var_r29->unk8 & 0x10)
+            if (obj->unk8 & 0x10)
             {
                 float f;
                 float g = temp_r27->unk14;
@@ -3138,31 +3142,31 @@ static void func_800BD4B8(void)
                 sp8.sp10.y = 0.0f;
                 sp8.sp2C.z = 0.0f;
                 sp8.sp10.z = 0.0f;
-                mathutil_mtxA_from_rotate_y(var_r29->unk30.y);
-                mathutil_mtxA_rotate_x(var_r29->unk30.x);
-                mathutil_mtxA_rotate_z(var_r29->unk30.z);
+                mathutil_mtxA_from_rotate_y(obj->unk30.y);
+                mathutil_mtxA_rotate_x(obj->unk30.x);
+                mathutil_mtxA_rotate_z(obj->unk30.z);
                 mathutil_mtxA_tf_vec_xyz(&spFC, 0.70710677f, 0.70710677f, 0.0f);
-                f = g * var_r29->unk24.x * (0.30000001192092896 + 0.69999998807907104 * fabs(spFC.y));
-                if (var_r29->unkC.y < sp8.sp20.y + f)
+                f = g * obj->unk24.x * (0.30000001192092896 + 0.69999998807907104 * fabs(spFC.y));
+                if (obj->unkC.y < sp8.sp20.y + f)
                 {
-                    var_r29->unkC.y = sp8.sp20.y + f;
-                    temp_f26 = mathutil_vec_dot_prod(&sp8.sp2C, &var_r29->unk18);
+                    obj->unkC.y = sp8.sp20.y + f;
+                    temp_f26 = mathutil_vec_dot_prod(&sp8.sp2C, &obj->unk18);
                     if (temp_f26 < 0.0f)
                     {
-                        var_r29->unk36 = var_r29->unk36 * 0.96875f;
-                        var_r29->unk38 = var_r29->unk38 * 0.96875f;
-                        var_r29->unk3A = var_r29->unk3A * 0.96875f;
+                        obj->unk36 = obj->unk36 * 0.96875f;
+                        obj->unk38 = obj->unk38 * 0.96875f;
+                        obj->unk3A = obj->unk3A * 0.96875f;
                         mathutil_mtxA_rigid_inv_tf_vec(&sp8.sp2C, &spFC);
                         sp8.unk0 = (256.0 + (256.0 * fabs(temp_f26))) * mathutil_cos(((s16)(((var_r30 * 0x800) & 0x1FFF) - 0xFFF) + mathutil_atan2(-spFC.z, spFC.y)));
-                        var_r29->unk36 += sp8.unk0;
+                        obj->unk36 += sp8.unk0;
                         if (temp_f26 < -0.1f)
                         {
                             temp_f27 = 16384.0f * (0.1f + temp_f26);
-                            var_r29->unk36 += temp_f27 * (RAND_FLOAT() - 0.5f);
-                            var_r29->unk38 += temp_f27 * (RAND_FLOAT() - 0.5f);
-                            var_r29->unk3A += temp_f27 * (RAND_FLOAT() - 0.5f);
+                            obj->unk36 += temp_f27 * (RAND_FLOAT() - 0.5f);
+                            obj->unk38 += temp_f27 * (RAND_FLOAT() - 0.5f);
+                            obj->unk3A += temp_f27 * (RAND_FLOAT() - 0.5f);
                         }
-                        spFC = var_r29->unk18;
+                        spFC = obj->unk18;
                         temp_f26 *= -1.0f;
                         spFC.x += temp_f26 * sp8.sp2C.x;
                         spFC.y += temp_f26 * sp8.sp2C.y;
@@ -3174,7 +3178,7 @@ static void func_800BD4B8(void)
                         spFC.x += temp_f26 * sp8.sp2C.x;
                         spFC.y += temp_f26 * sp8.sp2C.y;
                         spFC.z += temp_f26 * sp8.sp2C.z;
-                        var_r29->unk18 = spFC;
+                        obj->unk18 = spFC;
                     }
                 }
             }
@@ -3189,29 +3193,29 @@ static void func_800BEEE8(void)
 
     int i;
     int j;
-    struct SomeBigEndingStruct_sub4 *var_r29;
-    struct SomeBigEndingStruct_sub4 *var_r28;
+    struct EndingSceneObject *objA;
+    struct EndingSceneObject *objB;
 
     // useless, but needed to match
     unused_f30 = 0.5f;
     unused_f31 = 0.25f;
 
-    var_r29 = endingInfo.work->unk4;
-    for (i = 512; i > 0; i--, var_r29++)
+    objA = endingInfo.work->objects;
+    for (i = 512; i > 0; i--, objA++)
     {
-        if (var_r29->unk0 != 0 && (var_r29->unk8 & 8))
+        if (objA->isActive && (objA->unk8 & 8))
         {
-            float temp_f29 = 0.5f * (var_r29->unk50->unk14 * var_r29->unk24.x);
-            Vec sp38 = var_r29->unkC;
+            float temp_f29 = 0.5f * (objA->model->unk14 * objA->unk24.x);
+            Vec sp38 = objA->unkC;
 
-            var_r28 = var_r29 + 1;
-            for (j = i - 1; j > 0; j--, var_r28++)
+            objB = objA + 1;
+            for (j = i - 1; j > 0; j--, objB++)
             {
-                if (var_r28->unk0 != 0 && (var_r28->unk8 & 8))
+                if (objB->isActive && (objB->unk8 & 8))
                 {
-                    float temp_f28 = 0.5f * (var_r28->unk50->unk14 * var_r28->unk24.x);
+                    float temp_f28 = 0.5f * (objB->model->unk14 * objB->unk24.x);
                     float temp_f27 = temp_f29 + temp_f28;
-                    Vec sp2C = var_r28->unkC;
+                    Vec sp2C = objB->unkC;
                     Vec sp20;
 
                     sp20.x = sp38.x - sp2C.x;
@@ -3234,30 +3238,30 @@ static void func_800BEEE8(void)
                         sp14.z = sp2C.z + (sp20.z * temp_f0_4);
                         mathutil_vec_normalize_len(&sp20);
                         temp_f0_4 = 0.25f / temp_f29;
-                        sp8.x = (sp14.x + (temp_f29 * sp20.x)) - sp38.x;
-                        sp8.y = (sp14.y + (temp_f29 * sp20.y)) - sp38.y;
-                        sp8.z = (sp14.z + (temp_f29 * sp20.z)) - sp38.z;
+                        sp8.x = sp14.x + (temp_f29 * sp20.x) - sp38.x;
+                        sp8.y = sp14.y + (temp_f29 * sp20.y) - sp38.y;
+                        sp8.z = sp14.z + (temp_f29 * sp20.z) - sp38.z;
                         sp38.x += 0.5f * sp8.x;
                         sp38.y += 0.5f * sp8.y;
                         sp38.z += 0.5f * sp8.z;
-                        var_r29->unk18.x += (sp8.x * temp_f0_4);
-                        var_r29->unk18.y += (sp8.y * temp_f0_4);
-                        var_r29->unk18.z += (sp8.z * temp_f0_4);
+                        objA->unk18.x += sp8.x * temp_f0_4;
+                        objA->unk18.y += sp8.y * temp_f0_4;
+                        objA->unk18.z += sp8.z * temp_f0_4;
                         temp_f0_4 = 0.25f / temp_f28;
-                        sp8.x = (sp14.x - (temp_f28 * sp20.x)) - sp2C.x;
-                        sp8.y = (sp14.y - (temp_f28 * sp20.y)) - sp2C.y;
-                        sp8.z = (sp14.z - (temp_f28 * sp20.z)) - sp2C.z;
+                        sp8.x = sp14.x - (temp_f28 * sp20.x) - sp2C.x;
+                        sp8.y = sp14.y - (temp_f28 * sp20.y) - sp2C.y;
+                        sp8.z = sp14.z - (temp_f28 * sp20.z) - sp2C.z;
                         sp2C.x += 0.5f * sp8.x;
                         sp2C.y += 0.5f * sp8.y;
                         sp2C.z += 0.5f * sp8.z;
-                        var_r28->unk18.x += (sp8.x * temp_f0_4);
-                        var_r28->unk18.y += (sp8.y * temp_f0_4);
-                        var_r28->unk18.z += (sp8.z * temp_f0_4);
-                        var_r28->unkC = sp2C;
+                        objB->unk18.x += sp8.x * temp_f0_4;
+                        objB->unk18.y += sp8.y * temp_f0_4;
+                        objB->unk18.z += sp8.z * temp_f0_4;
+                        objB->unkC = sp2C;
                     }
                 }
             }
-            var_r29->unkC = sp38;
+            objA->unkC = sp38;
         }
     }
 }
@@ -3273,27 +3277,27 @@ static void func_800BF2D4(void)
     int isNaomiModel;
     int i;
     float radius;
-    struct SomeBigEndingStruct_sub4 *var_r30;
+    struct EndingSceneObject *obj;
     struct SomeBigEndingStruct_sub4_sub2 *model;
 
-    var_r30 = endingInfo.work->unk4;
-    for (i = 512; i > 0; i--, var_r30++)
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0; i--, obj++)
     {
-        if (var_r30->unk0 != 0)
+        if (obj->isActive)
         {
-            model = var_r30->unk50;
-            opacity = var_r30->unk48;
+            model = obj->model;
+            opacity = obj->unk48;
             if (opacity <= 0.0f)
                 continue;
 
-            sp14 = var_r30->unk24;
-            mathutil_mtxA_from_mtxB_translate(&var_r30->unkC);
-            mathutil_mtxA_rotate_y(var_r30->unk30.y);
-            mathutil_mtxA_rotate_x(var_r30->unk30.x);
-            mathutil_mtxA_rotate_z(var_r30->unk30.z);
+            sp14 = obj->unk24;
+            mathutil_mtxA_from_mtxB_translate(&obj->unkC);
+            mathutil_mtxA_rotate_y(obj->unk30.y);
+            mathutil_mtxA_rotate_x(obj->unk30.x);
+            mathutil_mtxA_rotate_z(obj->unk30.z);
             mathutil_mtxA_scale(&sp14);
             scale = MAX(MAX(sp14.x, sp14.y), sp14.z);
-            isNaomiModel = var_r30->unk8 & 0x40;
+            isNaomiModel = obj->unk8 & 0x40;
             if (isNaomiModel)
             {
                 radius = model->unk14;
@@ -3306,7 +3310,7 @@ static void func_800BF2D4(void)
             }
             if (test_scaled_sphere_in_frustum(&sp8, radius, scale))
             {
-                if (var_r30->unk8 & 4)
+                if (obj->unk8 & 4)
                 {
                     float temp_f0_2 = -(model->unk14 * scale) - mathutilData->mtxA[2][3];
                     if ((temp_f0_2 < 0.0f))
@@ -3340,43 +3344,43 @@ static void func_800BF2D4(void)
 
 static void func_800BF4F4(void)
 {
-    int var_r0;
+    int modelId;
     int i;
     int j;
     struct Stage_Child90 *var_r29;
-    struct SomeBigEndingStruct_sub4 *var_r28;
+    struct EndingSceneObject *obj;
 
-    endingInfo.unk4 |= 1;
+    endingInfo.flags |= 1;
     var_r29 = decodedStageLzPtr->unk90;
-    j = decodedStageLzPtr->unk8C;
-    var_r28 = endingInfo.work->unk4;
 
-    for (i = 512; i > 0 && j > 0; i--, var_r28++)
+    j = decodedStageLzPtr->unk8C;
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0 && j > 0; i--, obj++)
     {
-        if (var_r28->unk0 == 0)
+        if (!obj->isActive)
         {
-            var_r28->unk0 = 1;
-            var_r28->unk2 = 1;
-            var_r28->unkC = var_r29->unk4;
-            var_r28->unk18.x = 0.0f;
-            var_r28->unk18.y = 0.0f;
-            var_r28->unk18.z = 0.0f;
-            var_r28->unk30.x = 0;
-            var_r28->unk30.y = 0;
-            var_r28->unk30.z = 0;
+            obj->isActive = TRUE;
+            obj->unk2 = 1;
+            obj->unkC = var_r29->unk4;
+            obj->unk18.x = 0.0f;
+            obj->unk18.y = 0.0f;
+            obj->unk18.z = 0.0f;
+            obj->unk30.x = 0;
+            obj->unk30.y = 0;
+            obj->unk30.z = 0;
             mathutil_mtxA_from_rotate_z(var_r29->unk14);
             mathutil_mtxA_rotate_y(var_r29->unk12);
             mathutil_mtxA_rotate_x(var_r29->unk10);
-            mathutil_mtxA_to_euler((S16Vec *) &var_r28->unk30);
-            var_r28->unk24 = var_r29->unk18;
-            var_r28->unk48 = 1.0f;
-            var_r28->unk4C = (struct SomeBigEndingStruct_sub4_sub *) var_r29;
-            var_r28->unk8 = 3;
+            mathutil_mtxA_to_euler(&obj->unk30);
+            obj->unk24 = var_r29->unk18;
+            obj->unk48 = 1.0f;
+            obj->unk4C = (struct SomeBigEndingStruct_sub4_sub *) var_r29;
+            obj->unk8 = 3;
             if (!(var_r29->unk0 & 1))
-                var_r0 = 0;
+                modelId = HOUSE_BANANA;
             else
-                var_r0 = 5;
-            var_r28->unk50 = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[var_r0].model;
+                modelId = SEAL_BANANA;
+            obj->model = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[modelId].model;
             var_r29++;
             j--;
         }
@@ -3386,17 +3390,17 @@ static void func_800BF4F4(void)
 static void func_800BF658(void)
 {
     int i;
-    struct SomeBigEndingStruct_sub4 *ptr;
+    struct EndingSceneObject *obj;
 
-    ptr = endingInfo.work->unk4;
-    for (i = 512; i > 0; i--, ptr++)
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0; i--, obj++)
     {
-        if (ptr->unk0 != 0 && ptr->unk2 == 1)
+        if (obj->isActive && obj->unk2 == 1)
         {
-            ptr->unk2 = 2;
-            ptr->unk4 = 0;
-            ptr->unk8 &= 0xFFFFFFFE;
-            ptr->unk8 |= 2;
+            obj->unk2 = 2;
+            obj->unk4 = 0;
+            obj->unk8 &= 0xFFFFFFFE;
+            obj->unk8 |= 2;
         }
     }
 }
@@ -3406,85 +3410,85 @@ static void func_800BF774(void)
     Vec sp8;
     float temp_f25;
     int i;
-    struct SomeBigEndingStruct_sub4 *var_r29;
+    struct EndingSceneObject *obj;
 
     mathutil_mtxA_from_rotate_y((rand() & 0x3FF) - 0x200);
     mathutil_mtxA_rotate_z((rand() & 0x7FFF) - 0x4000);
     mathutil_mtxA_tf_vec_xyz(&sp8, 0.0f, -1.0f, 0.0f);
-    var_r29 = endingInfo.work->unk4;
-    for (i = 512; i > 0; i--, var_r29++)
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0; i--, obj++)
     {
-        if (var_r29->unk0 != 0 && var_r29->unk2 == 2 && var_r29->unk4 <= 0)
+        if (obj->isActive && obj->unk2 == 2 && obj->unk4 <= 0)
         {
-            temp_f25 = 1.0f + mathutil_vec_dot_normalized_safe(&var_r29->unkC, &sp8);
-            var_r29->unk4 = 1.0f + (60.0f * temp_f25 * (0.9f + (0.2f * RAND_FLOAT())));
+            temp_f25 = 1.0f + mathutil_vec_dot_normalized_safe(&obj->unkC, &sp8);
+            obj->unk4 = 1.0f + (60.0f * temp_f25 * (0.9f + (0.2f * RAND_FLOAT())));
         }
     }
 }
 
-static void func_800BF8C4(int arg0)
+static void spawn_lots_of_bananas_1(int arg0)
 {
-    int var_r0;
+    int modelId;
     int i;
-    struct SomeBigEndingStruct_sub4 *var_r6;
+    struct EndingSceneObject *obj;
 
-    var_r6 = endingInfo.work->unk4;
-    for (i = 512; i > 0 && arg0 > 0; i--, var_r6++)
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0 && arg0 > 0; i--, obj++)
     {
-        if (var_r6->unk0 == 0)
+        if (!obj->isActive)
         {
-            var_r6->unk0 = 1;
-            var_r6->unk2 = 4;
-            var_r6->unk8 = 0x14;
+            obj->isActive = TRUE;
+            obj->unk2 = 4;
+            obj->unk8 = 0x14;
             if (i & 1)
-                var_r0 = 0;
+                modelId = HOUSE_BANANA;
             else
-                var_r0 = 5;
+                modelId = SEAL_BANANA;
             arg0 -= 1;
-            var_r6->unk50 = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[var_r0].model;
+            obj->model = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[modelId].model;
         }
     }
 }
 
-static void func_800BF948(int arg0, int arg1)
+static void spawn_lots_of_bananas_2(int arg0, int arg1)
 {
-    int var_r0;
+    int modelId;
     int i;
-    struct SomeBigEndingStruct_sub4 *var_r6;
+    struct EndingSceneObject *obj;
 
-    var_r6 = endingInfo.work->unk4;
-    for (i = 512; i > 0 && arg0 > 0; i--, var_r6++)
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0 && arg0 > 0; i--, obj++)
     {
-        if (var_r6->unk0 == 0)
+        if (!obj->isActive)
         {
-            var_r6->unk0 = 1;
-            var_r6->unk2 = 6;
-            var_r6->unk4 = arg1;
+            obj->isActive = TRUE;
+            obj->unk2 = 6;
+            obj->unk4 = arg1;
             if (i & 1)
-                var_r0 = 0;
+                modelId = HOUSE_BANANA;
             else
-                var_r0 = 5;
+                modelId = SEAL_BANANA;
             arg0 -= 1;
-            var_r6->unk50 = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[var_r0].model;
+            obj->model = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[modelId].model;
         }
     }
 }
 
-static void func_800BF9CC(int arg0)
+static void spawn_beginner_banana(int arg0)
 {
     int i;
-    struct SomeBigEndingStruct_sub4 *var_r6;
+    struct EndingSceneObject *obj;
 
-    var_r6 = endingInfo.work->unk4;
-    for (i = 512; i > 0; i--, var_r6++)
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0; i--, obj++)
     {
-        if (var_r6->unk0 == 0)
+        if (!obj->isActive)
         {
-            var_r6->unk0 = 1;
-            var_r6->unk2 = 8;
-            var_r6->unk4 = arg0;
-            var_r6->unk48 = 0.0f;
-            var_r6->unk50 = (void *)NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_OBJ_BANANA_ENDING);
+            obj->isActive = TRUE;
+            obj->unk2 = 8;
+            obj->unk4 = arg0;
+            obj->unk48 = 0.0f;
+            obj->model = (void *)NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_OBJ_BANANA_ENDING);
             return;
         }
     }
@@ -3493,15 +3497,15 @@ static void func_800BF9CC(int arg0)
 static void func_800BFA2C(void)
 {
     int i;
-    struct SomeBigEndingStruct_sub4 *var_r6;
+    struct EndingSceneObject *obj;
 
-    var_r6 = endingInfo.work->unk4;
-    for (i = 512; i > 0; i--, var_r6++)
+    obj = endingInfo.work->objects;
+    for (i = 512; i > 0; i--, obj++)
     {
-        if ((var_r6->unk2 == 8 || var_r6->unk2 == 9) && var_r6->unk0 != 0)
+        if ((obj->unk2 == 8 || obj->unk2 == 9) && obj->isActive)
         {
-            var_r6->unk2 = 10;
-            var_r6->unk48 = 1.0f;
+            obj->unk2 = 10;
+            obj->unk48 = 1.0f;
             return;
         }
     }
@@ -3516,7 +3520,7 @@ static void func_800BFC2C(void)
     Vec cameraTarget;
     Mtx sp14;
     struct Ape *ape;
-    struct SomeBigEndingStruct_sub3 *temp_r29;
+    struct EndingSceneCharacter *chara;
     struct EndingWork *work;
     float x1, y1, x2, y2;
 
@@ -3525,8 +3529,8 @@ static void func_800BFC2C(void)
         return;
     if (work->unkAAA8 <= 0.0f)
         return;
-    temp_r29 = &work->unkA804[0];
-    ape = temp_r29->unk0;
+    chara = &work->characters[0];
+    ape = chara->ape;
     if (ape == NULL)
         return;
 
@@ -3548,9 +3552,9 @@ static void func_800BFC2C(void)
     upVec.y = 1.0f;
     upVec.z = 0.0f;
     MTXLookAt(mathutilData->mtxB, &cameraPos, &upVec, &cameraTarget);
-    temp_r29->unk0->flags &= 0xFFFFFFDF;
+    chara->ape->flags &= 0xFFFFFFDF;
     draw_monkey();
-    temp_r29->unk0->flags |= 0x20;
+    chara->ape->flags |= 0x20;
     GXSetNumChans(0);
     GXSetNumTexGens(1);
     GXSetNumTevStages_cached(1);

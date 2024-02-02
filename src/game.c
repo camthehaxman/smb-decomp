@@ -1277,7 +1277,7 @@ void submode_game_ending_main_func(void)
     if (gamePauseStatus & 0xA)
         return;
 
-    if (ending_main() == 0)
+    if (!ending_main())
     {
         ending_finish();
         gameSubmodeRequest = SMD_GAME_ROLL_INIT;

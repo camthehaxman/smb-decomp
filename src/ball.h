@@ -160,7 +160,7 @@ void func_80037718();
 void func_80037B1C(struct Ball *);
 void func_80037B20(void);
 void ev_ball_init(void);
-struct Ape *func_800380A8(int a, int character, void (*c)(struct Ape *, int));
+struct Ape *u_init_ape(int a, int character, void (*c)(struct Ape *, int));
 void ev_ball_main(void);
 void func_80038528(struct Ball *);
 void ev_ball_dest(void);

@@ -44,7 +44,7 @@ void effect_ending_ballfrag_main(struct Effect *effect)
     Vec spC;
     float temp_f2;
 
-    if (!(endingInfo.unk4 & 8))
+    if (!(endingInfo.flags & 8))
     {
         mathutil_mtxA_from_rotate_y(effect->rotY);
         mathutil_mtxA_rotate_x(effect->rotX);

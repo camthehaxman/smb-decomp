@@ -1,9 +1,9 @@
 #ifndef _SRC_ENDING_H_
 #define _SRC_ENDING_H_
 
-struct SomeBigEndingStruct_sub3
+struct EndingSceneCharacter
 {
-    struct Ape *unk0;
+    struct Ape *ape;
     s16 unk4;
     s16 unk6;
     s16 unk8;
@@ -15,7 +15,7 @@ struct SomeBigEndingStruct_sub3
              u16 unk36;
     /*0x38*/ s16 unk38;
     /*0x3A*/ s16 unk3A;
-    void *unk3C;
+    void *model;
     u32 unk40;
     Vec unk44;
     s16 unk50;
@@ -78,9 +78,9 @@ struct SomeBigEndingStruct_sub4_sub
     Vec unk4;
 };
 
-struct SomeBigEndingStruct_sub4
+struct EndingSceneObject
 {
-    s8 unk0;
+    s8 isActive;
     s16 unk2;
     s16 unk4;
     s32 unk8;
@@ -92,7 +92,7 @@ struct SomeBigEndingStruct_sub4
     float unk3C, unk40, unk44;
     float unk48;
     struct SomeBigEndingStruct_sub4_sub *unk4C;
-    struct SomeBigEndingStruct_sub4_sub2 *unk50;
+    struct SomeBigEndingStruct_sub4_sub2 *model;
 };
 
 struct EndingCharaDialogue
@@ -104,8 +104,8 @@ struct EndingCharaDialogue
 struct EndingWork
 {
     float unk0;
-    struct SomeBigEndingStruct_sub4 unk4[512];
-    struct SomeBigEndingStruct_sub3 unkA804[4];
+    struct EndingSceneObject objects[512];
+    struct EndingSceneCharacter characters[4];
     struct SomeStruct unkAA04;
     struct SomeBigEndingStruct_sub unkAA54;
     float unkAAA8;
@@ -119,7 +119,7 @@ struct EndingInfo
 {
     s16 state;
     s16 nextState;
-    u32 unk4;
+    u32 flags;
     struct EndingWork *work;
 };
 
@@ -132,10 +132,10 @@ void ending_finish(void);
 void u_ending_draw(void);
 
 // ending_camera.c
-void func_800C008C(void);
-void func_800C00F0(void);
-void func_800C09B0(void);
-void func_800C09B4(void);
+void ending_camera_init(void);
+void ending_camera_emptyfunc1(void);
+void ending_camera_emptyfunc2(void);
+void ending_camera_emptyfunc3(void);
 
 // ending_dialogue.c
 void effect_ending_ballfrag_init(struct Effect *);

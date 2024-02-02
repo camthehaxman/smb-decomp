@@ -405,17 +405,7 @@ extern struct ApeGfxFileInfo apeGfxFileInfo[8];
 // extern ? lbl_801E2A98;
 // extern ? lbl_801E2AD4;
 // extern ? lbl_801E2B28;
-// extern ? endingFuncs;
-// extern ? lbl_801E2BBC;
-// extern ? lbl_801E2BEC;
-// extern ? lbl_801E31E4;
-// extern ? lbl_801E31F4;
-// extern ? lbl_801E321C;
-// extern ? lbl_801E3248;
-// extern ? lbl_801E3258;
-// extern ? characterDialogues;
-// extern ? lbl_801E5C20;
-// extern ? lbl_801E5CA0;
+
 // extern ? lbl_801E5CF0;
 // extern ? lbl_801E5EB0;
 // extern ? DSPInitCode;
