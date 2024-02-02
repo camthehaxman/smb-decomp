@@ -51,17 +51,17 @@ void func_800C013C(struct Camera *camera, struct Ball *ball)
 
     if (gamePauseStatus & 0xA)
         return;
-    if (lbl_802C6BD8.unk8 == NULL)
+    if (endingInfo.unk8 == NULL)
         return;
-    temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r30 = &endingInfo.unk8->unkAA54;
     camera_clear(camera);
     camera->flags |= 8;
-    if (lbl_802C6BD8.unk8 == NULL)
+    if (endingInfo.unk8 == NULL)
         return;
     switch (temp_r30->unk0)
     {
     case 2:
-        temp = &lbl_802C6BD8.unk8->unkA804[temp_r30->unk1C];
+        temp = &endingInfo.unk8->unkA804[temp_r30->unk1C];
         temp_r31 = temp->unk0;
         mathutil_mtxA_from_quat(&temp_r31->unk60);
         mathutil_mtxA_to_mtx(sp10);
@@ -83,7 +83,7 @@ void func_800C013C(struct Camera *camera, struct Ball *ball)
     switch (temp_r30->unk2)
     {
     case 2:
-        temp = &lbl_802C6BD8.unk8->unkA804[temp_r30->unk44];
+        temp = &endingInfo.unk8->unkA804[temp_r30->unk44];
         temp_r31 = temp->unk0;
         mathutil_mtxA_from_quat(&temp_r31->unk60);
         mathutil_mtxA_to_mtx(sp10);
@@ -122,10 +122,10 @@ void func_800C0354(struct Camera *arg0, struct Ball *ball)
 
     if (gamePauseStatus & 0xA)
         return;
-    if (lbl_802C6BD8.unk8 == NULL)
+    if (endingInfo.unk8 == NULL)
         return;
 
-    temp_r31 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r31 = &endingInfo.unk8->unkAA54;
     sp70 = arg0->eye;
     sp64 = arg0->lookAt;
     switch (temp_r31->unk0)
@@ -145,7 +145,7 @@ void func_800C0354(struct Camera *arg0, struct Ball *ball)
         arg0->eye.z += sp40.z;
         break;
     case 2:
-        temp = &lbl_802C6BD8.unk8->unkA804[temp_r31->unk1C];
+        temp = &endingInfo.unk8->unkA804[temp_r31->unk1C];
         temp_r29 = temp->unk0;
         mathutil_mtxA_from_quat(&temp_r29->unk60);
         mathutil_mtxA_to_mtx(sp10);
@@ -182,7 +182,7 @@ void func_800C0354(struct Camera *arg0, struct Ball *ball)
         arg0->lookAt.z += sp40.z;
         break;
     case 2:
-        temp = &lbl_802C6BD8.unk8->unkA804[temp_r31->unk44];
+        temp = &endingInfo.unk8->unkA804[temp_r31->unk44];
         temp_r29 = temp->unk0;
         mathutil_mtxA_from_quat(&temp_r29->unk60);
         mathutil_mtxA_to_mtx(sp10);
@@ -231,7 +231,7 @@ void effect_ending_ballfrag_main(struct Effect *arg0)
     Vec spC;
     float temp_f2;
 
-    if (!(lbl_802C6BD8.unk4 & 8))
+    if (!(endingInfo.unk4 & 8))
     {
         mathutil_mtxA_from_rotate_y(arg0->rotY);
         mathutil_mtxA_rotate_x(arg0->rotX);

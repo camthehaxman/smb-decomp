@@ -734,7 +734,7 @@ int func_800246F4(struct Ball *ball)
 void func_80024860(struct Ball *ball)
 {
     lbl_802F1DFC = ball->ape->charaId;
-    lbl_802F1DF8 = ball->playerId;
+    u_somePlayerId = ball->playerId;
     if (infoWork.timerCurr > (infoWork.timerMax >> 1))
     {
         if (infoWork.unk22 != 1)

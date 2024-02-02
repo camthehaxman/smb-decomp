@@ -105,20 +105,20 @@ struct SomeBigEndingStruct
     float unkAAA8;
     float unkAAAC;
     s32 unkAAB0;
-    char *unkAAB4[2];
-    u8 fillerAABC[0xAACC-0xAABC];
+    /*0xAAB4*/ char *textboxStrings[6];
     u32 unkAACC;
     s32 unkAAD0;
+    u8 fillerAAD4[0xC2D0-0xAAD4];
 };
 
-struct Struct802C6BD8
+struct EndingInfo
 {
-    s16 unk0;
-    s16 unk2;
+    s16 state;
+    s16 nextState;
     u32 unk4;
     struct SomeBigEndingStruct *unk8;
 };
 
-extern struct Struct802C6BD8 lbl_802C6BD8;
+extern struct EndingInfo endingInfo;
 
 #endif

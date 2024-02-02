@@ -1261,7 +1261,7 @@ void submode_game_ending_init_func(void)
         return;
 
     modeCtrl.courseFlags |= (1 << 6);
-    func_800B6234();
+    ending_init();
     if (modeCtrl.gameType == 0 && modeCtrl.playerCount == 1
      && !(modeCtrl.courseFlags & (1 << 20)))
         record_play_points();
@@ -1276,9 +1276,9 @@ void submode_game_ending_main_func(void)
     if (gamePauseStatus & 0xA)
         return;
 
-    if (func_800B62FC() == 0)
+    if (ending_main() == 0)
     {
-        func_800B6430();
+        ending_finish();
         gameSubmodeRequest = SMD_GAME_ROLL_INIT;
         lbl_802F22C8 |= 1 << (modeCtrl.difficulty + 2);
         if (modeCtrl.gameType == 0 && modeCtrl.playerCount == 1

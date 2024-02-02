@@ -4,28 +4,51 @@
 struct SoundGroupDesc
 {
     char *groupName;
-    u32 unk4;
+    u32 unused;
     s32 unk8;
-    u32 unkC;
+    u32 index;
     char *baseName;
 };
 
 extern const struct SoundGroupDesc g_soundGroupDesc[];
 
-struct Struct8011057C
+struct SoundDesc
 {
     s32 unk0;
-    char *unk4;
+    char *name;
     s8 unk8;
     s16 unkA;
     s16 unkC;
 };
 
-extern const struct Struct8011057C lbl_8011057C[];
+extern const struct SoundDesc g_soundDesc[];
+
+enum SoundGroupID
+{
+    SOUND_GRPse04,
+    SOUND_GRPse01,
+    SOUND_GRPse02,
+    SOUND_GRPse03,
+    SOUND_GRPnar,
+    SOUND_GRPboy,
+    SOUND_GRPgirl,
+    SOUND_GRPbaby,
+    SOUND_GRPgoli,
+    SOUND_GRPbil_set,
+    SOUND_GRPbow_set,
+    SOUND_GRPfight_set,
+    SOUND_GRPgolf_set,
+    SOUND_GRPrace_set,
+    SOUND_GRPtarget_set,
+    SOUND_GRPcomn_set,
+    SOUND_GRPending,
+    SOUND_GRPstream,
+    SOUND_GRPend,
+};
 
 extern s32 g_loadedSoundGroupsCount;
 extern s32 lbl_802F1DFC;
-extern int lbl_802F1DF8;
+extern int u_somePlayerId;
 extern u8 lbl_802F1DF5;
 extern u8 lbl_802F1DF4;
 extern u32 g_soundAramTop;

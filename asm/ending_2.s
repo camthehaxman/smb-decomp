@@ -67,8 +67,8 @@ func_800C013C:
 /* 800C0154 000BC074  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
 /* 800C0158 000BC078  70 00 00 0A */	andi. r0, r0, 0xa
 /* 800C015C 000BC07C  40 82 01 E4 */	bne lbl_800C0340
-/* 800C0160 000BC080  3C 60 80 2C */	lis r3, lbl_802C6BD8@ha
-/* 800C0164 000BC084  38 63 6B D8 */	addi r3, r3, lbl_802C6BD8@l
+/* 800C0160 000BC080  3C 60 80 2C */	lis r3, endingInfo@ha
+/* 800C0164 000BC084  38 63 6B D8 */	addi r3, r3, endingInfo@l
 /* 800C0168 000BC088  3B E3 00 08 */	addi r31, r3, 8
 /* 800C016C 000BC08C  80 63 00 08 */	lwz r3, 8(r3)
 /* 800C0170 000BC090  28 03 00 00 */	cmplwi r3, 0
@@ -212,8 +212,8 @@ func_800C0354:
 /* 800C0370 000BC290  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
 /* 800C0374 000BC294  70 00 00 0A */	andi. r0, r0, 0xa
 /* 800C0378 000BC298  40 82 06 1C */	bne lbl_800C0994
-/* 800C037C 000BC29C  3C 60 80 2C */	lis r3, lbl_802C6BD8@ha
-/* 800C0380 000BC2A0  38 A3 6B D8 */	addi r5, r3, lbl_802C6BD8@l
+/* 800C037C 000BC29C  3C 60 80 2C */	lis r3, endingInfo@ha
+/* 800C0380 000BC2A0  38 A3 6B D8 */	addi r5, r3, endingInfo@l
 /* 800C0384 000BC2A4  80 85 00 08 */	lwz r4, 8(r5)
 /* 800C0388 000BC2A8  28 04 00 00 */	cmplwi r4, 0
 /* 800C038C 000BC2AC  41 82 06 08 */	beq lbl_800C0994
@@ -476,8 +476,8 @@ lbl_800C0684:
 /* 800C0770 000BC690  48 00 01 54 */	b lbl_800C08C4
 lbl_800C0774:
 /* 800C0774 000BC694  A8 1F 00 44 */	lha r0, 0x44(r31)
-/* 800C0778 000BC698  3C 60 80 2C */	lis r3, lbl_802C6BD8@ha
-/* 800C077C 000BC69C  38 83 6B D8 */	addi r4, r3, lbl_802C6BD8@l
+/* 800C0778 000BC698  3C 60 80 2C */	lis r3, endingInfo@ha
+/* 800C077C 000BC69C  38 83 6B D8 */	addi r4, r3, endingInfo@l
 /* 800C0780 000BC6A0  54 03 38 30 */	slwi r3, r0, 7
 /* 800C0784 000BC6A4  80 04 00 08 */	lwz r0, 8(r4)
 /* 800C0788 000BC6A8  3C 63 00 01 */	addis r3, r3, 1
@@ -639,9 +639,9 @@ effect_ending_ballfrag_init:
 .global effect_ending_ballfrag_main
 effect_ending_ballfrag_main:
 /* 800C09D0 000BC8F0  7C 08 02 A6 */	mflr r0
-/* 800C09D4 000BC8F4  3C 80 80 2C */	lis r4, lbl_802C6BD8@ha
+/* 800C09D4 000BC8F4  3C 80 80 2C */	lis r4, endingInfo@ha
 /* 800C09D8 000BC8F8  90 01 00 04 */	stw r0, 4(r1)
-/* 800C09DC 000BC8FC  38 84 6B D8 */	addi r4, r4, lbl_802C6BD8@l
+/* 800C09DC 000BC8FC  38 84 6B D8 */	addi r4, r4, endingInfo@l
 /* 800C09E0 000BC900  94 21 FF B0 */	stwu r1, -0x50(r1)
 /* 800C09E4 000BC904  93 E1 00 4C */	stw r31, 0x4c(r1)
 /* 800C09E8 000BC908  3B E3 00 00 */	addi r31, r3, 0

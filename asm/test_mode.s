@@ -1379,8 +1379,8 @@ lbl_000013A4:
 /* 000013AC 901D0014 */ stw r0, 0x14(r29)
 lbl_000013B0:
 /* 000013B0 809D0014 */ lwz r4, 0x14(r29)
-/* 000013B4 3C600000 */ lis r3, lbl_8011057C@ha
-/* 000013B8 38630000 */ addi r3, r3, lbl_8011057C@l
+/* 000013B4 3C600000 */ lis r3, g_soundDesc@ha
+/* 000013B8 38630000 */ addi r3, r3, g_soundDesc@l
 /* 000013BC 54802036 */ slwi r0, r4, 4
 /* 000013C0 7C630214 */ add r3, r3, r0
 /* 000013C4 88030008 */ lbz r0, 8(r3)
@@ -1541,9 +1541,9 @@ lbl_000015E8:
 /* 00001624 5403043E */ clrlwi r3, r0, 0x10
 /* 00001628 4BFFEB35 */ bl SoundCho
 lbl_0000162C:
-/* 0000162C 3C600000 */ lis r3, lbl_802F1DF8@ha
+/* 0000162C 3C600000 */ lis r3, u_somePlayerId@ha
 /* 00001630 38000000 */ li r0, 0
-/* 00001634 90030000 */ stw r0, lbl_802F1DF8@l(r3)
+/* 00001634 90030000 */ stw r0, u_somePlayerId@l(r3)
 /* 00001638 A01B0000 */ lhz r0, 0(r27)
 /* 0000163C 540005EF */ rlwinm. r0, r0, 0, 0x17, 0x17
 /* 00001640 41820038 */ beq lbl_00001678
@@ -1941,9 +1941,9 @@ lbl_00001B78:
 /* 00001BCC 4CC63182 */ crclr 6
 /* 00001BD0 4BFFE58D */ bl u_debug_printf
 /* 00001BD4 3B800000 */ li r28, 0
-/* 00001BD8 3C600000 */ lis r3, lbl_8020149C@ha
+/* 00001BD8 3C600000 */ lis r3, u_isSoundGroupDataLoaded@ha
 /* 00001BDC 5784103A */ slwi r4, r28, 2
-/* 00001BE0 38030000 */ addi r0, r3, lbl_8020149C@l
+/* 00001BE0 38030000 */ addi r0, r3, u_isSoundGroupDataLoaded@l
 /* 00001BE4 7FA02214 */ add r29, r0, r4
 lbl_00001BE8:
 /* 00001BE8 809D0000 */ lwz r4, 0(r29)
@@ -1963,9 +1963,9 @@ lbl_00001BE8:
 /* 00001C20 387F0774 */ addi r3, r31, 0x774
 /* 00001C24 4BFFE539 */ bl u_debug_printf
 /* 00001C28 3B800000 */ li r28, 0
-/* 00001C2C 3C600000 */ lis r3, s_loadedSoundGroups@ha
+/* 00001C2C 3C600000 */ lis r3, s_loadedSoundGroupIDs@ha
 /* 00001C30 5784103A */ slwi r4, r28, 2
-/* 00001C34 38030000 */ addi r0, r3, s_loadedSoundGroups@l
+/* 00001C34 38030000 */ addi r0, r3, s_loadedSoundGroupIDs@l
 /* 00001C38 7FA02214 */ add r29, r0, r4
 lbl_00001C3C:
 /* 00001C3C 809D0000 */ lwz r4, 0(r29)
@@ -2006,8 +2006,8 @@ lbl_00001C3C:
 /* 00001CC8 387F07B4 */ addi r3, r31, 0x7b4
 /* 00001CCC 4BFFE491 */ bl u_debug_printf
 /* 00001CD0 809E0014 */ lwz r4, 0x14(r30)
-/* 00001CD4 3C600000 */ lis r3, lbl_8011057C@ha
-/* 00001CD8 3BA30000 */ addi r29, r3, lbl_8011057C@l
+/* 00001CD4 3C600000 */ lis r3, g_soundDesc@ha
+/* 00001CD8 3BA30000 */ addi r29, r3, g_soundDesc@l
 /* 00001CDC 4CC63182 */ crclr 6
 /* 00001CE0 54802036 */ slwi r0, r4, 4
 /* 00001CE4 7C7D0214 */ add r3, r29, r0

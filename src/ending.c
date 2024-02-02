@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,44 +29,65 @@
 
 #include "../data/common.nlobj.h"
 
-struct Struct802C6BD8 lbl_802C6BD8;
-extern struct Struct802C6BD8 lbl_802C6BD8_;
+struct EndingInfo endingInfo;
 
-void func_800B6430(void);
-
-void func_800B65B4(void);
-void func_800B6608(void);
-void func_800B6848(void);
-void func_800B69F8(void);
-void func_800B6C14(void);
-void func_800B6EA4(void);
-void func_800B6F9C(void);
-void func_800B7078(void);
-void func_800B72D4(void);
-void func_800B7B6C(void);
-void func_800B7D38(void);
-void func_800B7F6C(void);
-void func_800B7FB4(void);
-void func_800B83EC(void);
-void func_800B86E0(void);
-void func_800B8780(void);
-void func_800B8AA4(void);
-void func_800B8D7C(void);
-void func_800B8E1C(void);
-void func_800B9444(void);
-void func_800B9724(void);
-void func_800B9920(void);
-void func_800B9A8C(void);
-void func_800B9EA4(void);
-void func_800B9FDC(void);
-void func_800BA124(void);
-void func_800BA160(void);
-void func_800BA928(void);
-void func_800BA950(void);
-void func_800BA4F4(void);
-void func_800BA51C(void);
-void func_800BB050(void);
-void func_800BB064(void);
+static void ending_state_init(void);
+static void ending_state_beginner_init(void);
+static void ending_state_2(void);
+static void ending_state_3(void);
+static void ending_state_4(void);
+static void ending_state_5(void);
+static void ending_state_6(void);
+static void ending_state_advanced_init(void);
+static void ending_state_8(void);
+static void ending_state_9(void);
+static void ending_state_10(void);
+static void ending_state_11(void);
+static void ending_state_12(void);
+static void ending_state_expert_init(void);
+static void ending_state_14(void);
+static void ending_state_15(void);
+static void ending_state_16(void);
+static void ending_state_17(void);
+static void ending_state_18(void);
+static void ending_state_19(void);
+static void ending_state_20(void);
+static void ending_state_21(void);
+static void ending_state_22(void);
+static void ending_state_23(void);
+static void ending_state_24(void);
+static void ending_state_25(void);
+static void ending_state_26(void);
+static void ending_state_27(void);
+static void ending_state_28(void);
+static void ending_state_29(void);
+static void ending_state_30(void);
+static void ending_state_31(void);
+static void ending_state_32(void);
+static void func_800BB068(void);
+static void func_800BB084(void);
+static void func_800BBA54(void);
+static void func_800BBA58(void);
+static void func_800BBB10(int);
+static void func_800BBB78(void);
+static void func_800BBBA8(void);
+static void func_800BC820(void);
+static void func_800BC8B8(void);
+static int func_800BCE54(int, int);
+static void lbl_800BCF6C(struct Ape *, int);
+static void func_800BD470(void);
+static void func_800BD4B8(void);
+static void func_800BEEE8(void);
+static void func_800BF2D0(void);
+static void func_800BF2D4(void);
+static void func_800BF4F4(void);
+static void func_800BF658(void);
+static void func_800BF774(void);
+static void func_800BF8C4(int);
+static void func_800BF948(int, int);
+static void func_800BF9CC(int);
+static void func_800BFA2C(void);
+static void func_800BFC2C(void);
 
 struct Struct801E2A98
 {
@@ -74,21 +95,21 @@ struct Struct801E2A98
     S16Vec unkC;
 };
 
-struct Struct801E2A98 lbl_801E2A98[] =
+static struct Struct801E2A98 lbl_801E2A98[] =
 {
     {{0.7f, -0.4f, 0.7f}, {0, 0x8000, 0}},
-    {{-0.675, 0.0f, 0.75f}, {0, 0x8000, 0}},
-    {{0.0200000014156, -0.4f, 1.1f}, {0, 0x8000, 0}},
+    {{-0.675f, 0.0f, 0.75f}, {0, 0x8000, 0}},
+    {{0.0200000014156f, -0.4f, 1.1f}, {0, 0x8000, 0}},
 };
 
-Vec lbl_801E2AD4[] =
+static Vec lbl_801E2AD4[] =
 {
     {  0.0f, 10.0f, 5.5f },
     { -1.2f, 10.0f, 5.0f },
     {  1.2f, 10.0f, 5.0f },
 };
 
-Vec lbl_801E2AD4_2[] =
+static Vec lbl_801E2AD4_2[] =
 {
     {  0.0f, 10.0f, 4.0f },
     { -0.1f, 10.0f, 5.5f },
@@ -96,7 +117,7 @@ Vec lbl_801E2AD4_2[] =
     {  0.0f, 10.0f, 9.5f },
 };
 
-s16 lbl_801E2B28[][2] =
+static s16 lbl_801E2B28[][2] =
 {
     { 0x00E8, 0x00E8 },
     { 0x0101, 0x0101 },
@@ -104,95 +125,92 @@ s16 lbl_801E2B28[][2] =
     { 0x0186, 0x0187 },
 };
 
-void (*lbl_801E2B38[])(void) =
+enum
 {
-    func_800B65B4,
-    func_800B6608,
-    func_800B6848,
-    func_800B69F8,
-    func_800B6C14,
-    func_800B6EA4,
-    func_800B6F9C,
-    func_800B7078,
-    func_800B72D4,
-    func_800B7B6C,
-    func_800B7D38,
-    func_800B7F6C,
-    func_800B7FB4,
-    func_800B83EC,
-    func_800B86E0,
-    func_800B8780,
-    func_800B8AA4,
-    func_800B8D7C,
-    func_800B8E1C,
-    func_800B9444,
-    func_800B9724,
-    func_800B9920,
-    func_800B9A8C,
-    func_800B9EA4,
-    func_800B9FDC,
-    func_800BA124,
-    func_800BA160,
-    func_800BA928,
-    func_800BA950,
-    func_800BA4F4,
-    func_800BA51C,
-    func_800BB050,
-    func_800BB064,
+    ENDING_STATE_INIT = 0,
+    ENDING_STATE_BEGINNER_INIT = 1,
+    ENDING_STATE_ADVANCED_INIT = 7,
+    ENDING_STATE_EXPERT_INIT = 13,
 };
 
-void func_800B6234(void)
+static void (*endingFuncs[])(void) =
 {
-    memset(&lbl_802C6BD8, 0, sizeof(lbl_802C6BD8));
-    lbl_802C6BD8.unk0 = 0;
-    lbl_802C6BD8.unk2 = -1;
+    ending_state_init,
+    ending_state_beginner_init,
+    ending_state_2,
+    ending_state_3,
+    ending_state_4,
+    ending_state_5,
+    ending_state_6,
+    ending_state_advanced_init,
+    ending_state_8,
+    ending_state_9,
+    ending_state_10,
+    ending_state_11,
+    ending_state_12,
+    ending_state_expert_init,
+    ending_state_14,
+    ending_state_15,
+    ending_state_16,
+    ending_state_17,
+    ending_state_18,
+    ending_state_19,
+    ending_state_20,
+    ending_state_21,
+    ending_state_22,
+    ending_state_23,
+    ending_state_24,
+    ending_state_25,
+    ending_state_26,
+    ending_state_27,
+    ending_state_28,
+    ending_state_29,
+    ending_state_30,
+    ending_state_31,
+    ending_state_32,
+};
+
+void ending_init(void)
+{
+    memset(&endingInfo, 0, sizeof(endingInfo));
+    endingInfo.state = 0;
+    endingInfo.nextState = -1;
     event_finish_all();
-    lbl_802C6BD8.unk8 = OSAllocFromHeap(stageHeap, 0xC2D0);
-    if (lbl_802C6BD8.unk8 == NULL)
+    endingInfo.unk8 = OSAllocFromHeap(stageHeap, sizeof(*endingInfo.unk8));
+    if (endingInfo.unk8 == NULL)
     {
         printf("fail to alloc memory for ending-management!\n");
-        lbl_802C6BD8.unk0 = 31;
+        endingInfo.state = 31;
         return;
     }
-    memset(lbl_802C6BD8.unk8, 0, 0xC2D0);
-    SoundGroupLoad(0x10);
+    memset(endingInfo.unk8, 0, sizeof(*endingInfo.unk8));
+    SoundGroupLoad(SOUND_GRPending);
     func_800BBB78();
     func_800BD470();
     func_800BB068();
     func_800C008C();
     func_800C09B0();
-    lbl_802F1B7C = func_800B6430;
+    lbl_802F1B7C = ending_finish;
 }
 
-#define lbl_802F64C8 0.01666666753590107f
-#define lbl_802F64CC 400.0f
-#define lbl_802F64D0 0.0f
-#define lbl_802F64D4 20.0f
-#define lbl_802F64D8 -64.0f
-#define lbl_802F64DC 250.0f
-#define lbl_802F64E0 100.0f
-#define lbl_802F64F8 0.5f
-#define lbl_802F64FC 20.75f
-#define lbl_802F64E8 -61.0f
-
-int func_800B62FC(void)
+int ending_main(void)
 {
     struct SomeBigEndingStruct *r3;
 
-    if (lbl_802C6BD8.unk8 == NULL)
+    if (endingInfo.unk8 == NULL)
         return 0;
     if (gamePauseStatus & 0xA)
         return 1;
-    if (lbl_802C6BD8.unk2 != -1)
-        lbl_802C6BD8.unk0 = lbl_802C6BD8.unk2;
-    lbl_801E2B38[lbl_802C6BD8.unk0]();
+    if (endingInfo.nextState != -1)
+        endingInfo.state = endingInfo.nextState;
+    endingFuncs[endingInfo.state]();
     func_800BBBA8();
     func_800BD4B8();
     func_800BB084();
-    if (lbl_802C6BD8.unk4 & 2)
-        lbl_802C6BD8.unk8->unk0 += lbl_802F64C8;
+    if (endingInfo.unk4 & 2)
+        endingInfo.unk8->unk0 += 0.01666666753590107f;
 
-    r3 = lbl_802C6BD8.unk8;
+    r3 = endingInfo.unk8;
 
     r3->unkAA54.unk4.x += r3->unkAA54.unk10.x;
     r3->unkAA54.unk4.y += r3->unkAA54.unk10.y;
@@ -202,33 +220,33 @@ int func_800B62FC(void)
     r3->unkAA54.unk2C.y += r3->unkAA54.unk38.y;
     r3->unkAA54.unk2C.z += r3->unkAA54.unk38.z;
 
-    return lbl_802C6BD8.unk0 != 32;
+    return endingInfo.state != 32;
 }
 
-void func_800B6430(void)
+void ending_finish(void)
 {
     func_800C09B4();
     func_800C00F0();
     func_800BBA54();
     func_800BF2D0();
     func_800BC820();
-    OSFreeToHeap(stageHeap, lbl_802C6BD8.unk8);
-    lbl_802C6BD8.unk8 = NULL;
+    OSFreeToHeap(stageHeap, endingInfo.unk8);
+    endingInfo.unk8 = NULL;
     event_finish_all();
     SoundGroupFree();
-    if (lbl_802F1B7C == func_800B6430)
+    if (lbl_802F1B7C == ending_finish)
         lbl_802F1B7C = NULL;
 }
 
-void func_800B64B0(void)
+void u_ending_draw(void)
 {
-    if (lbl_802C6BD8.unk8 == 0)
+    if (endingInfo.unk8 == NULL)
         return;
     u_call_camera_apply_viewport(modeCtrl.currPlayer);
     u_draw_ball_shadow();
     func_80054FF0();
     func_800BF2D4();
-    if (lbl_802C6BD8.unk4 & 1)
+    if (endingInfo.unk4 & 1)
     {
         mathutil_mtxA_from_mtxB();
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
@@ -241,36 +259,36 @@ void func_800B64B0(void)
         stage_draw();
     if (eventInfo[EVENT_BACKGROUND].state == EV_STATE_RUNNING)
     {
-        ord_tbl_set_depth_offset(lbl_802F64CC);
+        ord_tbl_set_depth_offset(400.0f);
         background_draw();
-        ord_tbl_set_depth_offset(lbl_802F64D0);
+        ord_tbl_set_depth_offset(0.0f);
     }
     if (eventInfo[EVENT_EFFECT].state == EV_STATE_RUNNING)
         effect_draw();
     draw_monkey();
     ord_tbl_draw_nodes();
-    if (lbl_802C6BD8.unk4 & 0x20)
+    if (endingInfo.unk4 & 0x20)
         func_800BFC2C();
 }
 
-void func_800B65B4(void)
+static void ending_state_init(void)
 {
     switch (modeCtrl.difficulty)
     {
     default:
-    case DIFFICULTY_BEGINNER: lbl_802C6BD8.unk2 = 1;  break;
-    case DIFFICULTY_ADVANCED: lbl_802C6BD8.unk2 = 7;  break;
-    case DIFFICULTY_EXPERT:   lbl_802C6BD8.unk2 = 13; break;
+    case DIFFICULTY_BEGINNER: endingInfo.nextState = ENDING_STATE_BEGINNER_INIT;  break;
+    case DIFFICULTY_ADVANCED: endingInfo.nextState = ENDING_STATE_ADVANCED_INIT;  break;
+    case DIFFICULTY_EXPERT:   endingInfo.nextState = ENDING_STATE_EXPERT_INIT;    break;
     }
 }
 
-void func_800B6608(void)
+static void ending_state_beginner_init(void)
 {
     int stageId;
     struct SomeBigEndingStruct_sub *r28;
     Vec sp8;
 
-    lbl_802C6BD8.unk2 = 2;
+    endingInfo.nextState = 2;
     modeCtrl.submodeTimer = 420;
     event_finish_all();
     switch (modeCtrl.difficulty)
@@ -301,36 +319,36 @@ void func_800B6608(void)
     light_init(currStageId);
     rend_efc_mirror_enable();
     func_800BCE54(0, playerCharacterSelection[modeCtrl.currPlayer]);
-    lbl_802C6BD8.unk8->unkA804[0].unk70 = 1;
+    endingInfo.unk8->unkA804[0].unk70 = 1;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    r28 = (void *)&lbl_802C6BD8.unk8->unkAA54;
+    r28 = &endingInfo.unk8->unkAA54;
     memset(r28, 0, sizeof(*r28));
     r28->unk0 = 1;
-    r28->unk4.x = lbl_802F64D0;
-    r28->unk4.y = lbl_802F64D4;
-    r28->unk4.z = lbl_802F64D8;
+    r28->unk4.x = 0.0f;
+    r28->unk4.y = 20.0f;
+    r28->unk4.z = -64.0f;
     r28->unk2 = 1;
     mathutil_mtxA_from_rotate_z(rand() & 0x7FFF);
-    mathutil_mtxA_tf_vec_xyz(&sp8, lbl_802F64DC, lbl_802F64D0, lbl_802F64D0);
+    mathutil_mtxA_tf_vec_xyz(&sp8, 250.0f, 0.0f, 0.0f);
     r28->unk2C.x = sp8.x;
-    r28->unk2C.y = sp8.y + lbl_802F64D4;
-    r28->unk2C.z = sp8.z + lbl_802F64E0;
-    if (lbl_802C6BD8.unk8->unkA804[0].unk0 != NULL)
-        lbl_802C6BD8.unk8->unkA804[0].unk0->colorId = modeCtrl.currPlayer;
+    r28->unk2C.y = sp8.y + 20.0f;
+    r28->unk2C.z = sp8.z + 100.0f;
+    if (endingInfo.unk8->unkA804[0].unk0 != NULL)
+        endingInfo.unk8->unkA804[0].unk0->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0, 0x1E);
     u_play_music(0x44, 0);
 }
 
-s16 lbl_802F18C0[4] = { 0x00EA, 0x0102, 0x0142, 0x0173 };
+static s16 lbl_802F18C0[4] = { 0x00EA, 0x0102, 0x0142, 0x0173 };
 
-void func_800B6848(void)
+static void ending_state_2(void)
 {
     float temp_f2;
     struct SomeBigEndingStruct_sub3 *temp_r4;
     struct SomeBigEndingStruct_sub *temp_r6;
 
-    temp_r6 = &lbl_802C6BD8.unk8->unkAA54;
-    temp_r4 = &lbl_802C6BD8.unk8->unkA804[0];
+    temp_r6 = &endingInfo.unk8->unkAA54;
+    temp_r4 = &endingInfo.unk8->unkA804[0];
     switch (modeCtrl.submodeTimer)
     {
     case 0x19E:
@@ -368,10 +386,10 @@ void func_800B6848(void)
     if (modeCtrl.submodeTimer != 0)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
-        lbl_802C6BD8.unk2 = 3;
+        endingInfo.nextState = 3;
 }
 
-void func_800B69F8(void)
+static void ending_state_3(void)
 {
     struct SomeBigEndingStruct *temp_r30;
     struct SomeBigEndingStruct_sub *temp_r29;
@@ -380,18 +398,18 @@ void func_800B69F8(void)
     struct SomeBigEndingStruct_sub3 *temp_r4;
     int i;
 
-    lbl_802C6BD8.unk2 = 4;
+    endingInfo.nextState = 4;
     modeCtrl.submodeTimer = 60;
     modeCtrl.unk18 = 0x1E;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r29 = &lbl_802C6BD8.unk8->unkAA54;
-    memset(temp_r29, 0, 0x54U);
+    temp_r29 = &endingInfo.unk8->unkAA54;
+    memset(temp_r29, 0, sizeof(*temp_r29));
     temp_r29->unk0 = 1;
     mathutil_mtxA_from_rotate_z((s16) (unpausedFrameCounter << 6));
     mathutil_mtxA_tf_vec_xyz(&sp30, 0.0f, 0.5f, 0.0f);
     temp_r29->unk4.x = sp30.x;
-    temp_r29->unk4.y = sp30.y * lbl_802F64F8 + lbl_802F64FC;
-    temp_r29->unk4.z = sp30.z + lbl_802F64E8;
+    temp_r29->unk4.y = sp30.y * 0.5f + 20.75f;
+    temp_r29->unk4.z = sp30.z + -61.0f;
     temp_r29->unk2 = 2;
     temp_r29->unk44 = 0;
     temp_r29->unk46 = 0;
@@ -399,7 +417,7 @@ void func_800B69F8(void)
     temp_r29->unk48.y = 0.0f;
     temp_r29->unk48.z = 0.0f;
 
-    temp_r30 = lbl_802C6BD8.unk8;
+    temp_r30 = endingInfo.unk8;
     temp_r30->unkAACC = 0;
 
     func_800C0DC0(&temp_r30->unkAAB0, &temp_r30->unkAAD0);
@@ -414,17 +432,17 @@ void func_800B69F8(void)
         textbox_set_properties(0, 1, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
-            textbox_add_text(0, temp_r30->unkAAB4[temp_r30->unkAACC]);
+            textbox_add_text(0, temp_r30->textboxStrings[temp_r30->unkAACC]);
             temp_r30->unkAAB0--;
             temp_r30->unkAACC++;
         }
     }
-    temp_r4 = &lbl_802C6BD8.unk8->unkA804[0];
+    temp_r4 = &endingInfo.unk8->unkA804[0];
     temp_r4->unkA = 1;
     temp_r4->unk38 = 0;
 }
 
-void func_800B6C14(void)
+static void ending_state_4(void)
 {
     Vec sp30;
     struct TextBox tbox;
@@ -433,8 +451,8 @@ void func_800B6C14(void)
     struct SomeBigEndingStruct_sub3 *temp_r30;
     int i2;
 
-    temp_r29 = &lbl_802C6BD8.unk8->unkAA54;
-    temp_r30 = &lbl_802C6BD8.unk8->unkA804[0];
+    temp_r29 = &endingInfo.unk8->unkAA54;
+    temp_r30 = &endingInfo.unk8->unkA804[0];
     mathutil_mtxA_from_rotate_z(unpausedFrameCounter << 6);
     mathutil_mtxA_tf_vec_xyz(&sp30, 0.0f, 0.5f, 0.0f);
     temp_r29->unk4.x = sp30.x;
@@ -444,7 +462,7 @@ void func_800B6C14(void)
     if (temp_r30->unk38 < 0)
     {
         SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
-        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * (rand() / 32767.0f)));
+        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
         temp_r30->unk3A++;
     }
     if (modeCtrl.unk18 != 0)
@@ -452,7 +470,7 @@ void func_800B6C14(void)
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
         modeCtrl.unk18 = 0x1E;
-        temp_r30_2 = lbl_802C6BD8.unk8;
+        temp_r30_2 = endingInfo.unk8;
         if (temp_r30_2->unkAAB0 != 0)
         {
             textbox_set_properties(0, 0x14, NULL);
@@ -465,14 +483,14 @@ void func_800B6C14(void)
             textbox_set_properties(0, 1, &tbox);
             for (i2 = 0; i2 < tbox.numRows; i2++)
             {
-                textbox_add_text(0, temp_r30_2->unkAAB4[temp_r30_2->unkAACC]);
+                textbox_add_text(0, temp_r30_2->textboxStrings[temp_r30_2->unkAACC]);
                 temp_r30_2->unkAAB0--;
                 temp_r30_2->unkAACC++;
             }
         }
         else
         {
-            lbl_802C6BD8.unk2 = 5;
+            endingInfo.nextState = 5;
             textbox_set_properties(0, 0x14, NULL);
         }
     }
@@ -480,14 +498,14 @@ void func_800B6C14(void)
         modeCtrl.submodeTimer--;
 }
 
-void func_800B6EA4(void)
+static void ending_state_5(void)
 {
     struct SomeBigEndingStruct_sub *temp_r29;
 
-    lbl_802C6BD8.unk2 = 6;
+    endingInfo.nextState = 6;
     modeCtrl.submodeTimer = 0x168;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r29 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r29 = &endingInfo.unk8->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
     temp_r29->unk0 = 1;
     temp_r29->unk4.x = 0.0f;
@@ -499,17 +517,17 @@ void func_800B6EA4(void)
     temp_r29->unk48.x = 0.0f;
     temp_r29->unk48.y = 0.0f;
     temp_r29->unk48.z = 0.0f;
-    lbl_802C6BD8.unk8->unkA804[0].unkA = 2;
+    endingInfo.unk8->unkA804[0].unkA = 2;
 }
 
-s16 lbl_802F18C8[4] = { 0x00B7, 0x0102, 0x0141, 0x018B };
+static s16 lbl_802F18C8[4] = { 0x00B7, 0x0102, 0x0141, 0x018B };
 
-void func_800B6F9C(void)
+static void ending_state_6(void)
 {
     switch (modeCtrl.submodeTimer)
     {
     case 0xF0:
-        lbl_802C6BD8.unk8->unkA804[0].unk4 = 4;
+        endingInfo.unk8->unkA804[0].unk4 = 4;
         break;
     case 0x117:
         SoundReq(lbl_802F18C8[playerCharacterSelection[modeCtrl.currPlayer]]);
@@ -521,17 +539,17 @@ void func_800B6F9C(void)
     if (modeCtrl.submodeTimer != 0)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
-        lbl_802C6BD8.unk2 = 0x1F;
+        endingInfo.nextState = 0x1F;
 }
 
-void func_800B7078(void)
+static void ending_state_advanced_init(void)
 {
     int stageId;
     float temp_f31;
     struct SomeBigEndingStruct_sub *temp_r31;
-    struct Ape *temp_r3;
+    struct Ape *ape;
 
-    lbl_802C6BD8.unk2 = 8;
+    endingInfo.nextState = 8;
     modeCtrl.submodeTimer = 0x186;
     event_finish_all();
     switch (modeCtrl.difficulty)
@@ -562,11 +580,11 @@ void func_800B7078(void)
     light_init(currStageId);
     rend_efc_mirror_enable();
     func_800BCE54(0, playerCharacterSelection[modeCtrl.currPlayer]);
-    lbl_802C6BD8.unk8->unkA804[0].unk4 = 6;
-    lbl_802C6BD8.unk8->unkA804[0].unk6 = modeCtrl.submodeTimer - 0xB4;
+    endingInfo.unk8->unkA804[0].unk4 = 6;
+    endingInfo.unk8->unkA804[0].unk6 = modeCtrl.submodeTimer - 0xB4;
     CAMERA_FOREACH(camera->unk1F = 0;)
     temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x12C);
-    temp_r31 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r31 = &endingInfo.unk8->unkAA54;
     memset(temp_r31, 0, sizeof(*temp_r31));
     temp_r31->unk0 = 1;
     temp_r31->unk4.x = -1.0f;
@@ -577,18 +595,18 @@ void func_800B7078(void)
     temp_r31->unk2C.x = 0.0f;
     temp_r31->unk2C.y = 0.0f;
     temp_r31->unk2C.z = 0.0f;
-    temp_r3 = lbl_802C6BD8.unk8->unkA804[0].unk0;
-    if (temp_r3 != NULL)
-        temp_r3->colorId = modeCtrl.currPlayer;
+    ape = endingInfo.unk8->unkA804[0].unk0;
+    if (ape != NULL)
+        ape->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0U, 0x1E);
     u_play_music(0x44U, 0);
     u_play_sound_0(0x232);
 }
 
-s16 lbl_802F18D0[4] = { 0x00EC, 0x0115, 0x016D, 0x0173 };
-s16 lbl_802F18D8[4] = { 0x00B5, 0x00FF, 0x0138, 0x0192 };
+static s16 lbl_802F18D0[4] = { 0x00EC, 0x0115, 0x016D, 0x0173 };
+static s16 lbl_802F18D8[4] = { 0x00B5, 0x00FF, 0x0138, 0x0192 };
 
-void func_800B72D4(void)
+static void ending_state_8(void)
 {
     Vec spB4;
     struct Effect sp8;
@@ -597,8 +615,8 @@ void func_800B72D4(void)
     struct SomeBigEndingStruct_sub3 *temp_r30;
     struct SomeBigEndingStruct_sub *temp_r29;
 
-    temp_r29 = &lbl_802C6BD8.unk8->unkAA54;
-    temp_r30 = &lbl_802C6BD8.unk8->unkA804[0];
+    temp_r29 = &endingInfo.unk8->unkAA54;
+    temp_r30 = &endingInfo.unk8->unkA804[0];
     switch (modeCtrl.submodeTimer)
     {
     case 0x177:
@@ -629,7 +647,7 @@ void func_800B72D4(void)
         func_8004CFF0(0x2E);
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x38);
-        temp_f30 = 1.25f * (0.9f + (0.2f * (rand() / 32767.0f)));
+        temp_f30 = 1.25f * (0.9f + (0.2f * RAND_FLOAT()));
         temp_r29->unk0 = 1;
         mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
         mathutil_mtxA_rotate_x(rand() & 0x7FFF);
@@ -653,7 +671,7 @@ void func_800B72D4(void)
         func_8004CFF0(0x2E);
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / modeCtrl.submodeTimer;
-        temp_f30 = 10.0f * (0.9f + (0.2f * (rand() / 32767.0f)));
+        temp_f30 = 10.0f * (0.9f + (0.2f * RAND_FLOAT()));
         temp_r29->unk0 = 1;
         mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
         mathutil_mtxA_rotate_x(rand() & 0x7FFF);
@@ -704,7 +722,7 @@ void func_800B72D4(void)
             sp8.unk88.y = 0.0f;
             sp8.unk88.z = -1.0f;
             mathutil_mtxA_tf_vec(&sp8.unk88, &sp8.vel);
-            temp_f31 = 0.2f * (1.0f + (0.2f * (rand() / 32767.0f)));
+            temp_f31 = 0.2f * (1.0f + (0.2f * RAND_FLOAT()));
             sp8.vel.x *= temp_f31;
             sp8.vel.y *= temp_f31;
             sp8.vel.z *= temp_f31;
@@ -747,12 +765,12 @@ void func_800B72D4(void)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
     {
-        lbl_802C6BD8.unk2 = 9;
-        lbl_802C6BD8.unk4 &= 0xFFFFFFF7;
+        endingInfo.nextState = 9;
+        endingInfo.unk4 &= 0xFFFFFFF7;
     }
 }
 
-void func_800B7B6C(void)
+static void ending_state_9(void)
 {
     struct TextBox tbox;
     int i;
@@ -761,16 +779,16 @@ void func_800B7B6C(void)
     struct SomeBigEndingStruct_sub *temp_r28;
     struct SomeBigEndingStruct_sub3 *temp_r3_2;
 
-    lbl_802C6BD8.unk2 = 0xA;
+    endingInfo.nextState = 0xA;
     modeCtrl.submodeTimer = 0x3C;
     modeCtrl.unk18 = 0x1E;
-    temp_r30 = lbl_802C6BD8.unk8;
+    temp_r30 = endingInfo.unk8;
     temp_r30->unkAACC = 0;
     func_800C0DC0(&temp_r30->unkAAB0, &temp_r30->unkAAD0);
     if (temp_r30->unkAAB0 > 0)
     {
-        memset(&tbox, 0, 0x28U);
-        tbox.style = 0xB;
+        memset(&tbox, 0, sizeof(tbox));
+        tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
         tbox.x = 0x140;
         tbox.y = 0xA0;
         tbox.numRows = MIN(temp_r30->unkAAB0, 2);
@@ -778,12 +796,12 @@ void func_800B7B6C(void)
         textbox_set_properties(0, 1, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
-            textbox_add_text(0, temp_r30->unkAAB4[temp_r30->unkAACC]);
+            textbox_add_text(0, temp_r30->textboxStrings[temp_r30->unkAACC]);
             temp_r30->unkAAB0--;
             temp_r30->unkAACC++;
         }
     }
-    temp_r28 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r28 = &endingInfo.unk8->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_r28->unk0 = 2;
     temp_r28->unk1C = 0;
@@ -798,25 +816,25 @@ void func_800B7B6C(void)
     temp_r28->unk48.y = 0.0f;
     temp_r28->unk48.z = 0.3f;
 
-    temp_r3_2 = &lbl_802C6BD8.unk8->unkA804[0];
+    temp_r3_2 = &endingInfo.unk8->unkA804[0];
     temp_r3_2->unkA = 6;
     temp_r3_2->unk0->flags &= 0xFFFFEFFF;
     temp_r3_2->unk38 = 0;
 }
 
-void func_800B7D38(void)
+static void ending_state_10(void)
 {
     struct TextBox tbox;
     int i;
     struct SomeBigEndingStruct *temp_r30_2;
     struct SomeBigEndingStruct_sub3 *temp_r30;
 
-    temp_r30 = &lbl_802C6BD8.unk8->unkA804[0];
+    temp_r30 = &endingInfo.unk8->unkA804[0];
     temp_r30->unk38--;
     if (temp_r30->unk38 < 0)
     {
         SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
-        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * (rand() / 32767.0f)));
+        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
         temp_r30->unk3A++;
     }
     if (modeCtrl.unk18 != 0)
@@ -824,12 +842,12 @@ void func_800B7D38(void)
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
         modeCtrl.unk18 = 0x1E;
-        temp_r30_2 = lbl_802C6BD8.unk8;
+        temp_r30_2 = endingInfo.unk8;
         if (temp_r30_2->unkAAB0 != 0)
         {
             textbox_set_properties(0, 0x14, NULL);
             memset(&tbox, 0, sizeof(tbox));
-            tbox.style = 0xB;
+            tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
             tbox.x = 0x140;
             tbox.y = 0xA0;
             tbox.numRows = temp_r30_2->unkAAB0;
@@ -837,14 +855,14 @@ void func_800B7D38(void)
             textbox_set_properties(0, 1, &tbox);
             for (i = 0; i < tbox.numRows; i++)
             {
-                textbox_add_text(0, temp_r30_2->unkAAB4[temp_r30_2->unkAACC]);
+                textbox_add_text(0, temp_r30_2->textboxStrings[temp_r30_2->unkAACC]);
                 temp_r30_2->unkAAB0--;
                 temp_r30_2->unkAACC++;
             }
         }
         else
         {
-            lbl_802C6BD8.unk2 = 0xB;
+            endingInfo.nextState = 0xB;
             textbox_set_properties(0, 0x14, NULL);
         }
     }
@@ -852,20 +870,20 @@ void func_800B7D38(void)
         modeCtrl.submodeTimer--;
 }
 
-void func_800B7F6C(void)
+static void ending_state_11(void)
 {
-    struct Ape *temp_r3;
+    struct Ape *ape;
 
-    lbl_802C6BD8.unk2 = 0xC;
+    endingInfo.nextState = 0xC;
     modeCtrl.submodeTimer = 0x21C;
-    lbl_802C6BD8.unk8->unkA804[0].unkA = 7;
-    temp_r3 = lbl_802C6BD8.unk8->unkA804[0].unk0;
-    temp_r3->flags &= 0xFFFFBFFF;
+    endingInfo.unk8->unkA804[0].unkA = 7;
+    ape = endingInfo.unk8->unkA804[0].unk0;
+    ape->flags &= 0xFFFFBFFF;
 }
 
-s16 lbl_802F18E0[4] = { 0x00EA, 0x0102, 0x016D, 0x0173 };
+static s16 lbl_802F18E0[4] = { 0x00EA, 0x0102, 0x016D, 0x0173 };
 
-void func_800B7FB4(void)
+void ending_state_12(void)
 {
     struct SomeBigEndingStruct_sub *temp_r28;
     struct SomeBigEndingStruct_sub3 *temp_r7;
@@ -873,8 +891,8 @@ void func_800B7FB4(void)
     int tm;
     u8 unused[8];
 
-    temp_r28 = &lbl_802C6BD8.unk8->unkAA54;
-    temp_r7 = &lbl_802C6BD8.unk8->unkA804[0];
+    temp_r28 = &endingInfo.unk8->unkAA54;
+    temp_r7 = &endingInfo.unk8->unkA804[0];
     switch (modeCtrl.submodeTimer)
     {
     case 0x21B:
@@ -906,10 +924,10 @@ void func_800B7FB4(void)
             modeCtrl.submodeTimer++;
         break;
     case 0x1A4:
-        lbl_802C6BD8.unk4 |= 0x20;
+        endingInfo.unk4 |= 0x20;
         break;
     case 0xF0:
-        lbl_802C6BD8.unk4 &= 0xFFFFFFDF;
+        endingInfo.unk4 &= 0xFFFFFFDF;
         break;
     case 0x10E:
         func_800BF948(1, modeCtrl.submodeTimer - 0x1E);
@@ -921,16 +939,16 @@ void func_800B7FB4(void)
     }
     tm = modeCtrl.submodeTimer;
     if (tm < 420 && tm > 360)
-        lbl_802C6BD8.unk8->unkAAA8 = 0.5f + 0.5f * (-0.016666668f * (float)(360 - tm));
+        endingInfo.unk8->unkAAA8 = 0.5f + 0.5f * (-0.016666668f * (float)(360 - tm));
     else if (tm < 300 && tm > 240)
-        lbl_802C6BD8.unk8->unkAAA8 = 0.5f + 0.5f * (1.0f - (-0.016666668f * (float)(240 - tm)));
+        endingInfo.unk8->unkAAA8 = 0.5f + 0.5f * (1.0f - (-0.016666668f * (float)(240 - tm)));
     if (modeCtrl.submodeTimer < 420 && modeCtrl.submodeTimer > 240)
-        lbl_802C6BD8.unk8->unkAAAC = 0.6f + 0.19999999f * (-0.0055555557f * (float)(240 - modeCtrl.submodeTimer));
+        endingInfo.unk8->unkAAAC = 0.6f + 0.19999999f * (-0.0055555557f * (float)(240 - modeCtrl.submodeTimer));
     if (modeCtrl.submodeTimer < 300 && modeCtrl.submodeTimer > 0)
     {
         float t = -0.0033333334f * -modeCtrl.submodeTimer;
         t = 1.0f - t;
-        if ((rand() / 32767.0f) < t)
+        if (RAND_FLOAT() < t)
             func_800BF8C4(1);
         if (unpausedFrameCounter % 90 == 0)
             u_play_sound_0(0x22E);
@@ -941,17 +959,17 @@ void func_800B7FB4(void)
     if (modeCtrl.submodeTimer != 0)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
-        lbl_802C6BD8.unk2 = 0x1F;
+        endingInfo.nextState = 0x1F;
 }
 
-void func_800B83EC(void)
+static void ending_state_expert_init(void)
 {
     int temp_r0;
     struct SomeBigEndingStruct_sub *temp_r28;
     struct Ape *temp_r3;
     int stageId;
 
-    lbl_802C6BD8.unk2 = 14;
+    endingInfo.nextState = 14;
     modeCtrl.submodeTimer = 0xB4;
     event_finish_all();
     switch (modeCtrl.difficulty)
@@ -985,11 +1003,11 @@ void func_800B83EC(void)
     func_800BCE54(1, 1);
     func_800BCE54(2, 2);
     func_800BCE54(3, 3);
-    lbl_802C6BD8.unk8->unkA804[0].unk4 = 9;
-    lbl_802C6BD8.unk8->unkA804[1].unk4 = 9;
-    lbl_802C6BD8.unk8->unkA804[2].unk4 = 9;
+    endingInfo.unk8->unkA804[0].unk4 = 9;
+    endingInfo.unk8->unkA804[1].unk4 = 9;
+    endingInfo.unk8->unkA804[2].unk4 = 9;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r28 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r28 = &endingInfo.unk8->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_r28->unk0 = 1;
     mathutil_mtxA_from_rotate_y(modeCtrl.submodeTimer * 4);
@@ -1001,7 +1019,7 @@ void func_800B83EC(void)
     temp_r0 = playerCharacterSelection[modeCtrl.currPlayer];
     if (temp_r0 == 3)
     {
-        struct SomeBigEndingStruct_sub3 *temp_r28_2 = &lbl_802C6BD8.unk8->unkA804[temp_r0];
+        struct SomeBigEndingStruct_sub3 *temp_r28_2 = &endingInfo.unk8->unkA804[temp_r0];
         temp_r28_2->unk0->flags &= 0xFFFFFFDF;
         temp_r28_2->unkA = 0x12;
         temp_r28_2->unkC.x = -20.38f;
@@ -1015,26 +1033,26 @@ void func_800B83EC(void)
         temp_r28_2->unk5A = (rand() & 0x7FFF);
         temp_r28_2->unk5C = (rand() & 0x7FFF);
     }
-    temp_r3 = lbl_802C6BD8.unk8->unkA804[modeCtrl.currPlayer].unk0;
+    temp_r3 = endingInfo.unk8->unkA804[modeCtrl.currPlayer].unk0;
     if (temp_r3 != NULL)
         temp_r3->colorId = modeCtrl.currPlayer;
     start_screen_fade(0x100, 0U, 0x1E);
     u_play_music(0x44U, 0);
 }
 
-void func_800B86E0(void)
+static void ending_state_14(void)
 {
-    struct SomeBigEndingStruct_sub *temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
+    struct SomeBigEndingStruct_sub *temp_r30 = &endingInfo.unk8->unkAA54;
 
     mathutil_mtxA_from_rotate_y(modeCtrl.submodeTimer * 4);
     mathutil_mtxA_tf_vec_xyz(&temp_r30->unk4, 0.0f, 20.0f, 12.0f);
     if (modeCtrl.submodeTimer != 0)
         modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer == 0)
-        lbl_802C6BD8.unk2 = 0xF;
+        endingInfo.nextState = 0xF;
 }
 
-void func_800B8780(void)
+static void ending_state_15(void)
 {
     struct TextBox tbox;
     float temp_f31;
@@ -1044,17 +1062,17 @@ void func_800B8780(void)
     struct SomeBigEndingStruct_sub3 *temp_r6;
     int i;
 
-    lbl_802C6BD8.unk2 = 0x10;
+    endingInfo.nextState = 0x10;
     modeCtrl.submodeTimer = 0x12C;
     modeCtrl.unk18 = 0x1E;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r26 = &lbl_802C6BD8.unk8->unkAA54;
-    temp_r27 = &lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    temp_r26 = &endingInfo.unk8->unkAA54;
+    temp_r27 = &endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
     mathutil_mtxA_from_translate(&temp_r27->unkC);
-    mathutil_mtxA_rotate_y((s32) temp_r27->unk30.y);
-    mathutil_mtxA_rotate_x((s32) temp_r27->unk30.x);
-    mathutil_mtxA_rotate_z((s32) temp_r27->unk30.z);
+    mathutil_mtxA_rotate_y(temp_r27->unk30.y);
+    mathutil_mtxA_rotate_x(temp_r27->unk30.x);
+    mathutil_mtxA_rotate_z(temp_r27->unk30.z);
     temp_r26->unk0 = 1;
     mathutil_mtxA_tf_point_xyz(&temp_r26->unk4, -4.0f * (temp_f31 - 0.5f), -0.2f, -2.0f);
     temp_r26->unk10.x = 0.0f;
@@ -1065,14 +1083,14 @@ void func_800B8780(void)
     temp_r26->unk38.x = 0.0f;
     temp_r26->unk38.y = 0.0f;
     temp_r26->unk38.z = 0.0f;
-    lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk70 = 1;
-    temp_r28 = lbl_802C6BD8.unk8;
+    endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk70 = 1;
+    temp_r28 = endingInfo.unk8;
     temp_r28->unkAACC = 0;
     func_800C0DC0(&temp_r28->unkAAB0, &temp_r28->unkAAD0);
     if (temp_r28->unkAAB0 > 0)
     {
         memset(&tbox, 0, sizeof(tbox));
-        tbox.style = 8;
+        tbox.style = TEXTBOX_STYLE_CENTER_UP;
         tbox.x = 0x140;
         tbox.y = 0x142;
         tbox.numRows = MIN(temp_r28->unkAAB0, 2);
@@ -1080,24 +1098,24 @@ void func_800B8780(void)
         textbox_set_properties(0, 1, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
-            textbox_add_text(0, temp_r28->unkAAB4[temp_r28->unkAACC]);
+            textbox_add_text(0, temp_r28->textboxStrings[temp_r28->unkAACC]);
             temp_r28->unkAAB0--;
             temp_r28->unkAACC++;
         }
     }
-    temp_r6 = &lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    temp_r6 = &endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_r6->unk38 = 0;
     if (playerCharacterSelection[modeCtrl.currPlayer] != 3)
         temp_r6->unkA = 0xB;
     else
         temp_r6->unkA = 0xC;
-    lbl_802C6BD8.unk8->unkA804[0].unk36 |= 1;
-    lbl_802C6BD8.unk8->unkA804[1].unk36 |= 1;
-    lbl_802C6BD8.unk8->unkA804[2].unk36 |= 1;
-    lbl_802C6BD8.unk8->unkA804[3].unk36 |= 1;
+    endingInfo.unk8->unkA804[0].unk36 |= 1;
+    endingInfo.unk8->unkA804[1].unk36 |= 1;
+    endingInfo.unk8->unkA804[2].unk36 |= 1;
+    endingInfo.unk8->unkA804[3].unk36 |= 1;
 }
 
-void func_800B8AA4(void)
+static void ending_state_16(void)
 {
     struct TextBox tbox;
     float temp_f31;
@@ -1106,8 +1124,8 @@ void func_800B8AA4(void)
     struct SomeBigEndingStruct_sub3 *temp_r30;
     int i;
 
-    temp_r28 = &lbl_802C6BD8.unk8->unkAA54;
-    temp_r30 = &lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
+    temp_r28 = &endingInfo.unk8->unkAA54;
+    temp_r30 = &endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
     mathutil_mtxA_from_translate(&temp_r30->unkC);
     mathutil_mtxA_rotate_y(temp_r30->unk30.y);
@@ -1118,7 +1136,7 @@ void func_800B8AA4(void)
     if (temp_r30->unk38 < 0)
     {
         SoundReq(lbl_801E2B28[temp_r30->unk0->charaId][temp_r30->unk3A & 1]);
-        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * (rand() / 32767.0f)));
+        temp_r30->unk38 = 240.0f * (0.8f + (0.4f * RAND_FLOAT()));
         temp_r30->unk3A++;
     }
     if (modeCtrl.unk18 != 0)
@@ -1126,12 +1144,12 @@ void func_800B8AA4(void)
     if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
     {
         modeCtrl.unk18 = 0x1E;
-        temp_r30_2 = lbl_802C6BD8.unk8;
+        temp_r30_2 = endingInfo.unk8;
         if (temp_r30_2->unkAAB0 != 0)
         {
             textbox_set_properties(0, 0x14, NULL);
             memset(&tbox, 0, sizeof(tbox));
-            tbox.style = 8;
+            tbox.style = TEXTBOX_STYLE_CENTER_UP;
             tbox.x = 0x140;
             tbox.y = 0x142;
             tbox.numRows = temp_r30_2->unkAAB0;
@@ -1139,14 +1157,14 @@ void func_800B8AA4(void)
             textbox_set_properties(0, 1, &tbox);
             for (i = 0; i < tbox.numRows; i++)
             {
-                textbox_add_text(0, temp_r30_2->unkAAB4[temp_r30_2->unkAACC]);
+                textbox_add_text(0, temp_r30_2->textboxStrings[temp_r30_2->unkAACC]);
                 temp_r30_2->unkAAB0--;
                 temp_r30_2->unkAACC++;
             }
         }
         else
         {
-            lbl_802C6BD8.unk2 = 0x11;
+            endingInfo.nextState = 0x11;
             textbox_set_properties(0, 0x14, NULL);
         }
     }
@@ -1154,23 +1172,23 @@ void func_800B8AA4(void)
         modeCtrl.submodeTimer--;
 }
 
-void func_800B8D7C(void)
+static void ending_state_17(void)
 {
-    lbl_802C6BD8.unk2 = 0x12;
+    endingInfo.nextState = 0x12;
     modeCtrl.submodeTimer = 0x1E0;
     func_800BBB10(modeCtrl.submodeTimer - 0x1A4);
-    lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk74 = cameraInfo[0].eye;
+    endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk74 = cameraInfo[0].eye;
 }
 
-s16 lbl_802F18E8[3] = { 0x00E4, 0x0127, 0x014A };
+static s16 lbl_802F18E8[3] = { 0x00E4, 0x0127, 0x014A };
 
-void func_800B8E1C(void)
+static void ending_state_18(void)
 {
     f32 temp_f2;
     f32 temp_f3;
     struct SomeBigEndingStruct_sub *temp_r26;
     struct SomeBigEndingStruct_sub3 *temp_r27;
-    struct Ape *temp_r4;
+    struct Ape *ape;
     struct SomeBigEndingStruct *temp;
     Vec sp8;
 
@@ -1179,7 +1197,7 @@ void func_800B8E1C(void)
     case 0x1DF:
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f3 = 1.0f / (modeCtrl.submodeTimer - 0x168);
-        temp = lbl_802C6BD8.unk8;
+        temp = endingInfo.unk8;
         temp->unkAA54.unk0 = 1;
         temp->unkAA54.unk4.x = 0.0f;
         temp->unkAA54.unk4.y = 0.0f;
@@ -1188,23 +1206,23 @@ void func_800B8E1C(void)
         temp->unkAA54.unk10.y = (1.5f - temp->unkAA54.unk4.y) * temp_f3;
         temp->unkAA54.unk10.z = (6.0f - temp->unkAA54.unk4.z) * temp_f3;
         temp->unkAA54.unk2 = 1;
-        temp->unkAA54.unk2C = lbl_802C6BD8.unk8->unkAA04.unk8;
+        temp->unkAA54.unk2C = endingInfo.unk8->unkAA04.unk8;
         temp->unkAA54.unk38.x = 0.0f;
         temp->unkAA54.unk38.y = 0.0f;
         temp->unkAA54.unk38.z = 0.0f;
         break;
     case 0x1A4:
-        temp_r4 = lbl_802C6BD8.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk0;
-        temp_r4->flags &= 0xFFFFFFBF;
+        ape = endingInfo.unk8->unkA804[playerCharacterSelection[modeCtrl.currPlayer]].unk0;
+        ape->flags &= 0xFFFFFFBF;
         u_play_sound_0(0x234);
         break;
     case 0x168:
-        lbl_802C6BD8.unk8->unkA804[0].unkA = 8;
-        lbl_802C6BD8.unk8->unkA804[1].unkA = 8;
-        lbl_802C6BD8.unk8->unkA804[2].unkA = 8;
+        endingInfo.unk8->unkA804[0].unkA = 8;
+        endingInfo.unk8->unkA804[1].unkA = 8;
+        endingInfo.unk8->unkA804[2].unkA = 8;
         SoundReq(lbl_802F18E8[playerCharacterSelection[modeCtrl.currPlayer] % 3]);
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp = lbl_802C6BD8.unk8;
+        temp = endingInfo.unk8;
         temp_r26 = &temp->unkAA54;
         temp_r27 = &temp->unkA804[playerCharacterSelection[modeCtrl.currPlayer] % 3];
         memset(temp_r26, 0, sizeof(*temp_r26));
@@ -1219,7 +1237,7 @@ void func_800B8E1C(void)
         break;
     case 0x12C:
         func_800BF948(1, modeCtrl.submodeTimer - 0x1E);
-        temp_r26 = &lbl_802C6BD8.unk8->unkAA54;
+        temp_r26 = &endingInfo.unk8->unkAA54;
         temp_f2 = 1.0f / modeCtrl.submodeTimer;
         temp_r26->unk10.x = temp_r26->unk4.x * temp_f2;
         temp_r26->unk10.z = temp_r26->unk4.z * temp_f2;
@@ -1228,22 +1246,22 @@ void func_800B8E1C(void)
         temp_r26->unk38.z = -temp_r26->unk2C.z * temp_f2;
         break;
     case 0x78:
-        lbl_802C6BD8.unk8->unkA804[0].unk4 = 0x10;
-        lbl_802C6BD8.unk8->unkA804[1].unk4 = 0x10;
-        lbl_802C6BD8.unk8->unkA804[2].unk4 = 0x10;
-        lbl_802C6BD8.unk8->unkA804[3].unk56 = -1;
+        endingInfo.unk8->unkA804[0].unk4 = 0x10;
+        endingInfo.unk8->unkA804[1].unk4 = 0x10;
+        endingInfo.unk8->unkA804[2].unk4 = 0x10;
+        endingInfo.unk8->unkA804[3].unk56 = -1;
         sp8.x = 0.0f;
         sp8.y = 4.0f;
         sp8.z = 0.0f;
-        lbl_802C6BD8.unk8->unkA804[0].unk70 = 2;
-        lbl_802C6BD8.unk8->unkA804[1].unk70 = 2;
-        lbl_802C6BD8.unk8->unkA804[2].unk70 = 2;
-        lbl_802C6BD8.unk8->unkA804[0].unk74 = sp8;
-        lbl_802C6BD8.unk8->unkA804[1].unk74 = sp8;
-        lbl_802C6BD8.unk8->unkA804[2].unk74 = sp8;
-        lbl_802C6BD8.unk8->unkA804[0].unkA = 0xC;
-        lbl_802C6BD8.unk8->unkA804[1].unkA = 0xC;
-        lbl_802C6BD8.unk8->unkA804[2].unkA = 0xC;
+        endingInfo.unk8->unkA804[0].unk70 = 2;
+        endingInfo.unk8->unkA804[1].unk70 = 2;
+        endingInfo.unk8->unkA804[2].unk70 = 2;
+        endingInfo.unk8->unkA804[0].unk74 = sp8;
+        endingInfo.unk8->unkA804[1].unk74 = sp8;
+        endingInfo.unk8->unkA804[2].unk74 = sp8;
+        endingInfo.unk8->unkA804[0].unkA = 0xC;
+        endingInfo.unk8->unkA804[1].unkA = 0xC;
+        endingInfo.unk8->unkA804[2].unkA = 0xC;
         break;
     case 0x1E:
         start_screen_fade(1, 0xFFFFFFU, modeCtrl.submodeTimer);
@@ -1251,34 +1269,34 @@ void func_800B8E1C(void)
         break;
     }
     if (modeCtrl.submodeTimer < 0x1DF && modeCtrl.submodeTimer > 0x1A4)
-        lbl_802C6BD8.unk8->unkAA54.unk2C = lbl_802C6BD8.unk8->unkAA04.unk8;
+        endingInfo.unk8->unkAA54.unk2C = endingInfo.unk8->unkAA04.unk8;
     if (modeCtrl.submodeTimer < 0x1A4 && modeCtrl.submodeTimer > 0.0f)
     {
         float t = -0.0023809525f * -(float)modeCtrl.submodeTimer;
         t = 1.0f - t;
-        if ((rand() / 32767.0f) < t)
+        if (RAND_FLOAT() < t)
             func_800BF8C4(1);
         if (unpausedFrameCounter % 90 == 0)
             u_play_sound_0(0x22E);
     }
     modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer < 0)
-        lbl_802C6BD8.unk2 = 0x13;
+        endingInfo.nextState = 0x13;
 }
 
-void func_800B9444(void)
+static void ending_state_19(void)
 {
     float temp_f4;
     struct SomeBigEndingStruct_sub *temp_r28;
     u8 unused[8];
 
-    lbl_802C6BD8.unk2 = 0x14;
+    endingInfo.nextState = 0x14;
     modeCtrl.submodeTimer = 0x168;
     start_screen_fade(0, 0U, 0x1E);
     func_800BD470();
     func_800BF4F4();
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r28 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r28 = &endingInfo.unk8->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_f4 = 1.0f / (modeCtrl.submodeTimer - 0xF0);
     temp_r28->unk0 = 1;
@@ -1294,14 +1312,14 @@ void func_800B9444(void)
     temp_r28->unk38.x = 2.0f * -temp_r28->unk2C.x * temp_f4;
     temp_r28->unk38.y = (0.4f - temp_r28->unk2C.y) * temp_f4;
     temp_r28->unk38.z = (6.0f - temp_r28->unk2C.z) * temp_f4;
-    lbl_802C6BD8.unk8->unkA804[0].unk38 = (s16) (1.0f + (120.0f * ((f32) rand() / 32767.0f)));
-    lbl_802C6BD8.unk8->unkA804[1].unk38 = (s16) (1.0f + (120.0f * ((f32) rand() / 32767.0f)));
-    lbl_802C6BD8.unk8->unkA804[2].unk38 = (s16) (1.0f + (120.0f * ((f32) rand() / 32767.0f)));
+    endingInfo.unk8->unkA804[0].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.unk8->unkA804[1].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
+    endingInfo.unk8->unkA804[2].unk38 = (s16) (1.0f + (120.0f * RAND_FLOAT()));
 }
 
-s16 lbl_802F18F0[4] = { 0x00E8, 0x0101, 0x016B, 0x0000 };
+static s16 lbl_802F18F0[4] = { 0x00E8, 0x0101, 0x016B, 0x0000 };
 
-void func_800B9724(void)
+static void ending_state_20(void)
 {
     float temp_f3;
     struct SomeBigEndingStruct_sub *temp_r4;
@@ -1314,7 +1332,7 @@ void func_800B9724(void)
         break;
     case 0xF0:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_r4 = &lbl_802C6BD8.unk8->unkAA54;
+        temp_r4 = &endingInfo.unk8->unkAA54;
         temp_f3 = 1.0f / modeCtrl.submodeTimer;
         temp_r4->unk0 = 1;
         temp_r4->unk4.x = -0.4f;
@@ -1332,7 +1350,7 @@ void func_800B9724(void)
         temp_r4->unk38.z = (2.0f - temp_r4->unk2C.z) * temp_f3;
         break;
     }
-    var_r28 = lbl_802C6BD8.unk8->unkA804;
+    var_r28 = endingInfo.unk8->unkA804;
     for (i = 3; i > 0; i--, var_r28++)  // BUG: maybe should be >= 0 instead?
     {
         if (var_r28->unk38 != 0)
@@ -1344,23 +1362,23 @@ void func_800B9724(void)
     }
     modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer < 0)
-        lbl_802C6BD8.unk2 = 0x15;
+        endingInfo.nextState = 0x15;
 }
 
-void func_800B9920(void)
+static void ending_state_21(void)
 {
     struct SomeBigEndingStruct *temp_r3;
     float temp_f3;
     struct SomeBigEndingStruct_sub *temp_r4;
 
-    lbl_802C6BD8.unk2 = 0x16;
+    endingInfo.nextState = 0x16;
     modeCtrl.submodeTimer = 0x2D0;
-    lbl_802C6BD8.unk8->unkA804[0].unk0->flags |= 0x20;
-    lbl_802C6BD8.unk8->unkA804[1].unk0->flags |= 0x20;
-    lbl_802C6BD8.unk8->unkA804[2].unk0->flags |= 0x20;
-    lbl_802C6BD8.unk8->unkA804[3].unk0->flags |= 0x20;
+    endingInfo.unk8->unkA804[0].unk0->flags |= 0x20;
+    endingInfo.unk8->unkA804[1].unk0->flags |= 0x20;
+    endingInfo.unk8->unkA804[2].unk0->flags |= 0x20;
+    endingInfo.unk8->unkA804[3].unk0->flags |= 0x20;
     CAMERA_FOREACH(camera->unk1F = 0;)
-    temp_r4 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r4 = &endingInfo.unk8->unkAA54;
     temp_f3 = 0.008333334f;
     temp_r4->unk0 = 1;
     temp_r4->unk4.x = 0.0f;
@@ -1379,7 +1397,7 @@ void func_800B9920(void)
     !temp_r4;  // needed to match
 }
 
-void func_800B9A8C(void)
+static void ending_state_22(void)
 {
     float temp_f2;
     struct SomeBigEndingStruct_sub *temp;
@@ -1387,20 +1405,20 @@ void func_800B9A8C(void)
     switch (modeCtrl.submodeTimer)
     {
     case 0x2B2:
-        lbl_802C6BD8.unk4 |= 4;
+        endingInfo.unk4 |= 4;
         u_play_sound_0(0x235);
         break;
     case 0x258:
-        lbl_802C6BD8.unk8->unkA804[0].unk4 = 0x11;
-        lbl_802C6BD8.unk8->unkA804[1].unk4 = 0x11;
-        lbl_802C6BD8.unk8->unkA804[2].unk4 = 0x11;
+        endingInfo.unk8->unkA804[0].unk4 = 0x11;
+        endingInfo.unk8->unkA804[1].unk4 = 0x11;
+        endingInfo.unk8->unkA804[2].unk4 = 0x11;
         break;
     case 0x257:
-        lbl_802C6BD8.unk8->unkA804[0].unk0->flags &= ~0x20;
-        lbl_802C6BD8.unk8->unkA804[1].unk0->flags &= ~0x20;
-        lbl_802C6BD8.unk8->unkA804[2].unk0->flags &= ~0x20;
+        endingInfo.unk8->unkA804[0].unk0->flags &= ~0x20;
+        endingInfo.unk8->unkA804[1].unk0->flags &= ~0x20;
+        endingInfo.unk8->unkA804[2].unk0->flags &= ~0x20;
         CAMERA_FOREACH(camera->unk1F = 0;)
-        temp = &lbl_802C6BD8.unk8->unkAA54;
+        temp = &endingInfo.unk8->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD8);
         temp->unk0 = 1;
         temp->unk4.x = -2.0f;
@@ -1417,11 +1435,11 @@ void func_800B9A8C(void)
         temp->unk48.z = 0.0f;
         break;
     case 0x1E0:
-        lbl_802C6BD8.unk8->unkA804[3].unk0->flags &= ~0x20;
-        lbl_802C6BD8.unk8->unkA804[3].unk4 = 0x13;
+        endingInfo.unk8->unkA804[3].unk0->flags &= ~0x20;
+        endingInfo.unk8->unkA804[3].unk4 = 0x13;
         break;
     case 0xD8:
-        temp = &lbl_802C6BD8.unk8->unkAA54;
+        temp = &endingInfo.unk8->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x3C);
         temp->unk0 = 1;
         temp->unk10.x = (2.0f - temp->unk4.x) * temp_f2;
@@ -1436,7 +1454,7 @@ void func_800B9A8C(void)
         SoundReq(0x199U);
         break;
     case 0x8A:
-        temp = &lbl_802C6BD8.unk8->unkAA54;
+        temp = &endingInfo.unk8->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0x3C);
         temp->unk0 = 1;
         temp->unk10.x = (2.0f - temp->unk4.x) * temp_f2;
@@ -1450,9 +1468,9 @@ void func_800B9A8C(void)
         temp->unk48.z = 0.0f;
         break;
     case 0x3C:
-        lbl_802C6BD8.unk4 &= 0xFFFFFFFB;
+        endingInfo.unk4 &= 0xFFFFFFFB;
         u_play_sound_0(0x236);
-        temp = &lbl_802C6BD8.unk8->unkAA54;
+        temp = &endingInfo.unk8->unkAA54;
         temp->unk0 = 1;
         temp->unk10.x = 0.0f;
         temp->unk10.y = 0.0f;
@@ -1461,22 +1479,22 @@ void func_800B9A8C(void)
     }
     modeCtrl.submodeTimer--;
     if (modeCtrl.submodeTimer < 0)
-        lbl_802C6BD8.unk2 = 0x17;
+        endingInfo.nextState = 0x17;
 }
 
-void func_800B9EA4(void)
+static void ending_state_23(void)
 {
     struct SomeBigEndingStruct_sub *temp;
 
-    lbl_802C6BD8.unk2 = 0x18;
+    endingInfo.nextState = 0x18;
     modeCtrl.submodeTimer = 0x12C;
-    lbl_802C6BD8.unk8->unkA804[0].unk4 = 0x15;
-    lbl_802C6BD8.unk8->unkA804[1].unk4 = 0x15;
-    lbl_802C6BD8.unk8->unkA804[2].unk4 = 0x15;
-    lbl_802C6BD8.unk8->unkA804[0].unk70 = 0;
-    lbl_802C6BD8.unk8->unkA804[1].unk70 = 0;
-    lbl_802C6BD8.unk8->unkA804[2].unk70 = 0;
-    temp = &lbl_802C6BD8.unk8->unkAA54;
+    endingInfo.unk8->unkA804[0].unk4 = 0x15;
+    endingInfo.unk8->unkA804[1].unk4 = 0x15;
+    endingInfo.unk8->unkA804[2].unk4 = 0x15;
+    endingInfo.unk8->unkA804[0].unk70 = 0;
+    endingInfo.unk8->unkA804[1].unk70 = 0;
+    endingInfo.unk8->unkA804[2].unk70 = 0;
+    temp = &endingInfo.unk8->unkAA54;
     temp->unk0 = 1;
     temp->unk4.x = 2.0f;
     temp->unk4.y = 0.3f;
@@ -1492,14 +1510,14 @@ void func_800B9EA4(void)
     temp->unk48.z = 0.0f;
     u_play_sound_0(0x238);
     SoundReq(0x17BU);
-    lbl_802C6BD8.unk8->unkA804[0].unk36 &= ~0x1;
-    lbl_802C6BD8.unk8->unkA804[1].unk36 &= ~0x1;
-    lbl_802C6BD8.unk8->unkA804[2].unk36 &= ~0x1;
+    endingInfo.unk8->unkA804[0].unk36 &= ~0x1;
+    endingInfo.unk8->unkA804[1].unk36 &= ~0x1;
+    endingInfo.unk8->unkA804[2].unk36 &= ~0x1;
 }
 
-void func_800B9FDC(void)
+static void ending_state_24(void)
 {
-    struct SomeBigEndingStruct_sub3 *temp_r29 = &lbl_802C6BD8.unk8->unkA804[3];
+    struct SomeBigEndingStruct_sub3 *temp_r29 = &endingInfo.unk8->unkA804[3];
     int temp_r28 = temp_r29->unk0->unk0->unk38;
 
     if (temp_r29->unk0->unk9C == 8 && temp_r28 == 0x2A)
@@ -1518,24 +1536,24 @@ void func_800B9FDC(void)
     if (temp_r29->unk8 == 0xB && temp_r28 > 0xC3)
     {
         func_800BF658();
-        lbl_802C6BD8.unk2 = 0x19;
-        lbl_802C6BD8.unk4 |= 2;
-        lbl_802C6BD8.unk8->unk0 = 0.0f;
+        endingInfo.nextState = 0x19;
+        endingInfo.unk4 |= 2;
+        endingInfo.unk8->unk0 = 0.0f;
         u_play_sound_0(0x238);
     }
 }
 
-void func_800BA124(void)
+static void ending_state_25(void)
 {
-    lbl_802C6BD8.unk2 = 0x1A;
+    endingInfo.nextState = 0x1A;
     modeCtrl.submodeTimer = 0x1E0;
     modeCtrl.unk18 = 0;
-    lbl_802C6BD8.unk8->unkAA04.unk2 = 4;
+    endingInfo.unk8->unkAA04.unk2 = 4;
 }
 
-void func_800BA160(void)
+static void ending_state_26(void)
 {
-    struct SomeBigEndingStruct_sub *temp_r4 = &lbl_802C6BD8.unk8->unkAA54;
+    struct SomeBigEndingStruct_sub *temp_r4 = &endingInfo.unk8->unkAA54;
     float temp_f2;
 
     switch (modeCtrl.submodeTimer)
@@ -1604,24 +1622,24 @@ void func_800BA160(void)
     if (modeCtrl.submodeTimer == 0)
     {
         if (playerCharacterSelection[modeCtrl.currPlayer] != 3)
-            lbl_802C6BD8.unk2 = 0x1B;
+            endingInfo.nextState = 0x1B;
         else
-            lbl_802C6BD8.unk2 = 0x1D;
+            endingInfo.nextState = 0x1D;
     }
 }
 
-void func_800BA4F4(void)
+static void ending_state_29(void)
 {
-    lbl_802C6BD8.unk2 = 0x1E;
+    endingInfo.nextState = 0x1E;
     modeCtrl.submodeTimer = 0x14A;
     modeCtrl.unk18 = 0;
 }
 
-void func_800BA51C(void)
+static void ending_state_30(void)
 {
     float temp_f2;
     int charaId;
-    struct SomeBigEndingStruct_sub *var_r31 = &lbl_802C6BD8.unk8->unkAA54;
+    struct SomeBigEndingStruct_sub *var_r31 = &endingInfo.unk8->unkAA54;
     struct SomeBigEndingStruct_sub3 *temp_r6;
     Vec sp8;
 
@@ -1629,10 +1647,10 @@ void func_800BA51C(void)
     {
     case 0x14A:
         CAMERA_FOREACH(camera->unk1F = 0;)
-        var_r31 = &lbl_802C6BD8.unk8->unkAA54;
+        var_r31 = &endingInfo.unk8->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        temp_r6 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        temp_r6 = &endingInfo.unk8->unkA804[charaId];
         var_r31->unk0 = 1;
         var_r31->unk4.x = temp_r6->unkC.x;
         var_r31->unk4.y = temp_r6->unkC.y - 0.5f;
@@ -1655,8 +1673,8 @@ void func_800BA51C(void)
         break;
     case 0xB4:
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        lbl_802C6BD8.unk8->unkA804[3].unkA = 0x11;
-        temp_r6 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        endingInfo.unk8->unkA804[3].unkA = 0x11;
+        temp_r6 = &endingInfo.unk8->unkA804[charaId];
         CAMERA_FOREACH(camera->unk1F = 0;)
         var_r31->unk0 = 1;
         var_r31->unk4.x = temp_r6->unkC.x;
@@ -1698,20 +1716,20 @@ void func_800BA51C(void)
     {
         modeCtrl.unk18--;
         if (modeCtrl.unk18 == 0)
-            lbl_802C6BD8.unk2 = 0x1F;
+            endingInfo.nextState = 0x1F;
     }
 }
 
-void func_800BA928(void)
+static void ending_state_27(void)
 {
-    lbl_802C6BD8.unk2 = 0x1C;
+    endingInfo.nextState = 0x1C;
     modeCtrl.submodeTimer = 0x276;
     modeCtrl.unk18 = 0;
 }
 
-s16 lbl_802F18F8[4] = { 0x00E8, 0x0102, 0x016D, 0x0000 };
+static s16 lbl_802F18F8[4] = { 0x00E8, 0x0102, 0x016D, 0x0000 };
 
-void func_800BA950(void)
+static void ending_state_28(void)
 {
     struct Ape *ape;
     struct SomeBigEndingStruct_sub3 *temp_r27;
@@ -1721,17 +1739,17 @@ void func_800BA950(void)
     Mtx sp8;
     float temp_f31;
 
-    temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
+    temp_r30 = &endingInfo.unk8->unkAA54;
     switch (modeCtrl.submodeTimer)
     {
     case 0x276:
-        lbl_802C6BD8.unk4 |= 0x10;
+        endingInfo.unk4 |= 0x10;
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x1FE);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 2) % 3;
-        temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
-        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
-        lbl_802C6BD8.unk8->unkAA54.unk0 = 1;
+        temp_r30 = &endingInfo.unk8->unkAA54;
+        temp_r27 = &endingInfo.unk8->unkA804[charaId];
+        endingInfo.unk8->unkAA54.unk0 = 1;
         sp38.x = temp_r27->unkC.x;
         sp38.y = 0.0f;
         sp38.z = temp_r27->unkC.z;
@@ -1753,9 +1771,9 @@ void func_800BA950(void)
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0x168);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 1) % 3;
-        temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
-        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
-        lbl_802C6BD8.unk8->unkAA54.unk0 = 1;
+        temp_r30 = &endingInfo.unk8->unkAA54;
+        temp_r27 = &endingInfo.unk8->unkA804[charaId];
+        endingInfo.unk8->unkAA54.unk0 = 1;
         sp38.x = temp_r27->unkC.x;
         sp38.y = 0.0f;
         sp38.z = temp_r27->unkC.z;
@@ -1777,9 +1795,9 @@ void func_800BA950(void)
         CAMERA_FOREACH(camera->unk1F = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 0xD2);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        temp_r30 = &lbl_802C6BD8.unk8->unkAA54;
-        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
-        lbl_802C6BD8.unk8->unkAA54.unk0 = 1;
+        temp_r30 = &endingInfo.unk8->unkAA54;
+        temp_r27 = &endingInfo.unk8->unkA804[charaId];
+        endingInfo.unk8->unkAA54.unk0 = 1;
         sp38.x = temp_r27->unkC.x;
         sp38.y = 0.0f;
         sp38.z = temp_r27->unkC.z;
@@ -1806,8 +1824,8 @@ void func_800BA950(void)
         break;
     case 0xB4:
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
-        lbl_802C6BD8.unk8->unkA804[charaId].unkA = 0x10;
-        temp_r27 = &lbl_802C6BD8.unk8->unkA804[charaId];
+        endingInfo.unk8->unkA804[charaId].unkA = 0x10;
+        temp_r27 = &endingInfo.unk8->unkA804[charaId];
         temp_r30->unk0 = 1;
         ape = temp_r27->unk0;
         mathutil_mtxA_from_quat(&ape->unk60);
@@ -1843,25 +1861,25 @@ void func_800BA950(void)
     {
         modeCtrl.unk18--;
         if (modeCtrl.unk18 == 0)
-            lbl_802C6BD8.unk2 = 0x1F;
+            endingInfo.nextState = 0x1F;
     }
 }
 
-void func_800BB050(void)
+static void ending_state_31(void)
 {
-    lbl_802C6BD8.unk2 = 0x20;
+    endingInfo.nextState = 0x20;
 }
 
-void func_800BB064(void) {}
+static void ending_state_32(void) {}
 
-void func_800BB068(void)
+static void func_800BB068(void)
 {
-    lbl_802C6BD8.unk8->unkAA04.unk0 = 0;
+    endingInfo.unk8->unkAA04.unk0 = 0;
 }
 
-void func_800BB084(void)
+static void func_800BB084(void)
 {
-    struct SomeStruct *temp_r30 = &lbl_802C6BD8.unk8->unkAA04;
+    struct SomeStruct *temp_r30 = &endingInfo.unk8->unkAA04;
     float temp_f5;
 
     if (temp_r30->unk0 != 0)
@@ -1886,16 +1904,16 @@ void func_800BB084(void)
                 temp_r30->unk8.y = 0.0f;
                 temp_r30->unk14.y = 0.0f;
                 temp_r30->unk2 = 3;
-                temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
-                temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
-                temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk44.x += 0.1f * (RAND_FLOAT() - 0.5f);
+                temp_r30->unk44.y += 0.1f * (RAND_FLOAT() - 0.5f);
+                temp_r30->unk44.z += 0.1f * (RAND_FLOAT() - 0.5f);
             }
             temp_r30->unk20.x = 0.4f + temp_r30->unk8.x;
             temp_r30->unk20.y = temp_r30->unk8.y;
             temp_r30->unk20.z = 2.95f + temp_r30->unk8.z;
             break;
         case 3:
-            if (lbl_802C6BD8.unk4 & 4)
+            if (endingInfo.unk4 & 4)
             {
                 temp_r30->unk40 = (-0x4000 - temp_r30->unk3A) >> 7;
                 temp_r30->unk3A += temp_r30->unk40;
@@ -1911,9 +1929,9 @@ void func_800BB084(void)
                     {
                         if (temp_r30->unk40 > 0x800)
                         {
-                            temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
-                            temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
-                            temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                            temp_r30->unk44.x += 0.1f * (RAND_FLOAT() - 0.5f);
+                            temp_r30->unk44.y += 0.1f * (RAND_FLOAT() - 0.5f);
+                            temp_r30->unk44.z += 0.1f * (RAND_FLOAT() - 0.5f);
                         }
                         temp_r30->unk40 = temp_r30->unk40 * -0.4f;
                     }
@@ -1923,12 +1941,12 @@ void func_800BB084(void)
         case 4:
             temp_r30->unk2 = 5;
             temp_r30->unk4 = 0x3C;
-            temp_r30->unk3E += 768.0f * ((rand() / 32767.0f) - 0.5f);
-            temp_r30->unk40 += 768.0f * ((rand() / 32767.0f) - 0.5f);
-            temp_r30->unk42 += 2304.0f * ((rand() / 32767.0f) - 0.5f);
-            temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
-            temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
-            temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+            temp_r30->unk3E += 768.0f * (RAND_FLOAT() - 0.5f);
+            temp_r30->unk40 += 768.0f * (RAND_FLOAT() - 0.5f);
+            temp_r30->unk42 += 2304.0f * (RAND_FLOAT() - 0.5f);
+            temp_r30->unk44.x += 0.1f * (RAND_FLOAT() - 0.5f);
+            temp_r30->unk44.y += 0.1f * (RAND_FLOAT() - 0.5f);
+            temp_r30->unk44.z += 0.1f * (RAND_FLOAT() - 0.5f);
             /* fallthrough */
         case 5:
             temp_r30->unk3E = 0.8f * temp_r30->unk3E;
@@ -1941,12 +1959,12 @@ void func_800BB084(void)
             if (temp_r30->unk4 < 0)
             {
                 temp_r30->unk2 = 6;
-                temp_r30->unk3E += 2304.0f * ((rand() / 32767.0f) - 0.5f);
-                temp_r30->unk40 += -2304.0f * -(rand() / 32767.0f);
-                temp_r30->unk42 += 2304.0f * ((rand() / 32767.0f) - 0.5f);
-                temp_r30->unk44.x += 0.1f * ((rand() / 32767.0f) - 0.5f);
-                temp_r30->unk44.y += 0.1f * ((rand() / 32767.0f) - 0.5f);
-                temp_r30->unk44.z += 0.1f * ((rand() / 32767.0f) - 0.5f);
+                temp_r30->unk3E += 2304.0f * (RAND_FLOAT() - 0.5f);
+                temp_r30->unk40 += -2304.0f * -RAND_FLOAT();
+                temp_r30->unk42 += 2304.0f * (RAND_FLOAT() - 0.5f);
+                temp_r30->unk44.x += 0.1f * (RAND_FLOAT() - 0.5f);
+                temp_r30->unk44.y += 0.1f * (RAND_FLOAT() - 0.5f);
+                temp_r30->unk44.z += 0.1f * (RAND_FLOAT() - 0.5f);
             }
             break;
         case 6:
@@ -1971,12 +1989,12 @@ void func_800BB084(void)
     }
 }
 
-void func_800BBA54(void) {}
+static void func_800BBA54(void) {}
 
-void func_800BBA58(void)
+static void func_800BBA58(void)
 {
     struct GMAModel *model;
-    struct SomeStruct *temp_r31 = &lbl_802C6BD8.unk8->unkAA04;
+    struct SomeStruct *temp_r31 = &endingInfo.unk8->unkAA04;
 
     if (temp_r31->unk0 != 0)
     {
@@ -1995,9 +2013,9 @@ void func_800BBA58(void)
     }
 }
 
-void func_800BBB10(int arg0)
+static void func_800BBB10(int arg0)
 {
-    struct SomeStruct *temp_r31 = &lbl_802C6BD8.unk8->unkAA04;
+    struct SomeStruct *temp_r31 = &endingInfo.unk8->unkAA04;
 
     memset(temp_r31, 0, sizeof(*temp_r31));
     temp_r31->unk0 = 1;
@@ -2005,9 +2023,9 @@ void func_800BBB10(int arg0)
     temp_r31->unk4 = arg0;
 }
 
-void func_800BBB78(void)
+static void func_800BBB78(void)
 {
-    struct SomeBigEndingStruct *temp = lbl_802C6BD8.unk8;
+    struct SomeBigEndingStruct *temp = endingInfo.unk8;
 
     if (temp != NULL)
     {
@@ -2018,27 +2036,14 @@ void func_800BBB78(void)
     }
 }
 
-#define lbl_802F6644 -4.5f
-#define lbl_802F664C 0.12999999523162842f
-#define lbl_802F6650 0.12000000476837158f
-#define lbl_802F6654 -0.094000004231929779f
-#define lbl_802F65E4 -0.10000000149011612f
-#define lbl_802F65A0 -0.60000002384185791f
-#define lbl_802F6528 0.20000000298023224f
-#define lbl_802F6634 30.0f
-#define lbl_802F6568 -0.20000000298023224f
-#define lbl_802F6638 -15.0f
-#define lbl_802F663C 0.012000000104308128f
-#define lbl_802F6640 -0.0080000003799796104f
-
-void func_800BBBA8(void)
+static void func_800BBBA8(void)
 {
     int i;
     struct Struct801E2A98 spD0;
     struct Effect effect;
     struct RaycastHit sp8;
     int playerId = modeCtrl.currPlayer;
-    struct SomeBigEndingStruct_sub3 *var_r16 = lbl_802C6BD8.unk8->unkA804;
+    struct SomeBigEndingStruct_sub3 *var_r16 = endingInfo.unk8->unkA804;
     float temp_f0;
 
     for (i = 0; i < 4; i++, var_r16++)
@@ -2101,7 +2106,7 @@ void func_800BBBA8(void)
                 var_r16->unk0->flags &= 0xFFFFFFDF;
                 var_r16->unkA = 3;
                 var_r16->unk30.x = 0;
-                var_r16->unk30.y = (rand() / 32767.0f);
+                var_r16->unk30.y = RAND_FLOAT();
                 var_r16->unk30.z = 0;
                 var_r16->unkC.x = 0.0f;
                 var_r16->unkC.y = 0.0f;
@@ -2164,9 +2169,9 @@ void func_800BBBA8(void)
                 var_r16->unk30.z = 0;
                 mathutil_mtxA_from_rotate_y(var_r16->unk30.y + 0x8000);
                 mathutil_mtxA_tf_vec_xyz(&var_r16->unkC, 0.0f, 0.0f, -5.0f);
-                var_r16->unkC.y += lbl_802F6634 + (5.0f * (rand() / 32767.0f));
+                var_r16->unkC.y += 30.0f + (5.0f * RAND_FLOAT());
                 var_r16->unk18.x = 0.0f;
-                var_r16->unk18.y = lbl_802F6568;
+                var_r16->unk18.y = -0.20000000298023224f;
                 var_r16->unk18.z = 0.0f;
                 if (i == playerCharacterSelection[playerId])
                 {
@@ -2184,8 +2189,8 @@ void func_800BBBA8(void)
             case 10:
                 raycast_stage_down(&var_r16->unkC, &sp8, NULL);
                 if (var_r16->unk18.y < 0.0f
-                 && (0.5f + (var_r16->unkC.y - sp8.pos.y) < lbl_802F6638 * var_r16->unk18.y))
-                    var_r16->unk18.y += lbl_802F663C;
+                 && (0.5f + (var_r16->unkC.y - sp8.pos.y) < -15.0f * var_r16->unk18.y))
+                    var_r16->unk18.y += 0.012000000104308128f;
                 memset(&effect, 0, sizeof(effect));
                 effect.type = 0xA;
                 effect.playerId = playerId;
@@ -2197,17 +2202,17 @@ void func_800BBBA8(void)
                 var_r16->unk18.x *= 0.99f;
                 var_r16->unk18.y *= 0.99f;
                 var_r16->unk18.z *= 0.99f;
-                var_r16->unk18.y += lbl_802F6640;
+                var_r16->unk18.y += -0.0080000003799796104f;
                 var_r16->unkC.x += var_r16->unk18.x;
                 var_r16->unkC.y += var_r16->unk18.y;
                 var_r16->unkC.z += var_r16->unk18.z;
                 if (sp8.pos.y > var_r16->unkC.y - 0.5f - 0.1f)
                 {
-                    if (var_r16->unk18.y < lbl_802F65E4)
+                    if (var_r16->unk18.y < -0.10000000149011612f)
                         u_play_sound_0(0x69);
                     var_r16->unkC.y = 0.5f + sp8.pos.y - 0.1f;
                     if (var_r16->unk18.y < 0.0f)
-                        var_r16->unk18.y *= lbl_802F65A0;
+                        var_r16->unk18.y *= -0.60000002384185791f;
                     if (var_r16->unk4 != 0xB)
                     {
                         var_r16->unk4 = 0xB;
@@ -2219,7 +2224,7 @@ void func_800BBBA8(void)
                         effect.unk88.x = 0.0f;
                         effect.unk88.y = 1.0f;
                         effect.unk88.z = 0.0f;
-                        effect.colorFactor = lbl_802F6528;
+                        effect.colorFactor = 0.20000000298023224f;
                         spawn_effect(&effect);
                     }
                 }
@@ -2256,7 +2261,7 @@ void func_800BBBA8(void)
                 temp_f0 = 1.0f / modeCtrl.submodeTimer;
                 var_r16->unk18.x = -var_r16->unkC.x * temp_f0;
                 var_r16->unk18.y = 0.0f;
-                var_r16->unk18.z = lbl_802F6644 * temp_f0 * (1.0f + (0.1f * (rand() / 32767.0f)));
+                var_r16->unk18.z = -4.5f * temp_f0 * (1.0f + (0.1f * RAND_FLOAT()));
                 break;
             case 18:
                 var_r16->unkC.x += var_r16->unk18.x;
@@ -2300,8 +2305,8 @@ void func_800BBBA8(void)
                     var_r16->unk3C = decodedBgGma->modelEntries[1].model;
                     var_r16->unk40 = 0xA;
                     var_r16->unk44.x = 0.05f;
-                    var_r16->unk44.y = lbl_802F664C;
-                    var_r16->unk44.z = lbl_802F6650;
+                    var_r16->unk44.y = 0.12999999523162842f;
+                    var_r16->unk44.z = 0.12000000476837158f;
                     var_r16->unk50 = -0x58E3;
                     var_r16->unk52 = -0x1555;
                     var_r16->unk54 = 0x438E;
@@ -2311,7 +2316,7 @@ void func_800BBBA8(void)
                     var_r16->unk40 = 0xF;
                     var_r16->unk44.x = 0.05f;
                     var_r16->unk44.y = 0.0f;
-                    var_r16->unk44.z = lbl_802F6654;
+                    var_r16->unk44.z = -0.094000004231929779f;
                     var_r16->unk50 = 0x20B7;
                     var_r16->unk52 = -0x6BE1;
                     var_r16->unk54 = -0x26E9;
@@ -2323,14 +2328,14 @@ void func_800BBBA8(void)
     }
 }
 
-void func_800BC820(void)
+static void func_800BC820(void)
 {
     int i;
     struct SomeBigEndingStruct_sub3 *var_r28;
 
-    if (lbl_802C6BD8.unk8 == NULL)
+    if (endingInfo.unk8 == NULL)
         return;
-    var_r28 = &lbl_802C6BD8.unk8->unkA804[3];
+    var_r28 = &endingInfo.unk8->unkA804[3];
     for (i = 3; i >= 0; i--, var_r28--)
     {
         if (var_r28->unk0 != NULL)
@@ -2350,9 +2355,9 @@ struct Blah
     u32 filler4;
     Vec unk8;
     float unk14;
-};  // size = 0x18
+};
 
-struct Blah lbl_801E2C44[] =
+static struct Blah lbl_801E2C44[] =
 {
     {  0, 35, 37, 38, 0, { 0.0f, 0.0f, 0.0f }, 0.32000002f },
     {  7, 35, 37, 38, 0, { 0.0f, 0.0f, 0.0f }, 0.16000001f },
@@ -2371,7 +2376,7 @@ struct Blah lbl_801E2C44[] =
     { -1,  0,  0,  0, 0, { 0.0f, 0.0f, 0.0f }, 0.0f },
 };
 
-struct Blah lbl_801E2DAC[] =
+static struct Blah lbl_801E2DAC[] =
 {
     {  0, 24, 25, 25, 0, { 0.0f, 0.0f, 0.0f  }, 0.320000023f },
     {  7, 32, 34, 35, 0, { 0.0f, 0.0f, 0.0f  }, 0.160000011f },
@@ -2390,7 +2395,7 @@ struct Blah lbl_801E2DAC[] =
     { -1,  0,  0,  0, 0, { 0.0f, 0.0f, 0.0f  }, 0.000000000f },
 };
 
-struct Blah lbl_801E2F14[] =
+static struct Blah lbl_801E2F14[] =
 {
     {  0, 32, 27, 25, 0, { 0.0000f, 0.0000f, 0.0f }, 0.320000023f },
     {  7, 22, 24, 25, 0, { 0.0000f, 0.0000f, 0.0f }, 0.160000011f },
@@ -2409,7 +2414,7 @@ struct Blah lbl_801E2F14[] =
     { -1,  0,  0,  0, 0, { 0.0000f, 0.0000f, 0.0f }, 0.000000000f },
 };
 
-struct Blah lbl_801E307C[] =
+static struct Blah lbl_801E307C[] =
 {
     {  0, 33, 37, 38, 0, { 0.0000f, 0.0000f, 0.0000f }, 0.480000019f },
     {  7, 37, 40, 41, 0, { 0.0000f, 0.0000f, 0.0000f }, 0.240000010f },
@@ -2428,8 +2433,7 @@ struct Blah lbl_801E307C[] =
     { -1,  0,  0,  0, 0, { 0.0000f, 0.0000f, 0.0000f }, 0.000000000f },
 };
 
-
-struct Blah *lbl_801E31E4[4] =
+static struct Blah *lbl_801E31E4[4] =
 {
     lbl_801E2C44,
     lbl_801E2DAC,
@@ -2443,12 +2447,11 @@ struct MyDrawNode
     struct SomeBigEndingStruct_sub3 *unk8;
 };
 
-void lbl_800BCD30(struct MyDrawNode *);
+static void lbl_800BCD30(struct MyDrawNode *);
 
-void func_800BC8B8(void)
+static void func_800BC8B8(void)
 {
     Vec *new_var;
-    //u8 unused[8];
     f32 temp_f21 ;
     f32 temp_f0;
     f32 temp_f4;
@@ -2469,7 +2472,7 @@ void func_800BC8B8(void)
     mathutil_mtxA_rotate_x(s_bgLightInfo.infLightRotX);
     mathutil_mtxA_tf_vec_xyz(&sp2C, 0.0f, 0.0f, -1.0f);
 
-    var_r27 = lbl_802C6BD8.unk8->unkA804;
+    var_r27 = endingInfo.unk8->unkA804;
     for (var_r28 = 4; var_r28 > 0; var_r28--, var_r27++)
     {
         temp_f0 = temp_f21 + -1.0f;  // needed to match
@@ -2570,9 +2573,7 @@ void func_800BC8B8(void)
     }
 }
 
-#define lbl_802F652C 0.10000000149011612f
-
-void lbl_800BCD30(struct MyDrawNode *node)
+static void lbl_800BCD30(struct MyDrawNode *node)
 {
     struct SomeBigEndingStruct_sub3 *r30 = node->unk8;
     s16 *r29 = coloredBallPartModelIDs[r30->unk56];
@@ -2580,7 +2581,7 @@ void lbl_800BCD30(struct MyDrawNode *node)
 
     mathutil_mtxA_from_mtxB();
     load_light_group_uncached(0);
-    mathutil_mtxA_translate_xyz(r30->unkC.x, r30->unkC.y + lbl_802F652C, r30->unkC.z);
+    mathutil_mtxA_translate_xyz(r30->unkC.x, r30->unkC.y + 0.1f, r30->unkC.z);
     mathutil_mtxA_rotate_y(r30->unk5A);
     mathutil_mtxA_rotate_x(r30->unk58);
     mathutil_mtxA_rotate_z(r30->unk5C);
@@ -2595,22 +2596,20 @@ void lbl_800BCD30(struct MyDrawNode *node)
     avdisp_set_z_mode(1, 3, 1);
 }
 
-void lbl_800BCF6C(struct Ape *, int);
-
-int func_800BCE54(int arg0, int arg1)
+static int func_800BCE54(int arg0, int charaId)
 {
     struct SomeBigEndingStruct_sub3 *temp_r31;
     struct Ape *ape;
 
-    temp_r31 = &lbl_802C6BD8.unk8->unkA804[arg0];
+    temp_r31 = &endingInfo.unk8->unkA804[arg0];
     if (temp_r31->unk0 != NULL)
     {
         func_8008D29C(lbl_80206B80[arg0]);
         temp_r31->unk0 = NULL;
     }
-    if (arg1 >= 0)
+    if (charaId >= 0)
     {
-        temp_r31->unk0 = (void *)func_800380A8(arg0, arg1, &lbl_800BCF6C);
+        temp_r31->unk0 = (void *)func_800380A8(arg0, charaId, &lbl_800BCF6C);
         ape = temp_r31->unk0;
         if (ape == NULL)
             return 0;
@@ -2625,7 +2624,7 @@ int func_800BCE54(int arg0, int arg1)
     return 1;
 }
 
-void lbl_800BCF6C(struct Ape *arg0, int arg1)
+static void lbl_800BCF6C(struct Ape *arg0, int arg1)
 {
     int var_r4;
     struct SomeBigEndingStruct_sub3 *var_r30;
@@ -2643,7 +2642,7 @@ void lbl_800BCF6C(struct Ape *arg0, int arg1)
     if (gamePauseStatus & 0xA)
         return;
 
-    var_r30 = &lbl_802C6BD8.unk8->unkA804[0];
+    var_r30 = &endingInfo.unk8->unkA804[0];
     for (var_r4 = 4; var_r4 > 0; var_r4--, var_r30++)
     {
         if (var_r30->unk0 == arg0)
@@ -2724,11 +2723,11 @@ void lbl_800BCF6C(struct Ape *arg0, int arg1)
     }
 
     if (var_r30->unk8 < 0x12)
-        u_set_ape_anim(arg0, 7, var_r30->unk8, 0, lbl_802F64D0);
+        u_set_ape_anim(arg0, 7, var_r30->unk8, 0, 0.0f);
     else
     {
         int temp_r5_3 = var_r30->unk8 - 0x12;
-        u_set_ape_anim(arg0, 1, temp_r5_3, temp_r5_3 + 1, lbl_802F64D0);
+        u_set_ape_anim(arg0, 1, temp_r5_3, temp_r5_3 + 1, 0.0f);
     }
     u_do_ape_anim(arg0);
     switch (var_r30->unk70)
@@ -2756,7 +2755,7 @@ void lbl_800BCF6C(struct Ape *arg0, int arg1)
         switch (arg0->unk9C)
         {
         case 0xE:
-            if (lbl_802C6BD8.unk4 & 0x10)
+            if (endingInfo.unk4 & 0x10)
             {
                 if (arg0->unk0->unk38 == 0x16)
                     SoundReq(0xB3U);
@@ -2770,7 +2769,7 @@ void lbl_800BCF6C(struct Ape *arg0, int arg1)
         switch (arg0->unk9C)
         {
         case 15:
-            if (lbl_802C6BD8.unk4 & 0x10)
+            if (endingInfo.unk4 & 0x10)
             {
                 if (arg0->unk0->unk38 == 0xC)
                     SoundReq(0x105U);
@@ -2781,7 +2780,7 @@ void lbl_800BCF6C(struct Ape *arg0, int arg1)
             }
             break;
         case 14:
-            if ((lbl_802C6BD8.unk4 & 0x10) && arg0->unk0->unk38 == 0x12)
+            if ((endingInfo.unk4 & 0x10) && arg0->unk0->unk38 == 0x12)
                 SoundReq(0xFCU);
             break;
         }
@@ -2790,7 +2789,7 @@ void lbl_800BCF6C(struct Ape *arg0, int arg1)
         switch (arg0->unk9C)
         {
         case 0xE:
-            if ((lbl_802C6BD8.unk4 & 0x10) && arg0->unk0->unk38 == 0x24)
+            if ((endingInfo.unk4 & 0x10) && arg0->unk0->unk38 == 0x24)
                 SoundReq(0x16BU);
             break;
         }
@@ -2798,75 +2797,36 @@ void lbl_800BCF6C(struct Ape *arg0, int arg1)
     }
 }
 
-void func_800BD470(void)
+static void func_800BD470(void)
 {
     int i;
     struct SomeBigEndingStruct_sub4 *ptr;
 
-    ptr = lbl_802C6BD8.unk8->unk4;
+    ptr = endingInfo.unk8->unk4;
     for (i = 0; i < 512; i++, ptr++)
         ptr->unk0 = 0;
 }
 
-#define lbl_802F66C8  0.96875f
-#define lbl_802F66D0  256.0
-#define lbl_802F6598  -0.40000000596046448f
-#define lbl_802F658C 2.f
-#define lbl_802F66D8 16384.f
-#define lbl_802F6574 3.f
-#define lbl_802F669C 0.15015999972820282f
-#define lbl_802F66A0 20.069999694824219f
-#define lbl_802F6694 256.f
-#define lbl_802F6698 16.f
-#define lbl_802F6530 1.5f
-#define lbl_802F6508 0.40000000596046448f
-#define lbl_802F65E0 -0.5f
-#define lbl_802F6534 0.30000001192092896f
-#define lbl_802F6614 -60.f
-#define lbl_802F6618 0.92000001668930054f
-#define lbl_802F6670 1024.f
-#define lbl_802F6674 0.0010000000474974513f
-#define lbl_802F6678 2048.f
-#define lbl_802F667C 60.f
-#define lbl_802F65BC 0.25f
-#define lbl_802F6580 4.f
-#define lbl_802F6588 5.f
-#define lbl_802F65A0 -0.60000002384185791f
-#define lbl_802F65A4 -0.30000001192092896f
-#define lbl_802F65A8 14.800000190734863f
-#define lbl_802F65AC 2.5f
-#define lbl_802F6690 3.2000000476837158f
-#define lbl_802F66C0 0.69999998807907104
-#define lbl_802F66B8 0.30000001192092896
-#define lbl_802F668C -0.125f
-#define lbl_802F65DC 0.15000000596046448f
-#define lbl_802F66A8 0.070000000298023224f
-#define lbl_802F66AC 0.984375f
-#define lbl_802F6514 -1.f
-#define lbl_802F6524 0.89999997615814209f
-#define lbl_802F653C 0.60000002384185791f
-
-void func_800BD4B8(void)
+static void func_800BD4B8(void)
 {
-    Point3d spFC;
-    Point3d spF0;
-    Point3d spE4;
+    Vec spFC;
+    Vec spF0;
+    Vec spE4;
     struct Effect sp38;
-    f32 temp_f0_5;
-    f32 temp_f1;
-    f32 temp_f27;
-    f32 temp_f26;
+    float temp_f0_5;
+    float temp_f1;
+    float temp_f27;
+    float temp_f26;
     float alt_f26;
     float alt_f27;
-
-    s32 var_r30;
+    int var_r30;
     struct SomeBigEndingStruct_sub4 *var_r29;
     struct Camera *temp_r28;
     struct SomeBigEndingStruct_sub4_sub2 *temp_r27;
     struct
     {
-         s16 unk0;
-         u8 filler2[6];
+        s16 unk0;
+        u8 filler2[6];
         Vec sp10;
         u8 filler1C[4];
         Vec sp20;
@@ -2879,44 +2839,7 @@ void func_800BD4B8(void)
     mathutil_mtxA_rigid_inv_tf_vec_xyz(&spF0, 0.0f, 0.0f, -1.0f);
     mathutil_mtxA_rigid_inv_tf_tl(&spE4);
 
-    var_r29 = lbl_802C6BD8.unk8->unk4;
-
-    #define sp200 lbl_802F66D8
-    #define sp1F0 lbl_802F66C8
-    #define sp1F8 lbl_802F66D0
-    #define sp1D8 lbl_802F6598
-    #define sp1C0 lbl_802F658C
-    #define sp1C8 lbl_802F6574
-    #define sp1D0 lbl_802F6530
-    #define sp1A0 lbl_802F669C
-    #define sp1A8 lbl_802F66A0
-    #define sp178 lbl_802F6508
-    #define sp180 lbl_802F6694
-    #define sp188 lbl_802F6698
-    #define sp190 lbl_802F6614
-    #define sp198 lbl_802F6618
-    #define sp168 lbl_802F668C
-    #define sp158 lbl_802F6568
-    #define sp160 lbl_802F65E0
-    #define sp128 lbl_802F6634
-    #define sp130 lbl_802F667C
-    #define sp138 lbl_802F6528
-    #define sp140 lbl_802F6534
-    #define sp148 lbl_802F6588
-    #define sp118 lbl_802F6674
-    #define sp120 lbl_802F6580
-    #define sp108 lbl_802F65BC
-    #define sp110 lbl_802F6670
-    #define sp150 lbl_802F65DC
-    #define sp170 lbl_802F6690
-    #define sp1B0 lbl_802F66A8
-    #define sp1B8 lbl_802F66AC
-    #define sp1E0 lbl_802F66B8
-    #define sp1E8 lbl_802F66C0
-    #define sp208 lbl_802F6514
-    #define sp210 lbl_802F6524
-    #define sp218 lbl_802F653C
-
+    var_r29 = endingInfo.unk8->unk4;
     for (var_r30 = 512; var_r30 > 0; var_r30--, var_r29++)
     {
         if (var_r29->unk0 != 0)
@@ -2927,18 +2850,18 @@ void func_800BD4B8(void)
             case 2:
                 alt_f26 = var_r29->unkC.y;
                 mathutil_mtxA_from_rotate_y((unpausedFrameCounter << 0xA) + var_r30);
-                alt_f27 = sp108 * alt_f26 * lbl_802C6BD8.unk8->unk0;
+                alt_f27 = 0.25f * alt_f26 * endingInfo.unk8->unk0;
                 mathutil_mtxA_tf_vec_xyz(&spFC, alt_f27, 0.0f, 0.0f);
                 mathutil_mtxA_from_translate(&spFC);
-                alt_f27 = sp110 * alt_f26 * lbl_802C6BD8.unk8->unk0;
-                mathutil_mtxA_rotate_x((s32) (alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30)));
-                mathutil_mtxA_rotate_z((s32) (alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30 + 0x4000)));
+                alt_f27 = 1024.f * alt_f26 * endingInfo.unk8->unk0;
+                mathutil_mtxA_rotate_x(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30));
+                mathutil_mtxA_rotate_z(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30 + 0x4000));
                 mathutil_mtxA_tf_point(&var_r29->unk4C->unk4, &spFC);
                 if (spFC.y < var_r29->unk4C->unk4.y)
                     spFC.y = var_r29->unk4C->unk4.y;
-                var_r29->unk18.x = (f32) (0.1f * (spFC.x - var_r29->unkC.x));
-                var_r29->unk18.y = (f32) (0.1f * (spFC.y - var_r29->unkC.y));
-                var_r29->unk18.z = (f32) (0.05f * (spFC.z - var_r29->unkC.z));
+                var_r29->unk18.x = 0.1f * (spFC.x - var_r29->unkC.x);
+                var_r29->unk18.y = 0.1f * (spFC.y - var_r29->unkC.y);
+                var_r29->unk18.z = 0.05f * (spFC.z - var_r29->unkC.z);
                 var_r29->unk36 = 0;
                 var_r29->unk38 = 0;
                 var_r29->unk3A = 0;
@@ -2948,29 +2871,26 @@ void func_800BD4B8(void)
                     if (var_r29->unk4 == 0)
                     {
                         var_r29->unk2 = 3;
-                        var_r29->unk8 = (s32) (var_r29->unk8 & 0xFFFFFFFC);
-                        var_r29->unk8 = (s32) (var_r29->unk8 | 0x34);
+                        var_r29->unk8 &= 0xFFFFFFFC;
+                        var_r29->unk8 |= 0x34;
                         if (var_r30 & 1)
-                        {
                             var_r29->unk8 |= 8;
-                        }
-                        mathutil_vec_set_len(&var_r29->unkC, &spFC, (f32) (f64) sp118 + (0.05f * ((f32) rand() / 32767.0f)));
+                        mathutil_vec_set_len(&var_r29->unkC, &spFC, 0.001f + (0.05f * RAND_FLOAT()));
                         var_r29->unk18.x += spFC.x;
-                        var_r29->unk18.y += 0.05f + ((f32) (f64) sp120 * spFC.y);
+                        var_r29->unk18.y += 0.05f + (4.0f * spFC.y);
                         var_r29->unk18.z += spFC.z;
-                        var_r29->unk36 += (2048.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                        var_r29->unk38 += (2048.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                        var_r29->unk3A += (2048.0f * (((f32) rand() / 32767.0f) - 0.5f));
+                        var_r29->unk36 += 2048.0f * (RAND_FLOAT() - 0.5f);
+                        var_r29->unk38 += 2048.0f * (RAND_FLOAT() - 0.5f);
+                        var_r29->unk3A += 2048.0f * (RAND_FLOAT() - 0.5f);
                     }
                 }
-
                 break;
             case 4:
                 var_r29->unk2 = 5;
                 mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
                 mathutil_mtxA_rotate_x(rand() & 0x7FFF);
-                mathutil_mtxA_tf_vec_xyz(&spFC, 0.0f, 0.0f, (f32) (f64) sp128 * ((f32) rand() / 32767.0f));
-                spFC.y += sp130;
+                mathutil_mtxA_tf_vec_xyz(&spFC, 0.0f, 0.0f, 30.0f * RAND_FLOAT());
+                spFC.y += 60.f;
                 temp_f1 = mathutil_vec_dot_prod(&spFC, &spF0);
                 if (temp_f1 < 0.0f)
                 {
@@ -2978,42 +2898,40 @@ void func_800BD4B8(void)
                     spFC.y -= temp_f1 * spF0.y;
                     spFC.z -= temp_f1 * spF0.z;
                     if (mathutil_vec_len(&spFC) > 80.0f)
-                    {
-                        mathutil_vec_set_len(&spFC, &spFC, 80.0f * ((f32) rand() / 32767.0f));
-                    }
+                        mathutil_vec_set_len(&spFC, &spFC, 80.0f * RAND_FLOAT());
                 }
-                var_r29->unkC.x = (f32) (spE4.x + spFC.x);
-                var_r29->unkC.y = (f32) (spE4.y + spFC.y);
-                var_r29->unkC.z = (f32) (spE4.z + spFC.z);
-                var_r29->unk18.x = (f32) ((f32) (f64) sp138 * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk18.y = (f32) ((f32) (f64) sp158 * ((f32) rand() / 32767.0f));
-                var_r29->unk18.z = (f32) ((f32) (f64) sp138 * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk30.x = (s16) (rand() & 0x7FFF);
-                var_r29->unk30.y = (s16) (rand() & 0x7FFF);
-                var_r29->unk30.z = (s16) (rand() & 0x7FFF);
-                var_r29->unk36 = (s16) (2048.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk38 = (s16) (2048.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk3A = (s16) (2048.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk24.x = (f32) ((f32) (f64) sp140 * (1.0f + ((f32) rand() / 32767.0f)));
-                var_r29->unk24.y = (f32) var_r29->unk24.x;
-                var_r29->unk24.z = (f32) var_r29->unk24.x;
+                var_r29->unkC.x = spE4.x + spFC.x;
+                var_r29->unkC.y = spE4.y + spFC.y;
+                var_r29->unkC.z = spE4.z + spFC.z;
+                var_r29->unk18.x = 0.2f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk18.y = -0.2f * RAND_FLOAT();
+                var_r29->unk18.z = 0.2f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk30.x = rand() & 0x7FFF;
+                var_r29->unk30.y = rand() & 0x7FFF;
+                var_r29->unk30.z = rand() & 0x7FFF;
+                var_r29->unk36 = 2048.0f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk38 = 2048.0f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk3A = 2048.0f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk24.x = 0.3f * (1.0f + RAND_FLOAT());
+                var_r29->unk24.y = var_r29->unk24.x;
+                var_r29->unk24.z = var_r29->unk24.x;
                 var_r29->unk48 = 0.0f;
-                /* fallthrough */
+                /* fall through */
             case 5:
                 mathutil_mtxA_from_mtx(temp_r28->unk144);
                 mathutil_mtxA_tf_point(&var_r29->unkC, &spFC);
-                if (spFC.z > sp148)
+                if (spFC.z > 5.f)
                 {
                     var_r29->unk2 = 4;
                     var_r29->unk48 = 0.0f;
                 }
                 else if (mathutil_vec_len(&spFC) < 80.0f)
                 {
-                    var_r29->unk48 += (0.1f * (1.1f - var_r29->unk48));
+                    var_r29->unk48 += 0.1f * (1.1f - var_r29->unk48);
                 }
                 else
                 {
-                    var_r29->unk48 += ((f32) (f64) sp150 * (-0.1f - var_r29->unk48));
+                    var_r29->unk48 += 0.15f * (-0.1f - var_r29->unk48);
                     if (var_r29->unk48 < 0.0f)
                     {
                         var_r29->unk2 = 4;
@@ -3025,24 +2943,23 @@ void func_800BD4B8(void)
                 var_r29->unk2 = 7;
                 var_r29->unk8 |= 3;
                 var_r29->unk48 = 0.0f;
-                var_r29->unk24.x = (f32) ((f32) (f64) sp1C0 * (1.0f + (0.5f * ((f32) rand() / 32767.0f))));
-                var_r29->unk24.y = (f32) var_r29->unk24.x;
-                var_r29->unk24.z = (f32) var_r29->unk24.x;
-                var_r29->unk30.x = (s16) (rand() & 0x7FFF);
-                var_r29->unk30.y = (s16) (rand() & 0x7FFF);
-                var_r29->unk30.z = (s16) (rand() & 0x7FFF);
-                var_r29->unk36 += (4096.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk38 += (4096.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk3A += (4096.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                alt_f27 = (f32) var_r29->unk4;
+                var_r29->unk24.x = 2.0f * (1.0f + (0.5f * RAND_FLOAT()));
+                var_r29->unk24.y = var_r29->unk24.x;
+                var_r29->unk24.z = var_r29->unk24.x;
+                var_r29->unk30.x = rand() & 0x7FFF;
+                var_r29->unk30.y = rand() & 0x7FFF;
+                var_r29->unk30.z = rand() & 0x7FFF;
+                var_r29->unk36 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
+                alt_f27 = var_r29->unk4;
                 var_r29->unk18.x = 0.0f;
-                var_r29->unk18.y = (f32) ((f32) (f64) sp158 * ((f32) rand() / 32767.0f));
+                var_r29->unk18.y = -0.2f * RAND_FLOAT();
                 var_r29->unk18.z = 0.0f;
-                var_r29->unk3C = (f32) (((f32) rand() / 32767.0f) - 0.5f);
-                var_r29->unk40 = (f32) ((f32) (f64) sp160 * (alt_f27 * (((f32) (f64) sp1C0 * var_r29->unk18.y) + (-0.008f * alt_f27))));
-                var_r29->unk44 = (f32) (((f32) rand() / 32767.0f) - 0.5f);
-
-                /* fallthrough */
+                var_r29->unk3C = RAND_FLOAT() - 0.5f;
+                var_r29->unk40 = -0.5f * (alt_f27 * ((2.0f * var_r29->unk18.y) + (-0.008f * alt_f27)));
+                var_r29->unk44 = RAND_FLOAT() - 0.5f;
+                /* fall through */
             case 7:
                 var_r29->unk36 = 0.99f * var_r29->unk36;
                 var_r29->unk38 = 0.99f * var_r29->unk38;
@@ -3060,52 +2977,52 @@ void func_800BD4B8(void)
                     func_8001898C(modeCtrl.currPlayer, 0xF, &spFC);
                     var_r29->unk40 = 0.0f;
                     if (var_r29->unk18.y < 0.0f)
-                        var_r29->unk18.y *= sp168;
-                    var_r29->unk36 += (4096.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                    var_r29->unk38 += (4096.0f * (((f32) rand() / 32767.0f) - 0.5f));
-                    var_r29->unk3A += (4096.0f * (((f32) rand() / 32767.0f) - 0.5f));
+                        var_r29->unk18.y *= -0.125f;
+                    var_r29->unk36 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                    var_r29->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
+                    var_r29->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
                 }
-                var_r29->unkC.x = (f32) (temp_r28->eye.x + var_r29->unk3C);
-                var_r29->unkC.y = (f32) (var_r29->unk40 + (temp_r28->eye.y + ((f32) (f64) sp170 * var_r29->unk24.x)));
-                var_r29->unkC.z = (f32) (temp_r28->eye.z + var_r29->unk44);
-                var_r29->unk48 += (0.1f * (1.1f - var_r29->unk48));
+                var_r29->unkC.x = temp_r28->eye.x + var_r29->unk3C;
+                var_r29->unkC.y = var_r29->unk40 + (temp_r28->eye.y + (3.2000000476837158f * var_r29->unk24.x));
+                var_r29->unkC.z = temp_r28->eye.z + var_r29->unk44;
+                var_r29->unk48 += 0.1f * (1.1f - var_r29->unk48);
                 break;
             case 8:
                 var_r29->unk2 = 9;
                 var_r29->unk8 = 0x43;
                 var_r29->unk48 = 0.0f;
-                var_r29->unk24.x = sp178;
-                var_r29->unk24.y = (f32) var_r29->unk24.x;
-                var_r29->unk24.z = (f32) var_r29->unk24.x;
-                var_r29->unk30.x = (s16) (rand() & 0x7FFF);
-                var_r29->unk30.y = (s16) (rand() & 0x7FFF);
-                var_r29->unk30.z = (s16) (rand() & 0x7FFF);
-                var_r29->unk36 += (sp180 * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk38 += (sp188 * (((f32) rand() / 32767.0f) - 0.5f));
-                var_r29->unk3A += (4096.0f * (0.5f + ((f32) rand() / 32767.0f)));
-                var_r29->unkC = lbl_802C6BD8.unk8->unkAA54.unk2C;
-                /* fallthrough */
+                var_r29->unk24.x = 0.4f;
+                var_r29->unk24.y = var_r29->unk24.x;
+                var_r29->unk24.z = var_r29->unk24.x;
+                var_r29->unk30.x = rand() & 0x7FFF;
+                var_r29->unk30.y = rand() & 0x7FFF;
+                var_r29->unk30.z = rand() & 0x7FFF;
+                var_r29->unk36 += 256.0f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk38 += 16.0f * (RAND_FLOAT() - 0.5f);
+                var_r29->unk3A += 4096.0f * (0.5f + RAND_FLOAT());
+                var_r29->unkC = endingInfo.unk8->unkAA54.unk2C;
+                /* fall through */
             case 9:
                 if (var_r29->unk4 != 0)
                     var_r29->unk4--;
-                lbl_802C6BD8.unk8->unkAA54.unk2C = var_r29->unkC;
+                endingInfo.unk8->unkAA54.unk2C = var_r29->unkC;
                 if (var_r29->unk4 < 0x3C)
                 {
-                    temp_f0_5 = 1.0f / (f32) (var_r29->unk4 + 1);
-                    var_r29->unk18.x = (f32) ((sp1A0 - var_r29->unkC.x) * temp_f0_5);
-                    var_r29->unk18.y = (f32) ((sp1A8 - var_r29->unkC.y) * temp_f0_5);
-                    var_r29->unk18.z = (f32) ((sp190 - var_r29->unkC.z) * temp_f0_5);
+                    temp_f0_5 = 1.0f / (var_r29->unk4 + 1);
+                    var_r29->unk18.x = (0.15016f - var_r29->unkC.x) * temp_f0_5;
+                    var_r29->unk18.y = (20.07f - var_r29->unkC.y) * temp_f0_5;
+                    var_r29->unk18.z = (-60.0f - var_r29->unkC.z) * temp_f0_5;
                     var_r29->unkC.x += var_r29->unk18.x;
                     var_r29->unkC.y += var_r29->unk18.y;
                     var_r29->unkC.z += var_r29->unk18.z;
                     if (var_r29->unk4 == 0)
                     {
-                        var_r29->unk36 = (s16) ((f32) (f64) sp198 * (f32) var_r29->unk36);
-                        var_r29->unk38 = (s16) ((f32) (f64) sp198 * (f32) var_r29->unk38);
-                        var_r29->unk3A = (s16) ((f32) (f64) sp198 * (f32) var_r29->unk3A);
-                        var_r29->unk36 += (-0.1f * (f32) var_r29->unk30.x);
-                        var_r29->unk38 += (-0.1f * (f32) var_r29->unk30.y);
-                        var_r29->unk3A += (-0.1f * (f32) var_r29->unk30.z);
+                        var_r29->unk36 = 0.92f * var_r29->unk36;
+                        var_r29->unk38 = 0.92f * var_r29->unk38;
+                        var_r29->unk3A = 0.92f * var_r29->unk3A;
+                        var_r29->unk36 += -0.1f * var_r29->unk30.x;
+                        var_r29->unk38 += -0.1f * var_r29->unk30.y;
+                        var_r29->unk3A += -0.1f * var_r29->unk30.z;
                     }
                     var_r29->unk30.x += var_r29->unk36;
                     var_r29->unk30.y += var_r29->unk38;
@@ -3113,8 +3030,8 @@ void func_800BD4B8(void)
                 }
                 else
                 {
-                    var_r29->unk18.x = (f32) (0.025f * ((f32) (f64) sp1A0 - var_r29->unkC.x));
-                    var_r29->unk18.y = (f32) (0.025f * ((f32) (f64) sp1A8 - var_r29->unkC.y));
+                    var_r29->unk18.x = 0.025f * (0.15016f - var_r29->unkC.x);
+                    var_r29->unk18.y = 0.025f * (20.07f - var_r29->unkC.y);
                     var_r29->unk18.z = 0.0f;
                     var_r29->unkC.x += var_r29->unk18.x;
                     var_r29->unkC.y += var_r29->unk18.y;
@@ -3132,10 +3049,10 @@ void func_800BD4B8(void)
                 break;
             case 10:
                 {
-                    struct SomeBigEndingStruct *temp = lbl_802C6BD8.unk8;
-                    var_r29->unkC.x = (f32) (sp1A0 + temp->unkA804[0].unkC.x);
-                    var_r29->unkC.y = (f32) (sp1B0 + temp->unkA804[0].unkC.y);
-                    var_r29->unkC.z = (f32) temp->unkA804[0].unkC.z;
+                    struct SomeBigEndingStruct *temp = endingInfo.unk8;
+                    var_r29->unkC.x = 0.15016f + temp->unkA804[0].unkC.x;
+                    var_r29->unkC.y = 0.07f + temp->unkA804[0].unkC.y;
+                    var_r29->unkC.z = temp->unkA804[0].unkC.z;
                     var_r29->unk30 = temp->unkA804[0].unk30;
                 }
                 break;
@@ -3145,9 +3062,9 @@ void func_800BD4B8(void)
                 var_r29->unk18.x *= 0.99f;
                 var_r29->unk18.y *= 0.99f;
                 var_r29->unk18.z *= 0.99f;
-                var_r29->unk36 = (s16) ((f32) (f64) sp1B8 * (f32) var_r29->unk36);
-                var_r29->unk38 = (s16) ((f32) (f64) sp1B8 * (f32) var_r29->unk38);
-                var_r29->unk3A = (s16) ((f32) (f64) sp1B8 * (f32) var_r29->unk3A);
+                var_r29->unk36 = 0.984375f * var_r29->unk36;
+                var_r29->unk38 = 0.984375f * var_r29->unk38;
+                var_r29->unk3A = 0.984375f * var_r29->unk3A;
             }
             if (!(var_r29->unk8 & 1))
             {
@@ -3162,7 +3079,7 @@ void func_800BD4B8(void)
             if (var_r29->unk8 & 0x20)
             {
                 temp_f26 = temp_r27->unk14 * var_r29->unk24.x;
-                temp_f27 = sp1C0 + temp_f26;
+                temp_f27 = 2.0f + temp_f26;
                 if (mathutil_vec_sq_len(&var_r29->unkC) < temp_f27 * temp_f27)
                 {
                     mathutil_vec_set_len(&var_r29->unkC, &spFC, temp_f27);
@@ -3179,8 +3096,8 @@ void func_800BD4B8(void)
 
                 spFC.x = var_r29->unkC.x;
                 spFC.y = var_r29->unkC.y - 1.0f;
-                spFC.z = var_r29->unkC.z - sp1C8;
-                temp_f27 = sp1D0 + temp_f26;
+                spFC.z = var_r29->unkC.z - 3.0f;
+                temp_f27 = 1.5f + temp_f26;
                 if (mathutil_vec_sq_len(&spFC) < temp_f27 * temp_f27)
                 {
                     mathutil_vec_set_len(&spFC, &spFC, temp_f27);
@@ -3193,7 +3110,7 @@ void func_800BD4B8(void)
                 }
                 temp_f27 = 1.0f + temp_f26;
                 {
-                    struct SomeBigEndingStruct *temp = lbl_802C6BD8.unk8;
+                    struct SomeBigEndingStruct *temp = endingInfo.unk8;
                     spFC.x = var_r29->unkC.x - temp->unkA804[3].unkC.x;
                     spFC.y = var_r29->unkC.y - temp->unkA804[3].unkC.y;
                     spFC.z = var_r29->unkC.z - temp->unkA804[3].unkC.z;
@@ -3214,7 +3131,7 @@ void func_800BD4B8(void)
                 float f;
                 float g = temp_r27->unk14;
                 sp8.sp20.x = 0.0f;
-                sp8.sp20.y = sp1D8;
+                sp8.sp20.y = -0.4f;
                 sp8.sp20.z = 0.0f;
                 sp8.sp2C.x = 0.0f;
                 sp8.sp10.x = 0.0f;
@@ -3223,41 +3140,41 @@ void func_800BD4B8(void)
                 sp8.sp2C.z = 0.0f;
                 sp8.sp10.z = 0.0f;
                 mathutil_mtxA_from_rotate_y(var_r29->unk30.y);
-                mathutil_mtxA_rotate_x((s32) var_r29->unk30.x);
-                mathutil_mtxA_rotate_z((s32) var_r29->unk30.z);
+                mathutil_mtxA_rotate_x(var_r29->unk30.x);
+                mathutil_mtxA_rotate_z(var_r29->unk30.z);
                 mathutil_mtxA_tf_vec_xyz(&spFC, 0.70710677f, 0.70710677f, 0.0f);
-                f = g * var_r29->unk24.x * (0.30000001192092896 + 0.69999998807907104 * __fabs(spFC.y));
+                f = g * var_r29->unk24.x * (0.30000001192092896 + 0.69999998807907104 * fabs(spFC.y));
                 if (var_r29->unkC.y < sp8.sp20.y + f)
                 {
                     var_r29->unkC.y = sp8.sp20.y + f;
                     temp_f26 = mathutil_vec_dot_prod(&sp8.sp2C, &var_r29->unk18);
                     if (temp_f26 < 0.0f)
                     {
-                        var_r29->unk36 = var_r29->unk36 * sp1F0;
-                        var_r29->unk38 = var_r29->unk38 * sp1F0;
-                        var_r29->unk3A = var_r29->unk3A * sp1F0;
+                        var_r29->unk36 = var_r29->unk36 * 0.96875f;
+                        var_r29->unk38 = var_r29->unk38 * 0.96875f;
+                        var_r29->unk3A = var_r29->unk3A * 0.96875f;
                         mathutil_mtxA_rigid_inv_tf_vec(&sp8.sp2C, &spFC);
-                        sp8.unk0 = (256.0 + (256.0 * __fabs(temp_f26))) * mathutil_sin((((s16) (((var_r30 * 0x800) & ((int) 0x1FFF)) - 0xFFF)) + mathutil_atan2(-spFC.z, spFC.y)) + 0x4000);
-                        var_r29->unk36 = (s16) (var_r29->unk36 + sp8.unk0);
+                        sp8.unk0 = (256.0 + (256.0 * fabs(temp_f26))) * mathutil_cos(((s16)(((var_r30 * 0x800) & 0x1FFF) - 0xFFF) + mathutil_atan2(-spFC.z, spFC.y)));
+                        var_r29->unk36 += sp8.unk0;
                         if (temp_f26 < -0.1f)
                         {
-                            temp_f27 = sp200 * (0.1f + temp_f26);
-                            var_r29->unk36 = (s16) ((f32) var_r29->unk36 + (temp_f27 * (((f32) rand() / 32767.0f) - 0.5f)));
-                            var_r29->unk38 = (s16) ((f32) var_r29->unk38 + (temp_f27 * (((f32) rand() / 32767.0f) - 0.5f)));
-                            var_r29->unk3A = (s16) ((f32) var_r29->unk3A + (temp_f27 * (((f32) rand() / 32767.0f) - 0.5f)));
+                            temp_f27 = 16384.0f * (0.1f + temp_f26);
+                            var_r29->unk36 += temp_f27 * (RAND_FLOAT() - 0.5f);
+                            var_r29->unk38 += temp_f27 * (RAND_FLOAT() - 0.5f);
+                            var_r29->unk3A += temp_f27 * (RAND_FLOAT() - 0.5f);
                         }
                         spFC = var_r29->unk18;
-                        temp_f26 *= sp208;
+                        temp_f26 *= -1.0f;
                         spFC.x += temp_f26 * sp8.sp2C.x;
                         spFC.y += temp_f26 * sp8.sp2C.y;
                         spFC.z += temp_f26 * sp8.sp2C.z;
-                        spFC.x *= sp210;
-                        spFC.y *= sp210;
-                        spFC.z *= sp210;
-                        temp_f26 *= sp218;
-                        spFC.x += (temp_f26 * sp8.sp2C.x);
-                        spFC.y += (temp_f26 * sp8.sp2C.y);
-                        spFC.z += (temp_f26 * sp8.sp2C.z);
+                        spFC.x *= 0.9f;
+                        spFC.y *= 0.9f;
+                        spFC.z *= 0.9f;
+                        temp_f26 *= 0.6f;
+                        spFC.x += temp_f26 * sp8.sp2C.x;
+                        spFC.y += temp_f26 * sp8.sp2C.y;
+                        spFC.z += temp_f26 * sp8.sp2C.z;
                         var_r29->unk18 = spFC;
                     }
                 }
@@ -3266,7 +3183,7 @@ void func_800BD4B8(void)
     }
 }
 
-void func_800BEEE8(void)
+static void func_800BEEE8(void)
 {
     float unused_f31;
     float unused_f30;
@@ -3280,7 +3197,7 @@ void func_800BEEE8(void)
     unused_f30 = 0.5f;
     unused_f31 = 0.25f;
 
-    var_r29 = lbl_802C6BD8.unk8->unk4;
+    var_r29 = endingInfo.unk8->unk4;
     for (i = 512; i > 0; i--, var_r29++)
     {
         if (var_r29->unk0 != 0 && (var_r29->unk8 & 8))
@@ -3346,9 +3263,9 @@ void func_800BEEE8(void)
     }
 }
 
-void func_800BF2D0(void) {}
+static void func_800BF2D0(void) {}
 
-void func_800BF2D4(void)
+static void func_800BF2D4(void)
 {
     Vec sp14;
     Point3d sp8;
@@ -3360,7 +3277,7 @@ void func_800BF2D4(void)
     struct SomeBigEndingStruct_sub4 *var_r30;
     struct SomeBigEndingStruct_sub4_sub2 *model;
 
-    var_r30 = lbl_802C6BD8.unk8->unk4;
+    var_r30 = endingInfo.unk8->unk4;
     for (i = 512; i > 0; i--, var_r30++)
     {
         if (var_r30->unk0 != 0)
@@ -3422,7 +3339,7 @@ void func_800BF2D4(void)
     }
 }
 
-void func_800BF4F4(void)
+static void func_800BF4F4(void)
 {
     int var_r0;
     int i;
@@ -3430,10 +3347,10 @@ void func_800BF4F4(void)
     struct Stage_Child90 *var_r29;
     struct SomeBigEndingStruct_sub4 *var_r28;
 
-    lbl_802C6BD8.unk4 |= 1;
+    endingInfo.unk4 |= 1;
     var_r29 = decodedStageLzPtr->unk90;
     j = decodedStageLzPtr->unk8C;
-    var_r28 = lbl_802C6BD8.unk8->unk4;
+    var_r28 = endingInfo.unk8->unk4;
 
     for (i = 512; i > 0 && j > 0; i--, var_r28++)
     {
@@ -3467,12 +3384,12 @@ void func_800BF4F4(void)
     }
 }
 
-void func_800BF658(void)
+static void func_800BF658(void)
 {
     int i;
     struct SomeBigEndingStruct_sub4 *ptr;
 
-    ptr = lbl_802C6BD8.unk8->unk4;
+    ptr = endingInfo.unk8->unk4;
     for (i = 512; i > 0; i--, ptr++)
     {
         if (ptr->unk0 != 0 && ptr->unk2 == 1)
@@ -3485,7 +3402,7 @@ void func_800BF658(void)
     }
 }
 
-void func_800BF774(void)
+static void func_800BF774(void)
 {
     Vec sp8;
     float temp_f25;
@@ -3495,24 +3412,24 @@ void func_800BF774(void)
     mathutil_mtxA_from_rotate_y((rand() & 0x3FF) - 0x200);
     mathutil_mtxA_rotate_z((rand() & 0x7FFF) - 0x4000);
     mathutil_mtxA_tf_vec_xyz(&sp8, 0.0f, -1.0f, 0.0f);
-    var_r29 = lbl_802C6BD8.unk8->unk4;
+    var_r29 = endingInfo.unk8->unk4;
     for (i = 512; i > 0; i--, var_r29++)
     {
         if (var_r29->unk0 != 0 && var_r29->unk2 == 2 && var_r29->unk4 <= 0)
         {
             temp_f25 = 1.0f + mathutil_vec_dot_normalized_safe(&var_r29->unkC, &sp8);
-            var_r29->unk4 = 1.0f + (60.0f * temp_f25 * (0.9f + (0.2f * (rand() / 32767.0f))));
+            var_r29->unk4 = 1.0f + (60.0f * temp_f25 * (0.9f + (0.2f * RAND_FLOAT())));
         }
     }
 }
 
-void func_800BF8C4(int arg0)
+static void func_800BF8C4(int arg0)
 {
     int var_r0;
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = lbl_802C6BD8.unk8->unk4;
+    var_r6 = endingInfo.unk8->unk4;
     for (i = 512; i > 0 && arg0 > 0; i--, var_r6++)
     {
         if (var_r6->unk0 == 0)
@@ -3530,13 +3447,13 @@ void func_800BF8C4(int arg0)
     }
 }
 
-void func_800BF948(int arg0, int arg1)
+static void func_800BF948(int arg0, int arg1)
 {
     int var_r0;
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = lbl_802C6BD8.unk8->unk4;
+    var_r6 = endingInfo.unk8->unk4;
     for (i = 512; i > 0 && arg0 > 0; i--, var_r6++)
     {
         if (var_r6->unk0 == 0)
@@ -3554,12 +3471,12 @@ void func_800BF948(int arg0, int arg1)
     }
 }
 
-void func_800BF9CC(int arg0)
+static void func_800BF9CC(int arg0)
 {
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = lbl_802C6BD8.unk8->unk4;
+    var_r6 = endingInfo.unk8->unk4;
     for (i = 512; i > 0; i--, var_r6++)
     {
         if (var_r6->unk0 == 0)
@@ -3574,12 +3491,12 @@ void func_800BF9CC(int arg0)
     }
 }
 
-void func_800BFA2C(void)
+static void func_800BFA2C(void)
 {
     int i;
     struct SomeBigEndingStruct_sub4 *var_r6;
 
-    var_r6 = lbl_802C6BD8.unk8->unk4;
+    var_r6 = endingInfo.unk8->unk4;
     for (i = 512; i > 0; i--, var_r6++)
     {
         if ((var_r6->unk2 == 8 || var_r6->unk2 == 9) && var_r6->unk0 != 0)
@@ -3591,7 +3508,7 @@ void func_800BFA2C(void)
     }
 }
 
-void func_800BFC2C(void)
+static void func_800BFC2C(void)
 {
     GXTexObj texObj;
     GXColor kcolor;
@@ -3604,7 +3521,7 @@ void func_800BFC2C(void)
     struct SomeBigEndingStruct *temp;
     float x1, y1, x2, y2;
 
-    temp = lbl_802C6BD8.unk8;
+    temp = endingInfo.unk8;
     if (temp == NULL)
         return;
     if (temp->unkAAA8 <= 0.0f)
@@ -3614,10 +3531,10 @@ void func_800BFC2C(void)
     if (ape == NULL)
         return;
 
-    GXSetTexCopySrc(0U, 0U, 0x280U, 0x1C0U);
-    GXSetTexCopyDst(0x280U, 0x1C0U, GX_TF_RGB565, 0U);
+    GXSetTexCopySrc(0, 0, 640, 448);
+    GXSetTexCopyDst(640, 448, GX_TF_RGB565, GX_FALSE);
     GXCopyTex(lbl_802F1B40, 0U);
-    GXInitTexObj(&texObj, lbl_802F1B40, 0x280U, 0x1C0U, GX_TF_RGB565, GX_CLAMP, GX_CLAMP, 0U);
+    GXInitTexObj(&texObj, lbl_802F1B40, 640, 448, GX_TF_RGB565, GX_CLAMP, GX_CLAMP, GX_FALSE);
     mathutil_mtxA_from_quat(&ape->unk60);
     mathutil_mtxA_to_mtx(sp14);
     mathutil_mtxA_from_translate(&ape->unk30);
@@ -3635,34 +3552,34 @@ void func_800BFC2C(void)
     temp_r29->unk0->flags &= 0xFFFFFFDF;
     draw_monkey();
     temp_r29->unk0->flags |= 0x20;
-    GXSetNumChans(0U);
-    GXSetNumTexGens(1U);
+    GXSetNumChans(0);
+    GXSetNumTexGens(1);
     GXSetNumTevStages_cached(1);
-    GXLoadTexObj_cached(&texObj, 0);
+    GXLoadTexObj_cached(&texObj, GX_TEXMAP0);
     kcolor.r = 255;
     kcolor.g = 255;
     kcolor.b = 255;
     kcolor.a = temp->unkAAA8 * 255.0f;
-    GXSetTevKColor_cached(0, kcolor);
+    GXSetTevKColor_cached(GX_KCOLOR0, kcolor);
     GXSetTevDirect(GX_TEVSTAGE0);
-    GXSetTevKAlphaSel_cached(0, 0x1C);
-    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 0x3CU, 0U, 0x7DU);
-    GXSetTevOrder_cached(0, 0, 0, 0xFF);
-    GXSetTevSwapMode_cached(0, 0, 0);
-    GXSetTevColorIn_cached(0, 0xF, 0xF, 0xF, 8);
-    GXSetTevColorOp_cached(0, 0, 0, 0, 1, 0);
-    GXSetTevAlphaIn_cached(0, 7, 7, 7, 6);
-    GXSetTevAlphaOp_cached(0, 0, 0, 0, 1, 0);
-    GXSetChanCtrl(GX_COLOR0A0, 0U, GX_SRC_REG, GX_SRC_REG, 0U, GX_DF_CLAMP, GX_AF_NONE);
-    GXSetZMode_cached(1U, GX_GEQUAL, 0U);
-    GXSetBlendMode_cached(1, 4, 5, 0);
+    GXSetTevKAlphaSel_cached(GX_TEVSTAGE0, GX_TEV_KASEL_K0_A);
+    GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 0x3CU);
+    GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);
+    GXSetTevSwapMode_cached(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
+    GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetChanCtrl(GX_COLOR0A0, GX_DISABLE, GX_SRC_REG, GX_SRC_REG, 0, GX_DF_CLAMP, GX_AF_NONE);
+    GXSetZMode_cached(GX_ENABLE, GX_GEQUAL, GX_DISABLE);
+    GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     {
-        GXColor color = {0};
-        GXSetFog_cached(0, 0.0f, 100.0f, 0.1f, 20000.0f, color);
+        GXColor fogColor = {0};
+        GXSetFog_cached(GX_FOG_NONE, 0.0f, 100.0f, 0.1f, 20000.0f, fogColor);
     }
-    GXSetCullMode_cached(0);
+    GXSetCullMode_cached(GX_CULL_NONE);
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     y1 = -10.0f * currentCameraStructPtr->sub28.unk38;
     y2 = -y1;
@@ -3680,130 +3597,3 @@ void func_800BFC2C(void)
     GXEnd();
     camera_apply_viewport(u_cameraId1);
 }
-
-/*
-const float lbl_802F64C8 = 0.01666666753590107f;
-const float lbl_802F64CC = 400f;
-const float lbl_802F64D0 = 0f;
-const float lbl_802F64D4 = 20f;
-const float lbl_802F64D8 = -64f;
-const float lbl_802F64DC = 250f;
-const float lbl_802F64E0 = 100f;
-const float lbl_802F64E4 = 1f;
-const float lbl_802F64E8 = -61f;
-const double lbl_802F64F0 = 4503601774854144;
-const float lbl_802F64F8 = 0.5f;
-const float lbl_802F64FC = 20.75f;
-const float lbl_802F6500 = 240f;
-const float lbl_802F6504 = 0.80000001192092896f;
-const float lbl_802F6508 = 0.40000000596046448f;
-const float lbl_802F650C = 32767f;
-const float lbl_802F6510 = -62f;
-const float lbl_802F6514 = -1f;
-const float lbl_802F6518 = 10f;
-const float lbl_802F651C = -2f;
-const float lbl_802F6520 = 1.25f;
-const float lbl_802F6524 = 0.89999997615814209f;
-const float lbl_802F6528 = 0.20000000298023224f;
-const float lbl_802F652C = 0.10000000149011612f;
-const float lbl_802F6530 = 1.5f;
-const float lbl_802F6534 = 0.30000001192092896f;
-const float lbl_802F6538 = -0.01666666753590107f;
-const float lbl_802F653C = 0.60000002384185791f;
-const float lbl_802F6540 = 0.19999998807907104f;
-const float lbl_802F6544 = -0.0055555556900799274f;
-const float lbl_802F6548 = -0.0033333334140479565f;
-const float lbl_802F654C = 0.99000000953674316f;
-const float lbl_802F6550 = -20.379999160766602f;
-const float lbl_802F6554 = -2.3399999141693115f;
-const float lbl_802F6558 = -20.389999389648438f;
-const float lbl_802F655C = 12f;
-const float lbl_802F6560 = 300f;
-const float lbl_802F6564 = -4f;
-const float lbl_802F6568 = -0.20000000298023224f;
-const float lbl_802F656C = 6.5f;
-const float lbl_802F6570 = 6f;
-const float lbl_802F6574 = 3f;
-const float lbl_802F6578 = 8f;
-const float lbl_802F657C = 40f;
-const float lbl_802F6580 = 4f;
-const float lbl_802F6584 = -0.0023809524718672037f;
-const float lbl_802F6588 = 5f;
-const float lbl_802F658C = 2f;
-const float lbl_802F6590 = 2.0999999046325684f;
-const float lbl_802F6594 = 120f;
-const float lbl_802F6598 = -0.40000000596046448f;
-const float lbl_802F659C = -0.34999999403953552f;
-const float lbl_802F65A0 = -0.60000002384185791f;
-const float lbl_802F65A4 = -0.30000001192092896f;
-const float lbl_802F65A8 = 14.800000190734863f;
-const float lbl_802F65AC = 2.5f;
-const float lbl_802F65B0 = 0.0083333337679505348f;
-const float lbl_802F65B4 = 4.5f;
-const float lbl_802F65B8 = 3.5f;
-const float lbl_802F65BC = 0.25f;
-const float lbl_802F65C0 = -2.5f;
-const float lbl_802F65C4 = -0.34000000357627869f;
-const float lbl_802F65C8 = -0.25f;
-const float lbl_802F65CC = 7.8000001907348633f;
-const float lbl_802F65D0 = 0.69999998807907104f;
-const float lbl_802F65D4 = 4.1999998092651367f;
-const float lbl_802F65D8 = 2.5999999046325684f;
-const float lbl_802F65DC = 0.15000000596046448f;
-const float lbl_802F65E0 = -0.5f;
-const float lbl_802F65E4 = -0.10000000149011612f;
-const float lbl_802F65E8 = -0.0020000000949949026f;
-const float lbl_802F65EC = 2.9500000476837158f;
-const float lbl_802F65F0 = -0.05000000074505806f;
-const float lbl_802F65F4 = 768f;
-const float lbl_802F65F8 = 2304f;
-const float lbl_802F65FC = -2304f;
-const float lbl_802F6600 = 0.98000001907348633f;
-const float lbl_802F6604 = -0.0010000000474974513f;
-const float lbl_802F6608 = 0.94999998807907104f;
-const float lbl_802F660C = -0.85000002384185791f;
-const float lbl_802F6610 = -0.0040000001899898052f;
-const float lbl_802F6614 = -60f;
-const float lbl_802F6618 = 0.92000001668930054f;
-const float lbl_802F661C = 0.05000000074505806f;
-const float lbl_802F6620 = 7.5000003562308848e-05f;
-const double lbl_802F6628 = 0.0097999920000000004;
-const float lbl_802F6630 = -5f;
-const float lbl_802F6634 = 30f;
-const float lbl_802F6638 = -15f;
-const float lbl_802F663C = 0.012000000104308128f;
-const float lbl_802F6640 = -0.0080000003799796104f;
-const float lbl_802F6644 = -4.5f;
-const float lbl_802F6648 = 3.4500000476837158f;
-const float lbl_802F664C = 0.12999999523162842f;
-const float lbl_802F6650 = 0.12000000476837158f;
-const float lbl_802F6654 = -0.094000004231929779f;
-const float lbl_802F6658 = -0.0099999997764825821f;
-const float lbl_802F665C = 1.6666666269302368f;
-const float lbl_802F6660 = 0.0039215688593685627f;
-const float lbl_802F6664 = 0.004999999888241291f;
-const double lbl_802F6668 = 4503599627370496;
-const float lbl_802F6670 = 1024f;
-const float lbl_802F6674 = 0.0010000000474974513f;
-const float lbl_802F6678 = 2048f;
-const float lbl_802F667C = 60f;
-const float lbl_802F6680 = 80f;
-const float lbl_802F6684 = 1.1000000238418579f;
-const float lbl_802F6688 = 4096f;
-const float lbl_802F668C = -0.125f;
-const float lbl_802F6690 = 3.2000000476837158f;
-const float lbl_802F6694 = 256f;
-const float lbl_802F6698 = 16f;
-const float lbl_802F669C = 0.15015999972820282f;
-const float lbl_802F66A0 = 20.069999694824219f;
-const float lbl_802F66A4 = 0.02500000037252903f;
-const float lbl_802F66A8 = 0.070000000298023224f;
-const float lbl_802F66AC = 0.984375f;
-const float lbl_802F66B0 = 0.0099999997764825821f;
-const float lbl_802F66B4 = 0.70710676908493042f;
-const double lbl_802F66B8 = 0.30000001192092896;
-const double lbl_802F66C0 = 0.69999998807907104;
-const float lbl_802F66C8 = 0.96875f;
-const double lbl_802F66D0 = 256;
-const float lbl_802F66D8 = 16384f;
-*/
