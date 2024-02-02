@@ -207,7 +207,8 @@ SOURCES := \
 	asm/credits.s \
 	src/vibration.c \
 	src/ending.c \
-	asm/ending_2.s \
+	src/ending_2.c \
+	asm/ending_dialogue.s \
 	libraries/base/asm/PPCArch.s \
 	libraries/os/__start.c \
 	libraries/os/asm/OS.s \
