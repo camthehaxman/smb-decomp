@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "course.h"
 #include "effect.h"
+#include "ending.h"
 #include "event.h"
 #include "game.h"
 #include "hud.h"
@@ -1261,9 +1262,9 @@ void submode_game_ending_init_func(void)
         return;
 
     modeCtrl.courseFlags |= (1 << 6);
-    func_800B6234();
+    ending_init();
     if (modeCtrl.gameType == 0 && modeCtrl.playerCount == 1
-     && !(modeCtrl.courseFlags & (1 << 20)))
+     && !(modeCtrl.courseFlags & COURSE_FLAG_FAILED_EXTRA))
         record_play_points();
     start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
     u_play_music(68, 0);
@@ -1276,13 +1277,13 @@ void submode_game_ending_main_func(void)
     if (gamePauseStatus & 0xA)
         return;
 
-    if (func_800B62FC() == 0)
+    if (!ending_main())
     {
-        func_800B6430();
+        ending_finish();
         gameSubmodeRequest = SMD_GAME_ROLL_INIT;
         lbl_802F22C8 |= 1 << (modeCtrl.difficulty + 2);
-        if (modeCtrl.gameType == 0 && modeCtrl.playerCount == 1
-         && !(modeCtrl.courseFlags & (1 << 20)))
+        if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1
+         && !(modeCtrl.courseFlags & COURSE_FLAG_FAILED_EXTRA))
             buy_extra_continues();
     }
 }
@@ -1310,7 +1311,7 @@ void submode_game_roll_main_func(void)
     if (modeCtrl.submodeTimer <= 0)
     {
         credits_finish();
-        lbl_802F1B7C = 0;
+        lbl_802F1B7C = NULL;
         gameSubmodeRequest = SMD_GAME_NAMEENTRY_READY_INIT;
         lbl_802F22C8 |= 2;
     }

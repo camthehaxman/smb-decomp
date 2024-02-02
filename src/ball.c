@@ -674,7 +674,7 @@ void ev_ball_init(void)
     func_8008BEF8(1);
 }
 
-struct Ape *func_800380A8(int a, int character, void (*c)(struct Ape *, int))
+struct Ape *u_init_ape(int a, int character, void (*c)(struct Ape *, int))
 {
     struct Ape *ape = u_make_ape(character);
 

@@ -8,6 +8,7 @@
 #include "ball.h"
 #include "camera.h"
 #include "effect.h"
+#include "ending.h"
 #include "gma.h"
 #include "gxutil.h"
 #include "hud.h"

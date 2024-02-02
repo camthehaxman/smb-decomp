@@ -220,17 +220,11 @@ enum
 
 enum
 {
-    DIFFICULTY_BEGINNER,
-    DIFFICULTY_ADVANCED,
-    DIFFICULTY_EXPERT,
-};
-
-enum
-{
     // (1 << 0) = is in a difficulty?
     // (1 << 2) = used a continue?
     COURSE_FLAG_EXTRA = (1 << 3),
     COURSE_FLAG_MASTER = (1 << 4),
+    COURSE_FLAG_FAILED_EXTRA = (1 << 20),  // reached extra stages, but failed to complete them all?
 };
 
 enum

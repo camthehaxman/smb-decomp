@@ -510,9 +510,5 @@ void effect_icewater_particle_init(struct Effect *);
 void effect_icewater_particle_main(struct Effect *);
 void effect_icewater_particle_draw(struct Effect *);
 void effect_icewater_particle_destroy(struct Effect *);
-void effect_ending_ballfrag_init(struct Effect *);
-void effect_ending_ballfrag_main(struct Effect *);
-void effect_ending_ballfrag_draw(struct Effect *);
-void effect_ending_ballfrag_destroy(struct Effect *);
 
 #endif

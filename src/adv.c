@@ -183,13 +183,13 @@ void update_av_logo_pos_and_sound(void)
         r5 = MIN(speed * 15.0, 80.0) * 0.85000002384185791;
         r29 = CLAMP(advLogoInfo.pos.x * 16.0, -64.0, 63.0);
         r28 = CLAMP((280.0 - advLogoInfo.pos.z) * 0.1, -64.0, 63.0);
-        lbl_802F1DF8 = 0;
+        u_somePlayerId = 0;
         func_8002CA5C(0, r4, r5);
-        lbl_802F1DF8 = 0;
+        u_somePlayerId = 0;
         SoundPan(0x51, r29, r28);
-        lbl_802F1DF8 = 0;
+        u_somePlayerId = 0;
         SoundPan(0x52, r29, r28);
-        lbl_802F1DF8 = 0;
+        u_somePlayerId = 0;
         SoundPan(0x53, r29, r28);
     }
     prevLogoPos = advLogoInfo.pos;

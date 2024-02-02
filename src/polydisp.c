@@ -10,6 +10,7 @@
 #include "ball.h"
 #include "camera.h"
 #include "effect.h"
+#include "ending.h"
 #include "event.h"
 #include "gma.h"
 #include "gxcache.h"
@@ -146,7 +147,7 @@ void draw_3d_scene(void)
             break;
         case SMD_GAME_ENDING_INIT:
         case SMD_GAME_ENDING_MAIN:
-            func_800B64B0();
+            u_ending_draw();
             draw_test_camera_target();
             break;
         case SMD_GAME_ROLL_INIT:

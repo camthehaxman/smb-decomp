@@ -142,9 +142,13 @@ struct Ball
 // extern ? lbl_80205E20;
 // extern ? lbl_80205E30;
 extern struct Ball ballInfo[];
-// extern ? lbl_80206B80;
+extern s32 lbl_80206B80[];
 extern s32 playerCharacterSelection[4];
 extern s32 playerControllerIDs[];
+
+extern s16 clearHemisphereOutsideParts[];
+extern s16 clearHemisphereInsideParts[];
+extern s16 coloredBallPartModelIDs[][9];
 
 void func_8003699C(struct Ape *a);
 float func_80036CAC(struct Ape *a);
@@ -156,7 +160,7 @@ void func_80037718();
 void func_80037B1C(struct Ball *);
 void func_80037B20(void);
 void ev_ball_init(void);
-// ? func_800380A8();
+struct Ape *u_init_ape(int a, int character, void (*c)(struct Ape *, int));
 void ev_ball_main(void);
 void func_80038528(struct Ball *);
 void ev_ball_dest(void);

@@ -118,7 +118,7 @@ lbl_80029A80:
 /* 80029A98 000259B8  90 6D 9B E4 */	stw r3, lbl_802F1DC4  // @sda21(r13)
 /* 80029A9C 000259BC  90 6D 9B E8 */	stw r3, lbl_802F1DC8  // @sda21(r13)
 /* 80029AA0 000259C0  90 0D 9C 1C */	stw r0, lbl_802F1DFC  // @sda21(r13)
-/* 80029AA4 000259C4  90 0D 9C 18 */	stw r0, lbl_802F1DF8  // @sda21(r13)
+/* 80029AA4 000259C4  90 0D 9C 18 */	stw r0, u_somePlayerId  // @sda21(r13)
 /* 80029AA8 000259C8  48 00 00 0C */	b lbl_80029AB4
 lbl_80029AAC:
 /* 80029AAC 000259CC  7C 64 32 14 */	add r3, r4, r6

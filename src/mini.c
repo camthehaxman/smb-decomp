@@ -4,6 +4,7 @@
 #include "global.h"
 #include "ball.h"
 #include "camera.h"
+#include "ending.h"
 #include "event.h"
 #include "input.h"
 #include "mode.h"
@@ -1593,7 +1594,7 @@ void submode_mini_ending_init_func(void)
         playerCharacterSelection[i] = i;
         setup_camera_viewport(i, 0.0f, 0.0f, 1.0f, 1.0f);
     }
-    func_800B6234();
+    ending_init();
 }
 
 void submode_mini_ending_main_func(void)
@@ -1632,10 +1633,10 @@ void submode_mini_ending_main_func(void)
             modeCtrl.difficulty -= 3;
     }
 
-    var_r31 |= !func_800B62FC();
+    var_r31 |= !ending_main();
     if (var_r31)
     {
-        func_800B6430();
+        ending_finish();
         gameSubmodeRequest = SMD_MINI_ENDING_INIT;
     }
 }
@@ -1647,5 +1648,5 @@ void u_draw_ending_viewer_text(void)
     u_debug_set_cursor_pos(6, 6);
     u_debug_printf("COURSE[%d]\n", modeCtrl.difficulty);
     u_debug_printf("PLAYER[%d]\n", modeCtrl.currPlayer);
-    func_800B64B0();
+    u_ending_draw();
 }

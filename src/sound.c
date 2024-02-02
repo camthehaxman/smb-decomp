@@ -39,28 +39,29 @@ static void lbl_8002D538(s32 result, DVDFileInfo *fileInfo);
 
 const struct SoundGroupDesc g_soundGroupDesc[] =
 {
-    { "GRPse04",          0,  3, 0, "allse"  },
-    { "GRPse01",          4,  0, 0, "allse"  },
-    { "GRPse02",         85,  1, 0, "allse"  },
-    { "GRPse03",        114,  2, 0, "allse"  },
-    { "GRPnar",         126,  7, 0, "allse"  },
-    { "GRPboy",         178,  4, 0, "allse"  },
-    { "GRPgirl",        243,  6, 0, "allse"  },
-    { "GRPbaby",        310,  5, 0, "allse"  },
-    { "GRPgoli",        370,  8, 0, "allse"  },
-    { "GRPbil_set",     411,  1, 1, "bil"    },
-    { "GRPbow_set",     476,  2, 2, "bowl"   },
-    { "GRPfight_set",   539,  6, 3, "fight"  },
-    { "GRPgolf_set",    626,  3, 4, "golf"   },
-    { "GRPrace_set",    671,  4, 5, "race"   },
-    { "GRPtarget_set",  730,  5, 6, "target" },
-    { "GRPcomn_set",    831,  7, 7, "comn"   },
-    { "GRPending",      973,  8, 8, "ending" },
-    { "GRPstream",      985, -1, 0, "allse"  },
-    { "GRPend",        1060, -2, 0, "allse"  },
+    // name          unused      index   basename
+    { "GRPse04",          0,  3,     0, "allse"  },
+    { "GRPse01",          4,  0,     0, "allse"  },
+    { "GRPse02",         85,  1,     0, "allse"  },
+    { "GRPse03",        114,  2,     0, "allse"  },
+    { "GRPnar",         126,  7,     0, "allse"  },
+    { "GRPboy",         178,  4,     0, "allse"  },
+    { "GRPgirl",        243,  6,     0, "allse"  },
+    { "GRPbaby",        310,  5,     0, "allse"  },
+    { "GRPgoli",        370,  8,     0, "allse"  },
+    { "GRPbil_set",     411,  1,     1, "bil"    },
+    { "GRPbow_set",     476,  2,     2, "bowl"   },
+    { "GRPfight_set",   539,  6,     3, "fight"  },
+    { "GRPgolf_set",    626,  3,     4, "golf"   },
+    { "GRPrace_set",    671,  4,     5, "race"   },
+    { "GRPtarget_set",  730,  5,     6, "target" },
+    { "GRPcomn_set",    831,  7,     7, "comn"   },
+    { "GRPending",      973,  8,     8, "ending" },
+    { "GRPstream",      985, -1,     0, "allse"  },
+    { "GRPend",        1060, -2,     0, "allse"  },
 };
 
-const struct Struct8011057C lbl_8011057C[] =
+const struct SoundDesc g_soundDesc[] =
 {
     {   3, "GRPse04",                               1,  0,  -1 },
     { 209, "SND_SEB_SE_COIN_SEPCM_2",               7,  0,   0 },
@@ -1360,12 +1361,12 @@ static struct
     u32 unk40;
     u32 unk44;
 } lbl_80201490;
-static s32 lbl_8020149C[9];
-static s32 s_loadedSoundGroups[8];
+static int u_isSoundGroupDataLoaded[9];
+static s32 s_loadedSoundGroupIDs[8];
 
 s32 g_loadedSoundGroupsCount;
 s32 lbl_802F1DFC;
-int lbl_802F1DF8;
+int u_somePlayerId;
 u8 lbl_802F1DF5;
 u8 lbl_802F1DF4;
 u32 g_soundAramTop;
@@ -1772,18 +1773,18 @@ void sound_init(void)
     lbl_802F1D50 = 1.0f;
     lbl_802F1D54 = 1.0f;
     for (i = 0; i < 9; i++)
-        lbl_8020149C[i] = 0;
+        u_isSoundGroupDataLoaded[i] = FALSE;
     g_loadedSoundGroupsCount = 0;
-    s_loadedSoundGroups[0] = -1;
-    s_loadedSoundGroups[1] = -1;
-    s_loadedSoundGroups[2] = -1;
-    s_loadedSoundGroups[3] = -1;
-    s_loadedSoundGroups[4] = -1;
-    s_loadedSoundGroups[5] = -1;
-    s_loadedSoundGroups[6] = -1;
-    s_loadedSoundGroups[7] = -1;
-    SoundGroupLoad(1);
-    SoundGroupLoad(0xF);
+    s_loadedSoundGroupIDs[0] = -1;
+    s_loadedSoundGroupIDs[1] = -1;
+    s_loadedSoundGroupIDs[2] = -1;
+    s_loadedSoundGroupIDs[3] = -1;
+    s_loadedSoundGroupIDs[4] = -1;
+    s_loadedSoundGroupIDs[5] = -1;
+    s_loadedSoundGroupIDs[6] = -1;
+    s_loadedSoundGroupIDs[7] = -1;
+    SoundGroupLoad(SOUND_GRPse01);
+    SoundGroupLoad(SOUND_GRPcomn_set);
     lbl_801F8F38.tempDisableFX = 0;
     lbl_801F8F38.time = 3.0f;
     lbl_801F8F38.preDelay = 0.1f;
@@ -1958,7 +1959,7 @@ void sound_main(void)
     if (lbl_802014E0.unk0 != -1 && lbl_802014E0.dtkState == DTK_STATE_RUN)
         lbl_802014E0.unk4++;
     lbl_802F1DDC = g_soundGroupDesc[lbl_802F1DE4].groupName;
-    lbl_802F1DE0 = lbl_8011057C[lbl_802F1DE8].unk4;
+    lbl_802F1DE0 = g_soundDesc[lbl_802F1DE8].name;
 }
 
 void SoundGroupLoad(int groupId)
@@ -1971,94 +1972,94 @@ void SoundGroupLoad(int groupId)
     s32 temp_cr0_eq;
     OSHeapHandle heap;
     u32 temp_r7;
-    const struct SoundGroupDesc *temp_r29;
+    const struct SoundGroupDesc *grpDesc;
     int i;
 
     if (g_loadedSoundGroupsCount == 8)
         return;
-    temp_r29 = &g_soundGroupDesc[groupId];
-    if (lbl_8020149C[temp_r29->unkC] != 0)
+    grpDesc = &g_soundGroupDesc[groupId];
+    if (u_isSoundGroupDataLoaded[grpDesc->index])
         return;
-    
+
     // check if already loaded
     for (i = 0; i < 8; i++)
     {
-        if (groupId == s_loadedSoundGroups[i])
+        if (groupId == s_loadedSoundGroupIDs[i])
             return;
     }
 
-    sprintf(poolFileName, "%s.pool", temp_r29->baseName);
-    sprintf(projFileName, "%s.proj", temp_r29->baseName);
-    sprintf(sampFileName, "%s.samp", temp_r29->baseName);
-    sprintf(sdirFileName, "%s.sdir", temp_r29->baseName);
+    sprintf(poolFileName, "%s.pool", grpDesc->baseName);
+    sprintf(projFileName, "%s.proj", grpDesc->baseName);
+    sprintf(sampFileName, "%s.samp", grpDesc->baseName);
+    sprintf(sdirFileName, "%s.sdir", grpDesc->baseName);
 
     DVDChangeDir("snd/mkb");
     s_groupIsUsingCharaHeap = FALSE;
-    s_sampData[temp_r29->unkC] = ReadMusyXData(sampFileName, &bytesRead);
-    if (s_sampData[temp_r29->unkC] == NULL)
+    s_sampData[grpDesc->index] = ReadMusyXData(sampFileName, &bytesRead);
+    if (s_sampData[grpDesc->index] == NULL)
     {
         u32 freeSpace = OSCheckHeap(mainHeap);
         if (freeSpace == -1U)
-            sound_error("SoundGroupLoad\n", "RAM ERROR ! \"%s\"(0x%X) MainHeap error\n", temp_r29->baseName, bytesRead);
+            sound_error("SoundGroupLoad\n", "RAM ERROR ! \"%s\"(0x%X) MainHeap error\n", grpDesc->baseName, bytesRead);
         else if (bytesRead < freeSpace)
-            sound_error("SoundGroupLoad\n", "RAM ALLOC ERROR ! \"%s\"(0x%X) MainHeap:0x%X\n", temp_r29->baseName, bytesRead, freeSpace);
+            sound_error("SoundGroupLoad\n", "RAM ALLOC ERROR ! \"%s\"(0x%X) MainHeap:0x%X\n", grpDesc->baseName, bytesRead, freeSpace);
         else
-            sound_error("SoundGroupLoad\n", "RAM SIZE OVER ! \"%s\"(0x%X) need 0x%X ... MainHeap:0x%X\n", temp_r29->baseName, bytesRead, bytesRead - freeSpace, freeSpace);
+            sound_error("SoundGroupLoad\n", "RAM SIZE OVER ! \"%s\"(0x%X) need 0x%X ... MainHeap:0x%X\n", grpDesc->baseName, bytesRead, bytesRead - freeSpace, freeSpace);
         s_groupIsUsingCharaHeap = TRUE;
         heap = OSSetCurrentHeap(charaHeap);
-        s_sampData[temp_r29->unkC] = ReadMusyXData(sampFileName, &bytesRead);
+        s_sampData[grpDesc->index] = ReadMusyXData(sampFileName, &bytesRead);
         OSSetCurrentHeap(heap);
-        if (s_sampData[temp_r29->unkC] == NULL)
+        if (s_sampData[grpDesc->index] == NULL)
         {
             freeSpace = OSCheckHeap(charaHeap);
             if (freeSpace == -1U)
-                sound_error("SoundGroupLoad\n", "RAM ERROR ! \"%s\"(0x%X) CharaHeap error\n", temp_r29->baseName, bytesRead);
+                sound_error("SoundGroupLoad\n", "RAM ERROR ! \"%s\"(0x%X) CharaHeap error\n", grpDesc->baseName, bytesRead);
             else if (bytesRead < freeSpace)
-                sound_error("SoundGroupLoad\n", "RAM ALLOC ERROR ! \"%s\"(0x%X) CharaHeap:0x%X\n", temp_r29->baseName, bytesRead, freeSpace);
+                sound_error("SoundGroupLoad\n", "RAM ALLOC ERROR ! \"%s\"(0x%X) CharaHeap:0x%X\n", grpDesc->baseName, bytesRead, freeSpace);
             else
-                sound_error("SoundGroupLoad\n", "RAM SIZE OVER ! \"%s\"(0x%X) need 0x%X ... CharaHeap:0x%X\n", temp_r29->baseName, bytesRead, bytesRead - freeSpace, freeSpace);
+                sound_error("SoundGroupLoad\n", "RAM SIZE OVER ! \"%s\"(0x%X) need 0x%X ... CharaHeap:0x%X\n", grpDesc->baseName, bytesRead, bytesRead - freeSpace, freeSpace);
             DVDChangeDir("/test");
             return;
         }
         printf("--> but SUCCESS !! use CharaHeap\n");
     }
 
-    s_sampDataSizes[temp_r29->unkC] = bytesRead;
-    g_soundTotalBytesLoaded += s_sampDataSizes[temp_r29->unkC];
+    s_sampDataSizes[grpDesc->index] = bytesRead;
+    g_soundTotalBytesLoaded += s_sampDataSizes[grpDesc->index];
 
-    temp_r7 = g_soundAramTop + s_sampDataSizes[temp_r29->unkC];
+    temp_r7 = g_soundAramTop + s_sampDataSizes[grpDesc->index];
     if (temp_r7 >= 0x700000U)
     {
-        sound_error("SoundGroupLoad\n", "ARAM SIZE OVER ! \"%s\"(0x%X) need 0x%X\n", temp_r29->baseName, s_sampDataSizes[temp_r29->unkC], temp_r7 + 0xFF900000);
+        sound_error("SoundGroupLoad\n", "ARAM SIZE OVER ! \"%s\"(0x%X) need 0x%X\n", grpDesc->baseName, s_sampDataSizes[grpDesc->index], temp_r7 + 0xFF900000);
         if (s_groupIsUsingCharaHeap)
             heap = OSSetCurrentHeap(charaHeap);
-        OSFree(s_sampData[temp_r29->unkC]);
+        OSFree(s_sampData[grpDesc->index]);
         if (s_groupIsUsingCharaHeap)
             OSSetCurrentHeap(heap);
-        g_soundTotalBytesLoaded -= s_sampDataSizes[temp_r29->unkC];
+        g_soundTotalBytesLoaded -= s_sampDataSizes[grpDesc->index];
         DVDChangeDir("/test");
         return;
     }
 
-    s_poolData[temp_r29->unkC] = ReadMusyXData(poolFileName, &bytesRead);
-    s_poolDataSizes[temp_r29->unkC] = bytesRead;
-    g_soundTotalBytesLoaded += s_poolDataSizes[temp_r29->unkC];
+    s_poolData[grpDesc->index] = ReadMusyXData(poolFileName, &bytesRead);
+    s_poolDataSizes[grpDesc->index] = bytesRead;
+    g_soundTotalBytesLoaded += s_poolDataSizes[grpDesc->index];
 
-    s_projData[temp_r29->unkC] = ReadMusyXData(projFileName, &bytesRead);
-    s_projDataSizes[temp_r29->unkC] = bytesRead;
-    g_soundTotalBytesLoaded += s_projDataSizes[temp_r29->unkC];
+    s_projData[grpDesc->index] = ReadMusyXData(projFileName, &bytesRead);
+    s_projDataSizes[grpDesc->index] = bytesRead;
+    g_soundTotalBytesLoaded += s_projDataSizes[grpDesc->index];
 
-    s_sdirData[temp_r29->unkC] = ReadMusyXData(sdirFileName, &bytesRead);
-    s_sdirDataSizes[temp_r29->unkC] = bytesRead;
-    g_soundTotalBytesLoaded += s_sdirDataSizes[temp_r29->unkC];
+    s_sdirData[grpDesc->index] = ReadMusyXData(sdirFileName, &bytesRead);
+    s_sdirDataSizes[grpDesc->index] = bytesRead;
+    g_soundTotalBytesLoaded += s_sdirDataSizes[grpDesc->index];
 
     temp_cr0_eq = sndPushGroup(
-        s_projData[temp_r29->unkC],
-        (u16)temp_r29->unk8,
-        s_sampData[temp_r29->unkC],
-        s_sdirData[temp_r29->unkC],
-        s_poolData[temp_r29->unkC]);
-    g_soundAramTop += s_sampDataSizes[temp_r29->unkC];
+        s_projData[grpDesc->index],
+        (u16)grpDesc->unk8,
+        s_sampData[grpDesc->index],
+        s_sdirData[grpDesc->index],
+        s_poolData[grpDesc->index]);
+    g_soundAramTop += s_sampDataSizes[grpDesc->index];
     if (temp_cr0_eq == 0)
     {
         DVDChangeDir("/test");
@@ -2066,34 +2067,34 @@ void SoundGroupLoad(int groupId)
     }
     if (s_groupIsUsingCharaHeap)
         heap = OSSetCurrentHeap(charaHeap);
-    OSFree(s_sampData[temp_r29->unkC]);
+    OSFree(s_sampData[grpDesc->index]);
     if (s_groupIsUsingCharaHeap)
         OSSetCurrentHeap(heap);
 
-    g_soundTotalBytesLoaded -= s_sampDataSizes[temp_r29->unkC];
-    lbl_8020149C[temp_r29->unkC] = 1;
+    g_soundTotalBytesLoaded -= s_sampDataSizes[grpDesc->index];
+    u_isSoundGroupDataLoaded[grpDesc->index] = TRUE;
     DVDChangeDir("/test");
-    s_loadedSoundGroups[g_loadedSoundGroupsCount++] = groupId;
+    s_loadedSoundGroupIDs[g_loadedSoundGroupsCount++] = groupId;
 }
 
 // Frees the most recently loaded sound group
 void SoundGroupFree(void)
 {
-    const struct SoundGroupDesc *temp_r29;
+    const struct SoundGroupDesc *grpDesc;
 
     if (g_loadedSoundGroupsCount > 2)
     {
-        temp_r29 = &g_soundGroupDesc[s_loadedSoundGroups[--g_loadedSoundGroupsCount]];
+        grpDesc = &g_soundGroupDesc[s_loadedSoundGroupIDs[--g_loadedSoundGroupsCount]];
         sndPopGroup();
-        g_soundAramTop -= s_sampDataSizes[temp_r29->unkC];
-        OSFree(s_poolData[temp_r29->unkC]);
-        g_soundTotalBytesLoaded -= s_poolDataSizes[temp_r29->unkC];
-        OSFree(s_projData[temp_r29->unkC]);
-        g_soundTotalBytesLoaded -= s_projDataSizes[temp_r29->unkC];
-        OSFree(s_sdirData[temp_r29->unkC]);
-        g_soundTotalBytesLoaded -= s_sdirDataSizes[temp_r29->unkC];
-        lbl_8020149C[temp_r29->unkC] = 0;
-        s_loadedSoundGroups[g_loadedSoundGroupsCount] = -1;
+        g_soundAramTop -= s_sampDataSizes[grpDesc->index];
+        OSFree(s_poolData[grpDesc->index]);
+        g_soundTotalBytesLoaded -= s_poolDataSizes[grpDesc->index];
+        OSFree(s_projData[grpDesc->index]);
+        g_soundTotalBytesLoaded -= s_projDataSizes[grpDesc->index];
+        OSFree(s_sdirData[grpDesc->index]);
+        g_soundTotalBytesLoaded -= s_sdirDataSizes[grpDesc->index];
+        u_isSoundGroupDataLoaded[grpDesc->index] = 0;
+        s_loadedSoundGroupIDs[g_loadedSoundGroupsCount] = -1;
     }
 }
 
@@ -2128,7 +2129,7 @@ void ev_sound_init(void)
     lbl_802F1DC4 = 0;
     lbl_802F1DC8 = 0;
     lbl_802F1DFC = -1;
-    lbl_802F1DF8 = (u32) -1;
+    u_somePlayerId = (u32) -1;
 
 }
 #else
@@ -2202,7 +2203,7 @@ void ev_sound_main(void)
                 sndFXCtrl(s_voiceIDs[var_r23][var_r24], 7, lbl_801FD404[var_r23][var_r24]);
                 continue;
             }
-            switch (lbl_8011057C[var_r24].unk8)
+            switch (g_soundDesc[var_r24].unk8)
             {
             case 4:
             case 9:
@@ -2276,7 +2277,7 @@ void ev_sound_dest(void)
     {
         for (j = 0; j < 0x425; j++)
         {
-            if (s_voiceIDs[i][j] != -1U && lbl_8011057C[j].unk8 != 7)
+            if (s_voiceIDs[i][j] != -1U && g_soundDesc[j].unk8 != 7)
                 sndFXKeyOff(s_voiceIDs[i][j]);
         }
     }
@@ -2478,20 +2479,20 @@ static void func_8002A964(struct Struct801FE498 *arg0)
     int var_r5;
     s8 var_r9;
     s8 temp_r9;
-    const struct Struct8011057C *temp_r3;
+    const struct SoundDesc *sndDesc;
     SND_PARAMETER_INFO sp1C;
     SND_PARAMETER spC[4];
     int temp;
 
-    temp_r0 = lbl_8011057C[arg0->unk0].unk0;
-    temp_r3 = &lbl_8011057C[arg0->unk2];
+    temp_r0 = g_soundDesc[arg0->unk0].unk0;
+    sndDesc = &g_soundDesc[arg0->unk2];
     if (temp_r0 != -1)
     {
         if (arg0->unk5 > 63)
             arg0->unk5 = -(128 - arg0->unk5);
         if (arg0->unk6 > 63)
             arg0->unk6 = -(128 - arg0->unk6);
-        temp_r9 = temp_r3->unk8;
+        temp_r9 = sndDesc->unk8;
         var_r5 = (temp_r9 == 7 || temp_r9 == 0xD || temp_r9 == 8 || temp_r9 == 14 || temp_r9 == 19);
         temp_r31 = var_r5 ? arg0->unk4 : arg0->unk4 * lbl_802F1D40;
 
@@ -2505,7 +2506,7 @@ static void func_8002A964(struct Struct801FE498 *arg0)
             spC[var_r9].paraData.value14 = (s16) (((s8) arg0->unk7 << 0xC) + 0x1FFF);
             var_r9++;
         }
-        if ((temp_r3->unk8 != 7) && (temp_r3->unk8 != 0xC))
+        if ((sndDesc->unk8 != 7) && (sndDesc->unk8 != 0xC))
         {
             spC[var_r9].ctrl = 0x5B;
             spC[var_r9].paraData.value7 = lbl_802F1D38;
@@ -2524,7 +2525,7 @@ static void func_8002A964(struct Struct801FE498 *arg0)
 
 static s8 lbl_802F081C[4] = { 0, 1, -1, 2 };
 
-static int func_8002ABF0(u32 *arg0, const struct Struct8011057C *arg1, u32 arg2)
+static int func_8002ABF0(u32 *arg0, const struct SoundDesc *sndDesc, u32 arg2)
 {
     float var_f2;
     int var_r3;
@@ -2543,7 +2544,7 @@ static int func_8002ABF0(u32 *arg0, const struct Struct8011057C *arg1, u32 arg2)
 
     if (gameMode != MD_SEL)
     {
-        switch (arg1->unk8)
+        switch (sndDesc->unk8)
         {
         case 2:
         case 3:
@@ -2577,7 +2578,7 @@ static int func_8002ABF0(u32 *arg0, const struct Struct8011057C *arg1, u32 arg2)
         }
     }
     var_r3 = 0;
-    switch (arg1->unk8)
+    switch (sndDesc->unk8)
     {
     case 2:
     case 3:
@@ -2595,13 +2596,13 @@ static int func_8002ABF0(u32 *arg0, const struct Struct8011057C *arg1, u32 arg2)
     return var_r3;
 }
 
-static int func_8002AE58(u32 *arg0, const struct Struct8011057C *arg1, u32 arg2)
+static int func_8002AE58(u32 *arg0, const struct SoundDesc *sndDesc, u32 arg2)
 {
     int i;
     int j;
-    const struct Struct8011057C *var_r25;
+    const struct SoundDesc *var_r25;
 
-    switch (arg1->unk8)
+    switch (sndDesc->unk8)
     {
     case 1:
         return 1;
@@ -2627,19 +2628,19 @@ static int func_8002AE58(u32 *arg0, const struct Struct8011057C *arg1, u32 arg2)
     case 14:
         for (i = 0; i < 4; i++)
         {
-            var_r25 = lbl_8011057C;
+            var_r25 = g_soundDesc;
             for (j = 0; j < 0x425; j++, var_r25++)
             {
                 if (s_voiceIDs[i][j] != -1U)
                 {
-                    if (arg1->unk8 == 8 || arg1->unk8 == 14)
+                    if (sndDesc->unk8 == 8 || sndDesc->unk8 == 14)
                     {
                         if (var_r25->unk8 != 8 && var_r25->unk8 != 14)
                             continue;
                     }
                     else
                     {
-                        if (arg1->unk8 != var_r25->unk8)
+                        if (sndDesc->unk8 != var_r25->unk8)
                             continue;
                     }
                     sndFXKeyOff(s_voiceIDs[i][j]);
@@ -2651,12 +2652,12 @@ static int func_8002AE58(u32 *arg0, const struct Struct8011057C *arg1, u32 arg2)
     return 0;
 }
 
-static int sound_req_inline(void)
+static int u_get_some_player_id(void)
 {
-    int var_r6 = lbl_802F1DF8;
+    int var_r6 = u_somePlayerId;
 
     if (var_r6 != -1)
-        lbl_802F1DF8 = -1;
+        u_somePlayerId = -1;
     else if (currentBallStructPtr == NULL)
         return -1;
     else
@@ -2664,25 +2665,25 @@ static int sound_req_inline(void)
     return var_r6;
 }
 
-int SoundReq(u32 soundId)
+int SoundReq(u32 soundParam)
 {
     int i;
     int var_r0_2;
     int temp_r3_2;
-    s32 var_r30;
+    s32 playerId;
     struct Struct801FE498 *var_r29;
-    const struct Struct8011057C *temp_r28;
+    const struct SoundDesc *sndDesc;
 
-    temp_r28 = &lbl_8011057C[soundId & 0x7FF];
-    var_r30 = sound_req_inline();
-    if (var_r30 == -1)
+    sndDesc = &g_soundDesc[soundParam & 0x7FF];
+    playerId = u_get_some_player_id();
+    if (playerId == -1)
     {
-        printf("SoundReq %s nowball is NULL. --> pid = 0\n", temp_r28->unk4);
-        var_r30 = 0;
+        printf("SoundReq %s nowball is NULL. --> pid = 0\n", sndDesc->name);
+        playerId = 0;
     }
-    if (func_8002AE58(&soundId, temp_r28, var_r30) != 0)
+    if (func_8002AE58(&soundParam, sndDesc, playerId) != 0)
         return -1;
-    if (modeCtrl.gameType != 6 && lbl_801FE558.unk0[var_r30][temp_r28->unk8] > 0)
+    if (modeCtrl.gameType != 6 && lbl_801FE558.unk0[playerId][sndDesc->unk8] > 0)
         return -1;
 
     var_r29 = lbl_801FE498;
@@ -2690,16 +2691,16 @@ int SoundReq(u32 soundId)
     {
         if (var_r29->unk0 == -1)
         {
-            temp_r3_2 = func_8002ABF0(&soundId, temp_r28, var_r30);
-            var_r29->unk0 = soundId & 0x7FF;
+            temp_r3_2 = func_8002ABF0(&soundParam, sndDesc, playerId);
+            var_r29->unk0 = soundParam & 0x7FF;
             var_r29->unk2 = (lbl_802F1D3A == -1) ? var_r29->unk0 : lbl_802F1D3A;
-            var_r29->unk4 = (soundId >> 11) & 0x7F;
-            var_r29->unk5 = (soundId >> 18) & 0x7F;
-            var_r29->unk6 = (u8)(soundId >> 25);
+            var_r29->unk4 = (soundParam >> 11) & 0x7F;
+            var_r29->unk5 = (soundParam >> 18) & 0x7F;
+            var_r29->unk6 = (u8)(soundParam >> 25);
             var_r29->unk7 = temp_r3_2;
-            var_r29->unk8 = var_r30;
-            if (temp_r28->unk8 != 0)
-                lbl_801FE558.unk0[var_r30][temp_r28->unk8] = temp_r28->unkA;
+            var_r29->unk8 = playerId;
+            if (sndDesc->unk8 != 0)
+                lbl_801FE558.unk0[playerId][sndDesc->unk8] = sndDesc->unkA;
             lbl_802F1D3A = -1;
             var_r0_2 = var_r29->unk4 + lbl_80201500[var_r29->unk0];
             var_r29->unk4 = CLAMP(var_r0_2, 0, 127);
@@ -2707,34 +2708,34 @@ int SoundReq(u32 soundId)
         }
     }
     lbl_802F1D3A = -1;
-    printf("warning : SoundReq() cue over %s\n", temp_r28->unk4);
+    printf("warning : SoundReq() cue over %s\n", sndDesc->name);
     return -1;
 }
 
-int SoundReqDirect(u32 soundId)
+int SoundReqDirect(u32 soundParam)
 {
     struct Struct801FE498 sp10;
     int var_r0;
     int temp_r3_2;
     struct Ball *temp_r3;
     s32 var_r31;
-    const struct Struct8011057C *temp_r30;
+    const struct SoundDesc *sndDesc;
 
-    temp_r30 = &lbl_8011057C[soundId & 0x7FF];
-    var_r31 = sound_req_inline();
+    sndDesc = &g_soundDesc[soundParam & 0x7FF];
+    var_r31 = u_get_some_player_id();
     if (var_r31 == -1)
     {
-        printf("SoundReqDirect %s ape is NULL. --> pid = 0\n", temp_r30->unk4);
+        printf("SoundReqDirect %s ape is NULL. --> pid = 0\n", sndDesc->name);
         var_r31 = 0;
     }
-    if (func_8002AE58(&soundId, temp_r30, var_r31) != 0)
+    if (func_8002AE58(&soundParam, sndDesc, var_r31) != 0)
         return -1;
-    temp_r3_2 = func_8002ABF0(&soundId, temp_r30, var_r31);
-    sp10.unk0 = soundId & 0x7FF;
+    temp_r3_2 = func_8002ABF0(&soundParam, sndDesc, var_r31);
+    sp10.unk0 = soundParam & 0x7FF;
     sp10.unk2 = (lbl_802F1D3A == -1) ? sp10.unk0 : lbl_802F1D3A;
-    sp10.unk4 = (soundId >> 11) & 0x7F;
-    sp10.unk5 = (soundId >> 18) & 0x7F;
-    sp10.unk6 = (u8)(soundId >> 25);
+    sp10.unk4 = (soundParam >> 11) & 0x7F;
+    sp10.unk5 = (soundParam >> 18) & 0x7F;
+    sp10.unk6 = (u8)(soundParam >> 25);
     sp10.unk7 = temp_r3_2;
     sp10.unk8 = var_r31;
     lbl_802F1D3A = -1;
@@ -2744,30 +2745,30 @@ int SoundReqDirect(u32 soundId)
     return sp10.unk2;
 }
 
-static int SoundReqID(u32 soundId, s32 arg1)
+static int SoundReqID(u32 soundParam, s32 arg1)
 {
     int var_r0;
     int var_r5;
-    int r31;
+    int soundId;
     int i;
     int j;
     int var_r30;
     s8 var_r8;
-    const struct Struct8011057C *var_r6;
+    const struct SoundDesc *sndDesc;
     s8 temp;
 
-    r31 = soundId & 0x7FF;
-    var_r6 = lbl_8011057C;
+    soundId = soundParam & 0x7FF;
+    sndDesc = g_soundDesc;
     var_r0 = -1;
     var_r30 = 0;
     var_r5 = 0;
-    for (i = 0; i < 0x425; i++, var_r5++, var_r6++)
+    for (i = 0; i < 0x425; i++, var_r5++, sndDesc++)
     {
-        if (var_r6->unkC == r31)
+        if (sndDesc->unkC == soundId)
         {
-            if (var_r6->unk8 >= 15 && gameSubmode == 12)
+            if (sndDesc->unk8 >= 15 && gameSubmode == SMD_ADV_RANKING_MAIN)
                 return -1;
-            if (var_r6->unk8 >= 15)
+            if (sndDesc->unk8 >= 15)
             {
                 var_r30++;
                 if (lbl_802F1DFC != -1)
@@ -2778,31 +2779,31 @@ static int SoundReqID(u32 soundId, s32 arg1)
                 }
                 else if (currentBallStructPtr->ape == NULL)
                 {
-                    printf("SoundReqID %s ERROR !! ape is NULL.\n", var_r6->unk4);
+                    printf("SoundReqID %s ERROR !! ape is NULL.\n", sndDesc->name);
                     return -1;
                 }
                 else if (currentBallStructPtr->ape->charaId + 1 != var_r30)
                     continue;
                 if (var_r30 == 4)
                 {
-                    temp = (soundId >> 11) & 0x7F;
-                    soundId &= ~(0x7F << 11);
+                    temp = (soundParam >> 11) & 0x7F;
+                    soundParam &= ~(0x7F << 11);
                     temp += 20;
-                    soundId |= (temp & 0x7F) << 11;
+                    soundParam |= (temp & 0x7F) << 11;
                 }
             }
             lbl_802F1D3A = var_r5;
-            if ((u32)var_r6->unk0 == -1U)
+            if ((u32)sndDesc->unk0 == -1U)
             {
-                for (j = var_r5; j >= 0; j--, var_r6--)
+                for (j = var_r5; j >= 0; j--, sndDesc--)
                 {
-                    if ((u32)var_r6->unk0 != -1U)
+                    if ((u32)sndDesc->unk0 != -1U)
                         break;
                     var_r5--;
                 }
             }
             var_r8 = 0;
-            switch (lbl_8011057C[var_r5].unk0)
+            switch (g_soundDesc[var_r5].unk0)
             {
             case 0xB2:
             case 0xB8:
@@ -2814,25 +2815,25 @@ static int SoundReqID(u32 soundId, s32 arg1)
                 var_r8 = 10;
                 break;
             }
-            if (var_r6->unk8 == 8 || var_r6->unk8 == 14 || var_r6->unk8 >= 15)
+            if (sndDesc->unk8 == 8 || sndDesc->unk8 == 14 || sndDesc->unk8 >= 15)
                 var_r8 = 10;
             if (var_r8 != 0)
             {
-                temp = (soundId >> 11) & 0x7F;
-                soundId &= ~(0x7F << 11);
+                temp = (soundParam >> 11) & 0x7F;
+                soundParam &= ~(0x7F << 11);
                 temp += var_r8;
-                soundId |= (temp & 0x7F) << 11;
+                soundParam |= (temp & 0x7F) << 11;
             }
-            soundId = (soundId & ~0x7FF) | var_r5;
+            soundParam = (soundParam & ~0x7FF) | var_r5;
             switch (arg1)
             {
             case 2:
             case 0:
-                var_r0 = SoundReq(soundId);
+                var_r0 = SoundReq(soundParam);
                 break;
             case 1:
             case 3:
-                var_r0 = SoundReqDirect(soundId);
+                var_r0 = SoundReqDirect(soundParam);
                 break;
             }
             return var_r0;
@@ -2841,24 +2842,24 @@ static int SoundReqID(u32 soundId, s32 arg1)
     return -1;
 }
 
-void u_play_sound_0(int soundId)
+void u_play_sound_0(int soundParam)
 {
-    SoundReqID(soundId, 0);
+    SoundReqID(soundParam, 0);
 }
 
-void u_play_sound_1(int soundId)
+void u_play_sound_1(int soundParam)
 {
-    SoundReqID(soundId, 1);
+    SoundReqID(soundParam, 1);
 }
 
-int u_play_sound_2(int soundId)
+int u_play_sound_2(int soundParam)
 {
-    return SoundReqID(soundId, 2);
+    return SoundReqID(soundParam, 2);
 }
 
-int u_play_sound_1_dupe(int soundId)
+int u_play_sound_1_dupe(int soundParam)
 {
-    return SoundReqID(soundId, 1);
+    return SoundReqID(soundParam, 1);
 }
 
 int func_8002B634(int arg0, Vec *arg1, s8 *arg2, s8 *arg3)
@@ -2970,9 +2971,9 @@ static s8 func_8002BB20(int arg0, Vec *arg1, s8 *arg2, s8 *arg3)
 
 void func_8002BFCC(u32 arg0, u32 arg1)
 {
-    lbl_802F1DF8 = 0;
+    u_somePlayerId = 0;
     SoundReqID(arg0 | 0x01000000, 0);
-    lbl_802F1DF8 = 0;
+    u_somePlayerId = 0;
     SoundReqID(arg1 | 0xFC0000, 0);
 }
 
@@ -2980,17 +2981,17 @@ static int get_some_id(const char *func, int arg1)
 {
     int var_r3;
 
-    if (lbl_8011057C[arg1].unk8 == 13)
+    if (g_soundDesc[arg1].unk8 == 13)
         return 0;
-    else if (lbl_802F1DF8 == -1 && currentBallStructPtr == NULL)
+    else if (u_somePlayerId == -1 && currentBallStructPtr == NULL)
     {
-        printf("%s %s nowball is NULL. --> pid = 0\n", func, lbl_8011057C[arg1].unk4);
+        printf("%s %s nowball is NULL. --> pid = 0\n", func, g_soundDesc[arg1].name);
         var_r3 = 0;
     }
-    else if (lbl_802F1DF8 != -1)
+    else if (u_somePlayerId != -1)
     {
-        var_r3 = *(int *)&lbl_802F1DF8;
-        lbl_802F1DF8 = -1;
+        var_r3 = *(int *)&u_somePlayerId;
+        u_somePlayerId = -1;
     }
     else
         var_r3 = currentBallStructPtr->playerId;
@@ -3069,15 +3070,15 @@ static int SoundSearchID(int arg0)
 {
     int i;
     int var_r9;
-    const struct Struct8011057C *var_r10;
+    const struct SoundDesc *sndDesc;
 
-    var_r10 = lbl_8011057C;
+    sndDesc = g_soundDesc;
     var_r9 = 0;
-    for (i = 0; i < 0x425; i++, var_r10++)
+    for (i = 0; i < 0x425; i++, sndDesc++)
     {
-        if (var_r10->unkC == arg0)
+        if (sndDesc->unkC == arg0)
         {
-            if (var_r10->unk8 >= 0xF)
+            if (sndDesc->unk8 >= 0xF)
             {
                 var_r9++;
                 if (lbl_802F1DFC != -1)
@@ -3090,7 +3091,7 @@ static int SoundSearchID(int arg0)
                 {
                     if (currentBallStructPtr->ape == NULL)
                     {
-                        printf("SoundSearchID %s ERROR !! ape is NULL.\n", var_r10->unk4);
+                        printf("SoundSearchID %s ERROR !! ape is NULL.\n", sndDesc->name);
                         return -1;
                     }
                     if (currentBallStructPtr->ape->charaId + 1 != var_r9)
@@ -3158,24 +3159,24 @@ struct Struct801B3938
 static struct Struct801B3938 lbl_801B3938[][3] =
 {
     {
-    { -1, 0x00000051 },
-    { -1, 0x00000052 },
-    { -1, 0x00000053 },
+        { -1, 0x00000051 },
+        { -1, 0x00000052 },
+        { -1, 0x00000053 },
     },
     {
-    { -1, 0x00000051 },
-    { -1, 0x00000052 },
-    { -1, 0x00000053 },
+        { -1, 0x00000051 },
+        { -1, 0x00000052 },
+        { -1, 0x00000053 },
     },
     {
-    { -1, 0x00000051 },
-    { -1, 0x00000052 },
-    { -1, 0x00000053 },
+        { -1, 0x00000051 },
+        { -1, 0x00000052 },
+        { -1, 0x00000053 },
     },
     {
-    { -1, 0x00000051 },
-    { -1, 0x00000052 },
-    { -1, 0x00000053 },
+        { -1, 0x00000051 },
+        { -1, 0x00000052 },
+        { -1, 0x00000053 },
     }
 };
 
@@ -3256,7 +3257,7 @@ void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2)
         {
             ptr = &lbl_801B3938[temp_r21][i];
             arg2 = f28 * func_8008CDC0(arg1, lbl_801B39F8[i]);
-            ptr->unk0 = sndFXStartParaInfo(lbl_8011057C[ptr->unk4].unk0, 0x7FU, var_r23 + 0x40, 0U, &sp14);
+            ptr->unk0 = sndFXStartParaInfo(g_soundDesc[ptr->unk4].unk0, 0x7FU, var_r23 + 0x40, 0U, &sp14);
             s_voiceIDs[temp_r21][ptr->unk4] = ptr->unk0;
             sndFXCtrl(ptr->unk0, 7, arg2);
         }

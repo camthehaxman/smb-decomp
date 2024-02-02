@@ -153,7 +153,7 @@ struct Struct8027CC58
 
 static struct Struct8027CC58 lbl_8027CC58[4][3];
 static u32 s_visitedFloors[4];  // bit mask of floors that have been played on at least once
-struct Struct8027CE18 lbl_8027CE18;
+u32 playPointYieldPerDifficulty[3];
 
 static int difficulty_to_course_id(int, u32);
 static void mark_floor_visited(int, int, u32);
@@ -172,27 +172,27 @@ void course_init(void)
     g_maxPlayPointRecord = 0;
 
     count = 0;
-    lbl_8027CE18.unk0 = 0;
+    playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] = 0;
     for (i = 0; i < 10; i++, count++)
-        lbl_8027CE18.unk0 += beginnerMainPlayPoints[i] + u_unkPlayPointList[i];
+        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerMainPlayPoints[i] + u_unkPlayPointList[i];
     for (i = 0; i < 3; i++, count++)
-        lbl_8027CE18.unk0 += beginnerExtraPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerExtraPlayPoints[i] + u_unkPlayPointList[count];
 
     count = 0;
-    lbl_8027CE18.unk4 = 0;
+    playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] = 0;
     for (i = 0; i < 30; i++, count++)
-        lbl_8027CE18.unk4 += advancedMainPlayPoints[i] + u_unkPlayPointList[i];
+        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedMainPlayPoints[i] + u_unkPlayPointList[i];
     for (i = 0; i < 5; i++, count++)
-        lbl_8027CE18.unk4 += advancedExtraPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedExtraPlayPoints[i] + u_unkPlayPointList[count];
 
     count = 0;
-    lbl_8027CE18.unk8 = 0;
+    playPointYieldPerDifficulty[DIFFICULTY_EXPERT] = 0;
     for (i = 0; i < 50; i++, count++)
-        lbl_8027CE18.unk8 += expertMainPlayPoints[i] + u_unkPlayPointList[i];
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertMainPlayPoints[i] + u_unkPlayPointList[i];
     for (i = 0; i < 10; i++, count++)
-        lbl_8027CE18.unk8 += expertExtraPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertExtraPlayPoints[i] + u_unkPlayPointList[count];
     for (i = 0; i < 10; i++, count++)
-        lbl_8027CE18.unk8 += masterPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += masterPlayPoints[i] + u_unkPlayPointList[count];
 }
 
 void reset_earned_play_points(void)
