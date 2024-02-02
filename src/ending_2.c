@@ -1,20 +1,42 @@
-#include <stddef.h>
+#include <string.h>
 #include <dolphin.h>
 
 #include "global.h"
 #include "ball.h"
 #include "camera.h"
+#include "course.h"
 #include "effect.h"
 #include "ending.h"
 #include "gxutil.h"
 #include "gma.h"
 #include "light.h"
 #include "mathutil.h"
+#include "mode.h"
 #include "ord_tbl.h"
+
+struct GameResultInfo
+{
+    s32 playPoints;
+    s32 unk4;
+    s32 unk8;
+    u8 unlockedMinigames;
+    u8 lockedMinigames;
+    s32 canUnlockMinigame;
+    s32 unk14;
+    s32 unk18;
+    s32 hasMaxContinues;
+    u8 continues;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    s32 unk30;
+    s32 unk34;
+};
 
 void lbl_800C00F4(struct Camera *, struct Ball *);
 void func_800C013C(struct Camera *camera, struct Ball *ball);
 void func_800C0354(struct Camera *camera, struct Ball *ball);
+void get_game_results(struct GameResultInfo *arg0);
 
 void (*lbl_801E3248[])(struct Camera *, struct Ball *) =
 {
@@ -323,22 +345,22 @@ void lbl_800C0C94(struct MyNode *node)
 
 void effect_ending_ballfrag_destroy(struct Effect *effect) {}
 
-struct UnkStrct
-{
-    u8 filler0[0x38];
-};
+char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***arg1);
 
 void func_800C0DC0(s32 *arg0, s32 *arg1)
 {
-    struct UnkStrct sp10;
-    int r3;
+    struct GameResultInfo sp10;
+    char **r3;
 
-    func_800C0F94(&sp10);
-    r3 = func_800C122C(&sp10, 0);
+    get_game_results(&sp10);
+    r3 = get_ending_dlg_lines(&sp10, NULL);
     func_800C1418(&sp10, arg0, arg1, r3);
 }
 
 #pragma force_active on
+
+// AiAi Dialogue
+
 char *lbl_801E32B8_jp[] =
 {
     "h/KONNDOHA SARANI",
@@ -606,6 +628,8 @@ char *lbl_801E3DD0_jp[] =
     NULL,
 };
 
+// MeeMee Dialogue
+
 char *lbl_801E3DD0[] =
 {
     "Try a higher level",
@@ -871,6 +895,8 @@ char *lbl_801E4814_jp[] =
     NULL,
 };
 
+// Baby Dialogue
+
 char *lbl_801E4814[] =
 {
     "I want to play higher level",
@@ -1129,6 +1155,8 @@ char *lbl_801E51D8_jp[] =
     "k/UENO REBERUDE ASONDEKURE~!",
     NULL,
 };
+
+// GonGon dialogue
 
 char *lbl_801E51D8[] =
 {
@@ -1390,7 +1418,7 @@ char *lbl_801E5B08[] =
 };
 #pragma force_active reset
 
-char **lbl_801E5B20[] =
+char **aiaiDialogue[] =
 {
     lbl_801E32B8,
     lbl_801E3330,
@@ -1409,7 +1437,7 @@ char **lbl_801E5B20[] =
     lbl_801E3D7C,
 };
 
-char **lbl_801E5B5C[] =
+char **meemeeDialogue[] =
 {
     lbl_801E3DD0,
     lbl_801E3E34,
@@ -1428,7 +1456,7 @@ char **lbl_801E5B5C[] =
     lbl_801E47A4,
 };
 
-char **lbl_801E5B98[] =
+char **babyDialogue[] =
 {
     lbl_801E4814,
     lbl_801E487C,
@@ -1447,7 +1475,7 @@ char **lbl_801E5B98[] =
     lbl_801E5134,
 };
 
-char **lbl_801E5BD4[] =
+char **gongonDialogue[] =
 {
     lbl_801E51D8,
     lbl_801E5298,
@@ -1466,83 +1494,142 @@ char **lbl_801E5BD4[] =
     lbl_801E5B08,
 };
 
-char ***lbl_801E5C10[] =
+char ***characterDialogues[] =
 {
-    lbl_801E5B20,
-    lbl_801E5B5C,
-    lbl_801E5B98,
-    lbl_801E5BD4,
+    aiaiDialogue,
+    meemeeDialogue,
+    babyDialogue,
+    gongonDialogue,
 };
 
-/*
-void func_800C0E1C(s32 arg0, s32 arg1, s32 arg2)
+void func_800C0E1C(s32 index, s32 arg1, s32 arg2)
 {
-    s32 sp44;
-    s32 sp38;
-    s8 sp34;
-    s32 sp18;
-    s32 sp14;
-    ? *temp_r4;
-    s32 var_r31;
-    u32 temp_r0;
+    struct GameResultInfo result;
+    char ***charaDlg;
+    char **lines;
 
-    var_r31 = saved_reg_r31;
-    func_800C0F94(&sp14);
-    sp14 = 0x457;
-    sp18 = 0x8AE;
-    sp38 = 0xD05;
-    sp34 = 4;
-    sp44 = 0x15B3;
-    temp_r0 = arg0 % 15;
-    temp_r4 = lbl_801E5C10[playerCharacterSelection[modeCtrl.currPlayer]];
-    switch (temp_r0)
+    get_game_results(&result);
+    result.playPoints = 1111;
+    result.unk4 = 2222;
+    result.unk24 = 3333;
+    result.continues = 4;
+    result.unk30 = 5555;
+    charaDlg = characterDialogues[playerCharacterSelection[modeCtrl.currPlayer]];
+    switch (index % 15)
     {
-    case 0:
-        var_r31 = temp_r4->unk0;
-        break;
-    case 1:
-        var_r31 = temp_r4->unk4;
-        break;
-    case 2:
-        var_r31 = temp_r4->unk8;
-        break;
-    case 3:
-        var_r31 = temp_r4->unkC;
-        break;
-    case 4:
-        var_r31 = temp_r4->unk10;
-        break;
-    case 5:
-        var_r31 = temp_r4->unk14;
-        break;
-    case 6:
-        var_r31 = temp_r4->unk18;
-        break;
-    case 7:
-        var_r31 = temp_r4->unk1C;
-        break;
-    case 8:
-        var_r31 = temp_r4->unk20;
-        break;
-    case 9:
-        var_r31 = temp_r4->unk24;
-        break;
-    case 10:
-        var_r31 = temp_r4->unk28;
-        break;
-    case 11:
-        var_r31 = temp_r4->unk2C;
-        break;
-    case 12:
-        var_r31 = temp_r4->unk30;
-        break;
-    case 13:
-        var_r31 = temp_r4->unk34;
-        break;
-    case 14:
-        var_r31 = temp_r4->unk38;
-        break;
+    case 0: lines = charaDlg[0]; break;
+    case 1: lines = charaDlg[1]; break;
+    case 2: lines = charaDlg[2]; break;
+    case 3: lines = charaDlg[3]; break;
+    case 4: lines = charaDlg[4]; break;
+    case 5: lines = charaDlg[5]; break;
+    case 6: lines = charaDlg[6]; break;
+    case 7: lines = charaDlg[7]; break;
+    case 8: lines = charaDlg[8]; break;
+    case 9: lines = charaDlg[9]; break;
+    case 10: lines = charaDlg[10]; break;
+    case 11: lines = charaDlg[11]; break;
+    case 12: lines = charaDlg[12]; break;
+    case 13: lines = charaDlg[13]; break;
+    case 14: lines = charaDlg[14]; break;
     }
-    func_800C1418(&sp14, arg1, arg2, var_r31);
+    func_800C1418(&result, arg1, arg2, lines);
 }
-*/
+
+void get_game_results(struct GameResultInfo *out)
+{
+    struct GameResultInfo result;
+
+    memset(&result, 0, sizeof(result));
+    result.unlockedMinigames = 0;
+    if (is_minigame_unlocked(GAMETYPE_MINI_BILLIARDS))
+        result.unlockedMinigames++;
+    if (is_minigame_unlocked(GAMETYPE_MINI_BOWLING))
+        result.unlockedMinigames++;
+    if (is_minigame_unlocked(GAMETYPE_MINI_GOLF))
+        result.unlockedMinigames++;
+    result.playPoints = g_playPointsEarned;
+    result.unk4 = g_totalPlayPoints;
+    result.unk8 = g_totalPlayPoints;
+    result.lockedMinigames   = 3 - result.unlockedMinigames;
+    result.canUnlockMinigame = (result.unk8 > 2500);
+    result.unk14 = g_unlockFlags & 8;
+    result.unk18 = (result.unk8 > 2500);
+    result.continues = (u8)get_max_continues();
+    {
+        int i;
+        int playPoints = result.unk8;
+        for (i = 2500; i < playPoints; i += 2500)
+            result.continues++;
+    }
+    result.hasMaxContinues = (result.continues > 9);
+    result.unk24 = 2500 - result.unk8;
+    result.unk28 = (result.unk14 != 0 && result.lockedMinigames == 0);
+    result.unk2C = !(lbl_802F22C8 & 1);
+    result.unk30 = g_maxPlayPointRecord;
+    result.unk34 = playPointYieldPerDifficulty[modeCtrl.difficulty];
+    *out = result;
+}
+
+char **get_ending_dlg_lines(struct GameResultInfo *arg0, char ***out)
+{
+    struct GameResultInfo sp10 = *arg0;
+    char ***charaDlg = characterDialogues[playerCharacterSelection[modeCtrl.currPlayer]];
+    char **lines;
+
+    if (modeCtrl.playerCount > 1)
+    {
+        switch (modeCtrl.difficulty)
+        {
+        case DIFFICULTY_BEGINNER:
+            lines = charaDlg[0];
+            break;
+        case DIFFICULTY_ADVANCED:
+            lines = charaDlg[1];
+            break;
+        default:
+        case DIFFICULTY_EXPERT:
+            lines = charaDlg[2];
+            break;
+        }
+    }
+    else if (modeCtrl.courseFlags & COURSE_FLAG_FAILED_EXTRA)
+        lines = charaDlg[3];
+    else if (sp10.lockedMinigames != 0)
+    {
+        if (sp10.canUnlockMinigame == 0)
+            lines = charaDlg[4];
+        else if (sp10.lockedMinigames > 1)
+            lines = charaDlg[5];
+        else
+            lines = charaDlg[6];
+    }
+    else if (sp10.unk14 == 0)
+    {
+        if (sp10.unk18 == 0)
+            lines = charaDlg[7];
+        else if (!sp10.hasMaxContinues)
+            lines = charaDlg[8];
+        else
+            lines = charaDlg[9];
+    }
+    else if (sp10.unk2C != 0)
+    {
+        lines = charaDlg[10];
+        lbl_802F22C8 |= 1;
+    }
+    else if (sp10.playPoints >= sp10.unk30)
+    {
+        if (sp10.playPoints >= sp10.unk34)
+            lines = charaDlg[13];
+        else
+            lines = charaDlg[12];
+    }
+    else if (sp10.unk30 >= sp10.unk34)
+        lines = charaDlg[14];
+    else
+        lines = charaDlg[11];
+    if (out != NULL)
+        *out = lines;
+    return lines;
+}

@@ -1263,7 +1263,7 @@ void submode_game_ending_init_func(void)
     modeCtrl.courseFlags |= (1 << 6);
     ending_init();
     if (modeCtrl.gameType == 0 && modeCtrl.playerCount == 1
-     && !(modeCtrl.courseFlags & (1 << 20)))
+     && !(modeCtrl.courseFlags & COURSE_FLAG_FAILED_EXTRA))
         record_play_points();
     start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
     u_play_music(68, 0);
@@ -1281,8 +1281,8 @@ void submode_game_ending_main_func(void)
         ending_finish();
         gameSubmodeRequest = SMD_GAME_ROLL_INIT;
         lbl_802F22C8 |= 1 << (modeCtrl.difficulty + 2);
-        if (modeCtrl.gameType == 0 && modeCtrl.playerCount == 1
-         && !(modeCtrl.courseFlags & (1 << 20)))
+        if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1
+         && !(modeCtrl.courseFlags & COURSE_FLAG_FAILED_EXTRA))
             buy_extra_continues();
     }
 }

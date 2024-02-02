@@ -912,10 +912,10 @@ func_800C0DC0:
 /* 800C0DD4 000BCCF4  93 C1 00 48 */	stw r30, 0x48(r1)
 /* 800C0DD8 000BCCF8  3B C3 00 00 */	addi r30, r3, 0
 /* 800C0DDC 000BCCFC  38 61 00 10 */	addi r3, r1, 0x10
-/* 800C0DE0 000BCD00  48 00 01 B5 */	bl func_800C0F94
+/* 800C0DE0 000BCD00  48 00 01 B5 */	bl get_game_results
 /* 800C0DE4 000BCD04  38 61 00 10 */	addi r3, r1, 0x10
 /* 800C0DE8 000BCD08  38 80 00 00 */	li r4, 0
-/* 800C0DEC 000BCD0C  48 00 04 41 */	bl func_800C122C
+/* 800C0DEC 000BCD0C  48 00 04 41 */	bl get_ending_dlg_lines
 /* 800C0DF0 000BCD10  38 C3 00 00 */	addi r6, r3, 0
 /* 800C0DF4 000BCD14  38 9E 00 00 */	addi r4, r30, 0
 /* 800C0DF8 000BCD18  38 BF 00 00 */	addi r5, r31, 0
@@ -941,7 +941,7 @@ func_800C0E1C:
 /* 800C0E3C 000BCD5C  93 81 00 50 */	stw r28, 0x50(r1)
 /* 800C0E40 000BCD60  3B 83 00 00 */	addi r28, r3, 0
 /* 800C0E44 000BCD64  38 61 00 14 */	addi r3, r1, 0x14
-/* 800C0E48 000BCD68  48 00 01 4D */	bl func_800C0F94
+/* 800C0E48 000BCD68  48 00 01 4D */	bl get_game_results
 /* 800C0E4C 000BCD6C  38 00 04 57 */	li r0, 0x457
 /* 800C0E50 000BCD70  90 01 00 14 */	stw r0, 0x14(r1)
 /* 800C0E54 000BCD74  38 00 08 AE */	li r0, 0x8ae
@@ -964,13 +964,13 @@ func_800C0E1C:
 /* 800C0E98 000BCDB8  3C 80 80 20 */	lis r4, playerCharacterSelection@ha
 /* 800C0E9C 000BCDBC  7C 00 1A 14 */	add r0, r0, r3
 /* 800C0EA0 000BCDC0  1C 00 00 0F */	mulli r0, r0, 0xf
-/* 800C0EA4 000BCDC4  3C 60 80 1E */	lis r3, lbl_801E5C10@ha
+/* 800C0EA4 000BCDC4  3C 60 80 1E */	lis r3, characterDialogues@ha
 /* 800C0EA8 000BCDC8  7C 00 E0 50 */	subf r0, r0, r28
 /* 800C0EAC 000BCDCC  54 A5 10 3A */	slwi r5, r5, 2
 /* 800C0EB0 000BCDD0  38 84 6B C0 */	addi r4, r4, playerCharacterSelection@l
 /* 800C0EB4 000BCDD4  7C 84 2A 14 */	add r4, r4, r5
 /* 800C0EB8 000BCDD8  80 84 00 00 */	lwz r4, 0(r4)
-/* 800C0EBC 000BCDDC  38 63 5C 10 */	addi r3, r3, lbl_801E5C10@l
+/* 800C0EBC 000BCDDC  38 63 5C 10 */	addi r3, r3, characterDialogues@l
 /* 800C0EC0 000BCDE0  28 00 00 0E */	cmplwi r0, 0xe
 /* 800C0EC4 000BCDE4  54 84 10 3A */	slwi r4, r4, 2
 /* 800C0EC8 000BCDE8  7C 63 22 14 */	add r3, r3, r4
@@ -1041,8 +1041,8 @@ lbl_800C0F60:
 /* 800C0F8C 000BCEAC  38 21 00 60 */	addi r1, r1, 0x60
 /* 800C0F90 000BCEB0  4E 80 00 20 */	blr
 
-.global func_800C0F94
-func_800C0F94:
+.global get_game_results
+get_game_results:
 /* 800C0F94 000BCEB4  7C 08 02 A6 */	mflr r0
 /* 800C0F98 000BCEB8  38 80 00 00 */	li r4, 0
 /* 800C0F9C 000BCEBC  90 01 00 04 */	stw r0, 4(r1)
@@ -1169,7 +1169,7 @@ lbl_800C1128:
 lbl_800C1164:
 /* 800C1164 000BD084  80 0D A0 E8 */	lwz r0, lbl_802F22C8@sda21(r13)
 /* 800C1168 000BD088  3C 80 80 1F */	lis r4, modeCtrl@ha
-/* 800C116C 000BD08C  3C 60 80 28 */	lis r3, lbl_8027CE18@ha
+/* 800C116C 000BD08C  3C 60 80 28 */	lis r3, playPointYieldPerDifficulty@ha
 /* 800C1170 000BD090  90 A1 00 34 */	stw r5, 0x34(r1)
 /* 800C1174 000BD094  54 00 07 FE */	clrlwi r0, r0, 0x1f
 /* 800C1178 000BD098  7C 00 00 34 */	cntlzw r0, r0
@@ -1177,7 +1177,7 @@ lbl_800C1164:
 /* 800C1180 000BD0A0  54 00 D9 7E */	srwi r0, r0, 5
 /* 800C1184 000BD0A4  90 01 00 38 */	stw r0, 0x38(r1)
 /* 800C1188 000BD0A8  38 84 EC 20 */	addi r4, r4, modeCtrl@l
-/* 800C118C 000BD0AC  38 03 CE 18 */	addi r0, r3, lbl_8027CE18@l
+/* 800C118C 000BD0AC  38 03 CE 18 */	addi r0, r3, playPointYieldPerDifficulty@l
 /* 800C1190 000BD0B0  90 A1 00 3C */	stw r5, 0x3c(r1)
 /* 800C1194 000BD0B4  80 64 00 04 */	lwz r3, 4(r4)
 /* 800C1198 000BD0B8  54 63 10 3A */	slwi r3, r3, 2
@@ -1218,18 +1218,18 @@ lbl_800C1164:
 /* 800C1224 000BD144  7C 08 03 A6 */	mtlr r0
 /* 800C1228 000BD148  4E 80 00 20 */	blr
 
-.global func_800C122C
-func_800C122C:
+.global get_ending_dlg_lines
+get_ending_dlg_lines:
 /* 800C122C 000BD14C  94 21 FF B8 */	stwu r1, -0x48(r1)
 /* 800C1230 000BD150  3C E0 80 1F */	lis r7, modeCtrl@ha
 /* 800C1234 000BD154  3C C0 80 20 */	lis r6, playerCharacterSelection@ha
 /* 800C1238 000BD158  81 03 00 00 */	lwz r8, 0(r3)
-/* 800C123C 000BD15C  3C A0 80 1E */	lis r5, lbl_801E5C10@ha
+/* 800C123C 000BD15C  3C A0 80 1E */	lis r5, characterDialogues@ha
 /* 800C1240 000BD160  80 03 00 04 */	lwz r0, 4(r3)
 /* 800C1244 000BD164  38 E7 EC 20 */	addi r7, r7, modeCtrl@l
 /* 800C1248 000BD168  38 C6 6B C0 */	addi r6, r6, playerCharacterSelection@l
 /* 800C124C 000BD16C  91 01 00 10 */	stw r8, 0x10(r1)
-/* 800C1250 000BD170  38 A5 5C 10 */	addi r5, r5, lbl_801E5C10@l
+/* 800C1250 000BD170  38 A5 5C 10 */	addi r5, r5, characterDialogues@l
 /* 800C1254 000BD174  90 01 00 14 */	stw r0, 0x14(r1)
 /* 800C1258 000BD178  81 03 00 08 */	lwz r8, 8(r3)
 /* 800C125C 000BD17C  80 03 00 0C */	lwz r0, 0xc(r3)
@@ -1439,6 +1439,8 @@ lbl_800C1520:
 /* 800C1530 000BD450  41 81 01 20 */	bgt lbl_800C1650
 /* 800C1534 000BD454  54 00 10 3A */	slwi r0, r0, 2
 /* 800C1538 000BD458  7C 13 00 2E */	lwzx r0, r19, r0
+/*lis r3, lbl_801E5CA0@ha
+addi r19, r3, lbl_801E5CA0@l*/  /* for decompiler */
 /* 800C153C 000BD45C  7C 09 03 A6 */	mtctr r0
 /* 800C1540 000BD460  4E 80 04 20 */	bctr
 .global lbl_800C1544
@@ -2931,7 +2933,7 @@ glabel lbl_801E5B08
 	.4byte string_if_you_can_get__b_  ;# ptr
 	.4byte string_Readyp_TENNTENN_a__Go___  ;# ptr
 	.4byte 0
-glabel lbl_801E5B20
+glabel aiaiDialogue
 	.4byte lbl_801E32B8  ;# ptr
 	.4byte lbl_801E3330  ;# ptr
 	.4byte lbl_801E33D0  ;# ptr
@@ -2947,7 +2949,7 @@ glabel lbl_801E5B20
 	.4byte lbl_801E3C14  ;# ptr
 	.4byte lbl_801E3CE4  ;# ptr
 	.4byte lbl_801E3D7C  ;# ptr
-glabel lbl_801E5B5C
+glabel meemeeDialogue
 	.4byte lbl_801E3DD0  ;# ptr
 	.4byte lbl_801E3E34  ;# ptr
 	.4byte lbl_801E3EA8  ;# ptr
@@ -2963,7 +2965,7 @@ glabel lbl_801E5B5C
 	.4byte lbl_801E4640  ;# ptr
 	.4byte lbl_801E46F8  ;# ptr
 	.4byte lbl_801E47A4  ;# ptr
-glabel lbl_801E5B98
+glabel babyDialogue
 	.4byte lbl_801E4814  ;# ptr
 	.4byte lbl_801E487C  ;# ptr
 	.4byte lbl_801E48F4  ;# ptr
@@ -2979,7 +2981,7 @@ glabel lbl_801E5B98
 	.4byte lbl_801E4FCC  ;# ptr
 	.4byte lbl_801E5078  ;# ptr
 	.4byte lbl_801E5134  ;# ptr
-glabel lbl_801E5BD4
+glabel gongonDialogue
 	.4byte lbl_801E51D8  ;# ptr
 	.4byte lbl_801E5298  ;# ptr
 	.4byte lbl_801E5334  ;# ptr
@@ -2996,13 +2998,13 @@ glabel lbl_801E5BD4
 	.4byte lbl_801E5A54  ;# ptr
 	.4byte lbl_801E5B08  ;# ptr
 
-.global lbl_801E5C10
-lbl_801E5C10:
+.global characterDialogues
+characterDialogues:
 	# ROM: 0x1E2C10
-	.4byte lbl_801E5B20  ;# ptr
-	.4byte lbl_801E5B5C  ;# ptr
-	.4byte lbl_801E5B98  ;# ptr
-	.4byte lbl_801E5BD4  ;# ptr
+	.4byte aiaiDialogue  ;# ptr
+	.4byte meemeeDialogue  ;# ptr
+	.4byte babyDialogue  ;# ptr
+	.4byte gongonDialogue  ;# ptr
 
 .global lbl_801E5C20
 lbl_801E5C20:

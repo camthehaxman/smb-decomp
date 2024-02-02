@@ -569,8 +569,8 @@ void func_800C09B4(void);
 // ? effect_ending_ballfrag_draw();
 // ? effect_ending_ballfrag_destroy();
 void func_800C0DC0(s32 *, s32 *);
-// ? func_800C0F94();
-// ? func_800C122C();
+// ? get_game_results();
+// ? get_ending_dlg_lines();
 // ? func_800C1418();
 
 // mkbe.sel_stage.rel functions

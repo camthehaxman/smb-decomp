@@ -11,6 +11,13 @@
 #define MAX_SPRITES 64
 #define MAX_EFFECTS 512
 
+enum
+{
+    DIFFICULTY_BEGINNER,
+    DIFFICULTY_ADVANCED,
+    DIFFICULTY_EXPERT,
+};
+
 #define ARRAY_COUNT(arr) ((int)(sizeof(arr)/sizeof(arr[0])))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
