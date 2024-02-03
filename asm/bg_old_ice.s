@@ -17,12 +17,12 @@ bg_old_ice_init:
 /* 80058C18 00054B38  90 03 00 7C */	stw r0, 0x7c(r3)
 /* 80058C1C 00054B3C  80 6D 99 1C */	lwz r3, g_bgNlObj@sda21(r13)
 /* 80058C20 00054B40  80 63 00 08 */	lwz r3, 8(r3)
-/* 80058C24 00054B44  48 03 47 49 */	bl func_8008D36C
+/* 80058C24 00054B44  48 03 47 49 */	bl u_set_model_mesh_unk_flags
 /* 80058C28 00054B48  80 6D 99 1C */	lwz r3, g_bgNlObj@sda21(r13)
 /* 80058C2C 00054B4C  38 9F FF FF */	addi r4, r31, -1
 /* 80058C30 00054B50  3C A0 04 00 */	lis r5, 0x400
 /* 80058C34 00054B54  80 63 00 0C */	lwz r3, 0xc(r3)
-/* 80058C38 00054B58  48 03 47 35 */	bl func_8008D36C
+/* 80058C38 00054B58  48 03 47 35 */	bl u_set_model_mesh_unk_flags
 /* 80058C3C 00054B5C  38 61 00 08 */	addi r3, r1, 8
 /* 80058C40 00054B60  38 80 00 00 */	li r4, 0
 /* 80058C44 00054B64  38 A0 00 AC */	li r5, 0xac

@@ -15660,7 +15660,7 @@ lbl_0000E9D8:
 /* 0000E9F0 3883FFFF */ addi r4, r3, -1  ;# fixed addi
 /* 0000E9F4 80650030 */ lwz r3, 0x30(r5)
 /* 0000E9F8 3CA02400 */ lis r5, 0x2400
-/* 0000E9FC 4BFF1769 */ bl func_8008D36C
+/* 0000E9FC 4BFF1769 */ bl u_set_model_mesh_unk_flags
 /* 0000EA00 8001000C */ lwz r0, 0xc(r1)
 /* 0000EA04 38210008 */ addi r1, r1, 8
 /* 0000EA08 7C0803A6 */ mtlr r0
@@ -17232,7 +17232,7 @@ lbl_000100A8:
 /* 000100AC 809E00FC */ lwz r4, 0xfc(r30)
 /* 000100B0 38630000 */ addi r3, r3, lbl_0001106C@l
 /* 000100B4 38A00005 */ li r5, 5
-/* 000100B8 4BFF00AD */ bl func_8008D1DC
+/* 000100B8 4BFF00AD */ bl u_insert_into_linked_list
 /* 000100BC 88BE002E */ lbz r5, 0x2e(r30)
 /* 000100C0 3C800000 */ lis r4, lbl_80206B80@ha
 /* 000100C4 38040000 */ addi r0, r4, lbl_80206B80@l

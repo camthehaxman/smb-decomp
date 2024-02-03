@@ -1036,7 +1036,7 @@ void func_8008B0AC(void)
 
 void u_ape_free(struct Ape *ape)
 {
-    func_8008D29C(ape->unk5C);
+    u_move_node_to_beginning(ape->unk5C);
     if (lbl_802F2074 == 2)
     {
         OSFreeToHeap(backgroundHeap, ape->unk0);
@@ -1194,7 +1194,7 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 
     ape->unkB8 = lbl_8008A10C;
     ape->unkBC = lbl_8008A108;
-    ape->unk5C = func_8008D1DC(func_8008C924, ape, 7);
+    ape->unk5C = u_insert_into_linked_list(func_8008C924, ape, 7);
     nextApeIndex++;
     return ape;
 }

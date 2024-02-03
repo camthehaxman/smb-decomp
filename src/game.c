@@ -70,7 +70,7 @@ void submode_game_first_init_func(void)
     call_bitmap_load_group(BMP_NML);
     BALL_FOREACH( ball->state = 1; )
     BALL_FOREACH( ball->ape->flags |= (1 << 5); )
-    func_800846B0(4);
+    minimap_set_state(MINIMAP_STATE_4);
     func_80022F14();
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1)
         reset_earned_play_points();
@@ -133,7 +133,7 @@ void submode_game_restart_init_func(void)
     event_start(EVENT_SOUND);
     call_bitmap_load_group(BMP_NML);
     BALL_FOREACH( ball->state = 1; )
-    func_800846B0(4);
+    minimap_set_state(MINIMAP_STATE_4);
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1)
         reset_earned_play_points();
     gameSubmodeRequest = SMD_GAME_READY_INIT;
@@ -289,12 +289,12 @@ void submode_game_ready_main_func(void)
         if (sprite != NULL)
             sprite->userVar = 15;
         hud_show_ready_banner(120);
-        func_800846B0(3);
+        minimap_set_state(MINIMAP_STATE_OPEN);
     }
     if (modeCtrl.submodeTimer == 24.0)
         BALL_FOREACH( ball->state = 3; )
     if (g_currPlayerButtons[2] & PAD_BUTTON_A)
-        minimap_change_size();
+        minimap_zoom();
     if (--modeCtrl.submodeTimer <= 0)
         gameSubmodeRequest = SMD_GAME_PLAY_INIT;
 }
@@ -363,7 +363,7 @@ void submode_game_play_main_func(void)
     if (infoWork.timerCurr <= 10 * 60 && infoWork.timerCurr % 60 == 51)
         u_play_sound_0(6);
     if (g_currPlayerButtons[2] & PAD_BUTTON_A)
-        minimap_change_size();
+        minimap_zoom();
 
     if (infoWork.flags & INFO_FLAG_GOAL)
     {
@@ -417,7 +417,7 @@ void submode_game_goal_init_func(void)
         preload_stage_files(r31);
         lbl_802F1C18 = r31;
     }
-    func_800846B0(1);
+    minimap_set_state(MINIMAP_STATE_CLOSE);
     camera_set_state(14);
     if (!(infoWork.flags & INFO_FLAG_13))
         hud_show_goal_banner(0x168);
@@ -754,7 +754,7 @@ void submode_game_timeover_init_func(void)
     event_finish(EVENT_WORLD);
     event_finish(EVENT_VIBRATION);
     BALL_FOREACH( ball->state = 0; )
-    func_800846B0(1);
+    minimap_set_state(MINIMAP_STATE_CLOSE);
     if (!(infoWork.flags & INFO_FLAG_BONUS_STAGE))
         u_play_sound_0(11);
     u_play_sound_0(0x128);
@@ -828,7 +828,7 @@ void submode_game_ringout_init_func(void)
 
     modeCtrl.submodeTimer = 270;
     modeCtrl.unk18 = 60;
-    func_800846B0(1);
+    minimap_set_state(MINIMAP_STATE_CLOSE);
     u_play_sound_0((currentBall->lives == 1) ? 81 : 29);
     u_play_sound_0(21);
     lbl_802F1C1C = -1;
@@ -934,7 +934,7 @@ void submode_game_bonus_clear_init_func(void)
     modeCtrl.courseFlags &= ~(1 << 10);
     event_finish(EVENT_WORLD);
     event_finish(EVENT_VIBRATION);
-    func_800846B0(1);
+    minimap_set_state(MINIMAP_STATE_CLOSE);
     BALL_FOREACH( ball->state = 5; )
     BALL_FOREACH( ball->flags |= BALL_FLAG_08|BALL_FLAG_10; )
     camera_set_state(14);

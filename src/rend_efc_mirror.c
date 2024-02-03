@@ -689,7 +689,7 @@ void func_80098B50(int arg0, struct RenderEffect *rendEfc)
     struct RenderEffectWavyMirror *work = rendEfc->work;
     Mtx sp10;
 
-    func_8009AC0C(0);
+    u_gxutil_set_fog_enabled(0);
     GXSetViewport(0.0f, 0.0f, 256.0f, 256.0f, 0.0f, 1.0f);
     GXSetScissor(0U, 0U, 0x100U, 0x100U);
     GXLoadTexObj_cached(&commonGma->modelEntries[0x59].model->texObjs[0], GX_TEXMAP0);
@@ -735,7 +735,7 @@ void func_80098B50(int arg0, struct RenderEffect *rendEfc)
     GXCopyTex(work->unkB4, 1);
     GXInitTexObj(&work->unk94, work->unkB4, 0x100U, 0x100U, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0U);
     GXInitTexObjLOD(&work->unk94, GX_LINEAR, GX_LINEAR, 0.0f, 10.0f, 0.0f, 0U, 0U, GX_ANISO_1);
-    func_8009AC44();
+    u_gxutil_fog_something_2();
     camera_apply_viewport(modeCtrl.currPlayer);
 }
 

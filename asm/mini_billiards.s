@@ -1276,7 +1276,7 @@ lbl_00001368:
 /* 0000136C 807E0064 */ lwz r3, 0x64(r30)
 /* 00001370 2C03FFFF */ cmpwi r3, -1
 /* 00001374 4182000C */ beq lbl_00001380
-/* 00001378 4BFFEDBD */ bl func_8008D29C
+/* 00001378 4BFFEDBD */ bl u_move_node_to_beginning
 /* 0000137C 935E0064 */ stw r26, 0x64(r30)
 lbl_00001380:
 /* 00001380 37BDFFFF */ addic. r29, r29, -1  ;# fixed addi
@@ -4154,7 +4154,7 @@ lbl_00003CEC:
 /* 00003CEC 80780000 */ lwz r3, 0(r24)
 /* 00003CF0 2C03FFFF */ cmpwi r3, -1
 /* 00003CF4 4182000C */ beq lbl_00003D00
-/* 00003CF8 4BFFC43D */ bl func_8008D29C
+/* 00003CF8 4BFFC43D */ bl u_move_node_to_beginning
 /* 00003CFC 92F80000 */ stw r23, 0(r24)
 lbl_00003D00:
 /* 00003D00 3739FFFF */ addic. r25, r25, -1  ;# fixed addi
@@ -4266,7 +4266,7 @@ lbl_00003E84:
 /* 00003E84 809B0064 */ lwz r4, 0x64(r27)
 /* 00003E88 38770000 */ addi r3, r23, 0
 /* 00003E8C 38A00005 */ li r5, 5
-/* 00003E90 4BFFC2A5 */ bl func_8008D1DC
+/* 00003E90 4BFFC2A5 */ bl u_insert_into_linked_list
 /* 00003E94 3B390001 */ addi r25, r25, 1
 /* 00003E98 907A0000 */ stw r3, 0(r26)
 /* 00003E9C 2C190009 */ cmpwi r25, 9
@@ -4300,7 +4300,7 @@ lbl_00003ED0:
 /* 00003F04 80990064 */ lwz r4, 0x64(r25)
 /* 00003F08 936400B4 */ stw r27, 0xb4(r4)
 /* 00003F0C 80990064 */ lwz r4, 0x64(r25)
-/* 00003F10 4BFFC225 */ bl func_8008D1DC
+/* 00003F10 4BFFC225 */ bl u_insert_into_linked_list
 /* 00003F14 3B7B0001 */ addi r27, r27, 1
 /* 00003F18 907A0000 */ stw r3, 0(r26)
 /* 00003F1C 2C1B0002 */ cmpwi r27, 2
@@ -7868,7 +7868,7 @@ lbl_0000731C:
 /* 00007320 807A0064 */ lwz r3, 0x64(r26)
 /* 00007324 2C03FFFF */ cmpwi r3, -1
 /* 00007328 4182000C */ beq lbl_00007334
-/* 0000732C 4BFF8E09 */ bl func_8008D29C
+/* 0000732C 4BFF8E09 */ bl u_move_node_to_beginning
 /* 00007330 933A0064 */ stw r25, 0x64(r26)
 lbl_00007334:
 /* 00007334 37BDFFFF */ addic. r29, r29, -1  ;# fixed addi
@@ -10850,7 +10850,7 @@ lbl_00009E88:
 /* 00009E88 807E0000 */ lwz r3, 0(r30)
 /* 00009E8C 2C03FFFF */ cmpwi r3, -1
 /* 00009E90 4182000C */ beq lbl_00009E9C
-/* 00009E94 4BFF62A1 */ bl func_8008D29C
+/* 00009E94 4BFF62A1 */ bl u_move_node_to_beginning
 /* 00009E98 93FE0000 */ stw r31, 0(r30)
 lbl_00009E9C:
 /* 00009E9C 37BDFFFF */ addic. r29, r29, -1  ;# fixed addi

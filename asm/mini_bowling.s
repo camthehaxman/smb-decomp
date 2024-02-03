@@ -246,7 +246,7 @@ lbl_000003D4:
 /* 000003E4 809A00FC */ lwz r4, 0xfc(r26)
 /* 000003E8 387B0000 */ addi r3, r27, 0
 /* 000003EC 38A00005 */ li r5, 5
-/* 000003F0 4BFFFD71 */ bl func_8008D1DC
+/* 000003F0 4BFFFD71 */ bl u_insert_into_linked_list
 /* 000003F4 90790000 */ stw r3, 0(r25)
 lbl_000003F8:
 /* 000003F8 3B180001 */ addi r24, r24, 1
@@ -1681,7 +1681,7 @@ lbl_000018D4:
 /* 000018D4 807F0000 */ lwz r3, 0(r31)
 /* 000018D8 2C03FFFF */ cmpwi r3, -1
 /* 000018DC 41820008 */ beq lbl_000018E4
-/* 000018E0 4BFFE881 */ bl func_8008D29C
+/* 000018E0 4BFFE881 */ bl u_move_node_to_beginning
 lbl_000018E4:
 /* 000018E4 37DEFFFF */ addic. r30, r30, -1  ;# fixed addi
 /* 000018E8 3BFFFFFC */ addi r31, r31, -4  ;# fixed addi

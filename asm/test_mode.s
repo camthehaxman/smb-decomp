@@ -2548,7 +2548,7 @@ lbl_000024AC:
 /* 000024D8 80640000 */ lwz r3, 0(r4)
 /* 000024DC 98030008 */ stb r0, 8(r3)
 lbl_000024E0:
-/* 000024E0 4BFFDC7D */ bl func_800188D4
+/* 000024E0 4BFFDC7D */ bl u_camera_set_persp_matrix
 /* 000024E4 8001006C */ lwz r0, 0x6c(r1)
 /* 000024E8 83E10064 */ lwz r31, 0x64(r1)
 /* 000024EC 83C10060 */ lwz r30, 0x60(r1)
@@ -4219,7 +4219,7 @@ lbl_00003CA8:
 /* 00003CB0 4BFFC4AD */ bl u_ape_free
 /* 00003CB4 2C1F0003 */ cmpwi r31, 3
 /* 00003CB8 418200C8 */ beq lbl_00003D80
-/* 00003CBC 4BFFC4A1 */ bl func_8008D240
+/* 00003CBC 4BFFC4A1 */ bl u_move_curr_node_to_beginning
 /* 00003CC0 480000C0 */ b lbl_00003D80
 lbl_00003CC4:
 /* 00003CC4 3C800000 */ lis r4, gamePauseStatus@ha
@@ -4359,7 +4359,7 @@ lbl_00003E64:
 /* 00003EBC 5400103A */ slwi r0, r0, 2
 /* 00003EC0 7C9F0214 */ add r4, r31, r0
 /* 00003EC4 808400BC */ lwz r4, 0xbc(r4)
-/* 00003EC8 4BFFC295 */ bl func_8008D1DC
+/* 00003EC8 4BFFC295 */ bl u_insert_into_linked_list
 /* 00003ECC 801F013C */ lwz r0, 0x13c(r31)
 /* 00003ED0 5400103A */ slwi r0, r0, 2
 /* 00003ED4 7C9F0214 */ add r4, r31, r0
@@ -5061,7 +5061,7 @@ lbl_000048E4:
 /* 000048FC 5400103A */ slwi r0, r0, 2
 /* 00004900 7C7F0214 */ add r3, r31, r0
 /* 00004904 806300FC */ lwz r3, 0xfc(r3)
-/* 00004908 4BFFB855 */ bl func_8008D29C
+/* 00004908 4BFFB855 */ bl u_move_node_to_beginning
 lbl_0000490C:
 /* 0000490C 38000000 */ li r0, 0
 /* 00004910 901F0154 */ stw r0, 0x154(r31)
@@ -5078,7 +5078,7 @@ lbl_00004920:
 /* 00004938 5400103A */ slwi r0, r0, 2
 /* 0000493C 7C7F0214 */ add r3, r31, r0
 /* 00004940 806300FC */ lwz r3, 0xfc(r3)
-/* 00004944 4BFFB819 */ bl func_8008D29C
+/* 00004944 4BFFB819 */ bl u_move_node_to_beginning
 lbl_00004948:
 /* 00004948 38000002 */ li r0, 2
 /* 0000494C 901F0154 */ stw r0, 0x154(r31)
@@ -5096,7 +5096,7 @@ lbl_00004960:
 /* 00004978 5400103A */ slwi r0, r0, 2
 /* 0000497C 7C7F0214 */ add r3, r31, r0
 /* 00004980 806300FC */ lwz r3, 0xfc(r3)
-/* 00004984 4BFFB7D9 */ bl func_8008D29C
+/* 00004984 4BFFB7D9 */ bl u_move_node_to_beginning
 lbl_00004988:
 /* 00004988 38000003 */ li r0, 3
 /* 0000498C 901F0154 */ stw r0, 0x154(r31)
@@ -5114,7 +5114,7 @@ lbl_000049A0:
 /* 000049B8 5400103A */ slwi r0, r0, 2
 /* 000049BC 7C7F0214 */ add r3, r31, r0
 /* 000049C0 806300FC */ lwz r3, 0xfc(r3)
-/* 000049C4 4BFFB799 */ bl func_8008D29C
+/* 000049C4 4BFFB799 */ bl u_move_node_to_beginning
 lbl_000049C8:
 /* 000049C8 38000004 */ li r0, 4
 /* 000049CC 901F0154 */ stw r0, 0x154(r31)
@@ -5156,7 +5156,7 @@ lbl_00004A2C:
 /* 00004A4C 5400103A */ slwi r0, r0, 2
 /* 00004A50 7C7F0214 */ add r3, r31, r0
 /* 00004A54 806300FC */ lwz r3, 0xfc(r3)
-/* 00004A58 4BFFB705 */ bl func_8008D29C
+/* 00004A58 4BFFB705 */ bl u_move_node_to_beginning
 lbl_00004A5C:
 /* 00004A5C 807F0154 */ lwz r3, 0x154(r31)
 /* 00004A60 3803FFFF */ addi r0, r3, -1  ;# fixed addi
@@ -5187,7 +5187,7 @@ lbl_00004A9C:
 /* 00004ABC 5400103A */ slwi r0, r0, 2
 /* 00004AC0 7C7F0214 */ add r3, r31, r0
 /* 00004AC4 806300FC */ lwz r3, 0xfc(r3)
-/* 00004AC8 4BFFB695 */ bl func_8008D29C
+/* 00004AC8 4BFFB695 */ bl u_move_node_to_beginning
 lbl_00004ACC:
 /* 00004ACC 807F0154 */ lwz r3, 0x154(r31)
 /* 00004AD0 38030001 */ addi r0, r3, 1
@@ -5221,7 +5221,7 @@ lbl_00004B18:
 /* 00004B38 5400103A */ slwi r0, r0, 2
 /* 00004B3C 7C7F0214 */ add r3, r31, r0
 /* 00004B40 806300FC */ lwz r3, 0xfc(r3)
-/* 00004B44 4BFFB619 */ bl func_8008D29C
+/* 00004B44 4BFFB619 */ bl u_move_node_to_beginning
 lbl_00004B48:
 /* 00004B48 807F0158 */ lwz r3, 0x158(r31)
 /* 00004B4C 3803FFFF */ addi r0, r3, -1  ;# fixed addi
@@ -5262,7 +5262,7 @@ lbl_00004BAC:
 /* 00004BCC 5400103A */ slwi r0, r0, 2
 /* 00004BD0 7C7F0214 */ add r3, r31, r0
 /* 00004BD4 806300FC */ lwz r3, 0xfc(r3)
-/* 00004BD8 4BFFB585 */ bl func_8008D29C
+/* 00004BD8 4BFFB585 */ bl u_move_node_to_beginning
 lbl_00004BDC:
 /* 00004BDC 809F0158 */ lwz r4, 0x158(r31)
 /* 00004BE0 3C600000 */ lis r3, motSkeleton@ha
@@ -5560,7 +5560,7 @@ lbl_00004FD8:
 /* 00004FE4 38000001 */ li r0, 1
 /* 00004FE8 901F0150 */ stw r0, 0x150(r31)
 /* 00004FEC 807F00FC */ lwz r3, 0xfc(r31)
-/* 00004FF0 4BFFB16D */ bl func_8008D29C
+/* 00004FF0 4BFFB16D */ bl u_move_node_to_beginning
 /* 00004FF4 4800A94D */ bl lbl_0000F940
 lbl_00004FF8:
 /* 00004FF8 BA21007C */ lmw r17, 0x7c(r1)
@@ -5935,10 +5935,10 @@ lbl_00005538:
 /* 00005560 38A00069 */ li r5, 0x69
 /* 00005564 4BFFABF9 */ bl avdisp_set_fog_color
 /* 00005568 38600001 */ li r3, 1
-/* 0000556C 4BFFABF1 */ bl func_8009AC0C
+/* 0000556C 4BFFABF1 */ bl u_gxutil_set_fog_enabled
 /* 00005570 807E0160 */ lwz r3, 0x160(r30)
 /* 00005574 4BFFABE9 */ bl avdisp_draw_model_unculled_sort_translucent
-/* 00005578 4BFFABE5 */ bl func_8009AC44
+/* 00005578 4BFFABE5 */ bl u_gxutil_fog_something_2
 /* 0000557C 39000000 */ li r8, 0
 /* 00005580 38C80000 */ addi r6, r8, 0
 /* 00005584 38E80000 */ addi r7, r8, 0
@@ -13474,7 +13474,7 @@ lbl_0000C260:
 /* 0000C3C8 A0A60004 */ lhz r5, 4(r6)
 /* 0000C3CC A0C60006 */ lhz r6, 6(r6)
 /* 0000C3D0 4BFF3D8D */ bl GXSetScissor
-/* 0000C3D4 4BFF3D89 */ bl func_800188D4
+/* 0000C3D4 4BFF3D89 */ bl u_camera_set_persp_matrix
 /* 0000C3D8 8001006C */ lwz r0, 0x6c(r1)
 /* 0000C3DC 83E10064 */ lwz r31, 0x64(r1)
 /* 0000C3E0 83C10060 */ lwz r30, 0x60(r1)
@@ -13835,7 +13835,7 @@ lbl_0000C888:
 /* 0000C960 4BFF37FD */ bl GXSetTevDirect
 /* 0000C964 38600000 */ li r3, 0
 /* 0000C968 4BFF37F5 */ bl GXSetNumIndStages
-/* 0000C96C 4BFF37F1 */ bl func_800188D4
+/* 0000C96C 4BFF37F1 */ bl u_camera_set_persp_matrix
 /* 0000C970 BB61008C */ lmw r27, 0x8c(r1)
 /* 0000C974 800100A4 */ lwz r0, 0xa4(r1)
 /* 0000C978 382100A0 */ addi r1, r1, 0xa0
@@ -16838,7 +16838,7 @@ lbl_0000F498:
 /* 0000F4AC 3C600000 */ lis r3, lbl_10003BF8@ha
 /* 0000F4B0 38630000 */ addi r3, r3, lbl_10003BF8@l
 /* 0000F4B4 80630000 */ lwz r3, 0(r3)
-/* 0000F4B8 4BFF0CA5 */ bl func_8008D29C
+/* 0000F4B8 4BFF0CA5 */ bl u_move_node_to_beginning
 /* 0000F4BC 3C600000 */ lis r3, lbl_10003C60@ha
 /* 0000F4C0 38000000 */ li r0, 0
 /* 0000F4C4 90030000 */ stw r0, lbl_10003C60@l(r3)
@@ -17030,7 +17030,7 @@ lbl_0000F6F0:
 /* 0000F790 4BFF09CD */ bl OSFreeToHeap
 /* 0000F794 2C1F0003 */ cmpwi r31, 3
 /* 0000F798 41820008 */ beq lbl_0000F7A0
-/* 0000F79C 4BFF09C1 */ bl func_8008D240
+/* 0000F79C 4BFF09C1 */ bl u_move_curr_node_to_beginning
 lbl_0000F7A0:
 /* 0000F7A0 80010024 */ lwz r0, 0x24(r1)
 /* 0000F7A4 83E1001C */ lwz r31, 0x1c(r1)
@@ -17158,7 +17158,7 @@ lbl_0000F940:
 /* 0000F970 38630000 */ addi r3, r3, lbl_0000F6F0@l
 /* 0000F974 38800000 */ li r4, 0
 /* 0000F978 38A00005 */ li r5, 5
-/* 0000F97C 4BFF07E1 */ bl func_8008D1DC
+/* 0000F97C 4BFF07E1 */ bl u_insert_into_linked_list
 /* 0000F980 907F0000 */ stw r3, 0(r31)
 /* 0000F984 38800000 */ li r4, 0
 /* 0000F988 3C600000 */ lis r3, lbl_000156F0@ha

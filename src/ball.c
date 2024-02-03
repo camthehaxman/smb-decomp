@@ -615,7 +615,7 @@ void ev_ball_init(void)
             break;
         default:
             if (!(advDemoInfo.flags & (1 << 8)))
-                lbl_80206B80[i] = func_8008D1DC(lbl_8003781C, ape, 5);
+                lbl_80206B80[i] = u_insert_into_linked_list(lbl_8003781C, ape, 5);
             break;
         }
         switch (modeCtrl.gameType)
@@ -681,7 +681,7 @@ struct Ape *u_init_ape(int a, enum Character character, void (*c)(struct Ape *, 
     ape->unk74 = 0;
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_y(0x8000);
-    lbl_80206B80[a] = func_8008D1DC(c, ape, 5);
+    lbl_80206B80[a] = u_insert_into_linked_list(c, ape, 5);
     u_switch_ape_character_lod_maybe(ape, 0);
     mathutil_mtxA_to_quat(&ape->unk60);
     lbl_802F1F08 = 0;
@@ -1063,7 +1063,7 @@ void ev_ball_dest(void)
     {
         if (lbl_80206B80[i] != -1)
         {
-            func_8008D29C(lbl_80206B80[i]);
+            u_move_node_to_beginning(lbl_80206B80[i]);
             lbl_80206B80[i] = -1;
         }
     }
@@ -2076,7 +2076,7 @@ void ball_func_demo_init(struct Ball *ball)
     ball->colorId = 3;
 
     if (!(advDemoInfo.flags & (1 << 6)))
-        lbl_80206B80[ball->playerId] = func_8008D1DC(lbl_8000F790, ball->ape, 5);
+        lbl_80206B80[ball->playerId] = u_insert_into_linked_list(lbl_8000F790, ball->ape, 5);
 
     ball->pos.x = decodedStageLzPtr->startPos->pos.x;
     ball->pos.y = decodedStageLzPtr->startPos->pos.y;

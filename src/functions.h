@@ -247,15 +247,15 @@ void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *un
 */
 
 // code_2.c
-float func_8008CDC0(float, struct Struct80176434 *);
-void func_8008CF00(struct Struct8008CF00 *arg0, int arg1);
-void func_8008D158(u32 arg0);
-int func_8008D1DC(void (*)(struct Ape *, int), struct Ape *, int);
-void func_8008D240(void);
-void func_8008D29C(int);
-void func_8008D330(struct NlModel *arg0, u32 arg1, u32 arg2);
-void func_8008D36C(struct NlModel *arg0, u32 arg1, u32 arg2);
-void func_8008D3A8(struct NlModel *arg0, u32 arg1, u32 arg2);
+float u_interpolate_other_keyframes(float, struct OtherKeyframe *);
+void u_init_some_linked_list(struct UnkLinkedListNode *arg0, int arg1);
+void u_process_some_linked_lists(u32 arg0);
+int u_insert_into_linked_list(void (*)(struct Ape *, int), struct Ape *, int);
+void u_move_curr_node_to_beginning(void);
+void u_move_node_to_beginning(int);
+void u_set_model_mesh_flags(struct NlModel *arg0, u32 arg1, u32 arg2);
+void u_set_model_mesh_unk_flags(struct NlModel *arg0, u32 arg1, u32 arg2);
+void u_set_model_mesh_texflags(struct NlModel *arg0, u32 arg1, u32 arg2);
 
 int lzs_decompress(u8 *, void *);
 // ? func_8008D6BC();

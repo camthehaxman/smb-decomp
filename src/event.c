@@ -64,7 +64,7 @@ void event_main(void)
     struct Event *event;
     int i;
     
-    func_8008D158(0x00FFFFEF);
+    u_process_some_linked_lists(0x00FFFFEF);
     for (i = 0, event = eventInfo; i < ARRAY_COUNT(eventInfo); i++, event++)
     {
         perf_start_timer(5);
@@ -82,7 +82,7 @@ void event_main(void)
         }
         event->time = perf_stop_timer(5);
     }
-    func_8008D158(0x00FFFFDF);
+    u_process_some_linked_lists(0x00FFFFDF);
 }
 
 void event_start(int id)

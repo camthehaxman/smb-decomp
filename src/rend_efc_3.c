@@ -410,7 +410,7 @@ void func_8009A13C(int arg0, struct RenderEffect *arg1)
     struct Struct800993A8 *temp_r31 = (void *)arg1->work;
     u8 unused[8];
 
-    func_8009AC0C(0);
+    u_gxutil_set_fog_enabled(0);
     GXSetViewport(0.0f, 0.0f, 256.0f, 256.0f, 0.0f, 1.0f);
     GXSetScissor(0U, 0U, 0x100U, 0x100U);
     func_8009A2A4(arg1);
@@ -421,7 +421,7 @@ void func_8009A13C(int arg0, struct RenderEffect *arg1)
     GXCopyTex(temp_r31->unk4C, 1);
     GXInitTexObj(&temp_r31->unk2C, temp_r31->unk4C, 0x100U, 0x100U, GX_TF_IA8, GX_MIRROR, GX_MIRROR, 0U);
     GXInitTexObjLOD(&temp_r31->unk2C, GX_LINEAR, GX_LINEAR, 0.0f, 10.0f, 0.0f, 0U, 0U, GX_ANISO_1);
-    func_8009AC44();
+    u_gxutil_fog_something_2();
     camera_apply_viewport(modeCtrl.currPlayer);
 }
 

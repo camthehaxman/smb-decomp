@@ -10812,7 +10812,7 @@ lbl_00009868:
 /* 000098E4 4BFF68A5 */ bl u_ape_free
 /* 000098E8 2C1F0003 */ cmpwi r31, 3
 /* 000098EC 41820290 */ beq lbl_00009B7C
-/* 000098F0 4BFF6899 */ bl func_8008D240
+/* 000098F0 4BFF6899 */ bl u_move_curr_node_to_beginning
 /* 000098F4 48000288 */ b lbl_00009B7C
 lbl_000098F8:
 /* 000098F8 3C600000 */ lis r3, gamePauseStatus@ha

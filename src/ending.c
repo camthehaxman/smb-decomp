@@ -2342,7 +2342,7 @@ static void func_800BC820(void)
     {
         if (chara->ape != NULL)
         {
-            func_8008D29C(lbl_80206B80[i]);
+            u_move_node_to_beginning(lbl_80206B80[i]);
             chara->ape = NULL;
         }
     }
@@ -2606,7 +2606,7 @@ static int init_ending_scene_ape(int arg0, enum Character charaId)
     chara = &endingInfo.work->characters[arg0];
     if (chara->ape != NULL)
     {
-        func_8008D29C(lbl_80206B80[arg0]);
+        u_move_node_to_beginning(lbl_80206B80[arg0]);
         chara->ape = NULL;
     }
 
@@ -2639,7 +2639,7 @@ static void u_some_ape_callback(struct Ape *ape, int arg1)
     {
         u_ape_free(ape);
         if (arg1 != 3)
-            func_8008D240();
+            u_move_curr_node_to_beginning();
         return;
     }
     if (gamePauseStatus & 0xA)

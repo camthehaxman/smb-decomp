@@ -22,7 +22,7 @@
 #include "stage.h"
 #include "world.h"
 
-struct Struct8008CF00 lbl_801ED920[146];
+struct UnkLinkedListNode lbl_801ED920[146];
 
 struct NlModel *lbl_802F1B4C;
 void *dvdReadBuffer;
@@ -76,7 +76,7 @@ void main(void)
     currentBall = &ballInfo[0];
     currentWorldStructPtr = &worldInfo[0];
     chkstatus_init();
-    func_8008CF00(lbl_801ED920, 0x80);
+    u_init_some_linked_list(lbl_801ED920, 0x80);
     recplay_init();
     camera_init();
     polydisp_init();

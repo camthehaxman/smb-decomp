@@ -18150,7 +18150,7 @@ lbl_00010B70:
 /* 00010B88 3C600000 */ lis r3, lbl_00010BC8@ha
 /* 00010B8C 809F00FC */ lwz r4, 0xfc(r31)
 /* 00010B90 38630000 */ addi r3, r3, lbl_00010BC8@l
-/* 00010B94 4BFEF5E9 */ bl func_8008D1DC
+/* 00010B94 4BFEF5E9 */ bl u_insert_into_linked_list
 /* 00010B98 88BF002E */ lbz r5, 0x2e(r31)
 /* 00010B9C 3C800000 */ lis r4, lbl_80206B80@ha
 /* 00010BA0 38040000 */ addi r0, r4, lbl_80206B80@l

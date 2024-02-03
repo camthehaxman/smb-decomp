@@ -82,7 +82,7 @@ void polydisp_main(void)
         lbl_801EEC90.unk0 |= 0x10;
 
     light_main();
-    func_8009AB5C();
+    u_gxutil_fog_something_1();
 
     if (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
         func_8000E134();
@@ -220,7 +220,7 @@ void draw_3d_scene(void)
         draw_test_camera_target();
         break;
     }
-    func_800188D4();
+    u_camera_set_persp_matrix();
     ord_tbl_draw_nodes();
 }
 
@@ -1340,7 +1340,7 @@ void set_backdrop_color(void)
 void draw_monkey(void)
 {
     ord_tbl_add_depth_offset(0.5f);
-    func_8008D158(0x00FFFF7F);
+    u_process_some_linked_lists(0x00FFFF7F);
     ord_tbl_add_depth_offset(-0.5f);
 }
 

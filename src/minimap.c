@@ -22,24 +22,24 @@
 
 #include "../data/common.nlobj.h"
 
-struct Struct801C5758
+struct MinimapInfo
 {
-    u32 unk0;
-    s32 unk4;
+    u32 unused;
+    s32 state;
     s16 unk8;
     u16 unkA;
     float unkC;
     float unk10;
     float unk14;
     float unk18;
-    s32 unk1C;
-    float unk20;
-    Vec unk24;
-    s16 unk30;
-    s16 unk32;
-    s16 unk34;
-    s16 unk36;
-    s16 unk38;
+    int zoomLevel;
+    float stageScale;
+    Point3d focusPos;  // point in world space which the minimap is centered on
+    s16 someX;
+    s16 someY;
+    s16 size;
+    s16 rotation;
+    s16 rotationVel;
     u16 unk3A;
     float unk3C;
     float unk40;
@@ -47,10 +47,10 @@ struct Struct801C5758
     float unk48;
 };
 
-static struct Struct801C5758 lbl_801C5758 =
+static struct MinimapInfo minimapInfo =
 {
     0xFFFFFFFF,
-    0,
+    MINIMAP_STATE_0,
     0, 0,
     1.0f,
     -0.8666666746139526f,
@@ -59,7 +59,7 @@ static struct Struct801C5758 lbl_801C5758 =
     0,
     0.26499998569488525f,
     { 0.0f, 0.0f, 0.0f },
-    0x0280, 0x01C0,
+    640, 448,
     0, 0,
     0, 0,
     0.0f,
@@ -70,20 +70,20 @@ static struct Struct801C5758 lbl_801C5758 =
 
 void ev_minimap_init(void)
 {
-    func_8008D36C(NLOBJ_MODEL(g_commonNlObj, 11), 0x1BFFFFFF, 0x24000000);
-    func_8008D36C(NLOBJ_MODEL(g_commonNlObj, 12), 0x1FFFFFFF, 0xE0000000);
-    func_8008D330(NLOBJ_MODEL(g_commonNlObj, 13), 0xF8FFFFFF, 0x02000000);
-    func_8008D36C(NLOBJ_MODEL(g_commonNlObj, 13), 0x1FFFFFFF, 0xE0000000);
-    func_8008D3A8(NLOBJ_MODEL(g_commonNlObj, 13), 0x90EFFFFF, 0x08000000);
+    u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_hideball_mark), 0x1BFFFFFF, 0x24000000);
+    u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapring), 0x1FFFFFFF, 0xE0000000);
+    u_set_model_mesh_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0xF8FFFFFF, 0x02000000);
+    u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0x1FFFFFFF, 0xE0000000);
+    u_set_model_mesh_texflags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0x90EFFFFF, 0x08000000);
     if (gameSubmode == SMD_ADV_INFO_INIT)
     {
-        lbl_801C5758.unk32 = 0x1A8;
-        lbl_801C5758.unk10 = -0.76666665077209473f;
+        minimapInfo.someY = 424;
+        minimapInfo.unk10 = -0.76666665077209473f;
     }
     else
     {
-        lbl_801C5758.unk32 = 0x1C0;
-        lbl_801C5758.unk10 = -0.86666667461395264f;
+        minimapInfo.someY = 448;
+        minimapInfo.unk10 = -0.86666667461395264f;
     }
 }
 
@@ -96,61 +96,61 @@ static struct
 
 void ev_minimap_main(void)
 {
-    struct Ball *r4 = currentBall;
+    struct Ball *ball = currentBall;
     float f1;
     float f3;
-    Vec sp8;
+    Point3d target;
 
     if (gamePauseStatus & 0xA)
         return;
-    if (lbl_801C5758.unk4 == 0)
+    if (minimapInfo.state == 0)
         return;
 
-    switch (lbl_801C5758.unk4)
+    switch (minimapInfo.state)
     {
-    case 1:
-        lbl_801C5758.unk34 -= 6;
-        lbl_801C5758.unk38 -= 71;
-        if (lbl_801C5758.unk34 < 0)
+    case MINIMAP_STATE_CLOSE:
+        minimapInfo.size -= 6;
+        minimapInfo.rotationVel -= 71;
+        if (minimapInfo.size < 0)
         {
-            lbl_801C5758.unk4 = 0;
-            lbl_801C5758.unk34 = 0;
+            minimapInfo.state = MINIMAP_STATE_0;
+            minimapInfo.size = 0;
         }
         break;
-    case 2:
-        lbl_801C5758.unk38 -= lbl_801C5758.unk38 >> 4;
+    case MINIMAP_STATE_2:
+        minimapInfo.rotationVel -= minimapInfo.rotationVel >> 4;
         break;
-    case 3:
-        lbl_801C5758.unk34 += 8;
-        lbl_801C5758.unk38 += 33;
-        if (lbl_801C5758.unk34 > 0x140)
+    case MINIMAP_STATE_OPEN:
+        minimapInfo.size += 8;
+        minimapInfo.rotationVel += 33;
+        if (minimapInfo.size > 0x140)
         {
-            lbl_801C5758.unk4 = 2;
-            lbl_801C5758.unk34 = 0x140;
+            minimapInfo.state = MINIMAP_STATE_2;
+            minimapInfo.size = 0x140;
         }
         break;
     }
 
-    lbl_801C5758.unk8 = lbl_801C5758.unk34 * 0x3000 / 0x140 + 0x1000;
-    lbl_801C5758.unk36 += lbl_801C5758.unk38;
+    minimapInfo.unk8 = minimapInfo.size * 0x3000 / 0x140 + 0x1000;
+    minimapInfo.rotation += minimapInfo.rotationVel;
     f1 = lbl_80292D30.unkC;
-    switch (lbl_801C5758.unk1C)
+    switch (minimapInfo.zoomLevel)
     {
     case 0:
         if (f1 > 18.0)
             f3 = 0.14722222089767456f;
         else
             f3 = 2.6500000000000004 / f1;
-        sp8 = r4->pos;
-        lbl_801C5758.unk40 = 0.0f;
-        lbl_801C5758.unk48 = 0.6f;
+        target = ball->pos;
+        minimapInfo.unk40 = 0.0f;
+        minimapInfo.unk48 = 0.6f;
         break;
     case 1:
         f3 = 1.3250000000000002 / f1;
-        sp8 = lbl_80292D30.unk0;
-        sp8.y = r4->pos.y;
-        lbl_801C5758.unk40 = 1.0f;
-        lbl_801C5758.unk48 = 0.0f;
+        target = lbl_80292D30.unk0;
+        target.y = ball->pos.y;
+        minimapInfo.unk40 = 1.0f;
+        minimapInfo.unk48 = 0.0f;
         break;
     case 2:
     default:
@@ -158,83 +158,83 @@ void ev_minimap_main(void)
             f3 = 0.29444444179534912f;
         else
             f3 = 5.3000000000000007 / f1;
-        sp8 = r4->pos;
-        lbl_801C5758.unk40 = 0.0f;
-        lbl_801C5758.unk48 = 0.6f;
+        target = ball->pos;
+        minimapInfo.unk40 = 0.0f;
+        minimapInfo.unk48 = 0.6f;
         break;
     }
 
-    lbl_801C5758.unk20 += (f3 - lbl_801C5758.unk20) * 0.1;
-    lbl_801C5758.unk24.x += (sp8.x - lbl_801C5758.unk24.x) * 0.1;
-    lbl_801C5758.unk24.y += (sp8.y - lbl_801C5758.unk24.y) * 0.1;
-    lbl_801C5758.unk24.z += (sp8.z - lbl_801C5758.unk24.z) * 0.1;
+    minimapInfo.stageScale += (f3 - minimapInfo.stageScale) * 0.1;
+    minimapInfo.focusPos.x += (target.x - minimapInfo.focusPos.x) * 0.1;
+    minimapInfo.focusPos.y += (target.y - minimapInfo.focusPos.y) * 0.1;
+    minimapInfo.focusPos.z += (target.z - minimapInfo.focusPos.z) * 0.1;
 
-    if (lbl_801C5758.unk3C < lbl_801C5758.unk40)
+    if (minimapInfo.unk3C < minimapInfo.unk40)
     {
-        lbl_801C5758.unk3C += 0.066666666666666666;
-        if (lbl_801C5758.unk3C > lbl_801C5758.unk40)
-            lbl_801C5758.unk3C = lbl_801C5758.unk40;
+        minimapInfo.unk3C += 0.066666666666666666;
+        if (minimapInfo.unk3C > minimapInfo.unk40)
+            minimapInfo.unk3C = minimapInfo.unk40;
     }
-    else if (lbl_801C5758.unk3C > lbl_801C5758.unk40)
+    else if (minimapInfo.unk3C > minimapInfo.unk40)
     {
-        lbl_801C5758.unk3C -= 0.033333333333333333;
-        if (lbl_801C5758.unk3C < lbl_801C5758.unk40)
-            lbl_801C5758.unk3C = lbl_801C5758.unk40;
+        minimapInfo.unk3C -= 0.033333333333333333;
+        if (minimapInfo.unk3C < minimapInfo.unk40)
+            minimapInfo.unk3C = minimapInfo.unk40;
     }
 
-    if (lbl_801C5758.unk44 < lbl_801C5758.unk48)
+    if (minimapInfo.unk44 < minimapInfo.unk48)
     {
-        lbl_801C5758.unk44 += 0.066666666666666666;
-        if (lbl_801C5758.unk44 > lbl_801C5758.unk48)
-            lbl_801C5758.unk44 = lbl_801C5758.unk48;
+        minimapInfo.unk44 += 0.066666666666666666;
+        if (minimapInfo.unk44 > minimapInfo.unk48)
+            minimapInfo.unk44 = minimapInfo.unk48;
     }
-    else if (lbl_801C5758.unk44 > lbl_801C5758.unk48)
+    else if (minimapInfo.unk44 > minimapInfo.unk48)
     {
-        lbl_801C5758.unk44 -= 0.033333333333333333;
-        if (lbl_801C5758.unk44 < lbl_801C5758.unk48)
-            lbl_801C5758.unk44 = lbl_801C5758.unk48;
+        minimapInfo.unk44 -= 0.033333333333333333;
+        if (minimapInfo.unk44 < minimapInfo.unk48)
+            minimapInfo.unk44 = minimapInfo.unk48;
     }
 }
 
 void ev_minimap_dest(void)
 {
-    lbl_801C5758.unk4 = 0;
-    lbl_801C5758.unk34 = 0;
-    lbl_801C5758.unk38 = 0;
-    lbl_801C5758.unk3C = 0.0f;
+    minimapInfo.state = 0;
+    minimapInfo.size = 0;
+    minimapInfo.rotationVel = 0;
+    minimapInfo.unk3C = 0.0f;
 }
 
-void func_800846B0(int a)
+void minimap_set_state(enum MinimapState state)
 {
-    switch (a)
+    switch (state)
     {
-    case 0:
-        lbl_801C5758.unk34 = 0;
-        lbl_801C5758.unk3C = 0.0f;
+    case MINIMAP_STATE_0:
+        minimapInfo.size = 0;
+        minimapInfo.unk3C = 0.0f;
         break;
-    case 2:
-        lbl_801C5758.unk34 = 0x140;
+    case MINIMAP_STATE_2:
+        minimapInfo.size = 0x140;
         break;
-    case 3:
-        if (lbl_801C5758.unk34 == 0)
-            lbl_801C5758.unk38 = (rand() & 0x3FF) + 0x200;
+    case MINIMAP_STATE_OPEN:
+        if (minimapInfo.size == 0)
+            minimapInfo.rotationVel = (rand() & 0x3FF) + 0x200;
         break;
-    case 4:
-        a = lbl_801C5758.unk4;
-        lbl_801C5758.unk34 = 0;
-        lbl_801C5758.unk3C = 0.0f;
-        lbl_801C5758.unk1C = 0;
-        lbl_801C5758.unk20 = 0.26499998569488525f;
+    case MINIMAP_STATE_4:
+        state = minimapInfo.state;
+        minimapInfo.size = 0;
+        minimapInfo.unk3C = 0.0f;
+        minimapInfo.zoomLevel = 0;
+        minimapInfo.stageScale = 0.26499998569488525f;
         break;
     }
 
-    if (lbl_801C5758.unk4 == 0)
+    if (minimapInfo.state == 0)
     {
-        lbl_801C5758.unk24.x = 0.0f;
-        lbl_801C5758.unk24.y = 0.0f;
-        lbl_801C5758.unk24.z = 0.0f;
+        minimapInfo.focusPos.x = 0.0f;
+        minimapInfo.focusPos.y = 0.0f;
+        minimapInfo.focusPos.z = 0.0f;
     }
-    lbl_801C5758.unk4 = a;
+    minimapInfo.state = state;
 }
 
 void func_80084794(void *unused)
@@ -242,13 +242,13 @@ void func_80084794(void *unused)
     func_800463E8(&lbl_80292D30.unk0, &lbl_80292D30.unkC);
 }
 
-void minimap_change_size(void)
+void minimap_zoom(void)
 {
-    if (lbl_801C5758.unk4 != 0)
+    if (minimapInfo.state != MINIMAP_STATE_0)
     {
-        lbl_801C5758.unk1C++;
-        if (lbl_801C5758.unk1C > 2)
-            lbl_801C5758.unk1C = 0;
+        minimapInfo.zoomLevel++;
+        if (minimapInfo.zoomLevel > 2)
+            minimapInfo.zoomLevel = 0;
     }
 }
 
@@ -261,13 +261,13 @@ struct Struct800847FC
     float unk10;
 };
 
-static void func_800847FC(struct Struct800847FC *a)
+static void u_draw_some_quad(struct Struct800847FC *a)
 {
-    float f31 = a->unk0;
-    float f30 = a->unk4;
-    float f29 = a->unk8;
-    float f28 = a->unkC;
-    float f27 = a->unk10;
+    float x2 = a->unk0;
+    float y1 = a->unk4;
+    float x1 = a->unk8;
+    float y2 = a->unkC;
+    float z = a->unk10;
 
     gxutil_set_vtx_attrs(1 << GX_VA_POS);
     GXSetBlendMode_cached(1, 0, 1, 0);
@@ -290,10 +290,10 @@ static void func_800847FC(struct Struct800847FC *a)
     GXLoadPosMtxImm(mathutilData->mtxA, 0);
     mathutil_mtxA_pop();
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
-    GXPosition3f32(f29, f30, f27);
-    GXPosition3f32(f31, f30, f27);
-    GXPosition3f32(f31, f28, f27);
-    GXPosition3f32(f29, f28, f27);
+    GXPosition3f32(x1, y1, z);
+    GXPosition3f32(x2, y1, z);
+    GXPosition3f32(x2, y2, z);
+    GXPosition3f32(x1, y2, z);
     GXSetZMode_cached(1, 3, 1);
 }
 
@@ -327,7 +327,7 @@ void minimap_draw(void)
     Mtx44 spE4;
     Mtx44 spA4;
     struct Struct800847FC sp90;
-    Vec sp84;
+    Point3d focusPos;
     struct NaomiSpriteParams params;
     Vec sp28;
     Vec sp1C;
@@ -335,31 +335,31 @@ void minimap_draw(void)
 
     ball = currentBall;
     world = currentWorldStructPtr;
-    if (lbl_801C5758.unk34 != 0)
+    if (minimapInfo.size != 0)
     {
-        func_8009AC0C(0);
+        u_gxutil_set_fog_enabled(FALSE);
         switch (gameMode)
         {
-        case 2:
+        case MD_GAME:
             switch (modeCtrl.gameType)
             {
-            case 0:
-                func_800188A8(modeCtrl.currPlayer);
+            case GAMETYPE_MAIN_NORMAL:
+                u_camera_apply_viewport_2_if_changed(modeCtrl.currPlayer);
                 break;
             default:
-                func_800188A8(0);
+                u_camera_apply_viewport_2_if_changed(0);
                 break;
             }
             break;
         default:
-            func_800188A8(0);
+            u_camera_apply_viewport_2_if_changed(0);
             break;
         }
 
-        temp_r6 = lbl_801C5758.unk34;
+        temp_r6 = minimapInfo.size;
         temp_r6 == 0.0f;
-        temp_r27 = lbl_801C5758.unk30 - (temp_r6 >> 1);
-        temp_r25 = lbl_801C5758.unk32 - (temp_r6 >> 1);
+        temp_r27 = minimapInfo.someX - (temp_r6 >> 1);
+        temp_r25 = minimapInfo.someY - (temp_r6 >> 1);
         var_r26 = temp_r27 + temp_r6;
         var_r24 = temp_r25 + temp_r6;
         if (var_r26 > 640)
@@ -368,7 +368,7 @@ void minimap_draw(void)
             var_r24 = 480;
         temp_r23 = temp_r25 * currRenderMode->xfbHeight / 480;
         temp_r22 = var_r24 * currRenderMode->xfbHeight / 480;
-        C_MTXPerspective(spA4, 60.0f, 1.3333334f, 0.1f, 20000.0f);
+        MTXPerspective(spA4, 60.0f, 1.3333334f, 0.1f, 20000.0f);
         GXSetProjection(spA4, GX_PERSPECTIVE);
         GXSetViewport(0.0f, 0.0f, currRenderMode->fbWidth, currRenderMode->xfbHeight, 0.0f, 1.0f);
         GXSetScissor(0, 0, currRenderMode->fbWidth, currRenderMode->xfbHeight);
@@ -378,27 +378,27 @@ void minimap_draw(void)
         sp90.unk8 = (var_r26 - 320) * new_var4;
         sp90.unkC = (240 - var_r24) * new_var4;
         sp90.unk10 = -0.1f;
-        func_800847FC(&sp90);
+        u_draw_some_quad(&sp90);
         mathutil_mtx_copy(mathutilData->mtxB, sp124);
-        C_MTXPerspective(spE4, 60.0f, 1.3333334f, 0.1f, 20000.0f);
-        spE4[0][2] += -0.57735026f * (1.3333334f * (spE4[0][0] * lbl_801C5758.unkC));
-        spE4[1][2] += -0.57735026f * (spE4[1][1] * lbl_801C5758.unk10);
+        MTXPerspective(spE4, 60.0f, 1.3333334f, 0.1f, 20000.0f);
+        spE4[0][2] += -0.57735026f * (1.3333334f * (spE4[0][0] * minimapInfo.unkC));
+        spE4[1][2] += -0.57735026f * (spE4[1][1] * minimapInfo.unk10);
         GXSetProjection(spE4, GX_PERSPECTIVE);
         push_light_group();
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(1);
         nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
 
-        scale = (415.0 * lbl_801C5758.unk34) / 320.0;
+        scale = (415.0 * minimapInfo.size) / 320.0;
         mathutil_mtxA_from_translate_xyz(0.0f, 0.0f, -1000.0f);
-        mathutil_mtxA_rotate_z(lbl_801C5758.unk36);
+        mathutil_mtxA_rotate_z(minimapInfo.rotation);
         mathutil_mtxA_scale_xyz(scale, scale, scale);
         nl2ngc_set_scale(scale);
         nl2ngc_draw_model_sort_none_alt2(g_commonNlObj->models[NLMODEL_common_mmapbase]);
 
-        scale = (0.46200000062584873 * lbl_801C5758.unk34) / 320.0;
+        scale = (0.46200000062584873 * minimapInfo.size) / 320.0;
         mathutil_mtxA_from_translate_xyz(0.0f, 0.0f, -1.1f);
-        mathutil_mtxA_rotate_z(lbl_801C5758.unk36);
+        mathutil_mtxA_rotate_z(minimapInfo.rotation);
         mathutil_mtxA_scale_xyz(scale, scale, scale);
         nl2ngc_set_scale(scale);
         nl2ngc_draw_model_sort_none_alt2(g_commonNlObj->models[NLMODEL_common_mmapring]);
@@ -407,10 +407,10 @@ void minimap_draw(void)
         GXSetScissor(temp_r27, temp_r23, var_r26 - temp_r27, temp_r22 - temp_r23);
 
         new_var = 0.057735026f;
-        !&lbl_801C5758.unk10;  // needed to match
-        temp_f29 = lbl_801C5758.unkC + lbl_801C5758.unk14;
-        temp_f28 = lbl_801C5758.unk10 + lbl_801C5758.unk18;
-        C_MTXFrustum(
+        !&minimapInfo.unk10;  // needed to match
+        temp_f29 = minimapInfo.unkC + minimapInfo.unk14;
+        temp_f28 = minimapInfo.unk10 + minimapInfo.unk18;
+        MTXFrustum(
             spE4,
             new_var * (((240.0f - temp_r25) / 240.0f) - temp_f28),
             new_var * (((240.0f - var_r24) / 240.0f) - temp_f28),
@@ -420,30 +420,30 @@ void minimap_draw(void)
             20000.0f);
         GXSetProjection(spE4, GX_PERSPECTIVE);
 
-        scale = lbl_801C5758.unk20;
+        scale = minimapInfo.stageScale;
         mathutil_mtxA_from_identity();
-        mathutil_mtxA_rotate_x(lbl_801C5758.unk8);
+        mathutil_mtxA_rotate_x(minimapInfo.unk8);
         mathutil_mtxA_rotate_y(-currentCamera->rotY);
         if (eventInfo[EVENT_WORLD].state == EV_STATE_RUNNING)
         {
             mathutil_mtxA_rotate_x(world->xrot);
             mathutil_mtxA_rotate_z(world->zrot);
         }
-        sp84.x = 0.0f;
-        sp84.y = 0.0f;
-        sp84.z = -10.0f;
-        mathutil_mtxA_set_translate(&sp84);
+        focusPos.x = 0.0f;
+        focusPos.y = 0.0f;
+        focusPos.z = -10.0f;
+        mathutil_mtxA_set_translate(&focusPos);
         mathutil_mtxA_scale_xyz(scale, scale, scale);
-        sp84 = lbl_801C5758.unk24;
-        mathutil_mtxA_translate_neg(&sp84);
+        focusPos = minimapInfo.focusPos;
+        mathutil_mtxA_translate_neg(&focusPos);
         mathutil_mtxA_to_mtx(mathutilData->mtxB);
-        mathutil_mtxA_scale_s(lbl_801C5758.unk44 / scale);
+        mathutil_mtxA_scale_s(minimapInfo.unk44 / scale);
         mathutil_mtxA_to_mtx(lbl_802F1B3C->matrices[2]);
         mathutil_mtxA_from_mtxB();
 
         var_f30 = 0.0f;
-        if ((lbl_801C5758.unk34 - 160) / 160.0f > 0.0f)
-            var_f30 = (lbl_801C5758.unk34 - 160) / 160.0f;
+        if ((minimapInfo.size - 160) / 160.0f > 0.0f)
+            var_f30 = (minimapInfo.size - 160) / 160.0f;
 
         params.unk30 = 2;
         params.addColor = 0;
@@ -453,7 +453,7 @@ void minimap_draw(void)
         params.v2 = 1.0f;
         u_math_unk16(&ball->pos, &sp28, 0.57735026f);
 
-        temp_f31 = lbl_801C5758.unk3C;
+        temp_f31 = minimapInfo.unk3C;
         if (temp_f31 > 0.0)
         {
             sp28.z = -2.0f;
@@ -498,17 +498,17 @@ void minimap_draw(void)
         params.flags = 0x100A;
         draw_naomi_sprite(&params);
 
-        u_set_some_minimap_light_param(lbl_801C5758.unk20);
+        u_set_some_minimap_light_param(minimapInfo.stageScale);
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(3);
         if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING
          || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)
             stage_draw();
-        if (lbl_801C5758.unk44 > 0.0f && eventInfo[EVENT_ITEM].state == EV_STATE_RUNNING)
+        if (minimapInfo.unk44 > 0.0f && eventInfo[EVENT_ITEM].state == EV_STATE_RUNNING)
             item_draw();
         if (eventInfo[EVENT_STOBJ].state == EV_STATE_RUNNING)
             stobj_draw();
-        if (lbl_801C5758.unk34 == 320)
+        if (minimapInfo.size == 320)
         {
             mathutil_mtxA_from_mtxB();
             mathutil_mtxA_translate(&ball->pos);
@@ -533,10 +533,10 @@ void minimap_draw(void)
         sp8.unk8 = (var_r26 - 320) * new_var4;
         sp8.unkC = (240 - var_r24) * new_var4;
         sp8.unk10 = -19999.0f;
-        func_800847FC(&sp8);
+        u_draw_some_quad(&sp8);
         func_80017FCC();
         u_set_some_minimap_light_param(1.0f);
         pop_light_group();
-        func_8009AC44();
+        u_gxutil_fog_something_2();
     }
 }

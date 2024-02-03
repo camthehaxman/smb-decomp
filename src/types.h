@@ -7,7 +7,8 @@
 #include <dolphin/GXFifo.h>
 #include <dolphin/mtx.h>
 
-typedef struct {
+typedef struct
+{
     f32 x, y;
 } Vec2d, *Vec2dPtr, Point2d, *Point2dPtr;
 
@@ -326,7 +327,7 @@ struct Ape
     s16 unkC2;
 };  // size = 0xC4
 
-struct Struct80176434
+struct OtherKeyframe
 {
     s32 unk0;
     float unk4;
@@ -951,12 +952,12 @@ enum
     PAUSEMENU_CONT_GUIDE_HOW_EXIT,
 };
 
-struct Struct8008CF00
+struct UnkLinkedListNode
 {
-	void (*unk0)(struct Ape *, int);
-	struct Ape *unk4;
-	struct Struct8008CF00 *prev;
-	struct Struct8008CF00 *next;
+	void (*callback)(struct Ape *, int);
+	struct Ape *ape;
+	struct UnkLinkedListNode *next;
+	struct UnkLinkedListNode *prev;
 	u32 unk10;
 	u32 unk14;
 	u32 unk18;

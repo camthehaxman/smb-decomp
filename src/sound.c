@@ -3180,32 +3180,32 @@ static struct Struct801B3938 lbl_801B3938[][3] =
     }
 };
 
-static struct Struct80176434 lbl_801B3998[] =
+static struct OtherKeyframe lbl_801B3998[] =
 {
     {   0,   0.0f, 0.0f, 0.0f },
     { 127, 127.0f, 0.0f, 0.0f },
 };
 
-static struct Struct80176434 lbl_801B39B8[] =
+static struct OtherKeyframe lbl_801B39B8[] =
 {
     {   0, 127.0f, 0.0f, 0.0f },
     { 127, 127.0f, 0.0f, 0.0f },
 };
 
-static struct Struct80176434 lbl_801B39D8[] =
+static struct OtherKeyframe lbl_801B39D8[] =
 {
     {   0,   0.0f, 0.0f, 0.0f },
     { 127, 127.0f, 0.0f, 0.0f },
 };
 
-static struct Struct80176434 *lbl_801B39F8[] =
+static struct OtherKeyframe *lbl_801B39F8[] =
 {
     lbl_801B3998,
     lbl_801B39B8,
     lbl_801B39D8,
 };
 
-static struct Struct80176434 lbl_801B3A04[] =
+static struct OtherKeyframe lbl_801B3A04[] =
 {
     {   0,  4608.0f, 0.0f, 0.0f },
     { 127, 16383.0f, 0.0f, 0.0f },
@@ -3256,7 +3256,7 @@ void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2)
         for (i = 0; i < 3; i++)
         {
             ptr = &lbl_801B3938[temp_r21][i];
-            arg2 = f28 * func_8008CDC0(arg1, lbl_801B39F8[i]);
+            arg2 = f28 * u_interpolate_other_keyframes(arg1, lbl_801B39F8[i]);
             ptr->unk0 = sndFXStartParaInfo(g_soundDesc[ptr->unk4].unk0, 0x7FU, var_r23 + 0x40, 0U, &sp14);
             s_voiceIDs[temp_r21][ptr->unk4] = ptr->unk0;
             sndFXCtrl(ptr->unk0, 7, arg2);
@@ -3277,11 +3277,11 @@ void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2)
         }
 
         f28 = arg2 / 127.0f;
-        temp_r21_2 = func_8008CDC0(arg1, lbl_801B3A04);
+        temp_r21_2 = u_interpolate_other_keyframes(arg1, lbl_801B3A04);
         for (i = 0; i < 3; i++)
         {
             ptr = &lbl_801B3938[temp_r21][i];
-            arg2 = f28 * func_8008CDC0(arg1, lbl_801B39F8[i]);
+            arg2 = f28 * u_interpolate_other_keyframes(arg1, lbl_801B39F8[i]);
             if (modeCtrl.unk30 > 0)
             {
                 var_r23 = func_8002A22C(0, currentBall->playerId);

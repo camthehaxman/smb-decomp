@@ -20,7 +20,7 @@ struct World *currentWorldStructPtr;
 struct World worldInfo[MAX_PLAYERS];
 Vec lbl_80206CF0;
 
-struct Struct80176434 tutorialStickInputs[] =
+struct OtherKeyframe tutorialStickInputs[] =
 {
     {    0,     0,    0,    0 },
     {  240,     0,    0,    0 },
@@ -64,7 +64,7 @@ struct Struct80176434 tutorialStickInputs[] =
     { 4380,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8228[] =
+struct OtherKeyframe lbl_801B8228[] =
 {
     {    0,     0,    0,    0 },
     { 1305,     0,    0,    0 },
@@ -80,7 +80,7 @@ struct Struct80176434 lbl_801B8228[] =
     { 2902, -2560,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B82E8[] =
+struct OtherKeyframe lbl_801B82E8[] =
 {
     {    0,     0,    0,    0 },
     { 1305,     0,    0,    0 },
@@ -93,7 +93,7 @@ struct Struct80176434 lbl_801B82E8[] =
     { 2902,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8378[] =
+struct OtherKeyframe lbl_801B8378[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -108,7 +108,7 @@ struct Struct80176434 lbl_801B8378[] =
     { 2902, -2048,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8428[] =
+struct OtherKeyframe lbl_801B8428[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -120,7 +120,7 @@ struct Struct80176434 lbl_801B8428[] =
     { 2902,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B84A8[] =
+struct OtherKeyframe lbl_801B84A8[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -131,7 +131,7 @@ struct Struct80176434 lbl_801B84A8[] =
     { 2902, -2048,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8518[] =
+struct OtherKeyframe lbl_801B8518[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -143,7 +143,7 @@ struct Struct80176434 lbl_801B8518[] =
     { 2902,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8598[] =
+struct OtherKeyframe lbl_801B8598[] =
 {
     {    0,     0,    0,    0 },
     { 1953,     0,    0,    0 },
@@ -155,7 +155,7 @@ struct Struct80176434 lbl_801B8598[] =
     { 2902, -1536,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8618[] =
+struct OtherKeyframe lbl_801B8618[] =
 {
     {    0,     0,    0,    0 },
     { 1953,     0,    0,    0 },
@@ -325,8 +325,8 @@ void world_sub_input_main(struct World *world)
 
         world->xrotPrev = world->xrot;
         world->zrotPrev = world->zrot;
-        inpXRot = advTutorialInfo.stickXRot = func_8008CDC0(f31, &tutorialStickInputs[0]);
-        inpYRot = advTutorialInfo.stickZRot = func_8008CDC0(f31, &tutorialStickInputs[0x19]);
+        inpXRot = advTutorialInfo.stickXRot = u_interpolate_other_keyframes(f31, &tutorialStickInputs[0]);
+        inpYRot = advTutorialInfo.stickZRot = u_interpolate_other_keyframes(f31, &tutorialStickInputs[0x19]);
 
         mathutil_mtxA_from_identity();
         mathutil_mtxA_rotate_y(cameraInfo[world->playerId].rotY);
@@ -347,8 +347,8 @@ void world_sub_input_main(struct World *world)
 
             world->xrotPrev = world->xrot;
             world->zrotPrev = world->zrot;
-            inpXRot = advTutorialInfo.stickXRot = func_8008CDC0(t, lbl_801B8688[world->playerId]);
-            inpYRot = advTutorialInfo.stickZRot = func_8008CDC0(t, lbl_801B8688[world->playerId + 4]);
+            inpXRot = advTutorialInfo.stickXRot = u_interpolate_other_keyframes(t, lbl_801B8688[world->playerId]);
+            inpYRot = advTutorialInfo.stickZRot = u_interpolate_other_keyframes(t, lbl_801B8688[world->playerId + 4]);
         }
         else if ((ballInfo[world->playerId].flags & (1 << 12))
          || world->unk20 > 0

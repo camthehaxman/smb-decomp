@@ -704,7 +704,7 @@ void submode_adv_demo_main_func(void)
     modeCtrl.submodeTimer--;
 }
 
-struct Struct80176434 lbl_80174254[] =
+struct OtherKeyframe lbl_80174254[] =
 {
     {    0, -15.51,   0,   0 },
     {  433, -15.51,   0,   0 },
@@ -720,7 +720,7 @@ struct Struct80176434 lbl_80174254[] =
     { 2902,    0.5,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174314[] =
+struct OtherKeyframe lbl_80174314[] =
 {
     {    0, -58.591,   0,   0 },
     {  433, -58.591,   0,   0 },
@@ -738,7 +738,7 @@ struct Struct80176434 lbl_80174314[] =
     { 2902,       0,   0,   0 },
 };
 
-struct Struct80176434 lbl_801743F4[] =
+struct OtherKeyframe lbl_801743F4[] =
 {
     {    0, -43.288,   0,   0 },
     {  433, -43.288,   0,   0 },
@@ -754,7 +754,7 @@ struct Struct80176434 lbl_801743F4[] =
     { 2902,       0,   0,   0 },
 };
 
-struct Struct80176434 lbl_801744B4[] =
+struct OtherKeyframe lbl_801744B4[] =
 {
     {    0,   61440,   0,   0 },
     {  433,   61440,   0,   0 },
@@ -770,7 +770,7 @@ struct Struct80176434 lbl_801744B4[] =
     { 2902,   32768,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174574[] =
+struct OtherKeyframe lbl_80174574[] =
 {
     {    0,   -14.11,   0,   0 },
     {  433,   -14.11,   0,   0 },
@@ -789,7 +789,7 @@ struct Struct80176434 lbl_80174574[] =
     { 2902,     -0.5,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174664[] =
+struct OtherKeyframe lbl_80174664[] =
 {
     {    0,  -58.591,   0,   0 },
     {  433,  -58.591,   0,   0 },
@@ -807,7 +807,7 @@ struct Struct80176434 lbl_80174664[] =
     { 2902,        0,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174744[] =
+struct OtherKeyframe lbl_80174744[] =
 {
     {    0,  -41.888,   0,   0 },
     {  433,  -41.888,   0,   0 },
@@ -825,7 +825,7 @@ struct Struct80176434 lbl_80174744[] =
     { 2902,     -0.2,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174824[] =
+struct OtherKeyframe lbl_80174824[] =
 {
     {    0,     4096,   0,   0 },
     {  433,     4096,   0,   0 },
@@ -843,7 +843,7 @@ struct Struct80176434 lbl_80174824[] =
     { 2902,    32768,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174904[] =
+struct OtherKeyframe lbl_80174904[] =
 {
     {    0,   -15.06,   0,   0 },
     {  433,   -15.06,   0,   0 },
@@ -859,7 +859,7 @@ struct Struct80176434 lbl_80174904[] =
     { 2902,     -0.1,   0,   0 },
 };
 
-struct Struct80176434 lbl_801749C4[] =
+struct OtherKeyframe lbl_801749C4[] =
 {
     {    0,  -58.591,   0,   0 },
     {  433,  -58.591,   0,   0 },
@@ -877,7 +877,7 @@ struct Struct80176434 lbl_801749C4[] =
     { 2902,     -0.1,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174AA4[] =
+struct OtherKeyframe lbl_80174AA4[] =
 {
     {    0,  -41.688,   0,   0 },
     {  433,  -41.688,   0,   0 },
@@ -893,7 +893,7 @@ struct Struct80176434 lbl_80174AA4[] =
     { 2902,      0.1,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174B64[] =
+struct OtherKeyframe lbl_80174B64[] =
 {
     {    0,    61440,   0,   0 },
     {  433,    61440,   0,   0 },
@@ -909,7 +909,7 @@ struct Struct80176434 lbl_80174B64[] =
     { 2902,    32768,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174C24[] =
+struct OtherKeyframe lbl_80174C24[] =
 {
     { 1306,        0,   0,   0 },
     { 1953,        0,   0,   0 },
@@ -919,7 +919,7 @@ struct Struct80176434 lbl_80174C24[] =
     { 2902,      0.1,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174C84[] =
+struct OtherKeyframe lbl_80174C84[] =
 {
     { 1306,        0,   0,   0 },
     { 1953,        0,   0,   0 },
@@ -932,7 +932,7 @@ struct Struct80176434 lbl_80174C84[] =
     { 2902,      0.1,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174D14[] =
+struct OtherKeyframe lbl_80174D14[] =
 {
     { 1306,        0,   0,   0 },
     { 1953,        0,   0,   0 },
@@ -942,7 +942,7 @@ struct Struct80176434 lbl_80174D14[] =
     { 2902,     -0.3,   0,   0 },
 };
 
-struct Struct80176434 lbl_80174D74[] =
+struct OtherKeyframe lbl_80174D74[] =
 {
     { 1306,    32768,   0,   0 },
     { 1953,    32768,   0,   0 },
@@ -953,7 +953,7 @@ struct Struct80176434 lbl_80174D74[] =
 };
 
 // x positions?
-struct Struct80176434 *lbl_80174DD4[] =
+struct OtherKeyframe *lbl_80174DD4[] =
 {
     lbl_80174254,
     lbl_80174574,
@@ -962,7 +962,7 @@ struct Struct80176434 *lbl_80174DD4[] =
 };
 
 // y positions?
-struct Struct80176434 *lbl_80174DE4[] =
+struct OtherKeyframe *lbl_80174DE4[] =
 {
     lbl_80174314,
     lbl_80174664,
@@ -971,7 +971,7 @@ struct Struct80176434 *lbl_80174DE4[] =
 };
 
 // z positions?
-struct Struct80176434 *lbl_80174DF4[] =
+struct OtherKeyframe *lbl_80174DF4[] =
 {
     lbl_801743F4,
     lbl_80174744,
@@ -980,7 +980,7 @@ struct Struct80176434 *lbl_80174DF4[] =
 };
 
 // unknown
-struct Struct80176434 *lbl_80174E04[] =
+struct OtherKeyframe *lbl_80174E04[] =
 {
     lbl_801744B4,
     lbl_80174824,
@@ -1059,10 +1059,10 @@ void lbl_8000F790(struct Ape *ape, int b)
     {
         ape->flags &= ~0x13;
         ape->flags |= 1;
-        ape->unk30.x = func_8008CDC0(f31, lbl_80174DD4[ape->charaId]);
-        ape->unk30.y = func_8008CDC0(f31, lbl_80174DE4[ape->charaId]);
-        ape->unk30.z = func_8008CDC0(f31, lbl_80174DF4[ape->charaId]);
-        r30 = func_8008CDC0(f31, lbl_80174E04[ape->charaId]);
+        ape->unk30.x = u_interpolate_other_keyframes(f31, lbl_80174DD4[ape->charaId]);
+        ape->unk30.y = u_interpolate_other_keyframes(f31, lbl_80174DE4[ape->charaId]);
+        ape->unk30.z = u_interpolate_other_keyframes(f31, lbl_80174DF4[ape->charaId]);
+        r30 = u_interpolate_other_keyframes(f31, lbl_80174E04[ape->charaId]);
         if (ape->charaId == lbl_802F1EB4)
         {
             ape->unk30.x += lbl_802F1ECC * 0.1;
@@ -1417,8 +1417,8 @@ void submode_adv_info_init_func(void)
         textbox_set_properties(2, TEXTBOX_STATE_INIT, &tbox);
         textbox_add_text(2, "c/0xff5000/    Control description!    ");
     }
-    func_800846B0(4);
-    func_800846B0(3);
+    minimap_set_state(MINIMAP_STATE_4);
+    minimap_set_state(MINIMAP_STATE_OPEN);
     start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
     advTutorialInfo.stickXRot = 0;
     advTutorialInfo.stickZRot = 0;
@@ -1599,7 +1599,7 @@ void submode_adv_info_main_func(void)
             camera_set_or_clear_flags(cmd->param, FALSE);
             break;
         case INFOCMD_MINIMAP_SIZE:
-            minimap_change_size();
+            minimap_zoom();
             break;
         case INFOCMD_BALL_STATE:
             ballInfo[0].state = cmd->param;
@@ -1713,7 +1713,7 @@ void submode_adv_game_ready_init_func(void)
     rend_efc_mirror_enable();
     event_suspend(EVENT_WORLD);
     light_init(currStageId);
-    func_800846B0(4);
+    minimap_set_state(MINIMAP_STATE_4);
     bitmap_load_group(BMP_NML);
     infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_08;
     modeCtrl.submodeTimer = 120;
@@ -1746,7 +1746,7 @@ void submode_adv_game_ready_main_func(void)
         if (sprite != NULL)
             sprite->userVar = 15;
         hud_show_ready_banner(0x78);
-        func_800846B0(3);
+        minimap_set_state(MINIMAP_STATE_OPEN);
     }
     if (modeCtrl.submodeTimer == 24.0)
         ballInfo[0].state = 3;
@@ -1795,7 +1795,7 @@ void submode_adv_game_play_main_func(void)
         gameSubmodeRequest = SMD_ADV_RANKING_INIT;
         worldInfo[0].state = 6;
         camera_set_state(14);
-        func_800846B0(1);
+        minimap_set_state(MINIMAP_STATE_CLOSE);
     }
     if (!(modeCtrl.courseFlags & (1 << 13))
      && modeCtrl.submodeTimer > 30
@@ -1806,7 +1806,7 @@ void submode_adv_game_play_main_func(void)
     if (modeCtrl.submodeTimer < 0)
     {
         gameSubmodeRequest = SMD_ADV_RANKING_INIT;
-        func_800846B0(1);
+        minimap_set_state(MINIMAP_STATE_CLOSE);
     }
 }
 
