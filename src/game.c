@@ -506,7 +506,7 @@ void submode_game_goal_replay_main_func(void)
     if (gamePauseStatus & 0xA)
         return;
 
-    if (currentBallStructPtr->state == 4)
+    if (currentBall->state == 4)
         infoWork.flags &= ~INFO_FLAG_REPLAY;
 
     BALL_FOREACH(
@@ -687,24 +687,24 @@ void submode_game_continue_main_func(void)
         {
             if (g_currPlayerButtons[2] & PAD_BUTTON_A)
             {
-                currentBallStructPtr->ape->flags &= ~(1 << 8);
+                currentBall->ape->flags &= ~(1 << 8);
                 if (modeCtrl.unk10 == 1)
                 {
                     infoWork.continuesUsed++;
                     infoWork.attempts = 1;
-                    currentBallStructPtr->ape->flags |= 0x800;
-                    textbox_set_properties(0, 20, NULL);
+                    currentBall->ape->flags |= 0x800;
+                    textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
                     u_play_sound_0(10);
                     u_play_sound_0(80);
                     modeCtrl.submodeTimer = 60;
                     modeCtrl.courseFlags |= (1 << 2);
-                    textbox_set_properties(1, 20, NULL);
+                    textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
                 }
                 else
                 {
-                    textbox_set_properties(0, 20, NULL);
+                    textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
                     u_play_sound_0(48);
-                    currentBallStructPtr->ape->flags |= 0x40000;
+                    currentBall->ape->flags |= 0x40000;
                     modeCtrl.submodeTimer = 60;
                     modeCtrl.courseFlags |= (1 << 2);
                 }
@@ -724,7 +724,7 @@ void submode_game_continue_main_func(void)
                 start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(255, 255, 255, 0), modeCtrl.submodeTimer);
             else
                 start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), modeCtrl.submodeTimer);
-            textbox_set_properties(1, 20, NULL);
+            textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
         }
 
         if (--modeCtrl.submodeTimer > 0)
@@ -829,7 +829,7 @@ void submode_game_ringout_init_func(void)
     modeCtrl.submodeTimer = 270;
     modeCtrl.unk18 = 60;
     func_800846B0(1);
-    u_play_sound_0((currentBallStructPtr->lives == 1) ? 81 : 29);
+    u_play_sound_0((currentBall->lives == 1) ? 81 : 29);
     u_play_sound_0(21);
     lbl_802F1C1C = -1;
     hud_show_fallout_banner(modeCtrl.submodeTimer);
@@ -841,7 +841,7 @@ void submode_game_ringout_main_func(void)
     if (gamePauseStatus & 0xA)
         return;
 
-    if (currentBallStructPtr->state == 4)
+    if (currentBall->state == 4)
         infoWork.flags &= ~INFO_FLAG_REPLAY;
     if (infoWork.flags & INFO_FLAG_BONUS_STAGE)
     {
@@ -879,16 +879,16 @@ void submode_game_ringout_main_func(void)
     }
     modeCtrl.unk18--;
     if ((g_currPlayerButtons[2] & PAD_BUTTON_A) && modeCtrl.unk18 < 0
-     && !(infoWork.flags & (INFO_FLAG_BONUS_STAGE|INFO_FLAG_BONUS_CLEAR)) && currentBallStructPtr->lives > 1)
+     && !(infoWork.flags & (INFO_FLAG_BONUS_STAGE|INFO_FLAG_BONUS_CLEAR)) && currentBall->lives > 1)
     {
         func_80049158();
         modeCtrl.submodeTimer = 0;
     }
     if (lbl_802F1C1C > 0)
         lbl_802F1C1C--;
-    if (lbl_802F1C1C == 0 && currentBallStructPtr->vel.y < -0.2)
+    if (lbl_802F1C1C == 0 && currentBall->vel.y < -0.2)
     {
-        u_play_sound_0((currentBallStructPtr->lives == 1) ? 81 : 29);
+        u_play_sound_0((currentBall->lives == 1) ? 81 : 29);
         u_play_sound_0(21);
         lbl_802F1C1C = -1;
     }
@@ -1061,7 +1061,7 @@ void submode_game_over_point_main_func(void)
     if (is_play_points_textbox_done() && modeCtrl.submodeTimer > 30 && (g_currPlayerButtons[2] & PAD_BUTTON_A))
         modeCtrl.submodeTimer = 30;
     if (modeCtrl.submodeTimer == 30)
-        textbox_set_properties(1, 20, NULL);
+        textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
     if (modeCtrl.submodeTimer == 15)
         start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 15);
     if (--modeCtrl.submodeTimer > 0)
@@ -1095,7 +1095,7 @@ void submode_game_over_dest_func(void)
         g_poolInfo.playerPool.statusList[2] = 0;
         g_poolInfo.playerPool.statusList[3] = 0;
         modeCtrl.currPlayer = 0;
-        currentBallStructPtr = &ballInfo[modeCtrl.currPlayer];
+        currentBall = &ballInfo[modeCtrl.currPlayer];
         SoundGroupFree();
         break;
     default:
@@ -1185,7 +1185,7 @@ void submode_game_nameentry_ready_init_func(void)
     tbox.numColumns = 0;
     tbox.numRows = 1;
     tbox.callback = NULL;
-    textbox_set_properties(1, 1, &tbox);
+    textbox_set_properties(1, TEXTBOX_STATE_INIT, &tbox);
     textbox_add_text(1, nameEntryText[playerCharacterSelection[modeCtrl.currPlayer]]);
     start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(255, 255, 255, 0), 30);
     BALL_FOREACH( ball->state = 15; )
@@ -1201,7 +1201,7 @@ void submode_game_nameentry_ready_main_func(void)
 
     if (modeCtrl.submodeTimer == 120.0)
     {
-        textbox_set_properties(1, 20, NULL);
+        textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
         hud_show_name_entry_info(
             func_800AECCC(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]),
             lbl_802C67D4[modeCtrl.currPlayer][0].score);
@@ -1519,21 +1519,21 @@ void submode_game_extra_wait_func(void)
         tbox.y = 200;
         tbox.numRows = 2;
         tbox.callback = NULL;
-        textbox_set_properties(1, 1, &tbox);
+        textbox_set_properties(1, TEXTBOX_STATE_INIT, &tbox);
         if (modeCtrl.courseFlags & COURSE_FLAG_MASTER)
         {
-            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][0]);
-            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][1]);
+            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBall->playerId]][0]);
+            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBall->playerId]][1]);
         }
         else if (modeCtrl.difficulty == DIFFICULTY_EXPERT)
         {
-            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][0]);
-            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][1]);
+            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBall->playerId]][0]);
+            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBall->playerId]][1]);
         }
         else
         {
-            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][0]);
-            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][1]);
+            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBall->playerId]][0]);
+            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBall->playerId]][1]);
         }
     }
     if (modeCtrl.submodeTimer == 300)
@@ -1546,26 +1546,26 @@ void submode_game_extra_wait_func(void)
         tbox.y = 200;
         tbox.numRows = 2;
         tbox.callback = 0;
-        textbox_set_properties(1, 21, &tbox);
+        textbox_set_properties(1, TEXTBOX_STATE_21, &tbox);
         if (modeCtrl.courseFlags & COURSE_FLAG_MASTER)
         {
-            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][2]);
-            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][3]);
+            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBall->playerId]][2]);
+            textbox_add_text(1, masterIntroSpeech[playerCharacterSelection[currentBall->playerId]][3]);
         }
         else if (modeCtrl.difficulty == DIFFICULTY_EXPERT)
         {
-            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][2]);
-            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][3]);
+            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBall->playerId]][2]);
+            textbox_add_text(1, expertExIntroSpeech[playerCharacterSelection[currentBall->playerId]][3]);
         }
         else
         {
-            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][2]);
-            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBallStructPtr->playerId]][3]);
+            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBall->playerId]][2]);
+            textbox_add_text(1, extraIntroSpeech[playerCharacterSelection[currentBall->playerId]][3]);
         }
     }
     if (modeCtrl.submodeTimer == 60)
     {
-        textbox_set_properties(1, 20, NULL);
+        textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
         start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 60);
         u_play_music(60, 2);
     }
@@ -1886,7 +1886,7 @@ void submode_game_intr_sel_main_func(void)
     if (is_play_points_textbox_done() && modeCtrl.submodeTimer > 30 && (g_currPlayerButtons[2] & PAD_BUTTON_A))
         modeCtrl.submodeTimer = 30;
     if (modeCtrl.submodeTimer == 30)
-        textbox_set_properties(1, 20, NULL);
+        textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
     if (modeCtrl.submodeTimer == 15)
         start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 15);
     if (--modeCtrl.submodeTimer <= 0)
@@ -1926,7 +1926,7 @@ u32 lose_life(void)
     BALL_FOREACH( ball->lives--; )
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1)
         func_800662D4();
-    if (currentBallStructPtr->lives > 0)
+    if (currentBall->lives > 0)
         return TRUE;
     return FALSE;
 }

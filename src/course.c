@@ -1065,7 +1065,7 @@ void show_play_points_textbox(int arg0, s16 x, s16 y)
     struct TextBox tbox;
 
     memset(&tbox, 0, sizeof(tbox));
-    tbox.style = 14;
+    tbox.style = TEXTBOX_STYLE_PLAIN;
     tbox.x = x;
     tbox.y = y;
     tbox.numColumns = 0;
@@ -1079,15 +1079,15 @@ void show_play_points_textbox(int arg0, s16 x, s16 y)
     {
         lbl_802F1FA0 = 0xB3;
         tbox.unk19 = 0;
-        tbox.numColumns = 0x18;
-        tbox.unk10 = tbox.numColumns * 24;
+        tbox.numColumns = TEXTBOX_FONT_SIZE;
+        tbox.textWidth = tbox.numColumns * TEXTBOX_FONT_SIZE;
     }
-    textbox_set_properties(1, 1, &tbox);
+    textbox_set_properties(1, TEXTBOX_STATE_INIT, &tbox);
 }
 
 int is_play_points_textbox_done(void)
 {
-    if (textBoxes[1].state == 0)
+    if (textBoxes[1].state == TEXTBOX_STATE_INACTIVE)
         return FALSE;
     if (textBoxes[1].unk18 == 0)
         return FALSE;

@@ -32,7 +32,7 @@
 #include "../data/common.gma.h"
 #include "../data/common.nlobj.h"
 
-struct Ball *currentBallStructPtr;
+struct Ball *currentBall;
 void (*minigameRelBallCallback)(struct Ball *);
 void (*lbl_802F1F10)(void);
 u32 lbl_802F1F0C;
@@ -497,7 +497,7 @@ void lbl_8003781C(struct Ape *ape, int b)
     u_do_ape_anim(ape);
     if (!(ape->flags & (1 << 3)))
         func_8003765C(ape);
-    func_8008C090(ape, &r29->unk104);
+    u_mot_ape_something_with_head_anim(ape, &r29->unk104);
     r29->unk100 = 0;
     r29->unk110 = 0.0f;
 }
@@ -507,7 +507,7 @@ void func_80037B1C(struct Ball *ball) {}
 void func_80037B20(void)
 {
     struct Ball *ball = &ballInfo[0];
-    struct Ball *ballBackup = currentBallStructPtr;
+    struct Ball *ballBackup = currentBall;
     s8 *r7 = g_poolInfo.playerPool.statusList;
     int i;
 
@@ -515,11 +515,11 @@ void func_80037B20(void)
     {
         if (*r7 == 2)
         {
-            currentBallStructPtr = ball;
+            currentBall = ball;
             ball->ape->flags &= ~(1 << 14);
         }
     }
-    currentBallStructPtr = ballBackup;
+    currentBall = ballBackup;
 }
 
 void ev_ball_init(void)
@@ -538,7 +538,7 @@ void ev_ball_init(void)
     r21 = g_poolInfo.playerPool.statusList;
 
     lbl_802F1F0C = 0;
-    func_8008C4A0(1.0f);
+    u_mot_ape_set_some_var(1.0f);
     lbl_802F1F10 = NULL;
     func_8008BEF8(1);
     switch (modeCtrl.gameType)
@@ -567,7 +567,7 @@ void ev_ball_init(void)
             continue;
         }
 
-        currentBallStructPtr = ball;
+        currentBall = ball;
         ball->playerId = i;
         u_ball_init_2(ball);
         ball->unk0 = 2;
@@ -665,16 +665,16 @@ void ev_ball_init(void)
     case GAMETYPE_MAIN_NORMAL:
     case GAMETYPE_MINI_TARGET:
     case GAMETYPE_MINI_BOWLING:
-        currentBallStructPtr = &ballInfo[modeCtrl.currPlayer];
+        currentBall = &ballInfo[modeCtrl.currPlayer];
         break;
     default:
-        currentBallStructPtr = &ballInfo[0];
+        currentBall = &ballInfo[0];
         break;
     }
     func_8008BEF8(1);
 }
 
-struct Ape *u_init_ape(int a, int character, void (*c)(struct Ape *, int))
+struct Ape *u_init_ape(int a, enum Character character, void (*c)(struct Ape *, int))
 {
     struct Ape *ape = u_make_ape(character);
 
@@ -881,7 +881,7 @@ void ev_ball_main(void)
         if (*r28 == 0 || *r28 == 4)
             continue;
 
-        currentBallStructPtr = ball;
+        currentBall = ball;
         mathutil_mtx_copy(ball->unk30, ball->unkC8);
         ball->unk120 = ball->flags;
         ball->flags &= ~(BALL_FLAG_00|BALL_FLAG_02);
@@ -966,7 +966,7 @@ void ev_ball_main(void)
         {
             if (*r28 == 0 || *r28 == 4)
                 continue;
-            currentBallStructPtr = ball;
+            currentBall = ball;
             func_80038528(ball);
         }
     }
@@ -976,10 +976,10 @@ void ev_ball_main(void)
     case GAMETYPE_MAIN_NORMAL:
     case GAMETYPE_MINI_TARGET:
     case GAMETYPE_MINI_BOWLING:
-        currentBallStructPtr = &ballInfo[modeCtrl.currPlayer];
+        currentBall = &ballInfo[modeCtrl.currPlayer];
         break;
     default:
-        currentBallStructPtr = &ballInfo[0];
+        currentBall = &ballInfo[0];
         break;
     }
     func_8004C780();
@@ -1127,7 +1127,7 @@ void ball_draw(void)
 
         // The following code is for drawing the old arcade ball
 
-        func_8000E1A4(ball->unk15C[currentCameraStructPtr->unk204]);
+        func_8000E1A4(ball->unk15C[currentCamera->unk204]);
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_mult_right(ball->unk30);
         mathutil_mtxA_scale_s(ball->modelScale);
@@ -1342,7 +1342,7 @@ void u_ball_shadow_something_2(void)
 
 void give_bananas(int bananas)
 {
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
 
     switch (modeCtrl.gameType)
     {
@@ -1379,7 +1379,7 @@ void func_800390C8(int a, Vec *sphereCenter, float c)
     int r28;
 
     ball = &ballInfo[0];
-    r28 = currentBallStructPtr->playerId;
+    r28 = currentBall->playerId;
     r29 = g_poolInfo.playerPool.statusList;
     lbl_802F1F0C = 0;
 
@@ -2431,7 +2431,7 @@ void update_ball_ape_transform(struct Ball *ball, struct PhysicsBall *physBall, 
 
 void func_8003BBF4(struct PhysicsBall *physBall, Vec *b)
 {
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
     struct AnimGroupInfo *animGroup = &animGroups[physBall->hardestColiAnimGroupId];
     Vec sp44;
     Vec sp38;
@@ -2470,7 +2470,7 @@ void func_8003BBF4(struct PhysicsBall *physBall, Vec *b)
 
 void func_8003BD68(struct PhysicsBall *physBall, Vec *b, Vec *c)
 {
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
     float f2 = mathutil_vec_dot_prod(b, &physBall->hardestColiPlane.normal);
     Vec sp44;
     Vec sp38;
@@ -2817,7 +2817,7 @@ void func_8003CB88(struct Ball *ball)
 
 void func_8003CCB0(void)
 {
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
     int bvar;
 
     if (modeCtrl.gameType == GAMETYPE_MINI_RACE
@@ -3054,12 +3054,12 @@ void draw_ball_hemispheres(struct Ball *ball, int unused)
     int lod;  // level of detail?
 
     mathutil_mtxA_push();
-    mathutil_mtxA_from_mtx(currentCameraStructPtr->unk144);
+    mathutil_mtxA_from_mtx(currentCamera->unk144);
     mathutil_mtxA_tf_point(&ball->pos, &pos);
-    f31 = -0.25f / (currentCameraStructPtr->sub28.unk38 * pos.z);
+    f31 = -0.25f / (currentCamera->sub28.unk38 * pos.z);
     mathutil_mtxA_pop();
 
-    func_8000E1A4(ball->unk15C[currentCameraStructPtr->unk204] * 0.5 + 0.5);
+    func_8000E1A4(ball->unk15C[currentCamera->unk204] * 0.5 + 0.5);
     avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
 
     lod = 0;

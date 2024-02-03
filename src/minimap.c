@@ -96,7 +96,7 @@ static struct
 
 void ev_minimap_main(void)
 {
-    struct Ball *r4 = currentBallStructPtr;
+    struct Ball *r4 = currentBall;
     float f1;
     float f3;
     Vec sp8;
@@ -333,7 +333,7 @@ void minimap_draw(void)
     Vec sp1C;
     struct Struct800847FC sp8;
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     world = currentWorldStructPtr;
     if (lbl_801C5758.unk34 != 0)
     {
@@ -423,7 +423,7 @@ void minimap_draw(void)
         scale = lbl_801C5758.unk20;
         mathutil_mtxA_from_identity();
         mathutil_mtxA_rotate_x(lbl_801C5758.unk8);
-        mathutil_mtxA_rotate_y(-currentCameraStructPtr->rotY);
+        mathutil_mtxA_rotate_y(-currentCamera->rotY);
         if (eventInfo[EVENT_WORLD].state == EV_STATE_RUNNING)
         {
             mathutil_mtxA_rotate_x(world->xrot);

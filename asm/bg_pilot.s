@@ -549,7 +549,7 @@ lbl_800647B0:
 /* 800647CC 000606EC  83 BE 00 E0 */	lwz r29, 0xe0(r30)
 /* 800647D0 000606F0  28 1D 00 00 */	cmplwi r29, 0
 /* 800647D4 000606F4  41 82 03 F8 */	beq lbl_80064BCC
-/* 800647D8 000606F8  80 8D 9A 5C */	lwz r4, currentCameraStructPtr@sda21(r13)
+/* 800647D8 000606F8  80 8D 9A 5C */	lwz r4, currentCamera@sda21(r13)
 /* 800647DC 000606FC  3F 80 43 30 */	lis r28, 0x4330
 /* 800647E0 00060700  C8 22 9D B8 */	lfd f1, lbl_802F45B8@sda21(r2)
 /* 800647E4 00060704  38 61 00 50 */	addi r3, r1, 0x50
@@ -566,7 +566,7 @@ lbl_800647B0:
 /* 80064810 00060730  EC 25 00 32 */	fmuls f1, f5, f0
 /* 80064814 00060734  48 06 5E DD */	bl C_MTXPerspective
 /* 80064818 00060738  4B FA 2D 4D */	bl mathutil_mtxA_from_identity
-/* 8006481C 0006073C  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 8006481C 0006073C  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80064820 00060740  C0 21 00 50 */	lfs f1, 0x50(r1)
 /* 80064824 00060744  C0 03 00 28 */	lfs f0, 0x28(r3)
 /* 80064828 00060748  C0 43 00 34 */	lfs f2, 0x34(r3)
@@ -580,7 +580,7 @@ lbl_800647B0:
 /* 80064848 00060768  FC 03 00 28 */	fsub f0, f3, f0
 /* 8006484C 0006076C  FC 00 00 18 */	frsp f0, f0
 /* 80064850 00060770  D0 03 00 08 */	stfs f0, 8(r3)
-/* 80064854 00060774  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 80064854 00060774  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80064858 00060778  C0 21 00 64 */	lfs f1, 0x64(r1)
 /* 8006485C 0006077C  C0 03 00 2C */	lfs f0, 0x2c(r3)
 /* 80064860 00060780  C0 43 00 38 */	lfs f2, 0x38(r3)
@@ -591,7 +591,7 @@ lbl_800647B0:
 /* 80064874 00060794  FC 03 00 28 */	fsub f0, f3, f0
 /* 80064878 00060798  FC 00 00 18 */	frsp f0, f0
 /* 8006487C 0006079C  D0 03 00 18 */	stfs f0, 0x18(r3)
-/* 80064880 000607A0  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 80064880 000607A0  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80064884 000607A4  C8 22 9D B8 */	lfd f1, lbl_802F45B8@sda21(r2)
 /* 80064888 000607A8  A8 03 00 30 */	lha r0, 0x30(r3)
 /* 8006488C 000607AC  6C 00 80 00 */	xoris r0, r0, 0x8000
@@ -606,7 +606,7 @@ lbl_800647B0:
 /* 800648B0 000607D0  4B FA 29 C5 */	bl mathutil_tan
 /* 800648B4 000607D4  C0 02 9D D0 */	lfs f0, lbl_802F45D0@sda21(r2)
 /* 800648B8 000607D8  38 61 00 90 */	addi r3, r1, 0x90
-/* 800648BC 000607DC  80 AD 9A 5C */	lwz r5, currentCameraStructPtr@sda21(r13)
+/* 800648BC 000607DC  80 AD 9A 5C */	lwz r5, currentCamera@sda21(r13)
 /* 800648C0 000607E0  EC 20 08 24 */	fdivs f1, f0, f1
 /* 800648C4 000607E4  80 8D 99 80 */	lwz r4, mathutilData@sda21(r13)
 /* 800648C8 000607E8  C0 05 00 34 */	lfs f0, 0x34(r5)

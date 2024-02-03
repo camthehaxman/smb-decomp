@@ -71,18 +71,18 @@ static void func_800BB084(void);
 static void func_800BBA54(void);
 static void func_800BBA58(void);
 static void func_800BBB10(int);
-static void func_800BBB78(void);
-static void func_800BBBA8(void);
+static void clear_scene_characters(void);
+static void update_scene_characters(void);
 static void func_800BC820(void);
 static void func_800BC8B8(void);
-static int init_ending_scene_ape(int, int);
+static int init_ending_scene_ape(int, enum Character);
 static void u_some_ape_callback(struct Ape *, int);
 static void clear_scene_objects(void);
-static void func_800BD4B8(void);
+static void update_scene_objects(void);
 static void func_800BEEE8(void);
 static void func_800BF2D0(void);
 static void func_800BF2D4(void);
-static void func_800BF4F4(void);
+static void u_spawn_some_bananas(void);
 static void func_800BF658(void);
 static void func_800BF774(void);
 static void spawn_lots_of_bananas_1(int);
@@ -187,7 +187,7 @@ void ending_init(void)
     }
     memset(endingInfo.work, 0, sizeof(*endingInfo.work));
     SoundGroupLoad(SOUND_GRPending);
-    func_800BBB78();
+    clear_scene_characters();
     clear_scene_objects();
     func_800BB068();
     ending_camera_init();
@@ -207,8 +207,8 @@ int ending_main(void)
     if (endingInfo.nextState != -1)
         endingInfo.state = endingInfo.nextState;
     endingFuncs[endingInfo.state]();
-    func_800BBBA8();
-    func_800BD4B8();
+    update_scene_characters();
+    update_scene_objects();
     func_800BB084();
     if (endingInfo.flags & 2)
         endingInfo.work->unk0 += 0.01666666753590107f;
@@ -323,7 +323,7 @@ static void ending_state_beginner_init(void)
     rend_efc_mirror_enable();
     init_ending_scene_ape(0, playerCharacterSelection[modeCtrl.currPlayer]);
     endingInfo.work->characters[0].unk70 = 1;
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    CAMERA_FOREACH(camera->subState = 0;)
     r28 = &endingInfo.work->unkAA54;
     memset(r28, 0, sizeof(*r28));
     r28->unk0 = 1;
@@ -361,8 +361,8 @@ static void ending_state_2(void)
         u_play_sound_0(0x230);
         break;
     case 240:
-        chara->unk4 = 1;
-        chara->unk6 = modeCtrl.submodeTimer - 120;
+        chara->state = 1;
+        chara->timer = modeCtrl.submodeTimer - 120;
         break;
     case 180:
         temp_f2 = 1.0f / modeCtrl.submodeTimer;
@@ -404,7 +404,7 @@ static void ending_state_3(void)
     endingInfo.nextState = 4;
     modeCtrl.submodeTimer = 60;
     modeCtrl.unk18 = 30;
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    CAMERA_FOREACH(camera->subState = 0;)
     temp_r29 = &endingInfo.work->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
     temp_r29->unk0 = 1;
@@ -432,7 +432,7 @@ static void ending_state_3(void)
         tbox.y = 322;
         tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
-        textbox_set_properties(0, 1, &tbox);
+        textbox_set_properties(0, TEXTBOX_STATE_INIT, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
             textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
@@ -470,20 +470,20 @@ static void ending_state_4(void)
     }
     if (modeCtrl.unk18 != 0)
         modeCtrl.unk18--;
-    if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
+    if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & PAD_BUTTON_A))
     {
         modeCtrl.unk18 = 30;
         work = endingInfo.work;
         if (work->charaDialogue.numLines != 0)
         {
-            textbox_set_properties(0, 0x14, NULL);
+            textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_UP;
             tbox.x = 320;
             tbox.y = 322;
             tbox.numRows = work->charaDialogue.numLines;
             tbox.callback = NULL;
-            textbox_set_properties(0, 1, &tbox);
+            textbox_set_properties(0, TEXTBOX_STATE_INIT, &tbox);
             for (i2 = 0; i2 < tbox.numRows; i2++)
             {
                 textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
@@ -494,7 +494,7 @@ static void ending_state_4(void)
         else
         {
             endingInfo.nextState = 5;
-            textbox_set_properties(0, 0x14, NULL);
+            textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
         }
     }
     if (modeCtrl.submodeTimer != 0)
@@ -507,7 +507,7 @@ static void ending_state_5(void)
 
     endingInfo.nextState = 6;
     modeCtrl.submodeTimer = 360;
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    CAMERA_FOREACH(camera->subState = 0;)
     temp_r29 = &endingInfo.work->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
     temp_r29->unk0 = 1;
@@ -530,7 +530,7 @@ static void ending_state_6(void)
     switch (modeCtrl.submodeTimer)
     {
     case 240:
-        endingInfo.work->characters[0].unk4 = 4;
+        endingInfo.work->characters[0].state = 4;
         break;
     case 279:
         SoundReq(lbl_802F18C8[playerCharacterSelection[modeCtrl.currPlayer]]);
@@ -583,9 +583,9 @@ static void ending_state_advanced_init(void)
     light_init(currStageId);
     rend_efc_mirror_enable();
     init_ending_scene_ape(0, playerCharacterSelection[modeCtrl.currPlayer]);
-    endingInfo.work->characters[0].unk4 = 6;
-    endingInfo.work->characters[0].unk6 = modeCtrl.submodeTimer - 180;
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    endingInfo.work->characters[0].state = 6;
+    endingInfo.work->characters[0].timer = modeCtrl.submodeTimer - 180;
+    CAMERA_FOREACH(camera->subState = 0;)
     temp_f31 = 1.0f / (modeCtrl.submodeTimer - 300);
     temp_r31 = &endingInfo.work->unkAA54;
     memset(temp_r31, 0, sizeof(*temp_r31));
@@ -648,22 +648,22 @@ static void ending_state_8(void)
         else
             chara->unk56 = 3;
         func_8004CFF0(0x2E);
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 56);
         temp_f30 = 1.25f * (0.9f + (0.2f * RAND_FLOAT()));
         temp_r29->unk0 = 1;
         mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
         mathutil_mtxA_rotate_x(rand() & 0x7FFF);
         mathutil_mtxA_tf_vec_xyz(&temp_r29->unk4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk4.x += chara->unkC.x;
-        temp_r29->unk4.y += chara->unkC.y;
-        temp_r29->unk4.z += chara->unkC.z;
+        temp_r29->unk4.x += chara->pos.x;
+        temp_r29->unk4.y += chara->pos.y;
+        temp_r29->unk4.z += chara->pos.z;
         mathutil_mtxA_rotate_y((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_rotate_x((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_tf_vec_xyz(&spB4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk10.x = temp_f31 * ((spB4.x + chara->unkC.x) - temp_r29->unk4.x);
-        temp_r29->unk10.y = temp_f31 * ((spB4.y + chara->unkC.y) - temp_r29->unk4.y);
-        temp_r29->unk10.z = temp_f31 * ((spB4.z + chara->unkC.z) - temp_r29->unk4.z);
+        temp_r29->unk10.x = temp_f31 * ((spB4.x + chara->pos.x) - temp_r29->unk4.x);
+        temp_r29->unk10.y = temp_f31 * ((spB4.y + chara->pos.y) - temp_r29->unk4.y);
+        temp_r29->unk10.z = temp_f31 * ((spB4.z + chara->pos.z) - temp_r29->unk4.z);
         break;
     case 60:
         chara->ape->flags &= 0xFFFFCFFF;
@@ -672,22 +672,22 @@ static void ending_state_8(void)
         else
             chara->unk56 = 3;
         func_8004CFF0(0x2E);
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         temp_f31 = 1.0f / modeCtrl.submodeTimer;
         temp_f30 = 10.0f * (0.9f + (0.2f * RAND_FLOAT()));
         temp_r29->unk0 = 1;
         mathutil_mtxA_from_rotate_y(rand() & 0x7FFF);
         mathutil_mtxA_rotate_x(rand() & 0x7FFF);
         mathutil_mtxA_tf_vec_xyz(&temp_r29->unk4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk4.x += chara->unkC.x;
-        temp_r29->unk4.y += chara->unkC.y;
-        temp_r29->unk4.z += chara->unkC.z;
+        temp_r29->unk4.x += chara->pos.x;
+        temp_r29->unk4.y += chara->pos.y;
+        temp_r29->unk4.z += chara->pos.z;
         mathutil_mtxA_rotate_y((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_rotate_x((rand() & 0x7FF) - 0x400);
         mathutil_mtxA_tf_vec_xyz(&spB4, 0.0f, 0.0f, temp_f30);
-        temp_r29->unk10.x = temp_f31 * ((spB4.x + chara->unkC.x) - temp_r29->unk4.x);
-        temp_r29->unk10.y = temp_f31 * ((spB4.y + chara->unkC.y) - temp_r29->unk4.y);
-        temp_r29->unk10.z = temp_f31 * ((spB4.z + chara->unkC.z) - temp_r29->unk4.z);
+        temp_r29->unk10.x = temp_f31 * ((spB4.x + chara->pos.x) - temp_r29->unk4.x);
+        temp_r29->unk10.y = temp_f31 * ((spB4.y + chara->pos.y) - temp_r29->unk4.y);
+        temp_r29->unk10.z = temp_f31 * ((spB4.z + chara->pos.z) - temp_r29->unk4.z);
         break;
     case 105:
     case 66:
@@ -711,9 +711,9 @@ static void ending_state_8(void)
         {
             memset(&effect, 0, sizeof(effect));
             effect.type = ET_ENDING_BALLFRAG;
-            effect.pos.x = chara->unkC.x;
-            effect.pos.y = 0.1f + chara->unkC.y;
-            effect.pos.z = chara->unkC.z;
+            effect.pos.x = chara->pos.x;
+            effect.pos.y = 0.1f + chara->pos.y;
+            effect.pos.z = chara->pos.z;
             effect.rotX = chara->unk58;
             effect.rotY = chara->unk5A;
             effect.rotZ = chara->unk5C;
@@ -729,9 +729,9 @@ static void ending_state_8(void)
             effect.vel.x *= temp_f31;
             effect.vel.y *= temp_f31;
             effect.vel.z *= temp_f31;
-            effect.vel.x += chara->unk18.x;
-            effect.vel.y += chara->unk18.y;
-            effect.vel.z += chara->unk18.z;
+            effect.vel.x += chara->vel.x;
+            effect.vel.y += chara->vel.y;
+            effect.vel.z += chara->vel.z;
             spawn_effect(&effect);
             effect.unkA0 = chara->unk56;
             effect.unk88.x = 0.0f;
@@ -741,9 +741,9 @@ static void ending_state_8(void)
             effect.vel.x *= temp_f31;
             effect.vel.y *= temp_f31;
             effect.vel.z *= temp_f31;
-            effect.vel.x += chara->unk18.x;
-            effect.vel.y += chara->unk18.y;
-            effect.vel.z += chara->unk18.z;
+            effect.vel.x += chara->vel.x;
+            effect.vel.y += chara->vel.y;
+            effect.vel.z += chara->vel.z;
             spawn_effect(&effect);
             chara->unk56 = -1;
             u_play_sound_0(0x233);
@@ -796,7 +796,7 @@ static void ending_state_9(void)
         tbox.y = 160;
         tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
-        textbox_set_properties(0, 1, &tbox);
+        textbox_set_properties(0, TEXTBOX_STATE_INIT, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
             textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
@@ -842,20 +842,20 @@ static void ending_state_10(void)
     }
     if (modeCtrl.unk18 != 0)
         modeCtrl.unk18--;
-    if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
+    if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & PAD_BUTTON_A))
     {
         modeCtrl.unk18 = 30;
         work = endingInfo.work;
         if (work->charaDialogue.numLines != 0)
         {
-            textbox_set_properties(0, 20, NULL);
+            textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
             tbox.x = 320;
             tbox.y = 160;
             tbox.numRows = work->charaDialogue.numLines;
             tbox.callback = NULL;
-            textbox_set_properties(0, 1, &tbox);
+            textbox_set_properties(0, TEXTBOX_STATE_INIT, &tbox);
             for (i = 0; i < tbox.numRows; i++)
             {
                 textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
@@ -866,7 +866,7 @@ static void ending_state_10(void)
         else
         {
             endingInfo.nextState = 11;
-            textbox_set_properties(0, 20, NULL);
+            textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
         }
     }
     if (modeCtrl.submodeTimer != 0)
@@ -915,8 +915,8 @@ void ending_state_12(void)
     case 538:
         if (chara->ape->unk0->unk38 > chara->ape->unk0->unk3A - 8)
         {
-            chara->unk4 = 8;
-            chara->unk6 = modeCtrl.submodeTimer - 420;
+            chara->state = 8;
+            chara->timer = modeCtrl.submodeTimer - 420;
             temp_r28->unk0 = 1;
             temp_r28->unk4 = cameraInfo[modeCtrl.currPlayer].eye;
             temp_r28->unk10 = cameraInfo[modeCtrl.currPlayer].eyeVel;
@@ -1002,14 +1002,14 @@ static void ending_state_expert_init(void)
     event_start(EVENT_VIBRATION);
     light_init(currStageId);
     rend_efc_mirror_enable();
-    init_ending_scene_ape(0, 0);
-    init_ending_scene_ape(1, 1);
-    init_ending_scene_ape(2, 2);
-    init_ending_scene_ape(3, 3);
-    endingInfo.work->characters[0].unk4 = 9;
-    endingInfo.work->characters[1].unk4 = 9;
-    endingInfo.work->characters[2].unk4 = 9;
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    init_ending_scene_ape(0, CHARACTER_AIAI);
+    init_ending_scene_ape(1, CHARACTER_MEEMEE);
+    init_ending_scene_ape(2, CHARACTER_BABY);
+    init_ending_scene_ape(3, CHARACTER_GONGON);
+    endingInfo.work->characters[0].state = 9;
+    endingInfo.work->characters[1].state = 9;
+    endingInfo.work->characters[2].state = 9;
+    CAMERA_FOREACH(camera->subState = 0;)
     temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_r28->unk0 = 1;
@@ -1025,9 +1025,9 @@ static void ending_state_expert_init(void)
         struct EndingSceneCharacter *chara = &endingInfo.work->characters[temp_r0];
         chara->ape->flags &= 0xFFFFFFDF;
         chara->unkA = 0x12;
-        chara->unkC.x = -20.38f;
-        chara->unkC.y = -2.34f;
-        chara->unkC.z = -20.39f;
+        chara->pos.x = -20.38f;
+        chara->pos.y = -2.34f;
+        chara->pos.z = -20.39f;
         if (modeCtrl.playerCount == 1)
             chara->unk56 = 3;
         else
@@ -1067,11 +1067,11 @@ static void ending_state_15(void)
     endingInfo.nextState = 16;
     modeCtrl.submodeTimer = 300;
     modeCtrl.unk18 = 30;
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    CAMERA_FOREACH(camera->subState = 0;)
     temp_r26 = &endingInfo.work->unkAA54;
     chara = &endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]];
     temp_f31 = modeCtrl.submodeTimer / 300.0f;
-    mathutil_mtxA_from_translate(&chara->unkC);
+    mathutil_mtxA_from_translate(&chara->pos);
     mathutil_mtxA_rotate_y(chara->unk30.y);
     mathutil_mtxA_rotate_x(chara->unk30.x);
     mathutil_mtxA_rotate_z(chara->unk30.z);
@@ -1097,7 +1097,7 @@ static void ending_state_15(void)
         tbox.y = 322;
         tbox.numRows = MIN(work->charaDialogue.numLines, 2);
         tbox.callback = NULL;
-        textbox_set_properties(0, 1, &tbox);
+        textbox_set_properties(0, TEXTBOX_STATE_INIT, &tbox);
         for (i = 0; i < tbox.numRows; i++)
         {
             textbox_add_text(0, work->charaDialogue.lines[work->unkAACC]);
@@ -1120,7 +1120,7 @@ static void ending_state_15(void)
 static void ending_state_16(void)
 {
     struct TextBox tbox;
-    float temp_f31;
+    float t;
     struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r28;
     struct EndingSceneCharacter *chara;
@@ -1128,12 +1128,12 @@ static void ending_state_16(void)
 
     temp_r28 = &endingInfo.work->unkAA54;
     chara = &endingInfo.work->characters[playerCharacterSelection[modeCtrl.currPlayer]];
-    temp_f31 = modeCtrl.submodeTimer / 300.0f;
-    mathutil_mtxA_from_translate(&chara->unkC);
+    t = modeCtrl.submodeTimer / 300.0f;
+    mathutil_mtxA_from_translate(&chara->pos);
     mathutil_mtxA_rotate_y(chara->unk30.y);
     mathutil_mtxA_rotate_x(chara->unk30.x);
     mathutil_mtxA_rotate_z(chara->unk30.z);
-    mathutil_mtxA_tf_point_xyz(&temp_r28->unk4, -4.0f * (temp_f31 - 0.5f), -0.2f, -2.0f);
+    mathutil_mtxA_tf_point_xyz(&temp_r28->unk4, -4.0f * (t - 0.5f), -0.2f, -2.0f);
     chara->unk38--;
     if (chara->unk38 < 0)
     {
@@ -1143,13 +1143,13 @@ static void ending_state_16(void)
     }
     if (modeCtrl.unk18 != 0)
         modeCtrl.unk18--;
-    if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & 0x100))
+    if (modeCtrl.unk18 == 0 && (g_currPlayerButtons[2] & PAD_BUTTON_A))
     {
         modeCtrl.unk18 = 30;
         work = endingInfo.work;
         if (work->charaDialogue.numLines != 0)
         {
-            textbox_set_properties(0, 20, NULL);
+            textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
             memset(&tbox, 0, sizeof(tbox));
             tbox.style = TEXTBOX_STYLE_CENTER_UP;
             tbox.x = 320;
@@ -1167,7 +1167,7 @@ static void ending_state_16(void)
         else
         {
             endingInfo.nextState = 17;
-            textbox_set_properties(0, 20, NULL);
+            textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
         }
     }
     if (modeCtrl.submodeTimer != 0)
@@ -1197,7 +1197,7 @@ static void ending_state_18(void)
     switch (modeCtrl.submodeTimer)
     {
     case 479:
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         temp_f3 = 1.0f / (modeCtrl.submodeTimer - 360);
         work = endingInfo.work;
         work->unkAA54.unk0 = 1;
@@ -1223,12 +1223,12 @@ static void ending_state_18(void)
         endingInfo.work->characters[1].unkA = 8;
         endingInfo.work->characters[2].unkA = 8;
         SoundReq(lbl_802F18E8[playerCharacterSelection[modeCtrl.currPlayer] % 3]);
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         work = endingInfo.work;
         temp_r26 = &work->unkAA54;
         chara = &work->characters[playerCharacterSelection[modeCtrl.currPlayer] % 3];
         memset(temp_r26, 0, sizeof(*temp_r26));
-        mathutil_mtxA_from_translate(&chara->unkC);
+        mathutil_mtxA_from_translate(&chara->pos);
         mathutil_mtxA_rotate_y(chara->unk30.y);
         mathutil_mtxA_rotate_x(chara->unk30.x);
         mathutil_mtxA_rotate_z(chara->unk30.z);
@@ -1248,9 +1248,9 @@ static void ending_state_18(void)
         temp_r26->unk38.z = -temp_r26->unk2C.z * temp_f2;
         break;
     case 120:
-        endingInfo.work->characters[0].unk4 = 0x10;
-        endingInfo.work->characters[1].unk4 = 0x10;
-        endingInfo.work->characters[2].unk4 = 0x10;
+        endingInfo.work->characters[0].state = 16;
+        endingInfo.work->characters[1].state = 16;
+        endingInfo.work->characters[2].state = 16;
         endingInfo.work->characters[3].unk56 = -1;
         sp8.x = 0.0f;
         sp8.y = 4.0f;
@@ -1296,8 +1296,8 @@ static void ending_state_19(void)
     modeCtrl.submodeTimer = 360;
     start_screen_fade(FADE_IN, RGBA(0, 0, 0, 0), 30);
     clear_scene_objects();
-    func_800BF4F4();
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    u_spawn_some_bananas();
+    CAMERA_FOREACH(camera->subState = 0;)
     temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
     temp_f4 = 1.0f / (modeCtrl.submodeTimer - 240);
@@ -1333,7 +1333,7 @@ static void ending_state_20(void)
     case 0:
         break;
     case 240:
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         temp_r4 = &endingInfo.work->unkAA54;
         temp_f3 = 1.0f / modeCtrl.submodeTimer;
         temp_r4->unk0 = 1;
@@ -1378,7 +1378,7 @@ static void ending_state_21(void)
     endingInfo.work->characters[1].ape->flags |= 0x20;
     endingInfo.work->characters[2].ape->flags |= 0x20;
     endingInfo.work->characters[3].ape->flags |= 0x20;
-    CAMERA_FOREACH(camera->unk1F = 0;)
+    CAMERA_FOREACH(camera->subState = 0;)
     temp_r4 = &endingInfo.work->unkAA54;
     temp_f3 = 0.008333334f;
     temp_r4->unk0 = 1;
@@ -1410,15 +1410,15 @@ static void ending_state_22(void)
         u_play_sound_0(0x235);
         break;
     case 600:
-        endingInfo.work->characters[0].unk4 = 0x11;
-        endingInfo.work->characters[1].unk4 = 0x11;
-        endingInfo.work->characters[2].unk4 = 0x11;
+        endingInfo.work->characters[0].state = 17;
+        endingInfo.work->characters[1].state = 17;
+        endingInfo.work->characters[2].state = 17;
         break;
     case 599:
         endingInfo.work->characters[0].ape->flags &= ~0x20;
         endingInfo.work->characters[1].ape->flags &= ~0x20;
         endingInfo.work->characters[2].ape->flags &= ~0x20;
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         temp = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 216);
         temp->unk0 = 1;
@@ -1437,7 +1437,7 @@ static void ending_state_22(void)
         break;
     case 480:
         endingInfo.work->characters[3].ape->flags &= ~0x20;
-        endingInfo.work->characters[3].unk4 = 0x13;
+        endingInfo.work->characters[3].state = 19;
         break;
     case 216:
         temp = &endingInfo.work->unkAA54;
@@ -1489,9 +1489,9 @@ static void ending_state_23(void)
 
     endingInfo.nextState = 24;
     modeCtrl.submodeTimer = 300;
-    endingInfo.work->characters[0].unk4 = 0x15;
-    endingInfo.work->characters[1].unk4 = 0x15;
-    endingInfo.work->characters[2].unk4 = 0x15;
+    endingInfo.work->characters[0].state = 21;
+    endingInfo.work->characters[1].state = 21;
+    endingInfo.work->characters[2].state = 21;
     endingInfo.work->characters[0].unk70 = 0;
     endingInfo.work->characters[1].unk70 = 0;
     endingInfo.work->characters[2].unk70 = 0;
@@ -1560,7 +1560,7 @@ static void ending_state_26(void)
     switch (modeCtrl.submodeTimer)
     {
     case 465:
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 300);
         temp_r4->unk0 = 0;
         temp_r4->unk4.x = 0.0f;
@@ -1647,15 +1647,15 @@ static void ending_state_30(void)
     switch (modeCtrl.submodeTimer)
     {
     case 330:
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         var_r31 = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / (modeCtrl.submodeTimer - 210);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
         chara = &endingInfo.work->characters[charaId];
         var_r31->unk0 = 1;
-        var_r31->unk4.x = chara->unkC.x;
-        var_r31->unk4.y = chara->unkC.y - 0.5f;
-        var_r31->unk4.z = chara->unkC.z - 2.0f;
+        var_r31->unk4.x = chara->pos.x;
+        var_r31->unk4.y = chara->pos.y - 0.5f;
+        var_r31->unk4.z = chara->pos.z - 2.0f;
         var_r31->unk10.x = 0.0f;
         var_r31->unk10.y = 0.15f * temp_f2;
         var_r31->unk10.z = temp_f2;
@@ -1676,18 +1676,18 @@ static void ending_state_30(void)
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
         endingInfo.work->characters[3].unkA = 0x11;
         chara = &endingInfo.work->characters[charaId];
-        CAMERA_FOREACH(camera->unk1F = 0;)
+        CAMERA_FOREACH(camera->subState = 0;)
         var_r31->unk0 = 1;
-        var_r31->unk4.x = chara->unkC.x;
-        var_r31->unk4.y = 0.5f + chara->unkC.y;
-        var_r31->unk4.z = 2.5f + chara->unkC.z;
+        var_r31->unk4.x = chara->pos.x;
+        var_r31->unk4.y = 0.5f + chara->pos.y;
+        var_r31->unk4.z = 2.5f + chara->pos.z;
         var_r31->unk10.x = 0.0f;
         var_r31->unk10.y = 0.0f;
         var_r31->unk10.z = 0.0f;
         var_r31->unk2 = 1;
-        var_r31->unk2C.x = chara->unkC.x;
-        var_r31->unk2C.y = 0.25f + chara->unkC.y;
-        var_r31->unk2C.z = chara->unkC.z;
+        var_r31->unk2C.x = chara->pos.x;
+        var_r31->unk2C.y = 0.25f + chara->pos.y;
+        var_r31->unk2C.z = chara->pos.z;
         var_r31->unk38.x = 0.0f;
         var_r31->unk38.y = 0.0f;
         var_r31->unk38.z = 0.0f;
@@ -1738,29 +1738,29 @@ static void ending_state_28(void)
     struct SomeBigEndingStruct_sub *temp_r30;
     Vec sp38;
     Mtx sp8;
-    float temp_f31;
+    float t;
 
     temp_r30 = &endingInfo.work->unkAA54;
     switch (modeCtrl.submodeTimer)
     {
     case 630:
         endingInfo.flags |= 0x10;
-        CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 510);
+        CAMERA_FOREACH(camera->subState = 0;)
+        t = 1.0f / (modeCtrl.submodeTimer - 510);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 2) % 3;
         temp_r30 = &endingInfo.work->unkAA54;
         chara = &endingInfo.work->characters[charaId];
         endingInfo.work->unkAA54.unk0 = 1;
-        sp38.x = chara->unkC.x;
+        sp38.x = chara->pos.x;
         sp38.y = 0.0f;
-        sp38.z = chara->unkC.z;
+        sp38.z = chara->pos.z;
         mathutil_vec_set_len(&sp38, &sp38, 1.25f);
-        temp_r30->unk4.x = chara->unkC.x + sp38.x;
-        temp_r30->unk4.y = chara->unkC.y;
-        temp_r30->unk4.z = chara->unkC.z + sp38.z;
-        temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
-        temp_r30->unk10.y = 0.5f * temp_f31;
-        temp_r30->unk10.z = temp_f31 * (1.0f + chara->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk4.x = chara->pos.x + sp38.x;
+        temp_r30->unk4.y = chara->pos.y;
+        temp_r30->unk4.z = chara->pos.z + sp38.z;
+        temp_r30->unk10.x = -0.5f * sp38.x * t;
+        temp_r30->unk10.y = 0.5f * t;
+        temp_r30->unk10.z = t * (1.0f + chara->pos.z - temp_r30->unk4.z);
         temp_r30->unk2 = 2;
         temp_r30->unk44 = charaId;
         temp_r30->unk46 = 0;
@@ -1769,22 +1769,22 @@ static void ending_state_28(void)
         temp_r30->unk48.z = 0.0f;
         break;
     case 480:
-        CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 360);
+        CAMERA_FOREACH(camera->subState = 0;)
+        t = 1.0f / (modeCtrl.submodeTimer - 360);
         charaId = (playerCharacterSelection[modeCtrl.currPlayer] + 1) % 3;
         temp_r30 = &endingInfo.work->unkAA54;
         chara = &endingInfo.work->characters[charaId];
         endingInfo.work->unkAA54.unk0 = 1;
-        sp38.x = chara->unkC.x;
+        sp38.x = chara->pos.x;
         sp38.y = 0.0f;
-        sp38.z = chara->unkC.z;
+        sp38.z = chara->pos.z;
         mathutil_vec_set_len(&sp38, &sp38, 1.25f);
-        temp_r30->unk4.x = chara->unkC.x + sp38.x;
-        temp_r30->unk4.y = chara->unkC.y;
-        temp_r30->unk4.z = chara->unkC.z + sp38.z;
-        temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
-        temp_r30->unk10.y = 0.5f * temp_f31;
-        temp_r30->unk10.z = temp_f31 * (1.0f + chara->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk4.x = chara->pos.x + sp38.x;
+        temp_r30->unk4.y = chara->pos.y;
+        temp_r30->unk4.z = chara->pos.z + sp38.z;
+        temp_r30->unk10.x = -0.5f * sp38.x * t;
+        temp_r30->unk10.y = 0.5f * t;
+        temp_r30->unk10.z = t * (1.0f + chara->pos.z - temp_r30->unk4.z);
         temp_r30->unk2 = 2;
         temp_r30->unk44 = charaId;
         temp_r30->unk46 = 0;
@@ -1793,22 +1793,22 @@ static void ending_state_28(void)
         temp_r30->unk48.z = 0.0f;
         break;
     case 330:
-        CAMERA_FOREACH(camera->unk1F = 0;)
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 210);
+        CAMERA_FOREACH(camera->subState = 0;)
+        t = 1.0f / (modeCtrl.submodeTimer - 210);
         charaId = playerCharacterSelection[modeCtrl.currPlayer];
         temp_r30 = &endingInfo.work->unkAA54;
         chara = &endingInfo.work->characters[charaId];
         endingInfo.work->unkAA54.unk0 = 1;
-        sp38.x = chara->unkC.x;
+        sp38.x = chara->pos.x;
         sp38.y = 0.0f;
-        sp38.z = chara->unkC.z;
+        sp38.z = chara->pos.z;
         mathutil_vec_set_len(&sp38, &sp38, 1.25f);
-        temp_r30->unk4.x = chara->unkC.x + sp38.x;
-        temp_r30->unk4.y = chara->unkC.y;
-        temp_r30->unk4.z = chara->unkC.z + sp38.z;
-        temp_r30->unk10.x = -0.5f * sp38.x * temp_f31;
-        temp_r30->unk10.y = 0.5f * temp_f31;
-        temp_r30->unk10.z = temp_f31 * (1.0f + chara->unkC.z - temp_r30->unk4.z);
+        temp_r30->unk4.x = chara->pos.x + sp38.x;
+        temp_r30->unk4.y = chara->pos.y;
+        temp_r30->unk4.z = chara->pos.z + sp38.z;
+        temp_r30->unk10.x = -0.5f * sp38.x * t;
+        temp_r30->unk10.y = 0.5f * t;
+        temp_r30->unk10.z = t * (1.0f + chara->pos.z - temp_r30->unk4.z);
         temp_r30->unk2 = 2;
         temp_r30->unk44 = charaId;
         temp_r30->unk46 = 0;
@@ -1839,10 +1839,10 @@ static void ending_state_28(void)
         mathutil_mtxA_tf_point_xyz(&sp38, 0.0f, 0.0f, 0.3f);
         sp38.y += -0.3f;
         sp38.z += 1.0f;
-        temp_f31 = 1.0f / (modeCtrl.submodeTimer - 66);
-        temp_r30->unk10.x = temp_f31 * (sp38.x - temp_r30->unk4.x);
-        temp_r30->unk10.y = temp_f31 * (sp38.y - temp_r30->unk4.y);
-        temp_r30->unk10.z = temp_f31 * (sp38.z - temp_r30->unk4.z);
+        t = 1.0f / (modeCtrl.submodeTimer - 66);
+        temp_r30->unk10.x = t * (sp38.x - temp_r30->unk4.x);
+        temp_r30->unk10.y = t * (sp38.y - temp_r30->unk4.y);
+        temp_r30->unk10.z = t * (sp38.z - temp_r30->unk4.z);
         break;
     case 66:
         SoundReq(lbl_802F18F8[playerCharacterSelection[modeCtrl.currPlayer]]);
@@ -2024,7 +2024,7 @@ static void func_800BBB10(int arg0)
     temp_r31->unk4 = arg0;
 }
 
-static void func_800BBB78(void)
+static void clear_scene_characters(void)
 {
     struct EndingWork *work = endingInfo.work;
 
@@ -2037,85 +2037,85 @@ static void func_800BBB78(void)
     }
 }
 
-static void func_800BBBA8(void)
+static void update_scene_characters(void)
 {
     int i;
     struct Struct801E2A98 spD0;
     struct Effect effect;
-    struct RaycastHit sp8;
+    struct RaycastHit floor;
     int playerId = modeCtrl.currPlayer;
     struct EndingSceneCharacter *chara;
-    float temp_f0;
+    float t;
 
     chara = &endingInfo.work->characters[0];
     for (i = 0; i < 4; i++, chara++)
     {
         if (chara->ape != NULL)
         {
-            switch (chara->unk4)
+            switch (chara->state)
             {
             case 1:
-                chara->unk4 = 2;
+                chara->state = 2;
                 chara->ape->flags &= 0xFFFFFFDF;
                 chara->unkA = 0;
                 chara->unk30.x = 0;
                 chara->unk30.y = 0;
                 chara->unk30.z = 0;
-                temp_f0 = chara->unk6;
-                chara->unkC.x = 0.0f;
-                chara->unkC.y = 20.0f - (0.5f * (-0.004f * (temp_f0 * temp_f0)));
-                chara->unkC.z = -60.0f;
-                chara->unk18.x = 0.0f;
-                chara->unk18.y = 0.0f;
-                chara->unk18.z = 0.0f;
+                t = chara->timer;
+                chara->pos.x = 0.0f;
+                chara->pos.y = 20.0f - (0.5f * (-0.004f * (t * t)));
+                chara->pos.z = -60.0f;
+                chara->vel.x = 0.0f;
+                chara->vel.y = 0.0f;
+                chara->vel.z = 0.0f;
                 break;
             case 2:
-                chara->unk18.y += -0.004f;
-                chara->unkC.y += chara->unk18.y;
-                chara->unk6--;
-                if (chara->unk6 <= 0)
+                chara->vel.y += -0.004f;
+                chara->pos.y += chara->vel.y;
+                chara->timer--;
+                if (chara->timer <= 0)
                 {
-                    chara->unk4 = 3;
-                    chara->unkC.x = 0.0f;
-                    chara->unkC.y = 20.0f;
-                    chara->unkC.z = -60.0f;
+                    chara->state = 3;
+                    chara->pos.x = 0.0f;
+                    chara->pos.y = 20.0f;
+                    chara->pos.z = -60.0f;
                 }
                 break;
             case 3:
-                chara->unk18.x *= 0.92f;
-                chara->unk18.y *= 0.92f;
-                chara->unk18.z *= 0.92f;
-                chara->unk18.y += -0.004f;
-                chara->unk18.x += 0.05f * -chara->unkC.x;
-                chara->unk18.y += 0.05f * (20.0f - chara->unkC.y);
-                chara->unk18.z += 0.05f * (-60.0f - chara->unkC.z);
-                chara->unkC.x += chara->unk18.x;
-                chara->unkC.y += chara->unk18.y;
-                chara->unkC.z += chara->unk18.z;
+                chara->vel.x *= 0.92f;
+                chara->vel.y *= 0.92f;
+                chara->vel.z *= 0.92f;
+                chara->vel.y += -0.004f;
+                chara->vel.x += 0.05f * -chara->pos.x;
+                chara->vel.y += 0.05f * (20.0f - chara->pos.y);
+                chara->vel.z += 0.05f * (-60.0f - chara->pos.z);
+                chara->pos.x += chara->vel.x;
+                chara->pos.y += chara->vel.y;
+                chara->pos.z += chara->vel.z;
                 break;
             case 4:
-                chara->unk4 = 5;
-                chara->unk6 = 0;
-                chara->unk18.z = 0.0f;
+                chara->state = 5;
+                chara->timer = 0;
+                chara->vel.z = 0.0f;
                 /* fallthrough */
             case 5:
-                chara->unk18.z += 0.000075f * chara->unk6;
-                chara->unkC.z += chara->unk18.z;
-                chara->unk6++;
+                chara->vel.z += 0.000075f * chara->timer;
+                chara->pos.z += chara->vel.z;
+                chara->timer++;
                 break;
             case 6:
-                chara->unk4 = 7;
+                chara->state = 7;
                 chara->ape->flags &= 0xFFFFFFDF;
                 chara->unkA = 3;
                 chara->unk30.x = 0;
                 chara->unk30.y = RAND_FLOAT();
                 chara->unk30.z = 0;
-                chara->unkC.x = 0.0f;
-                chara->unkC.y = 0.0f;
-                chara->unkC.z = 0.0f;
-                chara->unk18.x = 0.0f;
-                chara->unk18.y = 0.0f;
-                chara->unk18.z = 0.0f;
+                chara->pos.x = 0.0f;
+                chara->pos.y = 0.0f;
+                chara->pos.z = 0.0f;
+                chara->vel.x = 0.0f;
+                chara->vel.y = 0.0f;
+                chara->vel.z = 0.0f;
                 if (modeCtrl.playerCount == 1)
                     chara->unk56 = 3;
                 else
@@ -2125,56 +2125,56 @@ static void func_800BBBA8(void)
                 chara->unk5C = rand() & 0x7FFF;
                 /* fallthrough */
             case 7:
-                if (chara->unk6 > 0)
+                if (chara->timer > 0)
                 {
-                    chara->unk6--;
-                    chara->unk18.y += 0.009799992;
+                    chara->timer--;
+                    chara->vel.y += 0.009799992;
                     memset(&effect, 0, sizeof(effect));
                     effect.type = ET_LEVITATE;
                     effect.playerId = playerId;
-                    effect.pos = chara->unkC;
+                    effect.pos = chara->pos;
                     spawn_effect(&effect);
                 }
                 else
                 {
-                    chara->unk18.x *= 0.92f;
-                    chara->unk18.y *= 0.92f;
-                    chara->unk18.z *= 0.92f;
+                    chara->vel.x *= 0.92f;
+                    chara->vel.y *= 0.92f;
+                    chara->vel.z *= 0.92f;
                 }
-                chara->unkC.x += chara->unk18.x;
-                chara->unkC.y += chara->unk18.y;
-                chara->unkC.z += chara->unk18.z;
+                chara->pos.x += chara->vel.x;
+                chara->pos.y += chara->vel.y;
+                chara->pos.z += chara->vel.z;
                 chara->unk30.y -= 0x30;
                 chara->unk5A -= 0x40;
                 break;
             case 8:
-                chara->unk18.y += 0.009799992;
-                chara->unkC.y += chara->unk18.y;
-                chara->unk6--;
-                if (chara->unk6 < 0)
+                chara->vel.y += 0.009799992;
+                chara->pos.y += chara->vel.y;
+                chara->timer--;
+                if (chara->timer < 0)
                 {
-                    chara->unk4 = 0;
+                    chara->state = 0;
                     chara->ape->flags |= 0x20;
                 }
                 memset(&effect, 0, sizeof(effect));
                 effect.type = ET_LEVITATE;
                 effect.playerId = playerId;
-                effect.pos = chara->unkC;
+                effect.pos = chara->pos;
                 spawn_effect(&effect);
                 break;
             case 9:
-                chara->unk4 = 0xA;
+                chara->state = 0xA;
                 chara->ape->flags &= 0xFFFFFFDF;
                 chara->unkA = 0x12;
                 chara->unk30.x = 0;
                 chara->unk30.y = i * 0x10000 / 3;
                 chara->unk30.z = 0;
                 mathutil_mtxA_from_rotate_y(chara->unk30.y + 0x8000);
-                mathutil_mtxA_tf_vec_xyz(&chara->unkC, 0.0f, 0.0f, -5.0f);
-                chara->unkC.y += 30.0f + (5.0f * RAND_FLOAT());
-                chara->unk18.x = 0.0f;
-                chara->unk18.y = -0.20000000298023224f;
-                chara->unk18.z = 0.0f;
+                mathutil_mtxA_tf_vec_xyz(&chara->pos, 0.0f, 0.0f, -5.0f);
+                chara->pos.y += 30.0f + (5.0f * RAND_FLOAT());
+                chara->vel.x = 0.0f;
+                chara->vel.y = -0.20000000298023224f;
+                chara->vel.z = 0.0f;
                 if (i == playerCharacterSelection[playerId])
                 {
                     if (modeCtrl.playerCount == 1)
@@ -2189,39 +2189,39 @@ static void func_800BBBA8(void)
                 chara->unk5C = rand() & 0x7FFF;
                 /* fallthrough */
             case 10:
-                raycast_stage_down(&chara->unkC, &sp8, NULL);
-                if (chara->unk18.y < 0.0f
-                 && (0.5f + (chara->unkC.y - sp8.pos.y) < -15.0f * chara->unk18.y))
-                    chara->unk18.y += 0.012000000104308128f;
+                raycast_stage_down(&chara->pos, &floor, NULL);
+                if (chara->vel.y < 0.0f
+                 && (0.5f + (chara->pos.y - floor.pos.y) < -15.0f * chara->vel.y))
+                    chara->vel.y += 0.012000000104308128f;
                 memset(&effect, 0, sizeof(effect));
                 effect.type = ET_LEVITATE;
                 effect.playerId = playerId;
-                effect.pos = chara->unkC;
+                effect.pos = chara->pos;
                 spawn_effect(&effect);
                 /* fallthrough */
             case 11:
-                raycast_stage_down(&chara->unkC, &sp8, NULL);
-                chara->unk18.x *= 0.99f;
-                chara->unk18.y *= 0.99f;
-                chara->unk18.z *= 0.99f;
-                chara->unk18.y += -0.0080000003799796104f;
-                chara->unkC.x += chara->unk18.x;
-                chara->unkC.y += chara->unk18.y;
-                chara->unkC.z += chara->unk18.z;
-                if (sp8.pos.y > chara->unkC.y - 0.5f - 0.1f)
+                raycast_stage_down(&chara->pos, &floor, NULL);
+                chara->vel.x *= 0.99f;
+                chara->vel.y *= 0.99f;
+                chara->vel.z *= 0.99f;
+                chara->vel.y += -0.0080000003799796104f;
+                chara->pos.x += chara->vel.x;
+                chara->pos.y += chara->vel.y;
+                chara->pos.z += chara->vel.z;
+                if (floor.pos.y > chara->pos.y - 0.5f - 0.1f)
                 {
-                    if (chara->unk18.y < -0.10000000149011612f)
+                    if (chara->vel.y < -0.10000000149011612f)
                         u_play_sound_0(0x69);
-                    chara->unkC.y = 0.5f + sp8.pos.y - 0.1f;
-                    if (chara->unk18.y < 0.0f)
-                        chara->unk18.y *= -0.60000002384185791f;
-                    if (chara->unk4 != 0xB)
+                    chara->pos.y = 0.5f + floor.pos.y - 0.1f;
+                    if (chara->vel.y < 0.0f)
+                        chara->vel.y *= -0.60000002384185791f;
+                    if (chara->state != 0xB)
                     {
-                        chara->unk4 = 0xB;
+                        chara->state = 0xB;
                         memset(&effect, 0, sizeof(effect));
                         effect.playerId = playerId;
                         effect.type = ET_COLIFLASH;
-                        effect.pos = chara->unkC;
+                        effect.pos = chara->pos;
                         effect.pos.y -= 0.4f;
                         effect.unk88.x = 0.0f;
                         effect.unk88.y = 1.0f;
@@ -2232,74 +2232,74 @@ static void func_800BBBA8(void)
                 }
                 break;
             case 16:
-                chara->unk4 = 0;
+                chara->state = 0;
                 chara->unkA = 0xC;
-                chara->unkC = lbl_801E2AD4[i];
-                if (raycast_stage_down(&chara->unkC, &sp8, NULL) != 0U)
+                chara->pos = lbl_801E2AD4[i];
+                if (raycast_stage_down(&chara->pos, &floor, NULL) != 0U)
                 {
-                    chara->unkC = sp8.pos;
-                    chara->unkC.y += 0.4f;
+                    chara->pos = floor.pos;
+                    chara->pos.y += 0.4f;
                 }
                 chara->unk30.x = 0;
-                chara->unk30.y = mathutil_atan2(chara->unkC.x, chara->unkC.z);
+                chara->unk30.y = mathutil_atan2(chara->pos.x, chara->pos.z);
                 chara->unk30.z = 0;
                 chara->unk56 = -1;
                 break;
             case 17:
-                chara->unk4 = 0x12;
+                chara->state = 0x12;
                 chara->unkA = 0xD;
                 if (playerCharacterSelection[playerId] == 3)
-                    chara->unkC = lbl_801E2AD4_2[i];
+                    chara->pos = lbl_801E2AD4_2[i];
                 else
-                    chara->unkC = lbl_801E2AD4_2[(i + 3 - playerCharacterSelection[playerId]) % 3];
-                if (raycast_stage_down(&chara->unkC, &sp8, NULL) != 0U)
+                    chara->pos = lbl_801E2AD4_2[(i + 3 - playerCharacterSelection[playerId]) % 3];
+                if (raycast_stage_down(&chara->pos, &floor, NULL) != 0U)
                 {
-                    chara->unkC = sp8.pos;
-                    chara->unkC.y += 0.4f;
+                    chara->pos = floor.pos;
+                    chara->pos.y += 0.4f;
                 }
                 chara->unk30.x = 0;
                 chara->unk30.y = 0;
                 chara->unk30.z = 0;
-                temp_f0 = 1.0f / modeCtrl.submodeTimer;
-                chara->unk18.x = -chara->unkC.x * temp_f0;
-                chara->unk18.y = 0.0f;
-                chara->unk18.z = -4.5f * temp_f0 * (1.0f + (0.1f * RAND_FLOAT()));
+                t = 1.0f / modeCtrl.submodeTimer;
+                chara->vel.x = -chara->pos.x * t;
+                chara->vel.y = 0.0f;
+                chara->vel.z = -4.5f * t * (1.0f + (0.1f * RAND_FLOAT()));
                 break;
             case 18:
-                chara->unkC.x += chara->unk18.x;
-                chara->unkC.y += chara->unk18.y;
-                chara->unkC.z += chara->unk18.z;
+                chara->pos.x += chara->vel.x;
+                chara->pos.y += chara->vel.y;
+                chara->pos.z += chara->vel.z;
                 break;
             case 19:
-                chara->unk4 = 0x14;
-                chara->unk6 = modeCtrl.submodeTimer;
+                chara->state = 0x14;
+                chara->timer = modeCtrl.submodeTimer;
                 chara->unkA = 0xD;
-                chara->unkC = lbl_801E2AD4_2[i];
-                chara->unkC.y = 0.0f;
+                chara->pos = lbl_801E2AD4_2[i];
+                chara->pos.y = 0.0f;
                 chara->unk30.x = 0;
                 chara->unk30.y = 0;
                 chara->unk30.z = 0;
-                temp_f0 = 1.0f / chara->unk6;
-                chara->unk18.x = -chara->unkC.x * temp_f0;
-                chara->unk18.y = 0.0f;
-                chara->unk18.z = (3.45f - chara->unkC.z) * temp_f0;
+                t = 1.0f / chara->timer;
+                chara->vel.x = -chara->pos.x * t;
+                chara->vel.y = 0.0f;
+                chara->vel.z = (3.45f - chara->pos.z) * t;
                 break;
             case 20:
-                chara->unkC.x += chara->unk18.x;
-                chara->unkC.y += chara->unk18.y;
-                chara->unkC.z += chara->unk18.z;
-                if (chara->unkC.z < 3.45f)
+                chara->pos.x += chara->vel.x;
+                chara->pos.y += chara->vel.y;
+                chara->pos.z += chara->vel.z;
+                if (chara->pos.z < 3.45f)
                 {
-                    chara->unk4 = 0;
+                    chara->state = 0;
                     chara->unkA = 9;
-                    chara->unkC.z = 3.45f;
+                    chara->pos.z = 3.45f;
                 }
                 break;
             case 21:
-                chara->unk4 = 0;
+                chara->state = 0;
                 chara->unkA = 0xE;
                 spD0 = lbl_801E2A98[i];
-                chara->unkC = spD0.unk0;
+                chara->pos = spD0.unk0;
                 chara->unk30 = spD0.unkC;
                 switch (i)
                 {
@@ -2504,7 +2504,7 @@ static void func_800BC8B8(void)
         if (chara->unk56 >= 0)
         {
             mathutil_mtxA_from_mtxB();
-            entry = ord_tbl_get_entry_for_pos(&chara->unkC);
+            entry = ord_tbl_get_entry_for_pos(&chara->pos);
             node = ord_tbl_alloc_node(sizeof(*node));
             node->node.drawFunc = (OrdTblDrawFunc)lbl_800BCD30;
             node->unk8 = chara;
@@ -2512,7 +2512,7 @@ static void func_800BC8B8(void)
         }
         if (chara->unk36 & 1)
         {
-            sp20 = chara->unkC;
+            sp20 = chara->pos;
             mathutil_mtxA_from_quat(&temp_r26->unk60);
             mathutil_mtxA_to_mtx(sp38);
             mathutil_mtxA_from_translate(&temp_r26->unk30);
@@ -2583,7 +2583,7 @@ static void lbl_800BCD30(struct MyDrawNode *node)
 
     mathutil_mtxA_from_mtxB();
     load_light_group_uncached(0);
-    mathutil_mtxA_translate_xyz(chara->unkC.x, chara->unkC.y + 0.1f, chara->unkC.z);
+    mathutil_mtxA_translate_xyz(chara->pos.x, chara->pos.y + 0.1f, chara->pos.z);
     mathutil_mtxA_rotate_y(chara->unk5A);
     mathutil_mtxA_rotate_x(chara->unk58);
     mathutil_mtxA_rotate_z(chara->unk5C);
@@ -2598,7 +2598,7 @@ static void lbl_800BCD30(struct MyDrawNode *node)
     avdisp_set_z_mode(1, 3, 1);
 }
 
-static int init_ending_scene_ape(int arg0, int charaId)
+static int init_ending_scene_ape(int arg0, enum Character charaId)
 {
     struct EndingSceneCharacter *chara;
     struct Ape *ape;
@@ -2736,16 +2736,16 @@ static void u_some_ape_callback(struct Ape *ape, int arg1)
     switch (chara->unk70)
     {
     case 2:
-        func_8008C090(ape, &chara->unk74);
+        u_mot_ape_something_with_head_anim(ape, &chara->unk74);
         break;
     case 1:
         mathutil_mtxA_from_mtx(cameraInfo[modeCtrl.currPlayer].unk144);
         mathutil_mtxA_rigid_inv_tf_tl(&sp10);
-        func_8008C090(ape, &sp10);
+        u_mot_ape_something_with_head_anim(ape, &sp10);
         break;
     }
 
-    mathutil_mtxA_from_translate(&chara->unkC);
+    mathutil_mtxA_from_translate(&chara->pos);
     mathutil_mtxA_rotate_z(chara->unk30.z);
     mathutil_mtxA_rotate_y(chara->unk30.y - 0x4000);
     mathutil_mtxA_rotate_x(chara->unk30.x);
@@ -2810,7 +2810,7 @@ static void clear_scene_objects(void)
         obj->isActive = FALSE;
 }
 
-static void func_800BD4B8(void)
+static void update_scene_objects(void)
 {
     Vec spFC;
     Vec spF0;
@@ -2851,7 +2851,7 @@ static void func_800BD4B8(void)
             switch (obj->unk2)
             {
             case 2:
-                alt_f26 = obj->unkC.y;
+                alt_f26 = obj->pos.y;
                 mathutil_mtxA_from_rotate_y((unpausedFrameCounter << 0xA) + var_r30);
                 alt_f27 = 0.25f * alt_f26 * endingInfo.work->unk0;
                 mathutil_mtxA_tf_vec_xyz(&spFC, alt_f27, 0.0f, 0.0f);
@@ -2862,9 +2862,9 @@ static void func_800BD4B8(void)
                 mathutil_mtxA_tf_point(&obj->unk4C->unk4, &spFC);
                 if (spFC.y < obj->unk4C->unk4.y)
                     spFC.y = obj->unk4C->unk4.y;
-                obj->unk18.x = 0.1f * (spFC.x - obj->unkC.x);
-                obj->unk18.y = 0.1f * (spFC.y - obj->unkC.y);
-                obj->unk18.z = 0.05f * (spFC.z - obj->unkC.z);
+                obj->vel.x = 0.1f * (spFC.x - obj->pos.x);
+                obj->vel.y = 0.1f * (spFC.y - obj->pos.y);
+                obj->vel.z = 0.05f * (spFC.z - obj->pos.z);
                 obj->unk36 = 0;
                 obj->unk38 = 0;
                 obj->unk3A = 0;
@@ -2878,10 +2878,10 @@ static void func_800BD4B8(void)
                         obj->unk8 |= 0x34;
                         if (var_r30 & 1)
                             obj->unk8 |= 8;
-                        mathutil_vec_set_len(&obj->unkC, &spFC, 0.001f + (0.05f * RAND_FLOAT()));
-                        obj->unk18.x += spFC.x;
-                        obj->unk18.y += 0.05f + (4.0f * spFC.y);
-                        obj->unk18.z += spFC.z;
+                        mathutil_vec_set_len(&obj->pos, &spFC, 0.001f + (0.05f * RAND_FLOAT()));
+                        obj->vel.x += spFC.x;
+                        obj->vel.y += 0.05f + (4.0f * spFC.y);
+                        obj->vel.z += spFC.z;
                         obj->unk36 += 2048.0f * (RAND_FLOAT() - 0.5f);
                         obj->unk38 += 2048.0f * (RAND_FLOAT() - 0.5f);
                         obj->unk3A += 2048.0f * (RAND_FLOAT() - 0.5f);
@@ -2903,12 +2903,12 @@ static void func_800BD4B8(void)
                     if (mathutil_vec_len(&spFC) > 80.0f)
                         mathutil_vec_set_len(&spFC, &spFC, 80.0f * RAND_FLOAT());
                 }
-                obj->unkC.x = spE4.x + spFC.x;
-                obj->unkC.y = spE4.y + spFC.y;
-                obj->unkC.z = spE4.z + spFC.z;
-                obj->unk18.x = 0.2f * (RAND_FLOAT() - 0.5f);
-                obj->unk18.y = -0.2f * RAND_FLOAT();
-                obj->unk18.z = 0.2f * (RAND_FLOAT() - 0.5f);
+                obj->pos.x = spE4.x + spFC.x;
+                obj->pos.y = spE4.y + spFC.y;
+                obj->pos.z = spE4.z + spFC.z;
+                obj->vel.x = 0.2f * (RAND_FLOAT() - 0.5f);
+                obj->vel.y = -0.2f * RAND_FLOAT();
+                obj->vel.z = 0.2f * (RAND_FLOAT() - 0.5f);
                 obj->unk30.x = rand() & 0x7FFF;
                 obj->unk30.y = rand() & 0x7FFF;
                 obj->unk30.z = rand() & 0x7FFF;
@@ -2922,7 +2922,7 @@ static void func_800BD4B8(void)
                 /* fall through */
             case 5:
                 mathutil_mtxA_from_mtx(camera->unk144);
-                mathutil_mtxA_tf_point(&obj->unkC, &spFC);
+                mathutil_mtxA_tf_point(&obj->pos, &spFC);
                 if (spFC.z > 5.f)
                 {
                     obj->unk2 = 4;
@@ -2956,11 +2956,11 @@ static void func_800BD4B8(void)
                 obj->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
                 obj->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
                 alt_f27 = obj->unk4;
-                obj->unk18.x = 0.0f;
-                obj->unk18.y = -0.2f * RAND_FLOAT();
-                obj->unk18.z = 0.0f;
+                obj->vel.x = 0.0f;
+                obj->vel.y = -0.2f * RAND_FLOAT();
+                obj->vel.z = 0.0f;
                 obj->unk3C = RAND_FLOAT() - 0.5f;
-                obj->unk40 = -0.5f * (alt_f27 * ((2.0f * obj->unk18.y) + (-0.008f * alt_f27)));
+                obj->unk40 = -0.5f * (alt_f27 * ((2.0f * obj->vel.y) + (-0.008f * alt_f27)));
                 obj->unk44 = RAND_FLOAT() - 0.5f;
                 /* fall through */
             case 7:
@@ -2970,24 +2970,24 @@ static void func_800BD4B8(void)
                 obj->unk30.x += obj->unk36;
                 obj->unk30.y += obj->unk38;
                 obj->unk30.z += obj->unk3A;
-                obj->unk18.y += -0.008f;
-                obj->unk40 += obj->unk18.y;
+                obj->vel.y += -0.008f;
+                obj->unk40 += obj->vel.y;
                 if (obj->unk40 <= 0.0f)
                 {
-                    spFC.x = obj->unk18.x;
-                    spFC.y = obj->unk18.y;
-                    spFC.z = obj->unk18.z;
+                    spFC.x = obj->vel.x;
+                    spFC.y = obj->vel.y;
+                    spFC.z = obj->vel.z;
                     func_8001898C(modeCtrl.currPlayer, 0xF, &spFC);
                     obj->unk40 = 0.0f;
-                    if (obj->unk18.y < 0.0f)
-                        obj->unk18.y *= -0.125f;
+                    if (obj->vel.y < 0.0f)
+                        obj->vel.y *= -0.125f;
                     obj->unk36 += 4096.0f * (RAND_FLOAT() - 0.5f);
                     obj->unk38 += 4096.0f * (RAND_FLOAT() - 0.5f);
                     obj->unk3A += 4096.0f * (RAND_FLOAT() - 0.5f);
                 }
-                obj->unkC.x = camera->eye.x + obj->unk3C;
-                obj->unkC.y = obj->unk40 + (camera->eye.y + (3.2000000476837158f * obj->unk24.x));
-                obj->unkC.z = camera->eye.z + obj->unk44;
+                obj->pos.x = camera->eye.x + obj->unk3C;
+                obj->pos.y = obj->unk40 + (camera->eye.y + (3.2000000476837158f * obj->unk24.x));
+                obj->pos.z = camera->eye.z + obj->unk44;
                 obj->unk48 += 0.1f * (1.1f - obj->unk48);
                 break;
             case 8:
@@ -3003,21 +3003,21 @@ static void func_800BD4B8(void)
                 obj->unk36 += 256.0f * (RAND_FLOAT() - 0.5f);
                 obj->unk38 += 16.0f * (RAND_FLOAT() - 0.5f);
                 obj->unk3A += 4096.0f * (0.5f + RAND_FLOAT());
-                obj->unkC = endingInfo.work->unkAA54.unk2C;
+                obj->pos = endingInfo.work->unkAA54.unk2C;
                 /* fall through */
             case 9:
                 if (obj->unk4 != 0)
                     obj->unk4--;
-                endingInfo.work->unkAA54.unk2C = obj->unkC;
+                endingInfo.work->unkAA54.unk2C = obj->pos;
                 if (obj->unk4 < 60)
                 {
                     temp_f0_5 = 1.0f / (obj->unk4 + 1);
-                    obj->unk18.x = (0.15016f - obj->unkC.x) * temp_f0_5;
-                    obj->unk18.y = (20.07f - obj->unkC.y) * temp_f0_5;
-                    obj->unk18.z = (-60.0f - obj->unkC.z) * temp_f0_5;
-                    obj->unkC.x += obj->unk18.x;
-                    obj->unkC.y += obj->unk18.y;
-                    obj->unkC.z += obj->unk18.z;
+                    obj->vel.x = (0.15016f - obj->pos.x) * temp_f0_5;
+                    obj->vel.y = (20.07f - obj->pos.y) * temp_f0_5;
+                    obj->vel.z = (-60.0f - obj->pos.z) * temp_f0_5;
+                    obj->pos.x += obj->vel.x;
+                    obj->pos.y += obj->vel.y;
+                    obj->pos.z += obj->vel.z;
                     if (obj->unk4 == 0)
                     {
                         obj->unk36 = 0.92f * obj->unk36;
@@ -3033,19 +3033,19 @@ static void func_800BD4B8(void)
                 }
                 else
                 {
-                    obj->unk18.x = 0.025f * (0.15016f - obj->unkC.x);
-                    obj->unk18.y = 0.025f * (20.07f - obj->unkC.y);
-                    obj->unk18.z = 0.0f;
-                    obj->unkC.x += obj->unk18.x;
-                    obj->unkC.y += obj->unk18.y;
-                    obj->unkC.z += obj->unk18.z;
+                    obj->vel.x = 0.025f * (0.15016f - obj->pos.x);
+                    obj->vel.y = 0.025f * (20.07f - obj->pos.y);
+                    obj->vel.z = 0.0f;
+                    obj->pos.x += obj->vel.x;
+                    obj->pos.y += obj->vel.y;
+                    obj->pos.z += obj->vel.z;
                     obj->unk30.x += obj->unk36;
                     obj->unk30.y += obj->unk38;
                     obj->unk30.z += obj->unk3A;
                     memset(&effect, 0, sizeof(effect));
                     effect.type = ET_LEVITATE;
                     effect.playerId = modeCtrl.currPlayer;
-                    effect.pos = obj->unkC;
+                    effect.pos = obj->pos;
                     spawn_effect(&effect);
                 }
                 obj->unk48 += (0.1f * (1.1f - obj->unk48));
@@ -3053,28 +3053,28 @@ static void func_800BD4B8(void)
             case 10:
                 {
                     struct EndingWork *work = endingInfo.work;
-                    obj->unkC.x = 0.15016f + work->characters[0].unkC.x;
-                    obj->unkC.y = 0.07f + work->characters[0].unkC.y;
-                    obj->unkC.z = work->characters[0].unkC.z;
+                    obj->pos.x = 0.15016f + work->characters[0].pos.x;
+                    obj->pos.y = 0.07f + work->characters[0].pos.y;
+                    obj->pos.z = work->characters[0].pos.z;
                     obj->unk30 = work->characters[0].unk30;
                 }
                 break;
             }
             if (!(obj->unk8 & 2))
             {
-                obj->unk18.x *= 0.99f;
-                obj->unk18.y *= 0.99f;
-                obj->unk18.z *= 0.99f;
+                obj->vel.x *= 0.99f;
+                obj->vel.y *= 0.99f;
+                obj->vel.z *= 0.99f;
                 obj->unk36 = 0.984375f * obj->unk36;
                 obj->unk38 = 0.984375f * obj->unk38;
                 obj->unk3A = 0.984375f * obj->unk3A;
             }
             if (!(obj->unk8 & 1))
             {
-                obj->unk18.y += -0.008f;
-                obj->unkC.x += obj->unk18.x;
-                obj->unkC.y += obj->unk18.y;
-                obj->unkC.z += obj->unk18.z;
+                obj->vel.y += -0.008f;
+                obj->pos.x += obj->vel.x;
+                obj->pos.y += obj->vel.y;
+                obj->pos.z += obj->vel.z;
                 obj->unk30.x += obj->unk36;
                 obj->unk30.y += obj->unk38;
                 obj->unk30.z += obj->unk3A;
@@ -3083,50 +3083,50 @@ static void func_800BD4B8(void)
             {
                 temp_f26 = temp_r27->unk14 * obj->unk24.x;
                 temp_f27 = 2.0f + temp_f26;
-                if (mathutil_vec_sq_len(&obj->unkC) < temp_f27 * temp_f27)
+                if (mathutil_vec_sq_len(&obj->pos) < temp_f27 * temp_f27)
                 {
-                    mathutil_vec_set_len(&obj->unkC, &spFC, temp_f27);
-                    spFC.x -= obj->unkC.x;
-                    spFC.y -= obj->unkC.y;
-                    spFC.z -= obj->unkC.z;
-                    obj->unkC.x += 0.025f * spFC.x;
-                    obj->unkC.y += 0.025f * spFC.y;
-                    obj->unkC.z += 0.025f * spFC.z;
-                    obj->unk18.x += 0.01f * spFC.x;
-                    obj->unk18.y += 0.01f * spFC.y;
-                    obj->unk18.z += 0.01f * spFC.z;
+                    mathutil_vec_set_len(&obj->pos, &spFC, temp_f27);
+                    spFC.x -= obj->pos.x;
+                    spFC.y -= obj->pos.y;
+                    spFC.z -= obj->pos.z;
+                    obj->pos.x += 0.025f * spFC.x;
+                    obj->pos.y += 0.025f * spFC.y;
+                    obj->pos.z += 0.025f * spFC.z;
+                    obj->vel.x += 0.01f * spFC.x;
+                    obj->vel.y += 0.01f * spFC.y;
+                    obj->vel.z += 0.01f * spFC.z;
                 }
 
-                spFC.x = obj->unkC.x;
-                spFC.y = obj->unkC.y - 1.0f;
-                spFC.z = obj->unkC.z - 3.0f;
+                spFC.x = obj->pos.x;
+                spFC.y = obj->pos.y - 1.0f;
+                spFC.z = obj->pos.z - 3.0f;
                 temp_f27 = 1.5f + temp_f26;
                 if (mathutil_vec_sq_len(&spFC) < temp_f27 * temp_f27)
                 {
                     mathutil_vec_set_len(&spFC, &spFC, temp_f27);
-                    obj->unkC.x += 0.05f * spFC.x;
-                    obj->unkC.y += 0.05f * spFC.y;
-                    obj->unkC.z += 0.05f * spFC.z;
-                    obj->unk18.x += 0.01f * spFC.x;
-                    obj->unk18.y += 0.01f * spFC.y;
-                    obj->unk18.z += 0.01f * spFC.z;
+                    obj->pos.x += 0.05f * spFC.x;
+                    obj->pos.y += 0.05f * spFC.y;
+                    obj->pos.z += 0.05f * spFC.z;
+                    obj->vel.x += 0.01f * spFC.x;
+                    obj->vel.y += 0.01f * spFC.y;
+                    obj->vel.z += 0.01f * spFC.z;
                 }
                 temp_f27 = 1.0f + temp_f26;
                 {
                     struct EndingWork *work = endingInfo.work;
-                    spFC.x = obj->unkC.x - work->characters[3].unkC.x;
-                    spFC.y = obj->unkC.y - work->characters[3].unkC.y;
-                    spFC.z = obj->unkC.z - work->characters[3].unkC.z;
+                    spFC.x = obj->pos.x - work->characters[3].pos.x;
+                    spFC.y = obj->pos.y - work->characters[3].pos.y;
+                    spFC.z = obj->pos.z - work->characters[3].pos.z;
                 }
                 if (mathutil_vec_sq_len(&spFC) < (temp_f27 * temp_f27))
                 {
                     mathutil_vec_set_len(&spFC, &spFC, temp_f27);
-                    obj->unkC.x += 0.05f * spFC.x;
-                    obj->unkC.y += 0.05f * spFC.y;
-                    obj->unkC.z += 0.05f * spFC.z;
-                    obj->unk18.x += 0.01f * spFC.x;
-                    obj->unk18.y += 0.01f * spFC.y;
-                    obj->unk18.z += 0.01f * spFC.z;
+                    obj->pos.x += 0.05f * spFC.x;
+                    obj->pos.y += 0.05f * spFC.y;
+                    obj->pos.z += 0.05f * spFC.z;
+                    obj->vel.x += 0.01f * spFC.x;
+                    obj->vel.y += 0.01f * spFC.y;
+                    obj->vel.z += 0.01f * spFC.z;
                 }
             }
             if (obj->unk8 & 0x10)
@@ -3147,10 +3147,10 @@ static void func_800BD4B8(void)
                 mathutil_mtxA_rotate_z(obj->unk30.z);
                 mathutil_mtxA_tf_vec_xyz(&spFC, 0.70710677f, 0.70710677f, 0.0f);
                 f = g * obj->unk24.x * (0.30000001192092896 + 0.69999998807907104 * fabs(spFC.y));
-                if (obj->unkC.y < sp8.sp20.y + f)
+                if (obj->pos.y < sp8.sp20.y + f)
                 {
-                    obj->unkC.y = sp8.sp20.y + f;
-                    temp_f26 = mathutil_vec_dot_prod(&sp8.sp2C, &obj->unk18);
+                    obj->pos.y = sp8.sp20.y + f;
+                    temp_f26 = mathutil_vec_dot_prod(&sp8.sp2C, &obj->vel);
                     if (temp_f26 < 0.0f)
                     {
                         obj->unk36 = obj->unk36 * 0.96875f;
@@ -3166,7 +3166,7 @@ static void func_800BD4B8(void)
                             obj->unk38 += temp_f27 * (RAND_FLOAT() - 0.5f);
                             obj->unk3A += temp_f27 * (RAND_FLOAT() - 0.5f);
                         }
-                        spFC = obj->unk18;
+                        spFC = obj->vel;
                         temp_f26 *= -1.0f;
                         spFC.x += temp_f26 * sp8.sp2C.x;
                         spFC.y += temp_f26 * sp8.sp2C.y;
@@ -3178,7 +3178,7 @@ static void func_800BD4B8(void)
                         spFC.x += temp_f26 * sp8.sp2C.x;
                         spFC.y += temp_f26 * sp8.sp2C.y;
                         spFC.z += temp_f26 * sp8.sp2C.z;
-                        obj->unk18 = spFC;
+                        obj->vel = spFC;
                     }
                 }
             }
@@ -3206,7 +3206,7 @@ static void func_800BEEE8(void)
         if (objA->isActive && (objA->unk8 & 8))
         {
             float temp_f29 = 0.5f * (objA->model->unk14 * objA->unk24.x);
-            Vec sp38 = objA->unkC;
+            Vec sp38 = objA->pos;
 
             objB = objA + 1;
             for (j = i - 1; j > 0; j--, objB++)
@@ -3215,7 +3215,7 @@ static void func_800BEEE8(void)
                 {
                     float temp_f28 = 0.5f * (objB->model->unk14 * objB->unk24.x);
                     float temp_f27 = temp_f29 + temp_f28;
-                    Vec sp2C = objB->unkC;
+                    Vec sp2C = objB->pos;
                     Vec sp20;
 
                     sp20.x = sp38.x - sp2C.x;
@@ -3244,9 +3244,9 @@ static void func_800BEEE8(void)
                         sp38.x += 0.5f * sp8.x;
                         sp38.y += 0.5f * sp8.y;
                         sp38.z += 0.5f * sp8.z;
-                        objA->unk18.x += sp8.x * temp_f0_4;
-                        objA->unk18.y += sp8.y * temp_f0_4;
-                        objA->unk18.z += sp8.z * temp_f0_4;
+                        objA->vel.x += sp8.x * temp_f0_4;
+                        objA->vel.y += sp8.y * temp_f0_4;
+                        objA->vel.z += sp8.z * temp_f0_4;
                         temp_f0_4 = 0.25f / temp_f28;
                         sp8.x = sp14.x - (temp_f28 * sp20.x) - sp2C.x;
                         sp8.y = sp14.y - (temp_f28 * sp20.y) - sp2C.y;
@@ -3254,14 +3254,14 @@ static void func_800BEEE8(void)
                         sp2C.x += 0.5f * sp8.x;
                         sp2C.y += 0.5f * sp8.y;
                         sp2C.z += 0.5f * sp8.z;
-                        objB->unk18.x += sp8.x * temp_f0_4;
-                        objB->unk18.y += sp8.y * temp_f0_4;
-                        objB->unk18.z += sp8.z * temp_f0_4;
-                        objB->unkC = sp2C;
+                        objB->vel.x += sp8.x * temp_f0_4;
+                        objB->vel.y += sp8.y * temp_f0_4;
+                        objB->vel.z += sp8.z * temp_f0_4;
+                        objB->pos = sp2C;
                     }
                 }
             }
-            objA->unkC = sp38;
+            objA->pos = sp38;
         }
     }
 }
@@ -3291,7 +3291,7 @@ static void func_800BF2D4(void)
                 continue;
 
             sp14 = obj->unk24;
-            mathutil_mtxA_from_mtxB_translate(&obj->unkC);
+            mathutil_mtxA_from_mtxB_translate(&obj->pos);
             mathutil_mtxA_rotate_y(obj->unk30.y);
             mathutil_mtxA_rotate_x(obj->unk30.x);
             mathutil_mtxA_rotate_z(obj->unk30.z);
@@ -3342,7 +3342,7 @@ static void func_800BF2D4(void)
     }
 }
 
-static void func_800BF4F4(void)
+static void u_spawn_some_bananas(void)
 {
     int modelId;
     int i;
@@ -3361,10 +3361,10 @@ static void func_800BF4F4(void)
         {
             obj->isActive = TRUE;
             obj->unk2 = 1;
-            obj->unkC = var_r29->unk4;
-            obj->unk18.x = 0.0f;
-            obj->unk18.y = 0.0f;
-            obj->unk18.z = 0.0f;
+            obj->pos = var_r29->unk4;
+            obj->vel.x = 0.0f;
+            obj->vel.y = 0.0f;
+            obj->vel.z = 0.0f;
             obj->unk30.x = 0;
             obj->unk30.y = 0;
             obj->unk30.z = 0;
@@ -3420,7 +3420,7 @@ static void func_800BF774(void)
     {
         if (obj->isActive && obj->unk2 == 2 && obj->unk4 <= 0)
         {
-            temp_f25 = 1.0f + mathutil_vec_dot_normalized_safe(&obj->unkC, &sp8);
+            temp_f25 = 1.0f + mathutil_vec_dot_normalized_safe(&obj->pos, &sp8);
             obj->unk4 = 1.0f + (60.0f * temp_f25 * (0.9f + (0.2f * RAND_FLOAT())));
         }
     }
@@ -3584,9 +3584,9 @@ static void func_800BFC2C(void)
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
-    y1 = -10.0f * currentCameraStructPtr->sub28.unk38;
+    y1 = -10.0f * currentCamera->sub28.unk38;
     y2 = -y1;
-    x1 = -10.0f * (currentCameraStructPtr->sub28.unk38 * currentCameraStructPtr->sub28.aspect);
+    x1 = -10.0f * (currentCamera->sub28.unk38 * currentCamera->sub28.aspect);
     x2 = -x1;
     GXBegin(GX_QUADS, GX_VTXFMT0, 4U);
     GXPosition3f32(x1, y1, -10.0f);

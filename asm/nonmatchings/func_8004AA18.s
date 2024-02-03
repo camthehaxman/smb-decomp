@@ -9,7 +9,7 @@
 /* 8004AA38 00046958  3B C3 AE 20 */	addi r30, r3, lbl_8020AE20@l
 /* 8004AA3C 0004695C  3F FE 00 04 */	addis r31, r30, 4
 /* 8004AA40 00046960  93 A1 00 3C */	stw r29, 0x3c(r1)
-/* 8004AA44 00046964  83 AD 9D 38 */	lwz r29, currentBallStructPtr  //@sda21(r13)
+/* 8004AA44 00046964  83 AD 9D 38 */	lwz r29, currentBall  //@sda21(r13)
 /* 8004AA48 00046968  C3 E2 90 28 */	lfs f31, 0.0f  //lbl_802F3828@sda21(r2)
 /* 8004AA4C 0004696C  80 7D 00 04 */	lwz r3, 4(r29)
 /* 8004AA50 00046970  80 1D 00 08 */	lwz r0, 8(r29)

@@ -320,7 +320,7 @@ void func_8004B850(float arg0, struct ReplayBallFrame *arg1)
     struct Ball *ball;
     u8 unused[4];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     if (s_replayData.unk1A == 0)
     {
         arg1->pos = ball->pos;

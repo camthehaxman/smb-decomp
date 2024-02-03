@@ -2175,7 +2175,7 @@ void stage_draw(void)
             struct Struct8020A348_child *r27;
 
             animGroup = animGroups;
-            f29 = currentCameraStructPtr->sub28.unk38;
+            f29 = currentCamera->sub28.unk38;
             r23 = lbl_8020A348;
             for (i = 0; i < animGroupCount; i++, r23++, animGroup++)
             {
@@ -2350,7 +2350,7 @@ void draw_stage_preview(void)
 {
     if (previewLoaded)
     {
-        mathutil_mtxA_from_mtxB_translate(&currentCameraStructPtr->eye);
+        mathutil_mtxA_from_mtxB_translate(&currentCamera->eye);
         mathutil_mtxA_translate_xyz(0.0f, lbl_802F1EC8 * 10.0 + 100.0, 0.0f);
         mathutil_mtxA_rotate_x(0x4000);
         mathutil_mtxA_scale_s(lbl_802F1EC4 + 15.0);

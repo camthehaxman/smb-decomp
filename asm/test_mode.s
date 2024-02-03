@@ -4508,9 +4508,9 @@ lbl_000040B8:
 /* 000040F4 4BFFC069 */ bl event_start
 /* 000040F8 38600003 */ li r3, 3
 /* 000040FC 4BFFC061 */ bl camera_set_state
-/* 00004100 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00004100 3C600000 */ lis r3, currentCamera@ha
 /* 00004104 C01F0060 */ lfs f0, 0x60(r31)
-/* 00004108 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 00004108 38830000 */ addi r4, r3, currentCamera@l
 /* 0000410C 80640000 */ lwz r3, 0(r4)
 /* 00004110 3BC00000 */ li r30, 0
 /* 00004114 D0030000 */ stfs f0, 0(r3)
@@ -4580,9 +4580,9 @@ lbl_000041C4:
 /* 0000420C 4BFFBF51 */ bl func_8002FFEC
 /* 00004210 38600003 */ li r3, 3
 /* 00004214 4BFFBF49 */ bl camera_set_state
-/* 00004218 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00004218 3C600000 */ lis r3, currentCamera@ha
 /* 0000421C C0170060 */ lfs f0, 0x60(r23)
-/* 00004220 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 00004220 38830000 */ addi r4, r3, currentCamera@l
 /* 00004224 80640000 */ lwz r3, 0(r4)
 /* 00004228 38000000 */ li r0, 0
 /* 0000422C D0030000 */ stfs f0, 0(r3)
@@ -4865,9 +4865,9 @@ lbl_0000453C:
 /* 0000463C FC000018 */ frsp f0, f0
 /* 00004640 D0010050 */ stfs f0, 0x50(r1)
 /* 00004644 4BFFBB19 */ bl mathutil_mtxA_rigid_inv_tf_vec
-/* 00004648 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00004648 3C600000 */ lis r3, currentCamera@ha
 /* 0000464C C0210048 */ lfs f1, 0x48(r1)
-/* 00004650 3A630000 */ addi r19, r3, currentCameraStructPtr@l
+/* 00004650 3A630000 */ addi r19, r3, currentCamera@l
 /* 00004654 80730000 */ lwz r3, 0(r19)
 /* 00004658 C0030000 */ lfs f0, 0(r3)
 /* 0000465C EC01002A */ fadds f0, f1, f0
@@ -5816,8 +5816,8 @@ lbl_00005384:
 /* 000053A0 3BA40000 */ addi r29, r4, lbl_0000FE78@l
 /* 000053A4 3BC30000 */ addi r30, r3, lbl_10000000@l
 /* 000053A8 4BFFADB5 */ bl mathutil_mtxA_from_mtxB
-/* 000053AC 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 000053B0 38630000 */ addi r3, r3, currentCameraStructPtr@l
+/* 000053AC 3C600000 */ lis r3, currentCamera@ha
+/* 000053B0 38630000 */ addi r3, r3, currentCamera@l
 /* 000053B4 80630000 */ lwz r3, 0(r3)
 /* 000053B8 3863000C */ addi r3, r3, 0xc
 /* 000053BC 4BFFADA1 */ bl mathutil_mtxA_translate
@@ -6064,8 +6064,8 @@ lbl_000056BC:
 /* 00005750 4BFFAA0D */ bl GXSetNumTexGens
 /* 00005754 38600001 */ li r3, 1
 /* 00005758 4BFFAA05 */ bl GXSetNumTevStages_cached
-/* 0000575C 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00005760 38630000 */ addi r3, r3, currentCameraStructPtr@l
+/* 0000575C 3C600000 */ lis r3, currentCamera@ha
+/* 00005760 38630000 */ addi r3, r3, currentCamera@l
 /* 00005764 80630000 */ lwz r3, 0(r3)
 /* 00005768 3863000C */ addi r3, r3, 0xc
 /* 0000576C 4BFFA9F1 */ bl mathutil_mtxA_from_mtxB_translate
@@ -7139,8 +7139,8 @@ lbl_000065F0:
 /* 000065FC 9421FF20 */ stwu r1, -0xe0(r1)
 /* 00006600 BF2100C4 */ stmw r25, 0xc4(r1)
 /* 00006604 3BC30000 */ addi r30, r3, lbl_0000FE78@l
-/* 00006608 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 0000660C 3BE30000 */ addi r31, r3, currentCameraStructPtr@l
+/* 00006608 3C600000 */ lis r3, currentCamera@ha
+/* 0000660C 3BE30000 */ addi r31, r3, currentCamera@l
 /* 00006610 801E019C */ lwz r0, 0x19c(r30)
 /* 00006614 9001009C */ stw r0, 0x9c(r1)
 /* 00006618 801E01A0 */ lwz r0, 0x1a0(r30)
@@ -7456,9 +7456,9 @@ lbl_00006A70:
 /* 00006AD0 4BFF968D */ bl event_start
 /* 00006AD4 38600002 */ li r3, 2
 /* 00006AD8 4BFF9685 */ bl camera_set_state
-/* 00006ADC 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00006ADC 3C600000 */ lis r3, currentCamera@ha
 /* 00006AE0 C01D0060 */ lfs f0, 0x60(r29)
-/* 00006AE4 39030000 */ addi r8, r3, currentCameraStructPtr@l
+/* 00006AE4 39030000 */ addi r8, r3, currentCamera@l
 /* 00006AE8 80680000 */ lwz r3, 0(r8)
 /* 00006AEC 3CA00000 */ lis r5, lbl_00006974@ha
 /* 00006AF0 38C00001 */ li r6, 1
@@ -7750,9 +7750,9 @@ lbl_00006ED4:
 lbl_00006EDC:
 /* 00006EDC 28000000 */ cmplwi r0, 0
 /* 00006EE0 41820088 */ beq lbl_00006F68
-/* 00006EE4 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00006EE4 3C800000 */ lis r4, currentCamera@ha
 /* 00006EE8 80660008 */ lwz r3, 8(r6)
-/* 00006EEC 38A40000 */ addi r5, r4, currentCameraStructPtr@l
+/* 00006EEC 38A40000 */ addi r5, r4, currentCamera@l
 /* 00006EF0 8006000C */ lwz r0, 0xc(r6)
 /* 00006EF4 80850000 */ lwz r4, 0(r5)
 /* 00006EF8 9064000C */ stw r3, 0xc(r4)
@@ -7784,9 +7784,9 @@ lbl_00006EDC:
 /* 00006F60 D0030008 */ stfs f0, 8(r3)
 /* 00006F64 48000234 */ b lbl_00007198
 lbl_00006F68:
-/* 00006F68 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00006F68 3C800000 */ lis r4, currentCamera@ha
 /* 00006F6C 80660008 */ lwz r3, 8(r6)
-/* 00006F70 38A40000 */ addi r5, r4, currentCameraStructPtr@l
+/* 00006F70 38A40000 */ addi r5, r4, currentCamera@l
 /* 00006F74 8006000C */ lwz r0, 0xc(r6)
 /* 00006F78 80850000 */ lwz r4, 0(r5)
 /* 00006F7C 9064000C */ stw r3, 0xc(r4)
@@ -7866,9 +7866,9 @@ lbl_00007084:
 lbl_0000708C:
 /* 0000708C 28000000 */ cmplwi r0, 0
 /* 00007090 41820088 */ beq lbl_00007118
-/* 00007094 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00007094 3C800000 */ lis r4, currentCamera@ha
 /* 00007098 80660008 */ lwz r3, 8(r6)
-/* 0000709C 38A40000 */ addi r5, r4, currentCameraStructPtr@l
+/* 0000709C 38A40000 */ addi r5, r4, currentCamera@l
 /* 000070A0 8006000C */ lwz r0, 0xc(r6)
 /* 000070A4 80850000 */ lwz r4, 0(r5)
 /* 000070A8 9064000C */ stw r3, 0xc(r4)
@@ -7900,9 +7900,9 @@ lbl_0000708C:
 /* 00007110 D0030008 */ stfs f0, 8(r3)
 /* 00007114 48000084 */ b lbl_00007198
 lbl_00007118:
-/* 00007118 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00007118 3C800000 */ lis r4, currentCamera@ha
 /* 0000711C 80660008 */ lwz r3, 8(r6)
-/* 00007120 38A40000 */ addi r5, r4, currentCameraStructPtr@l
+/* 00007120 38A40000 */ addi r5, r4, currentCamera@l
 /* 00007124 8006000C */ lwz r0, 0xc(r6)
 /* 00007128 80850000 */ lwz r4, 0(r5)
 /* 0000712C 9064000C */ stw r3, 0xc(r4)
@@ -8018,9 +8018,9 @@ lbl_000072B4:
 lbl_000072BC:
 /* 000072BC 28000000 */ cmplwi r0, 0
 /* 000072C0 41820088 */ beq lbl_00007348
-/* 000072C4 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 000072C4 3C800000 */ lis r4, currentCamera@ha
 /* 000072C8 80660008 */ lwz r3, 8(r6)
-/* 000072CC 38A40000 */ addi r5, r4, currentCameraStructPtr@l
+/* 000072CC 38A40000 */ addi r5, r4, currentCamera@l
 /* 000072D0 8006000C */ lwz r0, 0xc(r6)
 /* 000072D4 80850000 */ lwz r4, 0(r5)
 /* 000072D8 9064000C */ stw r3, 0xc(r4)
@@ -8052,9 +8052,9 @@ lbl_000072BC:
 /* 00007340 D0030008 */ stfs f0, 8(r3)
 /* 00007344 48000084 */ b lbl_000073C8
 lbl_00007348:
-/* 00007348 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00007348 3C800000 */ lis r4, currentCamera@ha
 /* 0000734C 80660008 */ lwz r3, 8(r6)
-/* 00007350 38A40000 */ addi r5, r4, currentCameraStructPtr@l
+/* 00007350 38A40000 */ addi r5, r4, currentCamera@l
 /* 00007354 8006000C */ lwz r0, 0xc(r6)
 /* 00007358 80850000 */ lwz r4, 0(r5)
 /* 0000735C 9064000C */ stw r3, 0xc(r4)
@@ -8332,9 +8332,9 @@ lbl_00007718:
 /* 00007758 4BFF8A05 */ bl event_start
 /* 0000775C 38600002 */ li r3, 2
 /* 00007760 4BFF89FD */ bl camera_set_state
-/* 00007764 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00007764 3C600000 */ lis r3, currentCamera@ha
 /* 00007768 C0190060 */ lfs f0, 0x60(r25)
-/* 0000776C 38C30000 */ addi r6, r3, currentCameraStructPtr@l
+/* 0000776C 38C30000 */ addi r6, r3, currentCamera@l
 /* 00007770 80860000 */ lwz r4, 0(r6)
 /* 00007774 3C600000 */ lis r3, __OSCurrHeap@ha
 /* 00007778 38630000 */ addi r3, r3, __OSCurrHeap@l
@@ -10412,10 +10412,10 @@ lbl_00009560:
 /* 00009578 2C000002 */ cmpwi r0, 2
 /* 0000957C 3CA00000 */ lis r5, lbl_10000E00@ha
 /* 00009580 3C800000 */ lis r4, controllerInfo@ha
-/* 00009584 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00009584 3C600000 */ lis r3, currentCamera@ha
 /* 00009588 38E50000 */ addi r7, r5, lbl_10000E00@l
 /* 0000958C 38C40000 */ addi r6, r4, controllerInfo@l
-/* 00009590 38A30000 */ addi r5, r3, currentCameraStructPtr@l
+/* 00009590 38A30000 */ addi r5, r3, currentCamera@l
 /* 00009594 4082002C */ bne lbl_000095C0
 /* 00009598 A0060000 */ lhz r0, 0(r6)
 /* 0000959C 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
@@ -12027,10 +12027,10 @@ lbl_0000ADF0:
 /* 0000ADF8 3CA00000 */ lis r5, lbl_00010080@ha
 /* 0000ADFC 3C800000 */ lis r4, lbl_10000F60@ha
 /* 0000AE00 540007BD */ rlwinm. r0, r0, 0, 0x1e, 0x1e
-/* 0000AE04 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 0000AE04 3C600000 */ lis r3, currentCamera@ha
 /* 0000AE08 38C50000 */ addi r6, r5, lbl_00010080@l
 /* 0000AE0C 38A40000 */ addi r5, r4, lbl_10000F60@l
-/* 0000AE10 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 0000AE10 38830000 */ addi r4, r3, currentCamera@l
 /* 0000AE14 4C820020 */ bnelr 
 /* 0000AE18 80640000 */ lwz r3, 0(r4)
 /* 0000AE1C C0450000 */ lfs f2, 0(r5)
@@ -12509,8 +12509,8 @@ lbl_0000B520:
 /* 0000B538 D01F000C */ stfs f0, 0xc(r31)
 lbl_0000B53C:
 /* 0000B53C 4BFF4C21 */ bl mathutil_mtxA_from_mtxB
-/* 0000B540 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 0000B544 38630000 */ addi r3, r3, currentCameraStructPtr@l
+/* 0000B540 3C600000 */ lis r3, currentCamera@ha
+/* 0000B544 38630000 */ addi r3, r3, currentCamera@l
 /* 0000B548 80630000 */ lwz r3, 0(r3)
 /* 0000B54C 38810008 */ addi r4, r1, 8
 /* 0000B550 3863000C */ addi r3, r3, 0xc
@@ -12862,14 +12862,14 @@ lbl_0000BAA0:
 /* 0000BAA0 809D0000 */ lwz r4, 0(r29)
 /* 0000BAA4 3C600000 */ lis r3, lbl_00010148@ha
 /* 0000BAA8 C8230000 */ lfd f1, lbl_00010148@l(r3)
-/* 0000BAAC 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 0000BAAC 3C600000 */ lis r3, currentCamera@ha
 /* 0000BAB0 38040002 */ addi r0, r4, 2
 /* 0000BAB4 6C008000 */ xoris r0, r0, 0x8000
 /* 0000BAB8 9001004C */ stw r0, 0x4c(r1)
 /* 0000BABC 3C004330 */ lis r0, 0x4330
 /* 0000BAC0 7C9A2378 */ mr r26, r4
 /* 0000BAC4 90010048 */ stw r0, 0x48(r1)
-/* 0000BAC8 3B630000 */ addi r27, r3, currentCameraStructPtr@l
+/* 0000BAC8 3B630000 */ addi r27, r3, currentCamera@l
 /* 0000BACC 3F80CC01 */ lis r28, 0xcc01
 /* 0000BAD0 C8010048 */ lfd f0, 0x48(r1)
 /* 0000BAD4 EC000828 */ fsubs f0, f0, f1
@@ -12987,11 +12987,11 @@ lbl_0000BC6C:
 /* 0000BC84 C8230000 */ lfd f1, lbl_00010148@l(r3)
 /* 0000BC88 9001004C */ stw r0, 0x4c(r1)
 /* 0000BC8C 3C004330 */ lis r0, 0x4330
-/* 0000BC90 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 0000BC90 3C600000 */ lis r3, currentCamera@ha
 /* 0000BC94 FC400050 */ fneg f2, f0
 /* 0000BC98 90010048 */ stw r0, 0x48(r1)
 /* 0000BC9C EFDC0028 */ fsubs f30, f28, f0
-/* 0000BCA0 3BE30000 */ addi r31, r3, currentCameraStructPtr@l
+/* 0000BCA0 3BE30000 */ addi r31, r3, currentCamera@l
 /* 0000BCA4 C8010048 */ lfd f0, 0x48(r1)
 /* 0000BCA8 EC000828 */ fsubs f0, f0, f1
 /* 0000BCAC EFE20024 */ fdivs f31, f2, f0
@@ -17210,9 +17210,9 @@ lbl_0000FA2C:
 /* 0000FA38 4BFFE0F5 */ bl lbl_0000DB2C
 /* 0000FA3C 38600003 */ li r3, 3
 /* 0000FA40 4BFF071D */ bl camera_set_state
-/* 0000FA44 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 0000FA44 3C600000 */ lis r3, currentCamera@ha
 /* 0000FA48 C01E000C */ lfs f0, 0xc(r30)
-/* 0000FA4C 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 0000FA4C 38830000 */ addi r4, r3, currentCamera@l
 /* 0000FA50 80640000 */ lwz r3, 0(r4)
 /* 0000FA54 D0030000 */ stfs f0, 0(r3)
 /* 0000FA58 C01E00C0 */ lfs f0, 0xc0(r30)

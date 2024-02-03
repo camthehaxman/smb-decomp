@@ -192,8 +192,8 @@ void view_draw(void)
     }
 
     light_main();
-    ballBackup = currentBallStructPtr;
-    currentBallStructPtr = &ballInfo[0];
+    ballBackup = currentBall;
+    currentBall = &ballInfo[0];
     if (eventInfo[EVENT_REND_EFC].state == EV_STATE_RUNNING)
         rend_efc_draw(1);
     view_apply_camera(camera);
@@ -224,7 +224,7 @@ void view_draw(void)
     if (eventInfo[EVENT_REND_EFC].state == EV_STATE_RUNNING)
         rend_efc_draw(8);
     view_apply_camera(camera);
-    currentBallStructPtr = ballBackup;
+    currentBall = ballBackup;
     func_80017FCC();
     lbl_801EEC90.unk0 &= ~(1 << 1);
     cameraInfo[modeCtrl.currPlayer] = cameraBackup;

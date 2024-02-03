@@ -2658,10 +2658,10 @@ static int u_get_some_player_id(void)
 
     if (var_r6 != -1)
         u_somePlayerId = -1;
-    else if (currentBallStructPtr == NULL)
+    else if (currentBall == NULL)
         return -1;
     else
-        return currentBallStructPtr->playerId;
+        return currentBall->playerId;
     return var_r6;
 }
 
@@ -2777,12 +2777,12 @@ static int SoundReqID(u32 soundParam, s32 arg1)
                         continue;
                     lbl_802F1DFC = -1;
                 }
-                else if (currentBallStructPtr->ape == NULL)
+                else if (currentBall->ape == NULL)
                 {
                     printf("SoundReqID %s ERROR !! ape is NULL.\n", sndDesc->name);
                     return -1;
                 }
-                else if (currentBallStructPtr->ape->charaId + 1 != var_r30)
+                else if (currentBall->ape->charaId + 1 != var_r30)
                     continue;
                 if (var_r30 == 4)
                 {
@@ -2983,7 +2983,7 @@ static int get_some_id(const char *func, int arg1)
 
     if (g_soundDesc[arg1].unk8 == 13)
         return 0;
-    else if (u_somePlayerId == -1 && currentBallStructPtr == NULL)
+    else if (u_somePlayerId == -1 && currentBall == NULL)
     {
         printf("%s %s nowball is NULL. --> pid = 0\n", func, g_soundDesc[arg1].name);
         var_r3 = 0;
@@ -2994,7 +2994,7 @@ static int get_some_id(const char *func, int arg1)
         u_somePlayerId = -1;
     }
     else
-        var_r3 = currentBallStructPtr->playerId;
+        var_r3 = currentBall->playerId;
     return var_r3;
 }
 
@@ -3089,12 +3089,12 @@ static int SoundSearchID(int arg0)
                 }
                 else
                 {
-                    if (currentBallStructPtr->ape == NULL)
+                    if (currentBall->ape == NULL)
                     {
                         printf("SoundSearchID %s ERROR !! ape is NULL.\n", sndDesc->name);
                         return -1;
                     }
-                    if (currentBallStructPtr->ape->charaId + 1 != var_r9)
+                    if (currentBall->ape->charaId + 1 != var_r9)
                         continue;
                 }
             }
@@ -3241,9 +3241,9 @@ void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2)
 
         if (modeCtrl.unk30 > 0)
         {
-            var_r23 = func_8002A22C(0, currentBallStructPtr->playerId);
-            var_r22 = func_8002A22C(1, currentBallStructPtr->playerId);
-            arg2 *= lbl_801FE5C8[currentBallStructPtr->playerId] != -1.0f ? lbl_801FE5C8[currentBallStructPtr->playerId] : 1.0f;
+            var_r23 = func_8002A22C(0, currentBall->playerId);
+            var_r22 = func_8002A22C(1, currentBall->playerId);
+            arg2 *= lbl_801FE5C8[currentBall->playerId] != -1.0f ? lbl_801FE5C8[currentBall->playerId] : 1.0f;
         }
 
         f28 = arg2 / 127.0f;
@@ -3284,9 +3284,9 @@ void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2)
             arg2 = f28 * func_8008CDC0(arg1, lbl_801B39F8[i]);
             if (modeCtrl.unk30 > 0)
             {
-                var_r23 = func_8002A22C(0, currentBallStructPtr->playerId);
-                var_r22 = func_8002A22C(1, currentBallStructPtr->playerId);
-                arg2 *= lbl_801FE5C8[currentBallStructPtr->playerId] != -1.0f ? lbl_801FE5C8[currentBallStructPtr->playerId] : 1.0f;
+                var_r23 = func_8002A22C(0, currentBall->playerId);
+                var_r22 = func_8002A22C(1, currentBall->playerId);
+                arg2 *= lbl_801FE5C8[currentBall->playerId] != -1.0f ? lbl_801FE5C8[currentBall->playerId] : 1.0f;
             }
             sndFXCtrl(ptr->unk0, 7, arg2);
             sndFXCtrl(ptr->unk0, 0xA, var_r23 + 0x40);

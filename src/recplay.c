@@ -613,7 +613,7 @@ void func_800496BC(int replayId, struct ReplayBallFrame *arg1, float arg2)
     Point3d sp18;
     u8 unused[4];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     if (replayId == 11)
     {
         func_8004B850(arg2, arg1);
@@ -840,7 +840,7 @@ static float func_8004A0C8_sub(int a)
 #pragma force_active on
 void func_8004A0C8(void)
 {
-    struct Ball *currBall = currentBallStructPtr;
+    struct Ball *currBall = currentBall;
     struct BuiltinReplay *replay;
     int temp_r0_2;
     struct ReplayHeader header;
@@ -1015,8 +1015,8 @@ struct
 void func_8004A820(void)
 {
     lbl_80250A80.unk0 = 0.0f;
-    lbl_80250A80.unk4 = currentBallStructPtr->pos;
-    lbl_80250A80.unk10 = currentBallStructPtr->vel;
+    lbl_80250A80.unk4 = currentBall->pos;
+    lbl_80250A80.unk10 = currentBall->vel;
     lbl_80250A80.unk1C = 0;
 }
 
@@ -1064,7 +1064,7 @@ void func_8004AA18(void)
     float temp_f1_3;
     struct Ball *ball;
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     sp2C = ball->pos;
     sp20.x = ball->pos.x - lbl_80250A80.unk4.x;
     sp20.y = ball->pos.y - lbl_80250A80.unk4.y;

@@ -75,11 +75,11 @@ u32 lbl_802B47C0[4];
 struct TPL *lbl_802B47D0[4];
 GXTexObj *lbl_802B47E0[4];
 struct GMAShape *lbl_802B47F0[4];
-struct GMATevLayer *lbl_802B4800[8];
+struct GMATevLayer *u_apeMaterials[8];
 Mtx lbl_802B4820;
 Mtx lbl_802B4850[15];
 u8 unused802B4B20[0x2D0];
-GXTexObj *lbl_802B4DF0[8];
+GXTexObj *u_apeTextures[8];
 
 u32 *motLabel;
 s32 u_motAnimCount;
@@ -877,7 +877,7 @@ void *u_find_some_mesh_with_red(struct GMAModel *model)
     return NULL;
 }
 
-void u_load_character_graphics(int chara, int lod)
+void u_load_character_graphics(enum Character chara, int lod)
 {
     OSHeapHandle oldHeap;
     int index = chara * 2;
@@ -933,15 +933,15 @@ void u_load_character_graphics(int chara, int lod)
             model = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[i]].model;
             lbl_802B47F0[lod * 2 + i] = u_find_some_mesh_with_red(model);
         }
-        lbl_802B4800[index + 0] = NULL;
-        lbl_802B4800[index + 1] = NULL;
+        u_apeMaterials[index + 0] = NULL;
+        u_apeMaterials[index + 1] = NULL;
     }
     else
     {
         struct GMAModel *model1 = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[0]].model;
         struct GMAModel *model2 = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[1]].model;
 
-        func_8008CBD0(chara, lod, model1, model2);
+        u_init_ape_materials(chara, lod, model1, model2);
     }
 }
 
@@ -1215,7 +1215,7 @@ struct MotInfo2
 float force_lbl_802F56D4() { return 60.0f; }
 const double lbl_802F56D8 = 0.0000000099999999392252903;
 
-struct Ape *u_make_ape(int charaId)
+struct Ape *u_make_ape(enum Character charaId)
 {
     struct Ape *ape;
     struct AnimJoint *r5;
@@ -1456,7 +1456,7 @@ void func_8008BFDC(struct Ape *ape, u16 b, u16 c)
 }
 
 // something related to animation of the head
-void func_8008C090(struct Ape *ape, Vec *b)
+void u_mot_ape_something_with_head_anim(struct Ape *ape, Vec *b)
 {
     struct AnimJoint *r27 = ape->unk0->joints;
     Vec sp2C;
@@ -1559,7 +1559,7 @@ void func_8008C408(struct Ape *ape, Vec *b)
     mathutil_mtxA_to_quat(&ape->unk60);
 }
 
-void func_8008C4A0(float a)
+void u_mot_ape_set_some_var(float a)
 {
     lbl_802F2078 = a;
 }
@@ -1683,7 +1683,7 @@ void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
     }
 
     model = charaGMAs[index]->modelEntries[r27->unk1C[ape->unk90 & 1]].model;
-    func_8008CCB8(ape, model);
+    u_init_ape_materials_maybe_with_colors(ape, model);
     avdisp_draw_model_unculled_sort_none(model);  // Draw body, limbs, and hair
 }
 
@@ -1704,7 +1704,7 @@ void func_8008C924(struct Ape *ape, int b)
 
     if (r3)
         return;
-    if (ape->unkC1 & (1 << currentCameraStructPtr->unk204))
+    if (ape->unkC1 & (1 << currentCamera->unk204))
         return;
     if ((lbl_801EEC90.unk0 & (1 << 2)) && func_8000E4D0(&ape->unk30) < 0.0f)
         return;
@@ -1714,7 +1714,7 @@ void func_8008C924(struct Ape *ape, int b)
         struct Struct8008C924 *node;
         struct OrdTblNode *entry;
 
-        if (ballInfo[ape->ballId].unk15C[currentCameraStructPtr->unk204] < 1.1920928955078125e-07f)
+        if (ballInfo[ape->ballId].unk15C[currentCamera->unk204] < 1.1920928955078125e-07f)
             return;
         mathutil_mtxA_from_mtxB();
         entry = ord_tbl_get_entry_for_pos(&ape->unk30);
@@ -1722,7 +1722,7 @@ void func_8008C924(struct Ape *ape, int b)
         node->node.drawFunc = (OrdTblDrawFunc)lbl_8008CA80;
         node->unk8 = peek_light_group();
         node->ape = ape;
-        node->unk10 = ballInfo[ape->ballId].unk15C[currentCameraStructPtr->unk204];
+        node->unk10 = ballInfo[ape->ballId].unk15C[currentCamera->unk204];
         ord_tbl_insert_node(entry, &node->node);
     }
     else
@@ -1805,7 +1805,7 @@ struct GMATevLayer *find_material(struct GMAModel *model, u32 id)
 
 FORCE_BSS_ORDER(unused802B4B20)
 
-void func_8008CBD0(int charaId, int lod, struct GMAModel *model1, struct GMAModel *model2)
+void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *model1, struct GMAModel *model2)
 {
     int i;
     struct GMAModel *models[2];
@@ -1818,24 +1818,24 @@ void func_8008CBD0(int charaId, int lod, struct GMAModel *model1, struct GMAMode
     {
         struct GMATevLayer *mtrl = find_material(models[i], lbl_801C7DB0[var + lod][0]);
 
-        lbl_802B4DF0[var + i] = mtrl->texObj;
-        lbl_802B4800[var + i] = mtrl;
+        u_apeTextures[var + i] = mtrl->texObj;
+        u_apeMaterials[var + i] = mtrl;
     }
 }
 
-void func_8008CCB8(struct Ape *ape, struct GMAModel *unused)
+void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused)
 {
     u32 index = (ape->charaId * 2) + (ape->unk90 & 1);
 
-    if (lbl_802B4800[index] != NULL)
+    if (u_apeMaterials[index] != NULL)
     {
-        struct GMATevLayer *mtrl = lbl_802B4800[index];
+        struct GMATevLayer *mtrl = u_apeMaterials[index];
         u16 *r7 = lbl_801C7DB0[(ape->charaId * 2) + (ape->unk90 >> 1)];
 
         if (ape->colorId != 0)
             mtrl->texObj = &lbl_802B47E0[ape->charaId][r7[ape->colorId]];
         else
-            mtrl->texObj = lbl_802B4DF0[index];
+            mtrl->texObj = u_apeTextures[index];
         mtrl->flags |= (1 << 16);
     }
     else

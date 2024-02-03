@@ -588,7 +588,7 @@ u_draw_ball_shadow:
 /* 80092D70 0008EC90  93 A1 00 6C */	stw r29, 0x6c(r1)
 /* 80092D74 0008EC94  93 81 00 68 */	stw r28, 0x68(r1)
 /* 80092D78 0008EC98  4B F7 4A 79 */	bl mathutil_mtxA_push
-/* 80092D7C 0008EC9C  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 80092D7C 0008EC9C  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80092D80 0008ECA0  38 80 00 01 */	li r4, 1
 /* 80092D84 0008ECA4  80 03 02 04 */	lwz r0, 0x204(r3)
 /* 80092D88 0008ECA8  7C 80 00 30 */	slw r0, r4, r0
@@ -601,7 +601,7 @@ u_draw_ball_shadow:
 /* 80092DA4 0008ECC4  80 8D 99 80 */	lwz r4, mathutilData@sda21(r13)
 /* 80092DA8 0008ECC8  D0 04 00 18 */	stfs f0, 0x18(r4)
 /* 80092DAC 0008ECCC  4B F7 4A CD */	bl mathutil_mtxA_to_mtx
-/* 80092DB0 0008ECD0  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 80092DB0 0008ECD0  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80092DB4 0008ECD4  7F FD FB 78 */	mr r29, r31
 /* 80092DB8 0008ECD8  83 CD 9F 70 */	lwz r30, lbl_802F2150@sda21(r13)
 /* 80092DBC 0008ECDC  C3 A3 00 3C */	lfs f29, 0x3c(r3)

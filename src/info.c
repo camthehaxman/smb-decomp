@@ -83,7 +83,7 @@ void ev_info_main(void)
         return;
 
     // handle goal
-    ballBackup = currentBallStructPtr;
+    ballBackup = currentBall;
     ball = ballInfo;
     r23 = g_poolInfo.playerPool.statusList;
     r20 = 0;
@@ -95,7 +95,7 @@ void ev_info_main(void)
         if (*r23 == 0 || *r23 == 4)
             continue;
 
-        currentBallStructPtr = ball;
+        currentBall = ball;
         if (!check_ball_entered_goal(ball, &goalId, &sp64))
             continue;
         infoWork.playerId = ball->playerId;
@@ -195,7 +195,7 @@ void ev_info_main(void)
         infoWork.unk2C += r20 - 1;
     if (r20 > 0 && infoWork.unk2C >= modeCtrl.playerCount - 1)
         u_time_over_all_competition_mode_balls();
-    currentBallStructPtr = ballBackup;
+    currentBall = ballBackup;
 
     infoWork.bananasLeft = 0;
 
@@ -365,7 +365,7 @@ void ev_info_main(void)
                 {
                     struct Ball *ball;
 
-                    ball = currentBallStructPtr;
+                    ball = currentBall;
                     infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_TIMEOVER;
                     func_80049368(ball->playerId);
                     ball->flags |= BALL_FLAG_TIMEOVER;

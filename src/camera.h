@@ -61,7 +61,7 @@ struct Camera
     /*0x1A*/ s16 rotY;  // rotation about Y axis (yaw)
     /*0x1C*/ s16 rotZ;  // rotation about Z axis (roll)
     /*0x1E*/ s8 state;
-    s8 unk1F;
+    s8 subState;  // used by other systems to track camera state
     float unk20;
     /*0x24*/ s16 flags;
     s8 unk26;
@@ -116,21 +116,21 @@ struct Camera
 #define CAMERA_FOREACH(code) \
 { \
     struct Camera *camera = &cameraInfo[0]; \
-    struct Camera *cameraBackup = currentCameraStructPtr; \
+    struct Camera *cameraBackup = currentCamera; \
     int i; \
     for (i = 0; i < 4; i++, camera++) \
     { \
-        currentCameraStructPtr = camera; \
+        currentCamera = camera; \
         { code } \
     } \
-    currentCameraStructPtr = cameraBackup; \
+    currentCamera = cameraBackup; \
 }
 
 extern s16 lbl_802F1C30;
 //extern s8 lbl_802F1C32;
 extern s32 u_cameraId2;
 extern void (*minigameRelCameraCallback)(struct Camera *, struct Ball *);
-extern struct Camera *currentCameraStructPtr;
+extern struct Camera *currentCamera;
 extern s32 u_cameraId1;
 
 extern struct Camera cameraInfo[5];

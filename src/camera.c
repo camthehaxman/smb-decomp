@@ -33,7 +33,7 @@ struct Struct802F1C28
 };
 
 s32 u_cameraId1;
-struct Camera *currentCameraStructPtr;
+struct Camera *currentCamera;
 void (*minigameRelCameraCallback)(struct Camera *, struct Ball *);
 s32 u_cameraId2;
 s8 lbl_802F1C32;
@@ -47,7 +47,7 @@ void camera_init(void)
     int i;
     struct Camera *camera;
 
-    currentCameraStructPtr = &cameraInfo[0];
+    currentCamera = &cameraInfo[0];
     u_cameraId1 = -1;
     u_cameraId2 = -1;
 
@@ -370,7 +370,7 @@ void func_80017FCC(void)
 {
     Mtx44 mtx;
 
-    currentCameraStructPtr = &cameraInfo[0];
+    currentCamera = &cameraInfo[0];
     u_cameraId1 = 4;
     u_cameraId2 = 4;
     mathutil_mtx_copy(cameraInfo[0].unk144, mathutilData->mtxB);
@@ -484,7 +484,7 @@ void camera_apply_viewport(int cameraId)
 
     u_cameraId1 = cameraId;
     u_cameraId2 = cameraId;
-    currentCameraStructPtr = camera;
+    currentCamera = camera;
     mathutil_mtx_copy(camera->unk144, mathutilData->mtxB);
     mathutil_mtx_copy(mathutilData->mtxB, lbl_802F1B3C->matrices[2]);
     mathutil_mtx_copy(camera->unk174, lbl_802F1B3C->matrices[3]);
@@ -548,7 +548,7 @@ void camera_apply_viewport_2(int cameraId)
     Mtx44 projMtx;
 
     u_cameraId1 = cameraId;
-    currentCameraStructPtr = camera;
+    currentCamera = camera;
     mathutil_mtx_copy(camera->unk144, mathutilData->mtxB);
     mathutil_mtx_copy(mathutilData->mtxB, lbl_802F1B3C->matrices[2]);
     mathutil_mtx_copy(camera->unk174, lbl_802F1B3C->matrices[3]);
@@ -634,7 +634,7 @@ void camera_set_state(int state)
         if (!(camera->flags & (1 << 5)))
         {
             camera->state = state;
-            camera->unk1F = 0;
+            camera->subState = 0;
         }
     }
 }
@@ -679,7 +679,7 @@ void camera_clear(struct Camera *camera)
     backup.flags = camera->flags & 0x50;
     backup.unk26 = camera->unk26;
     backup.sub28 = camera->sub28;
-    backup.unk1F = camera->unk1F;
+    backup.subState = camera->subState;
     r3 = camera;
     memset(r3, 0, sizeof(*camera));
     camera->unk204 = backup.unk204;
@@ -687,7 +687,7 @@ void camera_clear(struct Camera *camera)
     camera->flags |= backup.flags | 1;
     camera->unk26 = backup.unk26;
     camera->sub28 = backup.sub28;
-    camera->unk1F = backup.unk1F;
+    camera->subState = backup.subState;
 
     camera->eye.z = 10.0f;
     camera->sub28.fov = camera->sub28.unk32;
@@ -1546,7 +1546,7 @@ void camera_func_62(struct Camera *camera, struct Ball *ball)
 
     camera->rotY = mathutil_atan2(v.x, v.z) - 32768;
     camera->rotX = mathutil_atan2(v.y, mathutil_sqrt(mathutil_sum_of_sq_2(v.x, v.z)));
-    camera->rotZ = currentCameraStructPtr->rotZ;
+    camera->rotZ = currentCamera->rotZ;
 }
 
 void camera_func_4(struct Camera *camera, struct Ball *ball)

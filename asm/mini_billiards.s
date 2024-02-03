@@ -232,8 +232,8 @@ lbl_00000350:
 /* 000003B0 4BFFFD85 */ bl event_start
 /* 000003B4 38600041 */ li r3, 0x41
 /* 000003B8 4BFFFD7D */ bl camera_set_state
-/* 000003BC 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 000003C0 38A30000 */ addi r5, r3, currentCameraStructPtr@l
+/* 000003BC 3C600000 */ lis r3, currentCamera@ha
+/* 000003C0 38A30000 */ addi r5, r3, currentCamera@l
 /* 000003C4 80650000 */ lwz r3, 0(r5)
 /* 000003C8 38800042 */ li r4, 0x42
 /* 000003CC 3800001A */ li r0, 0x1a
@@ -8171,7 +8171,7 @@ lbl_00007730:
 /* 000077A8 981E000A */ stb r0, 0xa(r30)
 /* 000077AC 4BFFC51D */ bl lbl_00003CC8
 /* 000077B0 C03F08B8 */ lfs f1, 0x8b8(r31)
-/* 000077B4 4BFF8981 */ bl func_8008C4A0
+/* 000077B4 4BFF8981 */ bl u_mot_ape_set_some_var
 /* 000077B8 38600064 */ li r3, 0x64
 /* 000077BC 38800008 */ li r4, 8
 /* 000077C0 4BFF8975 */ bl u_play_music
@@ -25713,11 +25713,11 @@ lbl_00017A84:
 /* 00017A90 2C1D000A */ cmpwi r29, 0xa
 /* 00017A94 4180FFF0 */ blt lbl_00017A84
 /* 00017A98 C03F0048 */ lfs f1, 0x48(r31)
-/* 00017A9C 4BFE8699 */ bl func_8008C4A0
+/* 00017A9C 4BFE8699 */ bl u_mot_ape_set_some_var
 /* 00017AA0 48000064 */ b lbl_00017B04
 lbl_00017AA4:
 /* 00017AA4 C03F0028 */ lfs f1, 0x28(r31)
-/* 00017AA8 4BFE868D */ bl func_8008C4A0
+/* 00017AA8 4BFE868D */ bl u_mot_ape_set_some_var
 /* 00017AAC A87D0000 */ lha r3, 0(r29)
 /* 00017AB0 A89E0000 */ lha r4, 0(r30)
 /* 00017AB4 38030001 */ addi r0, r3, 1
@@ -25822,7 +25822,7 @@ lbl_00017C0C:
 /* 00017C34 408103B8 */ ble lbl_00017FEC
 lbl_00017C38:
 /* 00017C38 C03F0048 */ lfs f1, 0x48(r31)
-/* 00017C3C 4BFE84F9 */ bl func_8008C4A0
+/* 00017C3C 4BFE84F9 */ bl u_mot_ape_set_some_var
 /* 00017C40 3C600000 */ lis r3, lbl_10000002@ha
 /* 00017C44 38830000 */ addi r4, r3, lbl_10000002@l
 /* 00017C48 88640000 */ lbz r3, 0(r4)

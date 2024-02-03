@@ -1168,7 +1168,7 @@ void stobj_goalbag_coli(struct Stobj *stobj, struct PhysicsBall *ball)
         spF8.z = 0.25f * (sp104.z + spEC.z);
         memset(&effect, 0, sizeof(effect));
         var_f24 = 0.1f;
-        effect.playerId = currentBallStructPtr->playerId;
+        effect.playerId = currentBall->playerId;
         for (i = 2; i > 0; i--)
         {
             var_r30 = 16.0f + (16.0f * var_f26);
@@ -1375,7 +1375,7 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
             u_play_sound_0(0x127);
             if (bag->unk24 < 0)
                 bag->unk24 = infoWork.timerCurr;
-            cameraMask = 1 << currentBallStructPtr->playerId;
+            cameraMask = 1 << currentBall->playerId;
             memset(&effect, 0, sizeof(effect));
             effect.type = ET_PAPERFRAG;
             mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].transform);

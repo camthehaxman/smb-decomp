@@ -23,7 +23,7 @@ void ending_camera_init(void)
     minigameRelCameraCallback = lbl_800C00F4;
     CAMERA_FOREACH(
         camera->state = 0x4A;
-        camera->unk1F = -1;
+        camera->subState = -1;
     )
 }
 
@@ -31,8 +31,8 @@ void ending_camera_emptyfunc1(void) {}
 
 static void lbl_800C00F4(struct Camera *camera, struct Ball *ball)
 {
-    if (camera->unk1F >= 0)
-        lbl_801E3248[camera->unk1F](camera, ball);
+    if (camera->subState >= 0)
+        lbl_801E3248[camera->subState](camera, ball);
 }
 
 static void func_800C013C(struct Camera *camera, struct Ball *ball)
@@ -96,7 +96,7 @@ static void func_800C013C(struct Camera *camera, struct Ball *ball)
         camera->lookAtVel = temp_r30->unk38;
         break;
     }
-    camera->unk1F = 1;
+    camera->subState = 1;
     camera->unk26 = 0;
     func_800C0354(camera, ball);
 }

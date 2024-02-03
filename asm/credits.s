@@ -75,7 +75,7 @@ credits_init:
 /* 800AFDB4 000ABCD4  38 60 00 03 */	li r3, 3
 /* 800AFDB8 000ABCD8  4B F5 B5 71 */	bl event_start
 /* 800AFDBC 000ABCDC  3C 60 80 20 */	lis r3, g_poolInfo@ha
-/* 800AFDC0 000ABCE0  80 CD 9D 38 */	lwz r6, currentBallStructPtr@sda21(r13)
+/* 800AFDC0 000ABCE0  80 CD 9D 38 */	lwz r6, currentBall@sda21(r13)
 /* 800AFDC4 000ABCE4  38 83 59 88 */	addi r4, r3, g_poolInfo@l
 /* 800AFDC8 000ABCE8  3C 60 80 20 */	lis r3, ballInfo@ha
 /* 800AFDCC 000ABCEC  80 E4 00 0C */	lwz r7, 0xc(r4)
@@ -88,7 +88,7 @@ lbl_800AFDE4:
 /* 800AFDE4 000ABD04  88 07 00 00 */	lbz r0, 0(r7)
 /* 800AFDE8 000ABD08  2C 00 00 02 */	cmpwi r0, 2
 /* 800AFDEC 000ABD0C  40 82 00 0C */	bne lbl_800AFDF8
-/* 800AFDF0 000ABD10  90 AD 9D 38 */	stw r5, currentBallStructPtr@sda21(r13)
+/* 800AFDF0 000ABD10  90 AD 9D 38 */	stw r5, currentBall@sda21(r13)
 /* 800AFDF4 000ABD14  98 65 00 03 */	stb r3, 3(r5)
 lbl_800AFDF8:
 /* 800AFDF8 000ABD18  39 08 00 01 */	addi r8, r8, 1
@@ -98,22 +98,22 @@ lbl_800AFE04:
 /* 800AFE04 000ABD24  80 04 00 08 */	lwz r0, 8(r4)
 /* 800AFE08 000ABD28  7C 08 00 00 */	cmpw r8, r0
 /* 800AFE0C 000ABD2C  41 80 FF D8 */	blt lbl_800AFDE4
-/* 800AFE10 000ABD30  90 CD 9D 38 */	stw r6, currentBallStructPtr@sda21(r13)
+/* 800AFE10 000ABD30  90 CD 9D 38 */	stw r6, currentBall@sda21(r13)
 /* 800AFE14 000ABD34  38 60 00 02 */	li r3, 2
 /* 800AFE18 000ABD38  4B FC 07 8D */	bl call_bitmap_load_group
 /* 800AFE1C 000ABD3C  4B F7 30 F9 */	bl func_80022F14
 /* 800AFE20 000ABD40  C0 42 B8 B8 */	lfs f2, lbl_802F60B8@sda21(r2)
 /* 800AFE24 000ABD44  3C 80 80 1F */	lis r4, modeCtrl@ha
-/* 800AFE28 000ABD48  80 AD 9A 5C */	lwz r5, currentCameraStructPtr@sda21(r13)
+/* 800AFE28 000ABD48  80 AD 9A 5C */	lwz r5, currentCamera@sda21(r13)
 /* 800AFE2C 000ABD4C  3C 60 80 20 */	lis r3, ballInfo@ha
 /* 800AFE30 000ABD50  3B C0 00 00 */	li r30, 0
 /* 800AFE34 000ABD54  D0 45 00 00 */	stfs f2, 0(r5)
 /* 800AFE38 000ABD58  38 84 EC 20 */	addi r4, r4, modeCtrl@l
 /* 800AFE3C 000ABD5C  38 03 5E 60 */	addi r0, r3, ballInfo@l
 /* 800AFE40 000ABD60  C0 1F 00 0C */	lfs f0, 0xc(r31)
-/* 800AFE44 000ABD64  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800AFE44 000ABD64  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800AFE48 000ABD68  D0 03 00 0C */	stfs f0, 0xc(r3)
-/* 800AFE4C 000ABD6C  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800AFE4C 000ABD6C  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800AFE50 000ABD70  B3 C3 00 1C */	sth r30, 0x1c(r3)
 /* 800AFE54 000ABD74  93 CD A0 34 */	stw r30, lbl_802F2214@sda21(r13)
 /* 800AFE58 000ABD78  C0 02 B8 BC */	lfs f0, lbl_802F60BC@sda21(r2)
@@ -127,7 +127,7 @@ lbl_800AFE04:
 /* 800AFE78 000ABD98  80 64 00 2C */	lwz r3, 0x2c(r4)
 /* 800AFE7C 000ABD9C  1C 63 01 A4 */	mulli r3, r3, 0x1a4
 /* 800AFE80 000ABDA0  7C 00 1A 14 */	add r0, r0, r3
-/* 800AFE84 000ABDA4  90 0D 9D 38 */	stw r0, currentBallStructPtr@sda21(r13)
+/* 800AFE84 000ABDA4  90 0D 9D 38 */	stw r0, currentBall@sda21(r13)
 /* 800AFE88 000ABDA8  D0 5F 00 24 */	stfs f2, 0x24(r31)
 /* 800AFE8C 000ABDAC  D0 5F 00 0C */	stfs f2, 0xc(r31)
 /* 800AFE90 000ABDB0  C0 02 B8 C8 */	lfs f0, lbl_802F60C8@sda21(r2)
@@ -247,14 +247,14 @@ lbl_800B0018:
 lbl_800B003C:
 /* 800B003C 000ABF5C  C0 1C 00 0C */	lfs f0, 0xc(r28)
 /* 800B0040 000ABF60  3C 60 80 1F */	lis r3, modeCtrl@ha
-/* 800B0044 000ABF64  80 AD 9A 5C */	lwz r5, currentCameraStructPtr@sda21(r13)
+/* 800B0044 000ABF64  80 AD 9A 5C */	lwz r5, currentCamera@sda21(r13)
 /* 800B0048 000ABF68  38 63 EC 20 */	addi r3, r3, modeCtrl@l
 /* 800B004C 000ABF6C  3B A3 00 2C */	addi r29, r3, 0x2c
 /* 800B0050 000ABF70  D0 05 00 00 */	stfs f0, 0(r5)
 /* 800B0054 000ABF74  3C 80 80 20 */	lis r4, ballInfo@ha
 /* 800B0058 000ABF78  38 A4 5E 60 */	addi r5, r4, ballInfo@l
 /* 800B005C 000ABF7C  C0 1C 00 0C */	lfs f0, 0xc(r28)
-/* 800B0060 000ABF80  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B0060 000ABF80  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B0064 000ABF84  D0 03 00 0C */	stfs f0, 0xc(r3)
 /* 800B0068 000ABF88  80 DD 00 00 */	lwz r6, 0(r29)
 /* 800B006C 000ABF8C  80 7C 00 0C */	lwz r3, 0xc(r28)
@@ -570,10 +570,10 @@ lbl_800B04EC:
 /* 800B04FC 000AC41C  D0 0D A0 D8 */	stfs f0, lbl_802F22B8@sda21(r13)
 lbl_800B0500:
 /* 800B0500 000AC420  C0 1C 00 0C */	lfs f0, 0xc(r28)
-/* 800B0504 000AC424  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B0504 000AC424  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B0508 000AC428  D0 03 00 00 */	stfs f0, 0(r3)
 /* 800B050C 000AC42C  C0 1C 00 0C */	lfs f0, 0xc(r28)
-/* 800B0510 000AC430  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B0510 000AC430  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B0514 000AC434  D0 03 00 0C */	stfs f0, 0xc(r3)
 /* 800B0518 000AC438  80 0D A0 A4 */	lwz r0, lbl_802F2284@sda21(r13)
 /* 800B051C 000AC43C  2C 00 00 00 */	cmpwi r0, 0
@@ -739,11 +739,11 @@ lbl_800B0748:
 lbl_800B0770:
 /* 800B0770 000AC690  C0 1C 00 0C */	lfs f0, 0xc(r28)
 /* 800B0774 000AC694  3B BC 00 70 */	addi r29, r28, 0x70
-/* 800B0778 000AC698  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B0778 000AC698  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B077C 000AC69C  3B DC 00 74 */	addi r30, r28, 0x74
 /* 800B0780 000AC6A0  D0 03 00 00 */	stfs f0, 0(r3)
 /* 800B0784 000AC6A4  C0 1C 00 0C */	lfs f0, 0xc(r28)
-/* 800B0788 000AC6A8  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B0788 000AC6A8  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B078C 000AC6AC  D0 03 00 0C */	stfs f0, 0xc(r3)
 /* 800B0790 000AC6B0  C0 42 B8 BC */	lfs f2, lbl_802F60BC@sda21(r2)
 /* 800B0794 000AC6B4  C0 2D A0 94 */	lfs f1, lbl_802F2274@sda21(r13)
@@ -792,7 +792,7 @@ lbl_800B081C:
 /* 800B083C 000AC75C  FC 01 00 40 */	fcmpo cr0, f1, f0
 /* 800B0840 000AC760  D0 4D A0 80 */	stfs f2, lbl_802F2260@sda21(r13)
 /* 800B0844 000AC764  40 80 00 20 */	bge lbl_800B0864
-/* 800B0848 000AC768  80 6D 9D 38 */	lwz r3, currentBallStructPtr@sda21(r13)
+/* 800B0848 000AC768  80 6D 9D 38 */	lwz r3, currentBall@sda21(r13)
 /* 800B084C 000AC76C  38 80 00 00 */	li r4, 0
 /* 800B0850 000AC770  38 A0 00 00 */	li r5, 0
 /* 800B0854 000AC774  88 63 00 2E */	lbz r3, 0x2e(r3)
@@ -804,7 +804,7 @@ lbl_800B0864:
 /* 800B0868 000AC788  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B086C 000AC78C  FC 01 00 00 */	fcmpu cr0, f1, f0
 /* 800B0870 000AC790  41 82 00 20 */	beq lbl_800B0890
-/* 800B0874 000AC794  80 6D 9D 38 */	lwz r3, currentBallStructPtr@sda21(r13)
+/* 800B0874 000AC794  80 6D 9D 38 */	lwz r3, currentBall@sda21(r13)
 /* 800B0878 000AC798  38 80 00 00 */	li r4, 0
 /* 800B087C 000AC79C  38 A0 00 00 */	li r5, 0
 /* 800B0880 000AC7A0  88 63 00 2E */	lbz r3, 0x2e(r3)
@@ -817,7 +817,7 @@ lbl_800B0890:
 /* 800B0898 000AC7B8  41 82 00 28 */	beq lbl_800B08C0
 /* 800B089C 000AC7BC  C0 0D A0 80 */	lfs f0, lbl_802F2260@sda21(r13)
 /* 800B08A0 000AC7C0  38 A0 00 41 */	li r5, 0x41
-/* 800B08A4 000AC7C4  80 6D 9D 38 */	lwz r3, currentBallStructPtr@sda21(r13)
+/* 800B08A4 000AC7C4  80 6D 9D 38 */	lwz r3, currentBall@sda21(r13)
 /* 800B08A8 000AC7C8  FC 00 00 1E */	fctiwz f0, f0
 /* 800B08AC 000AC7CC  88 63 00 2E */	lbz r3, 0x2e(r3)
 /* 800B08B0 000AC7D0  D8 01 00 10 */	stfd f0, 0x10(r1)
@@ -2973,7 +2973,7 @@ lbl_800B281C:
 /* 800B286C 000AE78C  4C 40 13 82 */	cror 2, 0, 2
 /* 800B2870 000AE790  40 82 01 98 */	bne lbl_800B2A08
 /* 800B2874 000AE794  90 01 00 DC */	stw r0, 0xdc(r1)
-/* 800B2878 000AE798  80 8D 9A 5C */	lwz r4, currentCameraStructPtr@sda21(r13)
+/* 800B2878 000AE798  80 8D 9A 5C */	lwz r4, currentCamera@sda21(r13)
 /* 800B287C 000AE79C  93 A1 00 D8 */	stw r29, 0xd8(r1)
 /* 800B2880 000AE7A0  80 7F 00 0C */	lwz r3, 0xc(r31)
 /* 800B2884 000AE7A4  C8 01 00 D8 */	lfd f0, 0xd8(r1)
@@ -2985,7 +2985,7 @@ lbl_800B281C:
 /* 800B289C 000AE7BC  80 1F 00 14 */	lwz r0, 0x14(r31)
 /* 800B28A0 000AE7C0  FC 00 20 28 */	fsub f0, f0, f4
 /* 800B28A4 000AE7C4  90 04 00 14 */	stw r0, 0x14(r4)
-/* 800B28A8 000AE7C8  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B28A8 000AE7C8  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B28AC 000AE7CC  FC 40 00 1E */	fctiwz f2, f0
 /* 800B28B0 000AE7D0  C0 23 00 0C */	lfs f1, 0xc(r3)
 /* 800B28B4 000AE7D4  C0 03 00 00 */	lfs f0, 0(r3)
@@ -2996,10 +2996,10 @@ lbl_800B281C:
 /* 800B28C8 000AE7E8  83 81 00 D4 */	lwz r28, 0xd4(r1)
 /* 800B28CC 000AE7EC  EC 42 00 28 */	fsubs f2, f2, f0
 /* 800B28D0 000AE7F0  4B F5 49 D5 */	bl mathutil_atan2
-/* 800B28D4 000AE7F4  80 8D 9A 5C */	lwz r4, currentCameraStructPtr@sda21(r13)
+/* 800B28D4 000AE7F4  80 8D 9A 5C */	lwz r4, currentCamera@sda21(r13)
 /* 800B28D8 000AE7F8  38 03 80 00 */	addi r0, r3, -32768
 /* 800B28DC 000AE7FC  B0 04 00 1A */	sth r0, 0x1a(r4)
-/* 800B28E0 000AE800  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B28E0 000AE800  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B28E4 000AE804  C0 63 00 14 */	lfs f3, 0x14(r3)
 /* 800B28E8 000AE808  C0 43 00 08 */	lfs f2, 8(r3)
 /* 800B28EC 000AE80C  C0 23 00 0C */	lfs f1, 0xc(r3)
@@ -3009,18 +3009,18 @@ lbl_800B281C:
 /* 800B28FC 000AE81C  EC 21 00 72 */	fmuls f1, f1, f1
 /* 800B2900 000AE820  EC 22 08 BA */	fmadds f1, f2, f2, f1
 /* 800B2904 000AE824  4B F5 47 F5 */	bl mathutil_sqrt
-/* 800B2908 000AE828  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B2908 000AE828  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B290C 000AE82C  FC 40 08 90 */	fmr f2, f1
 /* 800B2910 000AE830  C0 63 00 10 */	lfs f3, 0x10(r3)
 /* 800B2914 000AE834  C0 03 00 04 */	lfs f0, 4(r3)
 /* 800B2918 000AE838  EC 23 00 28 */	fsubs f1, f3, f0
 /* 800B291C 000AE83C  4B F5 49 89 */	bl mathutil_atan2
-/* 800B2920 000AE840  80 AD 9A 5C */	lwz r5, currentCameraStructPtr@sda21(r13)
+/* 800B2920 000AE840  80 AD 9A 5C */	lwz r5, currentCamera@sda21(r13)
 /* 800B2924 000AE844  6F 80 80 00 */	xoris r0, r28, 0x8000
 /* 800B2928 000AE848  90 01 00 CC */	stw r0, 0xcc(r1)
 /* 800B292C 000AE84C  38 80 00 00 */	li r4, 0
 /* 800B2930 000AE850  B0 65 00 18 */	sth r3, 0x18(r5)
-/* 800B2934 000AE854  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 800B2934 000AE854  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 800B2938 000AE858  93 A1 00 C8 */	stw r29, 0xc8(r1)
 /* 800B293C 000AE85C  B0 83 00 1C */	sth r4, 0x1c(r3)
 /* 800B2940 000AE860  C8 01 00 C8 */	lfd f0, 0xc8(r1)

@@ -859,8 +859,8 @@ lbl_00000C2C:
 /* 00000CCC 4BFFF4B1 */ bl event_start
 /* 00000CD0 3C600000 */ lis r3, g_poolInfo@ha
 /* 00000CD4 38630000 */ addi r3, r3, g_poolInfo@l
-/* 00000CD8 3C800000 */ lis r4, currentBallStructPtr@ha
-/* 00000CDC 38A40000 */ addi r5, r4, currentBallStructPtr@l
+/* 00000CD8 3C800000 */ lis r4, currentBall@ha
+/* 00000CDC 38A40000 */ addi r5, r4, currentBall@l
 /* 00000CE0 38C3000C */ addi r6, r3, 0xc
 /* 00000CE4 81050000 */ lwz r8, 0(r5)
 /* 00000CE8 3C800000 */ lis r4, ballInfo@ha
@@ -886,8 +886,8 @@ lbl_00000D2C:
 /* 00000D2C 80040000 */ lwz r0, 0(r4)
 /* 00000D30 7C0A0000 */ cmpw r10, r0
 /* 00000D34 4180FFD4 */ blt lbl_00000D08
-/* 00000D38 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00000D3C 91030000 */ stw r8, currentBallStructPtr@l(r3)
+/* 00000D38 3C600000 */ lis r3, currentBall@ha
+/* 00000D3C 91030000 */ stw r8, currentBall@l(r3)
 /* 00000D40 3C600000 */ lis r3, worldInfo@ha
 /* 00000D44 38030000 */ addi r0, r3, worldInfo@l
 /* 00000D48 80C60000 */ lwz r6, 0(r6)
@@ -1404,7 +1404,7 @@ lbl_0000148C:
 lbl_00001498:
 /* 00001498 807400FC */ lwz r3, 0xfc(r20)
 /* 0000149C 3894001C */ addi r4, r20, 0x1c
-/* 000014A0 4BFFECDD */ bl func_8008C090
+/* 000014A0 4BFFECDD */ bl u_mot_ape_something_with_head_anim
 lbl_000014A4:
 /* 000014A4 3BFF0001 */ addi r31, r31, 1
 /* 000014A8 3A9401A4 */ addi r20, r20, 0x1a4
@@ -3699,8 +3699,8 @@ lbl_000035B4:
 /* 000035B4 3A940001 */ addi r20, r20, 1
 /* 000035B8 2C140004 */ cmpwi r20, 4
 /* 000035BC 4180FFAC */ blt lbl_00003568
-/* 000035C0 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000035C4 3B830000 */ addi r28, r3, currentBallStructPtr@l
+/* 000035C0 3C600000 */ lis r3, currentBall@ha
+/* 000035C4 3B830000 */ addi r28, r3, currentBall@l
 /* 000035C8 3C800000 */ lis r4, playerControllerIDs@ha
 /* 000035CC 821C0000 */ lwz r16, 0(r28)
 /* 000035D0 3C600000 */ lis r3, modeCtrl@ha
@@ -3972,10 +3972,10 @@ lbl_000039B8:
 /* 000039C8 3C600000 */ lis r3, ballInfo@ha
 /* 000039CC 38030000 */ addi r0, r3, ballInfo@l
 /* 000039D0 3C600000 */ lis r3, decodedStageLzPtr@ha
-/* 000039D4 3C800000 */ lis r4, currentBallStructPtr@ha
+/* 000039D4 3C800000 */ lis r4, currentBall@ha
 /* 000039D8 7C170378 */ mr r23, r0
 /* 000039DC 39E30000 */ addi r15, r3, decodedStageLzPtr@l
-/* 000039E0 3A240000 */ addi r17, r4, currentBallStructPtr@l
+/* 000039E0 3A240000 */ addi r17, r4, currentBall@l
 /* 000039E4 3A800000 */ li r20, 0
 lbl_000039E8:
 /* 000039E8 88170000 */ lbz r0, 0(r23)
@@ -4011,8 +4011,8 @@ lbl_00003A58:
 /* 00003A5C 2C140004 */ cmpwi r20, 4
 /* 00003A60 3AF701A4 */ addi r23, r23, 0x1a4
 /* 00003A64 4180FF84 */ blt lbl_000039E8
-/* 00003A68 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00003A6C 92030000 */ stw r16, currentBallStructPtr@l(r3)
+/* 00003A68 3C600000 */ lis r3, currentBall@ha
+/* 00003A6C 92030000 */ stw r16, currentBall@l(r3)
 /* 00003A70 B9E10124 */ lmw r15, 0x124(r1)
 /* 00003A74 80010184 */ lwz r0, 0x184(r1)
 /* 00003A78 CBE10178 */ lfd f31, 0x178(r1)
@@ -11534,7 +11534,7 @@ lbl_0000A9C4:
 /* 0000A9E8 4E800020 */ blr 
 lbl_0000A9EC:
 /* 0000A9EC 7C0802A6 */ mflr r0
-/* 0000A9F0 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 0000A9F0 3C600000 */ lis r3, currentBall@ha
 /* 0000A9F4 90010004 */ stw r0, 4(r1)
 /* 0000A9F8 3CA00000 */ lis r5, cameraInfo@ha
 /* 0000A9FC 3C800000 */ lis r4, ballInfo@ha
@@ -11542,7 +11542,7 @@ lbl_0000A9EC:
 /* 0000AA04 3CE00000 */ lis r7, lbl_00013BD0@ha
 /* 0000AA08 3CC00000 */ lis r6, g_poolInfo@ha
 /* 0000AA0C BE61000C */ stmw r19, 0xc(r1)
-/* 0000AA10 3B630000 */ addi r27, r3, currentBallStructPtr@l
+/* 0000AA10 3B630000 */ addi r27, r3, currentBall@l
 /* 0000AA14 3C600000 */ lis r3, eventInfo@ha
 /* 0000AA18 3BC30000 */ addi r30, r3, eventInfo@l
 /* 0000AA1C 3B250000 */ addi r25, r5, cameraInfo@l
@@ -11683,8 +11683,8 @@ lbl_0000ABFC:
 /* 0000AC04 3B390284 */ addi r25, r25, 0x284
 /* 0000AC08 3B1801A4 */ addi r24, r24, 0x1a4
 /* 0000AC0C 4180FE44 */ blt lbl_0000AA50
-/* 0000AC10 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000AC14 92830000 */ stw r20, currentBallStructPtr@l(r3)
+/* 0000AC10 3C600000 */ lis r3, currentBall@ha
+/* 0000AC14 92830000 */ stw r20, currentBall@l(r3)
 /* 0000AC18 4BFF5565 */ bl func_80017FCC
 /* 0000AC1C BA61000C */ lmw r19, 0xc(r1)
 /* 0000AC20 80010044 */ lwz r0, 0x44(r1)
@@ -11952,9 +11952,9 @@ lbl_0000AFD4:
 /* 0000AFF4 4E800020 */ blr 
 lbl_0000AFF8:
 /* 0000AFF8 7C0802A6 */ mflr r0
-/* 0000AFFC 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 0000AFFC 3C600000 */ lis r3, currentBall@ha
 /* 0000B000 90010004 */ stw r0, 4(r1)
-/* 0000B004 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 0000B004 38630000 */ addi r3, r3, currentBall@l
 /* 0000B008 3CA00000 */ lis r5, decodedStageLzPtr@ha
 /* 0000B00C 9421FFC8 */ stwu r1, -0x38(r1)
 /* 0000B010 3C800000 */ lis r4, lbl_10000028@ha
@@ -12399,13 +12399,13 @@ lbl_0000B664:
 /* 0000B678 4E800020 */ blr 
 lbl_0000B67C:
 /* 0000B67C 7C0802A6 */ mflr r0
-/* 0000B680 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 0000B680 3C600000 */ lis r3, currentBall@ha
 /* 0000B684 90010004 */ stw r0, 4(r1)
 /* 0000B688 3CA00000 */ lis r5, cameraInfo@ha
 /* 0000B68C 3C800000 */ lis r4, ballInfo@ha
 /* 0000B690 9421FFC8 */ stwu r1, -0x38(r1)
 /* 0000B694 BEC10010 */ stmw r22, 0x10(r1)
-/* 0000B698 3BA30000 */ addi r29, r3, currentBallStructPtr@l
+/* 0000B698 3BA30000 */ addi r29, r3, currentBall@l
 /* 0000B69C 3C600000 */ lis r3, eventInfo@ha
 /* 0000B6A0 3BE30000 */ addi r31, r3, eventInfo@l
 /* 0000B6A4 3B650000 */ addi r27, r5, cameraInfo@l
@@ -12512,8 +12512,8 @@ lbl_0000B800:
 /* 0000B808 3B7B0284 */ addi r27, r27, 0x284
 /* 0000B80C 3B5A01A4 */ addi r26, r26, 0x1a4
 /* 0000B810 4180FEC0 */ blt lbl_0000B6D0
-/* 0000B814 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000B818 92E30000 */ stw r23, currentBallStructPtr@l(r3)
+/* 0000B814 3C600000 */ lis r3, currentBall@ha
+/* 0000B818 92E30000 */ stw r23, currentBall@l(r3)
 /* 0000B81C 4BFF4961 */ bl func_80017FCC
 /* 0000B820 BAC10010 */ lmw r22, 0x10(r1)
 /* 0000B824 8001003C */ lwz r0, 0x3c(r1)
@@ -18287,7 +18287,7 @@ lbl_00010D54:
 lbl_00010D8C:
 /* 00010D8C 387D0000 */ addi r3, r29, 0
 /* 00010D90 389E0104 */ addi r4, r30, 0x104
-/* 00010D94 4BFEF3E9 */ bl func_8008C090
+/* 00010D94 4BFEF3E9 */ bl u_mot_ape_something_with_head_anim
 /* 00010D98 38000000 */ li r0, 0
 /* 00010D9C 901E0100 */ stw r0, 0x100(r30)
 /* 00010DA0 C01F0008 */ lfs f0, 8(r31)
@@ -19443,9 +19443,9 @@ lbl_00011E30:
 /* 00011E4C 4E800020 */ blr 
 lbl_00011E50:
 /* 00011E50 7C0802A6 */ mflr r0
-/* 00011E54 3CA00000 */ lis r5, currentBallStructPtr@ha
+/* 00011E54 3CA00000 */ lis r5, currentBall@ha
 /* 00011E58 90010004 */ stw r0, 4(r1)
-/* 00011E5C 38A50000 */ addi r5, r5, currentBallStructPtr@l
+/* 00011E5C 38A50000 */ addi r5, r5, currentBall@l
 /* 00011E60 3CC00000 */ lis r6, lbl_00013F40@ha
 /* 00011E64 9421FFA8 */ stwu r1, -0x58(r1)
 /* 00011E68 DBE10050 */ stfd f31, 0x50(r1)
@@ -20315,14 +20315,14 @@ lbl_00012AA0:
 /* 00012B0C 4E800020 */ blr 
 lbl_00012B10:
 /* 00012B10 7C0802A6 */ mflr r0
-/* 00012B14 3CA00000 */ lis r5, currentBallStructPtr@ha
+/* 00012B14 3CA00000 */ lis r5, currentBall@ha
 /* 00012B18 90010004 */ stw r0, 4(r1)
 /* 00012B1C 9421FFE8 */ stwu r1, -0x18(r1)
 /* 00012B20 93E10014 */ stw r31, 0x14(r1)
 /* 00012B24 93C10010 */ stw r30, 0x10(r1)
 /* 00012B28 3BC40000 */ addi r30, r4, 0
 /* 00012B2C 80C30060 */ lwz r6, 0x60(r3)
-/* 00012B30 84E50000 */ lwzu r7, currentBallStructPtr@l(r5)
+/* 00012B30 84E50000 */ lwzu r7, currentBall@l(r5)
 /* 00012B34 28060000 */ cmplwi r6, 0
 /* 00012B38 83E70144 */ lwz r31, 0x144(r7)
 /* 00012B3C 41820070 */ beq lbl_00012BAC
@@ -20592,7 +20592,7 @@ lbl_00012F18:
 /* 00012F30 4E800020 */ blr 
 lbl_00012F34:
 /* 00012F34 7C0802A6 */ mflr r0
-/* 00012F38 3C800000 */ lis r4, currentBallStructPtr@ha
+/* 00012F38 3C800000 */ lis r4, currentBall@ha
 /* 00012F3C 90010004 */ stw r0, 4(r1)
 /* 00012F40 3CC00000 */ lis r6, lbl_00014060@ha
 /* 00012F44 9421FFB8 */ stwu r1, -0x48(r1)
@@ -20603,7 +20603,7 @@ lbl_00012F34:
 /* 00012F58 93C10030 */ stw r30, 0x30(r1)
 /* 00012F5C 3BC30000 */ addi r30, r3, 0
 /* 00012F60 93A1002C */ stw r29, 0x2c(r1)
-/* 00012F64 80A40000 */ lwz r5, currentBallStructPtr@l(r4)
+/* 00012F64 80A40000 */ lwz r5, currentBall@l(r4)
 /* 00012F68 3C800000 */ lis r4, cameraInfo@ha
 /* 00012F6C C05F0048 */ lfs f2, 0x48(r31)
 /* 00012F70 8805002E */ lbz r0, 0x2e(r5)
@@ -20641,9 +20641,9 @@ lbl_00012F34:
 lbl_00012FF0:
 /* 00012FF0 C3DF004C */ lfs f30, 0x4c(r31)
 lbl_00012FF4:
-/* 00012FF4 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00012FF4 3C600000 */ lis r3, currentBall@ha
 /* 00012FF8 A89E0014 */ lha r4, 0x14(r30)
-/* 00012FFC 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00012FFC 38630000 */ addi r3, r3, currentBall@l
 /* 00013000 80630000 */ lwz r3, 0(r3)
 /* 00013004 8803002E */ lbz r0, 0x2e(r3)
 /* 00013008 7C000774 */ extsb r0, r0

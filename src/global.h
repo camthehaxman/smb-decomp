@@ -18,6 +18,14 @@ enum
     DIFFICULTY_EXPERT,
 };
 
+enum Character
+{
+    CHARACTER_AIAI,
+    CHARACTER_MEEMEE,
+    CHARACTER_BABY,
+    CHARACTER_GONGON,
+};
+
 #define ARRAY_COUNT(arr) ((int)(sizeof(arr)/sizeof(arr[0])))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))

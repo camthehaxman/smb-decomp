@@ -522,7 +522,7 @@ void set_avdisp_inf_light(struct LightGroup *lightGrp)
         Vec spC = {0.0f, 1.0f, -0.5f};
 
         mathutil_mtxA_push();
-        mathutil_mtxA_from_rotate_y(currentCameraStructPtr->rotY);
+        mathutil_mtxA_from_rotate_y(currentCamera->rotY);
         mathutil_mtxA_tf_vec(&spC, &spC);
         mathutil_mtxA_pop();
         avdisp_set_inf_light_dir(&spC);
@@ -818,7 +818,7 @@ void u_draw_naomi_ball(void)
         break;
     case LIGHT_TYPE_INFINITE:
         mathutil_mtxA_from_mtxB();
-        mathutil_mtxA_translate(&currentCameraStructPtr->lookAt);
+        mathutil_mtxA_translate(&currentCamera->lookAt);
         mathutil_mtxA_rotate_y(r31->rotY);
         mathutil_mtxA_rotate_x(r31->rotX);
         mathutil_mtxA_rotate_x(0x8000);

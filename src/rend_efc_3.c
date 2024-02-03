@@ -249,7 +249,7 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
 
     camera_apply_viewport(modeCtrl.currPlayer);
     temp_r30 = (void *)arg1->work;
-    camera = currentCameraStructPtr;
+    camera = currentCamera;
     cameraBackup = *camera;  // save camera
     push_light_group();
 
@@ -369,7 +369,7 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
         Vec sp10;
 
         mathutil_mtxA_from_mtx(temp_r30->unk50);
-        mathutil_mtxA_rigid_inv_tf_point(&currentBallStructPtr->pos, &sp10);
+        mathutil_mtxA_rigid_inv_tf_point(&currentBall->pos, &sp10);
         r31 = (sp10.y > 0.0);
         draw_monkey();
         if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)

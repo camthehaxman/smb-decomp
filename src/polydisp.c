@@ -533,8 +533,8 @@ void func_8000C388(void)
     Vec sp8;
     float f3;
 
-    f3 = -(10000.0f * currentCameraStructPtr->sub28.unk38);
-    sp14.unk0 = f3 * currentCameraStructPtr->sub28.aspect;
+    f3 = -(10000.0f * currentCamera->sub28.unk38);
+    sp14.unk0 = f3 * currentCamera->sub28.aspect;
     sp14.unk4 = 0.0f;
     sp14.unk8 = 0.0f;
     sp14.unkC = f3;
@@ -548,7 +548,7 @@ void func_8000C388(void)
         sp8.y = 1.0f;
         sp8.z = 0.0f;
         mathutil_mtxA_from_identity();
-        mathutil_mtxA_rotate_y(-currentCameraStructPtr->rotY);
+        mathutil_mtxA_rotate_y(-currentCamera->rotY);
         mathutil_mtxA_rotate_z(-worldInfo[0].zrot);
         mathutil_mtxA_rotate_x(-worldInfo[0].xrot);
         mathutil_mtxA_tf_vec(&sp8, &sp8);
@@ -565,7 +565,7 @@ void func_8000C388(void)
 void draw_normal_game_scene(void)
 {
     int i;
-    struct Ball *oldBall = currentBallStructPtr;
+    struct Ball *oldBall = currentBall;
     for (i = 0; i < 4; i++)
     {
         if (cameraInfo[i].sub28.vp.width > 0.0f && cameraInfo[i].sub28.vp.height > 0.0f)
@@ -577,7 +577,7 @@ void draw_normal_game_scene(void)
                 if (!(cameraInfo[i].flags & (1 << 7)))
                     continue;
             }
-            currentBallStructPtr = &ballInfo[i];
+            currentBall = &ballInfo[i];
             u_call_camera_apply_viewport(i);
             u_draw_ball_shadow();
             func_80054FF0();
@@ -619,7 +619,7 @@ void draw_normal_game_scene(void)
         }
     }
     func_8000C7A4();
-    currentBallStructPtr = oldBall;
+    currentBall = oldBall;
     func_80017FCC();
 }
 
@@ -633,7 +633,7 @@ void func_8000C7A4(void)
         if (cameraInfo[i].sub28.vp.width > 0.0f && cameraInfo[i].sub28.vp.height > 0.0f
          && (cameraInfo[i].flags & (1 << 6)))
         {
-            currentBallStructPtr = &ballInfo[i];
+            currentBall = &ballInfo[i];
             u_call_camera_apply_viewport(i);
             u_reset_light_group_stack(i);
             if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING
@@ -756,9 +756,9 @@ void draw_continue_scene(void)
 
         nl2ngc_set_material_color(f1, f1, f1);
         mathutil_mtxA_from_mtxB();
-        sp5C.x = currentBallStructPtr->pos.x;
-        sp5C.y = currentBallStructPtr->pos.y - currentBallStructPtr->currRadius + 0.01;
-        sp5C.z = currentBallStructPtr->pos.z;
+        sp5C.x = currentBall->pos.x;
+        sp5C.y = currentBall->pos.y - currentBall->currRadius + 0.01;
+        sp5C.z = currentBall->pos.z;
         mathutil_mtxA_translate(&sp5C);
         f26 = 0.9f;
         f27 = 4.6f;
@@ -849,7 +849,7 @@ void draw_extra_scene(void)
 void draw_results_scene(void)
 {
     int i;
-    struct Ball *r23 = currentBallStructPtr;
+    struct Ball *r23 = currentBall;
 
     for (i = 0; i < 4; i++)
     {
@@ -861,7 +861,7 @@ void draw_results_scene(void)
 
             if (cameraInfo[i].flags & (1 << 6))
                 lbl_801EEC90.unk0 |= 8;
-            currentBallStructPtr = &ballInfo[i];
+            currentBall = &ballInfo[i];
             u_call_camera_apply_viewport(i);
             u_draw_ball_shadow();
             func_80054FF0();
@@ -901,7 +901,7 @@ void draw_results_scene(void)
                 lbl_801EEC90.unk0 &= ~(1 << 3);
         }
     }
-    currentBallStructPtr = r23;
+    currentBall = r23;
     func_80017FCC();
 }
 
@@ -920,15 +920,15 @@ void draw_test_camera_target(void)
 
     if ((dipSwitches & DIP_TEST_CAM) && !(dipSwitches & DIP_NO_INTR))
     {
-        mathutil_mtxA_from_translate(&currentCameraStructPtr->lookAt);
+        mathutil_mtxA_from_translate(&currentCamera->lookAt);
         mathutil_mtxA_rotate_y((globalFrameCounter << 8) * 1.2f);
         mathutil_unk_inline(10.0f, &light2pos);
 
-        mathutil_mtxA_from_translate(&currentCameraStructPtr->lookAt);
+        mathutil_mtxA_from_translate(&currentCamera->lookAt);
         mathutil_mtxA_rotate_x(globalFrameCounter << 8);
         mathutil_unk_inline(-10.0f, &light3pos);
 
-        mathutil_mtxA_from_translate(&currentCameraStructPtr->lookAt);
+        mathutil_mtxA_from_translate(&currentCamera->lookAt);
         mathutil_mtxA_rotate_z((globalFrameCounter << 8) * 0.8f);
 
         mathutil_mtxA_tf_point_xyz(&light4pos, 0.0f, 10.0f, 0.0f);
@@ -975,7 +975,7 @@ void draw_test_camera_target(void)
         GXSetNumTevStages_cached(1);
 
         mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
-        mathutil_mtxA_translate(&currentCameraStructPtr->lookAt);
+        mathutil_mtxA_translate(&currentCamera->lookAt);
         mathutil_mtxA_scale_xyz(0.05f, 0.05f, 0.05f);
         GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);

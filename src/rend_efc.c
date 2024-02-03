@@ -175,10 +175,10 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
 
     fbWidth  = currRenderMode->fbWidth;
     fbHeight = currRenderMode->xfbHeight;
-    left   = fbWidth * currentCameraStructPtr->sub28.vp.left;
-    top    = fbHeight * currentCameraStructPtr->sub28.vp.top;
-    width  = fbWidth * currentCameraStructPtr->sub28.vp.width;
-    height = fbHeight * currentCameraStructPtr->sub28.vp.height;
+    left   = fbWidth * currentCamera->sub28.vp.left;
+    top    = fbHeight * currentCamera->sub28.vp.top;
+    width  = fbWidth * currentCamera->sub28.vp.width;
+    height = fbHeight * currentCamera->sub28.vp.height;
     left   = left & ~1;
     top    = top & ~1;
     width  = (width + 1) & ~1;
@@ -252,10 +252,10 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, 0);
 
-    temp_f31_2 = currentCameraStructPtr->sub28.unk38;
-    temp_f30_2 = temp_f31_2 * currentCameraStructPtr->sub28.aspect;
-    temp_f29 = temp_f30_2 * currentCameraStructPtr->sub28.unk28;
-    temp_f28 = temp_f31_2 * currentCameraStructPtr->sub28.unk2C;
+    temp_f31_2 = currentCamera->sub28.unk38;
+    temp_f30_2 = temp_f31_2 * currentCamera->sub28.aspect;
+    temp_f29 = temp_f30_2 * currentCamera->sub28.unk28;
+    temp_f28 = temp_f31_2 * currentCamera->sub28.unk2C;
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
     GXPosition3f32(-temp_f30_2 - temp_f29, temp_f31_2 - temp_f28, -1.0f);
     GXTexCoord2f32(0.0f, 0.0f);
@@ -468,7 +468,7 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
 
     work = (void *)rendEfc->work;
 
-    if (currentCameraStructPtr->unk26 != 5)
+    if (currentCamera->unk26 != 5)
         return;
     var_f31 = work->unk24[u_cameraId1].unkC;
     if (var_f31 <= 0.0f)
@@ -479,10 +479,10 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
 
     fbWidth  = currRenderMode->fbWidth;
     fbHeight = currRenderMode->xfbHeight;
-    left   = fbWidth * currentCameraStructPtr->sub28.vp.left;
-    top    = fbHeight * currentCameraStructPtr->sub28.vp.top;
-    width  = fbWidth * currentCameraStructPtr->sub28.vp.width;
-    height = fbHeight * currentCameraStructPtr->sub28.vp.height;
+    left   = fbWidth * currentCamera->sub28.vp.left;
+    top    = fbHeight * currentCamera->sub28.vp.top;
+    width  = fbWidth * currentCamera->sub28.vp.width;
+    height = fbHeight * currentCamera->sub28.vp.height;
     left   = left & ~1;
     top    = top & ~1;
     width  = (width + 1) & ~1;
@@ -551,10 +551,10 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, 0);
 
-    temp_f31_2 = currentCameraStructPtr->sub28.unk38;
-    temp_f30_2 = temp_f31_2 * currentCameraStructPtr->sub28.aspect;
-    temp_f29 = temp_f30_2 * currentCameraStructPtr->sub28.unk28;
-    temp_f28 = temp_f31_2 * currentCameraStructPtr->sub28.unk2C;
+    temp_f31_2 = currentCamera->sub28.unk38;
+    temp_f30_2 = temp_f31_2 * currentCamera->sub28.aspect;
+    temp_f29 = temp_f30_2 * currentCamera->sub28.unk28;
+    temp_f28 = temp_f31_2 * currentCamera->sub28.unk2C;
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
     GXPosition3f32(-temp_f30_2 - temp_f29, temp_f31_2 - temp_f28, -1.0f);
     GXTexCoord2f32(0.0f, 0.0f);

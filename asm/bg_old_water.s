@@ -366,7 +366,7 @@ lbl_8005A6F0:
 /* 8005A6F8 00056618  38 A0 00 AC */	li r5, 0xac
 /* 8005A6FC 0005661C  4B FA 8C 25 */	bl memset
 /* 8005A700 00056620  38 00 00 09 */	li r0, 9
-/* 8005A704 00056624  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 8005A704 00056624  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 8005A708 00056628  B0 01 00 10 */	sth r0, 0x10(r1)
 /* 8005A70C 0005662C  C3 E3 00 38 */	lfs f31, 0x38(r3)
 /* 8005A710 00056630  48 0A C1 55 */	bl rand

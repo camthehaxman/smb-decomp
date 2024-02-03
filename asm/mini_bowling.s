@@ -181,8 +181,8 @@ lbl_0000020C:
 /* 000002FC 4BFFFE65 */ bl u_init_player_data_1
 /* 00000300 3C600000 */ lis r3, g_poolInfo@ha
 /* 00000304 38630000 */ addi r3, r3, g_poolInfo@l
-/* 00000308 3C800000 */ lis r4, currentBallStructPtr@ha
-/* 0000030C 38A40000 */ addi r5, r4, currentBallStructPtr@l
+/* 00000308 3C800000 */ lis r4, currentBall@ha
+/* 0000030C 38A40000 */ addi r5, r4, currentBall@l
 /* 00000310 3B83000C */ addi r28, r3, 0xc
 /* 00000314 80E50000 */ lwz r7, 0(r5)
 /* 00000318 3C800000 */ lis r4, ballInfo@ha
@@ -207,8 +207,8 @@ lbl_00000358:
 /* 00000358 80040000 */ lwz r0, 0(r4)
 /* 0000035C 7C090000 */ cmpw r9, r0
 /* 00000360 4180FFD8 */ blt lbl_00000338
-/* 00000364 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00000368 90E30000 */ stw r7, currentBallStructPtr@l(r3)
+/* 00000364 3C600000 */ lis r3, currentBall@ha
+/* 00000368 90E30000 */ stw r7, currentBall@l(r3)
 /* 0000036C 3C600000 */ lis r3, worldInfo@ha
 /* 00000370 38030000 */ addi r0, r3, worldInfo@l
 /* 00000374 80DC0000 */ lwz r6, 0(r28)
@@ -256,8 +256,8 @@ lbl_000003F8:
 /* 00000408 4180FFCC */ blt lbl_000003D4
 /* 0000040C 3860003D */ li r3, 0x3d
 /* 00000410 4BFFFD51 */ bl camera_set_state
-/* 00000414 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00000418 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 00000414 3C600000 */ lis r3, currentCamera@ha
+/* 00000418 38830000 */ addi r4, r3, currentCamera@l
 /* 0000041C 3C600000 */ lis r3, cameraInfo@ha
 /* 00000420 80C40000 */ lwz r6, 0(r4)
 /* 00000424 38630000 */ addi r3, r3, cameraInfo@l
@@ -583,8 +583,8 @@ lbl_00000890:
 /* 00000890 38000001 */ li r0, 1
 /* 00000894 901F0000 */ stw r0, 0(r31)
 lbl_00000898:
-/* 00000898 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000089C 80A30000 */ lwz r5, currentBallStructPtr@l(r3)
+/* 00000898 3C600000 */ lis r3, currentBall@ha
+/* 0000089C 80A30000 */ lwz r5, currentBall@l(r3)
 /* 000008A0 3C800000 */ lis r4, lbl_00010CC0@ha
 /* 000008A4 3C600000 */ lis r3, lbl_00010CC8@ha
 /* 000008A8 C8240000 */ lfd f1, lbl_00010CC0@l(r4)
@@ -612,8 +612,8 @@ lbl_000008EC:
 /* 000008FC 80030000 */ lwz r0, lbl_802F1BF0@l(r3)
 /* 00000900 2C000001 */ cmpwi r0, 1
 /* 00000904 418200C0 */ beq lbl_000009C4
-/* 00000908 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000090C 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 00000908 3C600000 */ lis r3, currentBall@ha
+/* 0000090C 80830000 */ lwz r4, currentBall@l(r3)
 /* 00000910 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00000914 3CA00000 */ lis r5, controllerInfo@ha
 /* 00000918 8884002E */ lbz r4, 0x2e(r4)
@@ -662,8 +662,8 @@ lbl_000009A4:
 /* 000009BC 38030001 */ addi r0, r3, 1
 /* 000009C0 981F0009 */ stb r0, 9(r31)
 lbl_000009C4:
-/* 000009C4 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000009C8 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 000009C4 3C600000 */ lis r3, currentBall@ha
+/* 000009C8 38630000 */ addi r3, r3, currentBall@l
 /* 000009CC 80630000 */ lwz r3, 0(r3)
 /* 000009D0 48009EA9 */ bl lbl_0000A878
 lbl_000009D4:
@@ -878,8 +878,8 @@ lbl_00000CB8:
 /* 00000CE0 801F0004 */ lwz r0, 4(r31)
 /* 00000CE4 54000463 */ rlwinm. r0, r0, 0, 0x11, 0x11
 /* 00000CE8 41820108 */ beq lbl_00000DF0
-/* 00000CEC 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00000CF0 3B830000 */ addi r28, r3, currentBallStructPtr@l
+/* 00000CEC 3C600000 */ lis r3, currentBall@ha
+/* 00000CF0 3B830000 */ addi r28, r3, currentBall@l
 /* 00000CF4 807C0000 */ lwz r3, 0(r28)
 /* 00000CF8 806300FC */ lwz r3, 0xfc(r3)
 /* 00000CFC 38630060 */ addi r3, r3, 0x60
@@ -950,9 +950,9 @@ lbl_00000DF0:
 /* 00000DF4 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 00000DF8 41820174 */ beq lbl_00000F6C
 /* 00000DFC 4BFFF365 */ bl mathutil_mtxA_from_mtxB
-/* 00000E00 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00000E00 3C600000 */ lis r3, currentBall@ha
 /* 00000E04 C05E1C98 */ lfs f2, 0x1c98(r30)
-/* 00000E08 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00000E08 38630000 */ addi r3, r3, currentBall@l
 /* 00000E0C C07E1D00 */ lfs f3, 0x1d00(r30)
 /* 00000E10 80630000 */ lwz r3, 0(r3)
 /* 00000E14 C0230004 */ lfs f1, 4(r3)
@@ -1078,8 +1078,8 @@ lbl_00000F98:
 /* 00000FE4 801E0000 */ lwz r0, 0(r30)
 /* 00000FE8 70006100 */ andi. r0, r0, 0x6100
 /* 00000FEC 40820300 */ bne lbl_000012EC
-/* 00000FF0 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00000FF4 80C30000 */ lwz r6, currentBallStructPtr@l(r3)
+/* 00000FF0 3C600000 */ lis r3, currentBall@ha
+/* 00000FF4 80C30000 */ lwz r6, currentBall@l(r3)
 /* 00000FF8 3800000A */ li r0, 0xa
 /* 00000FFC 7C0903A6 */ mtctr r0
 /* 00001000 38A100C4 */ addi r5, r1, 0xc4
@@ -1744,13 +1744,13 @@ lbl_00001988:
 lbl_000019BC:
 /* 000019BC 38E00000 */ li r7, 0
 /* 000019C0 98FE013F */ stb r7, 0x13f(r30)
-/* 000019C4 3CA00000 */ lis r5, currentBallStructPtr@ha
+/* 000019C4 3CA00000 */ lis r5, currentBall@ha
 /* 000019C8 3C600000 */ lis r3, g_poolInfo@ha
 /* 000019CC 98FE0140 */ stb r7, 0x140(r30)
 /* 000019D0 3C800000 */ lis r4, ballInfo@ha
 /* 000019D4 38040000 */ addi r0, r4, ballInfo@l
 /* 000019D8 C01F1C98 */ lfs f0, 0x1c98(r31)
-/* 000019DC 38C50000 */ addi r6, r5, currentBallStructPtr@l
+/* 000019DC 38C50000 */ addi r6, r5, currentBall@l
 /* 000019E0 38A30000 */ addi r5, r3, g_poolInfo@l
 /* 000019E4 D01E0168 */ stfs f0, 0x168(r30)
 /* 000019E8 7C080378 */ mr r8, r0
@@ -1780,8 +1780,8 @@ lbl_00001A3C:
 /* 00001A3C 80050008 */ lwz r0, 8(r5)
 /* 00001A40 7C0B0000 */ cmpw r11, r0
 /* 00001A44 4180FFD0 */ blt lbl_00001A14
-/* 00001A48 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00001A4C 38830000 */ addi r4, r3, currentBallStructPtr@l
+/* 00001A48 3C600000 */ lis r3, currentBall@ha
+/* 00001A4C 38830000 */ addi r4, r3, currentBall@l
 /* 00001A50 3C600000 */ lis r3, modeCtrl@ha
 /* 00001A54 91240000 */ stw r9, 0(r4)
 /* 00001A58 38630000 */ addi r3, r3, modeCtrl@l
@@ -1806,7 +1806,7 @@ lbl_00001A88:
 /* 00001A9C 38E00002 */ li r7, 2
 /* 00001AA0 C01F1DFC */ lfs f0, 0x1dfc(r31)
 /* 00001AA4 3CA00000 */ lis r5, lbl_00014F24@ha
-/* 00001AA8 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00001AA8 3C800000 */ lis r4, currentCamera@ha
 /* 00001AAC D01E0164 */ stfs f0, 0x164(r30)
 /* 00001AB0 38630000 */ addi r3, r3, cameraInfo@l
 /* 00001AB4 901E0000 */ stw r0, 0(r30)
@@ -1814,7 +1814,7 @@ lbl_00001A88:
 /* 00001ABC 90E60000 */ stw r7, lbl_00014F20@l(r6)
 /* 00001AC0 38C30284 */ addi r6, r3, 0x284
 /* 00001AC4 90050000 */ stw r0, lbl_00014F24@l(r5)
-/* 00001AC8 84040000 */ lwzu r0, currentCameraStructPtr@l(r4)
+/* 00001AC8 84040000 */ lwzu r0, currentCamera@l(r4)
 /* 00001ACC 90640000 */ stw r3, 0(r4)
 /* 00001AD0 98E3001F */ stb r7, 0x1f(r3)
 /* 00001AD4 90C40000 */ stw r6, 0(r4)
@@ -1905,14 +1905,14 @@ lbl_00001BF4:
 /* 00001C14 3CA00000 */ lis r5, lbl_00014F24@ha
 /* 00001C18 D01E0164 */ stfs f0, 0x164(r30)
 /* 00001C1C 38C040A1 */ li r6, 0x40a1
-/* 00001C20 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00001C20 3C800000 */ lis r4, currentCamera@ha
 /* 00001C24 911E0000 */ stw r8, 0(r30)
 /* 00001C28 38630000 */ addi r3, r3, cameraInfo@l
 /* 00001C2C 90070000 */ stw r0, 0(r7)
 /* 00001C30 38000002 */ li r0, 2
 /* 00001C34 90C50000 */ stw r6, lbl_00014F24@l(r5)
 /* 00001C38 38A30284 */ addi r5, r3, 0x284
-/* 00001C3C 84C40000 */ lwzu r6, currentCameraStructPtr@l(r4)
+/* 00001C3C 84C40000 */ lwzu r6, currentCamera@l(r4)
 /* 00001C40 90640000 */ stw r3, 0(r4)
 /* 00001C44 9803001F */ stb r0, 0x1f(r3)
 /* 00001C48 90A40000 */ stw r5, 0(r4)
@@ -1963,9 +1963,9 @@ lbl_00001C84:
 /* 00001CF4 3863D81E */ addi r3, r3, -10210  ;# fixed addi
 /* 00001CF8 4BFFE469 */ bl u_play_sound_0
 lbl_00001CFC:
-/* 00001CFC 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00001CFC 3C600000 */ lis r3, currentBall@ha
 /* 00001D00 C85F1E18 */ lfd f2, 0x1e18(r31)
-/* 00001D04 38C30000 */ addi r6, r3, currentBallStructPtr@l
+/* 00001D04 38C30000 */ addi r6, r3, currentBall@l
 /* 00001D08 80E60000 */ lwz r7, 0(r6)
 /* 00001D0C 3C600000 */ lis r3, lbl_00010D58@ha
 /* 00001D10 3C800000 */ lis r4, playerControllerIDs@ha
@@ -2013,8 +2013,8 @@ lbl_00001DAC:
 /* 00001DB0 D003001C */ stfs f0, 0x1c(r3)
 lbl_00001DB4:
 /* 00001DB4 48005765 */ bl lbl_00007518
-/* 00001DB8 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00001DBC 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 00001DB8 3C600000 */ lis r3, currentBall@ha
+/* 00001DBC 80830000 */ lwz r4, currentBall@l(r3)
 /* 00001DC0 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00001DC4 3CA00000 */ lis r5, controllerInfo@ha
 /* 00001DC8 8884002E */ lbz r4, 0x2e(r4)
@@ -2052,8 +2052,8 @@ lbl_00001DB4:
 lbl_00001E48:
 /* 00001E48 3860011A */ li r3, 0x11a
 /* 00001E4C 4BFFE315 */ bl u_play_sound_0
-/* 00001E50 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00001E54 3BA30000 */ addi r29, r3, currentBallStructPtr@l
+/* 00001E50 3C600000 */ lis r3, currentBall@ha
+/* 00001E54 3BA30000 */ addi r29, r3, currentBall@l
 /* 00001E58 807D0000 */ lwz r3, 0(r29)
 /* 00001E5C 38800000 */ li r4, 0
 /* 00001E60 38A00000 */ li r5, 0
@@ -2075,7 +2075,7 @@ lbl_00001E48:
 /* 00001EA0 38E60000 */ addi r7, r6, lbl_00014F20@l
 /* 00001EA4 38C04125 */ li r6, 0x4125
 /* 00001EA8 C01F1C98 */ lfs f0, 0x1c98(r31)
-/* 00001EAC 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00001EAC 3C800000 */ lis r4, currentCamera@ha
 /* 00001EB0 38000003 */ li r0, 3
 /* 00001EB4 D01E0160 */ stfs f0, 0x160(r30)
 /* 00001EB8 39430284 */ addi r10, r3, 0x284
@@ -2084,7 +2084,7 @@ lbl_00001E48:
 /* 00001EC4 913E0000 */ stw r9, 0(r30)
 /* 00001EC8 91070000 */ stw r8, 0(r7)
 /* 00001ECC 90C50000 */ stw r6, lbl_00014F24@l(r5)
-/* 00001ED0 84A40000 */ lwzu r5, currentCameraStructPtr@l(r4)
+/* 00001ED0 84A40000 */ lwzu r5, currentCamera@l(r4)
 /* 00001ED4 90640000 */ stw r3, 0(r4)
 /* 00001ED8 9803001F */ stb r0, 0x1f(r3)
 /* 00001EDC 91440000 */ stw r10, 0(r4)
@@ -2172,13 +2172,13 @@ lbl_00001FF8:
 /* 00002008 38A50000 */ addi r5, r5, controllerInfo@l
 /* 0000200C FC210032 */ fmul f1, f1, f0
 /* 00002010 C81E1D28 */ lfd f0, 0x1d28(r30)
-/* 00002014 3C800000 */ lis r4, currentBallStructPtr@ha
+/* 00002014 3C800000 */ lis r4, currentBall@ha
 /* 00002018 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 0000201C 3B850018 */ addi r28, r5, 0x18
 /* 00002020 FC010028 */ fsub f0, f1, f0
 /* 00002024 FC000018 */ frsp f0, f0
 /* 00002028 D01D0168 */ stfs f0, 0x168(r29)
-/* 0000202C 80640000 */ lwz r3, currentBallStructPtr@l(r4)
+/* 0000202C 80640000 */ lwz r3, currentBall@l(r4)
 /* 00002030 8863002E */ lbz r3, 0x2e(r3)
 /* 00002034 7C630774 */ extsb r3, r3
 /* 00002038 5463103A */ slwi r3, r3, 2
@@ -2204,7 +2204,7 @@ lbl_00002060:
 /* 00002084 38C00010 */ li r6, 0x10
 /* 00002088 C01E1DFC */ lfs f0, 0x1dfc(r30)
 /* 0000208C 38A04435 */ li r5, 0x4435
-/* 00002090 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00002090 3C800000 */ lis r4, currentCamera@ha
 /* 00002094 D01D0164 */ stfs f0, 0x164(r29)
 /* 00002098 38000004 */ li r0, 4
 /* 0000209C 39030284 */ addi r8, r3, 0x284
@@ -2213,7 +2213,7 @@ lbl_00002060:
 /* 000020A8 90FD0000 */ stw r7, 0(r29)
 /* 000020AC 90DF0000 */ stw r6, 0(r31)
 /* 000020B0 90BF0004 */ stw r5, 4(r31)
-/* 000020B4 84A40000 */ lwzu r5, currentCameraStructPtr@l(r4)
+/* 000020B4 84A40000 */ lwzu r5, currentCamera@l(r4)
 /* 000020B8 90640000 */ stw r3, 0(r4)
 /* 000020BC 9803001F */ stb r0, 0x1f(r3)
 /* 000020C0 91040000 */ stw r8, 0(r4)
@@ -2226,8 +2226,8 @@ lbl_00002060:
 /* 000020DC 9808001F */ stb r0, 0x1f(r8)
 /* 000020E0 90A40000 */ stw r5, 0(r4)
 lbl_000020E4:
-/* 000020E4 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000020E8 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 000020E4 3C600000 */ lis r3, currentBall@ha
+/* 000020E8 80830000 */ lwz r4, currentBall@l(r3)
 /* 000020EC 3C600000 */ lis r3, playerControllerIDs@ha
 /* 000020F0 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 000020F4 8864002E */ lbz r3, 0x2e(r4)
@@ -2250,7 +2250,7 @@ lbl_000020E4:
 /* 00002138 38C00004 */ li r6, 4
 /* 0000213C 38A040A1 */ li r5, 0x40a1
 /* 00002140 C01E1DFC */ lfs f0, 0x1dfc(r30)
-/* 00002144 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 00002144 3C800000 */ lis r4, currentCamera@ha
 /* 00002148 38630000 */ addi r3, r3, cameraInfo@l
 /* 0000214C D01D0164 */ stfs f0, 0x164(r29)
 /* 00002150 38000002 */ li r0, 2
@@ -2258,7 +2258,7 @@ lbl_000020E4:
 /* 00002158 38E30284 */ addi r7, r3, 0x284
 /* 0000215C 90DF0000 */ stw r6, 0(r31)
 /* 00002160 90BF0004 */ stw r5, 4(r31)
-/* 00002164 84A40000 */ lwzu r5, currentCameraStructPtr@l(r4)
+/* 00002164 84A40000 */ lwzu r5, currentCamera@l(r4)
 /* 00002168 90640000 */ stw r3, 0(r4)
 /* 0000216C 9803001F */ stb r0, 0x1f(r3)
 /* 00002170 90E40000 */ stw r7, 0(r4)
@@ -2381,8 +2381,8 @@ lbl_00002260:
 /* 00002334 5403043E */ clrlwi r3, r0, 0x10
 /* 00002338 4BFFDE29 */ bl SoundDop
 lbl_0000233C:
-/* 0000233C 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00002340 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 0000233C 3C600000 */ lis r3, currentBall@ha
+/* 00002340 80830000 */ lwz r4, currentBall@l(r3)
 /* 00002344 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00002348 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000234C 8884002E */ lbz r4, 0x2e(r4)
@@ -2423,7 +2423,7 @@ lbl_000023AC:
 /* 000023D0 38C00020 */ li r6, 0x20
 /* 000023D4 38A0423D */ li r5, 0x423d
 /* 000023D8 FC010032 */ fmul f0, f1, f0
-/* 000023DC 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 000023DC 3C800000 */ lis r4, currentCamera@ha
 /* 000023E0 38000004 */ li r0, 4
 /* 000023E4 39030284 */ addi r8, r3, 0x284
 /* 000023E8 FC02002A */ fadd f0, f2, f0
@@ -2433,7 +2433,7 @@ lbl_000023AC:
 /* 000023F8 90FD0000 */ stw r7, 0(r29)
 /* 000023FC 90DF0000 */ stw r6, 0(r31)
 /* 00002400 90BF0004 */ stw r5, 4(r31)
-/* 00002404 84A40000 */ lwzu r5, currentCameraStructPtr@l(r4)
+/* 00002404 84A40000 */ lwzu r5, currentCamera@l(r4)
 /* 00002408 90640000 */ stw r3, 0(r4)
 /* 0000240C 9803001F */ stb r0, 0x1f(r3)
 /* 00002410 91040000 */ stw r8, 0(r4)
@@ -2456,7 +2456,7 @@ lbl_00002434:
 /* 00002450 4E800020 */ blr 
 lbl_00002454:
 /* 00002454 7C0802A6 */ mflr r0
-/* 00002458 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00002458 3C600000 */ lis r3, currentBall@ha
 /* 0000245C 90010004 */ stw r0, 4(r1)
 /* 00002460 3CA00000 */ lis r5, playerControllerIDs@ha
 /* 00002464 3C800000 */ lis r4, controllerInfo@ha
@@ -2466,7 +2466,7 @@ lbl_00002454:
 /* 00002474 93C10030 */ stw r30, 0x30(r1)
 /* 00002478 93A1002C */ stw r29, 0x2c(r1)
 /* 0000247C 93810028 */ stw r28, 0x28(r1)
-/* 00002480 80C30000 */ lwz r6, currentBallStructPtr@l(r3)
+/* 00002480 80C30000 */ lwz r6, currentBall@l(r3)
 /* 00002484 3C600000 */ lis r3, lbl_00010D58@ha
 /* 00002488 C8230000 */ lfd f1, lbl_00010D58@l(r3)
 /* 0000248C 8806002E */ lbz r0, 0x2e(r6)
@@ -2514,9 +2514,9 @@ lbl_0000251C:
 /* 00002530 D01C0170 */ stfs f0, 0x170(r28)
 lbl_00002534:
 /* 00002534 C83D1D28 */ lfd f1, 0x1d28(r29)
-/* 00002538 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00002538 3C600000 */ lis r3, currentBall@ha
 /* 0000253C C01C016C */ lfs f0, 0x16c(r28)
-/* 00002540 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00002540 38630000 */ addi r3, r3, currentBall@l
 /* 00002544 C85D1E48 */ lfd f2, 0x1e48(r29)
 /* 00002548 FC010028 */ fsub f0, f1, f0
 /* 0000254C C83D1E70 */ lfd f1, 0x1e70(r29)
@@ -2540,8 +2540,8 @@ lbl_00002534:
 lbl_00002594:
 /* 00002594 2C030000 */ cmpwi r3, 0
 /* 00002598 408001F4 */ bge lbl_0000278C
-/* 0000259C 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000025A0 3BE30000 */ addi r31, r3, currentBallStructPtr@l
+/* 0000259C 3C600000 */ lis r3, currentBall@ha
+/* 000025A0 3BE30000 */ addi r31, r3, currentBall@l
 /* 000025A4 807F0000 */ lwz r3, 0(r31)
 /* 000025A8 38800000 */ li r4, 0
 /* 000025AC 38A00000 */ li r5, 0
@@ -2642,8 +2642,8 @@ lbl_0000271C:
 /* 0000271C 80E30008 */ lwz r7, 8(r3)
 /* 00002720 7C063800 */ cmpw r6, r7
 /* 00002724 4180FF40 */ blt lbl_00002664
-/* 00002728 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000272C 90030000 */ stw r0, currentBallStructPtr@l(r3)
+/* 00002728 3C600000 */ lis r3, currentBall@ha
+/* 0000272C 90030000 */ stw r0, currentBall@l(r3)
 /* 00002730 38000384 */ li r0, 0x384
 /* 00002734 3C600000 */ lis r3, cameraInfo@ha
 /* 00002738 901C0000 */ stw r0, 0(r28)
@@ -2651,11 +2651,11 @@ lbl_0000271C:
 /* 00002740 38630000 */ addi r3, r3, cameraInfo@l
 /* 00002744 901E0000 */ stw r0, 0(r30)
 /* 00002748 38000079 */ li r0, 0x79
-/* 0000274C 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 0000274C 3C800000 */ lis r4, currentCamera@ha
 /* 00002750 901E0004 */ stw r0, 4(r30)
 /* 00002754 38000001 */ li r0, 1
 /* 00002758 38A30284 */ addi r5, r3, 0x284
-/* 0000275C 84C40000 */ lwzu r6, currentCameraStructPtr@l(r4)
+/* 0000275C 84C40000 */ lwzu r6, currentCamera@l(r4)
 /* 00002760 90640000 */ stw r3, 0(r4)
 /* 00002764 9803001F */ stb r0, 0x1f(r3)
 /* 00002768 90A40000 */ stw r5, 0(r4)
@@ -2679,14 +2679,14 @@ lbl_0000278C:
 /* 000027AC 4E800020 */ blr 
 lbl_000027B0:
 /* 000027B0 7C0802A6 */ mflr r0
-/* 000027B4 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 000027B4 3C600000 */ lis r3, currentBall@ha
 /* 000027B8 90010004 */ stw r0, 4(r1)
 /* 000027BC 3CA00000 */ lis r5, lbl_10000000@ha
 /* 000027C0 9421FFF0 */ stwu r1, -0x10(r1)
 /* 000027C4 93E1000C */ stw r31, 0xc(r1)
 /* 000027C8 3BE50000 */ addi r31, r5, lbl_10000000@l
 /* 000027CC 93C10008 */ stw r30, 8(r1)
-/* 000027D0 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 000027D0 80830000 */ lwz r4, currentBall@l(r3)
 /* 000027D4 3C600000 */ lis r3, lbl_00010EE0@ha
 /* 000027D8 C8030000 */ lfd f0, lbl_00010EE0@l(r3)
 /* 000027DC C024000C */ lfs f1, 0xc(r4)
@@ -2702,8 +2702,8 @@ lbl_000027B0:
 /* 00002804 38000001 */ li r0, 1
 /* 00002808 981F0140 */ stb r0, 0x140(r31)
 lbl_0000280C:
-/* 0000280C 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00002810 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 0000280C 3C600000 */ lis r3, currentBall@ha
+/* 00002810 38630000 */ addi r3, r3, currentBall@l
 /* 00002814 80630000 */ lwz r3, 0(r3)
 /* 00002818 80030094 */ lwz r0, 0x94(r3)
 /* 0000281C 540004E7 */ rlwinm. r0, r0, 0, 0x13, 0x13
@@ -2712,8 +2712,8 @@ lbl_0000280C:
 /* 00002828 2C030000 */ cmpwi r3, 0
 /* 0000282C 40820020 */ bne lbl_0000284C
 lbl_00002830:
-/* 00002830 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00002834 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 00002830 3C600000 */ lis r3, currentBall@ha
+/* 00002834 80830000 */ lwz r4, currentBall@l(r3)
 /* 00002838 3C600000 */ lis r3, lbl_00010EE8@ha
 /* 0000283C C8030000 */ lfd f0, lbl_00010EE8@l(r3)
 /* 00002840 C0240008 */ lfs f1, 8(r4)
@@ -2752,9 +2752,9 @@ lbl_00002864:
 /* 000028B8 38000002 */ li r0, 2
 /* 000028BC 981F0140 */ stb r0, 0x140(r31)
 /* 000028C0 38000000 */ li r0, 0
-/* 000028C4 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 000028C4 3C600000 */ lis r3, currentBall@ha
 /* 000028C8 981F013F */ stb r0, 0x13f(r31)
-/* 000028CC 38830000 */ addi r4, r3, currentBallStructPtr@l
+/* 000028CC 38830000 */ addi r4, r3, currentBall@l
 /* 000028D0 38600000 */ li r3, 0
 /* 000028D4 80840000 */ lwz r4, 0(r4)
 /* 000028D8 4800508D */ bl lbl_00007964
@@ -2772,9 +2772,9 @@ lbl_000028EC:
 /* 00002904 38000001 */ li r0, 1
 /* 00002908 981F0140 */ stb r0, 0x140(r31)
 /* 0000290C 38000000 */ li r0, 0
-/* 00002910 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00002910 3C600000 */ lis r3, currentBall@ha
 /* 00002914 981F013F */ stb r0, 0x13f(r31)
-/* 00002918 38830000 */ addi r4, r3, currentBallStructPtr@l
+/* 00002918 38830000 */ addi r4, r3, currentBall@l
 /* 0000291C 38600000 */ li r3, 0
 /* 00002920 80840000 */ lwz r4, 0(r4)
 /* 00002924 48005041 */ bl lbl_00007964
@@ -2795,9 +2795,9 @@ lbl_00002940:
 /* 00002958 38000002 */ li r0, 2
 /* 0000295C 981F0140 */ stb r0, 0x140(r31)
 /* 00002960 38000000 */ li r0, 0
-/* 00002964 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00002964 3C600000 */ lis r3, currentBall@ha
 /* 00002968 981F013F */ stb r0, 0x13f(r31)
-/* 0000296C 38830000 */ addi r4, r3, currentBallStructPtr@l
+/* 0000296C 38830000 */ addi r4, r3, currentBall@l
 /* 00002970 38600000 */ li r3, 0
 /* 00002974 80840000 */ lwz r4, 0(r4)
 /* 00002978 48004FED */ bl lbl_00007964
@@ -2816,10 +2816,10 @@ lbl_00002990:
 /* 000029A4 4E800020 */ blr 
 lbl_000029A8:
 /* 000029A8 7C0802A6 */ mflr r0
-/* 000029AC 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 000029AC 3C600000 */ lis r3, currentBall@ha
 /* 000029B0 90010004 */ stw r0, 4(r1)
 /* 000029B4 3C800000 */ lis r4, modeCtrl@ha
-/* 000029B8 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 000029B8 38630000 */ addi r3, r3, currentBall@l
 /* 000029BC 9421FF80 */ stwu r1, -0x80(r1)
 /* 000029C0 38840000 */ addi r4, r4, modeCtrl@l
 /* 000029C4 3CC00000 */ lis r6, lbl_10000000@ha
@@ -2837,8 +2837,8 @@ lbl_000029A8:
 /* 000029F4 540004E7 */ rlwinm. r0, r0, 0, 0x13, 0x13
 /* 000029F8 3BBD000C */ addi r29, r29, 0xc
 /* 000029FC 4082005C */ bne lbl_00002A58
-/* 00002A00 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00002A04 38A30000 */ addi r5, r3, currentCameraStructPtr@l
+/* 00002A00 3C600000 */ lis r3, currentCamera@ha
+/* 00002A04 38A30000 */ addi r5, r3, currentCamera@l
 /* 00002A08 3C600000 */ lis r3, cameraInfo@ha
 /* 00002A0C 80E50000 */ lwz r7, 0(r5)
 /* 00002A10 38630000 */ addi r3, r3, cameraInfo@l
@@ -3022,9 +3022,9 @@ lbl_00002C94:
 /* 00002CB0 38A000B4 */ li r5, 0xb4
 /* 00002CB4 4800499D */ bl lbl_00007650
 lbl_00002CB8:
-/* 00002CB8 3C800000 */ lis r4, currentBallStructPtr@ha
+/* 00002CB8 3C800000 */ lis r4, currentBall@ha
 /* 00002CBC 3C600000 */ lis r3, g_poolInfo@ha
-/* 00002CC0 38A40000 */ addi r5, r4, currentBallStructPtr@l
+/* 00002CC0 38A40000 */ addi r5, r4, currentBall@l
 /* 00002CC4 38830000 */ addi r4, r3, g_poolInfo@l
 /* 00002CC8 80E50000 */ lwz r7, 0(r5)
 /* 00002CCC 3C600000 */ lis r3, ballInfo@ha
@@ -3048,11 +3048,11 @@ lbl_00002D08:
 /* 00002D08 80040008 */ lwz r0, 8(r4)
 /* 00002D0C 7C090000 */ cmpw r9, r0
 /* 00002D10 4180FFD8 */ blt lbl_00002CE8
-/* 00002D14 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00002D18 38830000 */ addi r4, r3, currentBallStructPtr@l
-/* 00002D1C 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00002D14 3C600000 */ lis r3, currentBall@ha
+/* 00002D18 38830000 */ addi r4, r3, currentBall@l
+/* 00002D1C 3C600000 */ lis r3, currentCamera@ha
 /* 00002D20 90E40000 */ stw r7, 0(r4)
-/* 00002D24 38A30000 */ addi r5, r3, currentCameraStructPtr@l
+/* 00002D24 38A30000 */ addi r5, r3, currentCamera@l
 /* 00002D28 3C600000 */ lis r3, cameraInfo@ha
 /* 00002D2C 80E50000 */ lwz r7, 0(r5)
 /* 00002D30 38830000 */ addi r4, r3, cameraInfo@l
@@ -3079,8 +3079,8 @@ lbl_00002D70:
 /* 00002D80 901E0000 */ stw r0, 0(r30)
 /* 00002D84 48000030 */ b lbl_00002DB4
 lbl_00002D88:
-/* 00002D88 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00002D8C 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00002D88 3C600000 */ lis r3, currentBall@ha
+/* 00002D8C 38630000 */ addi r3, r3, currentBall@l
 /* 00002D90 80630000 */ lwz r3, 0(r3)
 /* 00002D94 80030094 */ lwz r0, 0x94(r3)
 /* 00002D98 540004E7 */ rlwinm. r0, r0, 0, 0x13, 0x13
@@ -3105,9 +3105,9 @@ lbl_00002DB4:
 /* 00002DDC 4E800020 */ blr 
 lbl_00002DE0:
 /* 00002DE0 7C0802A6 */ mflr r0
-/* 00002DE4 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00002DE4 3C600000 */ lis r3, currentBall@ha
 /* 00002DE8 90010004 */ stw r0, 4(r1)
-/* 00002DEC 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00002DEC 38630000 */ addi r3, r3, currentBall@l
 /* 00002DF0 3CA00000 */ lis r5, lbl_10000000@ha
 /* 00002DF4 9421FFD8 */ stwu r1, -0x28(r1)
 /* 00002DF8 3C800000 */ lis r4, lbl_0000F020@ha
@@ -3305,8 +3305,8 @@ lbl_000030B0:
 /* 000030BC 38000001 */ li r0, 1
 /* 000030C0 480000CC */ b lbl_0000318C
 lbl_000030C4:
-/* 000030C4 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000030C8 80E30000 */ lwz r7, currentBallStructPtr@l(r3)
+/* 000030C4 3C600000 */ lis r3, currentBall@ha
+/* 000030C8 80E30000 */ lwz r7, currentBall@l(r3)
 /* 000030CC 3C600000 */ lis r3, playerControllerIDs@ha
 /* 000030D0 3CA00000 */ lis r5, controllerInfo@ha
 /* 000030D4 8887002E */ lbz r4, 0x2e(r7)
@@ -3460,8 +3460,8 @@ lbl_000032B8:
 /* 000032F8 3C600000 */ lis r3, g_poolInfo@ha
 /* 000032FC 981F0008 */ stb r0, 8(r31)
 /* 00003300 38630000 */ addi r3, r3, g_poolInfo@l
-/* 00003304 3C800000 */ lis r4, currentBallStructPtr@ha
-/* 00003308 38A40000 */ addi r5, r4, currentBallStructPtr@l
+/* 00003304 3C800000 */ lis r4, currentBall@ha
+/* 00003308 38A40000 */ addi r5, r4, currentBall@l
 /* 0000330C 38C3000C */ addi r6, r3, 0xc
 /* 00003310 81050000 */ lwz r8, 0(r5)
 /* 00003314 3C800000 */ lis r4, ballInfo@ha
@@ -3486,8 +3486,8 @@ lbl_00003354:
 /* 00003354 80040000 */ lwz r0, 0(r4)
 /* 00003358 7C0A0000 */ cmpw r10, r0
 /* 0000335C 4180FFD8 */ blt lbl_00003334
-/* 00003360 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00003364 91030000 */ stw r8, currentBallStructPtr@l(r3)
+/* 00003360 3C600000 */ lis r3, currentBall@ha
+/* 00003364 91030000 */ stw r8, currentBall@l(r3)
 /* 00003368 3C600000 */ lis r3, worldInfo@ha
 /* 0000336C 38030000 */ addi r0, r3, worldInfo@l
 /* 00003370 80C60000 */ lwz r6, 0(r6)
@@ -3508,8 +3508,8 @@ lbl_000033A0:
 /* 000033A0 80040000 */ lwz r0, 0(r4)
 /* 000033A4 7C070000 */ cmpw r7, r0
 /* 000033A8 4180FFDC */ blt lbl_00003384
-/* 000033AC 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 000033B0 39030000 */ addi r8, r3, currentCameraStructPtr@l
+/* 000033AC 3C600000 */ lis r3, currentCamera@ha
+/* 000033B0 39030000 */ addi r8, r3, currentCamera@l
 /* 000033B4 3C600000 */ lis r3, cameraInfo@ha
 /* 000033B8 81480000 */ lwz r10, 0(r8)
 /* 000033BC 38630000 */ addi r3, r3, cameraInfo@l
@@ -3545,8 +3545,8 @@ lbl_000033A0:
 lbl_00003434:
 /* 00003434 3C600000 */ lis r3, g_poolInfo@ha
 /* 00003438 38630000 */ addi r3, r3, g_poolInfo@l
-/* 0000343C 3C800000 */ lis r4, currentBallStructPtr@ha
-/* 00003440 38A40000 */ addi r5, r4, currentBallStructPtr@l
+/* 0000343C 3C800000 */ lis r4, currentBall@ha
+/* 00003440 38A40000 */ addi r5, r4, currentBall@l
 /* 00003444 38C3000C */ addi r6, r3, 0xc
 /* 00003448 81050000 */ lwz r8, 0(r5)
 /* 0000344C 3C800000 */ lis r4, ballInfo@ha
@@ -3571,8 +3571,8 @@ lbl_0000348C:
 /* 0000348C 80040000 */ lwz r0, 0(r4)
 /* 00003490 7C0A0000 */ cmpw r10, r0
 /* 00003494 4180FFD8 */ blt lbl_0000346C
-/* 00003498 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000349C 91030000 */ stw r8, currentBallStructPtr@l(r3)
+/* 00003498 3C600000 */ lis r3, currentBall@ha
+/* 0000349C 91030000 */ stw r8, currentBall@l(r3)
 /* 000034A0 3C600000 */ lis r3, worldInfo@ha
 /* 000034A4 38030000 */ addi r0, r3, worldInfo@l
 /* 000034A8 80C60000 */ lwz r6, 0(r6)
@@ -3593,8 +3593,8 @@ lbl_000034D8:
 /* 000034D8 80040000 */ lwz r0, 0(r4)
 /* 000034DC 7C070000 */ cmpw r7, r0
 /* 000034E0 4180FFDC */ blt lbl_000034BC
-/* 000034E4 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 000034E8 38E30000 */ addi r7, r3, currentCameraStructPtr@l
+/* 000034E4 3C600000 */ lis r3, currentCamera@ha
+/* 000034E8 38E30000 */ addi r7, r3, currentCamera@l
 /* 000034EC 3C600000 */ lis r3, cameraInfo@ha
 /* 000034F0 81270000 */ lwz r9, 0(r7)
 /* 000034F4 38630000 */ addi r3, r3, cameraInfo@l
@@ -3907,8 +3907,8 @@ lbl_00003918:
 /* 0000396C 4BFFC7F5 */ bl func_8009DB40
 /* 00003970 3860003D */ li r3, 0x3d
 /* 00003974 4BFFC7ED */ bl camera_set_state
-/* 00003978 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 0000397C 39030000 */ addi r8, r3, currentCameraStructPtr@l
+/* 00003978 3C600000 */ lis r3, currentCamera@ha
+/* 0000397C 39030000 */ addi r8, r3, currentCamera@l
 /* 00003980 3C600000 */ lis r3, cameraInfo@ha
 /* 00003984 81480000 */ lwz r10, 0(r8)
 /* 00003988 38630000 */ addi r3, r3, cameraInfo@l
@@ -4276,9 +4276,9 @@ lbl_00003DC0:
 lbl_00003EC4:
 /* 00003EC4 7C600774 */ extsb r0, r3
 /* 00003EC8 981E0000 */ stb r0, 0(r30)
-/* 00003ECC 3C800000 */ lis r4, currentBallStructPtr@ha
+/* 00003ECC 3C800000 */ lis r4, currentBall@ha
 /* 00003ED0 3CC00000 */ lis r6, controllerInfo@ha
-/* 00003ED4 80A40000 */ lwz r5, currentBallStructPtr@l(r4)
+/* 00003ED4 80A40000 */ lwz r5, currentBall@l(r4)
 /* 00003ED8 3C800000 */ lis r4, playerControllerIDs@ha
 /* 00003EDC 38040000 */ addi r0, r4, playerControllerIDs@l
 /* 00003EE0 88A5002E */ lbz r5, 0x2e(r5)
@@ -4513,8 +4513,8 @@ lbl_000041F0:
 /* 000041F0 3860006C */ li r3, 0x6c
 /* 000041F4 4BFFBF6D */ bl u_play_sound_0
 lbl_000041F8:
-/* 000041F8 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000041FC 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 000041F8 3C600000 */ lis r3, currentBall@ha
+/* 000041FC 80830000 */ lwz r4, currentBall@l(r3)
 /* 00004200 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00004204 3CA00000 */ lis r5, controllerInfo@ha
 /* 00004208 8884002E */ lbz r4, 0x2e(r4)
@@ -4576,13 +4576,13 @@ lbl_000042A4:
 /* 000042DC 48006AB1 */ bl lbl_0000AD8C
 /* 000042E0 B07E013C */ sth r3, 0x13c(r30)
 /* 000042E4 38E00000 */ li r7, 0
-/* 000042E8 3CA00000 */ lis r5, currentBallStructPtr@ha
+/* 000042E8 3CA00000 */ lis r5, currentBall@ha
 /* 000042EC 98FE013F */ stb r7, 0x13f(r30)
 /* 000042F0 3C800000 */ lis r4, ballInfo@ha
 /* 000042F4 38040000 */ addi r0, r4, ballInfo@l
 /* 000042F8 3C600000 */ lis r3, g_poolInfo@ha
 /* 000042FC 98FE0140 */ stb r7, 0x140(r30)
-/* 00004300 38C50000 */ addi r6, r5, currentBallStructPtr@l
+/* 00004300 38C50000 */ addi r6, r5, currentBall@l
 /* 00004304 38A30000 */ addi r5, r3, g_poolInfo@l
 /* 00004308 81260000 */ lwz r9, 0(r6)
 /* 0000430C 8145000C */ lwz r10, 0xc(r5)
@@ -4606,8 +4606,8 @@ lbl_00004348:
 /* 00004348 80050008 */ lwz r0, 8(r5)
 /* 0000434C 7C0B0000 */ cmpw r11, r0
 /* 00004350 4180FFD0 */ blt lbl_00004320
-/* 00004354 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00004358 91230000 */ stw r9, currentBallStructPtr@l(r3)
+/* 00004354 3C600000 */ lis r3, currentBall@ha
+/* 00004358 91230000 */ stw r9, currentBall@l(r3)
 /* 0000435C 38000000 */ li r0, 0
 /* 00004360 3860003C */ li r3, 0x3c
 /* 00004364 C01F1C98 */ lfs f0, 0x1c98(r31)
@@ -4627,7 +4627,7 @@ lbl_00004348:
 /* 0000439C 38E00002 */ li r7, 2
 /* 000043A0 C01F1DFC */ lfs f0, 0x1dfc(r31)
 /* 000043A4 3CA00000 */ lis r5, lbl_00014F24@ha
-/* 000043A8 3C800000 */ lis r4, currentCameraStructPtr@ha
+/* 000043A8 3C800000 */ lis r4, currentCamera@ha
 /* 000043AC D01E0164 */ stfs f0, 0x164(r30)
 /* 000043B0 38630000 */ addi r3, r3, cameraInfo@l
 /* 000043B4 901E0000 */ stw r0, 0(r30)
@@ -4635,7 +4635,7 @@ lbl_00004348:
 /* 000043BC 90E60000 */ stw r7, lbl_00014F20@l(r6)
 /* 000043C0 38C30284 */ addi r6, r3, 0x284
 /* 000043C4 90050000 */ stw r0, lbl_00014F24@l(r5)
-/* 000043C8 84040000 */ lwzu r0, currentCameraStructPtr@l(r4)
+/* 000043C8 84040000 */ lwzu r0, currentCamera@l(r4)
 /* 000043CC 90640000 */ stw r3, 0(r4)
 /* 000043D0 98E3001F */ stb r7, 0x1f(r3)
 /* 000043D4 90C40000 */ stw r6, 0(r4)
@@ -4655,9 +4655,9 @@ lbl_00004348:
 /* 0000440C 4E800020 */ blr 
 lbl_00004410:
 /* 00004410 7C0802A6 */ mflr r0
-/* 00004414 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00004414 3C600000 */ lis r3, currentBall@ha
 /* 00004418 90010004 */ stw r0, 4(r1)
-/* 0000441C 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 0000441C 38630000 */ addi r3, r3, currentBall@l
 /* 00004420 3CA00000 */ lis r5, lbl_10000000@ha
 /* 00004424 9421FFF0 */ stwu r1, -0x10(r1)
 /* 00004428 3C800000 */ lis r4, lbl_00014F20@ha
@@ -4669,8 +4669,8 @@ lbl_00004410:
 /* 00004440 80030094 */ lwz r0, 0x94(r3)
 /* 00004444 540004E7 */ rlwinm. r0, r0, 0, 0x13, 0x13
 /* 00004448 40820064 */ bne lbl_000044AC
-/* 0000444C 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00004450 38A30000 */ addi r5, r3, currentCameraStructPtr@l
+/* 0000444C 3C600000 */ lis r3, currentCamera@ha
+/* 00004450 38A30000 */ addi r5, r3, currentCamera@l
 /* 00004454 3C600000 */ lis r3, cameraInfo@ha
 /* 00004458 80E50000 */ lwz r7, 0(r5)
 /* 0000445C 38630000 */ addi r3, r3, cameraInfo@l
@@ -4718,9 +4718,9 @@ lbl_000044E0:
 /* 000044FC 386001CD */ li r3, 0x1cd
 /* 00004500 4BFFBC61 */ bl u_play_sound_0
 lbl_00004504:
-/* 00004504 3C800000 */ lis r4, currentBallStructPtr@ha
+/* 00004504 3C800000 */ lis r4, currentBall@ha
 /* 00004508 3C600000 */ lis r3, g_poolInfo@ha
-/* 0000450C 38A40000 */ addi r5, r4, currentBallStructPtr@l
+/* 0000450C 38A40000 */ addi r5, r4, currentBall@l
 /* 00004510 38830000 */ addi r4, r3, g_poolInfo@l
 /* 00004514 80E50000 */ lwz r7, 0(r5)
 /* 00004518 3C600000 */ lis r3, ballInfo@ha
@@ -4744,11 +4744,11 @@ lbl_00004554:
 /* 00004554 80040008 */ lwz r0, 8(r4)
 /* 00004558 7C090000 */ cmpw r9, r0
 /* 0000455C 4180FFD8 */ blt lbl_00004534
-/* 00004560 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00004564 38830000 */ addi r4, r3, currentBallStructPtr@l
-/* 00004568 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00004560 3C600000 */ lis r3, currentBall@ha
+/* 00004564 38830000 */ addi r4, r3, currentBall@l
+/* 00004568 3C600000 */ lis r3, currentCamera@ha
 /* 0000456C 90E40000 */ stw r7, 0(r4)
-/* 00004570 38A30000 */ addi r5, r3, currentCameraStructPtr@l
+/* 00004570 38A30000 */ addi r5, r3, currentCamera@l
 /* 00004574 3C600000 */ lis r3, cameraInfo@ha
 /* 00004578 80E50000 */ lwz r7, 0(r5)
 /* 0000457C 38830000 */ addi r4, r3, cameraInfo@l
@@ -4781,9 +4781,9 @@ lbl_000045C0:
 /* 000045E4 4E800020 */ blr 
 lbl_000045E8:
 /* 000045E8 7C0802A6 */ mflr r0
-/* 000045EC 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 000045EC 3C600000 */ lis r3, currentBall@ha
 /* 000045F0 90010004 */ stw r0, 4(r1)
-/* 000045F4 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 000045F4 38630000 */ addi r3, r3, currentBall@l
 /* 000045F8 3CA00000 */ lis r5, lbl_10000000@ha
 /* 000045FC 9421FFE0 */ stwu r1, -0x20(r1)
 /* 00004600 3C800000 */ lis r4, lbl_0000F020@ha
@@ -4890,8 +4890,8 @@ lbl_00004768:
 /* 00004774 38000001 */ li r0, 1
 /* 00004778 480000CC */ b lbl_00004844
 lbl_0000477C:
-/* 0000477C 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00004780 80E30000 */ lwz r7, currentBallStructPtr@l(r3)
+/* 0000477C 3C600000 */ lis r3, currentBall@ha
+/* 00004780 80E30000 */ lwz r7, currentBall@l(r3)
 /* 00004784 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00004788 3CA00000 */ lis r5, controllerInfo@ha
 /* 0000478C 8887002E */ lbz r4, 0x2e(r7)
@@ -5016,8 +5016,8 @@ lbl_0000492C:
 lbl_00004948:
 /* 00004948 3C600000 */ lis r3, g_poolInfo@ha
 /* 0000494C 38630000 */ addi r3, r3, g_poolInfo@l
-/* 00004950 3C800000 */ lis r4, currentBallStructPtr@ha
-/* 00004954 38A40000 */ addi r5, r4, currentBallStructPtr@l
+/* 00004950 3C800000 */ lis r4, currentBall@ha
+/* 00004954 38A40000 */ addi r5, r4, currentBall@l
 /* 00004958 38C3000C */ addi r6, r3, 0xc
 /* 0000495C 81050000 */ lwz r8, 0(r5)
 /* 00004960 3C800000 */ lis r4, ballInfo@ha
@@ -5042,8 +5042,8 @@ lbl_000049A0:
 /* 000049A0 80040000 */ lwz r0, 0(r4)
 /* 000049A4 7C0A0000 */ cmpw r10, r0
 /* 000049A8 4180FFD8 */ blt lbl_00004980
-/* 000049AC 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000049B0 91030000 */ stw r8, currentBallStructPtr@l(r3)
+/* 000049AC 3C600000 */ lis r3, currentBall@ha
+/* 000049B0 91030000 */ stw r8, currentBall@l(r3)
 /* 000049B4 3C600000 */ lis r3, worldInfo@ha
 /* 000049B8 38030000 */ addi r0, r3, worldInfo@l
 /* 000049BC 80C60000 */ lwz r6, 0(r6)
@@ -5064,8 +5064,8 @@ lbl_000049EC:
 /* 000049EC 80040000 */ lwz r0, 0(r4)
 /* 000049F0 7C070000 */ cmpw r7, r0
 /* 000049F4 4180FFDC */ blt lbl_000049D0
-/* 000049F8 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 000049FC 38A30000 */ addi r5, r3, currentCameraStructPtr@l
+/* 000049F8 3C600000 */ lis r3, currentCamera@ha
+/* 000049FC 38A30000 */ addi r5, r3, currentCamera@l
 /* 00004A00 3C600000 */ lis r3, cameraInfo@ha
 /* 00004A04 80E50000 */ lwz r7, 0(r5)
 /* 00004A08 38630000 */ addi r3, r3, cameraInfo@l
@@ -5101,10 +5101,10 @@ lbl_00004A64:
 /* 00004A7C 4E800020 */ blr 
 lbl_00004A80:
 /* 00004A80 7C0802A6 */ mflr r0
-/* 00004A84 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00004A84 3C600000 */ lis r3, currentBall@ha
 /* 00004A88 90010004 */ stw r0, 4(r1)
 /* 00004A8C 9421FFF8 */ stwu r1, -8(r1)
-/* 00004A90 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 00004A90 80830000 */ lwz r4, currentBall@l(r3)
 /* 00004A94 38600001 */ li r3, 1
 /* 00004A98 48002F51 */ bl lbl_000079E8
 /* 00004A9C 38600001 */ li r3, 1
@@ -5114,8 +5114,8 @@ lbl_00004A80:
 /* 00004AAC 88630000 */ lbz r3, 0(r3)
 /* 00004AB0 7C600775 */ extsb. r0, r3
 /* 00004AB4 40820050 */ bne lbl_00004B04
-/* 00004AB8 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00004ABC 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 00004AB8 3C600000 */ lis r3, currentCamera@ha
+/* 00004ABC 38830000 */ addi r4, r3, currentCamera@l
 /* 00004AC0 3C600000 */ lis r3, cameraInfo@ha
 /* 00004AC4 80C40000 */ lwz r6, 0(r4)
 /* 00004AC8 38630000 */ addi r3, r3, cameraInfo@l
@@ -5137,8 +5137,8 @@ lbl_00004B04:
 /* 00004B04 7C600774 */ extsb r0, r3
 /* 00004B08 2C000001 */ cmpwi r0, 1
 /* 00004B0C 40820050 */ bne lbl_00004B5C
-/* 00004B10 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00004B14 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 00004B10 3C600000 */ lis r3, currentCamera@ha
+/* 00004B14 38830000 */ addi r4, r3, currentCamera@l
 /* 00004B18 3C600000 */ lis r3, cameraInfo@ha
 /* 00004B1C 80C40000 */ lwz r6, 0(r4)
 /* 00004B20 38630000 */ addi r3, r3, cameraInfo@l
@@ -5157,8 +5157,8 @@ lbl_00004B04:
 /* 00004B54 90C40000 */ stw r6, 0(r4)
 /* 00004B58 4800004C */ b lbl_00004BA4
 lbl_00004B5C:
-/* 00004B5C 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00004B60 38830000 */ addi r4, r3, currentCameraStructPtr@l
+/* 00004B5C 3C600000 */ lis r3, currentCamera@ha
+/* 00004B60 38830000 */ addi r4, r3, currentCamera@l
 /* 00004B64 3C600000 */ lis r3, cameraInfo@ha
 /* 00004B68 80C40000 */ lwz r6, 0(r4)
 /* 00004B6C 38630000 */ addi r3, r3, cameraInfo@l
@@ -5191,12 +5191,12 @@ lbl_00004BA4:
 /* 00004BD4 4E800020 */ blr 
 lbl_00004BD8:
 /* 00004BD8 7C0802A6 */ mflr r0
-/* 00004BDC 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00004BDC 3C600000 */ lis r3, currentBall@ha
 /* 00004BE0 90010004 */ stw r0, 4(r1)
 /* 00004BE4 3CC00000 */ lis r6, controllerInfo@ha
 /* 00004BE8 3CE00000 */ lis r7, lbl_10000000@ha
 /* 00004BEC 9421FFF8 */ stwu r1, -8(r1)
-/* 00004BF0 80830000 */ lwz r4, currentBallStructPtr@l(r3)
+/* 00004BF0 80830000 */ lwz r4, currentBall@l(r3)
 /* 00004BF4 3C600000 */ lis r3, playerControllerIDs@ha
 /* 00004BF8 38030000 */ addi r0, r3, playerControllerIDs@l
 /* 00004BFC 88A4002E */ lbz r5, 0x2e(r4)
@@ -5893,8 +5893,8 @@ lbl_000055C4:
 /* 000055CC 94650008 */ stwu r3, 8(r5)
 /* 000055D0 90050004 */ stw r0, 4(r5)
 /* 000055D4 4200FFF0 */ bdnz lbl_000055C4
-/* 000055D8 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000055DC 80C30000 */ lwz r6, currentBallStructPtr@l(r3)
+/* 000055D8 3C600000 */ lis r3, currentBall@ha
+/* 000055DC 80C30000 */ lwz r6, currentBall@l(r3)
 /* 000055E0 3800000A */ li r0, 0xa
 /* 000055E4 7C0903A6 */ mtctr r0
 /* 000055E8 38A10194 */ addi r5, r1, 0x194
@@ -7185,7 +7185,7 @@ lbl_0000684C:
 lbl_00006884:
 /* 00006884 387D0000 */ addi r3, r29, 0
 /* 00006888 389E0104 */ addi r4, r30, 0x104
-/* 0000688C 4BFF98D5 */ bl func_8008C090
+/* 0000688C 4BFF98D5 */ bl u_mot_ape_something_with_head_anim
 /* 00006890 38000000 */ li r0, 0
 /* 00006894 901E0100 */ stw r0, 0x100(r30)
 /* 00006898 C01F1C98 */ lfs f0, 0x1c98(r31)
@@ -7220,9 +7220,9 @@ lbl_000068C4:
 /* 00006904 38840000 */ addi r4, r4, lbl_10000000@l
 /* 00006908 54C0077B */ rlwinm. r0, r6, 0, 0x1d, 0x1d
 /* 0000690C 4182003C */ beq lbl_00006948
-/* 00006910 3C800000 */ lis r4, currentBallStructPtr@ha
+/* 00006910 3C800000 */ lis r4, currentBall@ha
 /* 00006914 C8031DC0 */ lfd f0, 0x1dc0(r3)
-/* 00006918 38640000 */ addi r3, r4, currentBallStructPtr@l
+/* 00006918 38640000 */ addi r3, r4, currentBall@l
 /* 0000691C 80630000 */ lwz r3, 0(r3)
 /* 00006920 C023001C */ lfs f1, 0x1c(r3)
 /* 00006924 FC010040 */ fcmpo cr0, f1, f0
@@ -7420,8 +7420,8 @@ lbl_00006B80:
 /* 00006BD4 FC020000 */ fcmpu cr0, f2, f0
 /* 00006BD8 40820254 */ bne lbl_00006E2C
 lbl_00006BDC:
-/* 00006BDC 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00006BE0 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00006BDC 3C600000 */ lis r3, currentBall@ha
+/* 00006BE0 38630000 */ addi r3, r3, currentBall@l
 /* 00006BE4 80630000 */ lwz r3, 0(r3)
 /* 00006BE8 80030094 */ lwz r0, 0x94(r3)
 /* 00006BEC 540004E7 */ rlwinm. r0, r0, 0, 0x13, 0x13
@@ -7567,8 +7567,8 @@ lbl_00006DA4:
 /* 00006DF0 FC020000 */ fcmpu cr0, f2, f0
 /* 00006DF4 40820038 */ bne lbl_00006E2C
 lbl_00006DF8:
-/* 00006DF8 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 00006DFC 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00006DF8 3C600000 */ lis r3, currentBall@ha
+/* 00006DFC 38630000 */ addi r3, r3, currentBall@l
 /* 00006E00 80630000 */ lwz r3, 0(r3)
 /* 00006E04 80030094 */ lwz r0, 0x94(r3)
 /* 00006E08 540004E7 */ rlwinm. r0, r0, 0, 0x13, 0x13
@@ -8042,12 +8042,12 @@ lbl_00007288:
 /* 00007514 4E800020 */ blr 
 lbl_00007518:
 /* 00007518 7C0802A6 */ mflr r0
-/* 0000751C 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 0000751C 3C600000 */ lis r3, currentBall@ha
 /* 00007520 90010004 */ stw r0, 4(r1)
 /* 00007524 3C800000 */ lis r4, lbl_0000F020@ha
 /* 00007528 9421FFE8 */ stwu r1, -0x18(r1)
 /* 0000752C 93E10014 */ stw r31, 0x14(r1)
-/* 00007530 3BE30000 */ addi r31, r3, currentBallStructPtr@l
+/* 00007530 3BE30000 */ addi r31, r3, currentBall@l
 /* 00007534 93C10010 */ stw r30, 0x10(r1)
 /* 00007538 3BC40000 */ addi r30, r4, lbl_0000F020@l
 /* 0000753C 807F0000 */ lwz r3, 0(r31)
@@ -8098,8 +8098,8 @@ lbl_000075E4:
 /* 000075E4 FC200090 */ fmr f1, f0
 lbl_000075E8:
 /* 000075E8 C81E2228 */ lfd f0, 0x2228(r30)
-/* 000075EC 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 000075F0 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 000075EC 3C600000 */ lis r3, currentBall@ha
+/* 000075F0 38630000 */ addi r3, r3, currentBall@l
 /* 000075F4 FC000072 */ fmul f0, f0, f1
 /* 000075F8 80630000 */ lwz r3, 0(r3)
 /* 000075FC 8863002E */ lbz r3, 0x2e(r3)
@@ -8110,8 +8110,8 @@ lbl_000075E8:
 /* 00007610 4BFF8B51 */ bl func_8002CA5C
 /* 00007614 48000024 */ b lbl_00007638
 lbl_00007618:
-/* 00007618 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000761C 38630000 */ addi r3, r3, currentBallStructPtr@l
+/* 00007618 3C600000 */ lis r3, currentBall@ha
+/* 0000761C 38630000 */ addi r3, r3, currentBall@l
 /* 00007620 80630000 */ lwz r3, 0(r3)
 /* 00007624 38800000 */ li r4, 0
 /* 00007628 38A00000 */ li r5, 0

@@ -200,11 +200,11 @@ void bg_bonus_interact(int a)
         // spawn shooting star
         memset(&star, 0, sizeof(star));
         star.type = ET_BNS_STG_STAR;
-        star.playerId = currentBallStructPtr->playerId;
+        star.playerId = currentBall->playerId;
         mathutil_mtxA_from_mtx(cameraInfo[star.playerId].unk1A4);
         spC.z = -120.0f + RAND_FLOAT() * -225.0f;
-        spC.x = spC.z * -(8.0f / 3.0f) * currentCameraStructPtr->sub28.unk38 * (RAND_FLOAT() - 0.5f);
-        spC.y = spC.z * -1.1f * currentCameraStructPtr->sub28.unk38;
+        spC.x = spC.z * -(8.0f / 3.0f) * currentCamera->sub28.unk38 * (RAND_FLOAT() - 0.5f);
+        spC.y = spC.z * -1.1f * currentCamera->sub28.unk38;
         mathutil_mtxA_rigid_inv_tf_point(&spC, &star.pos);
         f31 = -spC.z * (1.0f / 300.0f);
         star.vel.x = (1.0f + RAND_FLOAT()) * f31;

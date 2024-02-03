@@ -1904,7 +1904,7 @@ void u_draw_stage_collision(void)
     struct StageColiCylinder *cylinder;
     int phi_r26_4;
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     mathutil_mtx_copy(mathutilData->mtxB, sp24);
 
     phi_r29 = animGroups;
@@ -1987,8 +1987,8 @@ void draw_dynamic_stage_collision(struct DynamicStagePart *dynStageParts)
     struct UnkStruct *r5;
     struct UnkStruct *r26;
     struct UnkStruct *r25;
-    float f29 = (double)mathutil_floor(currentBallStructPtr->pos.x - 1.0);
-    float f28 = (double)mathutil_floor(currentBallStructPtr->pos.z - 1.0);
+    float f29 = (double)mathutil_floor(currentBall->pos.x - 1.0);
+    float f28 = (double)mathutil_floor(currentBall->pos.z - 1.0);
     int j;
     int i;
     struct StageColiTri triangle;

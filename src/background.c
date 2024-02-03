@@ -998,7 +998,7 @@ void draw_bg_flipbooks(Mtx viewFromWorld, struct StageFlipbookAnims *flipbooks)
             // Position is in world space, Y rotation is billboarded
             mathutil_mtxA_from_mtx(viewFromWorld);
             mathutil_mtxA_translate(&stormFlipbook->pos);
-            mathutil_mtxA_rotate_y(currentCameraStructPtr->rotY);
+            mathutil_mtxA_rotate_y(currentCamera->rotY);
             GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
             GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
             t = (unpausedFrameCounter + stormFlipbook->frameOffset * 4);

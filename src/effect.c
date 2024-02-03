@@ -512,7 +512,7 @@ void u_give_points(int arg0, int arg1)
                 ball->unk7C = 999999999;
             break;
         case 2:
-            ball = currentBallStructPtr;
+            ball = currentBall;
             ball->unk7C += floorScore;
             if (ball->unk7C > 999999999)
                 ball->unk7C = 999999999;
@@ -524,7 +524,7 @@ void u_give_points(int arg0, int arg1)
             }
             break;
         default:
-            ball = currentBallStructPtr;
+            ball = currentBall;
             ball->unk7C += floorScore;
             if (ball->unk7C > 999999999)
                 ball->unk7C = 999999999;
@@ -532,7 +532,7 @@ void u_give_points(int arg0, int arg1)
         }
         break;
     default:
-        ball = currentBallStructPtr;
+        ball = currentBall;
         ball->unk7C += arg1;
         if (ball->unk7C > 999999999)
             ball->unk7C = 999999999;
@@ -623,7 +623,7 @@ void effect_draw(void)
 
     poolStatus = g_poolInfo.effectPool.statusList;
     effect = g_effects;
-    if (!(currentCameraStructPtr->flags & 1))
+    if (!(currentCamera->flags & 1))
     {
         for (i = g_poolInfo.effectPool.count; i > 0; i--, poolStatus++, effect++)
         {
@@ -934,7 +934,7 @@ static void effect_paperfrag_draw(struct Effect *effect)
     mathutil_mtxA_rotate_x(effect->rotX);
     mathutil_mtxA_rotate_z(effect->rotZ);
 
-    new_var = (120.0f * currentCameraStructPtr->sub28.vp.height) * (0.11f * effect->scale.x) * currentCameraStructPtr->sub28.unk3C;
+    new_var = (120.0f * currentCamera->sub28.vp.height) * (0.11f * effect->scale.x) * currentCamera->sub28.unk3C;
     var_f31 *= 2.0f * (new_var + mathutilData->mtxA[2][3]);
     if (var_f31 < 0.0)
         return;
@@ -1206,7 +1206,7 @@ static void effect_rotate_bg_init(struct Effect *effect) {}
 
 static void effect_rotate_bg_main(struct Effect *effect)
 {
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
 
     if (gameSubmode != MD_GAME || !(ball->flags & 8))
     {
@@ -1306,7 +1306,7 @@ static void effect_raindrop_destroy(struct Effect *effect) {}
 
 static void effect_holding_banana_init(struct Effect *effect)
 {
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
 
     effect->u_otherTimer = 30;
     effect->unk88.x = effect->pos.x - ball->pos.x;
@@ -1481,10 +1481,10 @@ static void effect_levitate_draw(struct Effect *effect)
     else
         scale = 1.0f;
     scale *= effect->scale.x;
-    if (spC.z > -1.443375673 * currentCameraStructPtr->sub28.unk3C)
-        scale *= spC.z / (-1.443375673 * currentCameraStructPtr->sub28.unk3C);
-    else if (spC.z < -5.773502692 * currentCameraStructPtr->sub28.unk3C)
-        scale *= spC.z / (-5.773502692 * currentCameraStructPtr->sub28.unk3C);
+    if (spC.z > -1.443375673 * currentCamera->sub28.unk3C)
+        scale *= spC.z / (-1.443375673 * currentCamera->sub28.unk3C);
+    else if (spC.z < -5.773502692 * currentCamera->sub28.unk3C)
+        scale *= spC.z / (-5.773502692 * currentCamera->sub28.unk3C);
     mathutil_mtxA_scale_xyz(scale, scale, scale);
     nl2ngc_set_scale(scale);
     if (effect->timer < 56)
@@ -1809,7 +1809,7 @@ static void effect_ball_glow_init(struct Effect *effect)
 
 static void effect_ball_glow_main(struct Effect *effect)
 {
-    if (!(currentBallStructPtr->flags & 0x10))
+    if (!(currentBall->flags & 0x10))
     {
         effect->unk18 += 0.10 * (1.0 - effect->unk18);
         effect->unk1C += 0.12 * (1.0 - effect->unk1C);
@@ -1825,7 +1825,7 @@ static void effect_ball_glow_main(struct Effect *effect)
 
 static void effect_ball_glow_draw(struct Effect *effect)
 {
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
     Vec spC;
     float scale;
 
@@ -1866,7 +1866,7 @@ static void effect_exm_guide_light_main(struct Effect *effect)
     float temp_f1;
     struct Ball *temp_r29;
 
-    temp_r29 = currentBallStructPtr;
+    temp_r29 = currentBall;
     spC4 = effect->pos;
     mathutil_mtxA_from_mtx(animGroups[effect->u_otherTimer].transform);
     mathutil_mtxA_translate(&effect->unk88);
@@ -3116,7 +3116,7 @@ static void effect_commendfrag_draw(struct Effect *effect)
     mathutil_mtxA_rotate_y(effect->rotY);
     mathutil_mtxA_rotate_x(effect->rotX);
     mathutil_mtxA_rotate_z(effect->rotZ);
-    new_var = (120.0f * currentCameraStructPtr->sub28.vp.height) * (0.11f * effect->scale.x) * currentCameraStructPtr->sub28.unk3C;
+    new_var = (120.0f * currentCamera->sub28.vp.height) * (0.11f * effect->scale.x) * currentCamera->sub28.unk3C;
     var_f31 *= 2.0f * (new_var + mathutilData->mtxA[2][3]);
     if (var_f31 < 0.0)
         return;

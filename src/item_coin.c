@@ -164,7 +164,7 @@ void item_coin_draw(struct Item *item)
         mathutil_mtxA_scale_xyz(scale, scale, scale);
     mathutil_mtxA_get_translate_alt(&spC);
     f30 = -(((spC.z + f30) + 0.1f) / f30);
-    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBallStructPtr->flags & (1 << 12)))
+    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBall->flags & (1 << 12)))
         f30 = 0.25f;
     if (f30 > 0.0f)
     {
@@ -183,7 +183,7 @@ void item_coin_draw(struct Item *item)
 
 void item_coin_collect(struct Item *item, struct PhysicsBall *ball)
 {
-    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBallStructPtr->flags & (1 << 12)))
+    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBall->flags & (1 << 12)))
         return;
     item->flags &= ~(1 << 1);
     item->state = 3;
@@ -192,7 +192,7 @@ void item_coin_collect(struct Item *item, struct PhysicsBall *ball)
     item->vel.x += ball->vel.x * 0.25;
     item->vel.y += ball->vel.y * 0.25;
     item->vel.z += ball->vel.z * 0.25;
-    if (item->unk5E < 0 && !(currentBallStructPtr->flags & (1 << 24)))
+    if (item->unk5E < 0 && !(currentBall->flags & (1 << 24)))
     {
         struct Effect effect;
 
@@ -206,7 +206,7 @@ void item_coin_collect(struct Item *item, struct PhysicsBall *ball)
         // spawn banana effect that travels towards counter in HUD
         memset(&effect, 0, sizeof(effect));
         effect.type = ET_HOLDING_BANANA;
-        effect.playerId = currentBallStructPtr->playerId;
+        effect.playerId = currentBall->playerId;
         mathutil_mtxA_from_mtx(animGroups[ball->animGroupId].transform);
         mathutil_mtxA_tf_point(&item->pos, &effect.pos);
         mathutil_mtxA_tf_vec(&item->vel, &effect.vel);
@@ -295,7 +295,7 @@ struct GMAModel *get_lod(struct ModelLOD **a)
     }
     if (spC.z > -0.1f)
         return model;
-    f1 = (currentCameraStructPtr->sub28.vp.height * -480.0f) * f31 / (spC.z * currentCameraStructPtr->sub28.unk38);
+    f1 = (currentCamera->sub28.vp.height * -480.0f) * f31 / (spC.z * currentCamera->sub28.unk38);
     while (r31->modelId > 0)
     {
         modelId = r31->modelId;

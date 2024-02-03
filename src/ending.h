@@ -4,12 +4,12 @@
 struct EndingSceneCharacter
 {
     struct Ape *ape;
-    s16 unk4;
-    s16 unk6;
+    s16 state;
+    s16 timer;
     s16 unk8;
     /*0x0A*/ s16 unkA;
-    /*0x0C*/ Vec unkC;
-    /*0x18*/ Vec unk18;
+    /*0x0C*/ Vec pos;
+    /*0x18*/ Vec vel;
              u8 filler24[0x30-0x24];
              S16Vec unk30;
              u16 unk36;
@@ -84,8 +84,8 @@ struct EndingSceneObject
     s16 unk2;
     s16 unk4;
     s32 unk8;
-    Vec unkC;
-    Vec unk18;
+    Vec pos;
+    Vec vel;
     Vec unk24;
     S16Vec unk30;
     s16 unk36, unk38, unk3A;

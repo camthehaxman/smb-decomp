@@ -28,7 +28,7 @@ void ev_obj_collision_dest(void) {}
 static void do_object_collision(void)
 {
     Vec sp70;
-    struct Ball *ballBackup = currentBallStructPtr;
+    struct Ball *ballBackup = currentBall;
     int i;
     struct Ball *ball;
     s8 *phi_r19;
@@ -37,7 +37,7 @@ static void do_object_collision(void)
     phi_r19 = g_poolInfo.playerPool.statusList;
     for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, phi_r19++)
     {
-        currentBallStructPtr = ball;
+        currentBall = ball;
         if (*phi_r19 != 0 && *phi_r19 != 4)
         {
             struct PhysicsBall physBall;
@@ -115,7 +115,7 @@ static void do_object_collision(void)
             }
         }
     }
-    currentBallStructPtr = ballBackup;
+    currentBall = ballBackup;
 }
 
 u32 func_8006A9B8(Point3d *arg0, Point3d *arg1, Point3d *arg2, Point3d *arg3, float arg4, float arg5)

@@ -218,16 +218,16 @@ lbl_00000348:
 /* 00000368 38E50000 */ addi r7, r5, ballInfo@l
 /* 0000036C 8003002C */ lwz r0, 0x2c(r3)
 /* 00000370 3B83002C */ addi r28, r3, 0x2c
-/* 00000374 3CC00000 */ lis r6, currentBallStructPtr@ha
+/* 00000374 3CC00000 */ lis r6, currentBall@ha
 /* 00000378 1D0001A4 */ mulli r8, r0, 0x1a4
 /* 0000037C 7CE74214 */ add r7, r7, r8
 /* 00000380 1CA00284 */ mulli r5, r0, 0x284
-/* 00000384 90E60000 */ stw r7, currentBallStructPtr@l(r6)
+/* 00000384 90E60000 */ stw r7, currentBall@l(r6)
 /* 00000388 3C800000 */ lis r4, cameraInfo@ha
 /* 0000038C 38040000 */ addi r0, r4, cameraInfo@l
-/* 00000390 3C600000 */ lis r3, currentCameraStructPtr@ha
+/* 00000390 3C600000 */ lis r3, currentCamera@ha
 /* 00000394 7C002A14 */ add r0, r0, r5
-/* 00000398 90030000 */ stw r0, currentCameraStructPtr@l(r3)
+/* 00000398 90030000 */ stw r0, currentCamera@l(r3)
 /* 0000039C 4BFFFE35 */ bl u_init_player_data_1
 /* 000003A0 4BFFFE31 */ bl func_80044920
 /* 000003A4 386000A7 */ li r3, 0xa7
@@ -393,11 +393,11 @@ lbl_000005CC:
 /* 0000060C 38630000 */ addi r3, r3, modeCtrl@l
 /* 00000610 8003002C */ lwz r0, 0x2c(r3)
 /* 00000614 3C800000 */ lis r4, ballInfo@ha
-/* 00000618 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00000618 3C600000 */ lis r3, currentBall@ha
 /* 0000061C 1CA001A4 */ mulli r5, r0, 0x1a4
 /* 00000620 38040000 */ addi r0, r4, ballInfo@l
 /* 00000624 7C002A14 */ add r0, r0, r5
-/* 00000628 90030000 */ stw r0, currentBallStructPtr@l(r3)
+/* 00000628 90030000 */ stw r0, currentBall@l(r3)
 /* 0000062C C03E0000 */ lfs f1, 0(r30)
 /* 00000630 C05E0024 */ lfs f2, 0x24(r30)
 /* 00000634 FC600890 */ fmr f3, f1
@@ -10619,9 +10619,9 @@ lbl_00009C40:
 /* 00009C4C 4E800020 */ blr 
 lbl_00009C50:
 /* 00009C50 7C0802A6 */ mflr r0
-/* 00009C54 3C600000 */ lis r3, currentBallStructPtr@ha
+/* 00009C54 3C600000 */ lis r3, currentBall@ha
 /* 00009C58 90010004 */ stw r0, 4(r1)
-/* 00009C5C 38030000 */ addi r0, r3, currentBallStructPtr@l
+/* 00009C5C 38030000 */ addi r0, r3, currentBall@l
 /* 00009C60 3C800000 */ lis r4, lbl_00009C10@ha
 /* 00009C64 9421FDC8 */ stwu r1, -0x238(r1)
 /* 00009C68 3D400000 */ lis r10, lbl_10000000@ha
@@ -10643,7 +10643,7 @@ lbl_00009C50:
 /* 00009CA8 3DC00000 */ lis r14, unpausedFrameCounter@ha
 /* 00009CAC 3E800000 */ lis r20, commonGma@ha
 /* 00009CB0 3EC00000 */ lis r22, stageBoundSphere@ha
-/* 00009CB4 3EE00000 */ lis r23, currentCameraStructPtr@ha
+/* 00009CB4 3EE00000 */ lis r23, currentCamera@ha
 /* 00009CB8 3F400000 */ lis r26, backgroundInfo@ha
 /* 00009CBC 3F600000 */ lis r27, g_poolInfo@ha
 /* 00009CC0 3F000000 */ lis r24, eventInfo@ha
@@ -10669,7 +10669,7 @@ lbl_00009C50:
 /* 00009D10 38160000 */ addi r0, r22, stageBoundSphere@l
 /* 00009D14 39EF8889 */ addi r15, r15, -30583  ;# fixed addi
 /* 00009D18 900101A4 */ stw r0, 0x1a4(r1)
-/* 00009D1C 38170000 */ addi r0, r23, currentCameraStructPtr@l
+/* 00009D1C 38170000 */ addi r0, r23, currentCamera@l
 /* 00009D20 3AC00000 */ li r22, 0
 /* 00009D24 9001019C */ stw r0, 0x19c(r1)
 /* 00009D28 381A0000 */ addi r0, r26, backgroundInfo@l
@@ -12129,8 +12129,8 @@ lbl_0000B250:
 /* 0000B250 2C160004 */ cmpwi r22, 4
 /* 0000B254 4180EAEC */ blt lbl_00009D40
 /* 0000B258 80010190 */ lwz r0, 0x190(r1)
-/* 0000B25C 3C600000 */ lis r3, currentBallStructPtr@ha
-/* 0000B260 90030000 */ stw r0, currentBallStructPtr@l(r3)
+/* 0000B25C 3C600000 */ lis r3, currentBall@ha
+/* 0000B260 90030000 */ stw r0, currentBall@l(r3)
 /* 0000B264 4BFF4F6D */ bl func_80017FCC
 /* 0000B268 B9C101E8 */ lmw r14, 0x1e8(r1)
 /* 0000B26C 8001023C */ lwz r0, 0x23c(r1)
@@ -18129,8 +18129,8 @@ lbl_00010C18:
 /* 00010C20 4180FF5C */ blt lbl_00010B7C
 /* 00010C24 48000198 */ b lbl_00010DBC
 lbl_00010C28:
-/* 00010C28 3C600000 */ lis r3, currentCameraStructPtr@ha
-/* 00010C2C 80C30000 */ lwz r6, currentCameraStructPtr@l(r3)
+/* 00010C28 3C600000 */ lis r3, currentCamera@ha
+/* 00010C2C 80C30000 */ lwz r6, currentCamera@l(r3)
 /* 00010C30 3C800000 */ lis r4, animGroups@ha
 /* 00010C34 3C600000 */ lis r3, lbl_8020A348@ha
 /* 00010C38 38A40000 */ addi r5, r4, animGroups@l

@@ -798,7 +798,7 @@ effect_bird_kite_main:
 /* 800574A0 000533C0  7C 7F 1B 78 */	mr r31, r3
 /* 800574A4 000533C4  93 C1 00 58 */	stw r30, 0x58(r1)
 /* 800574A8 000533C8  A8 03 00 0A */	lha r0, 0xa(r3)
-/* 800574AC 000533CC  80 8D 9D 38 */	lwz r4, currentBallStructPtr@sda21(r13)
+/* 800574AC 000533CC  80 8D 9D 38 */	lwz r4, currentBall@sda21(r13)
 /* 800574B0 000533D0  2C 00 00 01 */	cmpwi r0, 1
 /* 800574B4 000533D4  41 82 02 00 */	beq lbl_800576B4
 /* 800574B8 000533D8  40 80 01 FC */	bge lbl_800576B4
@@ -806,7 +806,7 @@ effect_bird_kite_main:
 /* 800574C0 000533E0  40 80 00 08 */	bge lbl_800574C8
 /* 800574C4 000533E4  48 00 01 F0 */	b lbl_800576B4
 lbl_800574C8:
-/* 800574C8 000533E8  80 8D 9A 5C */	lwz r4, currentCameraStructPtr@sda21(r13)
+/* 800574C8 000533E8  80 8D 9A 5C */	lwz r4, currentCamera@sda21(r13)
 /* 800574CC 000533EC  38 61 00 0C */	addi r3, r1, 0xc
 /* 800574D0 000533F0  C0 3F 00 34 */	lfs f1, 0x34(r31)
 /* 800574D4 000533F4  C0 44 00 00 */	lfs f2, 0(r4)

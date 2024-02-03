@@ -66,7 +66,7 @@ void bg_old_storm_main(void)
     Point3d spD0;
     struct Effect effect;
     struct RaycastHit sp8;
-    struct Ball *temp_r30 = currentBallStructPtr;
+    struct Ball *temp_r30 = currentBall;
 
     if (gamePauseStatus & 0xA)
         return;

@@ -758,7 +758,7 @@ lbl_8009C430:
 /* 8009C490 000983B0  FF 61 00 2A */	fadd f27, f1, f0
 /* 8009C494 000983B4  FF 60 D8 18 */	frsp f27, f27
 lbl_8009C498:
-/* 8009C498 000983B8  80 8D 9D 38 */	lwz r4, currentBallStructPtr@sda21(r13)
+/* 8009C498 000983B8  80 8D 9D 38 */	lwz r4, currentBall@sda21(r13)
 /* 8009C49C 000983BC  38 C0 00 01 */	li r6, 1
 /* 8009C4A0 000983C0  38 61 00 40 */	addi r3, r1, 0x40
 /* 8009C4A4 000983C4  88 04 00 2E */	lbz r0, 0x2e(r4)

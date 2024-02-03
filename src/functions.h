@@ -235,15 +235,15 @@ void func_8008BEF8(int);
 void u_switch_ape_character_lod_maybe(struct Ape *, int);
 // ? func_8008BFB4();
 void func_8008BFDC(struct Ape *, u16, u16);
-void func_8008C090(struct Ape *, Vec *);
+void u_mot_ape_something_with_head_anim(struct Ape *, Vec *);
 void func_8008C408(struct Ape *, Vec *);
-void func_8008C4A0(float);
+void u_mot_ape_set_some_var(float);
 void u_do_ape_anim(struct Ape *);
 // ? u_draw_ape_transformed();
 void func_8008C924(struct Ape *ape, int b);
 void func_8008CAAC(struct Ape *, float);
-void func_8008CBD0(int, int, struct GMAModel *, struct GMAModel *);
-void func_8008CCB8(struct Ape *ape, struct GMAModel *unused);
+void u_init_ape_materials(int, int, struct GMAModel *, struct GMAModel *);
+void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused);
 */
 
 // code_2.c

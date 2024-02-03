@@ -125,18 +125,18 @@ struct Ball
         struct Ball *ballBackup_; \
         s8 *unk_; \
         int i_; \
-        ballBackup_ = currentBallStructPtr; \
+        ballBackup_ = currentBall; \
         ball = ballInfo; \
         unk_ = g_poolInfo.playerPool.statusList; \
         for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, ball++, unk_++) \
         { \
             if (*unk_ == 2) \
             { \
-                currentBallStructPtr = ball; \
+                currentBall = ball; \
                 { code } \
             } \
         } \
-        currentBallStructPtr = ballBackup_; \
+        currentBall = ballBackup_; \
     }
 
 // extern ? lbl_80205E20;
@@ -160,7 +160,7 @@ void func_80037718();
 void func_80037B1C(struct Ball *);
 void func_80037B20(void);
 void ev_ball_init(void);
-struct Ape *u_init_ape(int a, int character, void (*c)(struct Ape *, int));
+struct Ape *u_init_ape(int a, enum Character character, void (*c)(struct Ape *, int));
 void ev_ball_main(void);
 void func_80038528(struct Ball *);
 void ev_ball_dest(void);

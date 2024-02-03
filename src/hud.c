@@ -342,7 +342,7 @@ void hud_show_press_start_textbox(int a)
     tbox.y = (a == 2 || a == 3) ? 361 : 410;
     tbox.numRows = 1;
     tbox.callback = press_start_texbox_callback;
-    textbox_set_properties(0, 21, &tbox);
+    textbox_set_properties(0, TEXTBOX_STATE_21, &tbox);
     if (a == 3)
         textbox_add_text(0, "b/Select using the c/0xffffff/p/BUTTON_A/c/0x000000/ Button!");
     else
@@ -979,7 +979,7 @@ void u_show_adv_ready_hud(void)
     struct Ball *ball;
     u8 filler[16];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     func_8000D5B8();
     hud_show_bomb(320.0f, 68.0f);
 
@@ -1537,7 +1537,7 @@ void hud_show_ready_banner(int duration)
         sprite = create_sprite();
         if (sprite != NULL)
         {
-            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBallStructPtr->playerId : 3;
+            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBall->playerId : 3;
 
             sprite->x = 785.0f;
             sprite->y = 310.0f;
@@ -1549,7 +1549,7 @@ void hud_show_ready_banner(int duration)
             sprite->userVar = -30;
             sprite->counter = 120;
             sprite->mainFunc = player_num_sprite_main;
-            sprintf(sprite->text, "%dP", currentBallStructPtr->playerId + 1);
+            sprintf(sprite->text, "%dP", currentBall->playerId + 1);
         }
     }
 
@@ -1626,7 +1626,7 @@ void hud_show_normal_mode_info(void)
     int floorNum;
     u8 dummy[16];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
         flags = lbl_8027CE24[0].unk4;
     else
@@ -2362,7 +2362,7 @@ static void banana_count_sprite_draw(struct Sprite *sprite)
     int temp_r23;
     struct Struct80292C00 *r22;
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     reset_text_draw_settings();
     set_text_font(sprite->fontId);
     set_text_pos(sprite->x - 70.0f, sprite->y - 10.0f);
@@ -2487,7 +2487,7 @@ static void lbl_8007B134(struct Sprite *sprite)
 static void score_value_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
     struct Struct80292C60 *r31 = &lbl_80292C60;
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
 
     if (r31->unk4 == 0)
     {
@@ -2531,7 +2531,7 @@ static void lbl_8007B490(s8 *arg0, struct Sprite *sprite)
 
 static void normal_ball_speed_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    float len = mathutil_vec_len(&currentBallStructPtr->vel);
+    float len = mathutil_vec_len(&currentBall->vel);
     float mph = ((216000.0 * len) / 1000.0) / 1.6093;
 
     if (mph > 999.0)
@@ -3562,7 +3562,7 @@ void hud_show_game_over_banner(int duration)
         sprite = create_sprite();
         if (sprite != NULL)
         {
-            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBallStructPtr->playerId : 3;
+            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBall->playerId : 3;
 
             sprite->x = 785.0f;
             sprite->y = 310.0f;
@@ -3575,7 +3575,7 @@ void hud_show_game_over_banner(int duration)
             sprite->counter = 120;
             sprite->unk4C = 0.008f;
             sprite->mainFunc = game_over_player_num_sprite_main;
-            sprintf(sprite->text, "%dP", currentBallStructPtr->playerId + 1);
+            sprintf(sprite->text, "%dP", currentBall->playerId + 1);
         }
     }
 }

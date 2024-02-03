@@ -106,7 +106,7 @@ void item_pilot_main(struct Item *item)
     struct Ball *r29;
     float f31;
 
-    r29 = currentBallStructPtr;
+    r29 = currentBall;
     if (item->unk64 != 0)
         f31 = item->pos.y + item->unk74;
     else
@@ -376,7 +376,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
             item->flags &= ~(1 << 1);
             memset(&effect, 0, sizeof(effect));
             effect.type = ET_HOLDING_BANANA;
-            effect.playerId = currentBallStructPtr->playerId;
+            effect.playerId = currentBall->playerId;
             mathutil_mtxA_from_mtx(animGroups[ball->animGroupId].transform);
             mathutil_mtxA_tf_point(&item->pos, &effect.pos);
             mathutil_mtxA_tf_vec(&item->vel, &effect.vel);
@@ -392,7 +392,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
     }
     else if (item->subType == 3)
     {
-        struct Ball *r31 = currentBallStructPtr;
+        struct Ball *r31 = currentBall;
         struct Effect effect;
 
         lbl_802F1FD0 |= 0x42;
@@ -415,7 +415,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
     }
     else if (item->subType == 4)
     {
-        struct Ball *r31 = currentBallStructPtr;
+        struct Ball *r31 = currentBall;
         struct Effect effect;
         int i;
 

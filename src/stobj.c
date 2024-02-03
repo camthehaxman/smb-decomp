@@ -708,7 +708,7 @@ static void stobj_bumper_draw(struct Stobj *stobj)
         GXLoadPosMtxImm(mathutilData->mtxA, 0);
         GXLoadNrmMtxImm(mathutilData->mtxA, 0);
 
-        temp_f1 = -((radius * currentCameraStructPtr->sub28.unk3C * currentCameraStructPtr->sub28.vp.height) / sp18.z);
+        temp_f1 = -((radius * currentCamera->sub28.unk3C * currentCamera->sub28.vp.height) / sp18.z);
         phi_r6 = lbl_8028C0B0.unk0;
         phi_r5 = lbl_8028C0B0.unk14;
         for (temp_r0 = lbl_8028C0B0.unk10 - 1; temp_r0 > 0; temp_r0--, phi_r5++, phi_r6++)
@@ -757,7 +757,7 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
     struct Ball *ball;
     BOOL rumble;
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     stobj->state = 1;
     sp30 = stobj->position;
     func_8006AAEC(&arg1->prevPos, &arg1->pos, &stobj->position_2, &sp30, arg1->radius, stobj->model->boundSphereRadius);
@@ -911,7 +911,7 @@ static void stobj_bumper_bgspecial_draw(struct Stobj *stobj)
         flameModel = decodedBgGma->modelEntries[modelId].model;
         mathutil_mtxA_from_mtxB_translate(&stobj->u_some_pos);
         mathutil_mtxA_get_translate_alt(&spC);
-        temp_f31_2 = spC.z + (8.0f * currentCameraStructPtr->sub28.unk3C * currentCameraStructPtr->sub28.vp.height);
+        temp_f31_2 = spC.z + (8.0f * currentCamera->sub28.unk3C * currentCamera->sub28.vp.height);
         if (temp_f31_2 > 0.0f)
         {
             temp_f31_2 *= 0.5f;

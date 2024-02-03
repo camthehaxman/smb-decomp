@@ -46,8 +46,8 @@ void func_80094A34(void)
     var_r29 = ARRAY_COUNT(lbl_802B9390) - lbl_802F2190;
     if (var_r29 != 0)
     {
-        temp_f1 = -currentCameraStructPtr->sub28.unk38;
-        temp_f27 = temp_f1 / currentCameraStructPtr->sub28.vp.height;
+        temp_f1 = -currentCamera->sub28.unk38;
+        temp_f27 = temp_f1 / currentCamera->sub28.vp.height;
         avdisp_set_z_mode(1, 3, 0);
 
         var_r28 = lbl_802B9390;

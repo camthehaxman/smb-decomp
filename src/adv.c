@@ -260,7 +260,7 @@ void submode_adv_logo_main_func(void)
     if (modeCtrl.submodeTimer == 30)
     {
         start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
-        textbox_set_properties(0, 20, NULL);
+        textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
     }
     if (--modeCtrl.submodeTimer <= 0)
     {
@@ -367,11 +367,6 @@ struct IntroCutsceneCommand
     u32 cmdId;
     s32 param;
 };
-
-#define CHARACTER_AIAI   0
-#define CHARACTER_MEEMEE 1
-#define CHARACTER_BABY   2
-#define CHARACTER_GONGON 3
 
 const struct IntroCutsceneCommand introCutsceneScript[] =
 {
@@ -504,7 +499,7 @@ static void banana_textbox_callback(struct TextBox *tbox)
     static float lbl_801741CC[] = { -125, -70, -10 };
 
     mathutil_mtxA_from_mtxB();
-    u_math_unk15(&ballInfo[tbox->id - 1].ape->unk30, &spC, currentCameraStructPtr->sub28.unk38);
+    u_math_unk15(&ballInfo[tbox->id - 1].ape->unk30, &spC, currentCamera->sub28.unk38);
     tbox->x = spC.x;
     tbox->y = spC.y + lbl_801741CC[tbox->id - 1];
 }
@@ -533,7 +528,7 @@ void run_cutscene_script(void)
             if (!(modeCtrl.courseFlags & (1 << 13)))
             {
                 mathutil_mtxA_from_mtxB();
-                u_math_unk15(&ballInfo[cmd->param].ape->unk30, &sp3C, currentCameraStructPtr->sub28.unk38);
+                u_math_unk15(&ballInfo[cmd->param].ape->unk30, &sp3C, currentCamera->sub28.unk38);
                 memset(&tbox, 0, sizeof(tbox));
                 tbox.x = sp3C.x;
                 tbox.y = sp3C.y;
@@ -541,13 +536,13 @@ void run_cutscene_script(void)
                 tbox.numColumns = (cmd->param == CHARACTER_BABY) ? 4 : 5;
                 tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
                 tbox.callback = banana_textbox_callback;
-                textbox_set_properties(cmd->param + 1, 1, &tbox);
+                textbox_set_properties(cmd->param + 1, TEXTBOX_STATE_INIT, &tbox);
                 hud_create_adv_demo_banana_sprite(cmd->param);
             }
             break;
         case CMD_HIDE_BANANA_BOXES:
             for (i = 0; i < 3; i++)
-                textbox_set_properties(i + 1, 20, NULL);
+                textbox_set_properties(i + 1, TEXTBOX_STATE_FADEOUT, NULL);
             sprite = find_sprite_with_tag(SPRITE_TAG_ADV_DEMO_BANANA_1);
             if (sprite != NULL)
                 sprite->counter = -1;
@@ -1045,7 +1040,7 @@ void lbl_8000F790(struct Ape *ape, int b)
         if (!(ape->flags & (1 << 3)))
             func_8003765C(ape);
         if (advDemoInfo.unk8 >= 0x682 && advDemoInfo.unk8 < 0x6CC)
-            ball->unk104 = currentCameraStructPtr->eye;
+            ball->unk104 = currentCamera->eye;
         else if (advDemoInfo.unk8 >= 0x51A && advDemoInfo.unk8 < 0x6CC)
         {
             ball->unk104.x = 9.62f;
@@ -1056,7 +1051,7 @@ void lbl_8000F790(struct Ape *ape, int b)
             ball->unk104.x = ape->unk30.x + 1.0;
         if (advDemoInfo.unk8 >= 0x73A && advDemoInfo.unk8 < 0x7A2)
             ball->unk104 = ballInfo[1].ape->unk30;
-        func_8008C090(ape, &ball->unk104);
+        u_mot_ape_something_with_head_anim(ape, &ball->unk104);
         ball->unk100 = 0;
         ball->unk110 = 0.0f;
     }
@@ -1162,7 +1157,7 @@ void lbl_8000F790(struct Ape *ape, int b)
             sp1C.x += ape->unk30.x;
             sp1C.y += ape->unk30.y;
             sp1C.z += ape->unk30.z;
-            func_8008C090(ape, &sp1C);
+            u_mot_ape_something_with_head_anim(ape, &sp1C);
             mathutil_mtxA_pop();
         }
     }
@@ -1184,9 +1179,9 @@ static void func_8000FEC8(int a)
     if (sprite != NULL)
         sprite->userVar = -1;
 
-    textbox_set_properties(1, 20, NULL);
-    textbox_set_properties(2, 20, NULL);
-    textbox_set_properties(3, 20, NULL);
+    textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
+    textbox_set_properties(2, TEXTBOX_STATE_FADEOUT, NULL);
+    textbox_set_properties(3, TEXTBOX_STATE_FADEOUT, NULL);
 
     sprite = find_sprite_with_tag(30);
     if (sprite != NULL)
@@ -1200,7 +1195,7 @@ static void func_8000FEC8(int a)
     if (sprite != NULL)
         sprite->counter = -1;
 
-    textbox_set_properties(0, 20, NULL);
+    textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
 
     sprite = find_sprite_with_tag(17);
     if (sprite != NULL)
@@ -1279,9 +1274,9 @@ void submode_adv_title_reinit_func(void)
         tbox.y = 386;
         tbox.numRows = 2;
         tbox.numColumns = 12;
-        tbox.style = 14;
+        tbox.style = TEXTBOX_STYLE_PLAIN;
         tbox.callback = NULL;
-        textbox_set_properties(0, 1, &tbox);
+        textbox_set_properties(0, TEXTBOX_STATE_INIT, &tbox);
         textbox_add_text(0, " \n ");
         hud_show_title_menu();
     }
@@ -1323,9 +1318,9 @@ void submode_adv_title_main_func(void)
         tbox.y = 386;
         tbox.numRows = 2;
         tbox.numColumns = 12;
-        tbox.style = 14;
+        tbox.style = TEXTBOX_STYLE_PLAIN;
         tbox.callback = NULL;
-        textbox_set_properties(0, 1, &tbox);
+        textbox_set_properties(0, TEXTBOX_STATE_INIT, &tbox);
         textbox_add_text(0, " \n ");
         hud_show_title_menu();
     }
@@ -1352,7 +1347,7 @@ void submode_adv_title_main_func(void)
     if (modeCtrl.submodeTimer == 30)
     {
         start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 30);
-        textbox_set_properties(0, 20, NULL);
+        textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
         u_play_music(modeCtrl.submodeTimer, 2);
     }
     if (--modeCtrl.submodeTimer <= 0)
@@ -1412,14 +1407,14 @@ void submode_adv_info_init_func(void)
         tbox.numColumns = 1;
         tbox.style = TEXTBOX_STYLE_CENTER_DOWN;
         tbox.callback = NULL;
-        textbox_set_properties(1, 2, &tbox);
+        textbox_set_properties(1, TEXTBOX_STATE_2, &tbox);
         tbox.x = 320;
         tbox.y = 60;
         tbox.numRows = 1;
         tbox.numColumns = 0;
-        tbox.style = 14;
+        tbox.style = TEXTBOX_STYLE_PLAIN;
         tbox.callback = NULL;
-        textbox_set_properties(2, 1, &tbox);
+        textbox_set_properties(2, TEXTBOX_STATE_INIT, &tbox);
         textbox_add_text(2, "c/0xff5000/    Control description!    ");
     }
     func_800846B0(4);
@@ -1457,7 +1452,7 @@ struct InfoCommand
     u32 param;
 };
 
-const struct InfoCommand infoScript[] =
+static const struct InfoCommand infoScript[] =
 {
     { 4380, INFOCMD_UNK12,            NULL, 0    },
     { 4380, INFOCMD_CAMERA_SET_FLAGS, NULL, 2    },
@@ -1510,7 +1505,7 @@ const struct InfoCommand infoScript[] =
     { 0 },
 };
 
-char *infoEnglishText[] =
+static char *englishTranslation[] =
 {
     "How to play Super Monkey Ball!",
     "The further you push the Control\nStick, the faster you'll roll.",
@@ -1592,8 +1587,8 @@ void submode_adv_info_main_func(void)
                 tbox.y = 0xB4;
             tbox.numRows = 1;
             tbox.style = cmd->param ? TEXTBOX_STYLE_SPIKY : TEXTBOX_STYLE_CENTER_DOWN;
-            textbox_set_properties(1, 21, &tbox);
-            textbox_add_text(1, infoEnglishText[cmd->cmdId]);
+            textbox_set_properties(1, TEXTBOX_STATE_21, &tbox);
+            textbox_add_text(1, englishTranslation[cmd->cmdId]);
         }
         switch (cmd->cmdId)
         {
@@ -1628,7 +1623,7 @@ void submode_adv_info_main_func(void)
             ballInfo[0].flags &= ~cmd->param;
             break;
         case INFOCMD_HIDE_TEXTBOX:
-            textbox_set_properties(1, 20, 0);
+            textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
             break;
         case INFOCMD_UNK12:
             advTutorialInfo.state = cmd->param;
@@ -1648,9 +1643,9 @@ void submode_adv_info_main_func(void)
         struct Sprite *sprite;
 
         start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 31);
-        textbox_set_properties(0, 20, NULL);
-        textbox_set_properties(1, 20, NULL);
-        textbox_set_properties(2, 20, NULL);
+        textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
+        textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
+        textbox_set_properties(2, TEXTBOX_STATE_FADEOUT, NULL);
         u_play_music(modeCtrl.submodeTimer, 2);
         sprite = find_sprite_with_tag(17);
         if (sprite != NULL)
@@ -1663,7 +1658,7 @@ void submode_adv_info_main_func(void)
 /**
  * Game Ready Submode
  */
- 
+
 static int func_800119C0(void);
 static int func_80011A84(void);
 static int func_80011B98(void);
@@ -1831,15 +1826,11 @@ void submode_adv_ranking_init_func(void)
 
 void submode_adv_ranking_main_func(void)
 {
-    struct Ball *r31;
-    struct Ball *r29;
-    struct Ball *ballBackup;
-    s8 *r28;
-    int i;
+    struct Ball *ball;
 
     if (gamePauseStatus & 0xA)
         return;
-    r31 = &ballInfo[0];
+    ball = &ballInfo[0];
     switch (modeCtrl.submodeTimer)
     {
     case 2520:
@@ -1893,23 +1884,23 @@ void submode_adv_ranking_main_func(void)
         break;
     }
 
-    if (r31->state == 4)
+    if (ball->state == 4)
     {
         struct ReplayHeader sp50;
 
         get_replay_header(lbl_80250A68.unk0[lbl_80250A68.unk14], &sp50);
         if (sp50.flags & (1 << 7))
         {
-            r31->state = 5;
-            r31->flags |= 0x3500;
+            ball->state = 5;
+            ball->flags |= 0x3500;
         }
     }
-    if (r31->state == 4 || r31->state == 6)
+    if (ball->state == 4 || ball->state == 6)
         infoWork.flags &= ~(INFO_FLAG_REPLAY|INFO_FLAG_11);
-    if (r31->state != 10)
+    if (ball->state != 10)
         modeCtrl.unk18--;
     if (modeCtrl.unk18 < 0
-     && (r31->state == 6 || r31->state == 4)
+     && (ball->state == 6 || ball->state == 4)
      && ((modeCtrl.submodeTimer & 0x1F) == 0 || !(infoWork.flags & INFO_FLAG_05)))
     {
         if (modeCtrl.submodeTimer > 180.0)
@@ -1995,27 +1986,18 @@ void submode_adv_ranking_main_func(void)
     if (modeCtrl.submodeTimer == 30)
     {
         start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(255, 255, 255, 0), 30);
-        textbox_set_properties(0, 20, NULL);
+        textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
         u_play_music(modeCtrl.submodeTimer, 2);
     }
 
-    ballBackup = currentBallStructPtr;
-    r28 = g_poolInfo.playerPool.statusList;
-    r29 = &ballInfo[0];
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, r29++, r28++)
-    {
-        if (*r28 == 2)
+    BALL_FOREACH(
+        if (!(ball->flags & (1 << 9)) && (ball->ape->flags & (1 << 14)))
         {
-            currentBallStructPtr = r29;
-            if (!(r29->flags & (1 << 9)) && (r29->ape->flags & (1 << 14)))
-            {
-                r29->flags &= ~0x500;
-                r29->flags |= 0x200;
-                u_play_sound_0(0x126);
-            }
+            ball->flags &= ~0x500;
+            ball->flags |= 0x200;
+            u_play_sound_0(0x126);
         }
-    }
-    currentBallStructPtr = ballBackup;
+    )
 
     if (--modeCtrl.submodeTimer <= 0)
     {
@@ -2120,10 +2102,10 @@ void submode_adv_start_init_func(void)
     lbl_802F1BA8 = 0;
     u_play_sound_1(2);
     start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 32);
-    textbox_set_properties(0, 20, NULL);
-    textbox_set_properties(1, 20, NULL);
-    textbox_set_properties(2, 20, NULL);
-    textbox_set_properties(3, 20, NULL);
+    textbox_set_properties(0, TEXTBOX_STATE_FADEOUT, NULL);
+    textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
+    textbox_set_properties(2, TEXTBOX_STATE_FADEOUT, NULL);
+    textbox_set_properties(3, TEXTBOX_STATE_FADEOUT, NULL);
     u_play_music(modeCtrl.submodeTimer, 2);
     if (find_sprite_with_tag(17) != NULL
      && find_sprite_with_tag(17)->userVar == 0)
@@ -2171,6 +2153,6 @@ void func_80011D90(void)
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;
     modeCtrl.unk40 = 0;
     modeCtrl.currPlayer = 0;
-    currentBallStructPtr = &ballInfo[modeCtrl.currPlayer];
+    currentBall = &ballInfo[modeCtrl.currPlayer];
     camera_setup_singleplayer_viewport();
 }

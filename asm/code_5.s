@@ -30,7 +30,7 @@ glabel monkey_sprite_draw
 /* 800809A0 0007C8C0  3B 43 00 00 */	addi r26, r3, 0
 /* 800809A4 0007C8C4  3A 05 89 38 */	addi r16, r5, lbl_80118938@l
 /* 800809A8 0007C8C8  3B E4 2D 18 */	addi r31, r4, lbl_80292D18@l
-/* 800809AC 0007C8CC  82 2D 9D 38 */	lwz r17, currentBallStructPtr@sda21(r13)
+/* 800809AC 0007C8CC  82 2D 9D 38 */	lwz r17, currentBall@sda21(r13)
 /* 800809B0 0007C8D0  38 71 00 1C */	addi r3, r17, 0x1c
 /* 800809B4 0007C8D4  C0 23 00 00 */	lfs f1, 0(r3)
 /* 800809B8 0007C8D8  C0 43 00 04 */	lfs f2, 4(r3)
