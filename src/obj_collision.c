@@ -19,7 +19,7 @@ void ev_obj_collision_init(void) {}
 
 void ev_obj_collision_main(void)
 {
-    if (!(gamePauseStatus & 0xA))
+    if (!(debugFlags & 0xA))
         do_object_collision();
 }
 

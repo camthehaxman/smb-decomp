@@ -59,7 +59,7 @@ void mode_adv_func(void)
     if (!(gameSubmode == SMD_ADV_START_INIT || gameSubmode == SMD_ADV_START_MAIN))
         advSubmode = gameSubmode;
 
-    if (!(gamePauseStatus & 0xA)
+    if (!(debugFlags & 0xA)
      && lbl_802F1BA8 > 0 && --lbl_802F1BA8 == 0)
         gameSubmodeRequest = SMD_ADV_TITLE_INIT;
 
@@ -94,7 +94,7 @@ void submode_adv_rating_init_func(void) {}
 
 void submode_adv_rating_main_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     if (--modeCtrl.submodeTimer <= 0)
@@ -110,7 +110,7 @@ struct AdvLogoInfo advLogoInfo;
 
 void submode_adv_logo_init_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     func_80011D90();
@@ -229,7 +229,7 @@ static void update_av_logo(void)
 
 void submode_adv_logo_main_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     if ((dipSwitches & DIP_DEBUG)
@@ -279,7 +279,7 @@ void submode_adv_demo_init_func(void)
 {
     int i;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     func_80011D90();
     introBackdropColor = RGBA(255, 255, 255, 0);
@@ -288,7 +288,7 @@ void submode_adv_demo_init_func(void)
     lbl_802F1BB0 = 0;
     advDemoInfo.unk8 = 0;
     advDemoInfo.flags = 0x108;
-    func_800569B4(1);
+    background_set_random_seed(1);
     load_stage(ST_099_JUNGLE_BG);
     func_8002FFEC();
     event_finish_all();
@@ -560,7 +560,7 @@ void run_cutscene_script(void)
             start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(255, 255, 255, 0), cmd->param);
             break;
         case CMD_PRELOAD_BG:
-            preload_bg_files(cmd->param);
+            background_preload(cmd->param);
             break;
         case CMD_LOAD_BG:
             event_finish(EVENT_STAGE);
@@ -569,7 +569,7 @@ void run_cutscene_script(void)
             event_finish(EVENT_EFFECT);
             event_finish(EVENT_REND_EFC);
             event_finish(EVENT_BACKGROUND);
-            load_bg_files(cmd->param);
+            background_change(cmd->param);
             event_start(EVENT_STAGE);
             event_start(EVENT_STOBJ);
             event_start(EVENT_ITEM);
@@ -599,7 +599,7 @@ void run_cutscene_script(void)
             event_finish(EVENT_EFFECT);
             event_finish(EVENT_REND_EFC);
             event_finish(EVENT_BACKGROUND);
-            func_800569B4(1);
+            background_set_random_seed(1);
             load_stage(cmd->param);
             event_start(EVENT_STAGE);
             event_start(EVENT_STOBJ);
@@ -663,7 +663,7 @@ void run_cutscene_script(void)
             sp8.x = 0.0f;
             sp8.y = 0.25f;
             sp8.z = 0.0f;
-            func_8001898C(0, cmd->param, &sp8);
+            shake_camera(0, cmd->param, &sp8);
             break;
         case 28:
             u_show_eieipu_sprite(cmd->param);
@@ -686,7 +686,7 @@ void run_cutscene_script(void)
 
 void submode_adv_demo_main_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (lbl_802014E0.unk0 == 2 && lbl_802014E0.unk4 == 1)
         lbl_802F1BB0 = 1;
@@ -999,14 +999,14 @@ void lbl_8000F790(struct Ape *ape, int b)
     switch (b)
     {
     case 3:
-        u_ape_free(ape);
+        new_ape_close(ape);
         return;
     }
     if (advDemoInfo.flags & (1 << 5))
     {
         struct Ball *ball = &ballInfo[ape->ballId];
 
-        if (gamePauseStatus & 0xA)
+        if (debugFlags & 0xA)
             return;
         raycast_stage_down(&ball->pos, &sp38, NULL);
         ape->flags &= ~0x13;
@@ -1036,7 +1036,7 @@ void lbl_8000F790(struct Ape *ape, int b)
         func_80036EB8(ape);
         mathutil_mtxA_to_quat(&ape->unk60);
         u_choose_ape_anim(ape, f31);
-        u_do_ape_anim(ape);
+        new_ape_calc(ape);
         if (!(ape->flags & (1 << 3)))
             func_8003765C(ape);
         if (advDemoInfo.unk8 >= 0x682 && advDemoInfo.unk8 < 0x6CC)
@@ -1051,7 +1051,7 @@ void lbl_8000F790(struct Ape *ape, int b)
             ball->unk104.x = ape->unk30.x + 1.0;
         if (advDemoInfo.unk8 >= 0x73A && advDemoInfo.unk8 < 0x7A2)
             ball->unk104 = ballInfo[1].ape->unk30;
-        u_mot_ape_something_with_head_anim(ape, &ball->unk104);
+        ape_face_dir(ape, &ball->unk104);
         ball->unk100 = 0;
         ball->unk110 = 0.0f;
     }
@@ -1120,9 +1120,9 @@ void lbl_8000F790(struct Ape *ape, int b)
                 break;
             }
         }
-        u_set_ape_anim(ape, r4, r5, r6, 0.0f);
+        new_ape_stat_motion(ape, r4, r5, r6, 0.0f);
         ape->unk3C = (Vec){ 0.0f, -0.12f, 0.0f };
-        u_do_ape_anim(ape);
+        new_ape_calc(ape);
         if (advDemoInfo.flags & (1 << 9))
         {
             s16 sp30[] = { 0x2E00, 0xE100, 0x1500, 0x0000 };
@@ -1157,7 +1157,7 @@ void lbl_8000F790(struct Ape *ape, int b)
             sp1C.x += ape->unk30.x;
             sp1C.y += ape->unk30.y;
             sp1C.z += ape->unk30.z;
-            u_mot_ape_something_with_head_anim(ape, &sp1C);
+            ape_face_dir(ape, &sp1C);
             mathutil_mtxA_pop();
         }
     }
@@ -1215,7 +1215,7 @@ static void func_8000FEC8(int a)
 
 void submode_adv_title_init_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     modeCtrl.submodeTimer = 1200;
@@ -1245,7 +1245,7 @@ void submode_adv_title_reinit_func(void)
 {
     struct TextBox tbox;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     func_80011D90();
@@ -1301,7 +1301,7 @@ void submode_adv_title_main_func(void)
      && modeCtrl.submodeTimer > 30)
         modeCtrl.submodeTimer = 30;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     if (textBoxes[0].state < 20
@@ -1365,7 +1365,7 @@ struct AdvTutorialInfo advTutorialInfo;
 
 void submode_adv_info_init_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     func_80011D90();
@@ -1533,7 +1533,7 @@ void submode_adv_info_main_func(void)
 {
     const struct InfoCommand *cmd;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if ((dipSwitches & DIP_DEBUG)
      && (controllerInfo[0].unk0[0].button & PAD_BUTTON_X)
@@ -1568,7 +1568,7 @@ void submode_adv_info_main_func(void)
         sp30.x = 1.15f;
         sp30.y = 0.5f;
         sp30.z = 3.8f;
-        func_800390C8(5, &sp30, 1.0f);
+        set_ball_target(5, &sp30, 1.0f);
     }
     if (!(modeCtrl.courseFlags & (1 << 13)) && modeCtrl.submodeTimer == 4320)
         hud_show_title_screen_monkey_sprite();
@@ -1669,21 +1669,21 @@ void submode_adv_game_ready_init_func(void)
     struct ReplayHeader sp8;
     int r4;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     u_load_random_builtin_replay();
     func_80011BD4();
-    lbl_80250A68.unk14 = 0;
-    lbl_80250A68.unk0[lbl_80250A68.unk14] = func_800119C0();
-    if (lbl_80250A68.unk0[lbl_80250A68.unk14] < 0)
+    replayInfo.unk14 = 0;
+    replayInfo.unk0[replayInfo.unk14] = func_800119C0();
+    if (replayInfo.unk0[replayInfo.unk14] < 0)
     {
-        lbl_80250A68.unk0[lbl_80250A68.unk14] = 0;
+        replayInfo.unk0[replayInfo.unk14] = 0;
         gameSubmodeRequest = SMD_ADV_LOGO_INIT;
         start_screen_fade(FADE_UNK2, RGBA(0, 0, 0, 0), 1);
         return;
     }
-    lbl_80250A68.unk10 = func_8004964C(lbl_80250A68.unk0[lbl_80250A68.unk14]);
-    get_replay_header(lbl_80250A68.unk0[lbl_80250A68.unk14], &sp8);
+    replayInfo.unk10 = func_8004964C(replayInfo.unk0[replayInfo.unk14]);
+    get_replay_header(replayInfo.unk0[replayInfo.unk14], &sp8);
     currStageId = sp8.stageId;
     event_finish_all();
     call_bitmap_load_group(BMP_RNK);
@@ -1694,7 +1694,7 @@ void submode_adv_game_ready_init_func(void)
     func_80044920();
     func_8002FFEC();
     event_start(EVENT_INFO);
-    func_80049514(lbl_80250A68.unk0[lbl_80250A68.unk14]);
+    func_80049514(replayInfo.unk0[replayInfo.unk14]);
     infoWork.flags |= INFO_FLAG_REPLAY|INFO_FLAG_11;
     load_stage(currStageId);
     event_start(EVENT_STAGE);
@@ -1737,7 +1737,7 @@ void submode_adv_game_ready_init_func(void)
 
 void submode_adv_game_ready_main_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (modeCtrl.submodeTimer == 120)
     {
@@ -1760,7 +1760,7 @@ void submode_adv_game_ready_main_func(void)
         struct ReplayHeader sp8;
 
         get_replay_header(func_80011A84(), &sp8);
-        if (gamePauseStatus & (1 << 2))
+        if (debugFlags & (1 << 2))
             printf("/*-- pre_load_stage(%d) --*/\n", sp8.stageId);
         preload_stage_files(sp8.stageId);
         gameSubmodeRequest = SMD_ADV_GAME_PLAY_INIT;
@@ -1769,9 +1769,9 @@ void submode_adv_game_ready_main_func(void)
 
 void submode_adv_game_play_init_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
-    modeCtrl.submodeTimer = func_8004964C(lbl_80250A68.unk0[lbl_80250A68.unk14]) + 30.0;
+    modeCtrl.submodeTimer = func_8004964C(replayInfo.unk0[replayInfo.unk14]) + 30.0;
     event_resume(EVENT_WORLD);
     hud_show_go_banner(60);
     infoWork.flags &= ~(INFO_FLAG_TIMER_PAUSED|INFO_FLAG_08);
@@ -1779,14 +1779,14 @@ void submode_adv_game_play_init_func(void)
     worldInfo[0].state = 9;
     camera_set_state(0);
     infoWork.flags |= INFO_FLAG_REPLAY|INFO_FLAG_11;
-    lbl_80250A68.unk10 = func_8004964C(lbl_80250A68.unk0[lbl_80250A68.unk14]);
-    animate_anim_groups(func_80049F90(lbl_80250A68.unk10, lbl_80250A68.unk0[lbl_80250A68.unk14]));
+    replayInfo.unk10 = func_8004964C(replayInfo.unk0[replayInfo.unk14]);
+    animate_anim_groups(get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]));
     gameSubmodeRequest = SMD_ADV_GAME_PLAY_MAIN;
 }
 
 void submode_adv_game_play_main_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (infoWork.flags & INFO_FLAG_GOAL)
     {
@@ -1828,7 +1828,7 @@ void submode_adv_ranking_main_func(void)
 {
     struct Ball *ball;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     ball = &ballInfo[0];
     switch (modeCtrl.submodeTimer)
@@ -1888,7 +1888,7 @@ void submode_adv_ranking_main_func(void)
     {
         struct ReplayHeader sp50;
 
-        get_replay_header(lbl_80250A68.unk0[lbl_80250A68.unk14], &sp50);
+        get_replay_header(replayInfo.unk0[replayInfo.unk14], &sp50);
         if (sp50.flags & (1 << 7))
         {
             ball->state = 5;
@@ -1919,10 +1919,10 @@ void submode_adv_ranking_main_func(void)
             event_finish(EVENT_BACKGROUND);
             event_finish(EVENT_BALL);
             event_finish(EVENT_SOUND);
-            lbl_80250A68.unk0[lbl_80250A68.unk14] = func_80011B98();
-            get_replay_header(lbl_80250A68.unk0[lbl_80250A68.unk14], &sp38);
+            replayInfo.unk0[replayInfo.unk14] = func_80011B98();
+            get_replay_header(replayInfo.unk0[replayInfo.unk14], &sp38);
             currStageId = sp38.stageId;
-            func_80049514(lbl_80250A68.unk0[lbl_80250A68.unk14]);
+            func_80049514(replayInfo.unk0[replayInfo.unk14]);
             infoWork.flags |= INFO_FLAG_REPLAY;
             load_stage(currStageId);
             event_start(EVENT_STAGE);
@@ -1952,17 +1952,17 @@ void submode_adv_ranking_main_func(void)
                 infoWork.flags &= ~INFO_FLAG_11;
             }
 
-            f1 = func_8004964C(lbl_80250A68.unk0[lbl_80250A68.unk14]);
+            f1 = func_8004964C(replayInfo.unk0[replayInfo.unk14]);
             if (sp38.flags & (1 << 4))
                 f1 -= 30.0f;
             if (f1 > (float)modeCtrl.submodeTimer - 120.0)
                 f1 = (int)((float)modeCtrl.submodeTimer - 120.0);
             else if (f1 > (float)modeCtrl.submodeTimer * 0.5)
                 f1 = (int)((float)modeCtrl.submodeTimer * 0.5);
-            lbl_80250A68.unk10 = f1;
-            animate_anim_groups(func_80049F90(lbl_80250A68.unk10, lbl_80250A68.unk0[lbl_80250A68.unk14]));
+            replayInfo.unk10 = f1;
+            animate_anim_groups(get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]));
             get_replay_header(func_80011A84(), &sp8);
-            if (gamePauseStatus & (1 << 2))
+            if (debugFlags & (1 << 2))
                 printf("/*-- pre_load_stage(%d) --*/\n", sp8.stageId);
             preload_stage_files(sp8.stageId);
         }
@@ -1980,7 +1980,7 @@ void submode_adv_ranking_main_func(void)
 
     if (modeCtrl.submodeTimer == 180)
     {
-        preload_bg_files(BG_TYPE_JUN);
+        background_preload(BG_TYPE_JUN);
         preload_stage_files(ST_001_PLAIN);
     }
     if (modeCtrl.submodeTimer == 30)
@@ -2006,7 +2006,7 @@ void submode_adv_ranking_main_func(void)
         func_80088FD4(1);
         destroy_sprite_with_tag(SPRITE_TAG_LOGO_PLUS);
         call_bitmap_free_group(BMP_RNK);
-        camera_setup_singleplayer_viewport();
+        reset_camera_viewport();
         gameSubmodeRequest = SMD_ADV_DEMO_INIT;
     }
 }
@@ -2096,7 +2096,7 @@ int func_80011BE0(void)
 
 void submode_adv_start_init_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     modeCtrl.submodeTimer = 30;
     lbl_802F1BA8 = 0;
@@ -2115,7 +2115,7 @@ void submode_adv_start_init_func(void)
 
 void submode_adv_start_main_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (--modeCtrl.submodeTimer <= 0)
     {
@@ -2123,7 +2123,7 @@ void submode_adv_start_main_func(void)
         advLogoInfo.timer = 0;
         advDemoInfo.unk8 = 0xB56;
         advDemoInfo.flags = 0;
-        camera_setup_singleplayer_viewport();
+        reset_camera_viewport();
         if (modeCtrl.courseFlags & 1)
         {
             gameModeRequest = MD_SEL;
@@ -2154,5 +2154,5 @@ void func_80011D90(void)
     modeCtrl.unk40 = 0;
     modeCtrl.currPlayer = 0;
     currentBall = &ballInfo[modeCtrl.currPlayer];
-    camera_setup_singleplayer_viewport();
+    reset_camera_viewport();
 }

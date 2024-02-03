@@ -546,10 +546,10 @@ void stobj_goaltape_draw(struct Stobj *stobj)
         }
     }
     apply_curr_light_group_ambient();
-    nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
-    temp_r5 = lbl_80250A68.unk14;
+    nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
+    temp_r5 = replayInfo.unk14;
     if (g_poolInfo.playerPool.statusList[temp_r5] == 2 && (ballInfo[temp_r5].flags & 0x01000000))
-        time = (100.0 * func_80049E7C(lbl_80250A68.unk0[temp_r5], lbl_80250A68.unk10)) / 60.0;
+        time = (100.0 * func_80049E7C(replayInfo.unk0[temp_r5], replayInfo.unk10)) / 60.0;
     else
     {
         temp_r0 = infoWork.timerCurr * 0x64;
@@ -596,7 +596,7 @@ void stobj_goaltape_draw(struct Stobj *stobj)
     time /= 10;
     nl2ngc_draw_model_sort_translucent_alt2(largeLCDModels[digit]);
 
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 void stobj_goaltape_coli(struct Stobj *stobj, struct PhysicsBall *ball)
@@ -978,7 +978,7 @@ void stobj_goalbag_main(struct Stobj *stobj)
         mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].transform);
         mathutil_mtxA_tf_point(&sp48, &sp48);
     }
-    func_800390C8(5, &sp48, 1.0f);
+    set_ball_target(5, &sp48, 1.0f);
 }
 
 void stobj_goalbag_draw(struct Stobj *stobj)

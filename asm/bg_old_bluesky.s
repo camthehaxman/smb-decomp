@@ -709,7 +709,7 @@ bg_old_bluesky_draw:
 /* 80057360 00053280  7C 08 02 A6 */	mflr r0
 /* 80057364 00053284  90 01 00 04 */	stw r0, 4(r1)
 /* 80057368 00053288  94 21 FF F8 */	stwu r1, -8(r1)
-/* 8005736C 0005328C  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 8005736C 0005328C  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 80057370 00053290  38 63 00 30 */	addi r3, r3, 0x30
 /* 80057374 00053294  4B FB 05 3D */	bl mathutil_mtxA_from_mtx
 /* 80057378 00053298  80 6D 99 1C */	lwz r3, g_bgNlObj@sda21(r13)
@@ -1084,7 +1084,7 @@ effect_bird_kite_draw:
 /* 800578E4 00053804  80 03 00 30 */	lwz r0, 0x30(r3)
 /* 800578E8 00053808  28 00 00 00 */	cmplwi r0, 0
 /* 800578EC 0005380C  41 82 00 34 */	beq lbl_80057920
-/* 800578F0 00053810  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800578F0 00053810  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800578F4 00053814  4B FA FF BD */	bl mathutil_mtxA_from_mtx
 /* 800578F8 00053818  38 7F 00 34 */	addi r3, r31, 0x34
 /* 800578FC 0005381C  4B FB 04 25 */	bl mathutil_mtxA_translate

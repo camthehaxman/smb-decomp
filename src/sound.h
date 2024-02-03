@@ -104,7 +104,7 @@ void SoundCho(u16 arg0, u8 arg1);
 void SoundOffID(int arg0_);
 void SoundRevID(int arg0_, u8 arg1);
 void SoundChoID(int arg0_, u8 arg1);
-void func_8002CA38(s8 arg0, s8 arg1);
+void SoundEffect(s8 arg0, s8 arg1);
 void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2);
 void func_8002CEAC(void);
 void func_8002CEB0(void);

@@ -1467,7 +1467,7 @@ void submode_mini_game_init_func(void)
     func_800249D4();
     relocation_load_module(s_minigameRelFileNames[gameSubmode - SMD_MINI_TOP], &s_minigameRelModule);
     lbl_802F2164 = 1;
-    lbl_802F1B7C = func_80093BB4;
+    submodeFinishFunc = func_80093BB4;
 }
 
 void submode_mini_game_main_func(void)
@@ -1587,7 +1587,7 @@ void submode_mini_ending_init_func(void)
     int i;
 
     gameSubmodeRequest = SMD_MINI_ENDING_MAIN;
-    camera_setup_singleplayer_viewport();
+    reset_camera_viewport();
     for (i = 0; i < 4; i++)
     {
         g_poolInfo.playerPool.statusList[i] = 2;

@@ -363,7 +363,7 @@ void rend_efc_motion_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXCopyTex(work->imageBuf, 0);
     GXInitTexObj(&work->texObj, work->imageBuf, currRenderMode->fbWidth, currRenderMode->xfbHeight, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, 0U);
     GXSetZMode_cached(1, GX_LEQUAL, 1);
-    camera_apply_viewport(u_cameraId1);
+    set_current_camera(u_cameraId1);
 }
 
 struct Struct8009557C_alt_sub
@@ -463,7 +463,7 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     u16 height;
     u8 unused[8];
 
-    if ((gamePauseStatus & 0xA))
+    if ((debugFlags & 0xA))
         return;
 
     work = (void *)rendEfc->work;
@@ -761,5 +761,5 @@ void rend_efc_kaleidoscope_draw(int arg0, struct RenderEffect *rendEfc)
         break;
     }
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
-    camera_apply_viewport(u_cameraId1);
+    set_current_camera(u_cameraId1);
 }

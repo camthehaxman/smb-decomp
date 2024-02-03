@@ -195,7 +195,7 @@ void bg_space_main(void)
 
     func_800940E0();
     bg_default_main();
-    if (!(gamePauseStatus & 0xA) || (eventInfo[EVENT_VIEW].state == EV_STATE_RUNNING))
+    if (!(debugFlags & 0xA) || (eventInfo[EVENT_VIEW].state == EV_STATE_RUNNING))
     {
         work->unk38--;
         if (work->unk38 < 0)
@@ -255,7 +255,7 @@ void bg_space_draw(void)
     if (saturnObj != NULL)
     {
         saturnObj->flags &= 0xFFFEFFFF;
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         mathutil_mtxA_translate(&saturnObj->pos);
         mathutil_mtxA_rotate_z(saturnObj->rotZ);
         mathutil_mtxA_rotate_y(saturnObj->rotY);
@@ -265,7 +265,7 @@ void bg_space_draw(void)
         GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
         scale = MAX(MAX(saturnObj->scale.x, saturnObj->scale.y), saturnObj->scale.z);
         avdisp_set_bound_sphere_scale(scale);
-        if (!(lbl_801EEC90.unk0 & 4))
+        if (!(polyDisp.unk0 & 4))
         {
             u_avdisp_set_some_func_1(lbl_800609AC);
             avdisp_draw_model_culled_sort_translucent(saturnObj->model);

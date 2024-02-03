@@ -3397,7 +3397,7 @@ void memcard_draw_ui(void)
     {
         draw_memcard_msg(&msgFormatPrompt, 320.0f, 240.0f);
 
-        intensity = ((float)abs((int)(float)(unpausedFrameCounter % 60) - 30.0) / 30.0) * 255.0;
+        intensity = ((float)abs((int)(float)(globalAnimTimer % 60) - 30.0) / 30.0) * 255.0;
         color = RGBA(intensity, intensity, intensity, 0);
 
         set_text_scale(1.5f, 1.5f);
@@ -3454,7 +3454,7 @@ void memcard_draw_ui(void)
     {
         draw_memcard_msg(&msgOverwritePrompt, 320.0f, 240.0f);
 
-        intensity = ((float)abs((int)(float)(unpausedFrameCounter % 60) - 30.0) / 30.0) * 255.0;
+        intensity = ((float)abs((int)(float)(globalAnimTimer % 60) - 30.0) / 30.0) * 255.0;
         color = RGBA(intensity, intensity, intensity, 0);
 
         set_text_scale(1.5f, 1.5f);

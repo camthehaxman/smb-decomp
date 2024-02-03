@@ -1609,7 +1609,7 @@ void func_80085C0C(int arg0)
             avdisp_set_ambient(ambient.r, ambient.g, ambient.b);
             return;
         case 1:
-            nl2ngc_set_ambient(1.35f * ambient.r, 1.35f * ambient.g, 1.35f * ambient.b);
+            nlLightAmbRGB(1.35f * ambient.r, 1.35f * ambient.g, 1.35f * ambient.b);
             break;
         }
     }
@@ -1627,7 +1627,7 @@ static void draw_aiai_hair(struct Ape *ape, struct ApeFacePart *unused1, struct 
     {
         int r4;
 
-        if (!(gamePauseStatus & 0xA))
+        if (!(debugFlags & 0xA))
             lbl_802B3770[ape->unk70]++;
         r4 = lbl_802B3770[ape->unk70] % 45;
         var_r6 = r4;
@@ -1647,7 +1647,7 @@ static void draw_aiai_hair(struct Ape *ape, struct ApeFacePart *unused1, struct 
 
 void func_80085DB0(struct Ape *ape)
 {
-    if (!(gamePauseStatus & 0xA) && (ape->flags & 0x80))
+    if (!(debugFlags & 0xA) && (ape->flags & 0x80))
     {
         lbl_802B37B0[ape->unk70]++;
         return;
@@ -1752,7 +1752,7 @@ static void draw_left_hand(struct Ape *ape, struct ApeFacePart *arg1, struct Str
     s16 *var_r4;
     Mtx **var_r5;
 
-    if (!(gamePauseStatus & 0xA) && !(ape->flags & 8))
+    if (!(debugFlags & 0xA) && !(ape->flags & 8))
     {
         mathutil_mtxA_push();
         func_80036510(temp_r29);
@@ -1782,7 +1782,7 @@ static void draw_right_hand(struct Ape *ape, struct ApeFacePart *arg1, struct St
     s16 *var_r4;
     Mtx **var_r5;
 
-    if (!(gamePauseStatus & 0xA) && !(ape->flags & 8))
+    if (!(debugFlags & 0xA) && !(ape->flags & 8))
     {
         mathutil_mtxA_push();
         func_80036510(temp_r29);
@@ -2141,7 +2141,7 @@ static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct80
         if (lbl_802F2060 == 0)
         {
             get_curr_light_group_ambient(&sp24);
-            nl2ngc_set_ambient(1.35f * sp24.r, 1.35f * sp24.g, 1.35f * sp24.b);
+            nlLightAmbRGB(1.35f * sp24.r, 1.35f * sp24.g, 1.35f * sp24.b);
         }
         if (var_r29 == 2 && ape->unk90 < 2)
         {
@@ -2166,7 +2166,7 @@ static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct80
                 var_r5 = (struct NlMesh *)((u8 *)var_r5->dispListStart + var_r5->dispListSize);
             }
         }
-        nl2ngc_draw_model_sort_translucent(nlModel);
+        nlObjPut(nlModel);
         mathutil_mtxA_pop();
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
         if (var_r28 != 0)
@@ -2245,7 +2245,7 @@ void func_80086D20(struct Ape *ape, int arg1, int arg2)
 
     func_8008669C((void *)nlModel, r4, r5, 1.0f - (arg2 / 16.0f));
     mathutil_mtxA_scale_s(0.1f);
-    nl2ngc_draw_model_sort_translucent(nlModel);
+    nlObjPut(nlModel);
 }
 #pragma force_active reset
 
@@ -2263,9 +2263,9 @@ static void draw_ear(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802
     }
     if ((ape->unk24 == 1 && ape->unk9C != 5) || ape->unk24 == 0)
     {
-        if (((unpausedFrameCounter << 12) & 0x30000) == 0)
+        if (((globalAnimTimer << 12) & 0x30000) == 0)
         {
-            float var_f1 = mathutil_sin(unpausedFrameCounter << 12);
+            float var_f1 = mathutil_sin(globalAnimTimer << 12);
             if (arg1->unk4.y < 0.0f)
                 var_f1 = -var_f1;
             mathutil_mtxA_rotate_z(DEGREES_TO_S16(10.0f * var_f1));

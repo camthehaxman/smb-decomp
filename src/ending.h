@@ -133,9 +133,9 @@ void u_ending_draw(void);
 
 // ending_camera.c
 void ending_camera_init(void);
-void ending_camera_emptyfunc1(void);
+void ending_camera_finish(void);
 void ending_camera_emptyfunc2(void);
-void ending_camera_emptyfunc3(void);
+void ending_effect_finish(void);
 
 // ending_dialogue.c
 void effect_ending_ballfrag_init(struct Effect *);

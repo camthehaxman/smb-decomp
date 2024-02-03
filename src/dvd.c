@@ -162,8 +162,8 @@ static void show_dvd_err_msg(int msgId)
 
             bitmap_init_tev();
             func_800AC718_sub();
-            lbl_802F21FC = lbl_802F1D04;
-            lbl_802F1D04 = 4;
+            lbl_802F21FC = spriteParamsBufState;
+            spriteParamsBufState = 4;
             reset_text_draw_settings();
             set_text_font(FONT_JAP_24x24_2Pg);
             func_80071B1C(0.008f);
@@ -178,7 +178,7 @@ static void show_dvd_err_msg(int msgId)
                 set_text_pos(x, y);
                 func_80072AC0(errMsg->lines[i].text);
             }
-            lbl_802F1D04 = lbl_802F21FC;
+            spriteParamsBufState = lbl_802F21FC;
         }
         else
         {
@@ -206,7 +206,7 @@ static void show_dvd_err_msg(int msgId)
     }
     gpwait_main();
     syncwait_main();
-    globalFrameCounter += 1;
+    powerOnTimer += 1;
     beginframe_main();
     func_8002DB38();
 }

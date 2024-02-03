@@ -442,7 +442,7 @@ bg_pilot_main:
 /* 80064654 00060574  93 C1 00 08 */	stw r30, 8(r1)
 /* 80064658 00060578  83 E3 00 9C */	lwz r31, 0x9c(r3)
 /* 8006465C 0006057C  4B FF 0E 95 */	bl bg_default_main
-/* 80064660 00060580  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80064660 00060580  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80064664 00060584  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80064668 00060588  40 82 00 70 */	bne lbl_800646D8
 /* 8006466C 0006058C  3B DF 00 E4 */	addi r30, r31, 0xe4
@@ -486,12 +486,12 @@ bg_pilot_finish:
 .global bg_pilot_draw
 bg_pilot_draw:
 /* 800646F4 00060614  7C 08 02 A6 */	mflr r0
-/* 800646F8 00060618  3C 60 80 1F */	lis r3, lbl_801EEC90@ha
+/* 800646F8 00060618  3C 60 80 1F */	lis r3, polyDisp@ha
 /* 800646FC 0006061C  90 01 00 04 */	stw r0, 4(r1)
 /* 80064700 00060620  94 21 FE D8 */	stwu r1, -0x128(r1)
 /* 80064704 00060624  DB E1 01 20 */	stfd f31, 0x120(r1)
 /* 80064708 00060628  BF 61 01 0C */	stmw r27, 0x10c(r1)
-/* 8006470C 0006062C  80 03 EC 90 */	lwz r0, lbl_801EEC90@l(r3)
+/* 8006470C 0006062C  80 03 EC 90 */	lwz r0, polyDisp@l(r3)
 /* 80064710 00060630  3C 60 80 1C */	lis r3, backgroundInfo@ha
 /* 80064714 00060634  38 63 91 78 */	addi r3, r3, backgroundInfo@l
 /* 80064718 00060638  54 00 07 FF */	clrlwi. r0, r0, 0x1f
@@ -542,8 +542,8 @@ lbl_800647B0:
 /* 800647B0 000606D0  83 FE 00 14 */	lwz r31, 0x14(r30)
 /* 800647B4 000606D4  28 1F 00 00 */	cmplwi r31, 0
 /* 800647B8 000606D8  41 82 04 5C */	beq lbl_80064C14
-/* 800647BC 000606DC  3C 60 80 1F */	lis r3, lbl_801EEC90@ha
-/* 800647C0 000606E0  80 03 EC 90 */	lwz r0, lbl_801EEC90@l(r3)
+/* 800647BC 000606DC  3C 60 80 1F */	lis r3, polyDisp@ha
+/* 800647C0 000606E0  80 03 EC 90 */	lwz r0, polyDisp@l(r3)
 /* 800647C4 000606E4  54 00 07 7B */	rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 800647C8 000606E8  40 82 04 4C */	bne lbl_80064C14
 /* 800647CC 000606EC  83 BE 00 E0 */	lwz r29, 0xe0(r30)

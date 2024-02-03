@@ -226,7 +226,7 @@ void ev_stobj_main(void)
     struct Stobj *stobj;
     s8 *phi_r27;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     phi_r27 = g_poolInfo.stobjPool.statusList;
@@ -273,7 +273,7 @@ void ev_stobj_main(void)
                         mathutil_mtxA_rotate_x(stobj->rotX);
                     }
                     mathutil_mtxA_tf_point(&stobj->unk90, &sp8);
-                    func_800390C8(5, &sp8, stobj->unk9C);
+                    set_ball_target(5, &sp8, stobj->unk9C);
                 }
             }
         }
@@ -741,10 +741,10 @@ static void stobj_bumper_draw(struct Stobj *stobj)
         if (phi_f30 > 1.0f)
             phi_f30 = 1.0f;
         mathutil_mtxA_scale_s(temp_f31_2);
-        nl2ngc_set_scale(temp_f31_2);
-        nl2ngc_set_material_color(phi_f30, phi_f30, phi_f30);
-        nl2ngc_draw_model_sort_none(g_commonNlObj->models[0x2B]);
-        u_reset_post_mult_color();
+        nlSetScaleFactor(temp_f31_2);
+        nlObjPutSetFadeColorBase(phi_f30, phi_f30, phi_f30);
+        nlObjPutImm(g_commonNlObj->models[0x2B]);
+        fade_color_base_default();
     }
 }
 
@@ -797,7 +797,7 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
         u8 dummy[4];
 
         lbl_802F1DFC = ball->ape->charaId;
-        u_play_sound_0(sp14[unpausedFrameCounter & 7]);
+        u_play_sound_0(sp14[globalAnimTimer & 7]);
         rumble = TRUE;
         if (modeCtrl.gameType == GAMETYPE_MINI_RACE)
         {
@@ -907,7 +907,7 @@ static void stobj_bumper_bgspecial_draw(struct Stobj *stobj)
         break;
     case BG_TYPE_STM:
         // Draw animated flame
-        modelId = stmFireModelIDs[unpausedFrameCounter & 0x1F];
+        modelId = stmFireModelIDs[globalAnimTimer & 0x1F];
         flameModel = decodedBgGma->modelEntries[modelId].model;
         mathutil_mtxA_from_mtxB_translate(&stobj->u_some_pos);
         mathutil_mtxA_get_translate_alt(&spC);
@@ -1010,14 +1010,14 @@ static void stobj_jamabar_destroy(struct Stobj *stobj) {}
 
 static void stobj_jamabar_debug(struct Stobj *stobj)
 {
-    func_8002FCC0(2, lbl_801BE25C);
-    func_8002FCC0(2, "OFS: X,%7.3f\n", stobj->u_local_pos.x);
-    func_8002FCC0(2, string______Y__7_3f_n_2, stobj->u_local_pos.y);
-    func_8002FCC0(2, string______Z__7_3f_n_2, stobj->u_local_pos.z);
+    window_printf(2, lbl_801BE25C);
+    window_printf(2, "OFS: X,%7.3f\n", stobj->u_local_pos.x);
+    window_printf(2, string______Y__7_3f_n_2, stobj->u_local_pos.y);
+    window_printf(2, string______Z__7_3f_n_2, stobj->u_local_pos.z);
     func_8002FD68(2, lbl_802F0B40);
-    func_8002FCC0(2, "OFS SPD: X,%7.3f\n", stobj->u_local_vel.x);
-    func_8002FCC0(2, "         Y,%7.3f\n", stobj->u_local_vel.y);
-    func_8002FCC0(2, "         Z,%7.3f\n", stobj->u_local_vel.z);
+    window_printf(2, "OFS SPD: X,%7.3f\n", stobj->u_local_vel.x);
+    window_printf(2, "         Y,%7.3f\n", stobj->u_local_vel.y);
+    window_printf(2, "         Z,%7.3f\n", stobj->u_local_vel.z);
     func_8002FD68(2, lbl_802F0B40);
 }
 

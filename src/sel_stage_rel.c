@@ -56,7 +56,7 @@ void _unresolved(void)
 
 static void sel_stage_init(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     modeCtrl.submodeTimer = 0;
@@ -73,7 +73,7 @@ static void sel_stage_init(void)
     func_8002FFEC();
     event_finish_all();
     free_all_bitmap_groups_except_com();
-    func_800569B4(loadingStageIdRequest);
+    background_set_random_seed(loadingStageIdRequest);
     load_stage(loadingStageIdRequest);
     call_bitmap_load_group(BMP_NML);
     preload_stage_files(loadingStageIdRequest);
@@ -105,7 +105,7 @@ static void sel_stage_handle_input(void)
 {
     int r3;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP))
@@ -211,7 +211,7 @@ static void sel_stage_handle_input(void)
         event_finish(EVENT_ITEM);
         event_finish(EVENT_STOBJ);
         event_finish(EVENT_REND_EFC);
-        func_800569B4(lbl_0000185D);
+        background_set_random_seed(lbl_0000185D);
         load_stage(lbl_0000185D);
         event_start(EVENT_EFFECT);
         event_start(EVENT_ITEM);

@@ -101,7 +101,7 @@ void ev_minimap_main(void)
     float f3;
     Point3d target;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (minimapInfo.state == 0)
         return;
@@ -334,7 +334,7 @@ void minimap_draw(void)
     struct Struct800847FC sp8;
 
     ball = currentBall;
-    world = currentWorldStructPtr;
+    world = currentWorld;
     if (minimapInfo.size != 0)
     {
         u_gxutil_set_fog_enabled(FALSE);
@@ -344,15 +344,15 @@ void minimap_draw(void)
             switch (modeCtrl.gameType)
             {
             case GAMETYPE_MAIN_NORMAL:
-                u_camera_apply_viewport_2_if_changed(modeCtrl.currPlayer);
+                change_current_camera_matrix(modeCtrl.currPlayer);
                 break;
             default:
-                u_camera_apply_viewport_2_if_changed(0);
+                change_current_camera_matrix(0);
                 break;
             }
             break;
         default:
-            u_camera_apply_viewport_2_if_changed(0);
+            change_current_camera_matrix(0);
             break;
         }
 
@@ -387,20 +387,20 @@ void minimap_draw(void)
         push_light_group();
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(1);
-        nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
+        nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
 
         scale = (415.0 * minimapInfo.size) / 320.0;
         mathutil_mtxA_from_translate_xyz(0.0f, 0.0f, -1000.0f);
         mathutil_mtxA_rotate_z(minimapInfo.rotation);
         mathutil_mtxA_scale_xyz(scale, scale, scale);
-        nl2ngc_set_scale(scale);
+        nlSetScaleFactor(scale);
         nl2ngc_draw_model_sort_none_alt2(g_commonNlObj->models[NLMODEL_common_mmapbase]);
 
         scale = (0.46200000062584873 * minimapInfo.size) / 320.0;
         mathutil_mtxA_from_translate_xyz(0.0f, 0.0f, -1.1f);
         mathutil_mtxA_rotate_z(minimapInfo.rotation);
         mathutil_mtxA_scale_xyz(scale, scale, scale);
-        nl2ngc_set_scale(scale);
+        nlSetScaleFactor(scale);
         nl2ngc_draw_model_sort_none_alt2(g_commonNlObj->models[NLMODEL_common_mmapring]);
 
         GXSetViewport(temp_r27, temp_r23, (float)var_r26 - (float)temp_r27, (float)temp_r22 - (float)temp_r23, 0.0f, 1.0f);
@@ -438,7 +438,7 @@ void minimap_draw(void)
         mathutil_mtxA_translate_neg(&focusPos);
         mathutil_mtxA_to_mtx(mathutilData->mtxB);
         mathutil_mtxA_scale_s(minimapInfo.unk44 / scale);
-        mathutil_mtxA_to_mtx(lbl_802F1B3C->matrices[2]);
+        mathutil_mtxA_to_mtx(userWork->matrices[2]);
         mathutil_mtxA_from_mtxB();
 
         var_f30 = 0.0f;
@@ -482,8 +482,8 @@ void minimap_draw(void)
             sp28.y += sp1C.y;
             mathutil_mtxA_translate(&ball->pos);
             mathutil_mtxA_scale_xyz(1.25 * temp_f31, 1.25 * temp_f31, 1.25 * temp_f31);
-            nl2ngc_set_scale(1.25 * scale * temp_f31);
-            nl2ngc_draw_model_sort_translucent(g_commonNlObj->models[NLMODEL_common_BALL_BLK]);
+            nlSetScaleFactor(1.25 * scale * temp_f31);
+            nlObjPut(g_commonNlObj->models[NLMODEL_common_BALL_BLK]);
         }
 
         params.bmpId = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[modeCtrl.currPlayer]);
@@ -513,20 +513,20 @@ void minimap_draw(void)
             mathutil_mtxA_from_mtxB();
             mathutil_mtxA_translate(&ball->pos);
             mathutil_mtxA_sq_from_identity();
-            mathutil_mtxA_rotate_z((unpausedFrameCounter << 8) + (unpausedFrameCounter << 7));
+            mathutil_mtxA_rotate_z((globalAnimTimer << 8) + (globalAnimTimer << 7));
             mathutil_mtxA_translate_xyz(0.0f, 0.0f, 0.5 * ball->modelScale * scale);
             mathutil_mtxA_scale_xyz(
                 2.0 * (ball->modelScale * scale),
                 2.0 * (ball->modelScale * scale),
                 2.0 * (ball->modelScale * scale));
-            nl2ngc_set_scale(2.0 * (ball->modelScale * scale));
+            nlSetScaleFactor(2.0 * (ball->modelScale * scale));
             nl2ngc_draw_model_sort_translucent_alt(g_commonNlObj->models[NLMODEL_common_hideball_mark]);
         }
         ord_tbl_draw_nodes();
         GXSetProjection(spA4, GX_PERSPECTIVE);
         GXSetViewport(0.0f, 0.0f, currRenderMode->fbWidth, currRenderMode->xfbHeight, 0.0f, 1.0f);
         GXSetScissor(0, 0, currRenderMode->fbWidth, currRenderMode->xfbHeight);
-        u_reset_post_mult_color();
+        fade_color_base_default();
         new_var4 = 48.11012f;
         sp8.unk0 = (temp_r27 - 320) * new_var4;
         sp8.unk4 = (240 - (temp_r25 - 1)) * new_var4;
@@ -534,7 +534,7 @@ void minimap_draw(void)
         sp8.unkC = (240 - var_r24) * new_var4;
         sp8.unk10 = -19999.0f;
         u_draw_some_quad(&sp8);
-        func_80017FCC();
+        default_camera_env();
         u_set_some_minimap_light_param(1.0f);
         pop_light_group();
         u_gxutil_fog_something_2();

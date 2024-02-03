@@ -562,7 +562,7 @@ void ev_effect_main(void)
     struct Effect *effect;
     s8 *poolStatus;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     poolStatus = g_poolInfo.effectPool.statusList;
     effect = g_effects;
@@ -675,7 +675,7 @@ int spawn_effect(struct Effect *effect)
     return newEffect->uid;
 }
 
-void func_8004CFF0(int type)
+void erase_effect(int type)
 {
     int i;
     struct Effect *effect;
@@ -791,7 +791,7 @@ static void effect_paperfrag_main(struct Effect *effect)
     float temp_f2_3;
     s16 temp_r29;
     s16 temp_r31;
-    struct World *world = currentWorldStructPtr;
+    struct World *world = currentWorld;
 
     effect->vel.x += 0.004 * world->unk10.x;
     effect->vel.y += 0.004 * world->unk10.y;
@@ -915,10 +915,10 @@ static void effect_paperfrag_draw(struct Effect *effect)
     float var_f31;
     float new_var;
 
-    if (lbl_801EEC90.unk0 & 4)
+    if (polyDisp.unk0 & 4)
     {
         temp_f30 = 0.1 * effect->scale.x;
-        var_f31 = temp_f30 + func_8000E4D0(&effect->pos);
+        var_f31 = temp_f30 + get_height_world_mirror_plane(&effect->pos);
         if (var_f31 <= 0.0f)
             return;
         if (var_f31 > temp_f30)
@@ -1007,7 +1007,7 @@ static void effect_get_banana_main(struct Effect *effect)
 
 static void effect_get_banana_draw(struct Effect *effect)
 {
-    if (!(lbl_801EEC90.unk0 & 4))
+    if (!(polyDisp.unk0 & 4))
     {
         mathutil_mtxA_from_translate(&effect->pos);
         mathutil_mtxA_rotate_y(effect->rotY);
@@ -1048,7 +1048,7 @@ static void effect_coli_particle_main(struct Effect *effect)
     float temp_f0_2;
     float temp_f2_4;
     float temp_f31;
-    struct World *world = currentWorldStructPtr;
+    struct World *world = currentWorld;
 
     effect->vel.x += 0.008f * world->unk10.x;
     effect->vel.y += 0.008f * world->unk10.y;
@@ -1143,9 +1143,9 @@ static void effect_coli_particle_draw(struct Effect *effect)
     struct PointWithColor sp18;
     Vec spC;
 
-    if ((lbl_801EEC90.unk0 & 4) && func_8000E4D0(&effect->pos) < 0.0f)
+    if ((polyDisp.unk0 & 4) && get_height_world_mirror_plane(&effect->pos) < 0.0f)
         return;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[3]);
+    mathutil_mtxA_from_mtx(userWork->matrices[3]);
     mathutil_mtxA_tf_point(&effect->unk58, &sp38);
     mathutil_mtxA_from_mtxB();
     if (effect->u_otherTimer == 0)
@@ -1196,7 +1196,7 @@ static void effect_coli_particle_draw(struct Effect *effect)
         avdisp_set_post_mult_color(effect->unk18 * temp_f30, effect->unk1C * temp_f30, effect->unk20 * temp_f30, 1.0f);
         avdisp_draw_model_unculled_sort_translucent(commonGma->modelEntries[circle_white].model);
         avdisp_set_z_mode(1, GX_LEQUAL, 1);
-        u_reset_post_mult_color();
+        fade_color_base_default();
     }
 }
 
@@ -1220,7 +1220,7 @@ static void effect_rotate_bg_draw(struct Effect *effect)
 {
     if (effect->model != NULL)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+        mathutil_mtxA_from_mtx(userWork->matrices[1]);
         mathutil_mtxA_translate(&effect->pos);
         mathutil_mtxA_rotate_y(effect->unkA2);
         mathutil_mtxA_rotate_x(effect->unkA0);
@@ -1286,9 +1286,9 @@ static void effect_raindrop_draw(struct Effect *effect)
     Vec spC;
     u32 color;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[4]);
+    mathutil_mtxA_from_mtx(userWork->matrices[4]);
     mathutil_mtxA_tf_point(&effect->unk58, &spC);
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_tf_point(&effect->pos, &lineStart);
     lineEnd.x = (1.5 * spC.x) - (0.5 * lineStart.x);
     lineEnd.y = (1.5 * spC.y) - (0.5 * lineStart.y);
@@ -1420,12 +1420,12 @@ static void effect_bubble_main(struct Effect *effect)
 
 static void effect_bubble_draw(struct Effect *effect)
 {
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_sq_from_identity();
     mathutil_mtxA_rotate_z(effect->rotZ);
     mathutil_mtxA_scale_xyz(effect->scale.z, effect->scale.z, 1.0f);
-    nl2ngc_set_scale(effect->scale.z);
+    nlSetScaleFactor(effect->scale.z);
     nl2ngc_draw_model_alpha_sort_all_alt((struct NlModel *)effect->model, effect->colorFactor);
 }
 
@@ -1470,7 +1470,7 @@ static void effect_levitate_draw(struct Effect *effect)
     Vec spC;
     float scale;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_get_translate_alt(&spC);
     mathutil_mtxA_sq_from_identity();
@@ -1486,11 +1486,11 @@ static void effect_levitate_draw(struct Effect *effect)
     else if (spC.z < -5.773502692 * currentCamera->sub28.unk3C)
         scale *= spC.z / (-5.773502692 * currentCamera->sub28.unk3C);
     mathutil_mtxA_scale_xyz(scale, scale, scale);
-    nl2ngc_set_scale(scale);
+    nlSetScaleFactor(scale);
     if (effect->timer < 56)
         nl2ngc_draw_model_sort_translucent_alt2(g_commonNlObj->models[NLMODEL_common_CROSS_LIGHT]);
     else
-        nl2ngc_draw_model_alpha_sort_all(g_commonNlObj->models[NLMODEL_common_CROSS_LIGHT], (float)(60 - effect->timer) / 4.0);
+        nlObjPutTrnsl(g_commonNlObj->models[NLMODEL_common_CROSS_LIGHT], (float)(60 - effect->timer) / 4.0);
 }
 
 static void effect_levitate_destroy(struct Effect *effect) {}
@@ -1527,7 +1527,7 @@ static void effect_twinkle_star_draw(struct Effect *effect)
     float temp_f1_2;
     float scale;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_get_translate_alt(&spC);
     if (spC.z > -0.1f)
@@ -1541,10 +1541,10 @@ static void effect_twinkle_star_draw(struct Effect *effect)
     mathutil_mtxA_set_translate(&spC);
     scale = 0.5 * (effect->unk88.x + effect->unk88.y + effect->unk88.z);
     mathutil_mtxA_scale_xyz(scale, scale, scale);
-    nl2ngc_set_scale(scale);
-    nl2ngc_set_material_color(effect->unk18, effect->unk1C, effect->unk20);
+    nlSetScaleFactor(scale);
+    nlObjPutSetFadeColorBase(effect->unk18, effect->unk1C, effect->unk20);
     nl2ngc_draw_model_sort_translucent_alt2((struct NlModel *)effect->model);
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 static void effect_twinkle_star_destroy(struct Effect *effect) {}
@@ -1593,7 +1593,7 @@ static void effect_bonus_stg_star_draw(struct Effect *effect)
     float scale;
     float temp_f1_3;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_get_translate_alt(&spC);
     if (spC.z > -0.1f)
@@ -1610,11 +1610,11 @@ static void effect_bonus_stg_star_draw(struct Effect *effect)
     mathutil_mtxA_from_translate(&spC);
     scale = 0.5 + (0.5 * effect->colorFactor);
     mathutil_mtxA_scale_xyz(scale, scale, scale);
-    nl2ngc_set_scale(scale);
+    nlSetScaleFactor(scale);
     temp_f1_3 = 0.75 * effect->colorFactor;
-    nl2ngc_set_material_color(temp_f1_3, temp_f1_3, temp_f1_3);
+    nlObjPutSetFadeColorBase(temp_f1_3, temp_f1_3, temp_f1_3);
     nl2ngc_draw_model_sort_translucent_alt2(g_bgNlObj->models[NLMODEL_bg_j_p_ST_J_OBJ_STARLIGHT]);
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 static void effect_bonus_stg_star_destroy(struct Effect *effect) {}
@@ -1643,17 +1643,17 @@ static void effect_bonus_stg_star_tail_draw(struct Effect *effect)
     Vec spC;
     float scale;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_sq_from_identity();
     scale = 52.68 * (effect->scale.x * effect->colorFactor);
     mathutil_mtxA_scale_xyz(scale, scale, scale);
-    nl2ngc_set_scale(scale);
+    nlSetScaleFactor(scale);
     mathutil_mtxA_get_translate_alt(&spC);
     mathutil_mtxA_rotate_z((s16)((325.0 * spC.x) + (655.0 * spC.y)));
-    nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
+    nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
     nl2ngc_draw_model_sort_translucent_alt2(g_commonNlObj->models[NLMODEL_common_CROSS_LIGHT]);
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 static void effect_bonus_stg_star_tail_destroy(struct Effect *effect) {}
@@ -1702,7 +1702,7 @@ static void effect_water_light_draw(struct Effect *effect)
     Vec spC;
     float temp_f31;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     mathutil_mtxA_translate(&effect->pos);
     spC.x = 0.0f;
     spC.y = -1.0f;
@@ -1720,10 +1720,10 @@ static void effect_water_light_draw(struct Effect *effect)
     sp18.z *= 0.75;
     mathutil_mtxA_rigid_inv_tf_point(&sp18, &sp18);
     mathutil_mtxA_rotate_y(mathutil_atan2(sp18.x, sp18.z));
-    nl2ngc_set_material_color(effect->unk18, effect->unk1C, effect->unk20);
+    nlObjPutSetFadeColorBase(effect->unk18, effect->unk1C, effect->unk20);
     mathutil_mtxA_scale_xyz(effect->scale.x * temp_f31, effect->scale.y, 1.0f);
     nl2ngc_draw_model_sort_translucent_alt2(g_bgNlObj->models[NLMODEL_bg_d_p_ST_D_WATERLIGHT_01]);
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 static void effect_water_light_destroy(struct Effect *effect) {}
@@ -1792,10 +1792,10 @@ static void effect_raindrop_ripple_draw(struct Effect *effect)
     mathutil_mtxA_rotate_z(effect->rotZ);
     mathutil_mtxA_rotate_x(-0x4000);
     mathutil_mtxA_scale_xyz(effect->scale.x, effect->scale.x, effect->scale.x);
-    nl2ngc_set_scale(effect->scale.x);
-    nl2ngc_set_material_color(s_bgLightInfo.unk14 * var_f31, s_bgLightInfo.unk18 * var_f31, s_bgLightInfo.unk1C * var_f31);
+    nlSetScaleFactor(effect->scale.x);
+    nlObjPutSetFadeColorBase(s_bgLightInfo.unk14 * var_f31, s_bgLightInfo.unk18 * var_f31, s_bgLightInfo.unk1C * var_f31);
     nl2ngc_draw_model_sort_translucent_alt2((struct NlModel *)effect->model);
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 static void effect_raindrop_ripple_destroy(struct Effect *effect) {}
@@ -1843,10 +1843,10 @@ static void effect_ball_glow_draw(struct Effect *effect)
             mathutil_mtxA_from_translate(&spC);
             scale = 4.0 * scale * ball->currRadius;
             mathutil_mtxA_scale_xyz(scale, scale, scale);
-            nl2ngc_set_scale(scale);
-            nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
+            nlSetScaleFactor(scale);
+            nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
             nl2ngc_draw_model_sort_translucent_alt2(g_commonNlObj->models[NLMODEL_common_circle_white]);
-            u_reset_post_mult_color();
+            fade_color_base_default();
         }
     }
 }
@@ -1885,7 +1885,7 @@ static void effect_exm_guide_light_main(struct Effect *effect)
     }
 
     if (effect->colorFactor > 0.25
-     && (unpausedFrameCounter + effect->poolIndex) % 2 == 0)
+     && (globalAnimTimer + effect->poolIndex) % 2 == 0)
     {
         memset(&lightTail, 0, sizeof(lightTail));
         lightTail.type = ET_EXM_GUIDE_LIGHT_TAIL;
@@ -1900,7 +1900,7 @@ static void effect_exm_guide_light_main(struct Effect *effect)
         spawn_effect(&lightTail);
     }
     if (effect->colorFactor > 0.0)
-        func_800390C8(5, &effect->pos, effect->colorFactor * (temp_f1 * temp_f1));
+        set_ball_target(5, &effect->pos, effect->colorFactor * (temp_f1 * temp_f1));
 }
 
 static void effect_exm_guide_light_draw(struct Effect *effect)
@@ -1914,12 +1914,12 @@ static void effect_exm_guide_light_draw(struct Effect *effect)
         mathutil_mtxA_translate(&effect->pos);
         mathutil_mtxA_sq_from_identity();
         mathutil_mtxA_get_translate_alt(&spC);
-        nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
+        nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
         scale = 0.038461538461538464 * (0.35 * effect->colorFactor);
         mathutil_mtxA_scale_xyz(scale, scale, scale);
-        nl2ngc_set_scale(scale);
+        nlSetScaleFactor(scale);
         nl2ngc_draw_model_sort_translucent_alt2(g_bgNlObj->models[NLMODEL_bg_j_p_ST_J_OBJ_STARLIGHT]);
-        nl2ngc_set_material_color(effect->colorFactor, effect->colorFactor, effect->colorFactor);
+        nlObjPutSetFadeColorBase(effect->colorFactor, effect->colorFactor, effect->colorFactor);
         if (spC.z < -0.1500000014901161)
         {
             scale = -0.1500000014901161 / spC.z;
@@ -1929,10 +1929,10 @@ static void effect_exm_guide_light_draw(struct Effect *effect)
             mathutil_mtxA_from_translate(&spC);
             scale = scale * (0.1875 + (0.5625 * effect->colorFactor));
             mathutil_mtxA_scale_xyz(scale, scale, scale);
-            nl2ngc_set_scale(scale);
+            nlSetScaleFactor(scale);
             nl2ngc_draw_model_sort_translucent_alt2(g_commonNlObj->models[NLMODEL_common_circle_white]);
         }
-        u_reset_post_mult_color();
+        fade_color_base_default();
     }
 }
 
@@ -1966,12 +1966,12 @@ static void effect_exm_guide_light_tail_draw(struct Effect *effect)
     mathutil_mtxA_sq_from_identity();
     temp_f31 = effect->scale.x * effect->colorFactor;
     mathutil_mtxA_scale_xyz(temp_f31, temp_f31, temp_f31);
-    nl2ngc_set_scale(temp_f31);
+    nlSetScaleFactor(temp_f31);
     mathutil_mtxA_get_translate_alt(&spC);
     mathutil_mtxA_rotate_z((s16)((32500.0 * spC.x) + (65500.0 * spC.y)));
-    nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
+    nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
     nl2ngc_draw_model_sort_translucent_alt2(g_commonNlObj->models[NLMODEL_common_CROSS_LIGHT]);
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 static void effect_exm_guide_light_tail_destroy(struct Effect *effect) {}
@@ -2008,7 +2008,7 @@ static void effect_colistar_particle_main(struct Effect *effect)
     float temp_f0_2;
     float temp_f2_6;
     float temp_f31;
-    struct World *world = &currentWorldStructPtr[effect->playerId];
+    struct World *world = &currentWorld[effect->playerId];
 
     effect->vel.x += 0.004f * world->unk10.x;
     effect->vel.y += 0.004f * world->unk10.y;
@@ -2116,8 +2116,8 @@ static void effect_colistar_particle_draw(struct Effect *effect)
     s16 temp_r29;
     s16 var_r28;
 
-    if ((lbl_801EEC90.unk0 & 4)
-     && func_8000E4D0(&effect->pos) < -(model->boundSphereRadius * effect->scale.x))
+    if ((polyDisp.unk0 & 4)
+     && get_height_world_mirror_plane(&effect->pos) < -(model->boundSphereRadius * effect->scale.x))
         return;
 
     mathutil_mtxA_from_mtxB_translate(&effect->pos);
@@ -2134,7 +2134,7 @@ static void effect_colistar_particle_draw(struct Effect *effect)
     mathutil_mtxA_pop();
 
     mathutil_mtxA_get_translate_alt(&sp30);
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[3]);
+    mathutil_mtxA_from_mtx(userWork->matrices[3]);
     mathutil_mtxA_tf_point(&effect->unk58, &sp18);
 
     if (sp30.z < -0.1f && sp18.z < -0.1f
@@ -2195,7 +2195,7 @@ static void effect_colistar_particle_draw(struct Effect *effect)
         avdisp_set_z_mode(1, GX_LEQUAL, 0);
         avdisp_set_post_mult_color(scale, scale, scale, 1.0f);
         avdisp_draw_model_culled_sort_translucent(model);
-        u_reset_post_mult_color();
+        fade_color_base_default();
         avdisp_set_z_mode(1, GX_LEQUAL, 1);
     }
 
@@ -2216,7 +2216,7 @@ static void effect_colistar_particle_draw(struct Effect *effect)
         avdisp_set_bound_sphere_scale(scale);
         avdisp_draw_model_unculled_sort_translucent(commonGma->modelEntries[circle_white].model);
         avdisp_set_z_mode(1, GX_LEQUAL, 1);
-        u_reset_post_mult_color();
+        fade_color_base_default();
     }
 }
 
@@ -2338,7 +2338,7 @@ static void effect_bgwat_bubble_draw(struct Effect *effect)
 {
     struct GMAModel *model;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_sq_from_identity();
     mathutil_mtxA_rotate_z((s16)((2048.0f * mathutil_sin(effect->rotZ)) - 1024.0f));
@@ -2464,9 +2464,9 @@ static void effect_meteo_draw(struct Effect *effect)
 {
     struct GMAModel *temp_r31 = effect->model;
 
-    if ((lbl_801EEC90.unk0 & 4) && func_8000E53C(&effect->pos) < -(temp_r31->boundSphereRadius * effect->scale.x))
+    if ((polyDisp.unk0 & 4) && func_8000E53C(&effect->pos) < -(temp_r31->boundSphereRadius * effect->scale.x))
         return;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_rotate_y(effect->rotY);
     mathutil_mtxA_rotate_x(effect->rotX);
@@ -2507,7 +2507,7 @@ static void effect_meteo_fix_draw(struct Effect *effect)
 {
     struct GMAModel *temp_r31;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_rotate_y(effect->rotY);
     mathutil_mtxA_rotate_x(effect->rotX);
@@ -2614,7 +2614,7 @@ static void effect_coliflash_draw(struct Effect *effect)
     avdisp_draw_model_culled_sort_all(effect->model);
     avdisp_set_z_mode(1, GX_LEQUAL, 1);
     if (var_f29 != 1.0f)
-        u_reset_post_mult_color();
+        fade_color_base_default();
 
     !temp_f30;  // needed to match
 }
@@ -2667,10 +2667,10 @@ static void effect_bns_stg_star_draw(struct Effect *effect)
     struct GMAModel *shotstarModel = bgWork->shotstarModel;
     struct GMAModel *starlightModel = bgWork->starlightModel;
 
-    if ((lbl_801EEC90.unk0 & 4) && func_8000E53C(&effect->pos) < -shotstarModel->boundSphereRadius)
+    if ((polyDisp.unk0 & 4) && func_8000E53C(&effect->pos) < -shotstarModel->boundSphereRadius)
         return;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_get_translate_alt(&pos);
     if (pos.z > -0.1f)
@@ -2694,7 +2694,7 @@ static void effect_bns_stg_star_draw(struct Effect *effect)
         avdisp_set_post_mult_color(temp_f1_2, temp_f1_2, temp_f1_2, 1.0f);
         GXLoadPosMtxImm(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(starlightModel);
-        u_reset_post_mult_color();
+        fade_color_base_default();
     }
 }
 
@@ -2725,16 +2725,16 @@ static void effect_bns_stg_star_tail_draw(struct Effect *effect)
     struct NlModel *model = g_commonNlObj->models[NLMODEL_common_CROSS_LIGHT];
     float scale = 52.68 * (effect->scale.x * effect->colorFactor);
 
-    if ((lbl_801EEC90.unk0 & 4) && func_8000E53C(&model->boundSphereCenter) < -(model->boundSphereRadius * scale))
+    if ((polyDisp.unk0 & 4) && func_8000E53C(&model->boundSphereCenter) < -(model->boundSphereRadius * scale))
         return;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_sq_from_identity();
     mathutil_mtxA_scale_xyz(scale, scale, scale);
-    nl2ngc_set_scale(scale);
+    nlSetScaleFactor(scale);
     mathutil_mtxA_get_translate_alt(&spC);
     mathutil_mtxA_rotate_z((s16)((325.0 * spC.x) + (655.0 * spC.y)));
-    nl2ngc_draw_model_sort_translucent(model);
+    nlObjPut(model);
 }
 
 static void effect_bns_stg_star_tail_destroy(struct Effect *effect) {}
@@ -2799,14 +2799,14 @@ static void effect_bgmst_gen_cloud_draw(struct Effect *effect)
     struct GMAModel *model;
     float scale;
 
-    if (lbl_801EEC90.unk0 & 4)
+    if (polyDisp.unk0 & 4)
         return;
     if (effect->colorFactor <= 0.0f)
         return;
 
     model = effect->model;
     scale = effect->scale.x;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
     mathutil_mtxA_sq_from_identity();
     mathutil_mtxA_rotate_z(effect->rotZ);
@@ -2876,7 +2876,7 @@ static void effect_bgstm_rainripple_draw(struct Effect *effect)
     float var_f31;
     float temp_f30;
 
-    if (!(lbl_801EEC90.unk0 & 4))
+    if (!(polyDisp.unk0 & 4))
     {
         mathutil_mtxA_from_mtxB_translate(&effect->pos);
         mathutil_mtxA_get_translate_alt(&pos);
@@ -2917,7 +2917,7 @@ static void effect_bgmst_water_draw(struct Effect *effect)
     BallEnvFunc func;
     u32 var_r3;
 
-    if (lbl_801EEC90.unk0 & 1)
+    if (polyDisp.unk0 & 1)
         var_r3 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         var_r3 = 1 << (modeCtrl.unk30 - 1);
@@ -2925,7 +2925,7 @@ static void effect_bgmst_water_draw(struct Effect *effect)
         var_r3 = 1 << 0;
     if (bgObj->flags & var_r3)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         mathutil_mtxA_translate(&bgObj->pos);
         mathutil_mtxA_rotate_z(bgObj->rotZ);
         mathutil_mtxA_rotate_y(bgObj->rotY);
@@ -3095,10 +3095,10 @@ static void effect_commendfrag_draw(struct Effect *effect)
     float var_f31;
     float new_var;
 
-    if (lbl_801EEC90.unk0 & 4)
+    if (polyDisp.unk0 & 4)
     {
         temp_f30 = 0.1 * effect->scale.x;
-        var_f31 = temp_f30 + func_8000E4D0(&effect->pos);
+        var_f31 = temp_f30 + get_height_world_mirror_plane(&effect->pos);
         if (var_f31 <= 0.0f)
             return;
         if (var_f31 > temp_f30)
@@ -3194,7 +3194,7 @@ static void effect_banana_drop_main(struct Effect *effect)
 
 static void effect_banana_drop_draw(struct Effect *effect)
 {
-    if (effect->timer >= 30 || !(unpausedFrameCounter & 2))
+    if (effect->timer >= 30 || !(globalAnimTimer & 2))
     {
         mathutil_mtxA_from_mtxB_translate((Vec *)effect->model);
         mathutil_mtxA_rotate_y(effect->unkA2 + (effect->u_otherTimer * 0x1999));
@@ -3236,7 +3236,7 @@ static void effect_bgend_water_draw(struct Effect *effect)
     BallEnvFunc func;
     u32 var_r3;
 
-    if (lbl_801EEC90.unk0 & 1)
+    if (polyDisp.unk0 & 1)
         var_r3 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         var_r3 = 1 << (modeCtrl.unk30 - 1);
@@ -3244,7 +3244,7 @@ static void effect_bgend_water_draw(struct Effect *effect)
         var_r3 = 1 << 0;
     if (bgObj->flags & var_r3)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         mathutil_mtxA_translate(&bgObj->pos);
         mathutil_mtxA_rotate_z(bgObj->rotZ);
         mathutil_mtxA_rotate_y(bgObj->rotY);

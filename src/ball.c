@@ -41,7 +41,7 @@ u32 lbl_802F1F08;
 float lbl_80205E20[4];
 Mtx lbl_80205E30;
 struct Ball ballInfo[8];
-s32 lbl_80206B80[16];
+s32 apeThreadNo[16];
 s32 playerCharacterSelection[MAX_PLAYERS];
 s32 playerControllerIDs[4];
 s32 lbl_80206BE0[4];
@@ -49,7 +49,7 @@ s32 lbl_80206BE0[4];
 FORCE_BSS_ORDER(lbl_80205E20)
 FORCE_BSS_ORDER(lbl_80205E30)
 FORCE_BSS_ORDER(ballInfo)
-FORCE_BSS_ORDER(lbl_80206B80)
+FORCE_BSS_ORDER(apeThreadNo)
 FORCE_BSS_ORDER(playerCharacterSelection)
 FORCE_BSS_ORDER(playerControllerIDs)
 FORCE_BSS_ORDER(lbl_80206BE0)
@@ -209,7 +209,7 @@ void func_80036EB8(struct Ape *ape)
             sp3C.y = ball->pos.y - 1.0;
             sp3C.z = sp48.z;
             ape->unk54 = i;
-            func_800390C8(3, &sp3C, 0.5f);
+            set_ball_target(3, &sp3C, 0.5f);
             break;
         }
     }
@@ -404,7 +404,7 @@ void u_choose_ape_anim(struct Ape *ape, float speed)
     }
     if (r29 != 1 || gameSubmode == SMD_GAME_READY_MAIN)
         ape->unk54 = 0;
-    u_set_ape_anim(ape, r29, r28, r27, speed);
+    new_ape_stat_motion(ape, r29, r28, r27, speed);
 }
 
 void func_8003765C(struct Ape *ape)
@@ -458,11 +458,11 @@ void lbl_8003781C(struct Ape *ape, int b)
     switch (b)
     {
     case 3:
-        u_ape_free(ape);
+        new_ape_close(ape);
         return;
     }
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     raycast_stage_down(&r29->pos, &sp50, NULL);
@@ -494,10 +494,10 @@ void lbl_8003781C(struct Ape *ape, int b)
     func_80036EB8(ape);
     mathutil_mtxA_to_quat(&ape->unk60);
     u_choose_ape_anim(ape, speed);
-    u_do_ape_anim(ape);
+    new_ape_calc(ape);
     if (!(ape->flags & (1 << 3)))
         func_8003765C(ape);
-    u_mot_ape_something_with_head_anim(ape, &r29->unk104);
+    ape_face_dir(ape, &r29->unk104);
     r29->unk100 = 0;
     r29->unk110 = 0.0f;
 }
@@ -532,7 +532,7 @@ void ev_ball_init(void)
     int i;
 
     for (j = 0; j < 16; j++)
-        lbl_80206B80[j] = -1;
+        apeThreadNo[j] = -1;
 
     ball = &ballInfo[0];
     r21 = g_poolInfo.playerPool.statusList;
@@ -615,7 +615,7 @@ void ev_ball_init(void)
             break;
         default:
             if (!(advDemoInfo.flags & (1 << 8)))
-                lbl_80206B80[i] = u_insert_into_linked_list(lbl_8003781C, ape, 5);
+                apeThreadNo[i] = thread_unknown(lbl_8003781C, ape, 5);
             break;
         }
         switch (modeCtrl.gameType)
@@ -674,14 +674,14 @@ void ev_ball_init(void)
     func_8008BEF8(1);
 }
 
-struct Ape *u_init_ape(int a, enum Character character, void (*c)(struct Ape *, int))
+struct Ape *ape_get_by_type(int a, enum Character character, void (*c)(struct Ape *, int))
 {
     struct Ape *ape = u_make_ape(character);
 
     ape->unk74 = 0;
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_y(0x8000);
-    lbl_80206B80[a] = u_insert_into_linked_list(c, ape, 5);
+    apeThreadNo[a] = thread_unknown(c, ape, 5);
     u_switch_ape_character_lod_maybe(ape, 0);
     mathutil_mtxA_to_quat(&ape->unk60);
     lbl_802F1F08 = 0;
@@ -872,7 +872,7 @@ void ev_ball_main(void)
     s8 *r3;
     int i;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     r28 = g_poolInfo.playerPool.statusList;
     ball = &ballInfo[0];
@@ -886,7 +886,7 @@ void ev_ball_main(void)
         ball->unk120 = ball->flags;
         ball->flags &= ~(BALL_FLAG_00|BALL_FLAG_02);
         func_8003CDB0(ball);
-        func_800390C8(4, &ball->pos, 0.75f);
+        set_ball_target(4, &ball->pos, 0.75f);
         ballFuncs[ball->state](ball);
         if (modeCtrl.gameType != GAMETYPE_MINI_RACE)
             func_80038528(ball);
@@ -1061,10 +1061,10 @@ void ev_ball_dest(void)
     func_8004C7A8();
     for (i = 15; i >= 0; i--)
     {
-        if (lbl_80206B80[i] != -1)
+        if (apeThreadNo[i] != -1)
         {
-            u_move_node_to_beginning(lbl_80206B80[i]);
-            lbl_80206B80[i] = -1;
+            thread_kill(apeThreadNo[i]);
+            apeThreadNo[i] = -1;
         }
     }
 
@@ -1106,8 +1106,8 @@ void ball_draw(void)
             continue;
         if (ball->flags & BALL_FLAG_INVISIBLE)
             continue;
-        if ((lbl_801EEC90.unk0 & (1 << 2))
-         && func_8000E4D0(&ball->pos) < 0.0f)
+        if ((polyDisp.unk0 & (1 << 2))
+         && get_height_world_mirror_plane(&ball->pos) < 0.0f)
             continue;
 
         if (!(dipSwitches & DIP_OLD_BALL))  // draw new ball
@@ -1131,7 +1131,7 @@ void ball_draw(void)
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_mult_right(ball->unk30);
         mathutil_mtxA_scale_s(ball->modelScale);
-        nl2ngc_set_scale(ball->modelScale);
+        nlSetScaleFactor(ball->modelScale);
 
         if (dipSwitches & (DIP_STCOLI | DIP_TRIANGLE))
         {
@@ -1167,11 +1167,11 @@ void ball_draw(void)
         mathutil_mtxA_push();
         mathutil_mtxA_sq_from_identity();
         mathutil_mtxA_scale_s(ball->modelScale);
-        nl2ngc_set_scale(ball->modelScale);
+        nlSetScaleFactor(ball->modelScale);
         nl2ngc_draw_model_sort_translucent_alt2(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_BALL_EDGE));
         mathutil_mtxA_pop();
 
-        u_reset_post_mult_color();
+        fade_color_base_default();
     }
 }
 
@@ -1368,7 +1368,7 @@ void give_bananas(int bananas)
     }
 }
 
-void func_800390C8(int a, Vec *sphereCenter, float c)
+void set_ball_target(int a, Vec *sphereCenter, float c)
 {
     Vec sp50;
     Vec sp44;
@@ -1573,7 +1573,7 @@ void u_ball_init_2(struct Ball *ball)
     ball->winStreak = backup.winStreak;
     ball->unk128 = backup.unk128;
 
-    func_8003C4A0(ball, 0);
+    ball_set_type(ball, 0);
 
     mathutil_mtxA_from_identity();
     mathutil_mtxA_to_mtx(ball->unk30);
@@ -1718,7 +1718,7 @@ void ball_func_7(struct Ball *ball)
     ball->flags &= ~BALL_FLAG_INVISIBLE;
     if (ball->ape != NULL)
         ball->ape->flags &= ~(1 << 5);
-    func_800496BC(lbl_80250A68.unk0[ball->playerId], &sp3C, lbl_80250A68.unk10);
+    func_800496BC(replayInfo.unk0[ball->playerId], &sp3C, replayInfo.unk10);
     ball->pos.x = sp3C.pos.x;
     ball->pos.y = sp3C.pos.y;
     ball->pos.z = sp3C.pos.z;
@@ -1755,10 +1755,10 @@ void ball_func_replay_main(struct Ball *ball)
     ball->prevPos.y = ball->pos.y;
     ball->prevPos.z = ball->pos.z;
 
-    if (ball->playerId == lbl_80250A68.unk14)
-        lbl_80250A68.unk10 -= 1.0f;
+    if (ball->playerId == replayInfo.unk14)
+        replayInfo.unk10 -= 1.0f;
 
-    func_800496BC(lbl_80250A68.unk0[ball->playerId], &spC, lbl_80250A68.unk10);
+    func_800496BC(replayInfo.unk0[ball->playerId], &spC, replayInfo.unk10);
 
     ball->pos.x = spC.pos.x;
     ball->pos.y = spC.pos.y;
@@ -1783,7 +1783,7 @@ void ball_func_replay_main(struct Ball *ball)
     ball->flags = spC.unk18 | BALL_FLAG_24;
     ball->unk130 = spC.unk1C;
 
-    if (lbl_80250A68.unk10 <= 0.0 || !(infoWork.flags & INFO_FLAG_REPLAY))
+    if (replayInfo.unk10 <= 0.0 || !(infoWork.flags & INFO_FLAG_REPLAY))
         ball->state = 4;
 
     mathutil_mtxA_from_translate(&ball->pos);
@@ -2076,7 +2076,7 @@ void ball_func_demo_init(struct Ball *ball)
     ball->colorId = 3;
 
     if (!(advDemoInfo.flags & (1 << 6)))
-        lbl_80206B80[ball->playerId] = u_insert_into_linked_list(lbl_8000F790, ball->ape, 5);
+        apeThreadNo[ball->playerId] = thread_unknown(lbl_8000F790, ball->ape, 5);
 
     ball->pos.x = decodedStageLzPtr->startPos->pos.x;
     ball->pos.y = decodedStageLzPtr->startPos->pos.y;
@@ -2403,7 +2403,7 @@ void update_ball_ape_transform(struct Ball *ball, struct PhysicsBall *physBall, 
 
     if ((ball->flags & BALL_FLAG_00) && physBall->hardestColiSpeed < -0.054999999701976776)
     {
-        int r4 = (modeCtrl.gameType != GAMETYPE_MINI_FIGHT && lbl_80206DEC.unk0 < 0xF0);
+        int r4 = (modeCtrl.gameType != GAMETYPE_MINI_FIGHT && stageInfo.unk0 < 0xF0);
 
         if (r4)
             ball->flags |= BALL_FLAG_27;
@@ -2632,7 +2632,7 @@ void func_8003C38C(struct Ball *ball)
     ball->unk90 = mathutil_atan2(spC.x, spC.z);
 }
 
-void func_8003C4A0(struct Ball *ball, int b)
+void ball_set_type(struct Ball *ball, int b)
 {
     struct BallPhysicsParams *physParams = &ballPhysicsParams[b];
 
@@ -2881,7 +2881,7 @@ void func_8003CDC0(struct Ball *ball)
     case GAMETYPE_MINI_GOLF:
         break;
     default:
-        if (lbl_80206DEC.unk0 > 0xF0
+        if (stageInfo.unk0 > 0xF0
          && gameSubmode != SMD_GAME_CONTINUE_INIT
          && gameSubmode != SMD_GAME_CONTINUE_MAIN
          && gameSubmode != SMD_GAME_OVER_INIT
@@ -2900,7 +2900,7 @@ void func_8003CDC0(struct Ball *ball)
     }
 
     if (ball->state != 6
-     && lbl_80206DEC.unk0 > 0xF0
+     && stageInfo.unk0 > 0xF0
      && ball->ape->unk24 == 4
      && ball->ape->unk0->unk38 == 2)
     {
@@ -2940,7 +2940,7 @@ void func_8003CDC0(struct Ball *ball)
             r31 = MIN(f4 * 127.0f, 127.0f);
             r28 = MIN(f4 * 127.0f * 10.0f, 80.0f) * 0.85f;
         }
-        if ((unpausedFrameCounter & 7) == 0 || r31 == 0)
+        if ((globalAnimTimer & 7) == 0 || r31 == 0)
             func_8002CA5C(ball->playerId, r31, r28);
     }
     else if (modeCtrl.gameType != GAMETYPE_MINI_BOWLING)
@@ -2959,7 +2959,7 @@ void func_8003CDC0(struct Ball *ball)
             r4 = 0;
             r5 = 0;
         }
-        if ((unpausedFrameCounter & 7) == 0 || r4 == 0)
+        if ((globalAnimTimer & 7) == 0 || r4 == 0)
             func_8002CA5C(ball->playerId, r4, r5);
     }
 }
@@ -3091,7 +3091,7 @@ void draw_ball_hemispheres(struct Ball *ball, int unused)
     avdisp_set_bound_sphere_scale(ball->modelScale);
     avdisp_draw_model_unculled_sort_none(entries[coloredParts[3 + lod]].model);
 
-    u_reset_post_mult_color();
+    fade_color_base_default();
     avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 

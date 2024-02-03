@@ -69,7 +69,7 @@ void bg_end_main(void)
     float temp_f1;
 
     bg_default_main();
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     work->unk1C.x += work->unk28;
     work->unk1C.y += work->unk2C;

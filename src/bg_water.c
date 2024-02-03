@@ -67,7 +67,7 @@ void bg_water_init(void)
         find_background_gma_models(waterBgModelFind, model_find_proc);
         work->unk0 = 1;
     }
-    func_80056934();
+    clear_background_parts_flag();
     work->waterSurface = NULL;
     find_background_objects(
         decodedStageLzPtr->bgObjects,
@@ -110,7 +110,7 @@ void bg_water_main(void)
     Vec scale;
     struct BGWaterWork *work;
 
-    if ((gamePauseStatus & 0xA) && eventInfo[12].state != 2)
+    if ((debugFlags & 0xA) && eventInfo[12].state != 2)
         return;
     bg_default_main();
     work = backgroundInfo.work;
@@ -171,7 +171,7 @@ void bg_water_draw(void)
     struct BGWaterWork *work = backgroundInfo.work;
     struct StageBgObject *temp_r31;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     temp_r31 = work->waterSurface;
     if (temp_r31 != NULL)
     {
@@ -197,7 +197,7 @@ static void lbl_8005E914(void)
     struct BGWaterWork *work = backgroundInfo.work;
     Mtx sp8;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_invert();
     mathutil_mtxA_to_mtx(sp8);
     mathutil_mtxA_mult_left(work->unk3C);

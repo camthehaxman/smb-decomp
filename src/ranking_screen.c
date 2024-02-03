@@ -209,7 +209,7 @@ static void update_ranking_screen(void)
     struct RankingEntry *entry;
     struct RankingLetterBall *letterBall;
 
-    if (!(gamePauseStatus & 0xA))
+    if (!(debugFlags & 0xA))
     {
         switch (lbl_802B37F0.unk4)
         {
@@ -634,7 +634,7 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
         params.v1 = 0.0f;
         params.u2 = params.u1 + 0.7265625;
         params.v2 = 0.96875f;
-        var = ((unpausedFrameCounter << 10) + rank);
+        var = ((globalAnimTimer << 10) + rank);
         temp_f29 = 384.0 * (mathutil_sin(var) - 0.5);
         if (temp_f29 > 0.0)
         {
@@ -919,7 +919,7 @@ void func_80088E90(void)
 {
     lbl_802B395C.unk0 = 0;
     lbl_802B395C.unk4 = 1;
-    lbl_802B395C.unk18 = lbl_80250A68.unk0[lbl_80250A68.unk14];
+    lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
     get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
     func_80088D44();
     lbl_802B395C.unk8 = -lbl_802B395C.unk14;
@@ -947,7 +947,7 @@ void func_80088F18(void)
     lbl_802B395C.unk4 = 1;
     if (temp_r31 != 0)
     {
-        lbl_802B395C.unk18 = lbl_80250A68.unk0[lbl_80250A68.unk14];
+        lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
         get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
         func_80088D44();
     }
@@ -984,7 +984,7 @@ static void func_800890D4(void)
         lbl_802B395C.unk10 = 8.0f;
         break;
     case 2:
-        if (lbl_802B395C.unk18 != lbl_80250A68.unk0[lbl_80250A68.unk14])
+        if (lbl_802B395C.unk18 != replayInfo.unk0[replayInfo.unk14])
         {
             lbl_802B395C.unk4 = 3;
             lbl_802B395C.unk10 = -lbl_802B395C.unk14;
@@ -994,7 +994,7 @@ static void func_800890D4(void)
         if (lbl_802B395C.unk8 == lbl_802B395C.unk10)
         {
             lbl_802B395C.unk4 = 1;
-            lbl_802B395C.unk18 = lbl_80250A68.unk0[lbl_80250A68.unk14];
+            lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
             get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
             func_80088D44();
         }

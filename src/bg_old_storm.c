@@ -24,7 +24,7 @@ void bg_old_storm_init(void)
     spB4.x = 0.0f;
     spB4.y = 0.0f;
     spB4.z = -3.5f;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_inv_tf_point(&spB4, &backgroundInfo.unk2C);
     backgroundInfo.unk2C.y += 3.0;
 
@@ -68,7 +68,7 @@ void bg_old_storm_main(void)
     struct RaycastHit sp8;
     struct Ball *temp_r30 = currentBall;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
  
     memset(&effect, 0, sizeof(effect));
@@ -76,7 +76,7 @@ void bg_old_storm_main(void)
     spDC.x = 0.0f;
     spDC.y = 0.0f;
     spDC.z = -3.5f;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_inv_tf_point(&spDC, &spD0);
     spD0.y += 3.0;
     spDC.x = 4.0 * (spD0.x - backgroundInfo.unk2C.x);
@@ -157,7 +157,7 @@ void bg_old_storm_finish(void) {}
 
 void bg_old_storm_draw(void)
 {
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     nl2ngc_draw_model_sort_translucent_alt2(g_bgNlObj->models[0]);
     nl2ngc_draw_model_sort_translucent_alt2(g_bgNlObj->models[3]);
 }

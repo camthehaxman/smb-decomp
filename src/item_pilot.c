@@ -208,14 +208,14 @@ void item_pilot_main(struct Item *item)
     item->rotZ += item->rotVelZ;
 
     if (item->animGroupId == 0)
-        func_800390C8(2, &item->pos, 1.0f);
+        set_ball_target(2, &item->pos, 1.0f);
     else
     {
         Vec spC;
 
         mathutil_mtxA_from_mtx(animGroups[item->animGroupId].transform);
         mathutil_mtxA_tf_point(&item->pos, &spC);
-        func_800390C8(2, &spC, 1.0f);
+        set_ball_target(2, &spC, 1.0f);
     }
     if (item->pos.y - f31 < item->unk14)
     {
@@ -235,12 +235,12 @@ void item_pilot_draw(struct Item *item)
     struct GMAModel *model;
     Vec spC;
 
-    if (lbl_801EEC90.unk0 & (1 << 2))
+    if (polyDisp.unk0 & (1 << 2))
         return;
     f30 = item->unk14;
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_translate(&item->pos);
-    mathutil_mtxA_sq_from_mtx(lbl_802F1B3C->matrices[2]);
+    mathutil_mtxA_sq_from_mtx(userWork->matrices[2]);
     mathutil_mtxA_rotate_y(item->rotY);
     mathutil_mtxA_rotate_x(item->rotX);
     mathutil_mtxA_rotate_z(item->rotZ);
@@ -314,7 +314,7 @@ void item_pilot_draw(struct Item *item)
         {
             float f1, f2, f3;
 
-            switch ((unpausedFrameCounter / 10) & 3)
+            switch ((globalAnimTimer / 10) & 3)
             {
             case 0:
                 f1 = 1.0f;
@@ -337,7 +337,7 @@ void item_pilot_draw(struct Item *item)
                 f3 = 0.0f;
                 break;
             }
-            f30 = 1.0 + (((unpausedFrameCounter + item->unk2 * 10) % 60) * 0.033333333333333333);
+            f30 = 1.0 + (((globalAnimTimer + item->unk2 * 10) % 60) * 0.033333333333333333);
             avdisp_set_post_mult_color(f1, f2, f3, 1.0f);
             mathutil_mtxA_sq_from_identity();
             mathutil_mtxA_scale_s(f30);
@@ -485,6 +485,6 @@ char lbl_801BE018[] =
 
 void item_pilot_debug(struct Item *item)
 {
-    func_8002FCC0(2, lbl_801BE018);
-    func_8002FCC0(2, "Coin Value: %d\n", pilotBananaInfo[item->subType].unkC);
+    window_printf(2, lbl_801BE018);
+    window_printf(2, "Coin Value: %d\n", pilotBananaInfo[item->subType].unkC);
 }

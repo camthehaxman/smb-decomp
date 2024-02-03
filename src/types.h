@@ -952,12 +952,12 @@ enum
     PAUSEMENU_CONT_GUIDE_HOW_EXIT,
 };
 
-struct UnkLinkedListNode
+struct Thread
 {
 	void (*callback)(struct Ape *, int);
 	struct Ape *ape;
-	struct UnkLinkedListNode *next;
-	struct UnkLinkedListNode *prev;
+	struct Thread *next;
+	struct Thread *prev;
 	u32 unk10;
 	u32 unk14;
 	u32 unk18;

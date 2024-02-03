@@ -22,15 +22,15 @@
 #include "stage.h"
 #include "world.h"
 
-struct UnkLinkedListNode lbl_801ED920[146];
+struct Thread lbl_801ED920[146];
 
 struct NlModel *lbl_802F1B4C;
 void *dvdReadBuffer;
 void *lbl_802F1B44;
 void *lbl_802F1B40;
-struct Struct802F1B3C *lbl_802F1B3C;
-u32 globalFrameCounter;
-u32 unpausedFrameCounter;
+struct Struct802F1B3C *userWork;
+u32 powerOnTimer;
+u32 globalAnimTimer;
 GXRenderModeObj *currRenderMode;
 
 OSHeapHandle mainHeap;
@@ -64,7 +64,7 @@ __attribute__((section(".text")))
 void main(void)
 {
     //dipSwitches |= DIP_DEBUG;
-    globalFrameCounter = 0;
+    powerOnTimer = 0;
     initialize();
     gm_init();
     bitmap_init();
@@ -74,9 +74,9 @@ void main(void)
     sound_init();
     avdisp_init();
     currentBall = &ballInfo[0];
-    currentWorldStructPtr = &worldInfo[0];
+    currentWorld = &worldInfo[0];
     chkstatus_init();
-    u_init_some_linked_list(lbl_801ED920, 0x80);
+    thread_init(lbl_801ED920, 0x80);
     recplay_init();
     camera_init();
     polydisp_init();
@@ -93,7 +93,7 @@ void main(void)
     lbl_802F1F40 = 1;
     u_reset_gamedata();
     course_init();
-    globalFrameCounter++;
+    powerOnTimer++;
     srand(OSGetTime());
 
     while (1)
@@ -175,9 +175,9 @@ void main(void)
         shadowerase_main();
         perfInfo.unk34 = perf_stop_timer(4);
 
-        globalFrameCounter++;
-        if ((gamePauseStatus & 0xA) == 0)
-            unpausedFrameCounter++;
+        powerOnTimer++;
+        if ((debugFlags & 0xA) == 0)
+            globalAnimTimer++;
     }
 }
 

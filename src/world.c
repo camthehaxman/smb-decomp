@@ -16,7 +16,7 @@
 #include "recplay.h"
 #include "world.h"
 
-struct World *currentWorldStructPtr;
+struct World *currentWorld;
 struct World worldInfo[MAX_PLAYERS];
 Vec lbl_80206CF0;
 
@@ -313,7 +313,7 @@ void world_sub_input_main(struct World *world)
     int inpYRot;
     Vec spC;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     if (gameMode == MD_ADV && !(advDemoInfo.flags & (1 << 8)) && gameSubmode != SMD_ADV_INFO_MAIN)
@@ -430,10 +430,10 @@ void world_sub_7(struct World *world)
     Vec sp10;
     struct ReplayWorldFrame spC;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
-    func_80049C1C(lbl_80250A68.unk0[world->playerId], &spC, lbl_80250A68.unk10);
+    func_80049C1C(replayInfo.unk0[world->playerId], &spC, replayInfo.unk10);
     var1 = -world->xrot;
     var2 = -world->zrot;
     world->xrot += var1 >> 2;
@@ -464,10 +464,10 @@ void world_sub_9(struct World *world)
     struct ReplayWorldFrame spC;
     Vec sp10;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
-    func_80049C1C(lbl_80250A68.unk0[world->playerId], &spC, lbl_80250A68.unk10);
+    func_80049C1C(replayInfo.unk0[world->playerId], &spC, replayInfo.unk10);
     var1 = spC.rotX - world->xrot;
     var2 = spC.rotZ - world->zrot;
     world->xrot += var1 >> 2;
@@ -492,7 +492,7 @@ void world_sub_11(struct World *world)
     Vec spC;
     int var;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     f1 = controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickX / 60.0;

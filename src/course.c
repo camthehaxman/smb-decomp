@@ -1120,7 +1120,7 @@ void ev_course_main(void)
     u32 condResult;
     u32 var_r4_2;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     prevOpcode = -1;
     condResult = 0;
@@ -1824,7 +1824,7 @@ void lbl_80067C20(struct Sprite *sprite)
                 if (i > 0)
                     break;
 
-                if (var_r31[1].unk0 == infoWork.currFloor && unpausedFrameCounter % 60 < 45)
+                if (var_r31[1].unk0 == infoWork.currFloor && globalAnimTimer % 60 < 45)
                     set_text_mul_color(RGBA(0, 255, 0, 0));
                 set_text_pos(
                     x + sprite->scaleX * (var_r4 * 8) + sprite->scaleX * 16.0f,

@@ -56,32 +56,32 @@ void debug_main(void)
     u32 temp_r4_2;
 
     if ((dipSwitches & DIP_DEBUG) && (dipSwitches & DIP_DISP))
-        gamePauseStatus |= 4;
+        debugFlags |= 4;
     else
-        gamePauseStatus &= ~4;
+        debugFlags &= ~4;
     if ((dipSwitches & DIP_DEBUG))
     {
-        if (!(gamePauseStatus & 1))
+        if (!(debugFlags & 1))
         {
             if ((analogButtonInfo[0][0] & PAD_BUTTON_B) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
-                gamePauseStatus |= 3;
+                debugFlags |= 3;
         }
         else if (!(analogButtonInfo[0][0] & PAD_BUTTON_A) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
-            gamePauseStatus &= ~3;
+            debugFlags &= ~3;
         else if (controllerInfo[0].unk0[2].button & PAD_TRIGGER_Z)
-            gamePauseStatus &= ~2;
+            debugFlags &= ~2;
         else
-            gamePauseStatus |= 2;
+            debugFlags |= 2;
     }
     else
-        gamePauseStatus &= ~3;
+        debugFlags &= ~3;
 
-    if (gamePauseStatus & 1)
+    if (debugFlags & 1)
         lbl_802F1ED8 = 8;
     else if (lbl_802F1ED8 != 0)
         lbl_802F1ED8--;
 
-    if (gamePauseStatus & 1)
+    if (debugFlags & 1)
     {
         u_debug_set_cursor_pos(43, 0);
         u_debug_print("DEBUG MODE");
@@ -94,7 +94,7 @@ void debug_main(void)
         {
             if (eventInfo[EVENT_MOUSE].state != EV_STATE_RUNNING)
             {
-                if (gamePauseStatus & 0xA)
+                if (debugFlags & 0xA)
                     event_start(EVENT_MOUSE);
             }
             else
@@ -190,7 +190,7 @@ static void func_80030914(struct PoolInfo_sub *pool, int eventId)
 
 static void dummy_func(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     else
         return;

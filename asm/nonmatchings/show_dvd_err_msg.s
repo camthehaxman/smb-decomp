@@ -41,10 +41,10 @@
 /* 800AC7B8 000A86D8  38 61 00 0C */	addi r3, r1, 0xc
 /* 800AC7BC 000A86DC  38 80 00 01 */	li r4, 1
 /* 800AC7C0 000A86E0  48 03 7B E9 */	bl GXSetProjection
-/* 800AC7C4 000A86E4  80 6D 9B 24 */	lwz r3, lbl_802F1D04  //@sda21(r13)
+/* 800AC7C4 000A86E4  80 6D 9B 24 */	lwz r3, spriteParamsBufState  //@sda21(r13)
 /* 800AC7C8 000A86E8  38 00 00 04 */	li r0, 4
 /* 800AC7CC 000A86EC  90 6D A0 1C */	stw r3, lbl_802F21FC  //@sda21(r13)
-/* 800AC7D0 000A86F0  90 0D 9B 24 */	stw r0, lbl_802F1D04  //@sda21(r13)
+/* 800AC7D0 000A86F0  90 0D 9B 24 */	stw r0, spriteParamsBufState  //@sda21(r13)
 /* 800AC7D4 000A86F4  4B FC 52 B9 */	bl reset_text_draw_settings
 /* 800AC7D8 000A86F8  38 60 00 B3 */	li r3, 0xb3
 /* 800AC7DC 000A86FC  4B FC 52 F9 */	bl set_text_font
@@ -104,7 +104,7 @@ lbl_800AC8A8:
 /* 800AC8AC 000A87CC  7C 1E 00 00 */	cmpw r30, r0
 /* 800AC8B0 000A87D0  41 80 FF 84 */	blt lbl_800AC834
 /* 800AC8B4 000A87D4  80 0D A0 1C */	lwz r0, lbl_802F21FC  //@sda21(r13)
-/* 800AC8B8 000A87D8  90 0D 9B 24 */	stw r0, lbl_802F1D04  //@sda21(r13)
+/* 800AC8B8 000A87D8  90 0D 9B 24 */	stw r0, spriteParamsBufState  //@sda21(r13)
 /* 800AC8BC 000A87DC  48 00 01 30 */	b lbl_800AC9EC
 lbl_800AC8C0:
 /* 800AC8C0 000A87E0  80 0D A0 18 */	lwz r0, lbl_802F21F8  //@sda21(r13)
@@ -188,9 +188,9 @@ lbl_800AC9E0:
 lbl_800AC9EC:
 /* 800AC9EC 000A890C  4B F7 64 25 */	bl gpwait_main
 /* 800AC9F0 000A8910  4B F7 64 C5 */	bl syncwait_main
-/* 800AC9F4 000A8914  80 6D 99 58 */	lwz r3, globalFrameCounter  //@sda21(r13)
+/* 800AC9F4 000A8914  80 6D 99 58 */	lwz r3, powerOnTimer  //@sda21(r13)
 /* 800AC9F8 000A8918  38 03 00 01 */	addi r0, r3, 1
-/* 800AC9FC 000A891C  90 0D 99 58 */	stw r0, globalFrameCounter  //@sda21(r13)
+/* 800AC9FC 000A891C  90 0D 99 58 */	stw r0, powerOnTimer  //@sda21(r13)
 /* 800ACA00 000A8920  4B F7 62 B5 */	bl beginframe_main
 /* 800ACA04 000A8924  4B F8 11 35 */	bl func_8002DB38
 /* 800ACA08 000A8928  80 01 00 C4 */	lwz r0, 0xc4(r1)

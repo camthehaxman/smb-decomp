@@ -1287,8 +1287,8 @@ static struct Struct801B2A5C lbl_801B2A5C[] =
 };
 
 static u32 s_aramBlocks[2];
-static u8 lbl_802F1D38;
-static u8 lbl_802F1D39;
+static u8 sndEfcRev;
+static u8 sndEfcCho;
 static s16 lbl_802F1D3A;
 static u8 lbl_802F1D3C;
 static float lbl_802F1D40;
@@ -1510,29 +1510,29 @@ static void play_stage_sounds(void)
                     lbl_802F1DC4 = 1;
                     lbl_80201490.unk3C = u_play_sound_2(0x4C);
                 }
-                if ((int)lbl_80206DEC.u_stageTimer % 300 == 60)
+                if ((int)stageInfo.u_stageTimer % 300 == 60)
                 {
                     lbl_80201490.unk40 = u_play_sound_1_dupe(
                         SOME_MACRO(
                             0x4D,
-                            ((int)lbl_80206DEC.u_stageTimer & 0x1F) - 0x23,
-                            ((int)(59.0f + lbl_80206DEC.u_stageTimer) & 0x7F) - 0x40,
-                            ((int)(77.0f + lbl_80206DEC.u_stageTimer) & 0x7F) - 0x40
+                            ((int)stageInfo.u_stageTimer & 0x1F) - 0x23,
+                            ((int)(59.0f + stageInfo.u_stageTimer) & 0x7F) - 0x40,
+                            ((int)(77.0f + stageInfo.u_stageTimer) & 0x7F) - 0x40
                         )
                     );
-                    SoundPitch(lbl_80201490.unk40, ((int)lbl_80206DEC.u_stageTimer * 0x1E) & 0x3FFF);
+                    SoundPitch(lbl_80201490.unk40, ((int)stageInfo.u_stageTimer * 0x1E) & 0x3FFF);
                 }
-                if ((int)lbl_80206DEC.u_stageTimer % 1000 == 200)
+                if ((int)stageInfo.u_stageTimer % 1000 == 200)
                 {
                     lbl_80201490.unk44 = u_play_sound_1_dupe(
                         SOME_MACRO(
                             0x4E,
-                            ((int)lbl_80206DEC.u_stageTimer & 0x1F) - 5,
-                            ((int)(59.0f + lbl_80206DEC.u_stageTimer) & 0x7F) - 0x40,
-                            ((int)(77.0f + lbl_80206DEC.u_stageTimer) & 0x7F) - 0x40
+                            ((int)stageInfo.u_stageTimer & 0x1F) - 5,
+                            ((int)(59.0f + stageInfo.u_stageTimer) & 0x7F) - 0x40,
+                            ((int)(77.0f + stageInfo.u_stageTimer) & 0x7F) - 0x40
                         )
                     );
-                    SoundPitch(lbl_80201490.unk40, ((int)lbl_80206DEC.u_stageTimer * 0x1E) & 0x3FFF);
+                    SoundPitch(lbl_80201490.unk40, ((int)stageInfo.u_stageTimer * 0x1E) & 0x3FFF);
                 }
             }
             else if (lbl_802F1DC4 != 0)
@@ -1550,14 +1550,14 @@ static void play_stage_sounds(void)
                     lbl_802F1DC8 = 1;
                     u_play_sound_0(0x389F7);
                 }
-                if ((int)lbl_80206DEC.u_stageTimer % 1000 == 200)
+                if ((int)stageInfo.u_stageTimer % 1000 == 200)
                 {
                     u_play_sound_0(
                         SOME_MACRO(
                             0x1F6,
-                            ((int)lbl_80206DEC.u_stageTimer & 0x1F) - 0x28,
-                            ((int)(59.0f + lbl_80206DEC.u_stageTimer) & 0x7F) - 0x40,
-                            ((int)(77.0f + lbl_80206DEC.u_stageTimer) & 0x7F) - 0x40
+                            ((int)stageInfo.u_stageTimer & 0x1F) - 0x28,
+                            ((int)(59.0f + stageInfo.u_stageTimer) & 0x7F) - 0x40,
+                            ((int)(77.0f + stageInfo.u_stageTimer) & 0x7F) - 0x40
                         )
                     );
                 }
@@ -1568,12 +1568,12 @@ static void play_stage_sounds(void)
                 lbl_802F1DC8 = 0;
             }
 
-            if (lbl_80206DEC.u_stageTimer != 0.0)
+            if (stageInfo.u_stageTimer != 0.0)
             {
                 switch (currStageId)
                 {
                 case ST_109_FACTORY:
-                    if ((int)lbl_80206DEC.u_stageTimer % 180 == 60)
+                    if ((int)stageInfo.u_stageTimer % 180 == 60)
                     {
                         sp8.x = 0.0f;
                         sp8.y = 7.5f;
@@ -1583,9 +1583,9 @@ static void play_stage_sounds(void)
                     }
                     break;
                 case ST_061_TWIN_ATTACKER:
-                    if ((int)lbl_80206DEC.u_stageTimer % 75 == 0)
+                    if ((int)stageInfo.u_stageTimer % 75 == 0)
                     {
-                        if ((int)lbl_80206DEC.u_stageTimer % 150 == 0)
+                        if ((int)stageInfo.u_stageTimer % 150 == 0)
                         {
                             sp8.x = -3.0f;
                             sp8.y = 0.25f;
@@ -1614,9 +1614,9 @@ static void play_stage_sounds(void)
                     }
                     break;
                 case ST_038_SPIKY:
-                    if ((int)lbl_80206DEC.u_stageTimer % 75 == 0)
+                    if ((int)stageInfo.u_stageTimer % 75 == 0)
                     {
-                        if ((int)lbl_80206DEC.u_stageTimer % 150 == 0)
+                        if ((int)stageInfo.u_stageTimer % 150 == 0)
                         {
                             sp8.x = -3.0f;
                             sp8.y = 0.5f;
@@ -1645,7 +1645,7 @@ static void play_stage_sounds(void)
                     }
                     break;
                 case ST_023_JUMPIES:
-                    if ((int)lbl_80206DEC.u_stageTimer % 150 == 90)
+                    if ((int)stageInfo.u_stageTimer % 150 == 90)
                     {
                         sp8.x = 0.0f;
                         sp8.y = 0.0f;
@@ -1668,7 +1668,7 @@ static void play_stage_sounds(void)
                     }
                     break;
                 case ST_113_DAA_LOO_MAA:
-                    if ((int)lbl_80206DEC.u_stageTimer % 150 == 0)
+                    if ((int)stageInfo.u_stageTimer % 150 == 0)
                     {
                         sp8.x = 0.0f;
                         sp8.y = 0.0f;
@@ -1679,7 +1679,7 @@ static void play_stage_sounds(void)
                     }
                     break;
                 case ST_107_BREATHE:
-                    if ((int)lbl_80206DEC.u_stageTimer % 0x78 == 1)
+                    if ((int)stageInfo.u_stageTimer % 0x78 == 1)
                     {
                         sp8.x = 16.0f;
                         sp8.y = 0.5f;
@@ -1704,7 +1704,7 @@ static void play_stage_sounds(void)
                     }
                     break;
                 case ST_077_QUAKE:
-                    if ((int)lbl_80206DEC.u_stageTimer % 480 == 150)
+                    if ((int)stageInfo.u_stageTimer % 480 == 150)
                     {
                         sp8.x = -16.0f;
                         sp8.y = 0.5f;
@@ -1808,8 +1808,8 @@ void sound_init(void)
         &lbl_801F9118.unk300,
         0xFF,
         0);
-    lbl_802F1D38 = 0;
-    lbl_802F1D39 = 0;
+    sndEfcRev = 0;
+    sndEfcCho = 0;
     sndMasterVolume(0x7F, 0, 1, 1);
     sndVolume(0.01f * (127.0f * lbl_802F1DF5), 0, 0xFF);
 
@@ -2107,7 +2107,7 @@ void ev_sound_init(void)
     int j;
     int i2;
 
-    func_8002CA38(0, 0);
+    SoundEffect(0, 0);
     ptr = lbl_801FE498;
     for (i = 0; i < 16; i++, ptr++)
     {
@@ -2156,7 +2156,7 @@ void ev_sound_main(void)
     {
         if (lbl_802014E0.unk14 > 0)
         {
-            if (!(gamePauseStatus & 2))
+            if (!(debugFlags & 2))
                 lbl_802014E0.unk14--;
             if (lbl_802014E0.unk10 == 2)
             {
@@ -2236,7 +2236,7 @@ void ev_sound_main(void)
             u_volumeRelated3 * (0.01f * u_volumeRelated1));
         u_volumeRelated2 = u_volumeRelated1;
     }
-    if (!(gamePauseStatus & 0xA))
+    if (!(debugFlags & 0xA))
     {
         int i;
         int j;
@@ -2509,10 +2509,10 @@ static void func_8002A964(struct Struct801FE498 *arg0)
         if ((sndDesc->unk8 != 7) && (sndDesc->unk8 != 0xC))
         {
             spC[var_r9].ctrl = 0x5B;
-            spC[var_r9].paraData.value7 = lbl_802F1D38;
+            spC[var_r9].paraData.value7 = sndEfcRev;
             var_r9++;
             spC[var_r9].ctrl = 0x5D;
-            spC[var_r9].paraData.value7 = lbl_802F1D39;
+            spC[var_r9].paraData.value7 = sndEfcCho;
             var_r9++;
         }
         sp1C.numPara = var_r9;
@@ -2525,7 +2525,7 @@ static void func_8002A964(struct Struct801FE498 *arg0)
 
 static s8 lbl_802F081C[4] = { 0, 1, -1, 2 };
 
-static int func_8002ABF0(u32 *arg0, const struct SoundDesc *sndDesc, u32 arg2)
+static int PlayerAutoSurround(u32 *arg0, const struct SoundDesc *sndDesc, u32 arg2)
 {
     float var_f2;
     int var_r3;
@@ -2691,7 +2691,7 @@ int SoundReq(u32 soundParam)
     {
         if (var_r29->unk0 == -1)
         {
-            temp_r3_2 = func_8002ABF0(&soundParam, sndDesc, playerId);
+            temp_r3_2 = PlayerAutoSurround(&soundParam, sndDesc, playerId);
             var_r29->unk0 = soundParam & 0x7FF;
             var_r29->unk2 = (lbl_802F1D3A == -1) ? var_r29->unk0 : lbl_802F1D3A;
             var_r29->unk4 = (soundParam >> 11) & 0x7F;
@@ -2730,7 +2730,7 @@ int SoundReqDirect(u32 soundParam)
     }
     if (func_8002AE58(&soundParam, sndDesc, var_r31) != 0)
         return -1;
-    temp_r3_2 = func_8002ABF0(&soundParam, sndDesc, var_r31);
+    temp_r3_2 = PlayerAutoSurround(&soundParam, sndDesc, var_r31);
     sp10.unk0 = soundParam & 0x7FF;
     sp10.unk2 = (lbl_802F1D3A == -1) ? sp10.unk0 : lbl_802F1D3A;
     sp10.unk4 = (soundParam >> 11) & 0x7F;
@@ -3142,12 +3142,12 @@ void SoundChoID(int arg0_, u8 arg1)
         sndFXCtrl(s_voiceIDs[var_r3][arg0], 0x5D, arg1);
 }
 
-void func_8002CA38(s8 arg0, s8 arg1)
+void SoundEffect(s8 arg0, s8 arg1)
 {
     if (arg0 != -1)
-        lbl_802F1D38 = arg0;
+        sndEfcRev = arg0;
     if (arg1 != -1)
-        lbl_802F1D39 = arg1;
+        sndEfcCho = arg1;
 }
 
 struct Struct801B3938
@@ -3211,6 +3211,7 @@ static struct OtherKeyframe lbl_801B3A04[] =
     { 127, 16383.0f, 0.0f, 0.0f },
 };
 
+// SoundIcsReq?
 void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2)
 {
     s8 var_r23;

@@ -210,10 +210,10 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
     struct RenderEffectFlatMirror *work;
     struct Camera *camera;
 
-    if (lbl_801EEC90.unk0 & 0x20)
+    if (polyDisp.unk0 & 0x20)
         return;
 
-    camera_apply_viewport(modeCtrl.currPlayer);
+    set_current_camera(modeCtrl.currPlayer);
     camera = currentCamera;
     work = (void *)rendEfc->work;
     cameraBackup = *camera;  // save camera
@@ -305,11 +305,11 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
         mathutil_mtxA_rotate_y(camera->rotY);
         mathutil_mtxA_rotate_x(camera->rotX);
         mathutil_mtxA_rotate_z(camera->rotZ);
-        mathutil_mtxA_mult_right(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_mult_right(userWork->matrices[0]);
         mathutil_mtxA_mult_left(spB0);
         mathutil_mtxA_to_mtx(camera->unk1A4);
         mathutil_mtxA_to_mtx(camera->unk1D4);
-        camera_apply_viewport(u_cameraId1);
+        set_current_camera(u_cameraId1);
         MTXPerspective(projMtx, 0.005493164f * camera->sub28.fov, camera->sub28.aspect, 0.1f, 20000.0f);
         projMtx[0][2] -= projMtx[0][0] * camera->sub28.unk28 * camera->sub28.aspect * camera->sub28.unk38;
         projMtx[1][2] -= projMtx[1][1] * camera->sub28.unk2C * camera->sub28.unk38;
@@ -318,23 +318,23 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
         GXSetScissor(0, 0, work->xres, work->yres);
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(5);
-        lbl_801EEC90.unk0 |= 4;
+        polyDisp.unk0 |= 4;
         mathutil_mtxA_from_mtx(work->unk2C);
-        mathutil_mtxA_get_translate_alt(&lbl_801EEC90.unk4);
-        mathutil_mtxA_tf_vec_xyz(&lbl_801EEC90.unk10, 0.0f, 1.0f, 0.0f);
+        mathutil_mtxA_get_translate_alt(&polyDisp.unk4);
+        mathutil_mtxA_tf_vec_xyz(&polyDisp.unk10, 0.0f, 1.0f, 0.0f);
         mathutil_mtxA_from_mtxB();
-        mathutil_mtxA_tf_point(&lbl_801EEC90.unk4, &lbl_801EEC90.unk1C);
-        mathutil_mtxA_tf_vec(&lbl_801EEC90.unk10, &lbl_801EEC90.unk28);
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_tf_point(&polyDisp.unk4, &polyDisp.unk1C);
+        mathutil_mtxA_tf_vec(&polyDisp.unk10, &polyDisp.unk28);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         mathutil_mtxA_rigid_invert();
         mathutil_mtxA_mult_right(mathutilData->mtxB);
-        mathutil_mtxA_tf_point(&lbl_801EEC90.unk4, &lbl_801EEC90.unk34);
-        mathutil_mtxA_tf_vec(&lbl_801EEC90.unk10, &lbl_801EEC90.unk40);
+        mathutil_mtxA_tf_point(&polyDisp.unk4, &polyDisp.unk34);
+        mathutil_mtxA_tf_vec(&polyDisp.unk10, &polyDisp.unk40);
     }
 
     if (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
     {
-        if (!(lbl_801EEC90.unk0 & 0x10))
+        if (!(polyDisp.unk0 & 0x10))
             draw_monkey();
         if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)
             stage_draw();
@@ -358,16 +358,16 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
     }
     else
         func_800A5F28();
-    lbl_801EEC90.unk0 &= 0xFFFFFFFB;
+    polyDisp.unk0 &= 0xFFFFFFFB;
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);
     GXCopyTex(work->imageBuf, 1);
     GXInitTexObj(&work->texObj, work->imageBuf, work->xres, work->yres, work->format, GX_CLAMP, GX_CLAMP, 0U);
     *camera = cameraBackup;  // restore camera
-    camera_apply_viewport(modeCtrl.currPlayer);
+    set_current_camera(modeCtrl.currPlayer);
     pop_light_group();
-    camera_apply_viewport(modeCtrl.currPlayer);
+    set_current_camera(modeCtrl.currPlayer);
 }
 
 u32 lbl_8009825C();
@@ -547,7 +547,7 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
     struct RenderEffectWavyMirror *work;
     struct Camera *camera;
 
-    camera_apply_viewport(modeCtrl.currPlayer);
+    set_current_camera(modeCtrl.currPlayer);
     light_main();
     work = rendEfc->work;
     camera = currentCamera;
@@ -626,7 +626,7 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
         mathutil_mtxA_mult_left(spB0);
         mathutil_mtxA_to_mtx(camera->unk1A4);
         mathutil_mtxA_to_mtx(camera->unk1D4);
-        camera_apply_viewport(modeCtrl.currPlayer);
+        set_current_camera(modeCtrl.currPlayer);
         MTXPerspective(projMtx, 0.005493164f * camera->sub28.fov, camera->sub28.aspect, 0.1f, 20000.0f);
         projMtx[0][2] -= projMtx[0][0] * camera->sub28.unk28 * camera->sub28.aspect * camera->sub28.unk38;
         projMtx[1][2] -= projMtx[1][1] * camera->sub28.unk2C * camera->sub28.unk38;
@@ -635,23 +635,23 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
         GXSetScissor(0, 0, work->xres, work->yres);
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(5);
-        lbl_801EEC90.unk0 |= 4;
+        polyDisp.unk0 |= 4;
         mathutil_mtxA_from_mtx(work->unk2C);
-        mathutil_mtxA_get_translate_alt(&lbl_801EEC90.unk4);
-        mathutil_mtxA_tf_vec_xyz(&lbl_801EEC90.unk10, 0.0f, 1.0f, 0.0f);
+        mathutil_mtxA_get_translate_alt(&polyDisp.unk4);
+        mathutil_mtxA_tf_vec_xyz(&polyDisp.unk10, 0.0f, 1.0f, 0.0f);
         mathutil_mtxA_from_mtxB();
-        mathutil_mtxA_tf_point(&lbl_801EEC90.unk4, &lbl_801EEC90.unk1C);
-        mathutil_mtxA_tf_vec(&lbl_801EEC90.unk10, &lbl_801EEC90.unk28);
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_tf_point(&polyDisp.unk4, &polyDisp.unk1C);
+        mathutil_mtxA_tf_vec(&polyDisp.unk10, &polyDisp.unk28);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         mathutil_mtxA_rigid_invert();
         mathutil_mtxA_mult_right(mathutilData->mtxB);
-        mathutil_mtxA_tf_point(&lbl_801EEC90.unk4, &lbl_801EEC90.unk34);
-        mathutil_mtxA_tf_vec(&lbl_801EEC90.unk10, &lbl_801EEC90.unk40);
+        mathutil_mtxA_tf_point(&polyDisp.unk4, &polyDisp.unk34);
+        mathutil_mtxA_tf_vec(&polyDisp.unk10, &polyDisp.unk40);
     }
 
     if (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
     {
-        if (!(lbl_801EEC90.unk0 & 0x10))
+        if (!(polyDisp.unk0 & 0x10))
             draw_monkey();
         if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)
             stage_draw();
@@ -673,14 +673,14 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
     }
     else
         func_800A5F28();
-    lbl_801EEC90.unk0 &= 0xFFFFFFFB;
+    polyDisp.unk0 &= 0xFFFFFFFB;
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);
     GXCopyTex(work->unk28, 1);
     GXInitTexObj(&work->unk0, work->unk28, work->xres, work->yres, work->format, GX_CLAMP, GX_CLAMP, 0U);
     *camera = cameraBackup;  // restore camera
-    camera_apply_viewport(modeCtrl.currPlayer);
+    set_current_camera(modeCtrl.currPlayer);
     pop_light_group();
 }
 
@@ -721,7 +721,7 @@ void func_80098B50(int arg0, struct RenderEffect *rendEfc)
 
         mathutil_mtxA_from_mtxB();
         GXLoadPosMtxImm(mathutilData->mtxA, 0U);
-        nl2ngc_set_scale(1.0f);
+        nlSetScaleFactor(1.0f);
         dynpart = dynamicStageParts;
         while (dynpart->modelName != NULL)
         {
@@ -736,7 +736,7 @@ void func_80098B50(int arg0, struct RenderEffect *rendEfc)
     GXInitTexObj(&work->unk94, work->unkB4, 0x100U, 0x100U, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0U);
     GXInitTexObjLOD(&work->unk94, GX_LINEAR, GX_LINEAR, 0.0f, 10.0f, 0.0f, 0U, 0U, GX_ANISO_1);
     u_gxutil_fog_something_2();
-    camera_apply_viewport(modeCtrl.currPlayer);
+    set_current_camera(modeCtrl.currPlayer);
 }
 
 void func_80098EB4(int arg0, struct RenderEffect *rendEfc)

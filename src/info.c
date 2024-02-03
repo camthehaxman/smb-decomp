@@ -79,7 +79,7 @@ void ev_info_main(void)
     struct ReplayHeader spC8;
     struct PhysicsBall sp6C;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     // handle goal
@@ -104,7 +104,7 @@ void ev_info_main(void)
         case GAMETYPE_MAIN_COMPETITION:
             if (ball->flags & BALL_FLAG_24)
             {
-                get_replay_header(lbl_80250A68.unk0[ball->playerId], &spC8);
+                get_replay_header(replayInfo.unk0[ball->playerId], &spC8);
                 if (!(spC8.flags & 1))
                     continue;
             }
@@ -165,7 +165,7 @@ void ev_info_main(void)
                 break;
             if (ball->flags & BALL_FLAG_24)
             {
-                get_replay_header(lbl_80250A68.unk0[ball->playerId], &spC8);
+                get_replay_header(replayInfo.unk0[ball->playerId], &spC8);
                 if (!(spC8.flags & 1))
                     break;
             }
@@ -570,7 +570,7 @@ void rank_icon_sprite_main(s8 *dummy, struct Sprite *sprite)
             countSprite->bmpId = ball->unk138;  //! Huh? This is a text sprite
             countSprite->mainFunc = bonus_count_sprite_main;
             sprintf(countSprite->text, "BONUS  +000", ball->unk138);  //! bad format
-            bananaSprite = create_linked_sprite(countSprite);
+            bananaSprite = create_child_sprite(countSprite);
             if (bananaSprite != NULL)
             {
                 bananaSprite->type = SPRITE_TYPE_BITMAP;

@@ -1,9 +1,9 @@
 /**
  * ord_tbl.c - Implements a system for drawing objects in order of depth
  *
- * lbl_802F1B3C->entries is an array of OrdTblNodes that also form a linked list
- * with lbl_802F1B3C->firstEntry as a pointer to the first node of the list. The
- * nodes in lbl_802F1B3C->entries don't actually draw anything, but serve as
+ * userWork->entries is an array of OrdTblNodes that also form a linked list
+ * with userWork->firstEntry as a pointer to the first node of the list. The
+ * nodes in userWork->entries don't actually draw anything, but serve as
  * places where other nodes (that do draw objects) can be inserted. Using this as
  * an array allows for quick O(1) lookup, since an appropriate spot to insert a
  * new node can be found by simply computing the depth of the object's position
@@ -25,31 +25,31 @@ static void reset_alloc_info(void);
 /* Initializes parameters for the ordering table. Called at game startup */
 void ord_tbl_init(float depthOffset, float minDepth, float maxDepth, void *buffer, int maxEntries)
 {
-    lbl_802F1B3C->entries = buffer;
-    lbl_802F1B3C->maxEntries = maxEntries;
-    lbl_802F1B3C->depthOffset = depthOffset;
-    lbl_802F1B3C->minDepth = minDepth;
-    lbl_802F1B3C->maxDepth = maxDepth;
-    lbl_802F1B3C->depthRange = maxDepth - minDepth;
+    userWork->entries = buffer;
+    userWork->maxEntries = maxEntries;
+    userWork->depthOffset = depthOffset;
+    userWork->minDepth = minDepth;
+    userWork->maxDepth = maxDepth;
+    userWork->depthRange = maxDepth - minDepth;
     ord_tbl_reset();
 }
 
 /* Resets the ordering table state. Called at the start of each frame */
 void ord_tbl_reset(void)
 {
-    clear_ord_table(lbl_802F1B3C->entries, lbl_802F1B3C->maxEntries, 1);
-    lbl_802F1B3C->lastEntry = &lbl_802F1B3C->entries[lbl_802F1B3C->maxEntries - 1];
-    lbl_802F1B3C->firstEntry = &lbl_802F1B3C->entries[0];
+    clear_ord_table(userWork->entries, userWork->maxEntries, 1);
+    userWork->lastEntry = &userWork->entries[userWork->maxEntries - 1];
+    userWork->firstEntry = &userWork->entries[0];
 }
 
 void ord_tbl_set_depth_offset(float offset)
 {
-    lbl_802F1B3C->depthOffset = offset;
+    userWork->depthOffset = offset;
 }
 
 void ord_tbl_add_depth_offset(float offset)
 {
-    lbl_802F1B3C->depthOffset += offset;
+    userWork->depthOffset += offset;
 }
 
 /* Returns the entry in the ordering table based on the depth of 'pos' in view
@@ -65,27 +65,27 @@ struct OrdTblNode *ord_tbl_get_entry_for_pos(Point3d *pos)
 
     // Convert the point into view space coordinates
     mathutil_mtxA_tf_point(pos, &pos_rt_view);
-    minDepth = lbl_802F1B3C->minDepth;
+    minDepth = userWork->minDepth;
     pos_rt_view.z = -pos_rt_view.z;
     if (pos_rt_view.z < minDepth)
         pos_rt_view.z = minDepth;
-    depth = mathutil_vec_len(&pos_rt_view) + lbl_802F1B3C->depthOffset - minDepth;
+    depth = mathutil_vec_len(&pos_rt_view) + userWork->depthOffset - minDepth;
 
     // Convert the depth to an index into the table
     if (depth < 0.0f)
         index = 0;
     else
     {
-        index = lbl_802F1B3C->maxEntries * depth / (depth + lbl_802F1B3C->depthRange);
-        if (index >= lbl_802F1B3C->maxEntries)
-            index = lbl_802F1B3C->maxEntries - 1;
+        index = userWork->maxEntries * depth / (depth + userWork->depthRange);
+        if (index >= userWork->maxEntries)
+            index = userWork->maxEntries - 1;
     }
 
-    entry = &lbl_802F1B3C->entries[index];
-    if (lbl_802F1B3C->lastEntry > entry)
-        lbl_802F1B3C->lastEntry = entry;
-    if (lbl_802F1B3C->firstEntry < entry)
-        lbl_802F1B3C->firstEntry = entry;
+    entry = &userWork->entries[index];
+    if (userWork->lastEntry > entry)
+        userWork->lastEntry = entry;
+    if (userWork->firstEntry < entry)
+        userWork->firstEntry = entry;
     return entry;
 }
 
@@ -101,41 +101,41 @@ struct OrdTblNode *ord_tbl_get_entry_for_pos_offset_index(Point3d *pos, int inde
 
     // Convert the point into view space coordinates
     mathutil_mtxA_tf_point(pos, &pos_rt_view);
-    minDepth = lbl_802F1B3C->minDepth;
+    minDepth = userWork->minDepth;
     pos_rt_view.z = -pos_rt_view.z;
     if (pos_rt_view.z < minDepth)
         pos_rt_view.z = minDepth;
-    depth = mathutil_vec_len(&pos_rt_view) + lbl_802F1B3C->depthOffset - minDepth;
+    depth = mathutil_vec_len(&pos_rt_view) + userWork->depthOffset - minDepth;
 
     // Convert the depth to an index into the table
     if (depth < 0.0f)
         index = 0;
     else
     {
-        index = lbl_802F1B3C->maxEntries * depth / (depth + lbl_802F1B3C->depthRange);
+        index = userWork->maxEntries * depth / (depth + userWork->depthRange);
         index = indexOffset + index;
         if (index < 0)
             index = 0;
-        else if (index >= lbl_802F1B3C->maxEntries)
-            index = lbl_802F1B3C->maxEntries - 1;
+        else if (index >= userWork->maxEntries)
+            index = userWork->maxEntries - 1;
     }
 
-    entry = &lbl_802F1B3C->entries[index];
-    if (lbl_802F1B3C->lastEntry > entry)
-        lbl_802F1B3C->lastEntry = entry;
-    if (lbl_802F1B3C->firstEntry < entry)
-        lbl_802F1B3C->firstEntry = entry;
+    entry = &userWork->entries[index];
+    if (userWork->lastEntry > entry)
+        userWork->lastEntry = entry;
+    if (userWork->firstEntry < entry)
+        userWork->firstEntry = entry;
     return entry;
 }
 
 /* Draws all nodes in the ordering table. Called at the end of each frame. */
 void ord_tbl_draw_nodes(void)
 {
-    if (lbl_802F1B3C->firstEntry >= lbl_802F1B3C->lastEntry)
+    if (userWork->firstEntry >= userWork->lastEntry)
     {
-        if (lbl_802F1B3C->lastEntry > &lbl_802F1B3C->entries[0])
-            lbl_802F1B3C->lastEntry[-1].next = NULL;  // Make sure the list is terminated
-        draw_nodes(lbl_802F1B3C->firstEntry);
+        if (userWork->lastEntry > &userWork->entries[0])
+            userWork->lastEntry[-1].next = NULL;  // Make sure the list is terminated
+        draw_nodes(userWork->firstEntry);
     }
     ord_tbl_reset();
 }

@@ -82,7 +82,7 @@ void bg_bonus_main(void)
     Vec sp8;
 
     bg_default_main();
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     starpoint = work->starpoints;
@@ -141,7 +141,7 @@ void bg_bonus_draw(void)
     bg_default_draw();
     mainObj = work->mainObj;
     bgScale = mainObj->scale;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&mainObj->pos);
     mathutil_mtxA_rotate_z(mainObj->rotZ);
     mathutil_mtxA_rotate_y(mainObj->rotY);
@@ -154,7 +154,7 @@ void bg_bonus_draw(void)
     {
         float pulse = (starpoint->red + starpoint->green + starpoint->blue) * 0.75f;
 
-        if (lbl_801EEC90.unk0 & (1 << 2))
+        if (polyDisp.unk0 & (1 << 2))
         {
             starPos.x = starpoint->u_pos.x * bgScale.x;
             starPos.y = starpoint->u_pos.y * bgScale.y;
@@ -180,7 +180,7 @@ void bg_bonus_draw(void)
             mathutil_mtxA_scale_s(pulse);
             avdisp_set_post_mult_color(starpoint->red, starpoint->green, starpoint->blue, 1.0f);
             avdisp_draw_model_culled_sort_translucent(starlightModel);
-            u_reset_post_mult_color();
+            fade_color_base_default();
         }
         mathutil_mtxA_pop();
     }
@@ -226,7 +226,7 @@ static void lbl_80061B58(void)
     struct BGBonusWork *work = (void *)backgroundInfo.work;
     Mtx sp8;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_invert();
     mathutil_mtxA_to_mtx(sp8);
     mathutil_mtxA_mult_left(work->unk71C);

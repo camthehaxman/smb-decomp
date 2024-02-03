@@ -15,7 +15,7 @@ double force_sdata2_802F2F50() { return 182.04444885253906; }
 double force_sdata2_802F2F58() { return 0.5; }
 float  force_sdata2_802F2F60() { return 182.04444885253906f; }
 
-void func_80020AB8(Vec *a, S16Vec *b, float c, float d, float e, float f)
+void clip_init_detail(Vec *a, S16Vec *b, float c, float d, float e, float f)
 {
     u8 dummy[8];
     s16 r30;

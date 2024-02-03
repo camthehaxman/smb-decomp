@@ -74,7 +74,7 @@ void ev_view_init(void)
     }
 
     if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
-        camera_setup_singleplayer_viewport();
+        reset_camera_viewport();
 
     view_init_stage_anim();
     func_800A66E4();
@@ -116,7 +116,7 @@ void ev_view_main(void)
     stageViewInfo->rotX = mathutil_atan2(sp8.y, mathutil_sqrt(mathutil_sum_of_sq_2(sp8.x, sp8.z)));
     stageViewInfo->rotZ = 0;
     stageViewInfo->frameCounter++;
-    unpausedFrameCounter++;
+    globalAnimTimer++;
 }
 
 void ev_view_dest(void)
@@ -178,7 +178,7 @@ void view_draw(void)
     Mtx44 projMtx;
     camera = &cameraInfo[modeCtrl.currPlayer];
 
-    lbl_801EEC90.unk0 |= 2;
+    polyDisp.unk0 |= 2;
     view_apply_camera(camera);
     MTXPerspective(projMtx, 59.99633789f, 1.33333333f, 0.1f, 20000.0f);
     GXSetProjection(projMtx, 0);
@@ -188,7 +188,7 @@ void view_draw(void)
         rotation.x = stageViewInfo->rotX;
         rotation.y = stageViewInfo->rotY;
         rotation.z = stageViewInfo->rotZ;
-        func_80020AB8(&stageViewInfo->eye, &rotation, 59.99633789f, 1.33333333f, 0.0f, 0.0f);
+        clip_init_detail(&stageViewInfo->eye, &rotation, 59.99633789f, 1.33333333f, 0.0f, 0.0f);
     }
 
     light_main();
@@ -198,8 +198,8 @@ void view_draw(void)
         rend_efc_draw(1);
     view_apply_camera(camera);
     u_draw_ball_shadow();
-    func_80054FF0();
-    u_reset_light_group_stack(0);
+    background_light_assign();
+    reset_light_group(0);
     if (eventInfo[EVENT_REND_EFC].state == EV_STATE_RUNNING)
         rend_efc_draw(4);
     view_apply_camera(camera);
@@ -225,8 +225,8 @@ void view_draw(void)
         rend_efc_draw(8);
     view_apply_camera(camera);
     currentBall = ballBackup;
-    func_80017FCC();
-    lbl_801EEC90.unk0 &= ~(1 << 1);
+    default_camera_env();
+    polyDisp.unk0 &= ~(1 << 1);
     cameraInfo[modeCtrl.currPlayer] = cameraBackup;
 }
 
@@ -320,7 +320,7 @@ void view_init_stage_anim(void)
     struct StageAnimGroup *r30;
     int i;
 
-    stageViewInfo->unk40 = lbl_80206DEC.u_stageTimer;
+    stageViewInfo->unk40 = stageInfo.u_stageTimer;
     animGroup = animGroups;
     r30 = decodedStageLzPtr->animGroups;
     for (i = 0; i < 72; i++, animGroup++, r30++)
@@ -358,7 +358,7 @@ void view_animate_stage(void)
     struct StageAnimGroup *r30;
     int i;
 
-    lbl_80206DEC.u_stageTimer = stageViewInfo->frameCounter;
+    stageInfo.u_stageTimer = stageViewInfo->frameCounter;
     t = stageViewInfo->frameCounter / 60.0;
     t += decodedStageLzPtr->loopStartSeconds;
     f3 = (float)(decodedStageLzPtr->loopEndSeconds - decodedStageLzPtr->loopStartSeconds);
@@ -440,7 +440,7 @@ void view_animate_stage(void)
 
 void func_800A66CC(void)
 {
-    lbl_80206DEC.u_stageTimer = stageViewInfo->unk40;
+    stageInfo.u_stageTimer = stageViewInfo->unk40;
 }
 
 void func_800A66E4(void)
@@ -550,12 +550,12 @@ void draw_stage_geometry(void)
     struct Struct8020A348_child *r26;
     u32 dummy;
 
-    nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
+    nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_translate(&decodedStageLzPtr->startPos->pos);
     mathutil_mtxA_rotate_y(stageViewInfo->frameCounter << 9);
     nl2ngc_draw_model_sort_translucent_alt2(NLOBJ_MODEL(g_commonNlObj, 10));
-    u_reset_post_mult_color();
+    fade_color_base_default();
     if (decodedStageGmaPtr != NULL)
     {
         animGrp = animGroups;
@@ -575,7 +575,7 @@ void draw_stage_geometry(void)
                     if (model != NULL)
                     {
 
-                        if (!(lbl_801EEC90.unk0 & (1<<(31-0x1D))) || (r26->flags & (1<<(31-0x1D))))
+                        if (!(polyDisp.unk0 & (1<<(31-0x1D))) || (r26->flags & (1<<(31-0x1D))))
                             avdisp_draw_model_culled_sort_none(model);
                     }
                 }
@@ -648,7 +648,7 @@ void draw_stage_objects(void)
                 u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
                 avdisp_draw_model_culled_sort_translucent(goalModel);
             }
-            nl2ngc_draw_model_sort_translucent(NLOBJ_MODEL(g_commonNlObj, 14));
+            nlObjPut(NLOBJ_MODEL(g_commonNlObj, 14));
 
             mathutil_mtxA_push();
             mathutil_mtxA_translate_xyz(0.0f, 2.8f, 0.0f);
@@ -759,9 +759,9 @@ void view_apply_camera(struct Camera *camera)
     mathutil_mtx_copy(mathutilData->mtxA, camera->unk1A4);
     mathutil_mtx_copy(mathutilData->mtxA, camera->unk1D4);
     mathutil_mtx_copy(mathutilData->mtxA, mathutilData->mtxB);
-    mathutil_mtx_copy(mathutilData->mtxA, lbl_802F1B3C->matrices[2]);
-    mathutil_mtx_copy(mathutilData->mtxA, lbl_802F1B3C->matrices[3]);
-    mathutil_mtx_copy(mathutilData->mtxA, lbl_802F1B3C->matrices[0]);
-    mathutil_mtx_copy(mathutilData->mtxA, lbl_802F1B3C->matrices[4]);
-    mathutil_mtx_copy(mathutilData->mtxA, lbl_802F1B3C->matrices[1]);
+    mathutil_mtx_copy(mathutilData->mtxA, userWork->matrices[2]);
+    mathutil_mtx_copy(mathutilData->mtxA, userWork->matrices[3]);
+    mathutil_mtx_copy(mathutilData->mtxA, userWork->matrices[0]);
+    mathutil_mtx_copy(mathutilData->mtxA, userWork->matrices[4]);
+    mathutil_mtx_copy(mathutilData->mtxA, userWork->matrices[1]);
 }

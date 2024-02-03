@@ -180,7 +180,7 @@ void bg_sand_main(void)
     struct BGSandWork_sub_sub *var_r27;
 
     bg_default_main();
-    if ((gamePauseStatus & 0xA) && (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING))
+    if ((debugFlags & 0xA) && (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING))
         return;
 
     work->unk1C.y += 0.001f * (0.03f - work->unk1C.y);
@@ -237,7 +237,7 @@ void bg_sand_draw(void)
     struct MyDrawNode2 *temp_r24_2;
     int i;
 
-    if (lbl_801EEC90.unk0 & 0x11)
+    if (polyDisp.unk0 & 0x11)
         var_r30 = 1 << 4;
     else if (gameMode == 2 || gameMode == 4)
         var_r30 = 1 << (modeCtrl.unk30 - 1);
@@ -261,7 +261,7 @@ void bg_sand_draw(void)
             temp_r28 = *var_r27;
             if (temp_r28->flags & var_r30)
             {
-                mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+                mathutil_mtxA_from_mtx(userWork->matrices[0]);
                 mathutil_mtxA_translate(&temp_r28->pos);
                 mathutil_mtxA_rotate_z(temp_r28->rotZ);
                 mathutil_mtxA_rotate_y(temp_r28->rotY);
@@ -281,7 +281,7 @@ void bg_sand_draw(void)
 
     if (work->unk7C != 0)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
 
         var_r27 = work->fountainWater;
         for (i = 0; i < work->unk7C; i++, var_r27++)
@@ -398,7 +398,7 @@ static void func_8005C55C(int arg0, struct RenderEffect *arg1)
     sp38.x = 0.0f;
     sp38.y = 0.0f;
     sp38.z = -1.0f;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_inv_tf_vec(&sp38, &sp38);
     mathutil_vec_to_euler_xy(&sp38, &sp36, &sp34);
     temp_f9 = 32768.0f / currentCamera->sub28.fov;
@@ -495,7 +495,7 @@ static void lbl_8005CC4C(struct MyDrawNode2 *arg0)
     temp_r29 = work->fountainWater[arg0->unkC];
     temp_r28 = &work->unk80[arg0->unkC];
     work->unk564 = temp_r28;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&temp_r29->pos);
     mathutil_mtxA_rotate_z(temp_r29->rotZ);
     mathutil_mtxA_rotate_y(temp_r29->rotY);

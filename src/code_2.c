@@ -37,22 +37,24 @@ float u_interpolate_other_keyframes(float arg0, struct OtherKeyframe *arg1)
     return ret;
 }
 
-static struct UnkLinkedListNode *u_listHead;
-static struct UnkLinkedListNode *u_allNodes;
-static struct UnkLinkedListNode *u_currNode;
-static struct UnkLinkedListNode *unusedVar;
-static struct UnkLinkedListNode *u_linkedLists[20];
+/* thread.c */
 
-void dummy_callback(struct Ape *a, int b) {}
+static struct Thread *freeThread;
+static struct Thread *threadWork;
+static struct Thread *currentThread;
+static struct Thread *restoreThread;  // set, but not used
+static struct Thread *executeLevels[20];
 
-void u_init_some_linked_list(struct UnkLinkedListNode *nodes, int count)
+void dummy_thread(struct Ape *a, int b) {}
+
+void thread_init(struct Thread *nodes, int count)
 {
 	u8 dummy[8];
-	struct UnkLinkedListNode *r8 = NULL;
+	struct Thread *r8 = NULL;
 	int i;
 
-	u_currNode = nodes;
-	unusedVar = nodes;
+	currentThread = nodes;
+	restoreThread = nodes;
 	for (i = 0; i < count; i++)
 	{
 		nodes[i].callback = NULL;
@@ -67,30 +69,30 @@ void u_init_some_linked_list(struct UnkLinkedListNode *nodes, int count)
 	}
 	for (i = 0; i < 16; i++)
 	{
-		u_linkedLists[i] = &nodes[i];
-		nodes[i].callback = dummy_callback;
+		executeLevels[i] = &nodes[i];
+		nodes[i].callback = dummy_thread;
 		nodes[i].next = NULL;
 		nodes[i].prev = NULL;
 	}
-	u_allNodes = nodes;
-	u_listHead = &nodes[i];
+	threadWork = nodes;
+	freeThread = &nodes[i];
 	nodes[i].prev = NULL;
 }
 
-void u_process_some_linked_lists(u32 arg0)
+void thread_loop(u32 arg0)
 {
 	int i;
-	struct UnkLinkedListNode *next;
-	struct UnkLinkedListNode *node;
+	struct Thread *next;
+	struct Thread *node;
 
 	for (i = 0; i < 16; i++)
 	{
 		if (!(arg0 & (1 << i)))
 		{
-			node = u_linkedLists[i];
+			node = executeLevels[i];
 			while (node != NULL)
 			{
-				u_currNode = node;
+				currentThread = node;
 				next = node->next;
 				node->callback(node->ape, 0);
 				node = next;
@@ -99,26 +101,26 @@ void u_process_some_linked_lists(u32 arg0)
 	}
 }
 
-int u_insert_into_linked_list(void (*func)(struct Ape *, int), struct Ape *ape, int listId)
+int thread_unknown(void (*func)(struct Ape *, int), struct Ape *ape, int listId)
 {
-    struct UnkLinkedListNode *oldHead = u_listHead;
+    struct Thread *oldHead = freeThread;
 
-    u_listHead = oldHead->next;
-    u_listHead->prev = NULL;
-    oldHead->next = u_linkedLists[listId]->next;
+    freeThread = oldHead->next;
+    freeThread->prev = NULL;
+    oldHead->next = executeLevels[listId]->next;
     if (oldHead->next != NULL)
         oldHead->next->prev = oldHead;
-    u_linkedLists[listId]->next = oldHead;
-    oldHead->prev = u_linkedLists[listId];
+    executeLevels[listId]->next = oldHead;
+    oldHead->prev = executeLevels[listId];
     oldHead->ape = ape;
     oldHead->callback = func;
     return oldHead->unk18;
 }
 
-void u_move_curr_node_to_beginning(void)
+void thread_exit(void)
 {
-    struct UnkLinkedListNode *prev = u_currNode->prev;
-    struct UnkLinkedListNode *next = u_currNode->next;
+    struct Thread *prev = currentThread->prev;
+    struct Thread *next = currentThread->next;
 
     // remove from list
     if (prev != NULL)
@@ -127,21 +129,21 @@ void u_move_curr_node_to_beginning(void)
         next->prev = prev;
 
     // insert at beginning
-    u_currNode->prev = NULL;
-    u_currNode->next = u_listHead;
-    if (u_listHead != NULL)
-        u_listHead->prev = u_currNode;
-    u_listHead = u_currNode;
+    currentThread->prev = NULL;
+    currentThread->next = freeThread;
+    if (freeThread != NULL)
+        freeThread->prev = currentThread;
+    freeThread = currentThread;
 }
 
-void u_move_node_to_beginning(int arg0)
+void thread_kill(int arg0)
 {
-    struct UnkLinkedListNode *backupCurr = u_currNode;
-    struct UnkLinkedListNode *node = &u_allNodes[arg0];
-    struct UnkLinkedListNode *prev = node->prev;
-    struct UnkLinkedListNode *next = node->next;
+    struct Thread *backupCurr = currentThread;
+    struct Thread *node = &threadWork[arg0];
+    struct Thread *prev = node->prev;
+    struct Thread *next = node->next;
 
-    u_currNode = node;
+    currentThread = node;
 
     // remove from list
     if (prev != NULL)
@@ -151,14 +153,14 @@ void u_move_node_to_beginning(int arg0)
 
     // insert at beginning
     node->prev = NULL;
-    node->next = u_listHead;
-    if (u_listHead != NULL)
-        u_listHead->prev = node;
-    u_listHead = node;
+    node->next = freeThread;
+    if (freeThread != NULL)
+        freeThread->prev = node;
+    freeThread = node;
 
     node->callback(node->ape, 3);
 
-    u_currNode = backupCurr;
+    currentThread = backupCurr;
 }
 
 void u_set_model_mesh_flags(struct NlModel *model, u32 arg1, u32 arg2)

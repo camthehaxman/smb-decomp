@@ -59,7 +59,7 @@ bg_old_ice_draw:
 /* 80058CA8 00054BC8  7C 08 02 A6 */	mflr r0
 /* 80058CAC 00054BCC  90 01 00 04 */	stw r0, 4(r1)
 /* 80058CB0 00054BD0  94 21 FF F8 */	stwu r1, -8(r1)
-/* 80058CB4 00054BD4  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 80058CB4 00054BD4  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 80058CB8 00054BD8  38 63 00 30 */	addi r3, r3, 0x30
 /* 80058CBC 00054BDC  4B FA EB F5 */	bl mathutil_mtxA_from_mtx
 /* 80058CC0 00054BE0  80 6D 99 1C */	lwz r3, g_bgNlObj@sda21(r13)
@@ -124,7 +124,7 @@ effect_icewater_reflect_main:
 /* 80058D94 00054CB4  38 80 00 00 */	li r4, 0
 /* 80058D98 00054CB8  38 A0 00 AC */	li r5, 0xac
 /* 80058D9C 00054CBC  4B FA A5 85 */	bl memset
-/* 80058DA0 00054CC0  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 80058DA0 00054CC0  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 80058DA4 00054CC4  38 00 00 06 */	li r0, 6
 /* 80058DA8 00054CC8  B0 01 00 14 */	sth r0, 0x14(r1)
 /* 80058DAC 00054CCC  38 63 00 30 */	addi r3, r3, 0x30
@@ -317,7 +317,7 @@ effect_icewater_reflect_draw:
 /* 8005908C 00054FAC  80 1F 00 04 */	lwz r0, 4(r31)
 /* 80059090 00054FB0  60 00 00 01 */	ori r0, r0, 1
 /* 80059094 00054FB4  90 1F 00 04 */	stw r0, 4(r31)
-/* 80059098 00054FB8  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 80059098 00054FB8  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 8005909C 00054FBC  38 63 00 30 */	addi r3, r3, 0x30
 /* 800590A0 00054FC0  4B FA E8 11 */	bl mathutil_mtxA_from_mtx
 /* 800590A4 00054FC4  80 BF 00 70 */	lwz r5, 0x70(r31)
@@ -585,7 +585,7 @@ effect_icewater_reflect_draw:
 lbl_800594BC:
 /* 800594BC 000553DC  FC 20 00 90 */	fmr f1, f0
 lbl_800594C0:
-/* 800594C0 000553E0  4B FD 76 E9 */	bl nl2ngc_set_scale
+/* 800594C0 000553E0  4B FD 76 E9 */	bl nlSetScaleFactor
 /* 800594C4 000553E4  80 7F 00 30 */	lwz r3, 0x30(r31)
 /* 800594C8 000553E8  4B FD A6 0D */	bl nl2ngc_draw_model_sort_translucent_alt2
 /* 800594CC 000553EC  C0 22 97 70 */	lfs f1, lbl_802F3F70@sda21(r2)
@@ -607,7 +607,7 @@ lbl_80059504:
 /* 80059504 00055424  C8 02 97 90 */	lfd f0, lbl_802F3F90@sda21(r2)
 /* 80059508 00055428  FC 20 00 72 */	fmul f1, f0, f1
 /* 8005950C 0005542C  FC 20 08 18 */	frsp f1, f1
-/* 80059510 00055430  4B FD 76 99 */	bl nl2ngc_set_scale
+/* 80059510 00055430  4B FD 76 99 */	bl nlSetScaleFactor
 /* 80059514 00055434  80 6D 99 1C */	lwz r3, g_bgNlObj@sda21(r13)
 /* 80059518 00055438  80 63 00 0C */	lwz r3, 0xc(r3)
 /* 8005951C 0005543C  4B FD A5 B9 */	bl nl2ngc_draw_model_sort_translucent_alt2
@@ -731,7 +731,7 @@ effect_icewater_particle_draw:
 /* 800596C8 000555E8  94 21 FF E8 */	stwu r1, -0x18(r1)
 /* 800596CC 000555EC  93 E1 00 14 */	stw r31, 0x14(r1)
 /* 800596D0 000555F0  3B E3 00 00 */	addi r31, r3, 0
-/* 800596D4 000555F4  80 8D 99 5C */	lwz r4, lbl_802F1B3C@sda21(r13)
+/* 800596D4 000555F4  80 8D 99 5C */	lwz r4, userWork@sda21(r13)
 /* 800596D8 000555F8  38 64 00 30 */	addi r3, r4, 0x30
 /* 800596DC 000555FC  4B FA E1 D5 */	bl mathutil_mtxA_from_mtx
 /* 800596E0 00055600  38 7F 00 34 */	addi r3, r31, 0x34
@@ -754,16 +754,16 @@ effect_icewater_particle_draw:
 lbl_80059724:
 /* 80059724 00055644  FC 20 00 90 */	fmr f1, f0
 lbl_80059728:
-/* 80059728 00055648  4B FD 74 81 */	bl nl2ngc_set_scale
+/* 80059728 00055648  4B FD 74 81 */	bl nlSetScaleFactor
 /* 8005972C 0005564C  A8 7F 00 A4 */	lha r3, 0xa4(r31)
 /* 80059730 00055650  4B FA E9 59 */	bl mathutil_mtxA_rotate_z
 /* 80059734 00055654  C0 3F 00 A8 */	lfs f1, 0xa8(r31)
 /* 80059738 00055658  FC 40 08 90 */	fmr f2, f1
 /* 8005973C 0005565C  FC 60 08 90 */	fmr f3, f1
-/* 80059740 00055660  4B FD 74 79 */	bl nl2ngc_set_material_color
+/* 80059740 00055660  4B FD 74 79 */	bl nlObjPutSetFadeColorBase
 /* 80059744 00055664  80 7F 00 30 */	lwz r3, 0x30(r31)
 /* 80059748 00055668  4B FD A3 8D */	bl nl2ngc_draw_model_sort_translucent_alt2
-/* 8005974C 0005566C  4B FB 4C 71 */	bl u_reset_post_mult_color
+/* 8005974C 0005566C  4B FB 4C 71 */	bl fade_color_base_default
 /* 80059750 00055670  80 01 00 1C */	lwz r0, 0x1c(r1)
 /* 80059754 00055674  83 E1 00 14 */	lwz r31, 0x14(r1)
 /* 80059758 00055678  38 21 00 18 */	addi r1, r1, 0x18

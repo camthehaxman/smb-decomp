@@ -104,13 +104,13 @@ int should_open_pause_menu(void)
         if (!(analogButtonInfo[0][0] & PAD_BUTTON_A)
          && !(analogButtonInfo[0][0] & PAD_BUTTON_B)
          && lbl_802F1ED8 == 0
-         && !(gamePauseStatus & 8)
+         && !(debugFlags & 8)
          && (g_currPlayerButtons[2] & PAD_BUTTON_START))
             return TRUE;
     }
     else
     {
-        if (!(gamePauseStatus & 8) && (g_currPlayerButtons[2] & PAD_BUTTON_START))
+        if (!(debugFlags & 8) && (g_currPlayerButtons[2] & PAD_BUTTON_START))
             return TRUE;
     }
     return FALSE;
@@ -120,7 +120,7 @@ void u_open_pause_menu(struct Sprite *menuSprite)
 {
     int i;
 
-    gamePauseStatus |= 8;
+    debugFlags |= 8;
     pauseMenuState.padId = 0;
     for (i = 0; i < 4; i++)
     {
@@ -289,12 +289,12 @@ void u_pause_menu_load_how_to_play(struct Sprite *menuSprite)
     if (modeCtrl.gameType == GAMETYPE_MINI_TARGET || modeCtrl.gameType == GAMETYPE_MINI_GOLF)
         OSSetCurrentHeap(lbl_802F1B9C);
     func_80081F30();
-    gamePauseStatus |= 8;
+    debugFlags |= 8;
 }
 
 void u_activate_pause_menu_item(struct Sprite *menuSprite)
 {
-    gamePauseStatus &= ~(1 << 3);
+    debugFlags &= ~(1 << 3);
     switch (pauseMenuState.menuType)
     {
     case PAUSEMENU_CONT_HOW_EXIT:
@@ -328,14 +328,14 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
             if (pauseMenuState.unk4 & (1 << 2))
             {
                 lbl_802F1B98 = 3;
-                gamePauseStatus |= 8;
+                debugFlags |= 8;
                 func_8009F49C(5);
                 event_start(EVENT_MEMCARD);
             }
             else
             {
                 lbl_802F1B98 = 2;
-                gamePauseStatus |= 8;
+                debugFlags |= 8;
                 event_start(EVENT_VIEW);
                 if (menuSprite != NULL)
                     menuSprite->unk78 |= 1;
@@ -376,14 +376,14 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
             if (pauseMenuState.unk4 & (1 << 2))
             {
                 lbl_802F1B98 = 3;
-                gamePauseStatus |= 8;
+                debugFlags |= 8;
                 func_8009F49C(5);
                 event_start(EVENT_MEMCARD);
             }
             else
             {
                 lbl_802F1B98 = 2;
-                gamePauseStatus |= 8;
+                debugFlags |= 8;
                 event_start(EVENT_VIEW);
                 if (menuSprite != NULL)
                     menuSprite->unk78 |= 1;
@@ -521,7 +521,7 @@ void u_menu_input_game_notdebug(void)
         u_open_pause_menu(menuSprite);
     else
     {
-        if (gamePauseStatus & (1 << 3))
+        if (debugFlags & (1 << 3))
         {
             if (!(pauseMenuState.unk4 & 1))
                 u_handle_pause_menu_navigation(menuSprite);
@@ -537,7 +537,7 @@ void u_menu_input_game_notdebug(void)
             }
             else
                 unkFunc8000AECC(menuSprite);
-            if (!(dipSwitches & DIP_DEBUG) || !(gamePauseStatus & (1 << 1)))
+            if (!(dipSwitches & DIP_DEBUG) || !(debugFlags & (1 << 1)))
             {
                 if (menuSprite != NULL)
                     func_80075E1C(0, menuSprite);

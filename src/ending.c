@@ -34,62 +34,62 @@
 struct EndingInfo endingInfo;
 
 static void ending_state_init(void);
-static void ending_state_beginner_init(void);
-static void ending_state_2(void);
-static void ending_state_3(void);
-static void ending_state_4(void);
-static void ending_state_5(void);
-static void ending_state_6(void);
-static void ending_state_advanced_init(void);
-static void ending_state_8(void);
-static void ending_state_9(void);
-static void ending_state_10(void);
-static void ending_state_11(void);
-static void ending_state_12(void);
-static void ending_state_expert_init(void);
-static void ending_state_14(void);
-static void ending_state_15(void);
-static void ending_state_16(void);
-static void ending_state_17(void);
-static void ending_state_18(void);
-static void ending_state_19(void);
-static void ending_state_20(void);
-static void ending_state_21(void);
-static void ending_state_22(void);
-static void ending_state_23(void);
-static void ending_state_24(void);
-static void ending_state_25(void);
-static void ending_state_26(void);
-static void ending_state_27(void);
-static void ending_state_28(void);
-static void ending_state_29(void);
-static void ending_state_30(void);
-static void ending_state_31(void);
-static void ending_state_32(void);
+static void ending_state_beginner_intro_init(void);
+static void ending_state_beginner_intro_main(void);
+static void ending_state_beginner_dialogue_init(void);
+static void ending_state_beginner_dialogue_main(void);
+static void ending_state_beginner_end_init(void);
+static void ending_state_beginner_end_main(void);
+static void ending_state_advanced_intro_init(void);
+static void ending_state_advanced_intro_main(void);
+static void ending_state_advanced_dialogue_init(void);
+static void ending_state_advanced_dialogue_main(void);
+static void ending_state_advanced_end_init(void);
+static void ending_state_advanced_end_main(void);
+static void ending_state_expert_intro_init(void);
+static void ending_state_expert_intro_main(void);
+static void ending_state_expert_dialogue_init(void);
+static void ending_state_expert_dialogue_main(void);
+static void ending_state_expert_fallbanana_init(void);
+static void ending_state_expert_fallbanana_main(void);
+static void ending_state_expert_house_init(void);
+static void ending_state_expert_house_main(void);
+static void ending_state_expert_walkin_init(void);
+static void ending_state_expert_walkin_main(void);
+static void ending_state_expert_breakin_init(void);
+static void ending_state_expert_breakin_main(void);
+static void ending_state_expert_end_init(void);
+static void ending_state_expert_end_main(void);
+static void ending_state_expert_apecam_init(void);
+static void ending_state_expert_apecam_main(void);
+static void ending_state_expert_gorcam_init(void);
+static void ending_state_expert_gorcam_main(void);
+static void ending_state_end_init(void);
+static void ending_state_end_main(void);
 static void func_800BB068(void);
-static void func_800BB084(void);
+static void ending_hgate_main(void);
 static void func_800BBA54(void);
-static void func_800BBA58(void);
+static void ending_hgate_draw(void);
 static void func_800BBB10(int);
-static void clear_scene_characters(void);
-static void update_scene_characters(void);
+static void ending_chara_init(void);
+static void ending_chara_main(void);
 static void func_800BC820(void);
-static void func_800BC8B8(void);
-static int init_ending_scene_ape(int, enum Character);
-static void u_some_ape_callback(struct Ape *, int);
-static void clear_scene_objects(void);
-static void update_scene_objects(void);
-static void func_800BEEE8(void);
+static void ending_chara_draw(void);
+static int set_ending_chara(int, enum Character);
+static void ending_ape(struct Ape *, int);
+static void ending_banana_init(void);
+static void ending_banana_main(void);
+static void ending_banana_each_coli(void);
 static void func_800BF2D0(void);
-static void func_800BF2D4(void);
-static void u_spawn_some_bananas(void);
+static void ending_banana_draw(void);
+static void set_house_ending_bananas(void);
 static void func_800BF658(void);
 static void func_800BF774(void);
-static void spawn_lots_of_bananas_1(int);
-static void spawn_lots_of_bananas_2(int, int);
+static void set_freefall_ending_bananas(int);
+static void set_cam_ride_ending_bananas(int, int);
 static void spawn_beginner_banana(int);
 static void func_800BFA2C(void);
-static void func_800BFC2C(void);
+static void rend_efc_ape_face(void);
 
 struct Struct801E2A98
 {
@@ -138,38 +138,38 @@ enum
 static void (*endingFuncs[])(void) =
 {
     ending_state_init,
-    ending_state_beginner_init,
-    ending_state_2,
-    ending_state_3,
-    ending_state_4,
-    ending_state_5,
-    ending_state_6,
-    ending_state_advanced_init,
-    ending_state_8,
-    ending_state_9,
-    ending_state_10,
-    ending_state_11,
-    ending_state_12,
-    ending_state_expert_init,
-    ending_state_14,
-    ending_state_15,
-    ending_state_16,
-    ending_state_17,
-    ending_state_18,
-    ending_state_19,
-    ending_state_20,
-    ending_state_21,
-    ending_state_22,
-    ending_state_23,
-    ending_state_24,
-    ending_state_25,
-    ending_state_26,
-    ending_state_27,
-    ending_state_28,
-    ending_state_29,
-    ending_state_30,
-    ending_state_31,
-    ending_state_32,
+    ending_state_beginner_intro_init,
+    ending_state_beginner_intro_main,
+    ending_state_beginner_dialogue_init,
+    ending_state_beginner_dialogue_main,
+    ending_state_beginner_end_init,
+    ending_state_beginner_end_main,
+    ending_state_advanced_intro_init,
+    ending_state_advanced_intro_main,
+    ending_state_advanced_dialogue_init,
+    ending_state_advanced_dialogue_main,
+    ending_state_advanced_end_init,
+    ending_state_advanced_end_main,
+    ending_state_expert_intro_init,
+    ending_state_expert_intro_main,
+    ending_state_expert_dialogue_init,
+    ending_state_expert_dialogue_main,
+    ending_state_expert_fallbanana_init,
+    ending_state_expert_fallbanana_main,
+    ending_state_expert_house_init,
+    ending_state_expert_house_main,
+    ending_state_expert_walkin_init,
+    ending_state_expert_walkin_main,
+    ending_state_expert_breakin_init,
+    ending_state_expert_breakin_main,
+    ending_state_expert_end_init,
+    ending_state_expert_end_main,
+    ending_state_expert_apecam_init,
+    ending_state_expert_apecam_main,
+    ending_state_expert_gorcam_init,
+    ending_state_expert_gorcam_main,
+    ending_state_end_init,
+    ending_state_end_main,
 };
 
 void ending_init(void)
@@ -187,12 +187,12 @@ void ending_init(void)
     }
     memset(endingInfo.work, 0, sizeof(*endingInfo.work));
     SoundGroupLoad(SOUND_GRPending);
-    clear_scene_characters();
-    clear_scene_objects();
+    ending_chara_init();
+    ending_banana_init();
     func_800BB068();
     ending_camera_init();
     ending_camera_emptyfunc2();
-    lbl_802F1B7C = ending_finish;
+    submodeFinishFunc = ending_finish;
 }
 
 // runs the ending. returns FALSE when done
@@ -202,14 +202,14 @@ int ending_main(void)
 
     if (endingInfo.work == NULL)
         return FALSE;
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return TRUE;
     if (endingInfo.nextState != -1)
         endingInfo.state = endingInfo.nextState;
     endingFuncs[endingInfo.state]();
-    update_scene_characters();
-    update_scene_objects();
-    func_800BB084();
+    ending_chara_main();
+    ending_banana_main();
+    ending_hgate_main();
     if (endingInfo.flags & 2)
         endingInfo.work->unk0 += 0.01666666753590107f;
 
@@ -228,8 +228,8 @@ int ending_main(void)
 
 void ending_finish(void)
 {
-    ending_camera_emptyfunc3();
-    ending_camera_emptyfunc1();
+    ending_effect_finish();
+    ending_camera_finish();
     func_800BBA54();
     func_800BF2D0();
     func_800BC820();
@@ -237,26 +237,26 @@ void ending_finish(void)
     endingInfo.work = NULL;
     event_finish_all();
     SoundGroupFree();
-    if (lbl_802F1B7C == ending_finish)
-        lbl_802F1B7C = NULL;
+    if (submodeFinishFunc == ending_finish)
+        submodeFinishFunc = NULL;
 }
 
 void u_ending_draw(void)
 {
     if (endingInfo.work == NULL)
         return;
-    u_call_camera_apply_viewport(modeCtrl.currPlayer);
+    change_current_camera(modeCtrl.currPlayer);
     u_draw_ball_shadow();
-    func_80054FF0();
-    func_800BF2D4();
+    background_light_assign();
+    ending_banana_draw();
     if (endingInfo.flags & 1)
     {
         mathutil_mtxA_from_mtxB();
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
         avdisp_draw_model_culled_sort_translucent(decodedBgGma->modelEntries[INSIDE_BANANA].model);
     }
-    func_800BC8B8();
-    func_800BBA58();
+    ending_chara_draw();
+    ending_hgate_draw();
     if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING
      || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)
         stage_draw();
@@ -271,7 +271,7 @@ void u_ending_draw(void)
     draw_monkey();
     ord_tbl_draw_nodes();
     if (endingInfo.flags & 0x20)
-        func_800BFC2C();
+        rend_efc_ape_face();
 }
 
 static void ending_state_init(void)
@@ -285,7 +285,7 @@ static void ending_state_init(void)
     }
 }
 
-static void ending_state_beginner_init(void)
+static void ending_state_beginner_intro_init(void)
 {
     int stageId;
     struct SomeBigEndingStruct_sub *r28;
@@ -321,7 +321,7 @@ static void ending_state_beginner_init(void)
     event_start(EVENT_VIBRATION);
     light_init(currStageId);
     rend_efc_mirror_enable();
-    init_ending_scene_ape(0, playerCharacterSelection[modeCtrl.currPlayer]);
+    set_ending_chara(0, playerCharacterSelection[modeCtrl.currPlayer]);
     endingInfo.work->characters[0].unk70 = 1;
     CAMERA_FOREACH(camera->subState = 0;)
     r28 = &endingInfo.work->unkAA54;
@@ -342,9 +342,11 @@ static void ending_state_beginner_init(void)
     u_play_music(0x44, 0);
 }
 
+/* Beginner course ending scene */
+
 static s16 lbl_802F18C0[4] = { 0x00EA, 0x0102, 0x0142, 0x0173 };
 
-static void ending_state_2(void)
+static void ending_state_beginner_intro_main(void)
 {
     float temp_f2;
     struct EndingSceneCharacter *chara;
@@ -392,7 +394,7 @@ static void ending_state_2(void)
         endingInfo.nextState = 3;
 }
 
-static void ending_state_3(void)
+static void ending_state_beginner_dialogue_init(void)
 {
     struct EndingWork *work;
     struct SomeBigEndingStruct_sub *temp_r29;
@@ -408,7 +410,7 @@ static void ending_state_3(void)
     temp_r29 = &endingInfo.work->unkAA54;
     memset(temp_r29, 0, sizeof(*temp_r29));
     temp_r29->unk0 = 1;
-    mathutil_mtxA_from_rotate_z((s16) (unpausedFrameCounter << 6));
+    mathutil_mtxA_from_rotate_z((s16) (globalAnimTimer << 6));
     mathutil_mtxA_tf_vec_xyz(&sp30, 0.0f, 0.5f, 0.0f);
     temp_r29->unk4.x = sp30.x;
     temp_r29->unk4.y = sp30.y * 0.5f + 20.75f;
@@ -445,7 +447,7 @@ static void ending_state_3(void)
     chara->unk38 = 0;
 }
 
-static void ending_state_4(void)
+static void ending_state_beginner_dialogue_main(void)
 {
     Vec sp30;
     struct TextBox tbox;
@@ -456,7 +458,7 @@ static void ending_state_4(void)
 
     temp_r29 = &endingInfo.work->unkAA54;
     chara = &endingInfo.work->characters[0];
-    mathutil_mtxA_from_rotate_z(unpausedFrameCounter << 6);
+    mathutil_mtxA_from_rotate_z(globalAnimTimer << 6);
     mathutil_mtxA_tf_vec_xyz(&sp30, 0.0f, 0.5f, 0.0f);
     temp_r29->unk4.x = sp30.x;
     temp_r29->unk4.y = 20.75f + (0.5f * sp30.y);
@@ -501,7 +503,7 @@ static void ending_state_4(void)
         modeCtrl.submodeTimer--;
 }
 
-static void ending_state_5(void)
+static void ending_state_beginner_end_init(void)
 {
     struct SomeBigEndingStruct_sub *temp_r29;
 
@@ -525,7 +527,7 @@ static void ending_state_5(void)
 
 static s16 lbl_802F18C8[4] = { 0x00B7, 0x0102, 0x0141, 0x018B };
 
-static void ending_state_6(void)
+static void ending_state_beginner_end_main(void)
 {
     switch (modeCtrl.submodeTimer)
     {
@@ -545,7 +547,9 @@ static void ending_state_6(void)
         endingInfo.nextState = 31;
 }
 
-static void ending_state_advanced_init(void)
+/* Advanced course ending scene */
+
+static void ending_state_advanced_intro_init(void)
 {
     int stageId;
     float temp_f31;
@@ -582,7 +586,7 @@ static void ending_state_advanced_init(void)
     event_start(EVENT_VIBRATION);
     light_init(currStageId);
     rend_efc_mirror_enable();
-    init_ending_scene_ape(0, playerCharacterSelection[modeCtrl.currPlayer]);
+    set_ending_chara(0, playerCharacterSelection[modeCtrl.currPlayer]);
     endingInfo.work->characters[0].state = 6;
     endingInfo.work->characters[0].timer = modeCtrl.submodeTimer - 180;
     CAMERA_FOREACH(camera->subState = 0;)
@@ -609,7 +613,7 @@ static void ending_state_advanced_init(void)
 static s16 lbl_802F18D0[4] = { 0x00EC, 0x0115, 0x016D, 0x0173 };
 static s16 lbl_802F18D8[4] = { 0x00B5, 0x00FF, 0x0138, 0x0192 };
 
-static void ending_state_8(void)
+static void ending_state_advanced_intro_main(void)
 {
     Vec spB4;
     struct Effect effect;
@@ -647,7 +651,7 @@ static void ending_state_8(void)
             chara->unk56 = modeCtrl.currPlayer;
         else
             chara->unk56 = 3;
-        func_8004CFF0(0x2E);
+        erase_effect(0x2E);
         CAMERA_FOREACH(camera->subState = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 56);
         temp_f30 = 1.25f * (0.9f + (0.2f * RAND_FLOAT()));
@@ -671,7 +675,7 @@ static void ending_state_8(void)
             chara->unk56 = modeCtrl.currPlayer;
         else
             chara->unk56 = 3;
-        func_8004CFF0(0x2E);
+        erase_effect(0x2E);
         CAMERA_FOREACH(camera->subState = 0;)
         temp_f31 = 1.0f / modeCtrl.submodeTimer;
         temp_f30 = 10.0f * (0.9f + (0.2f * RAND_FLOAT()));
@@ -773,7 +777,7 @@ static void ending_state_8(void)
     }
 }
 
-static void ending_state_9(void)
+static void ending_state_advanced_dialogue_init(void)
 {
     struct TextBox tbox;
     int i;
@@ -825,7 +829,7 @@ static void ending_state_9(void)
     chara->unk38 = 0;
 }
 
-static void ending_state_10(void)
+static void ending_state_advanced_dialogue_main(void)
 {
     struct TextBox tbox;
     int i;
@@ -873,7 +877,7 @@ static void ending_state_10(void)
         modeCtrl.submodeTimer--;
 }
 
-static void ending_state_11(void)
+static void ending_state_advanced_end_init(void)
 {
     struct Ape *ape;
 
@@ -886,7 +890,7 @@ static void ending_state_11(void)
 
 static s16 lbl_802F18E0[4] = { 0x00EA, 0x0102, 0x016D, 0x0173 };
 
-void ending_state_12(void)
+void ending_state_advanced_end_main(void)
 {
     struct SomeBigEndingStruct_sub *temp_r28;
     struct EndingSceneCharacter *chara;
@@ -933,7 +937,7 @@ void ending_state_12(void)
         endingInfo.flags &= 0xFFFFFFDF;
         break;
     case 270:
-        spawn_lots_of_bananas_2(1, modeCtrl.submodeTimer - 30);
+        set_cam_ride_ending_bananas(1, modeCtrl.submodeTimer - 30);
         break;
     case 30:
         start_screen_fade(FADE_OUT, RGBA(255, 255, 255, 0), modeCtrl.submodeTimer);
@@ -952,8 +956,8 @@ void ending_state_12(void)
         float t = -0.0033333334f * -modeCtrl.submodeTimer;
         t = 1.0f - t;
         if (RAND_FLOAT() < t)
-            spawn_lots_of_bananas_1(1);
-        if (unpausedFrameCounter % 90 == 0)
+            set_freefall_ending_bananas(1);
+        if (globalAnimTimer % 90 == 0)
             u_play_sound_0(0x22E);
     }
     temp_r28->unk10.x *= 0.99f;
@@ -965,7 +969,7 @@ void ending_state_12(void)
         endingInfo.nextState = 31;
 }
 
-static void ending_state_expert_init(void)
+static void ending_state_expert_intro_init(void)
 {
     int temp_r0;
     struct SomeBigEndingStruct_sub *temp_r28;
@@ -1002,10 +1006,10 @@ static void ending_state_expert_init(void)
     event_start(EVENT_VIBRATION);
     light_init(currStageId);
     rend_efc_mirror_enable();
-    init_ending_scene_ape(0, CHARACTER_AIAI);
-    init_ending_scene_ape(1, CHARACTER_MEEMEE);
-    init_ending_scene_ape(2, CHARACTER_BABY);
-    init_ending_scene_ape(3, CHARACTER_GONGON);
+    set_ending_chara(0, CHARACTER_AIAI);
+    set_ending_chara(1, CHARACTER_MEEMEE);
+    set_ending_chara(2, CHARACTER_BABY);
+    set_ending_chara(3, CHARACTER_GONGON);
     endingInfo.work->characters[0].state = 9;
     endingInfo.work->characters[1].state = 9;
     endingInfo.work->characters[2].state = 9;
@@ -1043,7 +1047,9 @@ static void ending_state_expert_init(void)
     u_play_music(0x44U, 0);
 }
 
-static void ending_state_14(void)
+/* Expert course ending scene */
+
+static void ending_state_expert_intro_main(void)
 {
     struct SomeBigEndingStruct_sub *temp_r30 = &endingInfo.work->unkAA54;
 
@@ -1055,7 +1061,7 @@ static void ending_state_14(void)
         endingInfo.nextState = 15;
 }
 
-static void ending_state_15(void)
+static void ending_state_expert_dialogue_init(void)
 {
     struct TextBox tbox;
     float temp_f31;
@@ -1117,7 +1123,7 @@ static void ending_state_15(void)
     endingInfo.work->characters[3].unk36 |= 1;
 }
 
-static void ending_state_16(void)
+static void ending_state_expert_dialogue_main(void)
 {
     struct TextBox tbox;
     float t;
@@ -1174,7 +1180,7 @@ static void ending_state_16(void)
         modeCtrl.submodeTimer--;
 }
 
-static void ending_state_17(void)
+static void ending_state_expert_fallbanana_init(void)
 {
     endingInfo.nextState = 18;
     modeCtrl.submodeTimer = 480;
@@ -1184,7 +1190,7 @@ static void ending_state_17(void)
 
 static s16 lbl_802F18E8[3] = { 0x00E4, 0x0127, 0x014A };
 
-static void ending_state_18(void)
+static void ending_state_expert_fallbanana_main(void)
 {
     f32 temp_f2;
     f32 temp_f3;
@@ -1238,7 +1244,7 @@ static void ending_state_18(void)
         mathutil_mtxA_tf_point_xyz(&temp_r26->unk2C, 0.0f, 0.2f, 0.0f);
         break;
     case 300:
-        spawn_lots_of_bananas_2(1, modeCtrl.submodeTimer - 30);
+        set_cam_ride_ending_bananas(1, modeCtrl.submodeTimer - 30);
         temp_r26 = &endingInfo.work->unkAA54;
         temp_f2 = 1.0f / modeCtrl.submodeTimer;
         temp_r26->unk10.x = temp_r26->unk4.x * temp_f2;
@@ -1277,8 +1283,8 @@ static void ending_state_18(void)
         float t = -0.0023809525f * -(float)modeCtrl.submodeTimer;
         t = 1.0f - t;
         if (RAND_FLOAT() < t)
-            spawn_lots_of_bananas_1(1);
-        if (unpausedFrameCounter % 90 == 0)
+            set_freefall_ending_bananas(1);
+        if (globalAnimTimer % 90 == 0)
             u_play_sound_0(0x22E);
     }
     modeCtrl.submodeTimer--;
@@ -1286,7 +1292,7 @@ static void ending_state_18(void)
         endingInfo.nextState = 19;
 }
 
-static void ending_state_19(void)
+static void ending_state_expert_house_init(void)
 {
     float temp_f4;
     struct SomeBigEndingStruct_sub *temp_r28;
@@ -1295,8 +1301,8 @@ static void ending_state_19(void)
     endingInfo.nextState = 20;
     modeCtrl.submodeTimer = 360;
     start_screen_fade(FADE_IN, RGBA(0, 0, 0, 0), 30);
-    clear_scene_objects();
-    u_spawn_some_bananas();
+    ending_banana_init();
+    set_house_ending_bananas();
     CAMERA_FOREACH(camera->subState = 0;)
     temp_r28 = &endingInfo.work->unkAA54;
     memset(temp_r28, 0, sizeof(*temp_r28));
@@ -1321,7 +1327,7 @@ static void ending_state_19(void)
 
 static s16 lbl_802F18F0[4] = { 0x00E8, 0x0101, 0x016B, 0x0000 };
 
-static void ending_state_20(void)
+static void ending_state_expert_house_main(void)
 {
     float temp_f3;
     struct SomeBigEndingStruct_sub *temp_r4;
@@ -1367,7 +1373,7 @@ static void ending_state_20(void)
         endingInfo.nextState = 21;
 }
 
-static void ending_state_21(void)
+static void ending_state_expert_walkin_init(void)
 {
     float temp_f3;
     struct SomeBigEndingStruct_sub *temp_r4;
@@ -1398,7 +1404,7 @@ static void ending_state_21(void)
     !temp_r4;  // needed to match
 }
 
-static void ending_state_22(void)
+static void ending_state_expert_walkin_main(void)
 {
     float temp_f2;
     struct SomeBigEndingStruct_sub *temp;
@@ -1483,7 +1489,7 @@ static void ending_state_22(void)
         endingInfo.nextState = 23;
 }
 
-static void ending_state_23(void)
+static void ending_state_expert_breakin_init(void)
 {
     struct SomeBigEndingStruct_sub *temp;
 
@@ -1516,7 +1522,7 @@ static void ending_state_23(void)
     endingInfo.work->characters[2].unk36 &= ~0x1;
 }
 
-static void ending_state_24(void)
+static void ending_state_expert_breakin_main(void)
 {
     struct EndingSceneCharacter *chara = &endingInfo.work->characters[3];
     int temp_r28 = chara->ape->unk0->unk38;
@@ -1544,7 +1550,7 @@ static void ending_state_24(void)
     }
 }
 
-static void ending_state_25(void)
+static void ending_state_expert_end_init(void)
 {
     endingInfo.nextState = 26;
     modeCtrl.submodeTimer = 480;
@@ -1552,7 +1558,7 @@ static void ending_state_25(void)
     endingInfo.work->unkAA04.unk2 = 4;
 }
 
-static void ending_state_26(void)
+static void ending_state_expert_end_main(void)
 {
     struct SomeBigEndingStruct_sub *temp_r4 = &endingInfo.work->unkAA54;
     float temp_f2;
@@ -1629,14 +1635,14 @@ static void ending_state_26(void)
     }
 }
 
-static void ending_state_29(void)
+static void ending_state_expert_gorcam_init(void)
 {
     endingInfo.nextState = 30;
     modeCtrl.submodeTimer = 330;
     modeCtrl.unk18 = 0;
 }
 
-static void ending_state_30(void)
+static void ending_state_expert_gorcam_main(void)
 {
     float temp_f2;
     int charaId;
@@ -1721,7 +1727,7 @@ static void ending_state_30(void)
     }
 }
 
-static void ending_state_27(void)
+static void ending_state_expert_apecam_init(void)
 {
     endingInfo.nextState = 28;
     modeCtrl.submodeTimer = 630;
@@ -1730,7 +1736,7 @@ static void ending_state_27(void)
 
 static s16 lbl_802F18F8[4] = { 0x00E8, 0x0102, 0x016D, 0x0000 };
 
-static void ending_state_28(void)
+static void ending_state_expert_apecam_main(void)
 {
     struct Ape *ape;
     struct EndingSceneCharacter *chara;
@@ -1866,19 +1872,19 @@ static void ending_state_28(void)
     }
 }
 
-static void ending_state_31(void)
+static void ending_state_end_init(void)
 {
     endingInfo.nextState = 32;
 }
 
-static void ending_state_32(void) {}
+static void ending_state_end_main(void) {}
 
 static void func_800BB068(void)
 {
     endingInfo.work->unkAA04.unk0 = 0;
 }
 
-static void func_800BB084(void)
+static void ending_hgate_main(void)
 {
     struct SomeStruct *temp_r30 = &endingInfo.work->unkAA04;
     float temp_f5;
@@ -1992,7 +1998,7 @@ static void func_800BB084(void)
 
 static void func_800BBA54(void) {}
 
-static void func_800BBA58(void)
+static void ending_hgate_draw(void)
 {
     struct GMAModel *model;
     struct SomeStruct *temp_r31 = &endingInfo.work->unkAA04;
@@ -2024,7 +2030,7 @@ static void func_800BBB10(int arg0)
     temp_r31->unk4 = arg0;
 }
 
-static void clear_scene_characters(void)
+static void ending_chara_init(void)
 {
     struct EndingWork *work = endingInfo.work;
 
@@ -2037,7 +2043,7 @@ static void clear_scene_characters(void)
     }
 }
 
-static void update_scene_characters(void)
+static void ending_chara_main(void)
 {
     int i;
     struct Struct801E2A98 spD0;
@@ -2342,7 +2348,7 @@ static void func_800BC820(void)
     {
         if (chara->ape != NULL)
         {
-            u_move_node_to_beginning(lbl_80206B80[i]);
+            thread_kill(apeThreadNo[i]);
             chara->ape = NULL;
         }
     }
@@ -2451,7 +2457,7 @@ struct MyDrawNode
 
 static void lbl_800BCD30(struct MyDrawNode *);
 
-static void func_800BC8B8(void)
+static void ending_chara_draw(void)
 {
     Vec *new_var;
     f32 temp_f21 ;
@@ -2569,7 +2575,7 @@ static void func_800BC8B8(void)
                 }
                 var_r25++;
             }
-            u_reset_post_mult_color();
+            fade_color_base_default();
             avdisp_set_z_mode(1, GX_LEQUAL, 1);
         }
     }
@@ -2598,7 +2604,7 @@ static void lbl_800BCD30(struct MyDrawNode *node)
     avdisp_set_z_mode(1, 3, 1);
 }
 
-static int init_ending_scene_ape(int arg0, enum Character charaId)
+static int set_ending_chara(int arg0, enum Character charaId)
 {
     struct EndingSceneCharacter *chara;
     struct Ape *ape;
@@ -2606,13 +2612,13 @@ static int init_ending_scene_ape(int arg0, enum Character charaId)
     chara = &endingInfo.work->characters[arg0];
     if (chara->ape != NULL)
     {
-        u_move_node_to_beginning(lbl_80206B80[arg0]);
+        thread_kill(apeThreadNo[arg0]);
         chara->ape = NULL;
     }
 
     if (charaId >= 0)
     {
-        chara->ape = u_init_ape(arg0, charaId, u_some_ape_callback);
+        chara->ape = ape_get_by_type(arg0, charaId, ending_ape);
         ape = chara->ape;
         if (ape == NULL)
             return 0;
@@ -2627,7 +2633,7 @@ static int init_ending_scene_ape(int arg0, enum Character charaId)
     return 1;
 }
 
-static void u_some_ape_callback(struct Ape *ape, int arg1)
+static void ending_ape(struct Ape *ape, int arg1)
 {
     int var_r4;
     struct EndingSceneCharacter *chara;
@@ -2637,12 +2643,12 @@ static void u_some_ape_callback(struct Ape *ape, int arg1)
 
     if (b)
     {
-        u_ape_free(ape);
+        new_ape_close(ape);
         if (arg1 != 3)
-            u_move_curr_node_to_beginning();
+            thread_exit();
         return;
     }
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     chara = &endingInfo.work->characters[0];
@@ -2726,22 +2732,22 @@ static void u_some_ape_callback(struct Ape *ape, int arg1)
     }
 
     if (chara->unk8 < 0x12)
-        u_set_ape_anim(ape, 7, chara->unk8, 0, 0.0f);
+        new_ape_stat_motion(ape, 7, chara->unk8, 0, 0.0f);
     else
     {
         int temp_r5_3 = chara->unk8 - 0x12;
-        u_set_ape_anim(ape, 1, temp_r5_3, temp_r5_3 + 1, 0.0f);
+        new_ape_stat_motion(ape, 1, temp_r5_3, temp_r5_3 + 1, 0.0f);
     }
-    u_do_ape_anim(ape);
+    new_ape_calc(ape);
     switch (chara->unk70)
     {
     case 2:
-        u_mot_ape_something_with_head_anim(ape, &chara->unk74);
+        ape_face_dir(ape, &chara->unk74);
         break;
     case 1:
         mathutil_mtxA_from_mtx(cameraInfo[modeCtrl.currPlayer].unk144);
         mathutil_mtxA_rigid_inv_tf_tl(&sp10);
-        u_mot_ape_something_with_head_anim(ape, &sp10);
+        ape_face_dir(ape, &sp10);
         break;
     }
 
@@ -2800,7 +2806,7 @@ static void u_some_ape_callback(struct Ape *ape, int arg1)
     }
 }
 
-static void clear_scene_objects(void)
+static void ending_banana_init(void)
 {
     int i;
     struct EndingSceneObject *obj;
@@ -2810,7 +2816,7 @@ static void clear_scene_objects(void)
         obj->isActive = FALSE;
 }
 
-static void update_scene_objects(void)
+static void ending_banana_main(void)
 {
     Vec spFC;
     Vec spF0;
@@ -2836,7 +2842,7 @@ static void update_scene_objects(void)
         Vec sp2C;
     } sp8;
 
-    func_800BEEE8();
+    ending_banana_each_coli();
     camera = &cameraInfo[modeCtrl.currPlayer];
     mathutil_mtxA_from_mtx(camera->unk144);
     mathutil_mtxA_rigid_inv_tf_vec_xyz(&spF0, 0.0f, 0.0f, -1.0f);
@@ -2852,13 +2858,13 @@ static void update_scene_objects(void)
             {
             case 2:
                 alt_f26 = obj->pos.y;
-                mathutil_mtxA_from_rotate_y((unpausedFrameCounter << 0xA) + var_r30);
+                mathutil_mtxA_from_rotate_y((globalAnimTimer << 0xA) + var_r30);
                 alt_f27 = 0.25f * alt_f26 * endingInfo.work->unk0;
                 mathutil_mtxA_tf_vec_xyz(&spFC, alt_f27, 0.0f, 0.0f);
                 mathutil_mtxA_from_translate(&spFC);
                 alt_f27 = 1024.f * alt_f26 * endingInfo.work->unk0;
-                mathutil_mtxA_rotate_x(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30));
-                mathutil_mtxA_rotate_z(alt_f27 * mathutil_sin((unpausedFrameCounter << 0xB) + var_r30 + 0x4000));
+                mathutil_mtxA_rotate_x(alt_f27 * mathutil_sin((globalAnimTimer << 0xB) + var_r30));
+                mathutil_mtxA_rotate_z(alt_f27 * mathutil_sin((globalAnimTimer << 0xB) + var_r30 + 0x4000));
                 mathutil_mtxA_tf_point(&obj->unk4C->unk4, &spFC);
                 if (spFC.y < obj->unk4C->unk4.y)
                     spFC.y = obj->unk4C->unk4.y;
@@ -2977,7 +2983,7 @@ static void update_scene_objects(void)
                     spFC.x = obj->vel.x;
                     spFC.y = obj->vel.y;
                     spFC.z = obj->vel.z;
-                    func_8001898C(modeCtrl.currPlayer, 0xF, &spFC);
+                    shake_camera(modeCtrl.currPlayer, 0xF, &spFC);
                     obj->unk40 = 0.0f;
                     if (obj->vel.y < 0.0f)
                         obj->vel.y *= -0.125f;
@@ -3186,7 +3192,7 @@ static void update_scene_objects(void)
     }
 }
 
-static void func_800BEEE8(void)
+static void ending_banana_each_coli(void)
 {
     float unused_f31;
     float unused_f30;
@@ -3268,7 +3274,7 @@ static void func_800BEEE8(void)
 
 static void func_800BF2D0(void) {}
 
-static void func_800BF2D4(void)
+static void ending_banana_draw(void)
 {
     Vec sp14;
     Point3d sp8;
@@ -3331,18 +3337,18 @@ static void func_800BF2D4(void)
                 }
                 else
                 {
-                    nl2ngc_set_scale(scale);
+                    nlSetScaleFactor(scale);
                     if (opacity < 1.0f)
-                        nl2ngc_draw_model_alpha_sort_all((struct NlModel *)model, opacity);
+                        nlObjPutTrnsl((struct NlModel *)model, opacity);
                     else
-                        nl2ngc_draw_model_sort_translucent((struct NlModel *)model);
+                        nlObjPut((struct NlModel *)model);
                 }
             }
         }
     }
 }
 
-static void u_spawn_some_bananas(void)
+static void set_house_ending_bananas(void)
 {
     int modelId;
     int i;
@@ -3426,7 +3432,7 @@ static void func_800BF774(void)
     }
 }
 
-static void spawn_lots_of_bananas_1(int arg0)
+static void set_freefall_ending_bananas(int arg0)
 {
     int modelId;
     int i;
@@ -3450,7 +3456,7 @@ static void spawn_lots_of_bananas_1(int arg0)
     }
 }
 
-static void spawn_lots_of_bananas_2(int arg0, int arg1)
+static void set_cam_ride_ending_bananas(int arg0, int arg1)
 {
     int modelId;
     int i;
@@ -3511,7 +3517,7 @@ static void func_800BFA2C(void)
     }
 }
 
-static void func_800BFC2C(void)
+static void rend_efc_ape_face(void)
 {
     GXTexObj texObj;
     GXColor kcolor;
@@ -3598,5 +3604,5 @@ static void func_800BFC2C(void)
     GXPosition3f32(x1, y2, -10.0f);
     GXTexCoord2f32(0.0f, 0.0f);
     GXEnd();
-    camera_apply_viewport(u_cameraId1);
+    set_current_camera(u_cameraId1);
 }

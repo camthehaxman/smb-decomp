@@ -9,7 +9,7 @@ credits_finish:
 /* 800AFCB8 000ABBD8  94 21 FF F8 */	stwu r1, -8(r1)
 /* 800AFCBC 000ABBDC  4B F7 4D F9 */	bl u_free_minigame_graphics
 /* 800AFCC0 000ABBE0  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
-/* 800AFCC4 000ABBE4  4B FD B6 11 */	bl u_ape_free
+/* 800AFCC4 000ABBE4  4B FD B6 11 */	bl new_ape_close
 /* 800AFCC8 000ABBE8  38 00 00 00 */	li r0, 0
 /* 800AFCCC 000ABBEC  90 0D A0 74 */	stw r0, lbl_802F2254@sda21(r13)
 /* 800AFCD0 000ABBF0  4B F5 B7 8D */	bl event_finish_all
@@ -40,7 +40,7 @@ credits_init:
 /* 800AFD28 000ABC48  3C 60 80 0B */	lis r3, credits_finish@ha
 /* 800AFD2C 000ABC4C  38 03 FC B0 */	addi r0, r3, credits_finish@l
 /* 800AFD30 000ABC50  3C 60 01 00 */	lis r3, 0x00FFFFFF@ha
-/* 800AFD34 000ABC54  90 0D 99 9C */	stw r0, lbl_802F1B7C@sda21(r13)
+/* 800AFD34 000ABC54  90 0D 99 9C */	stw r0, submodeFinishFunc@sda21(r13)
 /* 800AFD38 000ABC58  38 83 FF FF */	addi r4, r3, 0x00FFFFFF@l
 /* 800AFD3C 000ABC5C  38 60 01 00 */	li r3, 0x100
 /* 800AFD40 000ABC60  38 A0 00 1E */	li r5, 0x1e
@@ -202,7 +202,7 @@ credits_main:
 /* 800AFF98 000ABEB8  DB 61 00 38 */	stfd f27, 0x38(r1)
 /* 800AFF9C 000ABEBC  BF 01 00 18 */	stmw r24, 0x18(r1)
 /* 800AFFA0 000ABEC0  3B 83 69 18 */	addi r28, r3, lbl_802C6918@l
-/* 800AFFA4 000ABEC4  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 800AFFA4 000ABEC4  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 800AFFA8 000ABEC8  70 00 00 0A */	andi. r0, r0, 0xa
 /* 800AFFAC 000ABECC  40 82 0B 74 */	bne lbl_800B0B20
 /* 800AFFB0 000ABED0  C0 2D A0 D4 */	lfs f1, lbl_802F22B4@sda21(r13)
@@ -873,7 +873,7 @@ lbl_800B0960:
 /* 800B0964 000AC884  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B0968 000AC888  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B096C 000AC88C  41 82 00 74 */	beq lbl_800B09E0
-/* 800B0970 000AC890  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B0970 000AC890  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B0974 000AC894  3C 00 43 30 */	lis r0, 0x4330
 /* 800B0978 000AC898  C8 22 BA 30 */	lfd f1, lbl_802F6230@sda21(r2)
 /* 800B097C 000AC89C  90 61 00 14 */	stw r3, 0x14(r1)
@@ -911,7 +911,7 @@ lbl_800B09E0:
 /* 800B09F0 000AC910  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B09F4 000AC914  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B09F8 000AC918  41 82 00 38 */	beq lbl_800B0A30
-/* 800B09FC 000AC91C  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B09FC 000AC91C  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B0A00 000AC920  3C 00 43 30 */	lis r0, 0x4330
 /* 800B0A04 000AC924  C8 22 BA 30 */	lfd f1, lbl_802F6230@sda21(r2)
 /* 800B0A08 000AC928  90 61 00 14 */	stw r3, 0x14(r1)
@@ -929,7 +929,7 @@ lbl_800B0A30:
 /* 800B0A34 000AC954  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B0A38 000AC958  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B0A3C 000AC95C  41 82 00 38 */	beq lbl_800B0A74
-/* 800B0A40 000AC960  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B0A40 000AC960  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B0A44 000AC964  3C 00 43 30 */	lis r0, 0x4330
 /* 800B0A48 000AC968  C8 22 BA 30 */	lfd f1, lbl_802F6230@sda21(r2)
 /* 800B0A4C 000AC96C  90 61 00 14 */	stw r3, 0x14(r1)
@@ -947,7 +947,7 @@ lbl_800B0A74:
 /* 800B0A78 000AC998  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B0A7C 000AC99C  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B0A80 000AC9A0  41 82 00 38 */	beq lbl_800B0AB8
-/* 800B0A84 000AC9A4  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B0A84 000AC9A4  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B0A88 000AC9A8  3C 00 43 30 */	lis r0, 0x4330
 /* 800B0A8C 000AC9AC  C8 22 BA 30 */	lfd f1, lbl_802F6230@sda21(r2)
 /* 800B0A90 000AC9B0  90 61 00 14 */	stw r3, 0x14(r1)
@@ -1015,11 +1015,11 @@ func_800B0B48:
 /* 800B0B74 000ACA94  93 81 00 E0 */	stw r28, 0xe0(r1)
 /* 800B0B78 000ACA98  3B 83 EC 20 */	addi r28, r3, modeCtrl@l
 /* 800B0B7C 000ACA9C  80 7C 00 2C */	lwz r3, 0x2c(r28)
-/* 800B0B80 000ACAA0  4B F6 7A C9 */	bl u_call_camera_apply_viewport
+/* 800B0B80 000ACAA0  4B F6 7A C9 */	bl change_current_camera
 /* 800B0B84 000ACAA4  4B FE 21 B9 */	bl u_draw_ball_shadow
-/* 800B0B88 000ACAA8  4B FA 44 69 */	bl func_80054FF0
+/* 800B0B88 000ACAA8  4B FA 44 69 */	bl background_light_assign
 /* 800B0B8C 000ACAAC  80 7C 00 2C */	lwz r3, 0x2c(r28)
-/* 800B0B90 000ACAB0  4B F7 1A 31 */	bl u_reset_light_group_stack
+/* 800B0B90 000ACAB0  4B F7 1A 31 */	bl reset_light_group
 /* 800B0B94 000ACAB4  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
 /* 800B0B98 000ACAB8  38 00 00 00 */	li r0, 0
 /* 800B0B9C 000ACABC  7C 03 00 40 */	cmplw r3, r0
@@ -1027,7 +1027,7 @@ func_800B0B48:
 /* 800B0BA4 000ACAC4  38 80 00 00 */	li r4, 0
 /* 800B0BA8 000ACAC8  4B FD BD 7D */	bl func_8008C924
 lbl_800B0BAC:
-/* 800B0BAC 000ACACC  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B0BAC 000ACACC  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B0BB0 000ACAD0  38 63 00 30 */	addi r3, r3, 0x30
 /* 800B0BB4 000ACAD4  4B F5 6C FD */	bl mathutil_mtxA_from_mtx
 /* 800B0BB8 000ACAD8  C0 22 B8 B8 */	lfs f1, lbl_802F60B8@sda21(r2)
@@ -1036,7 +1036,7 @@ lbl_800B0BAC:
 /* 800B0BC4 000ACAE4  4B F5 71 6D */	bl mathutil_mtxA_translate_xyz
 /* 800B0BC8 000ACAE8  38 60 F7 00 */	li r3, -2304
 /* 800B0BCC 000ACAEC  4B F5 73 BD */	bl mathutil_mtxA_rotate_x
-/* 800B0BD0 000ACAF0  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B0BD0 000ACAF0  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B0BD4 000ACAF4  38 63 00 30 */	addi r3, r3, 0x30
 /* 800B0BD8 000ACAF8  4B F5 6C A1 */	bl mathutil_mtxA_to_mtx
 /* 800B0BDC 000ACAFC  4B F9 69 55 */	bl stage_draw
@@ -2210,7 +2210,7 @@ lbl_800B1D74:
 /* 800B1DA0 000ADCC0  FC 01 00 40 */	fcmpo cr0, f1, f0
 /* 800B1DA4 000ADCC4  4C 41 13 82 */	cror 2, 1, 2
 /* 800B1DA8 000ADCC8  40 82 00 24 */	bne lbl_800B1DCC
-/* 800B1DAC 000ADCCC  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B1DAC 000ADCCC  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B1DB0 000ADCD0  3C 00 43 30 */	lis r0, 0x4330
 /* 800B1DB4 000ADCD4  C8 22 BA 30 */	lfd f1, lbl_802F6230@sda21(r2)
 /* 800B1DB8 000ADCD8  90 61 00 DC */	stw r3, 0xdc(r1)
@@ -2260,7 +2260,7 @@ lbl_800B1E40:
 /* 800B1E60 000ADD80  38 03 FF 38 */	addi r0, r3, -200
 /* 800B1E64 000ADD84  90 0D A0 48 */	stw r0, lbl_802F2228@sda21(r13)
 lbl_800B1E68:
-/* 800B1E68 000ADD88  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B1E68 000ADD88  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B1E6C 000ADD8C  3F A0 43 30 */	lis r29, 0x4330
 /* 800B1E70 000ADD90  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B1E74 000ADD94  90 01 00 DC */	stw r0, 0xdc(r1)
@@ -2308,7 +2308,7 @@ lbl_800B1E68:
 /* 800B1F1C 000ADE3C  4B FB FB B9 */	bl set_text_font
 /* 800B1F20 000ADE40  3C 60 00 20 */	lis r3, 0x20
 /* 800B1F24 000ADE44  4B FB FC 2D */	bl func_80071B50
-/* 800B1F28 000ADE48  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B1F28 000ADE48  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B1F2C 000ADE4C  C8 82 BA 30 */	lfd f4, lbl_802F6230@sda21(r2)
 /* 800B1F30 000ADE50  90 01 00 DC */	stw r0, 0xdc(r1)
 /* 800B1F34 000ADE54  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
@@ -2340,7 +2340,7 @@ lbl_800B1E68:
 /* 800B1F9C 000ADEBC  4B FB FB A5 */	bl set_text_opacity
 /* 800B1FA0 000ADEC0  48 00 00 A0 */	b lbl_800B2040
 lbl_800B1FA4:
-/* 800B1FA4 000ADEC4  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B1FA4 000ADEC4  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B1FA8 000ADEC8  3C 00 43 30 */	lis r0, 0x4330
 /* 800B1FAC 000ADECC  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B1FB0 000ADED0  90 61 00 DC */	stw r3, 0xdc(r1)
@@ -2365,7 +2365,7 @@ lbl_800B1FA4:
 /* 800B1FFC 000ADF1C  4B FB FB 45 */	bl set_text_opacity
 /* 800B2000 000ADF20  48 00 00 40 */	b lbl_800B2040
 lbl_800B2004:
-/* 800B2004 000ADF24  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B2004 000ADF24  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B2008 000ADF28  3C 00 43 30 */	lis r0, 0x4330
 /* 800B200C 000ADF2C  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B2010 000ADF30  90 61 00 DC */	stw r3, 0xdc(r1)
@@ -2392,7 +2392,7 @@ lbl_800B2040:
 /* 800B2060 000ADF80  38 63 F3 25 */	addi r3, r3, 0x00F7F325@l
 /* 800B2064 000ADF84  4B FB FA 81 */	bl set_text_mul_color
 lbl_800B2068:
-/* 800B2068 000ADF88  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B2068 000ADF88  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B206C 000ADF8C  3C 00 43 30 */	lis r0, 0x4330
 /* 800B2070 000ADF90  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B2074 000ADF94  90 61 00 DC */	stw r3, 0xdc(r1)
@@ -2806,7 +2806,7 @@ lbl_800B257C:
 /* 800B25E4 000AE504  98 83 00 0D */	stb r4, 0xd(r3)
 /* 800B25E8 000AE508  80 6D A0 68 */	lwz r3, lbl_802F2248@sda21(r13)
 /* 800B25EC 000AE50C  98 83 00 0E */	stb r4, 0xe(r3)
-/* 800B25F0 000AE510  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B25F0 000AE510  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B25F4 000AE514  C8 82 BA 30 */	lfd f4, lbl_802F6230@sda21(r2)
 /* 800B25F8 000AE518  90 61 00 DC */	stw r3, 0xdc(r1)
 /* 800B25FC 000AE51C  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
@@ -2839,7 +2839,7 @@ lbl_800B257C:
 /* 800B2668 000AE588  D0 03 00 6C */	stfs f0, 0x6c(r3)
 /* 800B266C 000AE58C  48 00 00 68 */	b lbl_800B26D4
 lbl_800B2670:
-/* 800B2670 000AE590  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B2670 000AE590  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B2674 000AE594  3C 00 43 30 */	lis r0, 0x4330
 /* 800B2678 000AE598  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B267C 000AE59C  90 61 00 DC */	stw r3, 0xdc(r1)
@@ -2914,7 +2914,7 @@ lbl_800B2780:
 /* 800B2784 000AE6A4  C0 22 B8 B8 */	lfs f1, lbl_802F60B8@sda21(r2)
 /* 800B2788 000AE6A8  FC 04 08 00 */	fcmpu cr0, f4, f1
 /* 800B278C 000AE6AC  41 82 02 7C */	beq lbl_800B2A08
-/* 800B2790 000AE6B0  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B2790 000AE6B0  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B2794 000AE6B4  3C 00 43 30 */	lis r0, 0x4330
 /* 800B2798 000AE6B8  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B279C 000AE6BC  90 61 00 DC */	stw r3, 0xdc(r1)
@@ -2947,10 +2947,10 @@ lbl_800B2780:
 /* 800B2808 000AE728  38 80 00 05 */	li r4, 5
 /* 800B280C 000AE72C  38 A0 00 06 */	li r5, 6
 /* 800B2810 000AE730  38 C0 00 00 */	li r6, 0
-/* 800B2814 000AE734  4B FD 93 C1 */	bl u_set_ape_anim
+/* 800B2814 000AE734  4B FD 93 C1 */	bl new_ape_stat_motion
 /* 800B2818 000AE738  48 00 01 F0 */	b lbl_800B2A08
 lbl_800B281C:
-/* 800B281C 000AE73C  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B281C 000AE73C  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2820 000AE740  3F A0 43 30 */	lis r29, 0x4330
 /* 800B2824 000AE744  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B2828 000AE748  90 01 00 DC */	stw r0, 0xdc(r1)
@@ -3037,7 +3037,7 @@ lbl_800B281C:
 /* 800B296C 000AE88C  FC 04 00 2A */	fadd f0, f4, f0
 /* 800B2970 000AE890  FC 00 00 18 */	frsp f0, f0
 /* 800B2974 000AE894  D0 1F 00 10 */	stfs f0, 0x10(r31)
-/* 800B2978 000AE898  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2978 000AE898  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B297C 000AE89C  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B2980 000AE8A0  90 01 00 BC */	stw r0, 0xbc(r1)
 /* 800B2984 000AE8A4  C0 2D A0 C4 */	lfs f1, lbl_802F22A4@sda21(r13)
@@ -3073,13 +3073,13 @@ lbl_800B29F0:
 /* 800B29F8 000AE918  C0 22 B8 B8 */	lfs f1, lbl_802F60B8@sda21(r2)
 /* 800B29FC 000AE91C  38 A0 00 0F */	li r5, 0xf
 /* 800B2A00 000AE920  38 C0 00 00 */	li r6, 0
-/* 800B2A04 000AE924  4B FD 91 D1 */	bl u_set_ape_anim
+/* 800B2A04 000AE924  4B FD 91 D1 */	bl new_ape_stat_motion
 lbl_800B2A08:
 /* 800B2A08 000AE928  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
 /* 800B2A0C 000AE92C  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B2A10 000AE930  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B2A14 000AE934  41 82 02 6C */	beq lbl_800B2C80
-/* 800B2A18 000AE938  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2A18 000AE938  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2A1C 000AE93C  3F A0 43 30 */	lis r29, 0x4330
 /* 800B2A20 000AE940  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B2A24 000AE944  90 01 00 BC */	stw r0, 0xbc(r1)
@@ -3119,7 +3119,7 @@ lbl_800B2A08:
 /* 800B2AAC 000AE9CC  B0 83 00 3C */	sth r4, 0x3c(r3)
 /* 800B2AB0 000AE9D0  80 6D A0 60 */	lwz r3, lbl_802F2240@sda21(r13)
 /* 800B2AB4 000AE9D4  98 03 00 03 */	stb r0, 3(r3)
-/* 800B2AB8 000AE9D8  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2AB8 000AE9D8  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2ABC 000AE9DC  C8 82 BA 30 */	lfd f4, lbl_802F6230@sda21(r2)
 /* 800B2AC0 000AE9E0  90 01 00 BC */	stw r0, 0xbc(r1)
 /* 800B2AC4 000AE9E4  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
@@ -3153,7 +3153,7 @@ lbl_800B2A08:
 /* 800B2B34 000AEA54  D0 03 00 6C */	stfs f0, 0x6c(r3)
 /* 800B2B38 000AEA58  48 00 01 18 */	b lbl_800B2C50
 lbl_800B2B3C:
-/* 800B2B3C 000AEA5C  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B2B3C 000AEA5C  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B2B40 000AEA60  3C 00 43 30 */	lis r0, 0x4330
 /* 800B2B44 000AEA64  C8 82 BA 30 */	lfd f4, lbl_802F6230@sda21(r2)
 /* 800B2B48 000AEA68  90 61 00 BC */	stw r3, 0xbc(r1)
@@ -3187,7 +3187,7 @@ lbl_800B2B3C:
 /* 800B2BB8 000AEAD8  D0 03 00 6C */	stfs f0, 0x6c(r3)
 /* 800B2BBC 000AEADC  48 00 00 94 */	b lbl_800B2C50
 lbl_800B2BC0:
-/* 800B2BC0 000AEAE0  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B2BC0 000AEAE0  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B2BC4 000AEAE4  3C 00 43 30 */	lis r0, 0x4330
 /* 800B2BC8 000AEAE8  C8 62 BA 30 */	lfd f3, lbl_802F6230@sda21(r2)
 /* 800B2BCC 000AEAEC  90 61 00 BC */	stw r3, 0xbc(r1)
@@ -3243,7 +3243,7 @@ lbl_800B2C80:
 /* 800B2C84 000AEBA4  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B2C88 000AEBA8  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B2C8C 000AEBAC  41 82 01 64 */	beq lbl_800B2DF0
-/* 800B2C90 000AEBB0  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2C90 000AEBB0  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2C94 000AEBB4  3F A0 43 30 */	lis r29, 0x4330
 /* 800B2C98 000AEBB8  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B2C9C 000AEBBC  90 01 00 BC */	stw r0, 0xbc(r1)
@@ -3283,7 +3283,7 @@ lbl_800B2C80:
 /* 800B2D24 000AEC44  B0 83 00 3C */	sth r4, 0x3c(r3)
 /* 800B2D28 000AEC48  80 6D A0 5C */	lwz r3, lbl_802F223C@sda21(r13)
 /* 800B2D2C 000AEC4C  98 03 00 03 */	stb r0, 3(r3)
-/* 800B2D30 000AEC50  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2D30 000AEC50  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2D34 000AEC54  C8 82 BA 30 */	lfd f4, lbl_802F6230@sda21(r2)
 /* 800B2D38 000AEC58  90 01 00 BC */	stw r0, 0xbc(r1)
 /* 800B2D3C 000AEC5C  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
@@ -3339,7 +3339,7 @@ lbl_800B2DF0:
 /* 800B2DF4 000AED14  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B2DF8 000AED18  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B2DFC 000AED1C  41 82 01 68 */	beq lbl_800B2F64
-/* 800B2E00 000AED20  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2E00 000AED20  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2E04 000AED24  3F A0 43 30 */	lis r29, 0x4330
 /* 800B2E08 000AED28  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B2E0C 000AED2C  90 01 00 BC */	stw r0, 0xbc(r1)
@@ -3380,7 +3380,7 @@ lbl_800B2DF0:
 /* 800B2E98 000AEDB8  98 83 00 03 */	stb r4, 3(r3)
 /* 800B2E9C 000AEDBC  80 6D A0 58 */	lwz r3, lbl_802F2238@sda21(r13)
 /* 800B2EA0 000AEDC0  B0 03 00 3C */	sth r0, 0x3c(r3)
-/* 800B2EA4 000AEDC4  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2EA4 000AEDC4  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2EA8 000AEDC8  C8 82 BA 30 */	lfd f4, lbl_802F6230@sda21(r2)
 /* 800B2EAC 000AEDCC  90 01 00 BC */	stw r0, 0xbc(r1)
 /* 800B2EB0 000AEDD0  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
@@ -3436,7 +3436,7 @@ lbl_800B2F64:
 /* 800B2F68 000AEE88  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B2F6C 000AEE8C  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B2F70 000AEE90  41 82 01 14 */	beq lbl_800B3084
-/* 800B2F74 000AEE94  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2F74 000AEE94  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2F78 000AEE98  3F A0 43 30 */	lis r29, 0x4330
 /* 800B2F7C 000AEE9C  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B2F80 000AEEA0  90 01 00 BC */	stw r0, 0xbc(r1)
@@ -3462,7 +3462,7 @@ lbl_800B2F64:
 /* 800B2FD0 000AEEF0  4B FB EB 15 */	bl set_text_mul_color
 /* 800B2FD4 000AEEF4  38 60 00 01 */	li r3, 1
 /* 800B2FD8 000AEEF8  4B FB EA FD */	bl set_text_font
-/* 800B2FDC 000AEEFC  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B2FDC 000AEEFC  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B2FE0 000AEF00  C8 82 BA 30 */	lfd f4, lbl_802F6230@sda21(r2)
 /* 800B2FE4 000AEF04  90 01 00 BC */	stw r0, 0xbc(r1)
 /* 800B2FE8 000AEF08  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
@@ -3511,7 +3511,7 @@ lbl_800B3084:
 /* 800B3088 000AEFA8  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B308C 000AEFAC  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B3090 000AEFB0  41 82 00 6C */	beq lbl_800B30FC
-/* 800B3094 000AEFB4  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B3094 000AEFB4  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B3098 000AEFB8  3C 00 43 30 */	lis r0, 0x4330
 /* 800B309C 000AEFBC  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B30A0 000AEFC0  90 61 00 BC */	stw r3, 0xbc(r1)
@@ -3542,7 +3542,7 @@ lbl_800B30FC:
 /* 800B3100 000AF020  C0 02 B8 B8 */	lfs f0, lbl_802F60B8@sda21(r2)
 /* 800B3104 000AF024  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B3108 000AF028  41 82 00 40 */	beq lbl_800B3148
-/* 800B310C 000AF02C  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B310C 000AF02C  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B3110 000AF030  3C 00 43 30 */	lis r0, 0x4330
 /* 800B3114 000AF034  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B3118 000AF038  90 61 00 BC */	stw r3, 0xbc(r1)
@@ -3601,7 +3601,7 @@ lbl_800B31C0:
 /* 800B31DC 000AF0FC  FC 03 00 00 */	fcmpu cr0, f3, f0
 /* 800B31E0 000AF100  41 82 00 34 */	beq lbl_800B3214
 /* 800B31E4 000AF104  41 82 02 08 */	beq lbl_800B33EC
-/* 800B31E8 000AF108  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B31E8 000AF108  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B31EC 000AF10C  3C 00 43 30 */	lis r0, 0x4330
 /* 800B31F0 000AF110  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B31F4 000AF114  90 61 00 BC */	stw r3, 0xbc(r1)
@@ -4160,7 +4160,7 @@ lbl_800B397C:
 /* 800B3A1C 000AF93C  EC 62 00 28 */	fsubs f3, f2, f0
 /* 800B3A20 000AF940  C0 43 07 28 */	lfs f2, 0x728(r3)
 /* 800B3A24 000AF944  4B F5 43 0D */	bl mathutil_mtxA_translate_xyz
-/* 800B3A28 000AF948  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B3A28 000AF948  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B3A2C 000AF94C  54 03 48 2C */	slwi r3, r0, 9
 /* 800B3A30 000AF950  4B F5 45 CD */	bl mathutil_mtxA_rotate_y
 /* 800B3A34 000AF954  80 6D A0 4C */	lwz r3, lbl_802F222C@sda21(r13)
@@ -4217,7 +4217,7 @@ lbl_800B3AE0:
 /* 800B3AFC 000AFA1C  EC 62 00 28 */	fsubs f3, f2, f0
 /* 800B3B00 000AFA20  C0 43 07 28 */	lfs f2, 0x728(r3)
 /* 800B3B04 000AFA24  4B F5 42 2D */	bl mathutil_mtxA_translate_xyz
-/* 800B3B08 000AFA28  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B3B08 000AFA28  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B3B0C 000AFA2C  54 03 48 2C */	slwi r3, r0, 9
 /* 800B3B10 000AFA30  4B F5 44 ED */	bl mathutil_mtxA_rotate_y
 /* 800B3B14 000AFA34  80 6D 99 80 */	lwz r3, mathutilData@sda21(r13)
@@ -4298,7 +4298,7 @@ lbl_800B3B7C:
 /* 800B3C34 000AFB54  FC 40 08 90 */	fmr f2, f1
 /* 800B3C38 000AFB58  FC 60 08 90 */	fmr f3, f1
 /* 800B3C3C 000AFB5C  4B F5 41 9D */	bl mathutil_mtxA_scale_xyz
-/* 800B3C40 000AFB60  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B3C40 000AFB60  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B3C44 000AFB64  54 03 60 26 */	slwi r3, r0, 0xc
 /* 800B3C48 000AFB68  4B F5 43 B5 */	bl mathutil_mtxA_rotate_y
 /* 800B3C4C 000AFB6C  80 6D 99 80 */	lwz r3, mathutilData@sda21(r13)
@@ -4547,7 +4547,7 @@ lbl_800B3F5C:
 /* 800B3FC0 000AFEE0  FC 01 00 40 */	fcmpo cr0, f1, f0
 /* 800B3FC4 000AFEE4  4C 40 13 82 */	cror 2, 0, 2
 /* 800B3FC8 000AFEE8  40 82 00 8C */	bne lbl_800B4054
-/* 800B3FCC 000AFEEC  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B3FCC 000AFEEC  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B3FD0 000AFEF0  4B F5 38 E1 */	bl mathutil_mtxA_from_mtx
 /* 800B3FD4 000AFEF4  80 6D A0 4C */	lwz r3, lbl_802F222C@sda21(r13)
 /* 800B3FD8 000AFEF8  C0 6D A0 D4 */	lfs f3, lbl_802F22B4@sda21(r13)
@@ -4595,7 +4595,7 @@ lbl_800B4054:
 /* 800B407C 000AFF9C  FC 01 00 40 */	fcmpo cr0, f1, f0
 /* 800B4080 000AFFA0  4C 41 13 82 */	cror 2, 1, 2
 /* 800B4084 000AFFA4  40 82 00 5C */	bne lbl_800B40E0
-/* 800B4088 000AFFA8  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B4088 000AFFA8  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B408C 000AFFAC  4B F5 38 25 */	bl mathutil_mtxA_from_mtx
 /* 800B4090 000AFFB0  80 0D A0 40 */	lwz r0, lbl_802F2220@sda21(r13)
 /* 800B4094 000AFFB4  C0 62 BC 64 */	lfs f3, lbl_802F6464@sda21(r2)
@@ -4624,7 +4624,7 @@ lbl_800B40E0:
 /* 800B40EC 000B000C  C0 03 15 C8 */	lfs f0, 0x15c8(r3)
 /* 800B40F0 000B0010  FC 17 00 00 */	fcmpu cr0, f23, f0
 /* 800B40F4 000B0014  40 82 00 5C */	bne lbl_800B4150
-/* 800B40F8 000B0018  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B40F8 000B0018  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B40FC 000B001C  4B F5 37 B5 */	bl mathutil_mtxA_from_mtx
 /* 800B4100 000B0020  80 0D A0 40 */	lwz r0, lbl_802F2220@sda21(r13)
 /* 800B4104 000B0024  C0 62 BC 64 */	lfs f3, lbl_802F6464@sda21(r2)
@@ -4714,7 +4714,7 @@ lbl_800B4210:
 /* 800B4248 000B0168  FC 64 00 28 */	fsub f3, f4, f0
 /* 800B424C 000B016C  FC 60 18 18 */	frsp f3, f3
 /* 800B4250 000B0170  4B F5 3A E1 */	bl mathutil_mtxA_translate_xyz
-/* 800B4254 000B0174  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B4254 000B0174  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B4258 000B0178  54 03 60 26 */	slwi r3, r0, 0xc
 /* 800B425C 000B017C  4B F5 3D A1 */	bl mathutil_mtxA_rotate_y
 /* 800B4260 000B0180  C0 22 BC 60 */	lfs f1, lbl_802F6460@sda21(r2)
@@ -4823,7 +4823,7 @@ lbl_800B4380:
 /* 800B43E4 000B0304  FC 01 00 40 */	fcmpo cr0, f1, f0
 /* 800B43E8 000B0308  4C 40 13 82 */	cror 2, 0, 2
 /* 800B43EC 000B030C  40 82 00 8C */	bne lbl_800B4478
-/* 800B43F0 000B0310  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B43F0 000B0310  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B43F4 000B0314  4B F5 34 BD */	bl mathutil_mtxA_from_mtx
 /* 800B43F8 000B0318  80 6D A0 4C */	lwz r3, lbl_802F222C@sda21(r13)
 /* 800B43FC 000B031C  C0 6D A0 D4 */	lfs f3, lbl_802F22B4@sda21(r13)
@@ -4871,7 +4871,7 @@ lbl_800B4478:
 /* 800B44A0 000B03C0  FC 01 00 40 */	fcmpo cr0, f1, f0
 /* 800B44A4 000B03C4  4C 41 13 82 */	cror 2, 1, 2
 /* 800B44A8 000B03C8  40 82 00 5C */	bne lbl_800B4504
-/* 800B44AC 000B03CC  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B44AC 000B03CC  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B44B0 000B03D0  4B F5 34 01 */	bl mathutil_mtxA_from_mtx
 /* 800B44B4 000B03D4  80 0D A0 40 */	lwz r0, lbl_802F2220@sda21(r13)
 /* 800B44B8 000B03D8  C0 62 BC 64 */	lfs f3, lbl_802F6464@sda21(r2)
@@ -4900,7 +4900,7 @@ lbl_800B4504:
 /* 800B4510 000B0430  C0 03 81 5C */	lfs f0, -0x7ea4(r3)
 /* 800B4514 000B0434  FC 17 00 00 */	fcmpu cr0, f23, f0
 /* 800B4518 000B0438  40 82 00 5C */	bne lbl_800B4574
-/* 800B451C 000B043C  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800B451C 000B043C  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800B4520 000B0440  4B F5 33 91 */	bl mathutil_mtxA_from_mtx
 /* 800B4524 000B0444  80 0D A0 40 */	lwz r0, lbl_802F2220@sda21(r13)
 /* 800B4528 000B0448  C0 62 BC 64 */	lfs f3, lbl_802F6464@sda21(r2)
@@ -4990,7 +4990,7 @@ lbl_800B4634:
 /* 800B466C 000B058C  FC 64 00 28 */	fsub f3, f4, f0
 /* 800B4670 000B0590  FC 60 18 18 */	frsp f3, f3
 /* 800B4674 000B0594  4B F5 36 BD */	bl mathutil_mtxA_translate_xyz
-/* 800B4678 000B0598  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800B4678 000B0598  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800B467C 000B059C  54 03 60 26 */	slwi r3, r0, 0xc
 /* 800B4680 000B05A0  4B F5 39 7D */	bl mathutil_mtxA_rotate_y
 /* 800B4684 000B05A4  C0 22 BC 60 */	lfs f1, lbl_802F6460@sda21(r2)
@@ -6465,9 +6465,9 @@ func_800B5B5C:
 /* 800B5C18 000B1B38  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
 /* 800B5C1C 000B1B3C  90 03 00 B4 */	stw r0, 0xb4(r3)
 /* 800B5C20 000B1B40  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
-/* 800B5C24 000B1B44  4B FD 5F B1 */	bl u_set_ape_anim
+/* 800B5C24 000B1B44  4B FD 5F B1 */	bl new_ape_stat_motion
 /* 800B5C28 000B1B48  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
-/* 800B5C2C 000B1B4C  4B FD 68 7D */	bl u_do_ape_anim
+/* 800B5C2C 000B1B4C  4B FD 68 7D */	bl new_ape_calc
 /* 800B5C30 000B1B50  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
 /* 800B5C34 000B1B54  38 9F 00 6C */	addi r4, r31, 0x6c
 /* 800B5C38 000B1B58  4B FD 67 D1 */	bl func_8008C408
@@ -6515,7 +6515,7 @@ func_800B5C54:
 /* 800B5CD4 000B1BF4  38 80 00 01 */	li r4, 1
 /* 800B5CD8 000B1BF8  38 A0 00 00 */	li r5, 0
 /* 800B5CDC 000B1BFC  38 C0 00 00 */	li r6, 0
-/* 800B5CE0 000B1C00  4B FD 5E F5 */	bl u_set_ape_anim
+/* 800B5CE0 000B1C00  4B FD 5E F5 */	bl new_ape_stat_motion
 /* 800B5CE4 000B1C04  48 00 01 08 */	b lbl_800B5DEC
 lbl_800B5CE8:
 /* 800B5CE8 000B1C08  C0 0D A0 C0 */	lfs f0, lbl_802F22A0@sda21(r13)
@@ -6538,13 +6538,13 @@ lbl_800B5CE8:
 /* 800B5D2C 000B1C4C  FC 21 00 24 */	fdiv f1, f1, f0
 /* 800B5D30 000B1C50  38 C0 00 00 */	li r6, 0
 /* 800B5D34 000B1C54  FC 20 08 18 */	frsp f1, f1
-/* 800B5D38 000B1C58  4B FD 5E 9D */	bl u_set_ape_anim
+/* 800B5D38 000B1C58  4B FD 5E 9D */	bl new_ape_stat_motion
 /* 800B5D3C 000B1C5C  48 00 00 B0 */	b lbl_800B5DEC
 lbl_800B5D40:
 /* 800B5D40 000B1C60  C0 6D A0 C4 */	lfs f3, lbl_802F22A4@sda21(r13)
 /* 800B5D44 000B1C64  FC 03 08 00 */	fcmpu cr0, f3, f1
 /* 800B5D48 000B1C68  41 82 00 6C */	beq lbl_800B5DB4
-/* 800B5D4C 000B1C6C  80 6D 99 54 */	lwz r3, unpausedFrameCounter@sda21(r13)
+/* 800B5D4C 000B1C6C  80 6D 99 54 */	lwz r3, globalAnimTimer@sda21(r13)
 /* 800B5D50 000B1C70  3C 00 43 30 */	lis r0, 0x4330
 /* 800B5D54 000B1C74  C8 42 BA 30 */	lfd f2, lbl_802F6230@sda21(r2)
 /* 800B5D58 000B1C78  90 61 00 24 */	stw r3, 0x24(r1)
@@ -6568,7 +6568,7 @@ lbl_800B5D40:
 /* 800B5DA0 000B1CC0  38 80 00 05 */	li r4, 5
 /* 800B5DA4 000B1CC4  38 A0 00 00 */	li r5, 0
 /* 800B5DA8 000B1CC8  38 C0 00 00 */	li r6, 0
-/* 800B5DAC 000B1CCC  4B FD 5E 29 */	bl u_set_ape_anim
+/* 800B5DAC 000B1CCC  4B FD 5E 29 */	bl new_ape_stat_motion
 /* 800B5DB0 000B1CD0  48 00 00 3C */	b lbl_800B5DEC
 lbl_800B5DB4:
 /* 800B5DB4 000B1CD4  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
@@ -6584,10 +6584,10 @@ lbl_800B5DB4:
 /* 800B5DDC 000B1CFC  38 80 00 00 */	li r4, 0
 /* 800B5DE0 000B1D00  38 A0 00 00 */	li r5, 0
 /* 800B5DE4 000B1D04  38 C0 00 00 */	li r6, 0
-/* 800B5DE8 000B1D08  4B FD 5D ED */	bl u_set_ape_anim
+/* 800B5DE8 000B1D08  4B FD 5D ED */	bl new_ape_stat_motion
 lbl_800B5DEC:
 /* 800B5DEC 000B1D0C  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
-/* 800B5DF0 000B1D10  4B FD 66 B9 */	bl u_do_ape_anim
+/* 800B5DF0 000B1D10  4B FD 66 B9 */	bl new_ape_calc
 /* 800B5DF4 000B1D14  80 6D A0 74 */	lwz r3, lbl_802F2254@sda21(r13)
 /* 800B5DF8 000B1D18  38 63 00 60 */	addi r3, r3, 0x60
 /* 800B5DFC 000B1D1C  4B F5 24 61 */	bl mathutil_mtxA_from_quat

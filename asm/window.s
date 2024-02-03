@@ -1176,7 +1176,7 @@ lbl_8002EC24:
 /* 8002EC24 0002AB44  80 9C 00 0C */	lwz r4, 0xc(r28)
 /* 8002EC28 0002AB48  4C C6 31 82 */	crclr 6
 /* 8002EC2C 0002AB4C  38 60 00 02 */	li r3, 2
-/* 8002EC30 0002AB50  48 00 10 91 */	bl func_8002FCC0
+/* 8002EC30 0002AB50  48 00 10 91 */	bl window_printf
 /* 8002EC34 0002AB54  48 00 02 70 */	b lbl_8002EEA4
 .global lbl_8002EC38
 lbl_8002EC38:
@@ -1184,7 +1184,7 @@ lbl_8002EC38:
 /* 8002EC3C 0002AB5C  4C C6 31 82 */	crclr 6
 /* 8002EC40 0002AB60  80 A5 00 00 */	lwz r5, 0(r5)
 /* 8002EC44 0002AB64  38 60 00 02 */	li r3, 2
-/* 8002EC48 0002AB68  48 00 10 79 */	bl func_8002FCC0
+/* 8002EC48 0002AB68  48 00 10 79 */	bl window_printf
 /* 8002EC4C 0002AB6C  48 00 02 58 */	b lbl_8002EEA4
 .global lbl_8002EC50
 lbl_8002EC50:
@@ -1192,7 +1192,7 @@ lbl_8002EC50:
 /* 8002EC54 0002AB74  4C C6 31 82 */	crclr 6
 /* 8002EC58 0002AB78  80 A5 00 00 */	lwz r5, 0(r5)
 /* 8002EC5C 0002AB7C  38 60 00 02 */	li r3, 2
-/* 8002EC60 0002AB80  48 00 10 61 */	bl func_8002FCC0
+/* 8002EC60 0002AB80  48 00 10 61 */	bl window_printf
 /* 8002EC64 0002AB84  48 00 02 40 */	b lbl_8002EEA4
 .global lbl_8002EC68
 lbl_8002EC68:
@@ -1200,7 +1200,7 @@ lbl_8002EC68:
 /* 8002EC6C 0002AB8C  4C C6 31 82 */	crclr 6
 /* 8002EC70 0002AB90  80 B7 00 18 */	lwz r5, 0x18(r23)
 /* 8002EC74 0002AB94  38 60 00 02 */	li r3, 2
-/* 8002EC78 0002AB98  48 00 10 49 */	bl func_8002FCC0
+/* 8002EC78 0002AB98  48 00 10 49 */	bl window_printf
 /* 8002EC7C 0002AB9C  48 00 02 28 */	b lbl_8002EEA4
 .global lbl_8002EC80
 lbl_8002EC80:
@@ -1208,7 +1208,7 @@ lbl_8002EC80:
 /* 8002EC84 0002ABA4  4C C6 31 82 */	crclr 6
 /* 8002EC88 0002ABA8  A0 A5 00 00 */	lhz r5, 0(r5)
 /* 8002EC8C 0002ABAC  38 60 00 02 */	li r3, 2
-/* 8002EC90 0002ABB0  48 00 10 31 */	bl func_8002FCC0
+/* 8002EC90 0002ABB0  48 00 10 31 */	bl window_printf
 /* 8002EC94 0002ABB4  48 00 02 10 */	b lbl_8002EEA4
 .global lbl_8002EC98
 lbl_8002EC98:
@@ -1216,7 +1216,7 @@ lbl_8002EC98:
 /* 8002EC9C 0002ABBC  4C C6 31 82 */	crclr 6
 /* 8002ECA0 0002ABC0  A8 A5 00 00 */	lha r5, 0(r5)
 /* 8002ECA4 0002ABC4  38 60 00 02 */	li r3, 2
-/* 8002ECA8 0002ABC8  48 00 10 19 */	bl func_8002FCC0
+/* 8002ECA8 0002ABC8  48 00 10 19 */	bl window_printf
 /* 8002ECAC 0002ABCC  48 00 01 F8 */	b lbl_8002EEA4
 .global lbl_8002ECB0
 lbl_8002ECB0:
@@ -1224,7 +1224,7 @@ lbl_8002ECB0:
 /* 8002ECB4 0002ABD4  4C C6 31 82 */	crclr 6
 /* 8002ECB8 0002ABD8  88 A5 00 00 */	lbz r5, 0(r5)
 /* 8002ECBC 0002ABDC  38 60 00 02 */	li r3, 2
-/* 8002ECC0 0002ABE0  48 00 10 01 */	bl func_8002FCC0
+/* 8002ECC0 0002ABE0  48 00 10 01 */	bl window_printf
 /* 8002ECC4 0002ABE4  48 00 01 E0 */	b lbl_8002EEA4
 .global lbl_8002ECC8
 lbl_8002ECC8:
@@ -1233,7 +1233,7 @@ lbl_8002ECC8:
 /* 8002ECD0 0002ABF0  80 9C 00 0C */	lwz r4, 0xc(r28)
 /* 8002ECD4 0002ABF4  38 60 00 02 */	li r3, 2
 /* 8002ECD8 0002ABF8  7C A5 07 74 */	extsb r5, r5
-/* 8002ECDC 0002ABFC  48 00 0F E5 */	bl func_8002FCC0
+/* 8002ECDC 0002ABFC  48 00 0F E5 */	bl window_printf
 /* 8002ECE0 0002AC00  48 00 01 C4 */	b lbl_8002EEA4
 .global lbl_8002ECE4
 lbl_8002ECE4:
@@ -1241,14 +1241,14 @@ lbl_8002ECE4:
 /* 8002ECE8 0002AC08  4C C6 32 42 */	crset 6
 /* 8002ECEC 0002AC0C  C0 25 00 00 */	lfs f1, 0(r5)
 /* 8002ECF0 0002AC10  38 60 00 02 */	li r3, 2
-/* 8002ECF4 0002AC14  48 00 0F CD */	bl func_8002FCC0
+/* 8002ECF4 0002AC14  48 00 0F CD */	bl window_printf
 /* 8002ECF8 0002AC18  48 00 01 AC */	b lbl_8002EEA4
 .global lbl_8002ECFC
 lbl_8002ECFC:
 /* 8002ECFC 0002AC1C  80 9C 00 0C */	lwz r4, 0xc(r28)
 /* 8002ED00 0002AC20  4C C6 31 82 */	crclr 6
 /* 8002ED04 0002AC24  38 60 00 02 */	li r3, 2
-/* 8002ED08 0002AC28  48 00 0F B9 */	bl func_8002FCC0
+/* 8002ED08 0002AC28  48 00 0F B9 */	bl window_printf
 /* 8002ED0C 0002AC2C  48 00 01 98 */	b lbl_8002EEA4
 .global lbl_8002ED10
 lbl_8002ED10:
@@ -1256,7 +1256,7 @@ lbl_8002ED10:
 /* 8002ED14 0002AC34  4C C6 31 82 */	crclr 6
 /* 8002ED18 0002AC38  80 A5 00 00 */	lwz r5, 0(r5)
 /* 8002ED1C 0002AC3C  38 60 00 02 */	li r3, 2
-/* 8002ED20 0002AC40  48 00 0F A1 */	bl func_8002FCC0
+/* 8002ED20 0002AC40  48 00 0F A1 */	bl window_printf
 /* 8002ED24 0002AC44  48 00 01 80 */	b lbl_8002EEA4
 .global lbl_8002ED28
 lbl_8002ED28:
@@ -1272,7 +1272,7 @@ lbl_8002ED44:
 /* 8002ED44 0002AC64  80 9C 00 0C */	lwz r4, 0xc(r28)
 /* 8002ED48 0002AC68  4C C6 31 82 */	crclr 6
 /* 8002ED4C 0002AC6C  38 60 00 02 */	li r3, 2
-/* 8002ED50 0002AC70  48 00 0F 71 */	bl func_8002FCC0
+/* 8002ED50 0002AC70  48 00 0F 71 */	bl window_printf
 /* 8002ED54 0002AC74  48 00 01 50 */	b lbl_8002EEA4
 .global lbl_8002ED58
 lbl_8002ED58:
@@ -1289,7 +1289,7 @@ lbl_8002ED78:
 /* 8002ED78 0002AC98  80 9C 00 0C */	lwz r4, 0xc(r28)
 /* 8002ED7C 0002AC9C  4C C6 31 82 */	crclr 6
 /* 8002ED80 0002ACA0  38 60 00 02 */	li r3, 2
-/* 8002ED84 0002ACA4  48 00 0F 3D */	bl func_8002FCC0
+/* 8002ED84 0002ACA4  48 00 0F 3D */	bl window_printf
 /* 8002ED88 0002ACA8  48 00 01 1C */	b lbl_8002EEA4
 .global lbl_8002ED8C
 lbl_8002ED8C:
@@ -1297,7 +1297,7 @@ lbl_8002ED8C:
 /* 8002ED90 0002ACB0  4C C6 31 82 */	crclr 6
 /* 8002ED94 0002ACB4  80 B7 00 18 */	lwz r5, 0x18(r23)
 /* 8002ED98 0002ACB8  38 60 00 02 */	li r3, 2
-/* 8002ED9C 0002ACBC  48 00 0F 25 */	bl func_8002FCC0
+/* 8002ED9C 0002ACBC  48 00 0F 25 */	bl window_printf
 /* 8002EDA0 0002ACC0  48 00 01 04 */	b lbl_8002EEA4
 .global lbl_8002EDA4
 lbl_8002EDA4:
@@ -1308,14 +1308,14 @@ lbl_8002EDA4:
 /* 8002EDB4 0002ACD4  54 00 10 3A */	slwi r0, r0, 2
 /* 8002EDB8 0002ACD8  80 9C 00 0C */	lwz r4, 0xc(r28)
 /* 8002EDBC 0002ACDC  7C A5 00 2E */	lwzx r5, r5, r0
-/* 8002EDC0 0002ACE0  48 00 0F 01 */	bl func_8002FCC0
+/* 8002EDC0 0002ACE0  48 00 0F 01 */	bl window_printf
 /* 8002EDC4 0002ACE4  48 00 00 E0 */	b lbl_8002EEA4
 .global lbl_8002EDC8
 lbl_8002EDC8:
 /* 8002EDC8 0002ACE8  38 9D 39 B4 */	addi r4, r29, 0x39b4
 /* 8002EDCC 0002ACEC  4C C6 31 82 */	crclr 6
 /* 8002EDD0 0002ACF0  38 60 00 02 */	li r3, 2
-/* 8002EDD4 0002ACF4  48 00 0E ED */	bl func_8002FCC0
+/* 8002EDD4 0002ACF4  48 00 0E ED */	bl window_printf
 /* 8002EDD8 0002ACF8  80 6D 99 4C */	lwz r3, mainHeap@sda21(r13)
 /* 8002EDDC 0002ACFC  48 09 3B 55 */	bl OSCheckHeap
 /* 8002EDE0 0002AD00  80 CD 99 38 */	lwz r6, mainHeapSize@sda21(r13)
@@ -1323,7 +1323,7 @@ lbl_8002EDC8:
 /* 8002EDE8 0002AD08  4C C6 31 82 */	crclr 6
 /* 8002EDEC 0002AD0C  38 9D 39 D8 */	addi r4, r29, 0x39d8
 /* 8002EDF0 0002AD10  38 60 00 02 */	li r3, 2
-/* 8002EDF4 0002AD14  48 00 0E CD */	bl func_8002FCC0
+/* 8002EDF4 0002AD14  48 00 0E CD */	bl window_printf
 /* 8002EDF8 0002AD18  80 6D 99 48 */	lwz r3, subHeap@sda21(r13)
 /* 8002EDFC 0002AD1C  48 09 3B 35 */	bl OSCheckHeap
 /* 8002EE00 0002AD20  80 CD 99 34 */	lwz r6, subHeapSize@sda21(r13)
@@ -1331,7 +1331,7 @@ lbl_8002EDC8:
 /* 8002EE08 0002AD28  4C C6 31 82 */	crclr 6
 /* 8002EE0C 0002AD2C  38 9D 39 F4 */	addi r4, r29, 0x39f4
 /* 8002EE10 0002AD30  38 60 00 02 */	li r3, 2
-/* 8002EE14 0002AD34  48 00 0E AD */	bl func_8002FCC0
+/* 8002EE14 0002AD34  48 00 0E AD */	bl window_printf
 /* 8002EE18 0002AD38  80 6D 99 44 */	lwz r3, stageHeap@sda21(r13)
 /* 8002EE1C 0002AD3C  48 09 3B 15 */	bl OSCheckHeap
 /* 8002EE20 0002AD40  80 CD 99 30 */	lwz r6, stageHeapSize@sda21(r13)
@@ -1339,7 +1339,7 @@ lbl_8002EDC8:
 /* 8002EE28 0002AD48  4C C6 31 82 */	crclr 6
 /* 8002EE2C 0002AD4C  38 9D 3A 10 */	addi r4, r29, 0x3a10
 /* 8002EE30 0002AD50  38 60 00 02 */	li r3, 2
-/* 8002EE34 0002AD54  48 00 0E 8D */	bl func_8002FCC0
+/* 8002EE34 0002AD54  48 00 0E 8D */	bl window_printf
 /* 8002EE38 0002AD58  80 6D 99 40 */	lwz r3, backgroundHeap@sda21(r13)
 /* 8002EE3C 0002AD5C  48 09 3A F5 */	bl OSCheckHeap
 /* 8002EE40 0002AD60  80 CD 99 2C */	lwz r6, backgroundHeapSize@sda21(r13)
@@ -1347,7 +1347,7 @@ lbl_8002EDC8:
 /* 8002EE48 0002AD68  4C C6 31 82 */	crclr 6
 /* 8002EE4C 0002AD6C  38 9D 3A 2C */	addi r4, r29, 0x3a2c
 /* 8002EE50 0002AD70  38 60 00 02 */	li r3, 2
-/* 8002EE54 0002AD74  48 00 0E 6D */	bl func_8002FCC0
+/* 8002EE54 0002AD74  48 00 0E 6D */	bl window_printf
 /* 8002EE58 0002AD78  80 6D 99 3C */	lwz r3, charaHeap@sda21(r13)
 /* 8002EE5C 0002AD7C  48 09 3A D5 */	bl OSCheckHeap
 /* 8002EE60 0002AD80  80 CD 99 28 */	lwz r6, charaHeapSize@sda21(r13)
@@ -1355,7 +1355,7 @@ lbl_8002EDC8:
 /* 8002EE68 0002AD88  4C C6 31 82 */	crclr 6
 /* 8002EE6C 0002AD8C  38 9D 3A 48 */	addi r4, r29, 0x3a48
 /* 8002EE70 0002AD90  38 60 00 02 */	li r3, 2
-/* 8002EE74 0002AD94  48 00 0E 4D */	bl func_8002FCC0
+/* 8002EE74 0002AD94  48 00 0E 4D */	bl window_printf
 /* 8002EE78 0002AD98  48 00 00 2C */	b lbl_8002EEA4
 .global lbl_8002EE7C
 lbl_8002EE7C:
@@ -1368,7 +1368,7 @@ lbl_8002EE7C:
 /* 8002EE94 0002ADB4  54 00 10 3A */	slwi r0, r0, 2
 /* 8002EE98 0002ADB8  7C BF 02 14 */	add r5, r31, r0
 /* 8002EE9C 0002ADBC  80 A5 00 00 */	lwz r5, 0(r5)
-/* 8002EEA0 0002ADC0  48 00 0E 21 */	bl func_8002FCC0
+/* 8002EEA0 0002ADC0  48 00 0E 21 */	bl window_printf
 lbl_8002EEA4:
 .global lbl_8002EEA4
 /* 8002EEA4 0002ADC4  80 17 00 1C */	lwz r0, 0x1c(r23)
@@ -2353,8 +2353,8 @@ func_8002FCAC:
 /* 8002FCB8 0002BBD8  98 0D 9C 39 */	stb r0, lbl_802F1E19@sda21(r13)
 /* 8002FCBC 0002BBDC  4E 80 00 20 */	blr
 
-.global func_8002FCC0
-func_8002FCC0:
+.global window_printf
+window_printf:
 /* 8002FCC0 0002BBE0  7C 08 02 A6 */	mflr r0
 /* 8002FCC4 0002BBE4  90 01 00 04 */	stw r0, 4(r1)
 /* 8002FCC8 0002BBE8  94 21 FD 78 */	stwu r1, -0x288(r1)
@@ -2786,7 +2786,7 @@ lbl_8003029C:
 /* 800302B0 0002C1D0  91 01 00 1C */	stw r8, 0x1c(r1)
 /* 800302B4 0002C1D4  91 21 00 20 */	stw r9, 0x20(r1)
 /* 800302B8 0002C1D8  91 41 00 24 */	stw r10, 0x24(r1)
-/* 800302BC 0002C1DC  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 800302BC 0002C1DC  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 800302C0 0002C1E0  54 00 07 7B */	rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 800302C4 0002C1E4  40 82 00 0C */	bne lbl_800302D0
 /* 800302C8 0002C1E8  38 60 00 00 */	li r3, 0
@@ -4264,115 +4264,115 @@ glabel lbl_801B4D94
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFE
 	.4byte lbl_802F0858  ;# ptr
-	.4byte spriteInfo+0x8C  ;# ptr
+	.4byte spriteWork+0x8C  ;# ptr
 	.4byte 0
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_locate_dx____4_1f  ;# ptr
-	.4byte spriteInfo+4  ;# ptr
+	.4byte spriteWork+4  ;# ptr
 	.4byte lbl_801B4BE0  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_locate_dy____4_1f  ;# ptr
-	.4byte spriteInfo+8  ;# ptr
+	.4byte spriteWork+8  ;# ptr
 	.4byte lbl_801B4BE0  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_____depth____4_1f  ;# ptr
-	.4byte spriteInfo+0x4C  ;# ptr
+	.4byte spriteWork+0x4C  ;# ptr
 	.4byte lbl_801B3B28  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string______font____3d  ;# ptr
-	.4byte spriteInfo+1  ;# ptr
+	.4byte spriteWork+1  ;# ptr
 	.4byte lbl_801B4C00  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string____s  ;# ptr
-	.4byte spriteInfo+1  ;# ptr
+	.4byte spriteWork+1  ;# ptr
 	.4byte fontStrArray  ;# ptr
 	.4byte 0x00000006
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_____align____3d  ;# ptr
-	.4byte spriteInfo+3  ;# ptr
+	.4byte spriteWork+3  ;# ptr
 	.4byte lbl_801B4C10  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_______red_____02X  ;# ptr
-	.4byte spriteInfo+0xC  ;# ptr
+	.4byte spriteWork+0xC  ;# ptr
 	.4byte lbl_801B4C20  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_____green_____02X  ;# ptr
-	.4byte spriteInfo+0xD  ;# ptr
+	.4byte spriteWork+0xD  ;# ptr
 	.4byte lbl_801B4C20  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string______bule_____02X  ;# ptr
-	.4byte spriteInfo+0xE  ;# ptr
+	.4byte spriteWork+0xE  ;# ptr
 	.4byte lbl_801B4C20  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_ofs___red_____02X  ;# ptr
-	.4byte spriteInfo+0x70  ;# ptr
+	.4byte spriteWork+0x70  ;# ptr
 	.4byte lbl_801B4C20  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_ofs_green_____02X  ;# ptr
-	.4byte spriteInfo+0x71  ;# ptr
+	.4byte spriteWork+0x71  ;# ptr
 	.4byte lbl_801B4C20  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_ofs__bule_____02X  ;# ptr
-	.4byte spriteInfo+0x72  ;# ptr
+	.4byte spriteWork+0x72  ;# ptr
 	.4byte lbl_801B4C20  ;# ptr
 	.4byte 0x00000004
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string______zang____04hX  ;# ptr
-	.4byte spriteInfo+0x68  ;# ptr
+	.4byte spriteWork+0x68  ;# ptr
 	.4byte lbl_801B3B68  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string______zm_x____4_1f  ;# ptr
-	.4byte spriteInfo+0x40  ;# ptr
+	.4byte spriteWork+0x40  ;# ptr
 	.4byte lbl_801B3B28  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string______zm_y____4_1f  ;# ptr
-	.4byte spriteInfo+0x44  ;# ptr
+	.4byte spriteWork+0x44  ;# ptr
 	.4byte lbl_801B3B28  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_____trnsl____4_2f  ;# ptr
-	.4byte spriteInfo+0x6C  ;# ptr
+	.4byte spriteWork+0x6C  ;# ptr
 	.4byte lbl_801B4C30  ;# ptr
 	.4byte 0x00000011
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFE
 	.4byte string_____timer____5d  ;# ptr
-	.4byte spriteInfo+0x10  ;# ptr
+	.4byte spriteWork+0x10  ;# ptr
 	.4byte 0
 	.4byte 0x0000000F
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string_____para1____5d  ;# ptr
-	.4byte spriteInfo+0x48  ;# ptr
+	.4byte spriteWork+0x48  ;# ptr
 	.4byte 0
 	.4byte 0x0000001F
 	.4byte 0
@@ -7063,6 +7063,6 @@ lbl_802F1ED8:
 .global dipSwitches
 dipSwitches:
 	.skip 0x4
-.global gamePauseStatus
-gamePauseStatus:
+.global debugFlags
+debugFlags:
 	.skip 0x8

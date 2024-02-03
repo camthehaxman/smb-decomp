@@ -56,7 +56,7 @@ void bg_storm_main(void)
     int i;
     struct Camera *camera;
 
-    if ((gamePauseStatus & 0xA) && eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
+    if ((debugFlags & 0xA) && eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
         return;
 
     work = backgroundInfo.work;
@@ -87,7 +87,7 @@ void bg_storm_main(void)
 
     memset(&effect, 0, sizeof(effect));
     effect.type = ET_BGSTM_RAINRIPPLE;
-    if (lbl_801EEC90.unk0 & 1)
+    if (polyDisp.unk0 & 1)
     {
         spD0.x = RAND_FLOAT() - 0.5f;
         spD0.y = 0.0f;
@@ -152,9 +152,9 @@ void bg_storm_draw(void)
     float f25;
 
     bg_default_draw();
-    if (lbl_801EEC90.unk0 & (1 << 2))
+    if (polyDisp.unk0 & (1 << 2))
         return;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_inv_tf_tl(&sp7C);
     sp70 = work->unk10;
     sp70.x += (mathutil_ceil((sp7C.x - sp70.x) * 0.1666666716337204f) - 0.5f) * 6.0f;
@@ -183,7 +183,7 @@ void bg_storm_draw(void)
         {
             float alpha;
 
-            mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+            mathutil_mtxA_from_mtx(userWork->matrices[0]);
             mathutil_mtxA_tf_vec(r26, &sp28);
             if (sp28.z > 0.0f)
                 continue;
@@ -193,9 +193,9 @@ void bg_storm_draw(void)
             f25 = mathutil_vec_distance(&sp4C, &sp7C);
             if (f25 > 6.0f)
                 continue;
-            mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[4]);
+            mathutil_mtxA_from_mtx(userWork->matrices[4]);
             mathutil_mtxA_tf_point_xyz(&sp34, sp4C.x - sp64.x, sp4C.y - sp64.y, sp4C.z - sp64.z);
-            mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+            mathutil_mtxA_from_mtx(userWork->matrices[0]);
             mathutil_mtxA_tf_point(&sp4C, &sp40);
             if (sp40.z > 0.0f && sp34.z > 0.0f)
                 continue;

@@ -285,7 +285,7 @@ struct ScreenFadeInfo
     s32 timerMax;
 };
 
-extern struct Sprite spriteInfo[64];
+extern struct Sprite spriteWork[64];
 extern struct ScreenFadeInfo screenFadeInfo;
 extern struct FontParams fontInfo[];
 
@@ -299,7 +299,7 @@ void call_bitmap_load_group(int a);
 void call_bitmap_free_group(int a);
 void free_all_bitmap_groups_except_com(void);
 struct Sprite *create_sprite(void);
-struct Sprite *create_linked_sprite(struct Sprite *a);
+struct Sprite *create_child_sprite(struct Sprite *a);
 void destroy_sprite_with_tag(int a);
 void destroy_all_sprites(void);
 struct Sprite *find_sprite_with_tag(int a);

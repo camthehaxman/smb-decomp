@@ -45,7 +45,7 @@ void bg_old_bonus_init(void)
 
 void bg_old_bonus_main(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 }
 
@@ -53,7 +53,7 @@ void bg_old_bonus_finish(void) {}
 
 void bg_old_bonus_draw(void)
 {
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     nl2ngc_draw_model_sort_translucent_alt2(NLOBJ_MODEL(g_bgNlObj, 0));
 }
 
@@ -71,7 +71,7 @@ void bg_old_bonus_interact(int a)
         memset(&star, 0, sizeof(star));
         star.type = ET_BONUS_STG_STAR;
         star.playerId = currentBall->playerId;
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+        mathutil_mtxA_from_mtx(userWork->matrices[1]);
         spC.z = -180.0 + RAND_FLOAT() * -300.0;
         spC.x = spC.z * -2.6666666666666665 * currentCamera->sub28.unk38 * (RAND_FLOAT() - 0.5);
         spC.y = spC.z * -1.1 * currentCamera->sub28.unk38;

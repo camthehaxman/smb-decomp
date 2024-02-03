@@ -144,29 +144,29 @@ void u_init_bg_fog_params(void)
     fogInfo.b = 0;
 }
 
-void u_gxutil_fog_something_1(void)
+void fog_main(void)
 {
     avdisp_enable_fog(fogInfo.enabled);
-    nl2ngc_enable_fog(fogInfo.enabled);
+    nlSetFog(fogInfo.enabled);
     if (fogInfo.enabled != 0)
     {
         avdisp_set_fog_params(fogInfo.unk0, fogInfo.unk4, fogInfo.unk8);
         avdisp_set_fog_color(fogInfo.r, fogInfo.g, fogInfo.b);
-        nl2ngc_set_fog_params(fogInfo.unk0, fogInfo.unk4, fogInfo.unk8);
-        nl2ngc_set_fog_color(fogInfo.r, fogInfo.g, fogInfo.b);
+        nlSetFogType(fogInfo.unk0, fogInfo.unk4, fogInfo.unk8);
+        nlSetFogColor(fogInfo.r, fogInfo.g, fogInfo.b);
     }
 }
 
 void u_gxutil_set_fog_enabled(s8 enable)
 {
     avdisp_enable_fog(enable);
-    nl2ngc_enable_fog(enable);
+    nlSetFog(enable);
 }
 
 void u_gxutil_fog_something_2(void)
 {
     avdisp_enable_fog(fogInfo.enabled);
-    nl2ngc_enable_fog(fogInfo.enabled);
+    nlSetFog(fogInfo.enabled);
 }
 
 void func_8009AC8C(void)

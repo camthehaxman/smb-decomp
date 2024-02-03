@@ -129,14 +129,14 @@ void item_coin_main(struct Item *item)
     item->rotZ += item->rotVelZ;
 
     if (item->animGroupId == 0)
-        func_800390C8(2, &item->pos, 1.0f);
+        set_ball_target(2, &item->pos, 1.0f);
     else
     {
         Vec spC;
 
         mathutil_mtxA_from_mtx(animGroups[item->animGroupId].transform);
         mathutil_mtxA_tf_point(&item->pos, &spC);
-        func_800390C8(2, &spC, 1.0f);
+        set_ball_target(2, &spC, 1.0f);
     }
     item->unk6C.z = -item->rotY;
     item->unk7C.x = item->unk14;
@@ -152,7 +152,7 @@ void item_coin_draw(struct Item *item)
 
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_translate(&item->pos);
-    mathutil_mtxA_sq_from_mtx(lbl_802F1B3C->matrices[2]);
+    mathutil_mtxA_sq_from_mtx(userWork->matrices[2]);
     mathutil_mtxA_rotate_y(item->rotY);
     mathutil_mtxA_rotate_x(item->rotX);
     mathutil_mtxA_rotate_z(item->rotZ);
@@ -239,7 +239,7 @@ void item_coin_collect(struct Item *item, struct PhysicsBall *ball)
 
 void item_coin_destroy(struct Item *item) {}
 
-void func_80069394(struct Item *item)
+void item_coin_release(struct Item *item)
 {
     if (item->state != 2)
     {
@@ -264,8 +264,8 @@ char wtfisthis[] =
 
 void item_coin_debug(struct Item *item)
 {
-    func_8002FCC0(2, wtfisthis);
-    func_8002FCC0(2, "Coin Value: %d\n", s_bananaInfos[item->subType].bananaValue);
+    window_printf(2, wtfisthis);
+    window_printf(2, "Coin Value: %d\n", s_bananaInfos[item->subType].bananaValue);
 }
 
 // needed to force float constant ordering

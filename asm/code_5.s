@@ -39,7 +39,7 @@ glabel monkey_sprite_draw
 /* 800809C4 0007C8E4  EC 22 08 BA */	fmadds f1, f2, f2, f1
 /* 800809C8 0007C8E8  EC 20 08 3A */	fmadds f1, f0, f0, f1
 /* 800809CC 0007C8EC  4B F8 67 2D */	bl mathutil_sqrt
-/* 800809D0 0007C8F0  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 800809D0 0007C8F0  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 800809D4 0007C8F4  70 00 00 0A */	andi. r0, r0, 0xa
 /* 800809D8 0007C8F8  40 82 00 10 */	bne lbl_800809E8
 /* 800809DC 0007C8FC  80 7F 00 08 */	lwz r3, 8(r31)
@@ -370,7 +370,7 @@ lbl_80080E50:
 /* 80080E50 0007CD70  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080E54 0007CD74  2C 03 00 00 */	cmpwi r3, 0
 /* 80080E58 0007CD78  40 81 00 18 */	ble lbl_80080E70
-/* 80080E5C 0007CD7C  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080E5C 0007CD7C  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080E60 0007CD80  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080E64 0007CD84  40 82 00 0C */	bne lbl_80080E70
 /* 80080E68 0007CD88  38 03 FF FF */	addi r0, r3, -1
@@ -387,7 +387,7 @@ lbl_80080E8C:
 /* 80080E8C 0007CDAC  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080E90 0007CDB0  2C 03 FF FF */	cmpwi r3, -1
 /* 80080E94 0007CDB4  40 80 00 AC */	bge lbl_80080F40
-/* 80080E98 0007CDB8  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080E98 0007CDB8  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080E9C 0007CDBC  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080EA0 0007CDC0  40 82 00 A0 */	bne lbl_80080F40
 /* 80080EA4 0007CDC4  38 03 00 01 */	addi r0, r3, 1
@@ -397,7 +397,7 @@ lbl_80080EB0:
 /* 80080EB0 0007CDD0  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080EB4 0007CDD4  2C 03 00 00 */	cmpwi r3, 0
 /* 80080EB8 0007CDD8  40 81 00 1C */	ble lbl_80080ED4
-/* 80080EBC 0007CDDC  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080EBC 0007CDDC  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080EC0 0007CDE0  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080EC4 0007CDE4  40 82 00 10 */	bne lbl_80080ED4
 /* 80080EC8 0007CDE8  38 03 FF FF */	addi r0, r3, -1
@@ -419,7 +419,7 @@ lbl_80080F00:
 /* 80080F00 0007CE20  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080F04 0007CE24  2C 03 00 00 */	cmpwi r3, 0
 /* 80080F08 0007CE28  40 80 00 38 */	bge lbl_80080F40
-/* 80080F0C 0007CE2C  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080F0C 0007CE2C  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080F10 0007CE30  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080F14 0007CE34  40 82 00 2C */	bne lbl_80080F40
 /* 80080F18 0007CE38  A8 0D 99 AE */	lha r0, gameSubmode@sda21(r13)
@@ -571,7 +571,7 @@ lbl_80081118:
 /* 80081138 0007D058  7C 70 02 14 */	add r3, r16, r0
 /* 8008113C 0007D05C  83 83 03 20 */	lwz r28, 0x320(r3)
 lbl_80081140:
-/* 80081140 0007D060  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80081140 0007D060  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80081144 0007D064  A8 7F 00 0C */	lha r3, 0xc(r31)
 /* 80081148 0007D068  70 00 00 0A */	andi. r0, r0, 0xa
 /* 8008114C 0007D06C  40 82 01 08 */	bne lbl_80081254
@@ -798,7 +798,7 @@ lbl_80081434:
 lbl_80081438:
 /* 80081438 0007D358  28 1E 00 00 */	cmplwi r30, 0
 /* 8008143C 0007D35C  41 82 00 28 */	beq lbl_80081464
-/* 80081440 0007D360  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 80081440 0007D360  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 80081444 0007D364  1C 60 00 60 */	mulli r3, r0, 0x60
 /* 80081448 0007D368  38 63 40 00 */	addi r3, r3, 0x4000
 /* 8008144C 0007D36C  4B F8 5D 95 */	bl mathutil_sin
@@ -922,7 +922,7 @@ lbl_800815E8:
 lbl_80081608:
 /* 80081608 0007D528  28 1E 00 00 */	cmplwi r30, 0
 /* 8008160C 0007D52C  41 82 00 24 */	beq lbl_80081630
-/* 80081610 0007D530  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 80081610 0007D530  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 80081614 0007D534  54 03 48 2C */	slwi r3, r0, 9
 /* 80081618 0007D538  4B F8 5B C9 */	bl mathutil_sin
 /* 8008161C 0007D53C  EC 34 00 72 */	fmuls f1, f20, f1
@@ -3675,7 +3675,7 @@ lbl_80083910:
 /* 80083D2C 0007FC4C  4B FE DE 35 */	bl set_text_pos
 /* 80083D30 0007FC50  38 7D 34 08 */	addi r3, r29, 0x3408
 /* 80083D34 0007FC54  4B FE E1 25 */	bl u_draw_text
-/* 80083D38 0007FC58  80 0D 99 58 */	lwz r0, globalFrameCounter@sda21(r13)
+/* 80083D38 0007FC58  80 0D 99 58 */	lwz r0, powerOnTimer@sda21(r13)
 /* 80083D3C 0007FC5C  54 03 48 2C */	slwi r3, r0, 9
 /* 80083D40 0007FC60  4B F8 34 A1 */	bl mathutil_sin
 /* 80083D44 0007FC64  FC 40 0A 10 */	fabs f2, f1

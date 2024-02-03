@@ -98,7 +98,7 @@ void ev_effect_main(void);
 void ev_effect_dest(void);
 void effect_draw(void);
 int spawn_effect(struct Effect *);
-void func_8004CFF0(int type);
+void erase_effect(int type);
 struct Effect *find_effect_by_uid(int uid);
 
 struct EffectFuncs

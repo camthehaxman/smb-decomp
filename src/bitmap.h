@@ -261,7 +261,7 @@ struct BitmapGroup
 };
 
 extern s32 spriteParamsBufCount;
-extern s32 lbl_802F1D04;
+extern s32 spriteParamsBufState;
 extern struct TPL *u_unkBitmapTPL;
 
 extern struct BitmapGroup bitmapGroups[];

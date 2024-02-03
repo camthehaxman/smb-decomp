@@ -13,7 +13,7 @@
 
 struct Item itemPool[256];
 
-s16 lbl_802F1FC8;
+s16 itemCurrUid;
 
 #pragma force_active on
 char *itemNames[] =
@@ -94,7 +94,7 @@ void (*itemDestroyFuncs[])(struct Item *) =
 
 void (*lbl_801BDD30[])(struct Item *) =
 {
-    func_80069394,
+    item_coin_release,
     func_80068C8C,
     func_80068C8C,
     func_80068C8C,
@@ -148,7 +148,7 @@ void ev_item_init(void)
     int i;
     struct Item *item;
 
-    lbl_802F1FC8 = 0;
+    itemCurrUid = 0;
     memset(itemPool, 0, sizeof(itemPool));
     item = itemPool;
     for (i = 0; i < ARRAY_COUNT(itemPool); i++, item++)
@@ -161,11 +161,11 @@ void ev_item_init(void)
     switch (modeCtrl.gameType)
     {
     case GAMETYPE_MINI_FIGHT:
-        if (is_bonus_stage(currStageId) != 0)
+        if (is_bonus_stage(currStageId))
             spawn_stage_banana_items(decodedStageLzPtr->animGroups, decodedStageLzPtr->animGroupCount);
         break;
     case GAMETYPE_MAIN_COMPETITION:
-        if (is_bonus_stage(currStageId) != 0
+        if (is_bonus_stage(currStageId)
          || gameMode == MD_SEL
          || (modeCtrl.courseFlags & (1 << 12))
          || (advDemoInfo.flags & (1 << 8)))
@@ -183,7 +183,7 @@ void ev_item_main(void)
     struct Item *item;
     s8 *status;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     status = g_poolInfo.itemPool.statusList;
     item = itemPool;
@@ -251,7 +251,7 @@ void item_draw(void)
     mathutil_mtx_copy(viewFromWorld, mathutilData->mtxB);
 }
 
-int func_80068474(struct Item *a)
+int item_create(struct Item *a)
 {
     struct Item *r31;
     int r30 = pool_alloc(&g_poolInfo.itemPool, 1);
@@ -268,10 +268,10 @@ int func_80068474(struct Item *a)
         r31->unk18 = 1.0f;
     r31->prevPos = r31->pos;
     r31->unk58 = itemCollectFuncs[r31->type];
-    r31->unk2 = lbl_802F1FC8;
-    lbl_802F1FC8++;
-    if (lbl_802F1FC8 < 0)
-        lbl_802F1FC8 = 0;
+    r31->unk2 = itemCurrUid;
+    itemCurrUid++;
+    if (itemCurrUid < 0)
+        itemCurrUid = 0;
     if (r31->flags & (1 << 5))
     {
         r31->unk64 = 0;
@@ -380,14 +380,14 @@ void item_draw_shadows(void)
     }
 }
 
-void func_800689B4(int a)
+void release_captured_item(int a)
 {
     int r29;
     int r28;
     struct Item *item;
     s8 *r26;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     r26 = g_poolInfo.itemPool.statusList;
@@ -421,7 +421,7 @@ void spawn_stage_banana_items(struct StageAnimGroup *stageAg, int agCount)
             item.subType = stageBanana->type;
             item.animGroupId = i;
             item.stageBanana = stageBanana;
-            func_80068474(&item);
+            item_create(&item);
         }
     }
 }

@@ -244,7 +244,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
     reset_text_draw_settings();
     set_text_font(sprite->fontId);
     func_80071B50(0x220000);
-    temp_r16 = (u32)((globalFrameCounter >> 2) & 1) * 255;
+    temp_r16 = (u32)((powerOnTimer >> 2) & 1) * 255;
     temp_r16 = RGBA(temp_r16, temp_r16, temp_r16, 0);
 
     for (i = 0; i < pauseMenuState.itemCount; i++)
@@ -280,7 +280,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
         // Display billiards guide toggle
         if (menuType == PAUSEMENU_CONT_GUIDE_HOW_EXIT && i == 1)
         {
-            u32 temp_r3 = (1.0 - fabs(mathutil_sin(globalFrameCounter << 9))) * 255.0;
+            u32 temp_r3 = (1.0 - fabs(mathutil_sin(powerOnTimer << 9))) * 255.0;
             u32 flashColor = RGBA(temp_r3, temp_r3, temp_r3, 0);
 
             strcpy(text, "ON");
@@ -506,7 +506,7 @@ void hud_show_adv_copyright_info(int a)
         if (a == 1)
             sprite->drawFunc = lbl_80076710;
 
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->tag = 38;
@@ -830,7 +830,7 @@ static void title_sprite_draw(struct Sprite *sprite)
     params.scaleX = lbl_802F2010 * 0.7;
     params.scaleY = lbl_802F2010 * 0.7 * 0.65;
     params.opacity = 1.0f;
-    params.rotation = 1024.0f * mathutil_sin(unpausedFrameCounter << 8);
+    params.rotation = 1024.0f * mathutil_sin(globalAnimTimer << 8);
     params.flags = (sprite->flags & 0xFFFFFFF0) | 0x200000 | 0xA;
     draw_naomi_sprite(&params);
 }
@@ -994,7 +994,7 @@ void u_show_adv_ready_hud(void)
         sprite->unk4C = 0.19f;
         sprite->mainFunc = normal_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = -4.0f;
@@ -1659,9 +1659,9 @@ void hud_show_normal_mode_info(void)
             sprintf(sprite->text, "EXTRA %d", floorNum);
         else
             sprintf(sprite->text, "FLOOR %d", floorNum);
-        if (gamePauseStatus & 4)
+        if (debugFlags & 4)
         {
-            sprite = create_linked_sprite(sprite);
+            sprite = create_child_sprite(sprite);
             if (sprite != NULL)
             {
                 sprite->x = 20.0f;
@@ -1734,7 +1734,7 @@ void hud_show_normal_mode_info(void)
         sprite->unk4C = 0.19f;
         sprite->mainFunc = competition_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = -4.0f;
@@ -1875,7 +1875,7 @@ void hud_show_normal_mode_info(void)
         sprite->unk4C = 0.2f;
         sprite->mainFunc = normal_ball_speed_sprite_main;
         strcpy(sprite->text, "00");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = 4.0f;
@@ -2043,7 +2043,7 @@ static void show_competition_player_hud(int playerId)
         sprite->unk4C = 0.2f;
         sprite->mainFunc = competition_ball_speed_sprite_main;
         strcpy(sprite->text, "00");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = 4.0f;
@@ -2084,9 +2084,9 @@ void hud_show_competition_mode_info(void)
             sprite->fontId = FONT_ASC_20x20;
             sprite->textAlign = ALIGN_LB;
             sprite->mainFunc = competition_round_sprite_main;
-            if (gamePauseStatus & 4)
+            if (debugFlags & 4)
             {
-                sprite = create_linked_sprite(sprite);
+                sprite = create_child_sprite(sprite);
                 if (sprite != NULL)
                 {
                     sprite->x = 20.0f;
@@ -2112,7 +2112,7 @@ void hud_show_competition_mode_info(void)
         sprite->unk4C = 0.19f;
         sprite->mainFunc = competition_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = -4.0f;
@@ -2258,7 +2258,7 @@ static void lbl_8007A774(s8 *arg0, struct Sprite *sprite)
 {
     if (modeCtrl.courseFlags & 1)
     {
-        if (gamePauseStatus & 4)
+        if (debugFlags & 4)
             sprite->y = 436.0f;
         else
             sprite->y = 454.0f;
@@ -2269,7 +2269,7 @@ static void lbl_8007A774(s8 *arg0, struct Sprite *sprite)
 
 static void lbl_8007A7B8(s8 *arg0, struct Sprite *sprite)
 {
-    if (gamePauseStatus & 4)
+    if (debugFlags & 4)
         sprite->unk78 &= ~1;
     else
         sprite->unk78 |= 1;
@@ -2305,13 +2305,13 @@ static void competition_timer_100th_seconds_sprite_main(s8 *arg0, struct Sprite 
 
 static void normal_timer_seconds_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    int time = (int)func_80049E7C(lbl_80250A68.unk0[lbl_80250A68.unk14], lbl_80250A68.unk10) + 1;
+    int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
     sprintf(sprite->text, "%03d", time / 60);
 }
 
 static void normal_timer_100th_seconds_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    int time = (int)func_80049E7C(lbl_80250A68.unk0[lbl_80250A68.unk14], lbl_80250A68.unk10) + 1;
+    int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
     int val = 100.0 * ((float)(time % 60) / 60.0);
     sprintf(sprite->text, ":%02d", val);
 }
@@ -2385,7 +2385,7 @@ static void banana_count_sprite_draw(struct Sprite *sprite)
             if (ball->bananas < 90)
                 sprite->userVar = 0;
         }
-        if (!(gamePauseStatus & 0xA) && r22->unk4 > 0)
+        if (!(debugFlags & 0xA) && r22->unk4 > 0)
             r22->unk4--;
 
         temp_f28 = lbl_80118870[29 - r22->unk4];
@@ -2440,7 +2440,7 @@ static void lbl_8007ADF4(struct Sprite *sprite)
             r22->unk4 = 30;
             r22->unk0 = phi_r3;
         }
-        if (!(gamePauseStatus & 0xA) && r22->unk4 > 0)
+        if (!(debugFlags & 0xA) && r22->unk4 > 0)
             r22->unk4--;
 
         temp_f28 = lbl_80118870[29 - r22->unk4];
@@ -2569,7 +2569,7 @@ static void bananas_left_sprite_main(s8 *arg0, struct Sprite *sprite)
     else
         sprite->unk78 &= ~1;
     sprite->opacity = sprite->counter / 60.0f;
-    blueness = 2.0 * ((unpausedFrameCounter % 60) / 59.0);
+    blueness = 2.0 * ((globalAnimTimer % 60) / 59.0);
     if (blueness > 1.0)
         blueness = 2.0 - blueness;
     sprite->mulR = 255;
@@ -2810,7 +2810,7 @@ static void go_sprite_main(s8 *arg0, struct Sprite *sprite)
         int temp_r29 = (t - 15) * 0x888;
 
         sprite->opacity = 1.0f;
-        sprite->addR = ((unpausedFrameCounter >> 1) & 1) * 192;
+        sprite->addR = ((globalAnimTimer >> 1) & 1) * 192;
         sprite->addG = sprite->addR;
         sprite->addB = sprite->addR;
         sprite->scaleX = 1.0 - mathutil_sin(temp_r29) * 0.5;
@@ -2821,7 +2821,7 @@ static void go_sprite_main(s8 *arg0, struct Sprite *sprite)
         int temp_r29_2 = (t - 30) * 0x888;
 
         sprite->opacity = 1.0f;
-        sprite->addR = ((unpausedFrameCounter >> 1) & 1) * 192;
+        sprite->addR = ((globalAnimTimer >> 1) & 1) * 192;
         sprite->addG = sprite->addR;
         sprite->addB = sprite->addR;
         sprite->scaleX = 1.0 + mathutil_sin(temp_r29_2) * 0.75;
@@ -3452,7 +3452,7 @@ static void continue_yes_no_sprite_main(s8 *arg0, struct Sprite *sprite)
 
             sprite->x += 0.1 * (320.0 - sprite->x);
             sprite->y += 0.1 * (200.0 - sprite->y);
-            switch (unpausedFrameCounter & 7)
+            switch (globalAnimTimer & 7)
             {
             case 0:
             case 7:
@@ -3499,7 +3499,7 @@ static void continue_yes_no_sprite_main(s8 *arg0, struct Sprite *sprite)
     sprite->opacity += 0.1 * (1.0 - sprite->opacity);
     if (sprite->userVar == modeCtrl.unk10)
     {
-        float phi_f1 = 2.0 * ((float)((unpausedFrameCounter + 36) % 60) / 59.0);
+        float phi_f1 = 2.0 * ((float)((globalAnimTimer + 36) % 60) / 59.0);
         int temp_r0_2;
 
         if (phi_f1 > 1.0)
@@ -4446,7 +4446,7 @@ static void floor_score_sprite_draw(struct Sprite *sprite)
 
 static void goal_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    if (!(gamePauseStatus & 0xA) && --sprite->counter <= 0)
+    if (!(debugFlags & 0xA) && --sprite->counter <= 0)
         *arg0 = 0;
 }
 
@@ -4532,7 +4532,7 @@ static void best_score_sprite_draw(struct Sprite *sprite)
     r28 = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, 0);
     for (i = 0; i < 10; i++)
     {
-        int phi_r4 = sprite->userVar > 0 && (unpausedFrameCounter >> 4) % 2 == ((i > 4) ? i + 1 : i) % 2;
+        int phi_r4 = sprite->userVar > 0 && (globalAnimTimer >> 4) % 2 == ((i > 4) ? i + 1 : i) % 2;
 
         set_text_mul_color(phi_r4 ? RGBA(255, 0, 0, 0) : r28);
         set_text_pos(sprite->x + 20.0 * i * sprite->scaleX + ((i > 4) ? -8 : 0), sprite->y);

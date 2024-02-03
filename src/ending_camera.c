@@ -27,7 +27,7 @@ void ending_camera_init(void)
     )
 }
 
-void ending_camera_emptyfunc1(void) {}
+void ending_camera_finish(void) {}
 
 static void lbl_800C00F4(struct Camera *camera, struct Ball *ball)
 {
@@ -43,7 +43,7 @@ static void func_800C013C(struct Camera *camera, struct Ball *ball)
     struct EndingSceneCharacter *chara;
     Mtx sp10;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (endingInfo.work == NULL)
         return;
@@ -114,7 +114,7 @@ static void func_800C0354(struct Camera *arg0, struct Ball *ball)
     struct SomeBigEndingStruct_sub *temp_r31;
     struct EndingSceneCharacter *chara;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (endingInfo.work == NULL)
         return;
@@ -212,4 +212,4 @@ static void func_800C0354(struct Camera *arg0, struct Ball *ball)
 
 void ending_camera_emptyfunc2(void) {}
 
-void ending_camera_emptyfunc3(void) {}
+void ending_effect_finish(void) {}

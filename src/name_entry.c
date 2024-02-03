@@ -244,7 +244,7 @@ void ev_name_entry_main(void)
 
     ball = &ballInfo[modeCtrl.currPlayer];
     camera = &cameraInfo[ball->playerId];
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     switch (s_nameEntry.state)
     {
@@ -514,7 +514,7 @@ void ev_name_entry_main(void)
     case -2:
         break;
     case 3:
-        var_r28 = (unpausedFrameCounter << 9) & 0x3E00;
+        var_r28 = (globalAnimTimer << 9) & 0x3E00;
         for (i = NUM_BUTTONS; i > 0; i--)
         {
             if (btn->letter == '\b')  // flash the backspace button
@@ -539,7 +539,7 @@ void ev_name_entry_main(void)
         }
         break;
     default:
-        var_r28 = unpausedFrameCounter >> 5;
+        var_r28 = globalAnimTimer >> 5;
         for (i = NUM_BUTTONS; i > 0; i--, var_r28++)
         {
             if (var_r28 & 1)
@@ -563,7 +563,7 @@ void ev_name_entry_main(void)
     }
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_rigid_inv_tf_tl(&sp8);
-    func_800390C8(5, &sp8, 0.5f);
+    set_ball_target(5, &sp8, 0.5f);
 }
 
 void ev_name_entry_dest(void)
@@ -1164,7 +1164,7 @@ void stobj_nameent_btn_draw(struct Stobj *stobj)
         avdisp_set_bound_sphere_scale(temp_f31);
         avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[circle_white].model);
     }
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 void stobj_nameent_btn_coli(struct Stobj *stobj, struct PhysicsBall *ball)

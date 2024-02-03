@@ -39,8 +39,8 @@ void func_800123DC(void)
 
 void submode_sel_ngc_dest_func(void)
 {
-    lbl_802F1B7C();
-    lbl_802F1B7C = NULL;
+    submodeFinishFunc();
+    submodeFinishFunc = NULL;
 
     gameModeRequest = MD_TEST;
     gameSubmodeRequest = SMD_TEST_SELECT_INIT;
@@ -71,10 +71,10 @@ void func_80012434(int a)
 
     if (modeCtrl.gameType >= GAMETYPE_MINI_RACE || modeCtrl.gameType < GAMETYPE_MAIN_NORMAL)
     {
-        if (lbl_802F1B7C != NULL)
+        if (submodeFinishFunc != NULL)
         {
-            lbl_802F1B7C();
-            lbl_802F1B7C = NULL;
+            submodeFinishFunc();
+            submodeFinishFunc = NULL;
         }
     }
     
@@ -120,7 +120,7 @@ void submode_sel_init_func(void)
     event_finish_all();
     free_all_bitmap_groups_except_com();
     relocation_load_module(selSubmodeRelNames[gameSubmode - SMD_SEL_TOP], &lbl_802F1BD8);
-    lbl_802F1B7C = unload_sel_submode_rel;
+    submodeFinishFunc = unload_sel_submode_rel;
 }
 
 void submode_sel_main_func(void)
