@@ -761,6 +761,7 @@ DBClose:
 
 .section .sdata
 
+	.balign 8
 .global SendCount
 SendCount:
 	# ROM: 0x1EC218
@@ -768,6 +769,7 @@ SendCount:
 
 .section .sbss
 
+	.balign 8
 .global MTRCallback
 MTRCallback:
 	.skip 0x4
