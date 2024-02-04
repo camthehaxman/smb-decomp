@@ -8,6 +8,126 @@ typedef s32 (*SND_COMPARE)(u16 *, u8 *);
 
 extern SND_HOOKS salHooks;
 
+typedef struct FX_TAB {
+  // total size: 0xA
+  u16 id;       // offset 0x0, size 0x2
+  u16 macro;    // offset 0x2, size 0x2
+  u8 maxVoices; // offset 0x4, size 0x1
+  u8 priority;  // offset 0x5, size 0x1
+  u8 volume;    // offset 0x6, size 0x1
+  u8 panning;   // offset 0x7, size 0x1
+  u8 key;       // offset 0x8, size 0x1
+  u8 vGroup;    // offset 0x9, size 0x1
+} FX_TAB;
+
+typedef enum {
+  SND_STUDIO_TYPE_STD = 0,
+  SND_STUDIO_TYPE_DPL2,
+  SND_STUDIO_TYPE_RESERVED1,
+  SND_STUDIO_TYPE_RESERVED2
+} SND_STUDIO_TYPE;
+
+// Studio linkage
+typedef struct SND_STUDIO_INPUT {
+  u8 vol;
+  u8 volA;
+  u8 volB;
+  u8 srcStudio;
+} SND_STUDIO_INPUT;
+
+typedef struct SND_3DINFO {
+  u8 vol;
+  u8 pan;
+  u8 span;
+  u16 doppler;
+} SND_3DINFO;
+
+typedef struct SND_ROOM {
+  struct SND_ROOM* next;
+  struct SND_ROOM* prev;
+
+  u32 flags;
+  SND_FVECTOR pos; // World "position" of room
+  f32 distance;    // Average distance to listeners (squared)
+
+  u8 studio;
+
+  void (*activateReverb)(u8 studio, void* para); // Callbacks to activate/deactivate "reverb" (AuxA)
+  void (*deActivateReverb)(u8 studio);           // (NULL -> none)
+  void* user;                                    // Pointer to user data (e.g. "reverb" parameters)
+
+  u32 curMVol; // Current master mix volume (7.16)
+} SND_ROOM;
+
+typedef struct SND_DOOR {
+  struct SND_DOOR* next;
+  struct SND_DOOR* prev;
+
+  SND_FVECTOR pos; // Position of door
+
+  f32 open;   // State (0=closed, 1=open)
+  f32 dampen; // Dampening when closed (0=none, 1=full)
+  u8 fxVol;   // FX mix volume of this door (0-127)
+
+  u8 destStudio; // When active: Studio the input is linked to
+
+  SND_ROOM* a; // Rooms to be linked
+  SND_ROOM* b;
+
+  u32 flags; // Flags
+
+  s16 filterCoef[4];      // Coefs of the 4 tab FIR filter (0x7FFF = 1.0)
+  SND_STUDIO_INPUT input; // Input info (when active)
+} SND_DOOR;
+static u8 s3dCallCnt;
+
+typedef struct SND_LISTENER {
+  struct SND_LISTENER* next;
+  struct SND_LISTENER* prev;
+  SND_ROOM* room;
+
+  u32 flags;
+  SND_FVECTOR pos;
+  //f32 volPosOff;   // (reserved for future use)
+  SND_FVECTOR dir; // Speed in units/second
+  SND_FVECTOR heading;
+  SND_FVECTOR right;
+  SND_FVECTOR up;
+  SND_FMATRIX mat;
+  f32 surroundDisFront;
+  f32 surroundDisBack;
+  f32 soundSpeed;
+  f32 vol;
+} SND_LISTENER;
+
+typedef struct SND_EMITTER {
+  struct SND_EMITTER* next;
+  struct SND_EMITTER* prev;
+  SND_ROOM* room;
+
+  SND_PARAMETER_INFO* paraInfo;
+
+  u32 flags;
+  SND_FVECTOR pos;
+  SND_FVECTOR dir; // Speed in units/second
+  f32 maxDis;
+  f32 maxVol;
+  f32 minVol;
+  f32 volPush; // -1.0f = 1/square -> 0.0 = linear -> 1.0 = square
+  SND_VOICEID vid;
+  u32 group; // Group ID (by default FXID | 0x80000000) used to do volume priorities for continous
+             // emitters
+  SND_FXID fxid;
+
+  u8 studio;
+
+  u8 maxVoices; // Max. voices of the assigned FX
+
+  u16 VolLevelCnt; // Used during continous emitter allocation process
+  f32 fade;        // Used to fade-in of continous emitters
+
+} SND_EMITTER;
+
 extern struct
 {
     u32 freq;
@@ -129,7 +249,7 @@ u32 synthGetTicksPerSecond(u32 seconds);
 // ? HandleJobQueue();
 // ? HandleFaderTermination();
 void synthHandle(int);
-u32 synthFXStart(SND_FXID fid, u8 vol, u8 pan, u8 studio, u8);
+u32 synthFXStart(SND_FXID fid, u8 vol, u8 pan, u8 studio, u32);
 bool synthFXSetCtrl(SND_VOICEID vid, u8 ctrl, u8 value);
 bool synthFXSetCtrl14(SND_VOICEID vid, u8 ctrl, u16 value);
 // ? synthFXCloneMidiSetup();
@@ -149,14 +269,15 @@ void synthVolume(u8 volume, u16 time, u8 volgroup, int, int);
 // ? sndFXKeyOff();
 // ? sndFXStartParaInfo();
 // ? sndFXCheck();
+u8 synthFXGetMaxVoices(u16 fid);
 // ? sndVolume();
 // ? sndMasterVolume();
 // ? sndOutputMode();
 // ? sndSetAuxProcessingCallbacks();
-// ? synthActivateStudio();
-// ? synthDeactivateStudio();
-// ? synthAddStudioInput();
-// ? synthRemoveStudioInput();
+void synthActivateStudio(u8 studio, u32 isMaster, SND_STUDIO_TYPE type);
+void synthDeactivateStudio(u8 studio);
+bool synthAddStudioInput(u8 studio, SND_STUDIO_INPUT* in_desc);
+bool synthRemoveStudioInput(u8 studio, SND_STUDIO_INPUT* in_desc);
 // ? streamInit();
 void streamHandle(void);
 void streamCorrectLoops(void);
@@ -289,8 +410,10 @@ void salCalcVolume(u8 voltab_index, SAL_VOLINFO* vi, float vol, u32 pan, u32 spa
 void s3dHandle(void);
 // ? s3dInit();
 // ? sndActive();
-// ? salApplyMatrix();
-// ? salNormalizeVector();
+void salApplyMatrix(const SND_FMATRIX* a, const SND_FVECTOR* b, SND_FVECTOR* out);
+void salInvertMatrix(SND_FMATRIX* out, const SND_FMATRIX* in);
+f32 salNormalizeVector(SND_FVECTOR* vec);
+void salCrossProduct(SND_FVECTOR* out, const SND_FVECTOR* a, const SND_FVECTOR* b);
 // ? inpSetGlobalMIDIDirtyFlag();
 // ? inpSetMidiCtrl();
 // ? inpSetMidiCtrl14();
@@ -371,6 +494,7 @@ void hwActivateStudio(u8 studio, u32 arg1, u32 arg2);
 void hwDeactivateStudio(u8 studio);
 bool hwAddInput(u8 studio, void *arg1);
 bool hwRemoveInput(u8 studio, void *arg1);
+void hwChangeStudio(u32 v, u8 studio);
 // ? hwGetPos();
 // ? hwFlushStream();
 // ? hwInitStream();

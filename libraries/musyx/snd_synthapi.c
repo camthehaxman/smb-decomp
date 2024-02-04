@@ -140,7 +140,7 @@ void sndSetAuxProcessingCallbacks(u8 studio,
     hwEnableIrq();
 }
 
-void synthActivateStudio(u8 studio, u32 arg1, u32 arg2)
+void synthActivateStudio(u8 studio, u32 isMaster, SND_STUDIO_TYPE type)
 {
     hwDisableIrq();
     synthAuxACallback[studio] = NULL;
@@ -150,7 +150,7 @@ void synthActivateStudio(u8 studio, u32 arg1, u32 arg2)
     synthITDDefault[studio][1] = 0;
     synthITDDefault[studio][0] = 0;
     hwEnableIrq();
-    hwActivateStudio(studio, arg1, arg2);
+    hwActivateStudio(studio, isMaster, type);
 }
 
 void synthDeactivateStudio(u8 studio)
@@ -176,12 +176,12 @@ void synthDeactivateStudio(u8 studio)
     hwDeactivateStudio(studio);
 }
 
-bool synthAddStudioInput(u8 studio, void *unk)
+bool synthAddStudioInput(u8 studio, SND_STUDIO_INPUT *in_desc)
 {
-    return hwAddInput(studio, unk);
+    return hwAddInput(studio, in_desc);
 }
 
-bool synthRemoveStudioInput(u8 studio, void *unk)
+bool synthRemoveStudioInput(u8 studio, SND_STUDIO_INPUT *in_desc)
 {
-    return hwRemoveInput(studio, unk);
+    return hwRemoveInput(studio, in_desc);
 }

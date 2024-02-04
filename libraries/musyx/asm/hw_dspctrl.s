@@ -3547,6 +3547,15 @@ lbl_801EA358:
 	.4byte 0x045B0000
 	.4byte 0
 
+.section .bss
+
+.global gs
+gs:
+	.skip 0x400
+.global dspStudio
+dspStudio:
+	.skip 0x6E0
+
 .section .sbss
 
 .global dspARAMZeroBuffer

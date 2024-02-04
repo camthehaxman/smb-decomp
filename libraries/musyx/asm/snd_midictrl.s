@@ -2197,18 +2197,6 @@ lbl_801EA5D8:
 
 .section .bss
 
-.global gs
-gs:
-	.skip 0x400
-.global dspStudio
-dspStudio:
-	.skip 0x6E0
-.global lbl_802E4890
-lbl_802E4890:
-	.skip 0x50
-.global lbl_802E48E0
-lbl_802E48E0:
-	.skip 0x6D0
 .global midi_lastNote
 midi_lastNote:
 	.skip 0x80

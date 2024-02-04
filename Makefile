@@ -302,7 +302,7 @@ SOURCES := \
 	libraries/musyx/asm/s_data.s \
 	libraries/musyx/asm/hw_dspctrl.s \
 	libraries/musyx/hw_volconv.c \
-	libraries/musyx/asm/snd3d.s \
+	libraries/musyx/snd3d.c \
 	libraries/musyx/asm/synth_2.s \
 	libraries/musyx/snd_math.c \
 	libraries/musyx/asm/snd_midictrl.s \

@@ -670,7 +670,7 @@ extern struct Struct802C5D60 lbl_802C5D60;
 // extern ? lbl_802E3CB0;
 // extern ? gs;
 // extern ? dspStudio;
-// extern ? lbl_802E4890;
+// extern ? startGroup;
 // extern ? lbl_802E48E0;
 // extern ? midi_lastNote;
 // extern ? fx_lastNote;

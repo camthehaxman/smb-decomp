@@ -11,6 +11,7 @@ typedef int bool;
 #define SND_AUX_REASON_PARAMETERUPDATE 1
 
 typedef u32 SND_SEQID;
+typedef u16 SND_GROUPID;
 typedef u32 SND_VOICEID;
 typedef u16 SND_FXID;
 
@@ -156,7 +157,7 @@ typedef void (*SND_AUX_CALLBACK)(u8 reason, SND_AUX_INFO *info, void *user);
 void sndAuxCallbackChorus(u8 reason, SND_AUX_INFO *info, void *user);
 void sndAuxCallbackPrepareChorus();
 void sndOutputMode();
-void sndActive();
+//void sndActive();  // hmm
 int sndPushGroup();
 void sndPopGroup(void);
 SND_VOICEID sndFXCheck(SND_VOICEID arg0);
