@@ -2458,6 +2458,7 @@ void GXSetDrawDone(void)
 
 void print_render_stats(void)
 {
+#ifdef DEBUG
     printf(
         "Render Statistics:\n"
         "  draw calls: %i\n"
@@ -2466,6 +2467,7 @@ void print_render_stats(void)
         s_renderStats.drawCalls,
         s_renderStats.shaderCompiles,
         s_renderStats.textureLoads);
+#endif
     memset(&s_renderStats, 0, sizeof(s_renderStats));
 }
 

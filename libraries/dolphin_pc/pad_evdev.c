@@ -1,5 +1,6 @@
 #ifdef __linux__
 
+#include <errno.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,8 +38,13 @@ static void scan_gamepads(void)
     {
         sprintf(devicePath, "/dev/input/event%i", i);
         fd = open(devicePath, O_RDONLY);
-        if (fd < 0)
+        if (errno == ENOENT)
             break;
+        if (fd < 0)
+        {
+            printf("can't open %s: %s\n", devicePath, strerror(errno));
+            continue;
+        }
         if (libevdev_new_from_fd(fd, &dev) == 0 && is_gamepad(dev))
         {
             struct Gamepad *gamepad = &s_gamepads[s_gamepadsCount++];
