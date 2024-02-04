@@ -3,6 +3,10 @@
 
 #include <dolphin/gx/GXEnum.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void GXSetVtxDesc(GXAttr attr, GXAttrType type);
 void GXClearVtxDesc(void);
 void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt,
@@ -21,5 +25,9 @@ static inline void GXSetTexCoordGen(GXTexCoordID dst_coord, GXTexGenType func,
 {
     GXSetTexCoordGen2(dst_coord, func, src_param, mtx, GX_FALSE, GX_PTIDENTITY);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

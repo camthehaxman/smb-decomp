@@ -4,6 +4,10 @@
 #include <dolphin/types.h>
 #include <dolphin/vitypes.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct
 {
     /*0x00*/ VITVMode viTVmode;
@@ -53,5 +57,9 @@ typedef struct
 {
     u16 r[10];
 } GXFogAdjTable;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

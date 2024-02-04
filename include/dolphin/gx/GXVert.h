@@ -3,6 +3,10 @@
 
 #include <dolphin/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GXFIFO_ADDR 0xCC008000
 
 typedef union
@@ -73,5 +77,9 @@ static inline void GXTexCoord2f32(const f32 u, const f32 v)
 }
 
 static inline void GXEnd (void) {}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

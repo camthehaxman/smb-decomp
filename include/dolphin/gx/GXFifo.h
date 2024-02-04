@@ -3,6 +3,10 @@
 
 #include <dolphin/gx/GXEnum.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct
 {
     u8 pad[128];
@@ -19,5 +23,9 @@ void GXSaveCPUFifo(GXFifoObj *fifo);
 void GXGetFifoStatus(GXFifoObj *fifo, GXBool *overhi, GXBool *underlow, u32 *fifoCount, GXBool *cpu_write, GXBool *gp_read, GXBool *fifowrap);
 void GXGetGPStatus(GXBool *overhi, GXBool *underlow, GXBool *readIdle, GXBool *cmdIdle, GXBool *brkpt);
 void GXInitFifoLimits(GXFifoObj *fifo, u32 hiWaterMark, u32 loWaterMark);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

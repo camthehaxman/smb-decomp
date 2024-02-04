@@ -4,6 +4,10 @@
 #include <dolphin/gx/GXStruct.h>
 #include <dolphin/gx/GXEnum.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define	GX_MAX_Z24	0x00ffffff
 
 extern GXRenderModeObj GXNtsc480IntDf;
@@ -27,5 +31,9 @@ void GXCopyTex(void *dest, GXBool clear);
 void GXSetCopyClamp(GXFBClamp clamp);
 void GXClearBoundingBox(void);
 void GXSetDispCopyFrame2Field(GXCopyMode mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
