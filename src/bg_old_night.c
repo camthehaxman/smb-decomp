@@ -20,7 +20,7 @@ void bg_old_night_finish(void) {}
 
 void bg_old_night_draw(void)
 {
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[1]);
+    mathutil_mtxA_from_mtx(userWork->matrices[1]);
     nl2ngc_draw_model_sort_translucent_alt2(NLOBJ_MODEL(g_bgNlObj, 0));
 }
 

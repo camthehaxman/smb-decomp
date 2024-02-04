@@ -1,3 +1,4 @@
+#include <math.h>
 #include <string.h>
 #include <dolphin.h>
 
@@ -174,10 +175,10 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
 
     fbWidth  = currRenderMode->fbWidth;
     fbHeight = currRenderMode->xfbHeight;
-    left   = fbWidth * currentCameraStructPtr->sub28.vp.left;
-    top    = fbHeight * currentCameraStructPtr->sub28.vp.top;
-    width  = fbWidth * currentCameraStructPtr->sub28.vp.width;
-    height = fbHeight * currentCameraStructPtr->sub28.vp.height;
+    left   = fbWidth * currentCamera->sub28.vp.left;
+    top    = fbHeight * currentCamera->sub28.vp.top;
+    width  = fbWidth * currentCamera->sub28.vp.width;
+    height = fbHeight * currentCamera->sub28.vp.height;
     left   = left & ~1;
     top    = top & ~1;
     width  = (width + 1) & ~1;
@@ -251,10 +252,10 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, 0);
 
-    temp_f31_2 = currentCameraStructPtr->sub28.unk38;
-    temp_f30_2 = temp_f31_2 * currentCameraStructPtr->sub28.aspect;
-    temp_f29 = temp_f30_2 * currentCameraStructPtr->sub28.unk28;
-    temp_f28 = temp_f31_2 * currentCameraStructPtr->sub28.unk2C;
+    temp_f31_2 = currentCamera->sub28.unk38;
+    temp_f30_2 = temp_f31_2 * currentCamera->sub28.aspect;
+    temp_f29 = temp_f30_2 * currentCamera->sub28.unk28;
+    temp_f28 = temp_f31_2 * currentCamera->sub28.unk2C;
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
     GXPosition3f32(-temp_f30_2 - temp_f29, temp_f31_2 - temp_f28, -1.0f);
     GXTexCoord2f32(0.0f, 0.0f);
@@ -362,7 +363,7 @@ void rend_efc_motion_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXCopyTex(work->imageBuf, 0);
     GXInitTexObj(&work->texObj, work->imageBuf, currRenderMode->fbWidth, currRenderMode->xfbHeight, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, 0U);
     GXSetZMode_cached(1, GX_LEQUAL, 1);
-    camera_apply_viewport(u_cameraId1);
+    set_current_camera(u_cameraId1);
 }
 
 struct Struct8009557C_alt_sub
@@ -433,11 +434,11 @@ void rend_efc_focus_main(struct RenderEffect *rendEfc)
         float f1;
         float f3;
 
-        r30->unkC = 512.0 * __fabs(mathutil_tan(r30->unk0 >> 1) - mathutil_tan(fov >> 1));
+        r30->unkC = 512.0 * fabs(mathutil_tan(r30->unk0 >> 1) - mathutil_tan(fov >> 1));
         r30->unk0 = fov;
         f1 = mathutil_vec_distance(&camera->eye, &camera->lookAt);
         f3 = r30->unk4 - f1;
-        r30->unkC += 64.0 * __fabs(r30->unk8 - f3);
+        r30->unkC += 64.0 * fabs(r30->unk8 - f3);
         r30->unk4 = f1;
         r30->unk8 += (f3 - r30->unk8) * 0.2f;
         r30->unkC -= 0.25f;
@@ -462,12 +463,12 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     u16 height;
     u8 unused[8];
 
-    if ((gamePauseStatus & 0xA))
+    if ((debugFlags & 0xA))
         return;
 
     work = (void *)rendEfc->work;
 
-    if (currentCameraStructPtr->unk26 != 5)
+    if (currentCamera->unk26 != 5)
         return;
     var_f31 = work->unk24[u_cameraId1].unkC;
     if (var_f31 <= 0.0f)
@@ -478,10 +479,10 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
 
     fbWidth  = currRenderMode->fbWidth;
     fbHeight = currRenderMode->xfbHeight;
-    left   = fbWidth * currentCameraStructPtr->sub28.vp.left;
-    top    = fbHeight * currentCameraStructPtr->sub28.vp.top;
-    width  = fbWidth * currentCameraStructPtr->sub28.vp.width;
-    height = fbHeight * currentCameraStructPtr->sub28.vp.height;
+    left   = fbWidth * currentCamera->sub28.vp.left;
+    top    = fbHeight * currentCamera->sub28.vp.top;
+    width  = fbWidth * currentCamera->sub28.vp.width;
+    height = fbHeight * currentCamera->sub28.vp.height;
     left   = left & ~1;
     top    = top & ~1;
     width  = (width + 1) & ~1;
@@ -550,10 +551,10 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, 0);
 
-    temp_f31_2 = currentCameraStructPtr->sub28.unk38;
-    temp_f30_2 = temp_f31_2 * currentCameraStructPtr->sub28.aspect;
-    temp_f29 = temp_f30_2 * currentCameraStructPtr->sub28.unk28;
-    temp_f28 = temp_f31_2 * currentCameraStructPtr->sub28.unk2C;
+    temp_f31_2 = currentCamera->sub28.unk38;
+    temp_f30_2 = temp_f31_2 * currentCamera->sub28.aspect;
+    temp_f29 = temp_f30_2 * currentCamera->sub28.unk28;
+    temp_f28 = temp_f31_2 * currentCamera->sub28.unk2C;
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
     GXPosition3f32(-temp_f30_2 - temp_f29, temp_f31_2 - temp_f28, -1.0f);
     GXTexCoord2f32(0.0f, 0.0f);
@@ -760,5 +761,5 @@ void rend_efc_kaleidoscope_draw(int arg0, struct RenderEffect *rendEfc)
         break;
     }
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
-    camera_apply_viewport(u_cameraId1);
+    set_current_camera(u_cameraId1);
 }

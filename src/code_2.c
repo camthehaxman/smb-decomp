@@ -4,14 +4,14 @@
 #include "global.h"
 #include "nl2ngc.h"
 
-float func_8008CDC0(float arg0, struct Struct80176434 *arg1)
+float u_interpolate_other_keyframes(float arg0, struct OtherKeyframe *arg1)
 {
     float temp_f10;
     float temp_f11;
     float temp_f12;
     float temp_f13;
     float ret;
-    struct Struct80176434 *phi_r6;
+    struct OtherKeyframe *phi_r6;
 
     if (arg0 < arg1->unk0)
         return arg1->unk4;
@@ -37,153 +37,164 @@ float func_8008CDC0(float arg0, struct Struct80176434 *arg1)
     return ret;
 }
 
-static struct Struct8008CF00 *lbl_802F20B8;
-static struct Struct8008CF00 *lbl_802F20BC;
-static struct Struct8008CF00 *lbl_802F20C0;
-static struct Struct8008CF00 *lbl_802F20C4;
-static struct Struct8008CF00 *lbl_802B4E10[20];
+/* thread.c */
 
-void lbl_8008CEFC(struct Ape *a, int b) {}
+static struct Thread *freeThread;
+static struct Thread *threadWork;
+static struct Thread *currentThread;
+static struct Thread *restoreThread;  // set, but not used
+static struct Thread *executeLevels[20];
 
-void func_8008CF00(struct Struct8008CF00 *arg0, int arg1)
+void dummy_thread(struct Ape *a, int b) {}
+
+void thread_init(struct Thread *nodes, int count)
 {
 	u8 dummy[8];
-	struct Struct8008CF00 *r8 = NULL;
+	struct Thread *r8 = NULL;
 	int i;
 
-	lbl_802F20C0 = arg0;
-	lbl_802F20C4 = arg0;
-	for (i = 0; i < arg1; i++)
+	currentThread = nodes;
+	restoreThread = nodes;
+	for (i = 0; i < count; i++)
 	{
-		arg0[i].unk0 = NULL;
-		arg0[i].unk4 = NULL;
-		arg0[i].unk10 = 0;
-		arg0[i].unk14 = 0;
-		arg0[i].unk18 = i;
-		arg0[i].unk1C = 0;
-		arg0[i].next = r8;
-		arg0[i].prev = &arg0[i + 1];
-		r8 = &arg0[i];
+		nodes[i].callback = NULL;
+		nodes[i].ape = NULL;
+		nodes[i].unk10 = 0;
+		nodes[i].unk14 = 0;
+		nodes[i].unk18 = i;
+		nodes[i].unk1C = 0;
+		nodes[i].prev = r8;
+		nodes[i].next = &nodes[i + 1];
+		r8 = &nodes[i];
 	}
 	for (i = 0; i < 16; i++)
 	{
-		lbl_802B4E10[i] = &arg0[i];
-		arg0[i].unk0 = lbl_8008CEFC;
-		arg0[i].prev = NULL;
-		arg0[i].next = NULL;
+		executeLevels[i] = &nodes[i];
+		nodes[i].callback = dummy_thread;
+		nodes[i].next = NULL;
+		nodes[i].prev = NULL;
 	}
-	lbl_802F20BC = arg0;
-	lbl_802F20B8 = &arg0[i];
-	arg0[i].next = NULL;
+	threadWork = nodes;
+	freeThread = &nodes[i];
+	nodes[i].prev = NULL;
 }
 
-void func_8008D158(u32 arg0)
+void thread_loop(u32 arg0)
 {
 	int i;
-	struct Struct8008CF00 *r28;
-	struct Struct8008CF00 *r3;
+	struct Thread *next;
+	struct Thread *node;
 
 	for (i = 0; i < 16; i++)
 	{
 		if (!(arg0 & (1 << i)))
 		{
-			r3 = lbl_802B4E10[i];
-			while (r3 != NULL)
+			node = executeLevels[i];
+			while (node != NULL)
 			{
-				lbl_802F20C0 = r3;
-				r28 = r3->prev;
-				r3->unk0(r3->unk4, 0);
-				r3 = r28;
+				currentThread = node;
+				next = node->next;
+				node->callback(node->ape, 0);
+				node = next;
 			}
 		}
 	}
 }
 
-int func_8008D1DC(void (*func)(struct Ape *, int), struct Ape *arg1, int arg2)
+int thread_unknown(void (*func)(struct Ape *, int), struct Ape *ape, int listId)
 {
-    struct Struct8008CF00 *temp_r9 = lbl_802F20B8;
+    struct Thread *oldHead = freeThread;
 
-    lbl_802F20B8 = temp_r9->prev;
-    lbl_802F20B8->next = NULL;
-    temp_r9->prev = lbl_802B4E10[arg2]->prev;
-    if (temp_r9->prev != NULL)
-        temp_r9->prev->next = temp_r9;
-    lbl_802B4E10[arg2]->prev = temp_r9;
-    temp_r9->next = lbl_802B4E10[arg2];
-    temp_r9->unk4 = arg1;
-    temp_r9->unk0 = func;
-    return temp_r9->unk18;
+    freeThread = oldHead->next;
+    freeThread->prev = NULL;
+    oldHead->next = executeLevels[listId]->next;
+    if (oldHead->next != NULL)
+        oldHead->next->prev = oldHead;
+    executeLevels[listId]->next = oldHead;
+    oldHead->prev = executeLevels[listId];
+    oldHead->ape = ape;
+    oldHead->callback = func;
+    return oldHead->unk18;
 }
 
-void func_8008D240(void)
+void thread_exit(void)
 {
-    struct Struct8008CF00 *temp_r4 = lbl_802F20C0->next;
-    struct Struct8008CF00 *temp_r3 = lbl_802F20C0->prev;
+    struct Thread *prev = currentThread->prev;
+    struct Thread *next = currentThread->next;
 
-    if (temp_r4 != NULL)
-        temp_r4->prev = temp_r3;
-    if (temp_r3 != NULL)
-        temp_r3->next = temp_r4;
-    lbl_802F20C0->next = NULL;
-    lbl_802F20C0->prev = lbl_802F20B8;
-    if (lbl_802F20B8 != NULL)
-        lbl_802F20B8->next = lbl_802F20C0;
-    lbl_802F20B8 = lbl_802F20C0;
+    // remove from list
+    if (prev != NULL)
+        prev->next = next;
+    if (next != NULL)
+        next->prev = prev;
+
+    // insert at beginning
+    currentThread->prev = NULL;
+    currentThread->next = freeThread;
+    if (freeThread != NULL)
+        freeThread->prev = currentThread;
+    freeThread = currentThread;
 }
 
-void func_8008D29C(int arg0)
+void thread_kill(int arg0)
 {
-    struct Struct8008CF00 *temp_r31 = lbl_802F20C0;
-    struct Struct8008CF00 *temp_r5 = &lbl_802F20BC[arg0];
-    struct Struct8008CF00 *temp_r3 = temp_r5->next;
-    struct Struct8008CF00 *temp_r4 = temp_r5->prev;
+    struct Thread *backupCurr = currentThread;
+    struct Thread *node = &threadWork[arg0];
+    struct Thread *prev = node->prev;
+    struct Thread *next = node->next;
 
-    lbl_802F20C0 = temp_r5;
-    if (temp_r3 != NULL)
-        temp_r3->prev = temp_r4;
-    if (temp_r4 != NULL)
-        temp_r4->next = temp_r3;
-    temp_r5->next = NULL;
-    temp_r5->prev = lbl_802F20B8;
-    if (lbl_802F20B8 != NULL)
-        lbl_802F20B8->next = temp_r5;
-    lbl_802F20B8 = temp_r5;
-    temp_r5->unk0(temp_r5->unk4, 3);
-    lbl_802F20C0 = temp_r31;
+    currentThread = node;
+
+    // remove from list
+    if (prev != NULL)
+        prev->next = next;
+    if (next != NULL)
+        next->prev = prev;
+
+    // insert at beginning
+    node->prev = NULL;
+    node->next = freeThread;
+    if (freeThread != NULL)
+        freeThread->prev = node;
+    freeThread = node;
+
+    node->callback(node->ape, 3);
+
+    currentThread = backupCurr;
 }
 
-void func_8008D330(struct NlModel *arg0, u32 arg1, u32 arg2)
+void u_set_model_mesh_flags(struct NlModel *model, u32 arg1, u32 arg2)
 {
-	struct NlMesh *r6 = (struct NlMesh *)arg0->meshStart;
+    struct NlMesh *mesh = (struct NlMesh *)model->meshStart;
 
-	while ((u32)r6->flags != 0)
+    while ((u32)mesh->flags != 0)
 	{
-		r6->flags &= arg1;
-		r6->flags |= arg2;
-		r6 = (struct NlMesh *)(r6->dispListStart + r6->dispListSize);
+		mesh->flags &= arg1;
+		mesh->flags |= arg2;
+		mesh = (struct NlMesh *)(mesh->dispListStart + mesh->dispListSize);
 	}
 }
 
-void func_8008D36C(struct NlModel *arg0, u32 arg1, u32 arg2)
+void u_set_model_mesh_unk_flags(struct NlModel *model, u32 arg1, u32 arg2)
 {
-	struct NlMesh *r6 = (struct NlMesh *)arg0->meshStart;
+	struct NlMesh *mesh = (struct NlMesh *)model->meshStart;
 
-	while ((u32)r6->flags != 0)
+	while ((u32)mesh->flags != 0)
 	{
-		r6->unk4 &= arg1;
-		r6->unk4 |= arg2;
-		r6 = (struct NlMesh *)(r6->dispListStart + r6->dispListSize);
+		mesh->unk4 &= arg1;
+		mesh->unk4 |= arg2;
+		mesh = (struct NlMesh *)(mesh->dispListStart + mesh->dispListSize);
 	}
 }
 
-void func_8008D3A8(struct NlModel *arg0, u32 arg1, u32 arg2)
+void u_set_model_mesh_texflags(struct NlModel *model, u32 arg1, u32 arg2)
 {
-	struct NlMesh *r6 = (struct NlMesh *)arg0->meshStart;
+	struct NlMesh *mesh = (struct NlMesh *)model->meshStart;
 
-	while ((u32)r6->flags != 0)
+	while ((u32)mesh->flags != 0)
 	{
-		r6->texFlags &= arg1;
-		r6->texFlags |= arg2;
-		r6 = (struct NlMesh *)(r6->dispListStart + r6->dispListSize);
+		mesh->texFlags &= arg1;
+		mesh->texFlags |= arg2;
+		mesh = (struct NlMesh *)(mesh->dispListStart + mesh->dispListSize);
 	}
 }

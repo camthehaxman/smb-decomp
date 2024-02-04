@@ -368,7 +368,7 @@ lbl_80062FD4:
 .global bg_master_main
 bg_master_main:
 /* 800631B0 0005F0D0  7C 08 02 A6 */	mflr r0
-/* 800631B4 0005F0D4  3C 60 80 1F */	lis r3, lbl_801EEC90@ha
+/* 800631B4 0005F0D4  3C 60 80 1F */	lis r3, polyDisp@ha
 /* 800631B8 0005F0D8  90 01 00 04 */	stw r0, 4(r1)
 /* 800631BC 0005F0DC  94 21 FE B8 */	stwu r1, -0x148(r1)
 /* 800631C0 0005F0E0  DB E1 01 40 */	stfd f31, 0x140(r1)
@@ -383,7 +383,7 @@ bg_master_main:
 /* 800631E4 0005F104  DA C1 00 F8 */	stfd f22, 0xf8(r1)
 /* 800631E8 0005F108  DA A1 00 F0 */	stfd f21, 0xf0(r1)
 /* 800631EC 0005F10C  BF 41 00 D8 */	stmw r26, 0xd8(r1)
-/* 800631F0 0005F110  80 03 EC 90 */	lwz r0, lbl_801EEC90@l(r3)
+/* 800631F0 0005F110  80 03 EC 90 */	lwz r0, polyDisp@l(r3)
 /* 800631F4 0005F114  3C 60 80 1C */	lis r3, backgroundInfo@ha
 /* 800631F8 0005F118  38 63 91 78 */	addi r3, r3, backgroundInfo@l
 /* 800631FC 0005F11C  54 00 07 FF */	clrlwi. r0, r0, 0x1f
@@ -406,7 +406,7 @@ lbl_80063238:
 /* 80063238 0005F158  3B A0 00 01 */	li r29, 1
 lbl_8006323C:
 /* 8006323C 0005F15C  4B FF 22 B5 */	bl bg_default_main
-/* 80063240 0005F160  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80063240 0005F160  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80063244 0005F164  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80063248 0005F168  40 82 05 04 */	bne lbl_8006374C
 /* 8006324C 0005F16C  80 1E 00 08 */	lwz r0, 8(r30)
@@ -766,11 +766,11 @@ bg_master_finish:
 .global bg_master_draw
 bg_master_draw:
 /* 80063790 0005F6B0  7C 08 02 A6 */	mflr r0
-/* 80063794 0005F6B4  3C 60 80 1F */	lis r3, lbl_801EEC90@ha
+/* 80063794 0005F6B4  3C 60 80 1F */	lis r3, polyDisp@ha
 /* 80063798 0005F6B8  90 01 00 04 */	stw r0, 4(r1)
 /* 8006379C 0005F6BC  94 21 FF D0 */	stwu r1, -0x30(r1)
 /* 800637A0 0005F6C0  BF 61 00 1C */	stmw r27, 0x1c(r1)
-/* 800637A4 0005F6C4  80 03 EC 90 */	lwz r0, lbl_801EEC90@l(r3)
+/* 800637A4 0005F6C4  80 03 EC 90 */	lwz r0, polyDisp@l(r3)
 /* 800637A8 0005F6C8  3C 60 80 1C */	lis r3, backgroundInfo@ha
 /* 800637AC 0005F6CC  38 63 91 78 */	addi r3, r3, backgroundInfo@l
 /* 800637B0 0005F6D0  54 00 07 FF */	clrlwi. r0, r0, 0x1f
@@ -863,7 +863,7 @@ lbl_800638DC:
 /* 800638EC 0005F80C  38 60 00 00 */	li r3, 0
 /* 800638F0 0005F810  38 9C 00 28 */	addi r4, r28, 0x28
 /* 800638F4 0005F814  48 02 BD F1 */	bl avdisp_set_custom_tex_mtx
-/* 800638F8 0005F818  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800638F8 0005F818  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800638FC 0005F81C  4B FA 3F B5 */	bl mathutil_mtxA_from_mtx
 /* 80063900 0005F820  38 7D 00 0C */	addi r3, r29, 0xc
 /* 80063904 0005F824  4B FA 44 1D */	bl mathutil_mtxA_translate
@@ -893,8 +893,8 @@ lbl_80063950:
 /* 8006395C 0005F87C  48 02 BD 79 */	bl avdisp_enable_custom_tex_mtx
 lbl_80063960:
 /* 80063960 0005F880  4B FF 1B F9 */	bl bg_default_draw
-/* 80063964 0005F884  3C 60 80 1F */	lis r3, lbl_801EEC90@ha
-/* 80063968 0005F888  80 03 EC 90 */	lwz r0, lbl_801EEC90@l(r3)
+/* 80063964 0005F884  3C 60 80 1F */	lis r3, polyDisp@ha
+/* 80063968 0005F888  80 03 EC 90 */	lwz r0, polyDisp@l(r3)
 /* 8006396C 0005F88C  54 00 07 7B */	rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 80063970 0005F890  40 82 01 50 */	bne lbl_80063AC0
 /* 80063974 0005F894  80 1F 01 70 */	lwz r0, 0x170(r31)
@@ -914,7 +914,7 @@ lbl_800639A4:
 /* 800639A8 0005F8C8  80 1D 00 00 */	lwz r0, 0(r29)
 /* 800639AC 0005F8CC  7C 00 F0 39 */	and. r0, r0, r30
 /* 800639B0 0005F8D0  41 82 00 E8 */	beq lbl_80063A98
-/* 800639B4 0005F8D4  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800639B4 0005F8D4  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800639B8 0005F8D8  4B FA 3E F9 */	bl mathutil_mtxA_from_mtx
 /* 800639BC 0005F8DC  38 7D 00 0C */	addi r3, r29, 0xc
 /* 800639C0 0005F8E0  4B FA 43 61 */	bl mathutil_mtxA_translate

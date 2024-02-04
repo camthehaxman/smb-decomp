@@ -9,6 +9,8 @@
 #include <dolphin/gx/GXLighting.h>
 #include <dolphin/gx/GXVert.h>
 
+#include <ppcintrinsic.h>
+
 #include "global.h"
 #include "byteswap.h"
 #include "gma.h"

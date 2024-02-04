@@ -4,14 +4,7 @@
 struct MemcardGameData;
 struct Sprite;
 
-struct Struct8027CE18
-{
-    u32 unk0;
-    u32 unk4;
-    u32 unk8;
-};
-
-extern struct Struct8027CE18 lbl_8027CE18;
+extern u32 playPointYieldPerDifficulty[3];
 
 struct Struct8027CE24
 {

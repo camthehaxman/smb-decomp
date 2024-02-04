@@ -144,29 +144,29 @@ void u_init_bg_fog_params(void)
     fogInfo.b = 0;
 }
 
-void func_8009AB5C(void)
+void fog_main(void)
 {
     avdisp_enable_fog(fogInfo.enabled);
-    nl2ngc_enable_fog(fogInfo.enabled);
+    nlSetFog(fogInfo.enabled);
     if (fogInfo.enabled != 0)
     {
         avdisp_set_fog_params(fogInfo.unk0, fogInfo.unk4, fogInfo.unk8);
         avdisp_set_fog_color(fogInfo.r, fogInfo.g, fogInfo.b);
-        nl2ngc_set_fog_params(fogInfo.unk0, fogInfo.unk4, fogInfo.unk8);
-        nl2ngc_set_fog_color(fogInfo.r, fogInfo.g, fogInfo.b);
+        nlSetFogType(fogInfo.unk0, fogInfo.unk4, fogInfo.unk8);
+        nlSetFogColor(fogInfo.r, fogInfo.g, fogInfo.b);
     }
 }
 
-void func_8009AC0C(s8 a)
+void u_gxutil_set_fog_enabled(s8 enable)
 {
-    avdisp_enable_fog(a);
-    nl2ngc_enable_fog(a);
+    avdisp_enable_fog(enable);
+    nlSetFog(enable);
 }
 
-void func_8009AC44(void)
+void u_gxutil_fog_something_2(void)
 {
     avdisp_enable_fog(fogInfo.enabled);
-    nl2ngc_enable_fog(fogInfo.enabled);
+    nlSetFog(fogInfo.enabled);
 }
 
 void func_8009AC8C(void)
@@ -176,7 +176,7 @@ void func_8009AC8C(void)
     sp10.r = fogInfo.r;
     sp10.g = fogInfo.g;
     sp10.b = fogInfo.b;
-    if (fogInfo.enabled != 0)
+    if (fogInfo.enabled)
         GXSetFog_cached(fogInfo.unk0, fogInfo.unk4, fogInfo.unk8, 0.1f, 20000.0f, sp10);
     else
         GXSetFog_cached(GX_FOG_NONE, 0.0f, 100.0f, 0.1f, 20000.0f, sp10);

@@ -242,8 +242,8 @@ void init_cache(void)
     gfxBufferInfo = (void *)(LC_CACHE_BASE + size);
     size += sizeof(*gfxBufferInfo);
 
-    lbl_802F1B3C = (void *)(LC_CACHE_BASE + size);
-    size += sizeof(*lbl_802F1B3C);
+    userWork = (void *)(LC_CACHE_BASE + size);
+    size += sizeof(*userWork);
 
     gxCache = (void *)(LC_CACHE_BASE + size);
     size += sizeof(*gxCache);

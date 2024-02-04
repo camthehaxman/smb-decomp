@@ -183,6 +183,7 @@ lbl_800C9FDC:
 
 .section .sbss
 
+	.balign 8
 .global serEnabled
 serEnabled:
 	.skip 0x8

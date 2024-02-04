@@ -13,9 +13,11 @@
 #include <dolphin/perf.h>
 #include <dolphin/ar.h>
 #include <dolphin/arq.h>
-#include <dolphin/PPCArch.h>
+#include <dolphin/base/PPCArch.h>
 #include <dolphin/DBInterface.h>
 #include <dolphin/DEMOPuts.h>
 #include <dolphin/pad.h>
+#include <dolphin/dtk.h>
+#include <dolphin/ai.h>
 
 #endif

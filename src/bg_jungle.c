@@ -3,8 +3,8 @@
  */
 #include <stdlib.h>
 #include <dolphin.h>
+#include <dolphin/gx/GXEnum.h>
 
-#include "dolphin/gx/GXEnum.h"
 #include "global.h"
 #include "background.h"
 #include "info.h"
@@ -82,7 +82,7 @@ void bg_jungle_main(void)
         backgroundInfo.backdropColor.g = 0x55;
         backgroundInfo.backdropColor.b = 0x55;
     }
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (work->cloudCount == 0)
         return;
@@ -131,7 +131,7 @@ void bg_jungle_draw(void)
      || gameSubmode == SMD_GAME_OVER_MAIN)
         avdisp_set_post_mult_color(0.3f, 0.3f, 0.3, 1.0f);
 
-    if (lbl_801EEC90.unk0 & 1)
+    if (polyDisp.unk0 & 1)
         r28 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         r28 = 1 << (modeCtrl.unk30 - 1);
@@ -174,7 +174,7 @@ void bg_jungle_draw(void)
      || gameSubmode == SMD_GAME_NAMEENTRY_READY_INIT
      || gameSubmode == SMD_GAME_OVER_INIT
      || gameSubmode == SMD_GAME_OVER_MAIN)
-        u_reset_post_mult_color();
+        fade_color_base_default();
 }
 
 void bg_jungle_interact(int a) {}

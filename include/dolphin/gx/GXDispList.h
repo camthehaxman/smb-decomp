@@ -1,5 +1,5 @@
-#ifndef DOLPHIN_GXDISPLIST_H
-#define DOLPHIN_GXDISPLIST_H
+#ifndef _DOLPHIN_GX_GXDISPLIST_H_
+#define _DOLPHIN_GX_GXDISPLIST_H_
 
 #include <dolphin/types.h>
 
@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-void GXBeginDisplayList(void* list, u32 size);
+void GXBeginDisplayList(void *list, u32 size);
 u32 GXEndDisplayList(void);
-void GXCallDisplayList(void* list, u32 nbytes);
+void GXCallDisplayList( void *list, u32 nbytes);
 
 #ifdef __cplusplus
 }

@@ -300,13 +300,13 @@ void ev_background_init(void)
 {
     s16 r29 = backgroundInfo.bgId;
     void *r27 = backgroundInfo.work;
-    u32 r26 = backgroundInfo.unkA0;
+    u32 r26 = backgroundInfo.randSeed;
 
     memset(&backgroundInfo, 0, sizeof(backgroundInfo));
 
     backgroundInfo.bgId = r29;
     backgroundInfo.work = r27;
-    backgroundInfo.unkA0 = r26;
+    backgroundInfo.randSeed = r26;
 
     backgroundInfo.animTimer = 0.0f;
     backgroundInfo.unk8 = 0;
@@ -322,17 +322,17 @@ void ev_background_init(void)
     if (backgroundInfo.bgId > 0)
     {
         int temp = rand();
-        srand(backgroundInfo.unkA0);
+        srand(backgroundInfo.randSeed);
         backgroundInfo.unkA4 = rand();
         bgInitFuncs[backgroundInfo.bgId]();
-        backgroundInfo.unkA0 = globalFrameCounter + rand();
+        backgroundInfo.randSeed = powerOnTimer + rand();
         srand(temp);
     }
 }
 
 void ev_background_main(void)
 {
-    if ((gamePauseStatus & 0xA) == 0)
+    if ((debugFlags & 0xA) == 0)
     {
         backgroundInfo.animTimer += 1.0f;
         backgroundInfo.unkA4++;
@@ -353,7 +353,7 @@ void ev_background_dest(void)
     backgroundInfo.ballEnvFunc = NULL;
 }
 
-void func_80054FF0(void)
+void background_light_assign(void)
 {
     if (backgroundInfo.unk98 != NULL)
         backgroundInfo.unk98();
@@ -365,7 +365,7 @@ void background_draw(void)
         bgDrawFuncs[backgroundInfo.bgId]();
 }
 
-void func_8005507C(void)
+void background_free(void)
 {
     if (backgroundInfo.bgId > 0)
     {
@@ -391,14 +391,14 @@ void func_8005507C(void)
             free_gma(decodedBgGma);
             decodedBgGma = NULL;
         }
-        free_nlobj(&g_bgNlObj, &g_bgNlTpl);
+        nlObjModelListFree(&g_bgNlObj, &g_bgNlTpl);
 
         OSSetCurrentHeap(oldHeap);
         backgroundInfo.bgId = -1;
     }
 }
 
-void preload_bg_files(int bgId)
+void background_preload(int bgId)
 {
     char bgDir[64];
     char gmaFileName[64];
@@ -463,7 +463,7 @@ u32 bgWorkSizes[] =
     0,
     0,
     0,
-    0xB90,
+    sizeof(struct BGMasterWork),
     sizeof(struct BGEndWork),
     0,
 };
@@ -476,7 +476,7 @@ u8 stageBackgrounds[] =
 #undef DEFINE_STAGE
 };
 
-void load_bg_files(int bgId)
+void background_change(int bgId)
 {
     char bgDir[64];
     char gmaFileName[64];
@@ -514,7 +514,7 @@ void load_bg_files(int bgId)
             }
 
             // free old NAOMI resources
-            free_nlobj(&g_bgNlObj, &g_bgNlTpl);
+            nlObjModelListFree(&g_bgNlObj, &g_bgNlTpl);
         }
         if (bgId > 0)
         {
@@ -539,7 +539,7 @@ void load_bg_files(int bgId)
                 DVDChangeDir(bgDir);
                 sprintf(gmaFileName, "%s_p.lz", bgName);
                 sprintf(tplFileName, "%s.lz", bgName);
-                load_nlobj(&g_bgNlObj, &g_bgNlTpl, gmaFileName, tplFileName);
+                nlObjModelListLoad(&g_bgNlObj, &g_bgNlTpl, gmaFileName, tplFileName);
                 DVDChangeDir("/test");
             }
 
@@ -580,14 +580,14 @@ void bg_default_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (lbl_801EEC90.unk0 & 1))
+     && (polyDisp.unk0 & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != 0)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         load_light_group_uncached(LIGHT_GROUP_DEF_GMAT);
     }
-    draw_bg_objects(lbl_802F1B3C->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
+    draw_bg_objects(userWork->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
     if (decodedStageLzPtr->fgObjects != 0)
     {
         mathutil_mtxA_from_mtx(mathutilData->mtxB);
@@ -607,7 +607,7 @@ void animate_bg_objects(struct StageBgObject *bgObj, int bgObjCount, float timeS
 
     if (bgObj == NULL2)
         return;
-    if (lbl_801EEC90.unk0 & 0x11)
+    if (polyDisp.unk0 & 0x11)
         r29 = 16;
     else if (gameMode == MD_GAME || gameMode == MD_MINI)
         r29 = 1 << (modeCtrl.unk30 - 1);
@@ -630,7 +630,7 @@ void animate_bg_objects(struct StageBgObject *bgObj, int bgObjCount, float timeS
             continue;
         timeSecondsLooped = timeSeconds;
         if (bgObj->flags & (1 << 6))
-            timeSecondsLooped = lbl_80206DEC.u_stageTimer / 60.0;
+            timeSecondsLooped = stageInfo.u_stageTimer / 60.0;
         timeSecondsLooped += anim->loopStartSeconds;
         loopDurationSeconds = (float)(anim->loopEndSeconds - anim->loopStartSeconds);
         timeSecondsLooped -=
@@ -684,7 +684,7 @@ void animate_bg_objects(struct StageBgObject *bgObj, int bgObjCount, float timeS
             mathutil_mtxA_rotate_y(bgObj->rotY);
             mathutil_mtxA_rotate_x(bgObj->rotX);
             mathutil_mtxA_tf_point(&bgObj->model->boundSphereCenter, &boundSphereCenter);
-            func_800390C8(5, &boundSphereCenter, 1.0f);
+            set_ball_target(5, &boundSphereCenter, 1.0f);
         }
     }
 }
@@ -699,7 +699,7 @@ void draw_bg_objects(Mtx viewFromWorld, struct StageBgObject *bgObj, int bgObjCo
 
     if (bgObj == NULL)
         return;
-    if (lbl_801EEC90.unk0 & ((1 << 0)|(1 << 4)))
+    if (polyDisp.unk0 & ((1 << 0)|(1 << 4)))
         r30 = 1 << 4;
     else if (gameMode == MD_GAME || gameMode == MD_MINI)
         r30 = 1 << (modeCtrl.unk30 - 1);
@@ -709,7 +709,7 @@ void draw_bg_objects(Mtx viewFromWorld, struct StageBgObject *bgObj, int bgObjCo
     {
         if (!(bgObj->flags & r30))
             continue;
-        if ((lbl_801EEC90.unk0 & (1 << 2))
+        if ((polyDisp.unk0 & (1 << 2))
          && (bgObj->flags & (1 << 7)))
             continue;
         if (!(bgObj->flags & (1 << 16)))
@@ -726,8 +726,8 @@ void draw_bg_objects(Mtx viewFromWorld, struct StageBgObject *bgObj, int bgObjCo
         mathutil_mtxA_scale(&bgObj->scale);
         scale = MAX(bgObj->scale.x, bgObj->scale.y);
         scale = MAX(bgObj->scale.z, scale);
-        if ((lbl_801EEC90.unk0 & (1 << 2))
-         && func_8000E444(&model->boundSphereCenter) < -(scale * model->boundSphereRadius))
+        if ((polyDisp.unk0 & (1 << 2))
+         && get_height_mirror_plane(&model->boundSphereCenter) < -(scale * model->boundSphereRadius))
             continue;
         if (test_scaled_sphere_in_frustum(&model->boundSphereCenter, model->boundSphereRadius, scale) == 0)
             continue;
@@ -957,7 +957,7 @@ void draw_bg_flipbooks(Mtx viewFromWorld, struct StageFlipbookAnims *flipbooks)
             mathutil_mtxA_rotate_x(nightFlipbook->rotX);
             GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
             GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
-            t = unpausedFrameCounter / 2;
+            t = globalAnimTimer / 2;
             switch (nightFlipbook->id)
             {
             default:
@@ -998,10 +998,10 @@ void draw_bg_flipbooks(Mtx viewFromWorld, struct StageFlipbookAnims *flipbooks)
             // Position is in world space, Y rotation is billboarded
             mathutil_mtxA_from_mtx(viewFromWorld);
             mathutil_mtxA_translate(&stormFlipbook->pos);
-            mathutil_mtxA_rotate_y(currentCameraStructPtr->rotY);
+            mathutil_mtxA_rotate_y(currentCamera->rotY);
             GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
             GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
-            t = (unpausedFrameCounter + stormFlipbook->frameOffset * 4);
+            t = (globalAnimTimer + stormFlipbook->frameOffset * 4);
             modelId = s_stormFireModels[t % ARRAY_COUNT(s_stormFireModels)];
             avdisp_draw_model_unculled_sort_translucent(decodedBgGma->modelEntries[modelId].model);
         }
@@ -1024,14 +1024,14 @@ void bg_night_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (lbl_801EEC90.unk0 & 1))
+     && (polyDisp.unk0 & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         load_light_group_uncached(LIGHT_GROUP_DEF_GMAT);
     }
-    draw_bg_objects(lbl_802F1B3C->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
+    draw_bg_objects(userWork->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
     if (decodedStageLzPtr->fgObjects != NULL)
     {
         mathutil_mtxA_from_mtx(mathutilData->mtxB);
@@ -1059,14 +1059,14 @@ void bg_ice2_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (lbl_801EEC90.unk0 & 1))
+     && (polyDisp.unk0 & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         load_light_group_uncached(LIGHT_GROUP_DEF_GMAT);
     }
-    draw_bg_objects(lbl_802F1B3C->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
+    draw_bg_objects(userWork->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
     if (decodedStageLzPtr->fgObjects != NULL)
     {
         mathutil_mtxA_from_mtx(mathutilData->mtxB);
@@ -1128,14 +1128,14 @@ void bg_billiards_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (lbl_801EEC90.unk0 & 1))
+     && (polyDisp.unk0 & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         load_light_group_uncached(LIGHT_GROUP_DEF_GMAT);
     }
-    draw_bg_objects(lbl_802F1B3C->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
+    draw_bg_objects(userWork->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
     if (decodedStageLzPtr->fgObjects != NULL)
     {
         mathutil_mtxA_from_mtx(mathutilData->mtxB);
@@ -1163,14 +1163,14 @@ void bg_golf_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (lbl_801EEC90.unk0 & 1))
+     && (polyDisp.unk0 & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         load_light_group_uncached(LIGHT_GROUP_DEF_GMAT);
     }
-    draw_bg_objects(lbl_802F1B3C->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
+    draw_bg_objects(userWork->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
     if (decodedStageLzPtr->fgObjects != NULL)
     {
         mathutil_mtxA_from_mtx(mathutilData->mtxB);
@@ -1198,14 +1198,14 @@ void bg_bowling_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (lbl_801EEC90.unk0 & 1))
+     && (polyDisp.unk0 & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
         load_light_group_uncached(LIGHT_GROUP_DEF_GMAT);
     }
-    draw_bg_objects(lbl_802F1B3C->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
+    draw_bg_objects(userWork->matrices[0], decodedStageLzPtr->bgObjects, decodedStageLzPtr->bgObjectCount);
     if (decodedStageLzPtr->fgObjects != NULL)
     {
         mathutil_mtxA_from_mtx(mathutilData->mtxB);
@@ -1343,7 +1343,7 @@ void find_background_objects(struct StageBgObject *bgObj, int bgObjCount, struct
     }
 }
 
-void func_80056934(void)
+void clear_background_parts_flag(void)
 {
     int i;
     struct StageBgObject *bgObj;
@@ -1362,7 +1362,7 @@ void func_80056934(void)
     }
 }
 
-void func_800569B4(int a)
+void background_set_random_seed(int seed)
 {
-    backgroundInfo.unkA0 = a;
+    backgroundInfo.randSeed = seed;
 }

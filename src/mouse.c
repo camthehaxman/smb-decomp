@@ -107,7 +107,7 @@ void ev_mouse_main(void)
                 mouse.spriteIdx = INVALID_SPRITE_INDEX;
             } else {
                 mouse.spriteIdx = INVALID_SPRITE_INDEX;
-                _spriteInfo = &spriteInfo[0];
+                _spriteInfo = &spriteWork[0];
                 _statusList = g_poolInfo.spritePool.statusList;
                 for (
                     i = 0;
@@ -129,7 +129,7 @@ void ev_mouse_main(void)
         }
         
         if (mouse.spriteIdx >= 0) {
-            _spriteInfo = &spriteInfo[mouse.spriteIdx];
+            _spriteInfo = &spriteWork[mouse.spriteIdx];
             while(_spriteInfo->unk50 != NULL) {
                 _spriteInfo = _spriteInfo->unk50;
             }
@@ -171,7 +171,7 @@ void ev_mouse_update(void)
         _naomiSprite.addColor = 0x0;
         draw_naomi_sprite(&_naomiSprite);
         if (mouse.spriteIdx >= 0) {
-            _spriteInfo = &spriteInfo[mouse.spriteIdx];
+            _spriteInfo = &spriteWork[mouse.spriteIdx];
             reset_text_draw_settings();
             set_text_pos( (_spriteInfo->left - 8), (_spriteInfo->top - 8) );
             u_draw_text( "+" );

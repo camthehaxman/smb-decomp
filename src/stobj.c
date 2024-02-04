@@ -8,12 +8,15 @@
 #include "camera.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "name_entry.h"
 #include "nl2ngc.h"
 #include "obj_collision.h"
 #include "pool.h"
+#include "sound.h"
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "vibration.h"
 #include "world.h"
 
 #include "../data/bg_jun.gma.h"
@@ -223,7 +226,7 @@ void ev_stobj_main(void)
     struct Stobj *stobj;
     s8 *phi_r27;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     phi_r27 = g_poolInfo.stobjPool.statusList;
@@ -270,7 +273,7 @@ void ev_stobj_main(void)
                         mathutil_mtxA_rotate_x(stobj->rotX);
                     }
                     mathutil_mtxA_tf_point(&stobj->unk90, &sp8);
-                    func_800390C8(5, &sp8, stobj->unk9C);
+                    set_ball_target(5, &sp8, stobj->unk9C);
                 }
             }
         }
@@ -705,7 +708,7 @@ static void stobj_bumper_draw(struct Stobj *stobj)
         GXLoadPosMtxImm(mathutilData->mtxA, 0);
         GXLoadNrmMtxImm(mathutilData->mtxA, 0);
 
-        temp_f1 = -((radius * currentCameraStructPtr->sub28.unk3C * currentCameraStructPtr->sub28.vp.height) / sp18.z);
+        temp_f1 = -((radius * currentCamera->sub28.unk3C * currentCamera->sub28.vp.height) / sp18.z);
         phi_r6 = lbl_8028C0B0.unk0;
         phi_r5 = lbl_8028C0B0.unk14;
         for (temp_r0 = lbl_8028C0B0.unk10 - 1; temp_r0 > 0; temp_r0--, phi_r5++, phi_r6++)
@@ -738,10 +741,10 @@ static void stobj_bumper_draw(struct Stobj *stobj)
         if (phi_f30 > 1.0f)
             phi_f30 = 1.0f;
         mathutil_mtxA_scale_s(temp_f31_2);
-        nl2ngc_set_scale(temp_f31_2);
-        nl2ngc_set_material_color(phi_f30, phi_f30, phi_f30);
-        nl2ngc_draw_model_sort_none(g_commonNlObj->models[0x2B]);
-        u_reset_post_mult_color();
+        nlSetScaleFactor(temp_f31_2);
+        nlObjPutSetFadeColorBase(phi_f30, phi_f30, phi_f30);
+        nlObjPutImm(g_commonNlObj->models[0x2B]);
+        fade_color_base_default();
     }
 }
 
@@ -751,10 +754,10 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
     Vec sp24;
     float temp_f1;
     float temp_f2;
-    struct Ball *temp_r31;
-    int phi_r4;
+    struct Ball *ball;
+    BOOL rumble;
 
-    temp_r31 = currentBallStructPtr;
+    ball = currentBall;
     stobj->state = 1;
     sp30 = stobj->position;
     func_8006AAEC(&arg1->prevPos, &arg1->pos, &stobj->position_2, &sp30, arg1->radius, stobj->model->boundSphereRadius);
@@ -780,8 +783,8 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
     arg1->pos.x = stobj->position.x + sp24.x;
     arg1->pos.y = stobj->position.y + sp24.y;
     arg1->pos.z = stobj->position.z + sp24.z;
-    u_play_sound(0x5011);
-    temp_r31->flags |= 0x20;
+    u_play_sound_0(0x5011);
+    ball->flags |= 0x20;
 
     {
         s16 sp14[] =
@@ -793,16 +796,16 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
         };
         u8 dummy[4];
 
-        lbl_802F1DFC = temp_r31->ape->charaId;
-        u_play_sound(sp14[unpausedFrameCounter & 7]);
-        phi_r4 = 1;
+        lbl_802F1DFC = ball->ape->charaId;
+        u_play_sound_0(sp14[globalAnimTimer & 7]);
+        rumble = TRUE;
         if (modeCtrl.gameType == GAMETYPE_MINI_RACE)
         {
-            if (temp_r31->unk144 != NULL && (temp_r31->unk144->unk14 & 0x20))
-                phi_r4 = 0;
+            if (ball->unk144 != NULL && (ball->unk144->unk14 & 0x20))
+                rumble = FALSE;
         }
-        if (phi_r4 != 0)
-            func_800B60F4(lbl_80206BD0[temp_r31->playerId], 1, 0x1E);
+        if (rumble)
+            vibration_control(playerControllerIDs[ball->playerId], VIBRATION_STATE_1, 30);
     }
 }
 
@@ -904,11 +907,11 @@ static void stobj_bumper_bgspecial_draw(struct Stobj *stobj)
         break;
     case BG_TYPE_STM:
         // Draw animated flame
-        modelId = stmFireModelIDs[unpausedFrameCounter & 0x1F];
+        modelId = stmFireModelIDs[globalAnimTimer & 0x1F];
         flameModel = decodedBgGma->modelEntries[modelId].model;
         mathutil_mtxA_from_mtxB_translate(&stobj->u_some_pos);
         mathutil_mtxA_get_translate_alt(&spC);
-        temp_f31_2 = spC.z + (8.0f * currentCameraStructPtr->sub28.unk3C * currentCameraStructPtr->sub28.vp.height);
+        temp_f31_2 = spC.z + (8.0f * currentCamera->sub28.unk3C * currentCamera->sub28.vp.height);
         if (temp_f31_2 > 0.0f)
         {
             temp_f31_2 *= 0.5f;
@@ -1007,14 +1010,14 @@ static void stobj_jamabar_destroy(struct Stobj *stobj) {}
 
 static void stobj_jamabar_debug(struct Stobj *stobj)
 {
-    func_8002FCC0(2, lbl_801BE25C);
-    func_8002FCC0(2, "OFS: X,%7.3f\n", stobj->u_local_pos.x);
-    func_8002FCC0(2, string______Y__7_3f_n_2, stobj->u_local_pos.y);
-    func_8002FCC0(2, string______Z__7_3f_n_2, stobj->u_local_pos.z);
+    window_printf(2, lbl_801BE25C);
+    window_printf(2, "OFS: X,%7.3f\n", stobj->u_local_pos.x);
+    window_printf(2, string______Y__7_3f_n_2, stobj->u_local_pos.y);
+    window_printf(2, string______Z__7_3f_n_2, stobj->u_local_pos.z);
     func_8002FD68(2, lbl_802F0B40);
-    func_8002FCC0(2, "OFS SPD: X,%7.3f\n", stobj->u_local_vel.x);
-    func_8002FCC0(2, "         Y,%7.3f\n", stobj->u_local_vel.y);
-    func_8002FCC0(2, "         Z,%7.3f\n", stobj->u_local_vel.z);
+    window_printf(2, "OFS SPD: X,%7.3f\n", stobj->u_local_vel.x);
+    window_printf(2, "         Y,%7.3f\n", stobj->u_local_vel.y);
+    window_printf(2, "         Z,%7.3f\n", stobj->u_local_vel.z);
     func_8002FD68(2, lbl_802F0B40);
 }
 

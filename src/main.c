@@ -19,23 +19,25 @@
 #include "load.h"
 #include "mode.h"
 #include "mot_ape.h"
+#include "name_entry.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
 #include "perf.h"
 #include "pool.h"
 #include "recplay.h"
+#include "sound.h"
 #include "stage.h"
 #include "world.h"
 
-struct Struct8008CF00 lbl_801ED920[146];
+struct Thread lbl_801ED920[146];
 
 struct NlModel *lbl_802F1B4C;
 void *dvdReadBuffer;
 void *lbl_802F1B44;
 void *lbl_802F1B40;
-struct Struct802F1B3C *lbl_802F1B3C;
-u32 globalFrameCounter;
-u32 unpausedFrameCounter;
+struct Struct802F1B3C *userWork;
+u32 powerOnTimer;
+u32 globalAnimTimer;
 GXRenderModeObj *currRenderMode;
 
 OSHeapHandle mainHeap;
@@ -117,7 +119,7 @@ void main(void)
                                                     });
 #endif
     // dipSwitches = DIP_DEBUG|DIP_STCOLI;
-    globalFrameCounter = 0;
+    powerOnTimer = 0;
     initialize();
     gm_init();
     bitmap_init();
@@ -126,10 +128,10 @@ void main(void)
     perf_init();
     sound_init();
     avdisp_init();
-    currentBallStructPtr = &ballInfo[0];
-    currentWorldStructPtr = &worldInfo[0];
+    currentBall = &ballInfo[0];
+    currentWorld = &worldInfo[0];
     chkstatus_init();
-    func_8008CF00(lbl_801ED920, 0x80);
+    thread_init(lbl_801ED920, 0x80);
     recplay_init();
     camera_init();
     polydisp_init();
@@ -140,13 +142,13 @@ void main(void)
     load_common_graphics();
     init_ape_model_info("motdat.lz", "motlabel.bin", "motskl.bin", "motinfo.lz");
     mot_ape_init();
-    func_800AD38C();
+    name_entry_init();
     u_initialize_stage_dyn_part_info();
     loadingStageIdRequest = 1;
     lbl_802F1F40 = 1;
     u_reset_gamedata();
     course_init();
-    globalFrameCounter++;
+    powerOnTimer++;
     srand(OSGetTime());
 
     while (1)
@@ -253,9 +255,9 @@ void main(void)
         shadowerase_main();
         perfInfo.unk34 = perf_stop_timer(4);
 
-        globalFrameCounter++;
-        if ((gamePauseStatus & 0xA) == 0)
-            unpausedFrameCounter++;
+        powerOnTimer++;
+        if ((debugFlags & 0xA) == 0)
+            globalAnimTimer++;
 
 #ifdef AURORA
         frame_limiter();

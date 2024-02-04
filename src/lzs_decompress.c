@@ -1,5 +1,7 @@
 #include <dolphin.h>
 
+#include <ppcintrinsic.h>
+
 #include "global.h"
 
 int lzs_decompress(u8 *src, void *dest)

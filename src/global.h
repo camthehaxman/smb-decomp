@@ -11,6 +11,21 @@
 #define MAX_SPRITES 64
 #define MAX_EFFECTS 512
 
+enum
+{
+    DIFFICULTY_BEGINNER,
+    DIFFICULTY_ADVANCED,
+    DIFFICULTY_EXPERT,
+};
+
+enum Character
+{
+    CHARACTER_AIAI,
+    CHARACTER_MEEMEE,
+    CHARACTER_BABY,
+    CHARACTER_GONGON,
+};
+
 #define ARRAY_COUNT(arr) ((int)(sizeof(arr)/sizeof(arr[0])))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -35,77 +50,6 @@
 
 // returns a random float between 0.0 and 1.0, inclusive
 #define RAND_FLOAT() (rand() / (float)RAND_MAX)
-
-#ifdef TARGET_PC
-#define OS_BUS_CLOCK_SPEED 162000000
-#else
-#ifdef __MWERKS__
-u32 OS_BUS_CLOCK_SPEED : 0x800000F8;
-#else
-#define OS_BUS_CLOCK_SPEED (*(u32 *)0x800000F8)
-#endif
-#endif
-
-// intrinsics
-#ifndef __MWERKS__
-static inline u32 __cntlzw(u32 n)
-{
-#ifdef __PPC__
-    u32 ret;
-    asm("cntlzw %0, %1" : "=r"(ret) : "r"(n));
-    return ret;
-#else
-    int i;
-    for (i = 0; i < 31; i++)
-    {
-        if ((n >> (31 - i)) & 1)
-            break;
-    }
-    return i;
-#endif
-}
-
-static inline u32 __lwbrx(void *ptr, u32 offset)
-{
-#ifdef __PPC__
-    u32 ret;
-    asm("lwbrx %0, %1, %2" : "=r"(ret) : "r"(ptr), "r"(offset));
-    return ret;
-#else
-    u32 val = *(u32 *)((u8 *)ptr + offset);
-    //return ((val & 0xFF) << 24) | (((val >> 8) & 0xFF) << 16) | (((val >> 16) & 0xFF) << 8) | ((val >> 24) & 0xFF);
-    return val;
-#endif
-}
-
-#ifdef __PPC__
-static inline float __fabs(float n)
-{
-    float ret;
-    asm("fabs %0, %1" : "=f"(ret) : "f"(n));
-    return ret;
-}
-#else
-extern float fabsf(float);
-#define __fabs(n) fabsf(n)
-#endif
-
-static inline float __frsqrte(float n)
-{
-#ifdef __PPC__
-    float ret;
-    asm("frsqrte %0, %1" : "=f"(ret) : "f"(n));
-    return ret;
-#else
-    extern float sqrtf(float);
-    return 1.0f / sqrtf(n);
-#endif
-}
-
-#if defined(TARGET_PC)
-#define __abs(n) abs(n)
-#endif
-#endif
 
 #define qr0 0
 #define qr2 2

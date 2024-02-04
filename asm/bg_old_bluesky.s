@@ -709,7 +709,7 @@ bg_old_bluesky_draw:
 /* 80057360 00053280  7C 08 02 A6 */	mflr r0
 /* 80057364 00053284  90 01 00 04 */	stw r0, 4(r1)
 /* 80057368 00053288  94 21 FF F8 */	stwu r1, -8(r1)
-/* 8005736C 0005328C  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 8005736C 0005328C  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 80057370 00053290  38 63 00 30 */	addi r3, r3, 0x30
 /* 80057374 00053294  4B FB 05 3D */	bl mathutil_mtxA_from_mtx
 /* 80057378 00053298  80 6D 99 1C */	lwz r3, g_bgNlObj@sda21(r13)
@@ -725,8 +725,8 @@ bg_old_bluesky_draw:
 .global bg_old_bluesky_interact
 bg_old_bluesky_interact:
 /* 800573A0 000532C0  4E 80 00 20 */	blr
-.global func_800573A4
-func_800573A4:
+.global effect_bird_kite_init
+effect_bird_kite_init:
 /* 800573A4 000532C4  7C 08 02 A6 */	mflr r0
 /* 800573A8 000532C8  38 80 00 00 */	li r4, 0
 /* 800573AC 000532CC  90 01 00 04 */	stw r0, 4(r1)
@@ -788,8 +788,8 @@ lbl_8005744C:
 /* 80057480 000533A0  38 21 00 20 */	addi r1, r1, 0x20
 /* 80057484 000533A4  7C 08 03 A6 */	mtlr r0
 /* 80057488 000533A8  4E 80 00 20 */	blr
-.global func_8005748C
-func_8005748C:
+.global effect_bird_kite_main
+effect_bird_kite_main:
 /* 8005748C 000533AC  7C 08 02 A6 */	mflr r0
 /* 80057490 000533B0  90 01 00 04 */	stw r0, 4(r1)
 /* 80057494 000533B4  94 21 FF 98 */	stwu r1, -0x68(r1)
@@ -798,7 +798,7 @@ func_8005748C:
 /* 800574A0 000533C0  7C 7F 1B 78 */	mr r31, r3
 /* 800574A4 000533C4  93 C1 00 58 */	stw r30, 0x58(r1)
 /* 800574A8 000533C8  A8 03 00 0A */	lha r0, 0xa(r3)
-/* 800574AC 000533CC  80 8D 9D 38 */	lwz r4, currentBallStructPtr@sda21(r13)
+/* 800574AC 000533CC  80 8D 9D 38 */	lwz r4, currentBall@sda21(r13)
 /* 800574B0 000533D0  2C 00 00 01 */	cmpwi r0, 1
 /* 800574B4 000533D4  41 82 02 00 */	beq lbl_800576B4
 /* 800574B8 000533D8  40 80 01 FC */	bge lbl_800576B4
@@ -806,7 +806,7 @@ func_8005748C:
 /* 800574C0 000533E0  40 80 00 08 */	bge lbl_800574C8
 /* 800574C4 000533E4  48 00 01 F0 */	b lbl_800576B4
 lbl_800574C8:
-/* 800574C8 000533E8  80 8D 9A 5C */	lwz r4, currentCameraStructPtr@sda21(r13)
+/* 800574C8 000533E8  80 8D 9A 5C */	lwz r4, currentCamera@sda21(r13)
 /* 800574CC 000533EC  38 61 00 0C */	addi r3, r1, 0xc
 /* 800574D0 000533F0  C0 3F 00 34 */	lfs f1, 0x34(r31)
 /* 800574D4 000533F4  C0 44 00 00 */	lfs f2, 0(r4)
@@ -1074,8 +1074,8 @@ lbl_800577B4:
 /* 800578C8 000537E8  7C 08 03 A6 */	mtlr r0
 /* 800578CC 000537EC  4E 80 00 20 */	blr
 
-.global func_800578D0
-func_800578D0:
+.global effect_bird_kite_draw
+effect_bird_kite_draw:
 /* 800578D0 000537F0  7C 08 02 A6 */	mflr r0
 /* 800578D4 000537F4  90 01 00 04 */	stw r0, 4(r1)
 /* 800578D8 000537F8  94 21 FF E8 */	stwu r1, -0x18(r1)
@@ -1084,7 +1084,7 @@ func_800578D0:
 /* 800578E4 00053804  80 03 00 30 */	lwz r0, 0x30(r3)
 /* 800578E8 00053808  28 00 00 00 */	cmplwi r0, 0
 /* 800578EC 0005380C  41 82 00 34 */	beq lbl_80057920
-/* 800578F0 00053810  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800578F0 00053810  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800578F4 00053814  4B FA FF BD */	bl mathutil_mtxA_from_mtx
 /* 800578F8 00053818  38 7F 00 34 */	addi r3, r31, 0x34
 /* 800578FC 0005381C  4B FB 04 25 */	bl mathutil_mtxA_translate
@@ -1102,8 +1102,8 @@ lbl_80057920:
 /* 80057928 00053848  38 21 00 18 */	addi r1, r1, 0x18
 /* 8005792C 0005384C  7C 08 03 A6 */	mtlr r0
 /* 80057930 00053850  4E 80 00 20 */	blr
-.global func_80057934
-func_80057934:
+.global effect_bird_kite_destroy
+effect_bird_kite_destroy:
 /* 80057934 00053854  38 00 00 00 */	li r0, 0
 /* 80057938 00053858  90 03 00 30 */	stw r0, 0x30(r3)
 /* 8005793C 0005385C  4E 80 00 20 */	blr

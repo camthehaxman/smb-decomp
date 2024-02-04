@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dolphin.h>
+#include <ppcintrinsic.h>
 
 #include "global.h"
 #include "ball.h"
@@ -58,7 +59,7 @@ void (*apeDummyFuncs[])(struct Ape *) =
 };
 
 // bss
-static Mtx lbl_802B39C0;
+static Mtx workMatrix;
 static u32 uselessArray[0x20];
 static struct Ape apeStructs[16];
 static struct Ape *apeStructPtrs[16];
@@ -74,11 +75,11 @@ u32 lbl_802B47C0[4];
 struct TPL *lbl_802B47D0[4];
 GXTexObj *lbl_802B47E0[4];
 struct GMAShape *lbl_802B47F0[4];
-struct GMATevLayer *lbl_802B4800[8];
+struct GMATevLayer *u_apeMaterials[8];
 Mtx lbl_802B4820;
 Mtx lbl_802B4850[15];
 u8 unused802B4B20[0x2D0];
-GXTexObj *lbl_802B4DF0[8];
+GXTexObj *u_apeTextures[8];
 
 u32 *motLabel;
 s32 u_motAnimCount;
@@ -142,7 +143,7 @@ void load_character_resources(void)
     lbl_802F2090 = 1;
     if (work == NULL)
         OSPanic("mot_ape.c", 230, "cannot OSAlloc\n");
-    if (gamePauseStatus & (1 << 2))
+    if (debugFlags & (1 << 2))
         printf(" ===== Character Model Information =====\n");
 
     for (i = 0; i < 4; i++)
@@ -227,7 +228,7 @@ void load_character_resources(void)
                 ;
             file_close(&file);
 
-            if (gamePauseStatus & (1 << 2))
+            if (debugFlags & (1 << 2))
                 printf("%s : Polygon[ %x ] Texture[ %x ]\n",
                     charaNames[index], charaGmaSizes[index], charaTplSizes[index]);
         }
@@ -265,7 +266,7 @@ void load_character_resources(void)
             while (transferInProgress != 0)
                 ;
             file_close(&file);
-            if (gamePauseStatus & (1 << 2))
+            if (debugFlags & (1 << 2))
                 printf("change texture load. %s [ %x ]\n",
                     sp8[i], lbl_802B47B0[i]);
         }
@@ -277,9 +278,9 @@ void load_character_resources(void)
         lbl_802B47D0[i] = NULL;
     }
     DVDChangeDir("..");
-    if (gamePauseStatus & (1 << 2))
+    if (debugFlags & (1 << 2))
         printf("   Use ARAM Memory top : %x\n", aramTop);
-    if (gamePauseStatus & (1 << 2))
+    if (debugFlags & (1 << 2))
         printf(" =======================================\n");
     OSFree(work);
     OSSetCurrentHeap(oldHeap);
@@ -676,7 +677,7 @@ void func_8008A55C(u32 a, struct Struct802B39C0_B0_child *b, int c, int d)
     int r8;
 
     b->unk4 += b->unk10;
-    if (__fabs(b->unk10) < lbl_802F56D8)
+    if (fabs(b->unk10) < lbl_802F56D8)
         r8 = dummy = b->unkC != NULL;
     else if (b->unk10 < 0.0f)
         r8 = dummy = b->unk4 < b->unk8;
@@ -876,7 +877,7 @@ void *u_find_some_mesh_with_red(struct GMAModel *model)
     return NULL;
 }
 
-void u_load_character_graphics(int chara, int lod)
+void u_load_character_graphics(enum Character chara, int lod)
 {
     OSHeapHandle oldHeap;
     int index = chara * 2;
@@ -932,15 +933,15 @@ void u_load_character_graphics(int chara, int lod)
             model = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[i]].model;
             lbl_802B47F0[lod * 2 + i] = u_find_some_mesh_with_red(model);
         }
-        lbl_802B4800[index + 0] = NULL;
-        lbl_802B4800[index + 1] = NULL;
+        u_apeMaterials[index + 0] = NULL;
+        u_apeMaterials[index + 1] = NULL;
     }
     else
     {
         struct GMAModel *model1 = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[0]].model;
         struct GMAModel *model2 = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[1]].model;
 
-        func_8008CBD0(chara, lod, model1, model2);
+        u_init_ape_materials(chara, lod, model1, model2);
     }
 }
 
@@ -995,7 +996,7 @@ void mot_ape_init(void)
     mathutil_mtxA_to_mtx(lbl_802B4820);
     mathutil_mtxA_pop();
     func_8008B0AC();
-    load_nlobj(&apeFaceObj, &apeFaceTpl, "ape/face_p.lz", "ape/face.lz");
+    nlObjModelListLoad(&apeFaceObj, &apeFaceTpl, "ape/face_p.lz", "ape/face.lz");
 }
 
 void func_8008B0AC(void)
@@ -1033,9 +1034,9 @@ void func_8008B0AC(void)
     }
 }
 
-void u_ape_free(struct Ape *ape)
+void new_ape_close(struct Ape *ape)
 {
-    func_8008D29C(ape->unk5C);
+    thread_kill(ape->unk5C);
 #ifndef TARGET_PC
     if (lbl_802F2074 == 2)
     {
@@ -1201,7 +1202,7 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 
     ape->unkB8 = lbl_8008A10C;
     ape->unkBC = lbl_8008A108;
-    ape->unk5C = func_8008D1DC(func_8008C924, ape, 7);
+    ape->unk5C = thread_unknown(func_8008C924, ape, 7);
     nextApeIndex++;
     return ape;
 }
@@ -1222,7 +1223,7 @@ struct MotInfo2
 float force_lbl_802F56D4() { return 60.0f; }
 const double lbl_802F56D8 = 0.0000000099999999392252903;
 
-struct Ape *u_make_ape(int charaId)
+struct Ape *u_make_ape(enum Character charaId)
 {
     struct Ape *ape;
     struct AnimJoint *r5;
@@ -1303,7 +1304,7 @@ void func_8008BAA8(int *a, int *b)
 }
 #pragma force_active reset
 
-void u_set_ape_anim(struct Ape *ape, int b, int c, int d, float speed)
+void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
 {
 #ifndef TARGET_PC
     struct MotInfo *r30;
@@ -1451,7 +1452,7 @@ void func_8008BFDC(struct Ape *ape, u16 b, u16 c)
     struct AnimJoint *r30 = ape->unk0->joints;
     Mtx sp10;
 
-    if ((gamePauseStatus & 0xA) || (ape->flags & (1 << 3)))
+    if ((debugFlags & 0xA) || (ape->flags & (1 << 3)))
         return;
     r31 = &r30[5];
     mathutil_mtxA_from_mtx(r30[1].transformMtx);
@@ -1466,7 +1467,7 @@ void func_8008BFDC(struct Ape *ape, u16 b, u16 c)
 }
 
 // something related to animation of the head
-void func_8008C090(struct Ape *ape, Vec *b)
+void ape_face_dir(struct Ape *ape, Vec *b)
 {
 #ifndef TARGET_PC
     struct AnimJoint *r27 = ape->unk0->joints;
@@ -1478,14 +1479,14 @@ void func_8008C090(struct Ape *ape, Vec *b)
     Vec sp20;
     Quaternion sp10;
 
-    if ((gamePauseStatus & 0xA) || (ape->flags & (1 << 3)))
+    if ((debugFlags & 0xA) || (ape->flags & (1 << 3)))
         return;
     if (!(ape->unk1C->unkC & 1) && (ape->flags & (1 << 6)))
         return;
 
     r27++;
     mathutil_mtxA_from_quat(&ape->unk60);
-    mathutil_mtxA_to_mtx(lbl_802B39C0);
+    mathutil_mtxA_to_mtx(workMatrix);
     mathutil_mtxA_mult_right(r27->transformMtx);
     if (ape->charaId == 2 && (ape->flags & (1 << 22)))
         mathutil_mtxA_rotate_z(-5461);
@@ -1504,7 +1505,7 @@ void func_8008C090(struct Ape *ape, Vec *b)
     if (r3 || r27_)
     {
         mathutil_mtxA_push();
-        mathutil_mtxA_from_mtx(lbl_802B39C0);
+        mathutil_mtxA_from_mtx(workMatrix);
         mathutil_mtxA_mult_right(r30->transformMtx);
         mathutil_mtxA_tf_vec_xyz(&sp2C, 1.0f, 0.0f, 0.0f);
         mathutil_mtxA_pop();
@@ -1542,7 +1543,7 @@ void func_8008C090(struct Ape *ape, Vec *b)
     }
     mathutil_vec_normalize_len(&ape->unkA0);
     mathutil_mtxA_tf_vec(&ape->unkA0, &sp2C);
-    mathutil_mtxA_from_mtx(lbl_802B39C0);
+    mathutil_mtxA_from_mtx(workMatrix);
     mathutil_mtxA_mult_right(r30->transformMtx);
     mathutil_mtxA_rigid_inv_tf_vec(&sp2C, &sp2C);
     sp20.x = 1.0f;
@@ -1571,18 +1572,18 @@ void func_8008C408(struct Ape *ape, Vec *b)
     mathutil_mtxA_to_quat(&ape->unk60);
 }
 
-void func_8008C4A0(float a)
+void u_mot_ape_set_some_var(float a)
 {
     lbl_802F2078 = a;
 }
 
-void u_do_ape_anim(struct Ape *ape)
+void new_ape_calc(struct Ape *ape)
 {
 #ifndef TARGET_PC
     struct Struct8003699C_child *r31 = ape->unk0;
     struct Struct8003699C_child *r29;
 
-    if ((gamePauseStatus & 0xA) || (ape->flags & (1 << 3)))
+    if ((debugFlags & 0xA) || (ape->flags & (1 << 3)))
         return;
 
     ape->unk18--;
@@ -1697,7 +1698,7 @@ void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
     }
 
     model = charaGMAs[index]->modelEntries[r27->unk1C[ape->unk90 & 1]].model;
-    func_8008CCB8(ape, model);
+    u_init_ape_materials_maybe_with_colors(ape, model);
     avdisp_draw_model_unculled_sort_none(model);  // Draw body, limbs, and hair
 }
 
@@ -1719,9 +1720,9 @@ void func_8008C924(struct Ape *ape, int b)
 
     if (r3)
         return;
-    if (ape->unkC1 & (1 << currentCameraStructPtr->unk204))
+    if (ape->unkC1 & (1 << currentCamera->unk204))
         return;
-    if ((lbl_801EEC90.unk0 & (1 << 2)) && func_8000E4D0(&ape->unk30) < 0.0f)
+    if ((polyDisp.unk0 & (1 << 2)) && get_height_world_mirror_plane(&ape->unk30) < 0.0f)
         return;
 
     if (ape->flags & (1 << 20))
@@ -1729,7 +1730,7 @@ void func_8008C924(struct Ape *ape, int b)
         struct Struct8008C924 *node;
         struct OrdTblNode *entry;
 
-        if (ballInfo[ape->ballId].unk15C[currentCameraStructPtr->unk204] < 1.1920928955078125e-07f)
+        if (ballInfo[ape->ballId].unk15C[currentCamera->unk204] < 1.1920928955078125e-07f)
             return;
         mathutil_mtxA_from_mtxB();
         entry = ord_tbl_get_entry_for_pos(&ape->unk30);
@@ -1737,7 +1738,7 @@ void func_8008C924(struct Ape *ape, int b)
         node->node.drawFunc = (OrdTblDrawFunc)lbl_8008CA80;
         node->unk8 = peek_light_group();
         node->ape = ape;
-        node->unk10 = ballInfo[ape->ballId].unk15C[currentCameraStructPtr->unk204];
+        node->unk10 = ballInfo[ape->ballId].unk15C[currentCamera->unk204];
         ord_tbl_insert_node(entry, &node->node);
     }
     else
@@ -1763,15 +1764,15 @@ void func_8008CAAC(struct Ape *ape, float b)
 
     mathutil_mtxA_push();
     mathutil_mtxA_from_quat(&ape->unk60);
-    mathutil_mtxA_to_mtx(lbl_802B39C0);
+    mathutil_mtxA_to_mtx(workMatrix);
     mathutil_mtxA_pop();
 
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_translate(&ape->unk30);
     mathutil_mtxA_scale_xyz(ape->modelScale, ape->modelScale, ape->modelScale);
-    nl2ngc_set_scale(ape->modelScale);
+    nlSetScaleFactor(ape->modelScale);
     mathutil_mtxA_translate(&ape->unk3C);
-    mathutil_mtxA_mult_right(lbl_802B39C0);
+    mathutil_mtxA_mult_right(workMatrix);
     sp10.x = ape->unk0->joints[0].transformMtx[0][3];
     sp10.y = ape->unk0->joints[0].transformMtx[1][3];
     sp10.z = ape->unk0->joints[0].transformMtx[2][3];
@@ -1780,7 +1781,7 @@ void func_8008CAAC(struct Ape *ape, float b)
         apeDummyFuncs[r30](ape);
         u_draw_ape_transformed(ape, r29);
     }
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 u16 lbl_801C7D80[] = { 9, 1, 3, 2 };
@@ -1821,7 +1822,7 @@ struct GMATevLayer *find_material(struct GMAModel *model, u32 id)
 
 FORCE_BSS_ORDER(unused802B4B20)
 
-void func_8008CBD0(int charaId, int lod, struct GMAModel *model1, struct GMAModel *model2)
+void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *model1, struct GMAModel *model2)
 {
     int i;
     struct GMAModel *models[2];
@@ -1834,24 +1835,24 @@ void func_8008CBD0(int charaId, int lod, struct GMAModel *model1, struct GMAMode
     {
         struct GMATevLayer *mtrl = find_material(models[i], lbl_801C7DB0[var + lod][0]);
 
-        lbl_802B4DF0[var + i] = mtrl->texObj;
-        lbl_802B4800[var + i] = mtrl;
+        u_apeTextures[var + i] = mtrl->texObj;
+        u_apeMaterials[var + i] = mtrl;
     }
 }
 
-void func_8008CCB8(struct Ape *ape, struct GMAModel *unused)
+void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused)
 {
     u32 index = (ape->charaId * 2) + (ape->unk90 & 1);
 
-    if (lbl_802B4800[index] != NULL)
+    if (u_apeMaterials[index] != NULL)
     {
-        struct GMATevLayer *mtrl = lbl_802B4800[index];
+        struct GMATevLayer *mtrl = u_apeMaterials[index];
         u16 *r7 = lbl_801C7DB0[(ape->charaId * 2) + (ape->unk90 >> 1)];
 
         if (ape->colorId != 0)
             mtrl->texObj = &lbl_802B47E0[ape->charaId][r7[ape->colorId]];
         else
-            mtrl->texObj = lbl_802B4DF0[index];
+            mtrl->texObj = u_apeTextures[index];
         mtrl->flags |= (1 << 16);
     }
     else

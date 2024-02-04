@@ -5,6 +5,7 @@
 
 #include "global.h"
 #include "ball.h"
+#include "effect.h"
 #include "gma.h"
 #include "info.h"
 #include "light.h"
@@ -13,6 +14,7 @@
 #include "nl2ngc.h"
 #include "pool.h"
 #include "recplay.h"
+#include "sound.h"
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
@@ -544,10 +546,10 @@ void stobj_goaltape_draw(struct Stobj *stobj)
         }
     }
     apply_curr_light_group_ambient();
-    nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
-    temp_r5 = lbl_80250A68.unk14;
+    nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
+    temp_r5 = replayInfo.unk14;
     if (g_poolInfo.playerPool.statusList[temp_r5] == 2 && (ballInfo[temp_r5].flags & 0x01000000))
-        time = (100.0 * func_80049E7C(lbl_80250A68.unk0[temp_r5], lbl_80250A68.unk10)) / 60.0;
+        time = (100.0 * func_80049E7C(replayInfo.unk0[temp_r5], replayInfo.unk10)) / 60.0;
     else
     {
         temp_r0 = infoWork.timerCurr * 0x64;
@@ -594,7 +596,7 @@ void stobj_goaltape_draw(struct Stobj *stobj)
     time /= 10;
     nl2ngc_draw_model_sort_translucent_alt2(largeLCDModels[digit]);
 
-    u_reset_post_mult_color();
+    fade_color_base_default();
 }
 
 void stobj_goaltape_coli(struct Stobj *stobj, struct PhysicsBall *ball)
@@ -630,13 +632,13 @@ void stobj_goaltape_coli(struct Stobj *stobj, struct PhysicsBall *ball)
         if (var_r29->unk28 & 1)
             continue;
         sp4C.x = var_r29->unk0.x - sp58.x;
-        if (__fabs(sp4C.x) > radius)
+        if (fabs(sp4C.x) > radius)
             continue;
         sp4C.z = var_r29->unk0.z - sp58.z;
-        if (__fabs(sp4C.z) > radius)
+        if (fabs(sp4C.z) > radius)
             continue;
         sp4C.y = var_r29->unk0.y - sp58.y;
-        if (__fabs(sp4C.y) > radius)
+        if (fabs(sp4C.y) > radius)
             continue;
         if (mathutil_vec_sq_len(&sp4C) > radiusSq)
             continue;
@@ -976,7 +978,7 @@ void stobj_goalbag_main(struct Stobj *stobj)
         mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].transform);
         mathutil_mtxA_tf_point(&sp48, &sp48);
     }
-    func_800390C8(5, &sp48, 1.0f);
+    set_ball_target(5, &sp48, 1.0f);
 }
 
 void stobj_goalbag_draw(struct Stobj *stobj)
@@ -1141,12 +1143,12 @@ void stobj_goalbag_coli(struct Stobj *stobj, struct PhysicsBall *ball)
     }
     if (var_f26 > 0.1f)
     {
-        struct Effect sp34;
+        struct Effect effect;
         Vec sp28 = lbl_80117A70;
         Vec sp1C;
         Vec sp10;
         int var_r30;
-        int var_r29;
+        int i;
         int temp_r28;
         float temp_f6;
         float var_f24;
@@ -1164,13 +1166,13 @@ void stobj_goalbag_coli(struct Stobj *stobj, struct PhysicsBall *ball)
         spF8.x = 0.25f * (sp104.x + spEC.x);
         spF8.y = 0.25f * (sp104.y + spEC.y);
         spF8.z = 0.25f * (sp104.z + spEC.z);
-        memset(&sp34, 0, sizeof(sp34));
+        memset(&effect, 0, sizeof(effect));
         var_f24 = 0.1f;
-        sp34.unk14 = currentBallStructPtr->playerId;
-        for (var_r29 = 2; var_r29 > 0; var_r29--)
+        effect.playerId = currentBall->playerId;
+        for (i = 2; i > 0; i--)
         {
             var_r30 = 16.0f + (16.0f * var_f26);
-            sp34.unk8 = 19;
+            effect.type = ET_COLISTAR_PARTICLE;
             if (var_r30 > 32)
                 var_r30 = 32;
             temp_r28 = 65536.0f / var_r30;
@@ -1181,18 +1183,18 @@ void stobj_goalbag_coli(struct Stobj *stobj, struct PhysicsBall *ball)
             {
                 mathutil_mtxA_rotate_y(temp_r28);
                 mathutil_mtxA_tf_vec(&sp28, &sp1C);
-                sp34.unk34.x = sp10.x + (temp_f25 * sp1C.x);
-                sp34.unk34.y = sp10.y + (temp_f25 * sp1C.y);
-                sp34.unk34.z = sp10.z + (temp_f25 * sp1C.z);
+                effect.pos.x = sp10.x + (temp_f25 * sp1C.x);
+                effect.pos.y = sp10.y + (temp_f25 * sp1C.y);
+                effect.pos.z = sp10.z + (temp_f25 * sp1C.z);
                 temp_f6 = var_f24 + 0.02f * RAND_FLOAT();
-                sp34.unk40.x = spF8.x + (temp_f6 * sp1C.x);
-                sp34.unk40.y = spF8.y + (temp_f6 * sp1C.y);
-                sp34.unk40.z = spF8.z + (temp_f6 * sp1C.z);
-                spawn_effect(&sp34);
+                effect.vel.x = spF8.x + (temp_f6 * sp1C.x);
+                effect.vel.y = spF8.y + (temp_f6 * sp1C.y);
+                effect.vel.z = spF8.z + (temp_f6 * sp1C.z);
+                spawn_effect(&effect);
                 var_r30--;
             }
             var_r30 = 12.0f + (12.0f * var_f26);
-            sp34.unk8 = 2;
+            effect.type = ET_COLI_PARTICLE;
             if (var_r30 > 24)
                 var_r30 = 24;
             temp_r28 = 65536.0f / var_r30;
@@ -1200,14 +1202,14 @@ void stobj_goalbag_coli(struct Stobj *stobj, struct PhysicsBall *ball)
             {
                 mathutil_mtxA_rotate_y(temp_r28);
                 mathutil_mtxA_tf_vec(&sp28, &sp1C);
-                sp34.unk34.x = sp10.x + (temp_f25 * sp1C.x);
-                sp34.unk34.y = sp10.y + (temp_f25 * sp1C.y);
-                sp34.unk34.z = sp10.z + (temp_f25 * sp1C.z);
+                effect.pos.x = sp10.x + (temp_f25 * sp1C.x);
+                effect.pos.y = sp10.y + (temp_f25 * sp1C.y);
+                effect.pos.z = sp10.z + (temp_f25 * sp1C.z);
                 temp_f6 = var_f24 + 0.02f * RAND_FLOAT();
-                sp34.unk40.x = spF8.x + (temp_f6 * sp1C.x);
-                sp34.unk40.y = spF8.y + (temp_f6 * sp1C.y);
-                sp34.unk40.z = spF8.z + (temp_f6 * sp1C.z);
-                spawn_effect(&sp34);
+                effect.vel.x = spF8.x + (temp_f6 * sp1C.x);
+                effect.vel.y = spF8.y + (temp_f6 * sp1C.y);
+                effect.vel.z = spF8.z + (temp_f6 * sp1C.z);
+                spawn_effect(&effect);
                 var_r30--;
             }
             var_f24 *= 0.5f;
@@ -1343,7 +1345,7 @@ void func_8006F5F0(int arg0)
 
 static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
 {
-    struct Effect sp34;
+    struct Effect effect;
     Point3d sp28;
     Point3d sp1C;
     Point3d sp10;
@@ -1351,7 +1353,7 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
     int confettiCount;
     struct GoalBag *bag;
     struct Stobj *stobj;
-    u16 temp_r30;
+    u16 cameraMask;
 
     if (goalId < 8)
     {
@@ -1369,21 +1371,21 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
             stobj->u_local_vel.x += 0.5 * arg1->vel.x;
             stobj->u_local_vel.y += 0.5 * arg1->vel.y;
             stobj->u_local_vel.z += 0.5 * arg1->vel.z;
-            u_play_sound(0x16);
-            u_play_sound(0x127);
+            u_play_sound_0(0x16);
+            u_play_sound_0(0x127);
             if (bag->unk24 < 0)
                 bag->unk24 = infoWork.timerCurr;
-            temp_r30 = 1 << currentBallStructPtr->playerId;
-            memset(&sp34, 0, sizeof(sp34));
-            sp34.unk8 = 0;
+            cameraMask = 1 << currentBall->playerId;
+            memset(&effect, 0, sizeof(effect));
+            effect.type = ET_PAPERFRAG;
             mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].transform);
-            mathutil_mtxA_tf_vec(&arg1->vel, &sp34.unk40);
+            mathutil_mtxA_tf_vec(&arg1->vel, &effect.vel);
             mathutil_mtxA_tf_point(&stobj->position, &sp1C);
             mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].prevTransform);
             mathutil_mtxA_tf_point(&stobj->position_2, &sp10);
-            sp34.unk40.x += sp1C.x - sp10.x;
-            sp34.unk40.y += sp1C.y - sp10.y;
-            sp34.unk40.z += sp1C.z - sp10.z;
+            effect.vel.x += sp1C.x - sp10.x;
+            effect.vel.y += sp1C.y - sp10.y;
+            effect.vel.z += sp1C.z - sp10.z;
             temp_f27 = stobj->model->boundSphereRadius - commonGma->modelEntries[PAPER_PIECE_DEEPGREEN].model->boundSphereRadius;
             mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].transform);
             mathutil_mtxA_translate(&stobj->position);
@@ -1416,15 +1418,15 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
                 sp28.z = 0.5 * (temp_f27 * (1.0 + RAND_FLOAT()));
                 mathutil_mtxA_rotate_y(rand() & 0x7FFF);
                 mathutil_mtxA_rotate_x(rand() & 0x7FFF);
-                mathutil_mtxA_tf_point(&sp28, &sp34.unk34);
-                sp34.unk4C = rand() & 0x7FFF;
-                sp34.unk4E = rand() & 0x7FFF;
-                sp34.unk50 = rand() & 0x7FFF;
+                mathutil_mtxA_tf_point(&sp28, &effect.pos);
+                effect.rotX = rand() & 0x7FFF;
+                effect.rotY = rand() & 0x7FFF;
+                effect.rotZ = rand() & 0x7FFF;
                 if (confettiCount & 1)
-                    sp34.unk16 = temp_r30;
+                    effect.cameras = cameraMask;
                 else
-                    sp34.unk16 = 0;
-                spawn_effect(&sp34);
+                    effect.cameras = 0;
+                spawn_effect(&effect);
                 confettiCount--;
             }
         }

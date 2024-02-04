@@ -39,12 +39,12 @@ struct Struct8020AE20
     s16 unk2;
 };
 
-static struct Struct8020AE20 lbl_8020AE20[8];
+static struct Struct8020AE20 recSys[8];
 static struct BuiltinReplay s_builtinReplays[11];
 static u32 s_dummyVar;
 static s32 s_builtinReplayFilesCount;
 static char **s_builtinReplayFileNames;
-static s32 lbl_802F1F74;
+static s32 delayStopCounter;
 static u32 s_totalSize = sizeof(s_builtinReplays);
 
 static struct
@@ -54,8 +54,8 @@ static struct
 } lbl_802F1F78;
 
 void func_8004A820(void);
-void func_8004A874(void);
-void func_8004AA18(void);
+void end_grading_play(void);
+void grading_play(void);
 float func_8004ABD8(void);
 void func_8004ABE4(void);
 void func_8004AC68(struct BuiltinReplay *);
@@ -114,14 +114,14 @@ void recplay_init(void)
         }
         func_8004ABE4();
 
-        lbl_8020AE20[0].unk0 = 0;
-        lbl_8020AE20[0].unk2 = 0;
-        lbl_8020AE20[1].unk0 = 0;
-        lbl_8020AE20[1].unk2 = 0;
-        lbl_8020AE20[2].unk0 = 0;
-        lbl_8020AE20[2].unk2 = 0;
-        lbl_8020AE20[3].unk0 = 0;
-        lbl_8020AE20[3].unk2 = 0;
+        recSys[0].unk0 = 0;
+        recSys[0].unk2 = 0;
+        recSys[1].unk0 = 0;
+        recSys[1].unk2 = 0;
+        recSys[2].unk0 = 0;
+        recSys[2].unk2 = 0;
+        recSys[3].unk0 = 0;
+        recSys[3].unk2 = 0;
 
         if (DVDOpenDir("recdata", &dir) != 0)
         {
@@ -215,7 +215,7 @@ void u_load_random_builtin_replay(void)
         temp_r30->header.unkC *= 0.92f;
 }
 
-void func_80048BD4(void)
+void recplay_init_first(void)
 {
     int i;
     struct BuiltinReplay *replay;
@@ -228,36 +228,37 @@ void func_80048BD4(void)
         if (!(dipSwitches & DIP_DEBUG))
             replay->header.unkC *= 0.92f;
     }
-    dummy_8004AFD0();
+    cmp_recplay_init_first();
 }
 
 void ev_recplay_init(void)
 {
-    lbl_802F1F74 = 0;
+    delayStopCounter = 0;
     dummy_8004AFD4();
 }
 
-#ifdef NONMATCHING
 void ev_recplay_main(void)
 {
     struct Ball *ball;
     int i;
     struct Struct8020AE20 *var_r28;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
-    if (lbl_802F1F74 > 0)
+    if (delayStopCounter > 0)
     {
-        lbl_802F1F74--;
-        if (lbl_802F1F74 == 0)
-            func_80049158();
+        delayStopCounter--;
+        if (delayStopCounter == 0)
+            stop_recplay();
     }
 
-    var_r28 = lbl_8020AE20;
+    var_r28 = recSys;
     ball = ballInfo;
     for (i = 4; i > 0; i--, var_r28++, ball++)
     {
+        modeCtrl.gameType;  // needed to match
+
         if ((s16)(int)var_r28->unk2 != 0)
         {
             struct BuiltinReplay *replay;
@@ -280,38 +281,30 @@ void ev_recplay_main(void)
             temp_r5->unk1C = ball->unk130;
 
             temp_r7 = &replay->worldFrames[var_r6];
-            temp_r7->rotX = currentWorldStructPtr->xrot;
-            temp_r7->rotZ = currentWorldStructPtr->zrot;
+            temp_r7->rotX = currentWorld->xrot;
+            temp_r7->rotZ = currentWorld->zrot;
 
             replay->unk1A++;
-            replay->unk30 = lbl_80206DEC.unk0;
+            replay->unk30 = stageInfo.unk0;
             if (++var_r6 > 0x2CF)
                 var_r6 -= 0x2D0;
             replay->unk34 = var_r6;
             if (replay->unk36 < 0x2D0)
                 replay->unk36++;
-            func_8004AA18();
+            grading_play();
         }
     }
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL
      || modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
         u_serialize_some_replay_data();
 }
-#else
-asm void ev_recplay_main(void)
-{
-    nofralloc
-#include "../asm/nonmatchings/ev_recplay_main.s"
-}
-#pragma peephole on
-#endif
 
 void ev_recplay_dest(void)
 {
-    if (lbl_802F1F74 > 0)
+    if (delayStopCounter > 0)
     {
-        func_80049158();
-        lbl_802F1F74 = 0;
+        stop_recplay();
+        delayStopCounter = 0;
     }
     func_8004B334();
 }
@@ -354,15 +347,15 @@ void func_80048F20(void)
     struct Struct8020AE20 *ptr;
     int i;
 
-    func_80049158();
-    ptr = lbl_8020AE20;
+    stop_recplay();
+    ptr = recSys;
     for (i = 0; i < 4; i++, ptr++)
         ptr->unk0 = -1;
 }
 
 void func_80048F58(int arg0, int arg1)
 {
-    lbl_8020AE20[arg0].unk0 = arg1;
+    recSys[arg0].unk0 = arg1;
 }
 
 void func_80048F74(void)
@@ -372,7 +365,7 @@ void func_80048F74(void)
     struct Struct8020AE20 *var_r19;
     int isPractice = (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE);
 
-    var_r19 = lbl_8020AE20;
+    var_r19 = recSys;
     for (i = 4; i > 0; i--, var_r19++)
     {
         if (var_r19->unk0 >= 0)
@@ -398,7 +391,7 @@ void func_80048F74(void)
             }
             replay->header.character = playerCharacterSelection[4 - i];
             replay->header.playerName[0] = 0;
-            replay->unk30 = lbl_80206DEC.unk0;
+            replay->unk30 = stageInfo.unk0;
             if (infoWork.flags & INFO_FLAG_BONUS_STAGE)
                 replay->header.flags |= REPLAY_FLAG_BONUS_STAGE;
             if (!isPractice)
@@ -425,15 +418,15 @@ void func_80048F74(void)
         func_8004B354();
 }
 
-void func_80049158(void)
+void stop_recplay(void)
 {
-    int var_r29;
+    int i;
     struct Struct8020AE20 *var_r28;
     struct BuiltinReplay *replay;
 
-    lbl_802F1F74 = 0;
-    var_r28 = lbl_8020AE20;
-    for (var_r29 = 4; var_r29 > 0; var_r29--, var_r28++)
+    delayStopCounter = 0;
+    var_r28 = recSys;
+    for (i = 4; i > 0; i--, var_r28++)
     {
         if (var_r28->unk0 >= 0)
         {
@@ -444,7 +437,7 @@ void func_80049158(void)
                     replay->header.flags |= REPLAY_FLAG_4;
                 else
                     replay->header.flags &= ~REPLAY_FLAG_4;
-                func_8004A874();
+                end_grading_play();
                 replay->header.unkC = func_8004ABD8();
             }
             var_r28->unk2 = 0;
@@ -458,9 +451,9 @@ void func_80049158(void)
 
 void func_8004923C(int arg0)
 {
-    lbl_802F1F74 = arg0;
+    delayStopCounter = arg0;
     if (arg0 == 0)
-        func_80049158();
+        stop_recplay();
 }
 
 void func_80049268(int arg0)
@@ -468,7 +461,7 @@ void func_80049268(int arg0)
     struct Struct8020AE20 *temp_r3;
     struct BuiltinReplay *replay;
 
-    temp_r3 = &lbl_8020AE20[arg0];
+    temp_r3 = &recSys[arg0];
     if (temp_r3->unk2 == 1)
     {
         replay = &s_builtinReplays[temp_r3->unk0];
@@ -486,7 +479,7 @@ void func_800492FC(int arg0)
     struct Struct8020AE20 *temp_r3;
     struct BuiltinReplay *replay;
 
-    temp_r3 = &lbl_8020AE20[arg0];
+    temp_r3 = &recSys[arg0];
     if (temp_r3->unk2 == 1)
     {
         replay = &s_builtinReplays[temp_r3->unk0];
@@ -501,7 +494,7 @@ void func_80049368(int arg0)
     struct Struct8020AE20 *temp_r3;
     struct BuiltinReplay *replay;
 
-    temp_r3 = &lbl_8020AE20[arg0];
+    temp_r3 = &recSys[arg0];
     if (temp_r3->unk2 == 1)
     {
         replay = &s_builtinReplays[temp_r3->unk0];
@@ -515,7 +508,7 @@ void func_800493C4(int arg0)
     struct Struct8020AE20 *temp_r3;
     struct BuiltinReplay *replay;
 
-    temp_r3 = &lbl_8020AE20[arg0];
+    temp_r3 = &recSys[arg0];
     if (temp_r3->unk2 == 1)
     {
         replay = &s_builtinReplays[temp_r3->unk0];
@@ -624,7 +617,7 @@ void func_800496BC(int replayId, struct ReplayBallFrame *arg1, float arg2)
     Point3d sp18;
     u8 unused[4];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     if (replayId == 11)
     {
         func_8004B850(arg2, arg1);
@@ -712,7 +705,7 @@ void func_80049C1C(int replayId, struct ReplayWorldFrame *arg1, float arg2)
     struct World *world;
     u8 unused[4];
 
-    world = currentWorldStructPtr;
+    world = currentWorld;
     if (replayId == 11)
     {
         func_8004BFCC(arg2, arg1);
@@ -795,7 +788,7 @@ void get_replay_header(int replayId, struct ReplayHeader *header)
     *header = replay->header;
 }
 
-float func_80049F90(float arg0, int replayId)
+float get_recplay_stage_timer(float arg0, int replayId)
 {
     struct BuiltinReplay *replay;
 
@@ -808,7 +801,7 @@ float func_80049F90(float arg0, int replayId)
 #pragma force_active on
 void func_80049FF0(void)
 {
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     func_8002FFEC();
@@ -829,13 +822,13 @@ void func_80049FF0(void)
     event_start(EVENT_EFFECT);
     event_start(EVENT_REND_EFC);
     event_start(EVENT_BACKGROUND);
-    lbl_80250A68.unk14 = 0;
-    lbl_802F1F78.replayId = lbl_80250A68.unk0[lbl_80250A68.unk14];
+    replayInfo.unk14 = 0;
+    lbl_802F1F78.replayId = replayInfo.unk0[replayInfo.unk14];
     lbl_802F1F78.unk4 = 0;
 }
 #pragma force_active reset
 
-struct Struct80250A68 lbl_80250A68;
+struct Struct80250A68 replayInfo;
 
 static float func_8004A0C8_sub(int a)
 {
@@ -851,13 +844,13 @@ static float func_8004A0C8_sub(int a)
 #pragma force_active on
 void func_8004A0C8(void)
 {
-    struct Ball *currBall = currentBallStructPtr;
+    struct Ball *currBall = currentBall;
     struct BuiltinReplay *replay;
     int temp_r0_2;
     struct ReplayHeader header;
     u8 unused[0xC];
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     func_8002FFEC();
@@ -933,11 +926,11 @@ void func_8004A0C8(void)
                 float var_f1_4;
                 int temp_r0_7;
 
-                lbl_80250A68.unk0[lbl_80250A68.unk14] = lbl_802F1F78.replayId;
+                replayInfo.unk0[replayInfo.unk14] = lbl_802F1F78.replayId;
                 currStageId = header.stageId;
                 modeCtrl.difficulty = header.difficulty;
                 event_finish(EVENT_EFFECT);
-                func_80049514(lbl_80250A68.unk0[lbl_80250A68.unk14]);
+                func_80049514(replayInfo.unk0[replayInfo.unk14]);
                 infoWork.flags |= INFO_FLAG_REPLAY;
                 load_stage(currStageId);
                 event_finish(EVENT_STAGE);
@@ -957,11 +950,11 @@ void func_8004A0C8(void)
                 BALL_FOREACH( ball->state = 9; )
                 WORLD_FOREACH( world->state = 6; )
                 camera_set_state(0x2C);
-                lbl_80250A68.unk10 = func_8004A0C8_sub(lbl_80250A68.unk0[lbl_80250A68.unk14]);
-                var_f1_4 = lbl_80250A68.unk10;
-                temp_r0_7 = lbl_80250A68.unk0[lbl_80250A68.unk14];
+                replayInfo.unk10 = func_8004A0C8_sub(replayInfo.unk0[replayInfo.unk14]);
+                var_f1_4 = replayInfo.unk10;
+                temp_r0_7 = replayInfo.unk0[replayInfo.unk14];
                 if (temp_r0_7 == 11)
-                    var_f1_4 = func_8004C254(lbl_80250A68.unk10);
+                    var_f1_4 = func_8004C254(replayInfo.unk10);
                 else
                     var_f1_4 = s_builtinReplays[temp_r0_7].unk30 - var_f1_4;
                 animate_anim_groups(var_f1_4);
@@ -1021,27 +1014,27 @@ struct
     Vec unk4;
     Vec unk10;
     s32 unk1C;
-} lbl_80250A80;
+} _gpp;
 
 void func_8004A820(void)
 {
-    lbl_80250A80.unk0 = 0.0f;
-    lbl_80250A80.unk4 = currentBallStructPtr->pos;
-    lbl_80250A80.unk10 = currentBallStructPtr->vel;
-    lbl_80250A80.unk1C = 0;
+    _gpp.unk0 = 0.0f;
+    _gpp.unk4 = currentBall->pos;
+    _gpp.unk10 = currentBall->vel;
+    _gpp.unk1C = 0;
 }
 
-void func_8004A874(void)
+void end_grading_play(void)
 {
     float temp_f7;
     float f1;
     float var_f0;
     struct BuiltinReplay *replay;
 
-    replay = &s_builtinReplays[lbl_8020AE20[0].unk0];
-    temp_f7 = (float)lbl_80250A80.unk1C / (float)replay->unk1A;
+    replay = &s_builtinReplays[recSys[0].unk0];
+    temp_f7 = (float)_gpp.unk1C / (float)replay->unk1A;
     f1 = replay->unk1A + 1;
-    var_f0 = lbl_80250A80.unk0;
+    var_f0 = _gpp.unk0;
     var_f0 *= 1.0 / f1;
     if (replay->header.flags & REPLAY_FLAG_WIN)
     {
@@ -1059,11 +1052,11 @@ void func_8004A874(void)
     }
     if (replay->header.flags & REPLAY_FLAG_TIME_OVER)
         var_f0 *= 0.1;
-    lbl_80250A80.unk0 = var_f0;
+    _gpp.unk0 = var_f0;
 }
 
 #ifdef NONMATCHING
-void func_8004AA18(void)
+void grading_play(void)
 {
     Vec sp2C;
     Vec sp20;
@@ -1075,14 +1068,14 @@ void func_8004AA18(void)
     float temp_f1_3;
     struct Ball *ball;
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     sp2C = ball->pos;
-    sp20.x = ball->pos.x - lbl_80250A80.unk4.x;
-    sp20.y = ball->pos.y - lbl_80250A80.unk4.y;
-    sp20.z = ball->pos.z - lbl_80250A80.unk4.z;
+    sp20.x = ball->pos.x - _gpp.unk4.x;
+    sp20.y = ball->pos.y - _gpp.unk4.y;
+    sp20.z = ball->pos.z - _gpp.unk4.z;
     sp14 = sp20;
     temp_f30 = mathutil_vec_len(&sp14);
-    sp8 = lbl_80250A80.unk10;
+    sp8 = _gpp.unk10;
     f1 = mathutil_vec_len(&sp8);
     var_f31 += 2.0 * (temp_f30 - f1);
     temp_f1_3 = sp14.x * sp8.x + sp14.y * sp8.y + sp14.z * sp8.z;
@@ -1090,23 +1083,23 @@ void func_8004AA18(void)
     if (temp_f1_3 > 1.1920929e-7f)
         var_f31 += mathutil_sqrt(temp_f1_3) * 1.0;
     if (ball->flags & 1)
-        lbl_80250A80.unk1C++;
-    lbl_80250A80.unk0 += var_f31;
-    lbl_80250A80.unk4 = sp2C;
-    lbl_80250A80.unk10 = sp20;
+        _gpp.unk1C++;
+    _gpp.unk0 += var_f31;
+    _gpp.unk4 = sp2C;
+    _gpp.unk10 = sp20;
 }
 #else
-asm void func_8004AA18(void)
+asm void grading_play(void)
 {
     nofralloc
-#include "../asm/nonmatchings/func_8004AA18.s"
+#include "../asm/nonmatchings/grading_play.s"
 }
 #pragma peephole on
 #endif
 
 float func_8004ABD8(void)
 {
-    return lbl_80250A80.unk0;
+    return _gpp.unk0;
 }
 
 s8 lbl_80250AA0[3][61];
@@ -1208,3 +1201,34 @@ static int dummy_return_true(struct BuiltinReplay *unused)
 {
     return TRUE;
 }
+
+static u32 lbl_801B89A0[] =
+{
+    0x0002136E,
+    0x00076675,
+    0x00096776,
+    0,
+};
+
+static u32 lbl_801B89B0[] =
+{
+    0x00086877,
+    0x00094E78,
+    0x000B1B79,
+    0x000C697A,
+    0x000E6B7B,
+    0x00136D7C,
+    0x0017707D,
+    0x0018717E,
+    0x001A5F7F,
+    0,
+};
+
+static u32 lbl_802F0A04[] =
+{
+    0,
+};
+
+#pragma force_active on
+void *lbl_801B89D8[] = { lbl_801B89A0, lbl_801B89B0, lbl_802F0A04, NULL };
+#pragma force_active reset

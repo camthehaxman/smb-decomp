@@ -41,14 +41,14 @@ struct Struct8028FE58
 // .bss
 struct TextDrawInfo textDrawInfo;
 FORCE_BSS_ORDER(textDrawInfo)
-struct Sprite spriteInfo[MAX_SPRITES];
-FORCE_BSS_ORDER(spriteInfo)
+struct Sprite spriteWork[MAX_SPRITES];
+FORCE_BSS_ORDER(spriteWork)
 struct Struct8028FE58 lbl_8028FE58[0x42];
 FORCE_BSS_ORDER(lbl_8028FE58)
 struct ScreenFadeInfo screenFadeInfo;
 FORCE_BSS_ORDER(screenFadeInfo)
 
-u32 lbl_802F2000;
+u32 spriteClassMask;
 
 void ev_sprite_init(void)
 {
@@ -78,16 +78,16 @@ void ev_sprite_main(void)
     s8 *status;
     int i = 0;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
-    lbl_802F2000 = 0;
+    spriteClassMask = 0;
     status = g_poolInfo.spritePool.statusList;
-    sprite = spriteInfo;
+    sprite = spriteWork;
     for (i = 0; i < g_poolInfo.spritePool.count; i++, sprite++, status++)
     {
         if (*status != 0)
         {
-            lbl_802F2000 |= 1 << sprite->tag;
+            spriteClassMask |= 1 << sprite->tag;
             if (sprite->mainFunc != NULL)
                 sprite->mainFunc(status, sprite);
         }
@@ -101,7 +101,7 @@ void ev_sprite_dest(void)
     s8 *status;
     int i;
 
-    sprite = spriteInfo;
+    sprite = spriteWork;
     status = g_poolInfo.spritePool.statusList;
     for (i = 0; i < MAX_SPRITES; i++, sprite++, status++)
     {
@@ -114,7 +114,7 @@ void ev_sprite_dest(void)
     }
 
     g_poolInfo.spritePool.nextFree = 0;
-    lbl_802F2000 = 0;
+    spriteClassMask = 0;
     textbox_destroy_all();
 }
 
@@ -147,23 +147,23 @@ void func_800700D8(int a)
 
         if (*r11 == 0)
             continue;
-        if (viewStage && spriteInfo[i].tag != 100)
+        if (viewStage && spriteWork[i].tag != 100)
             continue;
         if (a == 0)
         {
-            if ((spriteInfo[i].flags & (1<<18)) == 0)
+            if ((spriteWork[i].flags & (1<<18)) == 0)
                 continue;
         }
         else
         {
-            if ((spriteInfo[i].flags & (1<<18)) != 0)
+            if ((spriteWork[i].flags & (1<<18)) != 0)
                 continue;
         }
-        if (spriteInfo[i].unk50 != NULL)
+        if (spriteWork[i].unk50 != NULL)
             continue;
 
         r10 = r5->unk8;
-        r8 = &spriteInfo[i];
+        r8 = &spriteWork[i];
         while (r10->unk0 != NULL)
         {
             if (r8->unk4C > r10->unk0->unk4C)
@@ -171,7 +171,7 @@ void func_800700D8(int a)
             r10 = r10->unk8;
         }
         r9 = &lbl_8028FE58[r12++];
-        r9->unk0 = &spriteInfo[i];
+        r9->unk0 = &spriteWork[i];
         r9->unk4 = r10->unk4;
         r9->unk8 = r10;
         r10->unk4->unk8 = r9;
@@ -926,7 +926,7 @@ struct Sprite *create_sprite(void)
         return NULL;
     else
     {
-        struct Sprite *sprite = &spriteInfo[index];
+        struct Sprite *sprite = &spriteWork[index];
 
         memset(sprite, 0, sizeof(*sprite));
         sprite->unk2 = index;
@@ -950,7 +950,7 @@ struct Sprite *create_sprite(void)
     }
 }
 
-struct Sprite *create_linked_sprite(struct Sprite *sprite)
+struct Sprite *create_child_sprite(struct Sprite *sprite)
 {
     struct Sprite *newSprite = create_sprite();
     if (newSprite != NULL)
@@ -964,7 +964,7 @@ struct Sprite *create_linked_sprite(struct Sprite *sprite)
 
 void destroy_sprite_with_tag(int tag)
 {
-    struct Sprite *sprite = spriteInfo;
+    struct Sprite *sprite = spriteWork;
     s8 *status = g_poolInfo.spritePool.statusList;
     int i;
 
@@ -984,7 +984,7 @@ void destroy_sprite_with_tag(int tag)
 #pragma force_active on
 void destroy_all_sprites(void)
 {
-    struct Sprite *sprite = spriteInfo;
+    struct Sprite *sprite = spriteWork;
     s8 *status = g_poolInfo.spritePool.statusList;
     int i;
 
@@ -1004,7 +1004,7 @@ void destroy_all_sprites(void)
 
 struct Sprite *find_sprite_with_tag(int tag)
 {
-    struct Sprite *sprite = spriteInfo;
+    struct Sprite *sprite = spriteWork;
     s8 *status = g_poolInfo.spritePool.statusList;
     int i;
 
@@ -2725,7 +2725,7 @@ void u_draw_text(char *str)
     {
         int glyphIndex;
 
-        if (lbl_802F1D04 != 4 && lbl_802F200C != -1.0f)
+        if (spriteParamsBufState != 4 && lbl_802F200C != -1.0f)
         {
             if (lbl_802F200C <= (float)r22)
                 break;
@@ -2823,7 +2823,7 @@ void u_draw_text(char *str)
         if (drawInfo->fontId < FONT_JAP_TAG
          || lbl_802F200C < lbl_802F2008
          || !(parseState.mode & TEXT_MODE_BLINK)
-         || (unpausedFrameCounter % 60) < 45)
+         || (globalAnimTimer % 60) < 45)
         {
             int div;
             int mod;
@@ -2888,7 +2888,7 @@ float u_get_text_width(char *str)
         float f1;
         int glyphIndex;
 
-        if (lbl_802F1D04 != 4 && lbl_802F200C != -1.0f)
+        if (spriteParamsBufState != 4 && lbl_802F200C != -1.0f)
         {
             if (lbl_802F200C <= (float)r22)
                 break;
@@ -3146,7 +3146,7 @@ void u_draw_screen_fade_mask(void)
     }
     else
     {
-        if (!(gamePauseStatus & 0xA) && (screenFadeInfo.type & 0xFF) != FADE_UNK2)
+        if (!(debugFlags & 0xA) && (screenFadeInfo.type & 0xFF) != FADE_UNK2)
             screenFadeInfo.timer--;
     }
     switch (screenFadeInfo.type & 0xFF)
@@ -3247,7 +3247,7 @@ int add_naomi_sprite(struct NaomiSpriteParams *params)
 {
     int r4;
 
-    switch (lbl_802F1D04)
+    switch (spriteParamsBufState)
     {
     case 0:
         if (append_to_sprite_params_buf(params))

@@ -7,13 +7,16 @@
 
 #include "global.h"
 #include "ball.h"
+#include "effect.h"
 #include "gma.h"
 #include "gxutil.h"
 #include "info.h"
 #include "item.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "sound.h"
 #include "stage.h"
+#include "vibration.h"
 
 #include "../data/common.gma.h"
 
@@ -103,7 +106,7 @@ void item_pilot_main(struct Item *item)
     struct Ball *r29;
     float f31;
 
-    r29 = currentBallStructPtr;
+    r29 = currentBall;
     if (item->unk64 != 0)
         f31 = item->pos.y + item->unk74;
     else
@@ -205,14 +208,14 @@ void item_pilot_main(struct Item *item)
     item->rotZ += item->rotVelZ;
 
     if (item->animGroupId == 0)
-        func_800390C8(2, &item->pos, 1.0f);
+        set_ball_target(2, &item->pos, 1.0f);
     else
     {
         Vec spC;
 
         mathutil_mtxA_from_mtx(animGroups[item->animGroupId].transform);
         mathutil_mtxA_tf_point(&item->pos, &spC);
-        func_800390C8(2, &spC, 1.0f);
+        set_ball_target(2, &spC, 1.0f);
     }
     if (item->pos.y - f31 < item->unk14)
     {
@@ -232,12 +235,12 @@ void item_pilot_draw(struct Item *item)
     struct GMAModel *model;
     Vec spC;
 
-    if (lbl_801EEC90.unk0 & (1 << 2))
+    if (polyDisp.unk0 & (1 << 2))
         return;
     f30 = item->unk14;
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_translate(&item->pos);
-    mathutil_mtxA_sq_from_mtx(lbl_802F1B3C->matrices[2]);
+    mathutil_mtxA_sq_from_mtx(userWork->matrices[2]);
     mathutil_mtxA_rotate_y(item->rotY);
     mathutil_mtxA_rotate_x(item->rotX);
     mathutil_mtxA_rotate_z(item->rotZ);
@@ -311,7 +314,7 @@ void item_pilot_draw(struct Item *item)
         {
             float f1, f2, f3;
 
-            switch ((unpausedFrameCounter / 10) & 3)
+            switch ((globalAnimTimer / 10) & 3)
             {
             case 0:
                 f1 = 1.0f;
@@ -334,7 +337,7 @@ void item_pilot_draw(struct Item *item)
                 f3 = 0.0f;
                 break;
             }
-            f30 = 1.0 + (((unpausedFrameCounter + item->unk2 * 10) % 60) * 0.033333333333333333);
+            f30 = 1.0 + (((globalAnimTimer + item->unk2 * 10) % 60) * 0.033333333333333333);
             avdisp_set_post_mult_color(f1, f2, f3, 1.0f);
             mathutil_mtxA_sq_from_identity();
             mathutil_mtxA_scale_s(f30);
@@ -359,7 +362,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
         if (item->unk5E < 0
          && (!(infoWork.flags & INFO_FLAG_REPLAY) || (infoWork.flags & INFO_FLAG_11)))
         {
-            struct Effect sp178;
+            struct Effect effect;
 
             item->unk5E = infoWork.timerCurr;
             lbl_80285A58[modeCtrl.currPlayer] += pilotBananaInfo[item->subType].unkE;
@@ -371,87 +374,87 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
             item->state = 0;
             item->flags |= ITEM_FLAG_INVISIBLE;
             item->flags &= ~(1 << 1);
-            memset(&sp178, 0, sizeof(sp178));
-            sp178.unk8 = 8;
-            sp178.unk14 = currentBallStructPtr->playerId;
+            memset(&effect, 0, sizeof(effect));
+            effect.type = ET_HOLDING_BANANA;
+            effect.playerId = currentBall->playerId;
             mathutil_mtxA_from_mtx(animGroups[ball->animGroupId].transform);
-            mathutil_mtxA_tf_point(&item->pos, &sp178.unk34);
-            mathutil_mtxA_tf_vec(&item->vel, &sp178.unk40);
-            sp178.unk4C = item->rotX;
-            sp178.unk4E = item->rotY;
-            sp178.unk50 = item->rotZ;
-            sp178.unk30 = get_lod(item->modelLODs);
-            sp178.unk24.x = (item->unk14 / sp178.unk30->boundSphereRadius) * 1.5;
-            sp178.unk24.y = sp178.unk24.x;
-            sp178.unk24.z = sp178.unk24.y;
-            spawn_effect(&sp178);
+            mathutil_mtxA_tf_point(&item->pos, &effect.pos);
+            mathutil_mtxA_tf_vec(&item->vel, &effect.vel);
+            effect.rotX = item->rotX;
+            effect.rotY = item->rotY;
+            effect.rotZ = item->rotZ;
+            effect.model = get_lod(item->modelLODs);
+            effect.scale.x = (item->unk14 / effect.model->boundSphereRadius) * 1.5;
+            effect.scale.y = effect.scale.x;
+            effect.scale.z = effect.scale.y;
+            spawn_effect(&effect);
         }
     }
     else if (item->subType == 3)
     {
-        struct Ball *r31 = currentBallStructPtr;
-        struct Effect spCC;
+        struct Ball *r31 = currentBall;
+        struct Effect effect;
 
         lbl_802F1FD0 |= 0x42;
         if (lbl_802F1FF6 == 14)
             lbl_802F1FF4 = 15;
-        u_play_sound(0x10B);
-        u_play_sound(0x1C);
-        func_800B60F4(lbl_80206BD0[r31->playerId], 1, 0x1C);
+        u_play_sound_0(0x10B);
+        u_play_sound_0(0x1C);
+        vibration_control(playerControllerIDs[r31->playerId], VIBRATION_STATE_1, 28);
         ball->vel.y += 0.92592592592592582;
         lbl_802F1FE0 = 0x78;
         lbl_802F1FD8 = 0.6f;
-        memset(&spCC, 0, sizeof(spCC));
-        spCC.unk8 = 0x27;
-        spCC.unk14 = r31->playerId;
-        spCC.unk34.x = r31->pos.x;
-        spCC.unk34.y = r31->pos.y - 1.0;
-        spCC.unk34.z = r31->pos.z;
-        spCC.unk24 = (Vec){3.5, 4.5, 3.5};
-        spawn_effect(&spCC);
+        memset(&effect, 0, sizeof(effect));
+        effect.type = ET_PILOT_BOMB;
+        effect.playerId = r31->playerId;
+        effect.pos.x = r31->pos.x;
+        effect.pos.y = r31->pos.y - 1.0;
+        effect.pos.z = r31->pos.z;
+        effect.scale = (Vec){3.5, 4.5, 3.5};
+        spawn_effect(&effect);
     }
     else if (item->subType == 4)
     {
-        struct Ball *r31 = currentBallStructPtr;
-        struct Effect sp20;
+        struct Ball *r31 = currentBall;
+        struct Effect effect;
         int i;
 
         lbl_802F1FD0 |= 0x82;
-        u_play_sound(0x2F);
-        u_play_sound(0x1C);
+        u_play_sound_0(0x2F);
+        u_play_sound_0(0x1C);
         if (lbl_802F1FF6 == 14)
-            u_play_sound(0x16C);
-        func_800B60F4(lbl_80206BD0[r31->playerId], 1, 0x1C);
+            u_play_sound_0(0x16C);
+        vibration_control(playerControllerIDs[r31->playerId], VIBRATION_STATE_1, 28);
         ball->vel.y += 0.1388888888888889;
         ball->vel.x += RAND_FLOAT() * 0.64814814814814814;
         ball->vel.z += RAND_FLOAT() * 0.64814814814814814;
         lbl_802F1FD8 = 0.6f;
         lbl_802F1FDC = 1.0f;
-        memset(&sp20, 0, sizeof(sp20));
-        sp20.unk8 = 0x13;
-        sp20.unk14 = r31->playerId;
-        sp20.unk34 = r31->pos;
+        memset(&effect, 0, sizeof(effect));
+        effect.type = ET_COLISTAR_PARTICLE;
+        effect.playerId = r31->playerId;
+        effect.pos = r31->pos;
         for (i = 0; i < 30; i++)
         {
-            sp20.unk40.x = ball->vel.x + (RAND_FLOAT() * 0.2 - 0.1);
-            sp20.unk40.y = ball->vel.y + 0.1 + (RAND_FLOAT() * 0.2 - 0.1);
-            sp20.unk40.z = ball->vel.z + (RAND_FLOAT() * 0.2 - 0.1);
-            spawn_effect(&sp20);
+            effect.vel.x = ball->vel.x + (RAND_FLOAT() * 0.2 - 0.1);
+            effect.vel.y = ball->vel.y + 0.1 + (RAND_FLOAT() * 0.2 - 0.1);
+            effect.vel.z = ball->vel.z + (RAND_FLOAT() * 0.2 - 0.1);
+            spawn_effect(&effect);
         }
     }
     if (gameSubmode == 2)
         return;
     if (item->subType == 2)
     {
-        u_play_sound(0x39);
+        u_play_sound_0(0x39);
         if ((infoWork.flags & INFO_FLAG_11) || !(infoWork.flags & INFO_FLAG_REPLAY))
-            u_play_sound(0x2820);
+            u_play_sound_0(0x2820);
     }
     else if (item->subType == 0 || item->subType == 1)
     {
-        u_play_sound(3);
+        u_play_sound_0(3);
         if ((infoWork.flags & INFO_FLAG_11) || !(infoWork.flags & INFO_FLAG_REPLAY))
-            u_play_sound(0x281F);
+            u_play_sound_0(0x281F);
     }
 }
 
@@ -482,6 +485,6 @@ char lbl_801BE018[] =
 
 void item_pilot_debug(struct Item *item)
 {
-    func_8002FCC0(2, lbl_801BE018);
-    func_8002FCC0(2, "Coin Value: %d\n", pilotBananaInfo[item->subType].unkC);
+    window_printf(2, lbl_801BE018);
+    window_printf(2, "Coin Value: %d\n", pilotBananaInfo[item->subType].unkC);
 }

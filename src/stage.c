@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <ppcintrinsic.h>
 
 #include "background.h"
 #include "byteswap.h"
@@ -18,6 +19,7 @@
 #include "info.h"
 #include "load.h"
 #include "mathutil.h"
+#include "minimap.h"
 #include "mode.h"
 #include "nl2ngc.h"
 #include "preview.h"
@@ -65,13 +67,13 @@ int lbl_802F099C = -1;
 
 struct Preview stagePreview; // 78
 
-struct Struct80206DEC lbl_80206DEC;
+struct Struct80206DEC stageInfo;
 
 struct AnimGroupInfo animGroups[0x48]; // 148
 
 FORCE_BSS_ORDER(lbl_80206D00)
 FORCE_BSS_ORDER(stagePreview)
-FORCE_BSS_ORDER(lbl_80206DEC)
+FORCE_BSS_ORDER(stageInfo)
 
 char *goalModelNames[] =
 {
@@ -86,9 +88,9 @@ u32 bonus_wave_raycast_down();
 
 void ev_stage_init(void)
 {
-    lbl_80206DEC.unk0 = 0;
-    lbl_80206DEC.unk8 = NULL;
-    lbl_80206DEC.unk1C = 0;
+    stageInfo.unk0 = 0;
+    stageInfo.unk8 = NULL;
+    stageInfo.unk1C = 0;
     func_8004482C();
     switch (currStageId)
     {
@@ -123,25 +125,25 @@ void ev_stage_main(void)
     float f3;
     int i;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (infoWork.flags & INFO_FLAG_08)
     {
         if (modeCtrl.submodeTimer > 120)
-            lbl_80206DEC.u_stageTimer = 0.0f;
+            stageInfo.u_stageTimer = 0.0f;
         else
-            lbl_80206DEC.u_stageTimer = 120 - modeCtrl.submodeTimer;
-        lbl_80206DEC.unk0 = 0x77;
+            stageInfo.u_stageTimer = 120 - modeCtrl.submodeTimer;
+        stageInfo.unk0 = 0x77;
     }
     else if (infoWork.flags & INFO_FLAG_REPLAY)
     {
-        lbl_80206DEC.u_stageTimer =
-            func_80049F90(lbl_80250A68.unk10, lbl_80250A68.unk0[lbl_80250A68.unk14]);
-        lbl_80206DEC.unk0 = lbl_80206DEC.u_stageTimer;
+        stageInfo.u_stageTimer =
+            get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]);
+        stageInfo.unk0 = stageInfo.u_stageTimer;
     }
     else
-        lbl_80206DEC.u_stageTimer = lbl_80206DEC.unk0;
-    f31 = lbl_80206DEC.u_stageTimer / 60.0;
+        stageInfo.u_stageTimer = stageInfo.unk0;
+    f31 = stageInfo.u_stageTimer / 60.0;
     f31 += decodedStageLzPtr->loopStartSeconds;
     f3 = (float)(decodedStageLzPtr->loopEndSeconds - decodedStageLzPtr->loopStartSeconds);
     f31 -= f3 * mathutil_floor(f31 / f3);
@@ -152,9 +154,9 @@ void ev_stage_main(void)
         int i;
         for (i = 0; i < 3; i++)
         {
-            float *r5 = &lbl_80206DEC.unk10[i];
+            float *r5 = &stageInfo.unk10[i];
             float f3 = *r5;
-            if (lbl_80206DEC.unkC & (1 << i))
+            if (stageInfo.unkC & (1 << i))
             {
                 f3 += 1.0;
                 if (f3 > 50.0)
@@ -185,7 +187,7 @@ void ev_stage_main(void)
             {
                 if (coll->unk12 & (1 << j))
                 {
-                    f31 = lbl_80206DEC.unk10[j];
+                    f31 = stageInfo.unk10[j];
                     break;
                 }
             }
@@ -243,8 +245,8 @@ void ev_stage_main(void)
         mathutil_mtxA_translate_neg(&coll->initPos);
         mathutil_mtxA_to_mtx(animGroup->prevTransform);
     }
-    if (lbl_80206DEC.unk8 != NULL)
-        lbl_80206DEC.unk8();
+    if (stageInfo.unk8 != NULL)
+        stageInfo.unk8();
 
     // process dynamic models?
     if (dynamicStageParts != NULL)
@@ -260,8 +262,8 @@ void ev_stage_main(void)
         }
     }
 
-    if (!(lbl_80206DEC.unk1C & 1))
-        lbl_80206DEC.unk0++;
+    if (!(stageInfo.unk1C & 1))
+        stageInfo.unk0++;
 }
 
 void ev_stage_dest(void)
@@ -304,7 +306,7 @@ void draw_blur_bridge_accordions(void)
 
     if (blurBridgeAccordion == NULL2)
         return;
-    loopedTime = lbl_80206DEC.u_stageTimer / 60.0;
+    loopedTime = stageInfo.u_stageTimer / 60.0;
     loopedTime += (float)decodedStageLzPtr->loopStartSeconds;
     temp = (float)(decodedStageLzPtr->loopEndSeconds - decodedStageLzPtr->loopStartSeconds);
     loopedTime -= temp * mathutil_floor(loopedTime / temp);
@@ -364,11 +366,11 @@ void animate_anim_groups(float a)
     struct StageAnimGroupAnim *anim;
     int i;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
-    lbl_80206DEC.u_stageTimer = a;
-    lbl_80206DEC.unk0 = a;
-    timeSeconds = lbl_80206DEC.u_stageTimer / 60.0;
+    stageInfo.u_stageTimer = a;
+    stageInfo.unk0 = a;
+    timeSeconds = stageInfo.u_stageTimer / 60.0;
     timeSeconds += decodedStageLzPtr->loopStartSeconds;
     f3 = (float)(decodedStageLzPtr->loopEndSeconds - decodedStageLzPtr->loopStartSeconds);
     timeSeconds -= f3 * mathutil_floor(timeSeconds / f3);
@@ -524,23 +526,23 @@ void load_stage(int stageId)
             free_gma(decodedStageGmaPtr);
             decodedStageGmaPtr = NULL;
         }
-        free_nlobj(&g_stageNlObj, &g_stageNlTpl);
+        nlObjModelListFree(&g_stageNlObj, &g_stageNlTpl);
         free_stagedef();
 
         OSSetCurrentHeap(oldHeap);
     }
     if (backgroundInfo.bgId != get_stage_background(stageId))
     {
-        func_8005507C();
+        background_free();
         bgChanged = TRUE;
     }
     load_stage_files(stageId);
-    load_bg_files(get_stage_background(stageId));
+    background_change(get_stage_background(stageId));
     if (loadedStageId != stageId || bgChanged)
     {
         animGroupCount =
             decodedStageLzPtr->animGroupCount < 0x48 ? decodedStageLzPtr->animGroupCount : 0x48;
-        if (gamePauseStatus & (1 << 2))
+        if (debugFlags & (1 << 2))
             printf("========== st%03d ============\n", stageId);
         func_80044E18();
         func_80045194();
@@ -579,14 +581,14 @@ void unload_stage(void)
             free_gma(decodedStageGmaPtr);
             decodedStageGmaPtr = NULL;
         }
-        free_nlobj(&g_stageNlObj, &g_stageNlTpl);
+        nlObjModelListFree(&g_stageNlObj, &g_stageNlTpl);
         free_stagedef();
 
         OSSetCurrentHeap(oldHeap);
 
         loadedStageId = -1;
     }
-    func_8005507C();
+    background_free();
 }
 
 // Stages that have Naomi models
@@ -636,7 +638,7 @@ void preload_stage_files(int stageId)
     char tplName[0x100];
     char stageLzName[0x100];
 
-    preload_bg_files(get_stage_background_2(stageId));
+    background_preload(get_stage_background_2(stageId));
     sprintf(stageDir, "st%03d", stageId);
     DVDChangeDir(stageDir);
     sprintf(stageLzName, "STAGE%03d.lz", stageId);
@@ -690,7 +692,7 @@ void load_stage_files(int stageId)
         {
             sprintf(gmaName, "st%03d_p.lz", stageId);
             sprintf(tplName, "st%03d.lz", stageId);
-            load_nlobj(&g_stageNlObj, &g_stageNlTpl, gmaName, tplName);
+            nlObjModelListLoad(&g_stageNlObj, &g_stageNlTpl, gmaName, tplName);
         }
         OSSetCurrentHeap(oldHeap);
         DVDChangeDir("/test");
@@ -964,7 +966,7 @@ void func_80045194(void)
     for (i = 0; i < phi_r27; i++, phi_r25++, phi_r24++)
     {
         model = find_model_in_gma_list(phi_r25->name);
-        if (model == NULL && (gamePauseStatus & 4))
+        if (model == NULL && (debugFlags & 4))
             printf("warning %s : no match\n", phi_r25->name);
         phi_r24->unk4 = model;
         phi_r24->unk0 = phi_r25->unk0;
@@ -986,7 +988,7 @@ void func_80045194(void)
     for (i = 0; i < decodedStageLzPtr->bgObjectCount; i++, phi_r24_2++)
     {
         model = find_model_in_gma_list(phi_r24_2->name);
-        if (model == NULL && (gamePauseStatus & 4))
+        if (model == NULL && (debugFlags & 4))
             printf("warning BG %s : no match\n", phi_r24_2->name);
         phi_r24_2->model = model;
     }
@@ -995,7 +997,7 @@ void func_80045194(void)
     for (i = 0; i < decodedStageLzPtr->fgObjectCount; i++, phi_r24_2++)
     {
         model = find_model_in_gma_list(phi_r24_2->name);
-        if (model == NULL && (gamePauseStatus & 4))
+        if (model == NULL && (debugFlags & 4))
             printf("warning MV %s : no match\n", phi_r24_2->name);
         phi_r24_2->model = model;
     }
@@ -1106,7 +1108,7 @@ void u_bonus_wave_warp_callback_1(struct NlVtxTypeB *vtxp)
     dstFromOrigin = mathutil_sqrt(vtx.x * vtx.x + vtx.z * vtx.z);
     amplitude = 0.5 + -0.030833333333333333 * dstFromOrigin;
     f2 = -1092.0f;
-    f2 *= (lbl_80206DEC.u_stageTimer - 30.0f);
+    f2 *= (stageInfo.u_stageTimer - 30.0f);
     angle = 16384.0 * dstFromOrigin;
     angle = f2 + angle;
     if (angle > 0)
@@ -1143,7 +1145,7 @@ void u_bonus_wave_warp_callback_2(struct NlVtxTypeA *vtxp)
     dstFromOrigin = mathutil_sqrt(vtx.x * vtx.x + vtx.z * vtx.z);
     amplitude = 0.5 + -0.030833333333333333 * dstFromOrigin;
     f2 = -1092.0f;
-    f2 *= (lbl_80206DEC.u_stageTimer - 30.0f);
+    f2 *= (stageInfo.u_stageTimer - 30.0f);
     angle = 16384.0 * dstFromOrigin;
     angle = f2 + angle;
     if (angle > 0)
@@ -1169,7 +1171,7 @@ u32 bonus_wave_raycast_down(Point3d *rayOrigin, Point3d *outHitPos, Vec *outHitN
     f1 = mathutil_sqrt(rayOrigin->x * rayOrigin->x + rayOrigin->z * rayOrigin->z);
     f31 = 0.5 + -0.030833333333333333 * f1;
     f2 = -1092.0f;
-    f2 *= (lbl_80206DEC.u_stageTimer - 30.0f);
+    f2 *= (stageInfo.u_stageTimer - 30.0f);
     r3 = 16384.0 * f1;
     angle = f2 + r3;
     if (angle > 0)
@@ -1993,9 +1995,9 @@ void adjust_stage_flipbook_anims_ptrs(struct StageFlipbookAnims **flipbookAnims,
 #pragma force_active on
 Struct80206DEC_Func func_80047518(Struct80206DEC_Func func)
 {
-    Struct80206DEC_Func old = lbl_80206DEC.unk8;
+    Struct80206DEC_Func old = stageInfo.unk8;
 
-    lbl_80206DEC.unk8 = func;
+    stageInfo.unk8 = func;
     return old;
 }
 #pragma force_active reset
@@ -2085,7 +2087,7 @@ void stage_draw(void)
         }
     }
 
-    u_reset_post_mult_color();
+    fade_color_base_default();
     sp7C.unk0 = 2;
 
     if (dipSwitches & DIP_TRIANGLE)
@@ -2094,7 +2096,7 @@ void stage_draw(void)
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_rotate_x(0xC000);
         mathutil_mtxA_scale_xyz(10.0f, 10.0f, 10.0f);
-        nl2ngc_set_scale(10.0f);
+        nlSetScaleFactor(10.0f);
         nl2ngc_draw_model_sort_translucent_alt2(
             NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_TRIANGLE_XY));
     }
@@ -2131,7 +2133,7 @@ void stage_draw(void)
                         model = r27->model;
                         if (model != NULL && model != NULL) // WTF?
                         {
-                            if (!(lbl_801EEC90.unk0 & (1 << 2)) ||
+                            if (!(polyDisp.unk0 & (1 << 2)) ||
                                 (r27->flags & (1 << 2)))
                             {
                                 avdisp_draw_model_culled_sort_none(model);
@@ -2188,7 +2190,7 @@ void stage_draw(void)
             struct Struct8020A348_child *r27;
 
             animGroup = animGroups;
-            f29 = currentCameraStructPtr->sub28.unk38;
+            f29 = currentCamera->sub28.unk38;
             r23 = lbl_8020A348;
             for (i = 0; i < animGroupCount; i++, r23++, animGroup++)
             {
@@ -2272,10 +2274,10 @@ void stage_draw(void)
             draw_blur_bridge_accordions();
 
         // draw starting position marker
-        if (gameSubmode == SMD_GAME_READY_MAIN && !(lbl_801EEC90.unk0 & (1 << 1)))
+        if (gameSubmode == SMD_GAME_READY_MAIN && !(polyDisp.unk0 & (1 << 1)))
         {
-            nl2ngc_set_material_color(1.0f, 1.0f, 1.0f);
-            if (lbl_801EEC90.unk0 & (1 << 3))
+            nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
+            if (polyDisp.unk0 & (1 << 3))
             {
                 mathutil_mtxA_from_identity();
                 mathutil_mtxA_scale_s(0.8f);
@@ -2283,14 +2285,14 @@ void stage_draw(void)
                 mathutil_mtxA_translate(&decodedStageLzPtr->startPos->pos);
                 mathutil_mtxA_rotate_y(decodedStageLzPtr->startPos->yrot);
                 mathutil_mtxA_rotate_x(0x4000);
-                mathutil_mtxA_rotate_y(unpausedFrameCounter << 9);
+                mathutil_mtxA_rotate_y(globalAnimTimer << 9);
                 mathutil_mtxA_scale_s(2.0f);
             }
             else
             {
                 mathutil_mtxA_from_mtxB();
                 mathutil_mtxA_translate(&decodedStageLzPtr->startPos->pos);
-                mathutil_mtxA_rotate_y(-unpausedFrameCounter << 9);
+                mathutil_mtxA_rotate_y(-globalAnimTimer << 9);
             }
             if (infoWork.attempts == 1)
             {
@@ -2316,7 +2318,7 @@ void stage_draw(void)
                         (modeCtrl.submodeTimer - 45) / 30.0f);
                 }
             }
-            u_reset_post_mult_color();
+            fade_color_base_default();
         }
     }
     if (backgroundInfo.unk8C != 0)
@@ -2349,7 +2351,7 @@ void stage_draw(void)
                 mathutil_mtxA_scale(&r25->unkC);
                 f1 = MAX(r25->unkC.x, r25->unkC.y);
                 f1 = MAX(f1, r25->unkC.z);
-                nl2ngc_set_scale(f1);
+                nlSetScaleFactor(f1);
                 nl2ngc_draw_model_alpha_sort_all_alt(
                     NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_CUBE_B), 0.5f);
             }
@@ -2363,7 +2365,7 @@ void draw_stage_preview(void)
 {
     if (previewLoaded)
     {
-        mathutil_mtxA_from_mtxB_translate(&currentCameraStructPtr->eye);
+        mathutil_mtxA_from_mtxB_translate(&currentCamera->eye);
         mathutil_mtxA_translate_xyz(0.0f, lbl_802F1EC8 * 10.0 + 100.0, 0.0f);
         mathutil_mtxA_rotate_x(0x4000);
         mathutil_mtxA_scale_s(lbl_802F1EC4 + 15.0);

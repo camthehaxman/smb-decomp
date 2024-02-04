@@ -141,34 +141,36 @@ struct NlObj
 
 #define NLOBJ_MODEL(obj, index) (((struct NlModel **)obj->models)[index])
 
-// ? func_80030AF8();
-// ? nl2ngc_draw_line_deferred();
-void nl2ngc_set_scale(float);
-void nl2ngc_set_material_color(float r, float g, float b);
-BOOL load_nlobj(struct NlObj **pobj, struct TPL **ptpl, char *modelName, char *texName);
-BOOL free_nlobj(struct NlObj **pobj, struct TPL **ptpl);
-void init_nl_model_textures(struct NlModel *model, struct TPL *tpl);
-void nl2ngc_draw_model_sort_translucent(struct NlModel *);
-void nl2ngc_draw_model_sort_none(struct NlModel *model);
-void nl2ngc_draw_model_alpha_sort_all(struct NlModel *model, float alpha);
+void nlLineSetThickness(float width);
+void nl2ngc_set_line_blend_params(GXBlendFactor srcFactor, GXBlendFactor dstFactor);
+void nlSingleLine(Point3d *start, Point3d *end, u32 color);
+void nl2ngc_draw_line_deferred(Point3d *start, Point3d *end, u32 color);
+void nlSetScaleFactor(float);
+void nlObjPutSetFadeColorBase(float r, float g, float b);
+BOOL nlObjModelListLoad(struct NlObj **pobj, struct TPL **ptpl, char *modelName, char *texName);
+BOOL nlObjModelListFree(struct NlObj **pobj, struct TPL **ptpl);
+void nlObjPutLoadTexture(struct NlModel *model, struct TPL *tpl);
+void nlObjPut(struct NlModel *);
+void nlObjPutImm(struct NlModel *model);
+void nlObjPutTrnsl(struct NlModel *model, float alpha);
 void nl2ngc_draw_model_alpha_sort_none(struct NlModel *model, float b);
 void nl2ngc_draw_model_sort_translucent_alt(struct NlModel *a);
 void nl2ngc_draw_model_sort_none_alt(struct NlModel *a);
-void u_draw_nl_disp_list_type_b_1(struct NlDispList *dl, void *end);
-void draw_nl_disp_list_type_a(struct NlDispList *dl, void *end);
-void build_alpha_mesh_tev_material(struct NlMesh *);
-void draw_nl_disp_list_type_a_alpha(struct NlDispList *dl, void *end);
+void nlObjPut_PutStrip(struct NlDispList *dl, void *end);
+void nlObjPut_PutStrip_VTC(struct NlDispList *dl, void *end);
+void nlObjPutTrnsl_SetMaterial(struct NlMesh *);
+void nlObjPutTrnsl_PutStrip_VTC(struct NlDispList *dl, void *end);
 void nl2ngc_draw_model_sort_translucent_alt2(struct NlModel *model);
 void nl2ngc_draw_model_sort_none_alt2(struct NlModel *model);
 void nl2ngc_draw_model_alpha_sort_all_alt(struct NlModel *model, float b);
-void nl2ngc_set_light_mask(u32 lightMask);
-void nl2ngc_set_ambient(float r, float g, float b);
-void nl2ngc_enable_fog(int);
-void nl2ngc_set_fog_params(u32 a, float b, float c);
-void nl2ngc_set_fog_color(int r, int g, int b);
-void nl2ngc_draw_opaque_model_meshes(struct NlModel *);
-void nl2ngc_draw_translucent_model_meshes(struct NlModel *);
-void nl2ngc_draw_all_model_meshes_alpha(struct NlModel *);
+void nlLightMask(u32 lightMask);
+void nlLightAmbRGB(float r, float g, float b);
+void nlSetFog(int);
+void nlSetFogType(u32 a, float b, float c);
+void nlSetFogColor(int r, int g, int b);
+void nlObjPut_OpaqueList(struct NlModel *);
+void nlObjPut_TrnslList(struct NlModel *);
+void nlObjPutTrnsl_TrnslList(struct NlModel *);
 void u_nl2ngc_draw_model_with_mesh_func(struct NlModel *a, int (*func)());
 void unk_empty(void);
 

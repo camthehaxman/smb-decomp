@@ -9,6 +9,7 @@
 
 #include "global.h"
 #include "background.h"
+#include "effect.h"
 #include "event.h"
 #include "gxcache.h"
 #include "gxutil.h"
@@ -66,7 +67,7 @@ void bg_water_init(void)
         find_background_gma_models(waterBgModelFind, model_find_proc);
         work->unk0 = 1;
     }
-    func_80056934();
+    clear_background_parts_flag();
     work->waterSurface = NULL;
     find_background_objects(
         decodedStageLzPtr->bgObjects,
@@ -109,7 +110,7 @@ void bg_water_main(void)
     Vec scale;
     struct BGWaterWork *work;
 
-    if ((gamePauseStatus & 0xA) && eventInfo[12].state != 2)
+    if ((debugFlags & 0xA) && eventInfo[12].state != 2)
         return;
     bg_default_main();
     work = backgroundInfo.work;
@@ -170,7 +171,7 @@ void bg_water_draw(void)
     struct BGWaterWork *work = backgroundInfo.work;
     struct StageBgObject *temp_r31;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     temp_r31 = work->waterSurface;
     if (temp_r31 != NULL)
     {
@@ -196,7 +197,7 @@ static void lbl_8005E914(void)
     struct BGWaterWork *work = backgroundInfo.work;
     Mtx sp8;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_invert();
     mathutil_mtxA_to_mtx(sp8);
     mathutil_mtxA_mult_left(work->unk3C);
@@ -495,8 +496,8 @@ static int obj_find_proc(int index, struct StageBgObject *bgObj)
     case 0:  // WAT_SUB_SUKRYU
         // submarine propeller
         memset(&effect, 0, sizeof(effect));
-        effect.unk8 = 20;
-        effect.unk30 = (void *)bgObj;
+        effect.type = ET_BGWAT_BUBBLE_BASE;
+        effect.model = (void *)bgObj;
         spawn_effect(&effect);
         break;
     case 1:  // WAT_SUIMEN

@@ -125,26 +125,30 @@ struct Ball
         struct Ball *ballBackup_; \
         s8 *unk_; \
         int i_; \
-        ballBackup_ = currentBallStructPtr; \
+        ballBackup_ = currentBall; \
         ball = ballInfo; \
         unk_ = g_poolInfo.playerPool.statusList; \
         for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, ball++, unk_++) \
         { \
             if (*unk_ == 2) \
             { \
-                currentBallStructPtr = ball; \
+                currentBall = ball; \
                 { code } \
             } \
         } \
-        currentBallStructPtr = ballBackup_; \
+        currentBall = ballBackup_; \
     }
 
 // extern ? lbl_80205E20;
 // extern ? lbl_80205E30;
 extern struct Ball ballInfo[];
-// extern ? lbl_80206B80;
+extern s32 apeThreadNo[];
 extern s32 playerCharacterSelection[4];
-extern s32 lbl_80206BD0[];
+extern s32 playerControllerIDs[];
+
+extern s16 clearHemisphereOutsideParts[];
+extern s16 clearHemisphereInsideParts[];
+extern s16 coloredBallPartModelIDs[][9];
 
 void func_8003699C(struct Ape *a);
 float func_80036CAC(struct Ape *a);
@@ -152,11 +156,11 @@ void func_80036EB8(struct Ape *a);
 // ? func_80037098();
 void u_choose_ape_anim(struct Ape *a, float b);
 void func_8003765C(struct Ape *a);
-void func_80037718(struct Ape *a);
-// ? func_80037B1C();
+void func_80037718();
+void func_80037B1C(struct Ball *);
 void func_80037B20(void);
 void ev_ball_init(void);
-// ? func_800380A8();
+struct Ape *ape_get_by_type(int a, enum Character character, void (*c)(struct Ape *, int));
 void ev_ball_main(void);
 void func_80038528(struct Ball *);
 void ev_ball_dest(void);
@@ -164,7 +168,7 @@ void ball_draw(void);
 void u_ball_shadow_something_1(void);
 void u_ball_shadow_something_2(void);
 void give_bananas(int bananas);
-void func_800390C8(int, Vec *, float);
+void set_ball_target(int, Vec *, float);
 // ? u_ball_init_1();
 void u_ball_init_2(struct Ball *);
 void ball_func_0(struct Ball *);
@@ -197,7 +201,7 @@ void update_ball_ape_transform(struct Ball *, struct PhysicsBall *, int);
 // ? func_8003BD68();
 void handle_ball_rotational_kinematics(struct Ball *, struct PhysicsBall *, int);
 void func_8003C38C(struct Ball *);
-void func_8003C4A0(struct Ball *, int);
+void ball_set_type(struct Ball *, int);
 void func_8003C550(struct Ball *);
 void init_physball_from_ball(struct Ball *, struct PhysicsBall *b);
 void func_8003CB3C(struct Ball *, struct PhysicsBall *b);

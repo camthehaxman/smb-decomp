@@ -526,7 +526,7 @@ void set_avdisp_inf_light(struct LightGroup *lightGrp)
         Vec spC = {0.0f, 1.0f, -0.5f};
 
         mathutil_mtxA_push();
-        mathutil_mtxA_from_rotate_y(currentCameraStructPtr->rotY);
+        mathutil_mtxA_from_rotate_y(currentCamera->rotY);
         mathutil_mtxA_tf_vec(&spC, &spC);
         mathutil_mtxA_pop();
         avdisp_set_inf_light_dir(&spC);
@@ -581,8 +581,8 @@ void light_main(void)
     struct Light *light;
 
     s_u_lightPerfTimer = 0;
-    func_8000E428(s_bgLightInfo.unk14, s_bgLightInfo.unk18, s_bgLightInfo.unk1C);
-    u_reset_post_mult_color();
+    fade_color_base_default_set(s_bgLightInfo.unk14, s_bgLightInfo.unk18, s_bgLightInfo.unk1C);
+    fade_color_base_default();
     s_lightPoolSize = 0;
 
     light = s_u_lightPool;
@@ -683,7 +683,7 @@ void load_light_group_uncached(int lightGrpId)
                 }
             }
         }
-        nl2ngc_set_light_mask(lightGrp->lightMask);
+        nlLightMask(lightGrp->lightMask);
         avdisp_set_light_mask(lightGrp->lightMask);
     }
     if (r31->u_someLGIdxToCopy != u_someLGIdx || (r31->flags & 2) != 0)
@@ -720,7 +720,7 @@ void load_light_group_cached(int lightGrpId)
                 s_numLightObjsLoaded++;
             }
         }
-        nl2ngc_set_light_mask(lightGrp->lightMask);
+        nlLightMask(lightGrp->lightMask);
         avdisp_set_light_mask(lightGrp->lightMask);
     }
     set_avdisp_inf_light(lightGrp);
@@ -753,7 +753,7 @@ void pop_light_group(void)
     }
 }
 
-void u_reset_light_group_stack(int a)
+void reset_light_group(int a)
 {
     s_currLightGroup = -1;
     u_someLGIdx = -1;
@@ -775,7 +775,7 @@ void set_bg_ambient(float r, float g, float b)
 
 void set_render_ambient(float r, float g, float b)
 {
-    nl2ngc_set_ambient(r, g, b);
+    nlLightAmbRGB(r, g, b);
     avdisp_set_ambient(r, g, b);
 }
 
@@ -788,7 +788,7 @@ void apply_curr_light_group_ambient(void)
 {
     struct Color3f *ambient = &s_lightGroups[s_currLightGroup].ambient;
 
-    nl2ngc_set_ambient(ambient->r, ambient->g, ambient->b);
+    nlLightAmbRGB(ambient->r, ambient->g, ambient->b);
     avdisp_set_ambient(ambient->r, ambient->g, ambient->b);
 }
 
@@ -814,19 +814,19 @@ void u_draw_naomi_ball(void)
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_translate(&r31->pos);
         mathutil_mtxA_scale_s(r31->refDist * 2.0);
-        nl2ngc_set_scale(r31->refDist * 2.0);
-        nl2ngc_draw_model_alpha_sort_all(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_BALL_B), 0.5f);
+        nlSetScaleFactor(r31->refDist * 2.0);
+        nlObjPutTrnsl(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_BALL_B), 0.5f);
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_translate(&r31->pos);
-        nl2ngc_draw_model_sort_translucent(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_BALL_B));
+        nlObjPut(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_BALL_B));
         break;
     case LIGHT_TYPE_INFINITE:
         mathutil_mtxA_from_mtxB();
-        mathutil_mtxA_translate(&currentCameraStructPtr->lookAt);
+        mathutil_mtxA_translate(&currentCamera->lookAt);
         mathutil_mtxA_rotate_y(r31->rotY);
         mathutil_mtxA_rotate_x(r31->rotX);
         mathutil_mtxA_rotate_x(0x8000);
-        nl2ngc_draw_model_sort_translucent(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_spotl1));
+        nlObjPut(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_spotl1));
         break;
     case LIGHT_TYPE_SPOT:
     case LIGHT_TYPE_SPOT_POW:
@@ -839,13 +839,13 @@ void u_draw_naomi_ball(void)
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_translate(&r31->pos);
         mathutil_mtxA_scale_s(r31->refDist * 2.0);
-        nl2ngc_set_scale(r31->refDist * 2.0);
-        nl2ngc_draw_model_alpha_sort_all(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_BALL_B), 0.5f);
+        nlSetScaleFactor(r31->refDist * 2.0);
+        nlObjPutTrnsl(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_BALL_B), 0.5f);
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_translate(&r31->pos);
         mathutil_mtxA_rotate_y(r31->rotY);
         mathutil_mtxA_rotate_x(r31->rotX);
-        nl2ngc_draw_model_sort_translucent(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_spotl1));
+        nlObjPut(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_spotl1));
         break;
     }
 }

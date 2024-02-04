@@ -2164,6 +2164,7 @@ lbl_80171C38:
 
 .section .data
 
+	.balign 8
 .global lbl_801EA5B8
 lbl_801EA5B8:
 	# ROM: 0x1E75B8
@@ -2196,18 +2197,6 @@ lbl_801EA5D8:
 
 .section .bss
 
-.global gs
-gs:
-	.skip 0x400
-.global lbl_802E41B0
-lbl_802E41B0:
-	.skip 0x6E0
-.global lbl_802E4890
-lbl_802E4890:
-	.skip 0x50
-.global lbl_802E48E0
-lbl_802E48E0:
-	.skip 0x6D0
 .global midi_lastNote
 midi_lastNote:
 	.skip 0x80

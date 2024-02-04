@@ -7,6 +7,7 @@
 #include "info.h"
 #include "input.h"
 #include "mode.h"
+#include "sound.h"
 #include "sprite.h"
 #include "stage.h"
 #include "textbox.h"
@@ -152,7 +153,7 @@ struct Struct8027CC58
 
 static struct Struct8027CC58 lbl_8027CC58[4][3];
 static u32 s_visitedFloors[4];  // bit mask of floors that have been played on at least once
-struct Struct8027CE18 lbl_8027CE18;
+u32 playPointYieldPerDifficulty[3];
 
 static int difficulty_to_course_id(int, u32);
 static void mark_floor_visited(int, int, u32);
@@ -171,27 +172,27 @@ void course_init(void)
     g_maxPlayPointRecord = 0;
 
     count = 0;
-    lbl_8027CE18.unk0 = 0;
+    playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] = 0;
     for (i = 0; i < 10; i++, count++)
-        lbl_8027CE18.unk0 += beginnerMainPlayPoints[i] + u_unkPlayPointList[i];
+        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerMainPlayPoints[i] + u_unkPlayPointList[i];
     for (i = 0; i < 3; i++, count++)
-        lbl_8027CE18.unk0 += beginnerExtraPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerExtraPlayPoints[i] + u_unkPlayPointList[count];
 
     count = 0;
-    lbl_8027CE18.unk4 = 0;
+    playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] = 0;
     for (i = 0; i < 30; i++, count++)
-        lbl_8027CE18.unk4 += advancedMainPlayPoints[i] + u_unkPlayPointList[i];
+        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedMainPlayPoints[i] + u_unkPlayPointList[i];
     for (i = 0; i < 5; i++, count++)
-        lbl_8027CE18.unk4 += advancedExtraPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedExtraPlayPoints[i] + u_unkPlayPointList[count];
 
     count = 0;
-    lbl_8027CE18.unk8 = 0;
+    playPointYieldPerDifficulty[DIFFICULTY_EXPERT] = 0;
     for (i = 0; i < 50; i++, count++)
-        lbl_8027CE18.unk8 += expertMainPlayPoints[i] + u_unkPlayPointList[i];
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertMainPlayPoints[i] + u_unkPlayPointList[i];
     for (i = 0; i < 10; i++, count++)
-        lbl_8027CE18.unk8 += expertExtraPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertExtraPlayPoints[i] + u_unkPlayPointList[count];
     for (i = 0; i < 10; i++, count++)
-        lbl_8027CE18.unk8 += masterPlayPoints[i] + u_unkPlayPointList[count];
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += masterPlayPoints[i] + u_unkPlayPointList[count];
 }
 
 void reset_earned_play_points(void)
@@ -1034,7 +1035,7 @@ static void play_points_textbox_callback(struct TextBox *tbox)
                     int buyContinues;
                     if (tbox->unk17 == 0)
                     {
-                        func_8002B5C8(0x16D);
+                        u_play_sound_1(0x16D);
                         tbox->unk17 = 1;
                     }
                     buyContinues = g_totalPlayPoints / 2500;
@@ -1064,7 +1065,7 @@ void show_play_points_textbox(int arg0, s16 x, s16 y)
     struct TextBox tbox;
 
     memset(&tbox, 0, sizeof(tbox));
-    tbox.style = 14;
+    tbox.style = TEXTBOX_STYLE_PLAIN;
     tbox.x = x;
     tbox.y = y;
     tbox.numColumns = 0;
@@ -1078,15 +1079,15 @@ void show_play_points_textbox(int arg0, s16 x, s16 y)
     {
         lbl_802F1FA0 = 0xB3;
         tbox.unk19 = 0;
-        tbox.numColumns = 0x18;
-        tbox.unk10 = tbox.numColumns * 24;
+        tbox.numColumns = TEXTBOX_FONT_SIZE;
+        tbox.textWidth = tbox.numColumns * TEXTBOX_FONT_SIZE;
     }
-    textbox_set_properties(1, 1, &tbox);
+    textbox_set_properties(1, TEXTBOX_STATE_INIT, &tbox);
 }
 
 int is_play_points_textbox_done(void)
 {
-    if (textBoxes[1].state == 0)
+    if (textBoxes[1].state == TEXTBOX_STATE_INACTIVE)
         return FALSE;
     if (textBoxes[1].unk18 == 0)
         return FALSE;
@@ -1119,7 +1120,7 @@ void ev_course_main(void)
     u32 condResult;
     u32 var_r4_2;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     prevOpcode = -1;
     condResult = 0;
@@ -1823,7 +1824,7 @@ void lbl_80067C20(struct Sprite *sprite)
                 if (i > 0)
                     break;
 
-                if (var_r31[1].unk0 == infoWork.currFloor && unpausedFrameCounter % 60 < 45)
+                if (var_r31[1].unk0 == infoWork.currFloor && globalAnimTimer % 60 < 45)
                     set_text_mul_color(RGBA(0, 255, 0, 0));
                 set_text_pos(
                     x + sprite->scaleX * (var_r4 * 8) + sprite->scaleX * 16.0f,

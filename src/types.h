@@ -7,7 +7,8 @@
 #include <dolphin/gx/GXFifo.h>
 #include <dolphin/mtx.h>
 
-typedef struct {
+typedef struct
+{
     f32 x, y;
 } Vec2d, *Vec2dPtr, Point2d, *Point2dPtr;
 
@@ -326,7 +327,7 @@ struct Ape
     s16 unkC2;
 };  // size = 0xC4
 
-struct Struct80176434
+struct OtherKeyframe
 {
     s32 unk0;
     float unk4;
@@ -384,7 +385,8 @@ struct Struct8009492C
     float unk24;
     struct GMAModel *unk28;
     GXColor unk2C;
-    u8 filler30[0x38-0x30];
+    float unk30;
+    float unk34;
 };
 
 enum
@@ -466,38 +468,6 @@ struct Struct80206DEC
 };
 
 struct Stage;
-
-struct Effect
-{
-    u8 filler0[8];
-    s16 unk8;
-    u8 fillerA[0x10-0xA];
-    s32 unk10;
-    s16 unk14;
-    u16 unk16;
-    float unk18;
-    float unk1C;
-    float unk20;
-    Vec unk24;
-    struct GMAModel *unk30;
-    Vec unk34;
-    Vec unk40;
-    s16 unk4C;
-    s16 unk4E;
-    s16 unk50;
-    s16 unk52;
-    s16 unk54;
-    s16 unk56;
-    u8 filler58[0x70-0x58];
-    Vec unk70;
-    Vec unk7C;
-    Vec unk88;
-    Vec unk94;
-    s16 unkA0;
-    s16 unkA2;
-    s16 unkA4;
-    float unkA8;
-};
 
 // motload
 
@@ -741,6 +711,23 @@ struct Struct801EED88
     u32 unkC;
 };  // size = 0x10
 
+struct ScoreRecord
+{
+    char initials[4];
+    s32 score;
+    u32 unk8;
+    u8 floorNum;
+    s8 unkD;  // 0 = normal, 1 = extra, 2 = master
+    s8 unkE;
+    u8 fillerF[1];
+};
+
+struct Struct802C6220
+{
+    u32 size;
+    struct ScoreRecord records[3*5];
+};
+
 struct MemcardGameData_sub
 {
     /*0x5844*/ u8 filler0[0x44-0x00];
@@ -752,7 +739,8 @@ struct MemcardGameData_sub
     /*0x588D*/ u8 unk49;
     /*0x588E*/ u8 unk4A;
     /*0x588F*/ u8 unk4B;
-    /*0x5890*/ u8 filler4C[2];
+    /*0x5890*/ u8 unk4C;
+    /*0x5891*/ u8 unk4D;
     /*0x5892*/ u8 unk4E;
     /*0x5893*/ u8 unk4F;
     /*0x5894*/ u8 unk50;
@@ -811,7 +799,7 @@ struct MemcardGameData_sub
     /*0x5B03*/ u8 unk2BF;
     /*0x5B04*/ u32 unk2C0;
     /*0x5B08*/ u32 unk2C4;
-    /*0x5B0C*/ u8 filler2C8[0x3BC-0x2C8];
+    /*0x5B0C*/ struct Struct802C6220 unk2C8;
     /*0x5C00*/ u32 unk3BC;
 };  // size = 0x3C0
 
@@ -843,13 +831,6 @@ struct ModelLOD
 {
     s32 modelId;
     float distance;
-};
-
-struct Struct802C67D4
-{
-    u8 filler0[4];
-    u32 unk4;
-    u8 filler8[0x50-0x8];
 };
 
 struct ApeFacePart
@@ -971,12 +952,12 @@ enum
     PAUSEMENU_CONT_GUIDE_HOW_EXIT,
 };
 
-struct Struct8008CF00
+struct Thread
 {
-	void (*unk0)(struct Ape *, int);
-	struct Ape *unk4;
-	struct Struct8008CF00 *prev;
-	struct Struct8008CF00 *next;
+	void (*callback)(struct Ape *, int);
+	struct Ape *ape;
+	struct Thread *next;
+	struct Thread *prev;
 	u32 unk10;
 	u32 unk14;
 	u32 unk18;
@@ -994,15 +975,6 @@ struct Struct80089A04
     s32 unk30[4];
 };
 
-struct ScoreRecord
-{
-    char initials[4];
-    u32 score;
-    u8 filler8[4];
-    u8 floorNum;
-    s8 unkD;  // 0 = normal, 1 = extra, 2 = master
-};
-
 struct Struct80250A68
 {
     s32 unk0[4];
@@ -1010,11 +982,38 @@ struct Struct80250A68
     s32 unk14;
 };
 
-struct Struct80048084
+struct Struct801EEDA8
 {
-    u8 filler0[0x20];
-    u32 unk20;
-    GXTexObj *unk24;
+    u8 filler0[0x100];
+    float unk100;
+    u8 filler104[0x118-0x104];
 };
+
+struct Struct8009DBB0
+{
+    int unk0;
+    Vec unk4;
+    Vec unk10;
+};
+
+struct Struct802C5D60
+{
+    u32 unk0;
+    u32 unk4;
+    u8 filler8[0x10-0x8];
+    u32 unk10;
+    u8 filler14[0x20-0x14];
+    char unk20[0x400];
+};
+
+struct Struct80094870
+{
+    u32 unk0;
+    u32 unk4;
+    u16 unk8;
+};
+
+struct Effect;
+struct ScoreRecord;
 
 #endif

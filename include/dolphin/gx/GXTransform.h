@@ -1,5 +1,5 @@
-#ifndef DOLPHIN_GXTRANSFORM_H
-#define DOLPHIN_GXTRANSFORM_H
+#ifndef _DOLPHIN_GX_GXTRANSFORM_H_
+#define _DOLPHIN_GX_GXTRANSFORM_H_
 
 #include <dolphin/gx/GXEnum.h>
 
@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#define GX_PROJECTION_SZ 7
+#define GX_PROJECTION_SZ  7
 
 void GXSetProjection(f32 mtx[4][4], GXProjectionType type);
 void GXSetViewport(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz);

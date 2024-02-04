@@ -1,5 +1,5 @@
-#ifndef DOLPHIN_GXCULL_H
-#define DOLPHIN_GXCULL_H
+#ifndef _DOLPHIN_GX_GXCULL_H_
+#define _DOLPHIN_GX_GXCULL_H_
 
 #include <dolphin/types.h>
 

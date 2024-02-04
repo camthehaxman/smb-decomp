@@ -30,7 +30,7 @@ glabel monkey_sprite_draw
 /* 800809A0 0007C8C0  3B 43 00 00 */	addi r26, r3, 0
 /* 800809A4 0007C8C4  3A 05 89 38 */	addi r16, r5, lbl_80118938@l
 /* 800809A8 0007C8C8  3B E4 2D 18 */	addi r31, r4, lbl_80292D18@l
-/* 800809AC 0007C8CC  82 2D 9D 38 */	lwz r17, currentBallStructPtr@sda21(r13)
+/* 800809AC 0007C8CC  82 2D 9D 38 */	lwz r17, currentBall@sda21(r13)
 /* 800809B0 0007C8D0  38 71 00 1C */	addi r3, r17, 0x1c
 /* 800809B4 0007C8D4  C0 23 00 00 */	lfs f1, 0(r3)
 /* 800809B8 0007C8D8  C0 43 00 04 */	lfs f2, 4(r3)
@@ -39,7 +39,7 @@ glabel monkey_sprite_draw
 /* 800809C4 0007C8E4  EC 22 08 BA */	fmadds f1, f2, f2, f1
 /* 800809C8 0007C8E8  EC 20 08 3A */	fmadds f1, f0, f0, f1
 /* 800809CC 0007C8EC  4B F8 67 2D */	bl mathutil_sqrt
-/* 800809D0 0007C8F0  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 800809D0 0007C8F0  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 800809D4 0007C8F4  70 00 00 0A */	andi. r0, r0, 0xa
 /* 800809D8 0007C8F8  40 82 00 10 */	bne lbl_800809E8
 /* 800809DC 0007C8FC  80 7F 00 08 */	lwz r3, 8(r31)
@@ -370,7 +370,7 @@ lbl_80080E50:
 /* 80080E50 0007CD70  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080E54 0007CD74  2C 03 00 00 */	cmpwi r3, 0
 /* 80080E58 0007CD78  40 81 00 18 */	ble lbl_80080E70
-/* 80080E5C 0007CD7C  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080E5C 0007CD7C  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080E60 0007CD80  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080E64 0007CD84  40 82 00 0C */	bne lbl_80080E70
 /* 80080E68 0007CD88  38 03 FF FF */	addi r0, r3, -1
@@ -387,7 +387,7 @@ lbl_80080E8C:
 /* 80080E8C 0007CDAC  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080E90 0007CDB0  2C 03 FF FF */	cmpwi r3, -1
 /* 80080E94 0007CDB4  40 80 00 AC */	bge lbl_80080F40
-/* 80080E98 0007CDB8  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080E98 0007CDB8  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080E9C 0007CDBC  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080EA0 0007CDC0  40 82 00 A0 */	bne lbl_80080F40
 /* 80080EA4 0007CDC4  38 03 00 01 */	addi r0, r3, 1
@@ -397,7 +397,7 @@ lbl_80080EB0:
 /* 80080EB0 0007CDD0  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080EB4 0007CDD4  2C 03 00 00 */	cmpwi r3, 0
 /* 80080EB8 0007CDD8  40 81 00 1C */	ble lbl_80080ED4
-/* 80080EBC 0007CDDC  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080EBC 0007CDDC  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080EC0 0007CDE0  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080EC4 0007CDE4  40 82 00 10 */	bne lbl_80080ED4
 /* 80080EC8 0007CDE8  38 03 FF FF */	addi r0, r3, -1
@@ -419,7 +419,7 @@ lbl_80080F00:
 /* 80080F00 0007CE20  80 7F 00 10 */	lwz r3, 0x10(r31)
 /* 80080F04 0007CE24  2C 03 00 00 */	cmpwi r3, 0
 /* 80080F08 0007CE28  40 80 00 38 */	bge lbl_80080F40
-/* 80080F0C 0007CE2C  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80080F0C 0007CE2C  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80080F10 0007CE30  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80080F14 0007CE34  40 82 00 2C */	bne lbl_80080F40
 /* 80080F18 0007CE38  A8 0D 99 AE */	lha r0, gameSubmode@sda21(r13)
@@ -571,7 +571,7 @@ lbl_80081118:
 /* 80081138 0007D058  7C 70 02 14 */	add r3, r16, r0
 /* 8008113C 0007D05C  83 83 03 20 */	lwz r28, 0x320(r3)
 lbl_80081140:
-/* 80081140 0007D060  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80081140 0007D060  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80081144 0007D064  A8 7F 00 0C */	lha r3, 0xc(r31)
 /* 80081148 0007D068  70 00 00 0A */	andi. r0, r0, 0xa
 /* 8008114C 0007D06C  40 82 01 08 */	bne lbl_80081254
@@ -798,7 +798,7 @@ lbl_80081434:
 lbl_80081438:
 /* 80081438 0007D358  28 1E 00 00 */	cmplwi r30, 0
 /* 8008143C 0007D35C  41 82 00 28 */	beq lbl_80081464
-/* 80081440 0007D360  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 80081440 0007D360  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 80081444 0007D364  1C 60 00 60 */	mulli r3, r0, 0x60
 /* 80081448 0007D368  38 63 40 00 */	addi r3, r3, 0x4000
 /* 8008144C 0007D36C  4B F8 5D 95 */	bl mathutil_sin
@@ -922,7 +922,7 @@ lbl_800815E8:
 lbl_80081608:
 /* 80081608 0007D528  28 1E 00 00 */	cmplwi r30, 0
 /* 8008160C 0007D52C  41 82 00 24 */	beq lbl_80081630
-/* 80081610 0007D530  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 80081610 0007D530  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 80081614 0007D534  54 03 48 2C */	slwi r3, r0, 9
 /* 80081618 0007D538  4B F8 5B C9 */	bl mathutil_sin
 /* 8008161C 0007D53C  EC 34 00 72 */	fmuls f1, f20, f1
@@ -1792,7 +1792,7 @@ lbl_800821B4:
 /* 800821EC 0007E10C  98 0D 9E 41 */	stb r0, lbl_802F2021@sda21(r13)
 lbl_800821F0:
 /* 800821F0 0007E110  38 60 01 69 */	li r3, 0x169
-/* 800821F4 0007E114  4B FA 93 D5 */	bl func_8002B5C8
+/* 800821F4 0007E114  4B FA 93 D5 */	bl u_play_sound_1
 /* 800821F8 0007E118  38 00 00 0F */	li r0, 0xf
 /* 800821FC 0007E11C  98 0D 9E 40 */	stb r0, lbl_802F2020@sda21(r13)
 /* 80082200 0007E120  38 80 00 01 */	li r4, 1
@@ -1906,7 +1906,7 @@ lbl_8008234C:
 /* 8008238C 0007E2AC  98 0D 9E 41 */	stb r0, lbl_802F2021@sda21(r13)
 lbl_80082390:
 /* 80082390 0007E2B0  38 60 01 69 */	li r3, 0x169
-/* 80082394 0007E2B4  4B FA 92 35 */	bl func_8002B5C8
+/* 80082394 0007E2B4  4B FA 92 35 */	bl u_play_sound_1
 /* 80082398 0007E2B8  38 00 00 0F */	li r0, 0xf
 /* 8008239C 0007E2BC  98 0D 9E 40 */	stb r0, lbl_802F2020@sda21(r13)
 /* 800823A0 0007E2C0  38 80 00 01 */	li r4, 1
@@ -1960,7 +1960,7 @@ lbl_80082420:
 /* 80082454 0007E374  98 0D 9E 41 */	stb r0, lbl_802F2021@sda21(r13)
 lbl_80082458:
 /* 80082458 0007E378  38 60 01 69 */	li r3, 0x169
-/* 8008245C 0007E37C  4B FA 91 6D */	bl func_8002B5C8
+/* 8008245C 0007E37C  4B FA 91 6D */	bl u_play_sound_1
 /* 80082460 0007E380  38 00 00 0F */	li r0, 0xf
 /* 80082464 0007E384  98 0D 9E 40 */	stb r0, lbl_802F2020@sda21(r13)
 /* 80082468 0007E388  38 80 00 01 */	li r4, 1
@@ -2010,7 +2010,7 @@ lbl_800824D0:
 /* 8008250C 0007E42C  98 0D 9E 41 */	stb r0, lbl_802F2021@sda21(r13)
 lbl_80082510:
 /* 80082510 0007E430  38 60 01 69 */	li r3, 0x169
-/* 80082514 0007E434  4B FA 90 B5 */	bl func_8002B5C8
+/* 80082514 0007E434  4B FA 90 B5 */	bl u_play_sound_1
 /* 80082518 0007E438  38 00 00 0F */	li r0, 0xf
 /* 8008251C 0007E43C  98 0D 9E 40 */	stb r0, lbl_802F2020@sda21(r13)
 /* 80082520 0007E440  38 80 00 01 */	li r4, 1
@@ -3675,7 +3675,7 @@ lbl_80083910:
 /* 80083D2C 0007FC4C  4B FE DE 35 */	bl set_text_pos
 /* 80083D30 0007FC50  38 7D 34 08 */	addi r3, r29, 0x3408
 /* 80083D34 0007FC54  4B FE E1 25 */	bl u_draw_text
-/* 80083D38 0007FC58  80 0D 99 58 */	lwz r0, globalFrameCounter@sda21(r13)
+/* 80083D38 0007FC58  80 0D 99 58 */	lwz r0, powerOnTimer@sda21(r13)
 /* 80083D3C 0007FC5C  54 03 48 2C */	slwi r3, r0, 9
 /* 80083D40 0007FC60  4B F8 34 A1 */	bl mathutil_sin
 /* 80083D44 0007FC64  FC 40 0A 10 */	fabs f2, f1
@@ -4612,300 +4612,11 @@ lbl_802F5350:
 	.4byte 0x40EFFFE0
 	.4byte 0
 
-.global lbl_802F5358
-lbl_802F5358:
-	# ROM: 0x1EED78
-	.4byte 0xBF444444
-
-.global lbl_802F535C
-lbl_802F535C:
-	# ROM: 0x1EED7C
-	.4byte 0xBF5DDDDE
-
-.global lbl_802F5360
-lbl_802F5360:
-	# ROM: 0x1EED80
-	.4byte 0x40320000
-	.4byte 0
-
-.global lbl_802F5368
-lbl_802F5368:
-	# ROM: 0x1EED88
-	.4byte 0x3E16C16C
-	.4byte 0
-
-.global lbl_802F5370
-lbl_802F5370:
-	# ROM: 0x1EED90
-	.4byte 0x40053333
-	.4byte 0x33333334
-
-.global lbl_802F5378
-lbl_802F5378:
-	# ROM: 0x1EED98
-	.4byte 0
-
-.global lbl_802F537C
-lbl_802F537C:
-	# ROM: 0x1EED9C
-	.4byte 0x3F19999A
-
-.global lbl_802F5380
-lbl_802F5380:
-	# ROM: 0x1EEDA0
-	.4byte 0x3FF53333
-	.4byte 0x33333334
-
-.global lbl_802F5388
-lbl_802F5388:
-	# ROM: 0x1EEDA8
-	.4byte 0x3F800000
-
-.global lbl_802F538C
-lbl_802F538C:
-	# ROM: 0x1EEDAC
-	.4byte 0x3E96C16C
-
-.global lbl_802F5390
-lbl_802F5390:
-	# ROM: 0x1EEDB0
-	.4byte 0x40153333
-	.4byte 0x33333334
-
-.global lbl_802F5398
-lbl_802F5398:
-	# ROM: 0x1EEDB8
-	.4byte 0x3FB99999
-	.4byte 0x9999999A
-
-.global lbl_802F53A0
-lbl_802F53A0:
-	# ROM: 0x1EEDC0
-	.4byte 0x3FB11111
-	.4byte 0x11111111
-
-.global lbl_802F53A8
-lbl_802F53A8:
-	# ROM: 0x1EEDC8
-	.4byte 0x3FA11111
-	.4byte 0x11111111
-
-.global lbl_802F53B0
-lbl_802F53B0:
-	# ROM: 0x1EEDD0
-	.4byte 0x3E87AE14
-
-.global lbl_802F53B4
-lbl_802F53B4:
-	# ROM: 0x1EEDD4
-	.4byte 0
-
-.global lbl_802F53B8
-lbl_802F53B8:
-	# ROM: 0x1EEDD8
-	.4byte 0x42C80000
-
-.global lbl_802F53BC
-lbl_802F53BC:
-	# ROM: 0x1EEDDC
-	.4byte 0x3DCCCCCD
-
-.global lbl_802F53C0
-lbl_802F53C0:
-	# ROM: 0x1EEDE0
-	.4byte 0x469C4000
-
-.global lbl_802F53C4
-lbl_802F53C4:
-	# ROM: 0x1EEDE4
-	.4byte 0x42700000
-
-.global lbl_802F53C8
-lbl_802F53C8:
-	# ROM: 0x1EEDE8
-	.4byte 0x3FAAAAAB
-
-.global lbl_802F53CC
-lbl_802F53CC:
-	# ROM: 0x1EEDEC
-	.4byte 0x397C3F8A
-
-.global lbl_802F53D0
-lbl_802F53D0:
-	# ROM: 0x1EEDF0
-	.4byte 0xBDCCCCCD
-
-.global lbl_802F53D4
-lbl_802F53D4:
-	# ROM: 0x1EEDF4
-	.4byte 0xBF13CD3A
-
-.global lbl_802F53D8
-lbl_802F53D8:
-	# ROM: 0x1EEDF8
-	.4byte 0x4079F000
-	.4byte 0
-
-.global lbl_802F53E0
-lbl_802F53E0:
-	# ROM: 0x1EEE00
-	.4byte 0x40740000
-	.4byte 0
-
-.global lbl_802F53E8
-lbl_802F53E8:
-	# ROM: 0x1EEE08
-	.4byte 0xC47A0000
-	.4byte 0
-
-.global lbl_802F53F0
-lbl_802F53F0:
-	# ROM: 0x1EEE10
-	.4byte 0x3FDD9168
-	.4byte 0x735C28F5
-
-.global lbl_802F53F8
-lbl_802F53F8:
-	# ROM: 0x1EEE18
-	.4byte 0xBF8CCCCD
-
-.global lbl_802F53FC
-lbl_802F53FC:
-	# ROM: 0x1EEE1C
-	.4byte 0x3D6C7B90
-
-.global lbl_802F5400
-lbl_802F5400:
-	# ROM: 0x1EEE20
-	.4byte 0x43700000
-
-.global lbl_802F5404
-lbl_802F5404:
-	# ROM: 0x1EEE24
-	.4byte 0x43A00000
-
-.global lbl_802F5408
-lbl_802F5408:
-	# ROM: 0x1EEE28
-	.4byte 0xC1200000
-
-.global lbl_802F540C
-lbl_802F540C:
-	# ROM: 0x1EEE2C
-	.4byte 0x43200000
-
-.global lbl_802F5410
-lbl_802F5410:
-	# ROM: 0x1EEE30
-	.4byte 0x3F13CD3A
-	.4byte 0
-
-.global lbl_802F5418
-lbl_802F5418:
-	# ROM: 0x1EEE38
-	.4byte 0
-	.4byte 0
-
-.global lbl_802F5420
-lbl_802F5420:
-	# ROM: 0x1EEE40
-	.4byte 0xC0000000
-	.4byte 0
-
-.global lbl_802F5428
-lbl_802F5428:
-	# ROM: 0x1EEE48
-	.4byte 0x3FE00000
-	.4byte 0
-
-.global lbl_802F5430
-lbl_802F5430:
-	# ROM: 0x1EEE50
-	.4byte 0x3FF55555
-	.4byte 0x55555555
-
-.global lbl_802F5438
-lbl_802F5438:
-	# ROM: 0x1EEE58
-	.4byte 0x3FBCCCCC
-	.4byte 0xCCCCCCCD
-
-.global lbl_802F5440
-lbl_802F5440:
-	# ROM: 0x1EEE60
-	.4byte 0x3FE80000
-	.4byte 0
-
-.global lbl_802F5448
-lbl_802F5448:
-	# ROM: 0x1EEE68
-	.4byte 0x406E0000
-	.4byte 0
-
-.global lbl_802F5450
-lbl_802F5450:
-	# ROM: 0x1EEE70
-	.4byte 0xC06E0000
-	.4byte 0
-
-.global lbl_802F5458
-lbl_802F5458:
-	# ROM: 0x1EEE78
-	.4byte 0x3F999999
-	.4byte 0x9999999A
-
-.global lbl_802F5460
-lbl_802F5460:
-	# ROM: 0x1EEE80
-	.4byte 0x3FF40000
-	.4byte 0
-
-.global lbl_802F5468
-lbl_802F5468:
-	# ROM: 0x1EEE88
-	.4byte 0x3E93B13B
-
-.global lbl_802F546C
-lbl_802F546C:
-	# ROM: 0x1EEE8C
-	.4byte 0x3E400000
-
-.global lbl_802F5470
-lbl_802F5470:
-	# ROM: 0x1EEE90
-	.4byte 0x40000000
-	.4byte 0
-
-.global lbl_802F5478
-lbl_802F5478:
-	# ROM: 0x1EEE98
-	.4byte 0x424070C3
-
-.global lbl_802F547C
-lbl_802F547C:
-	# ROM: 0x1EEE9C
-	.4byte 0xC69C3E00
-
-.global lbl_802F5480
-lbl_802F5480:
-	# ROM: 0x1EEEA0
-	.4byte 0x43300000
-	.4byte 0x80000000
-
-.global lbl_802F5488
-lbl_802F5488:
-	# ROM: 0x1EEEA8
-	.4byte 0x43300000
-	.4byte 0
-
 .section .bss
 
 .global lbl_80292D18
 lbl_80292D18:
 	.skip 0x18
-.global lbl_80292D30
-lbl_80292D30:
-	.skip 0x130
 
 .section .data
 
@@ -6491,34 +6202,6 @@ glabel string_p_SANNKAKU_L_a___p_SANNKAKU_R_
 glabel string_a_Movement
 	.asciz "a/Movement"
 	.balign 4
-
-.global lbl_801C5758
-lbl_801C5758:
-	# ROM: 0x1C2758
-	.4byte 0xFFFFFFFF
-	.4byte 0
-	.4byte 0
-	.4byte 0x3F800000
-	.4byte 0xBF5DDDDE
-	.4byte 0xBE333333
-	.4byte 0x3E6EEEEF
-	.4byte 0
-	.4byte 0x3E87AE14
-	.4byte 0
-	.4byte 0
-	.4byte 0
-	.4byte 0x028001C0
-	.4byte 0
-	.4byte 0
-	.4byte 0
-	.4byte 0
-	.4byte 0
-	.4byte 0
-	.4byte 0x00FFFFFF
-	.4byte 0x00FFFFFF
-	.4byte 0x00FFE080
-	.4byte 0x00FFFFFF
-	.4byte 0
 
 .section .sdata
 

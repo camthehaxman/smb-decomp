@@ -9,11 +9,13 @@
 #include "background.h"
 #include "ball.h"
 #include "camera.h"
+#include "effect.h"
 #include "gma.h"
 #include "info.h"
 #include "item.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "sound.h"
 #include "stage.h"
 
 #include "../data/common.gma.h"
@@ -127,14 +129,14 @@ void item_coin_main(struct Item *item)
     item->rotZ += item->rotVelZ;
 
     if (item->animGroupId == 0)
-        func_800390C8(2, &item->pos, 1.0f);
+        set_ball_target(2, &item->pos, 1.0f);
     else
     {
         Vec spC;
 
         mathutil_mtxA_from_mtx(animGroups[item->animGroupId].transform);
         mathutil_mtxA_tf_point(&item->pos, &spC);
-        func_800390C8(2, &spC, 1.0f);
+        set_ball_target(2, &spC, 1.0f);
     }
     item->unk6C.z = -item->rotY;
     item->unk7C.x = item->unk14;
@@ -150,7 +152,7 @@ void item_coin_draw(struct Item *item)
 
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_translate(&item->pos);
-    mathutil_mtxA_sq_from_mtx(lbl_802F1B3C->matrices[2]);
+    mathutil_mtxA_sq_from_mtx(userWork->matrices[2]);
     mathutil_mtxA_rotate_y(item->rotY);
     mathutil_mtxA_rotate_x(item->rotX);
     mathutil_mtxA_rotate_z(item->rotZ);
@@ -162,7 +164,7 @@ void item_coin_draw(struct Item *item)
         mathutil_mtxA_scale_xyz(scale, scale, scale);
     mathutil_mtxA_get_translate_alt(&spC);
     f30 = -(((spC.z + f30) + 0.1f) / f30);
-    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBallStructPtr->flags & (1 << 12)))
+    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBall->flags & (1 << 12)))
         f30 = 0.25f;
     if (f30 > 0.0f)
     {
@@ -181,7 +183,7 @@ void item_coin_draw(struct Item *item)
 
 void item_coin_collect(struct Item *item, struct PhysicsBall *ball)
 {
-    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBallStructPtr->flags & (1 << 12)))
+    if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && (currentBall->flags & (1 << 12)))
         return;
     item->flags &= ~(1 << 1);
     item->state = 3;
@@ -190,9 +192,9 @@ void item_coin_collect(struct Item *item, struct PhysicsBall *ball)
     item->vel.x += ball->vel.x * 0.25;
     item->vel.y += ball->vel.y * 0.25;
     item->vel.z += ball->vel.z * 0.25;
-    if (item->unk5E < 0 && !(currentBallStructPtr->flags & (1 << 24)))
+    if (item->unk5E < 0 && !(currentBall->flags & (1 << 24)))
     {
-        struct Effect sp10;
+        struct Effect effect;
 
         item->unk5E = infoWork.timerCurr;
         give_bananas(s_bananaInfos[item->subType].bananaValue);
@@ -202,42 +204,42 @@ void item_coin_collect(struct Item *item, struct PhysicsBall *ball)
         item->flags &= ~(1 << 1);
 
         // spawn banana effect that travels towards counter in HUD
-        memset(&sp10, 0, sizeof(sp10));
-        sp10.unk8 = 8;
-        sp10.unk14 = currentBallStructPtr->playerId;
+        memset(&effect, 0, sizeof(effect));
+        effect.type = ET_HOLDING_BANANA;
+        effect.playerId = currentBall->playerId;
         mathutil_mtxA_from_mtx(animGroups[ball->animGroupId].transform);
-        mathutil_mtxA_tf_point(&item->pos, &sp10.unk34);
-        mathutil_mtxA_tf_vec(&item->vel, &sp10.unk40);
-        sp10.unk4C = item->rotX;
-        sp10.unk4E = item->rotY;
-        sp10.unk50 = item->rotZ;
-        sp10.unk30 = get_lod((void *)item->modelLODs);
-        sp10.unk24.x = (item->unk14 / sp10.unk30->boundSphereRadius) * 1.5;
-        sp10.unk24.y = sp10.unk24.x;
-        sp10.unk24.z = sp10.unk24.y;
-        spawn_effect(&sp10);
+        mathutil_mtxA_tf_point(&item->pos, &effect.pos);
+        mathutil_mtxA_tf_vec(&item->vel, &effect.vel);
+        effect.rotX = item->rotX;
+        effect.rotY = item->rotY;
+        effect.rotZ = item->rotZ;
+        effect.model = get_lod((void *)item->modelLODs);
+        effect.scale.x = (item->unk14 / effect.model->boundSphereRadius) * 1.5;
+        effect.scale.y = effect.scale.x;
+        effect.scale.z = effect.scale.y;
+        spawn_effect(&effect);
     }
     if (advDemoInfo.flags & (1 << 8))
         return;
     if (item->subType == 1)
     {
-        u_play_sound(0x39);
+        u_play_sound_0(0x39);
         if ((infoWork.flags & (1 << 11)) || !(infoWork.flags & (1 << 4)))
-            u_play_sound(0x2820);
+            u_play_sound_0(0x2820);
         background_interact(1);
     }
     else
     {
-        u_play_sound(3);
+        u_play_sound_0(3);
         if ((infoWork.flags & (1 << 11)) || !(infoWork.flags & (1 << 4)))
-            u_play_sound(0x281F);
+            u_play_sound_0(0x281F);
         background_interact(0);
     }
 }
 
 void item_coin_destroy(struct Item *item) {}
 
-void func_80069394(struct Item *item)
+void item_coin_release(struct Item *item)
 {
     if (item->state != 2)
     {
@@ -262,8 +264,8 @@ char wtfisthis[] =
 
 void item_coin_debug(struct Item *item)
 {
-    func_8002FCC0(2, wtfisthis);
-    func_8002FCC0(2, "Coin Value: %d\n", s_bananaInfos[item->subType].bananaValue);
+    window_printf(2, wtfisthis);
+    window_printf(2, "Coin Value: %d\n", s_bananaInfos[item->subType].bananaValue);
 }
 
 // needed to force float constant ordering
@@ -293,7 +295,7 @@ struct GMAModel *get_lod(struct ModelLOD **a)
     }
     if (spC.z > -0.1f)
         return model;
-    f1 = (currentCameraStructPtr->sub28.vp.height * -480.0f) * f31 / (spC.z * currentCameraStructPtr->sub28.unk38);
+    f1 = (currentCamera->sub28.vp.height * -480.0f) * f31 / (spC.z * currentCamera->sub28.unk38);
     while (r31->modelId > 0)
     {
         modelId = r31->modelId;

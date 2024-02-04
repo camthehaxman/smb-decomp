@@ -52,7 +52,7 @@ void func_8004AFC0(void)
     lbl_80250B70.unk0 = 0;
 }
 
-void dummy_8004AFD0(void) {}
+void cmp_recplay_init_first(void) {}
 
 void dummy_8004AFD4(void) {}
 
@@ -160,7 +160,7 @@ void u_serialize_some_replay_data(void)
         lbl_80250B70.ballPos.z += (0.00006103702f * (s16)var);
 
         s_replayData.unk1A++;
-        s_replayData.unk22 = lbl_80206DEC.unk0;
+        s_replayData.unk22 = stageInfo.unk0;
         s_replayData.currFrameNum = frameNum + 1;
     }
 }
@@ -199,7 +199,7 @@ void func_8004B354(void)
     }
     s_replayData.header.character = playerCharacterSelection[ball->playerId];
     s_replayData.header.playerName[0] = 0;
-    s_replayData.unk22 = lbl_80206DEC.unk0;
+    s_replayData.unk22 = stageInfo.unk0;
     if (infoWork.flags & INFO_FLAG_BONUS_STAGE)
         s_replayData.header.flags |= REPLAY_FLAG_BONUS_STAGE;
     if (!practice)
@@ -293,7 +293,7 @@ void func_8004B70C(void)
     }
     if (s_replayData.header.flags & REPLAY_FLAG_BONUS_STAGE)
         infoWork.flags |= INFO_FLAG_BONUS_STAGE;
-    playerCharacterSelection[lbl_80250A68.unk14] = s_replayData.header.character;
+    playerCharacterSelection[replayInfo.unk14] = s_replayData.header.character;
     modeCtrl.difficulty = s_replayData.header.difficulty;
     modeCtrl.courseFlags &= ~(COURSE_FLAG_EXTRA|COURSE_FLAG_MASTER);
     if (s_replayData.header.flags & REPLAY_FLAG_EXTRA)
@@ -320,7 +320,7 @@ void func_8004B850(float arg0, struct ReplayBallFrame *arg1)
     struct Ball *ball;
     u8 unused[4];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     if (s_replayData.unk1A == 0)
     {
         arg1->pos = ball->pos;
@@ -422,7 +422,7 @@ void func_8004BFCC(float arg8, struct ReplayWorldFrame *arg0)
     struct World *world;
     u8 unused[4];
 
-    world = currentWorldStructPtr;
+    world = currentWorld;
     if (s_replayData.unk1A == 0)
     {
         arg0->rotX = world->xrot;

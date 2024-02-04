@@ -8,13 +8,13 @@
 #include "gxutil.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "name_entry.h"
 #include "ranking_screen.h"
 #include "recplay.h"
 #include "sprite.h"
 
 static void ranking_screen_sprite_main(s8 *, struct Sprite *);
 static void ranking_screen_sprite_draw(struct Sprite *);
-static int func_80088AF4(void);
 static void rnk_title_sprite_main(s8 *, struct Sprite *);
 static void lbl_80089070(s8 *, struct Sprite *);
 static void lbl_800890B4(struct Sprite *);
@@ -209,7 +209,7 @@ static void update_ranking_screen(void)
     struct RankingEntry *entry;
     struct RankingLetterBall *letterBall;
 
-    if (!(gamePauseStatus & 0xA))
+    if (!(debugFlags & 0xA))
     {
         switch (lbl_802B37F0.unk4)
         {
@@ -634,7 +634,7 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
         params.v1 = 0.0f;
         params.u2 = params.u1 + 0.7265625;
         params.v2 = 0.96875f;
-        var = ((unpausedFrameCounter << 10) + rank);
+        var = ((globalAnimTimer << 10) + rank);
         temp_f29 = 384.0 * (mathutil_sin(var) - 0.5);
         if (temp_f29 > 0.0)
         {
@@ -670,11 +670,11 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
     }
 }
 
-#ifdef NONMATCHING
 void func_800885EC(void)
 {
     int i;
-    struct RankingLetterBall *var;
+    float new_var;
+    struct RankingLetterBall *letterBall;
     struct Struct801C79C8 *var2;
     s16 *var3;
 
@@ -682,32 +682,36 @@ void func_800885EC(void)
     lbl_802B37F0.unk4 = 0;
     lbl_802B37F0.unk1C = 0;
 
+#ifdef NONMATCHING
+    letterBall = lbl_802B37F0.letterBalls;
+    for (i = 0; i < 7; i++, letterBall++)
+    {
+        letterBall->bmpId = s_rankingBallBmpIds[i];
+        letterBall->x     = lbl_801C79C8[i].unk0;
+        letterBall->unk10 = lbl_801C79C8[i].unk4;
+    }
+#else
     var2 = lbl_801C79C8;
-    var = lbl_802B37F0.letterBalls;
+    letterBall = lbl_802B37F0.letterBalls;
     var3 = s_rankingBallBmpIds;
-
-    for (i = 0; i < 7; i++, var++)
+    if ((&lbl_802B37F0) && (&lbl_802B37F0))
+    {
+    }
+    for (i = 0; i < 7; i++, letterBall++)
     {
         var2 = &lbl_801C79C8[i];
-        var->bmpId = var3[i];
-        var->x = lbl_801C79C8[i].unk0;
-        var->unk10 = lbl_801C79C8[i].unk4;
+        letterBall->bmpId = var3[i];
+        letterBall->x     = var2->unk0;
+        letterBall->unk10 = (new_var = var2->unk4);
         !var2;
     }
-    !var;
+#endif
+
     lbl_802B37F0.unkC = 0.0f;
     lbl_802B37F0.unk10 = 0.0f;
     lbl_802B37F0.unk12C = 0;
     lbl_802B37F0.unk130 = 0;
 }
-#else
-asm void func_800885EC(void)
-{
-    nofralloc
-#include "../asm/nonmatchings/func_800885EC.s"
-}
-#pragma peephole on
-#endif
 
 void init_ranking_screen(int difficulty)
 {
@@ -745,7 +749,7 @@ void init_ranking_screen(int difficulty)
         lbl_802B37F0.unk18 = 0;
         break;
     }
-    lbl_802B37F0.unk168 = func_800AEC74(difficulty, 0);
+    lbl_802B37F0.unk168 = func_800AEC74(difficulty, NULL);
 
     var = 0;
     entry = lbl_802B37F0.rankingEntries;
@@ -809,7 +813,7 @@ void func_80088A10(void)
     }
 }
 
-static int func_80088AF4(void)
+int func_80088AF4(void)
 {
     struct RankingEntry *entry;
     int i;
@@ -915,7 +919,7 @@ void func_80088E90(void)
 {
     lbl_802B395C.unk0 = 0;
     lbl_802B395C.unk4 = 1;
-    lbl_802B395C.unk18 = lbl_80250A68.unk0[lbl_80250A68.unk14];
+    lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
     get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
     func_80088D44();
     lbl_802B395C.unk8 = -lbl_802B395C.unk14;
@@ -943,7 +947,7 @@ void func_80088F18(void)
     lbl_802B395C.unk4 = 1;
     if (temp_r31 != 0)
     {
-        lbl_802B395C.unk18 = lbl_80250A68.unk0[lbl_80250A68.unk14];
+        lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
         get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
         func_80088D44();
     }
@@ -980,7 +984,7 @@ static void func_800890D4(void)
         lbl_802B395C.unk10 = 8.0f;
         break;
     case 2:
-        if (lbl_802B395C.unk18 != lbl_80250A68.unk0[lbl_80250A68.unk14])
+        if (lbl_802B395C.unk18 != replayInfo.unk0[replayInfo.unk14])
         {
             lbl_802B395C.unk4 = 3;
             lbl_802B395C.unk10 = -lbl_802B395C.unk14;
@@ -990,7 +994,7 @@ static void func_800890D4(void)
         if (lbl_802B395C.unk8 == lbl_802B395C.unk10)
         {
             lbl_802B395C.unk4 = 1;
-            lbl_802B395C.unk18 = lbl_80250A68.unk0[lbl_80250A68.unk14];
+            lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
             get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
             func_80088D44();
         }

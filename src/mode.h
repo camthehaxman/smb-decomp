@@ -220,17 +220,11 @@ enum
 
 enum
 {
-    DIFFICULTY_BEGINNER,
-    DIFFICULTY_ADVANCED,
-    DIFFICULTY_EXPERT,
-};
-
-enum
-{
     // (1 << 0) = is in a difficulty?
     // (1 << 2) = used a continue?
     COURSE_FLAG_EXTRA = (1 << 3),
     COURSE_FLAG_MASTER = (1 << 4),
+    COURSE_FLAG_FAILED_EXTRA = (1 << 20),  // reached extra stages, but failed to complete them all?
 };
 
 enum
@@ -286,7 +280,7 @@ extern void *submodeStringPtr;
 extern void (*lbl_802F1B70)(void);
 extern void (*lbl_802F1B74)(void);
 extern s32 lbl_802F1B78;
-extern void (*lbl_802F1B7C)(void);
+extern void (*submodeFinishFunc)(void);
 extern void (*unusedCallback)(void);
 
 void gm_init(void);

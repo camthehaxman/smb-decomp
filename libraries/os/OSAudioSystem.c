@@ -1,8 +1,7 @@
 #include <string.h>
 
 #include <dolphin.h>
-
-#include "../dsp/__dsp.h"
+#include <dolphin/hw_regs.h>
 
 #define SOME_BUFFER (void *)0x81000000
 

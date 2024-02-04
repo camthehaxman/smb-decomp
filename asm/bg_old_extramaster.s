@@ -15,7 +15,7 @@ bg_old_extramaster_init:
 /* 80057ABC 000539DC  80 AD 99 1C */	lwz r5, g_bgNlObj@sda21(r13)
 /* 80057AC0 000539E0  80 65 00 08 */	lwz r3, 8(r5)
 /* 80057AC4 000539E4  3C A0 04 00 */	lis r5, 0x400
-/* 80057AC8 000539E8  48 03 58 A5 */	bl func_8008D36C
+/* 80057AC8 000539E8  48 03 58 A5 */	bl u_set_model_mesh_unk_flags
 /* 80057ACC 000539EC  80 8D 99 1C */	lwz r4, g_bgNlObj@sda21(r13)
 /* 80057AD0 000539F0  3C 60 80 1C */	lis r3, backgroundInfo@ha
 /* 80057AD4 000539F4  3B A3 91 78 */	addi r29, r3, backgroundInfo@l
@@ -202,7 +202,7 @@ bg_old_extramaster_init:
 /* 80057DA8 00053CC8  FC 00 00 50 */	fneg f0, f0
 /* 80057DAC 00053CCC  D0 1C 00 00 */	stfs f0, 0(r28)
 lbl_80057DB0:
-/* 80057DB0 00053CD0  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 80057DB0 00053CD0  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 80057DB4 00053CD4  54 03 30 32 */	slwi r3, r0, 6
 /* 80057DB8 00053CD8  4B FA F4 29 */	bl mathutil_sin
 /* 80057DBC 00053CDC  C8 42 96 48 */	lfd f2, lbl_802F3E48@sda21(r2)
@@ -401,7 +401,7 @@ bg_old_extramaster_main:
 /* 8005807C 00053F9C  93 E1 00 2C */	stw r31, 0x2c(r1)
 /* 80058080 00053FA0  93 C1 00 28 */	stw r30, 0x28(r1)
 /* 80058084 00053FA4  93 A1 00 24 */	stw r29, 0x24(r1)
-/* 80058088 00053FA8  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80058088 00053FA8  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 8005808C 00053FAC  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80058090 00053FB0  40 82 01 A8 */	bne lbl_80058238
 /* 80058094 00053FB4  3C 60 80 1C */	lis r3, backgroundInfo@ha
@@ -498,7 +498,7 @@ lbl_800581AC:
 /* 800581E8 00054108  80 01 00 0C */	lwz r0, 0xc(r1)
 /* 800581EC 0005410C  7C 03 07 34 */	extsh r3, r0
 /* 800581F0 00054110  4B FA FE 99 */	bl mathutil_mtxA_rotate_z
-/* 800581F4 00054114  80 0D 99 54 */	lwz r0, unpausedFrameCounter@sda21(r13)
+/* 800581F4 00054114  80 0D 99 54 */	lwz r0, globalAnimTimer@sda21(r13)
 /* 800581F8 00054118  54 03 30 32 */	slwi r3, r0, 6
 /* 800581FC 0005411C  4B FA EF E5 */	bl mathutil_sin
 /* 80058200 00054120  C8 02 96 48 */	lfd f0, lbl_802F3E48@sda21(r2)
@@ -531,7 +531,7 @@ bg_old_extramaster_draw:
 /* 80058258 00054178  7C 08 02 A6 */	mflr r0
 /* 8005825C 0005417C  90 01 00 04 */	stw r0, 4(r1)
 /* 80058260 00054180  94 21 FF F8 */	stwu r1, -8(r1)
-/* 80058264 00054184  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 80058264 00054184  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 80058268 00054188  38 63 00 30 */	addi r3, r3, 0x30
 /* 8005826C 0005418C  4B FA F6 45 */	bl mathutil_mtxA_from_mtx
 /* 80058270 00054190  80 6D 99 1C */	lwz r3, g_bgNlObj@sda21(r13)
@@ -559,7 +559,7 @@ lbl_800582B8:
 /* 800582BC 000541DC  38 80 00 00 */	li r4, 0
 /* 800582C0 000541E0  38 A0 00 AC */	li r5, 0xac
 /* 800582C4 000541E4  4B FA B0 5D */	bl memset
-/* 800582C8 000541E8  80 6D 99 5C */	lwz r3, lbl_802F1B3C@sda21(r13)
+/* 800582C8 000541E8  80 6D 99 5C */	lwz r3, userWork@sda21(r13)
 /* 800582CC 000541EC  38 00 00 0C */	li r0, 0xc
 /* 800582D0 000541F0  B0 01 00 20 */	sth r0, 0x20(r1)
 /* 800582D4 000541F4  38 63 00 30 */	addi r3, r3, 0x30
@@ -582,7 +582,7 @@ lbl_800582B8:
 /* 80058318 00054238  D0 01 00 14 */	stfs f0, 0x14(r1)
 /* 8005831C 0005423C  48 0A E5 49 */	bl rand
 /* 80058320 00054240  6C 60 80 00 */	xoris r0, r3, 0x8000
-/* 80058324 00054244  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 80058324 00054244  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80058328 00054248  90 01 00 E4 */	stw r0, 0xe4(r1)
 /* 8005832C 0005424C  3B C1 00 4C */	addi r30, r1, 0x4c
 /* 80058330 00054250  C8 22 96 58 */	lfd f1, lbl_802F3E58@sda21(r2)

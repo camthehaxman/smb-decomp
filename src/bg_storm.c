@@ -5,6 +5,7 @@
 #include "global.h"
 #include "background.h"
 #include "camera.h"
+#include "effect.h"
 #include "event.h"
 #include "mathutil.h"
 #include "stcoli.h"
@@ -51,11 +52,11 @@ void bg_storm_main(void)
     Vec spDC;
     Vec spD0;
     struct RaycastHit spB4;
-    struct Effect sp8;
+    struct Effect effect;
     int i;
     struct Camera *camera;
 
-    if ((gamePauseStatus & 0xA) && eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
+    if ((debugFlags & 0xA) && eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
         return;
 
     work = backgroundInfo.work;
@@ -84,19 +85,19 @@ void bg_storm_main(void)
 
     work->unk10 = spDC;
 
-    memset(&sp8, 0, sizeof(sp8));
-    sp8.unk8 = 35;
-    if (lbl_801EEC90.unk0 & 1)
+    memset(&effect, 0, sizeof(effect));
+    effect.type = ET_BGSTM_RAINRIPPLE;
+    if (polyDisp.unk0 & 1)
     {
         spD0.x = RAND_FLOAT() - 0.5f;
         spD0.y = 0.0f;
         spD0.z = RAND_FLOAT() - 0.5f;
-        mathutil_vec_set_len(&spD0, &sp8.unk34, (RAND_FLOAT() + 0.1f) * 3.6000001430511475f);
-        sp8.unk70.y = 1.0f;
-        mathutil_vec_to_euler_xy(&spB4.normal, &sp8.unk4C, &sp8.unk4E);
-        sp8.unk50 = rand() & 0x7FFF;
-        sp8.unk30 = work->rain02Model;
-        spawn_effect(&sp8);
+        mathutil_vec_set_len(&spD0, &effect.pos, (RAND_FLOAT() + 0.1f) * 3.6000001430511475f);
+        effect.unk70.y = 1.0f;
+        mathutil_vec_to_euler_xy(&spB4.normal, &effect.rotX, &effect.rotY);
+        effect.rotZ = rand() & 0x7FFF;
+        effect.model = work->rain02Model;
+        spawn_effect(&effect);
         return;
     }
     camera = cameraInfo;
@@ -111,14 +112,14 @@ void bg_storm_main(void)
             spD0.x += camera->lookAt.x;
             spD0.y += camera->lookAt.y + 10.0f;
             spD0.z += camera->lookAt.z;
-            if ((u32)raycast_stage_down(&spD0, &spB4, &sp8.unk7C) != 0)
+            if ((u32)raycast_stage_down(&spD0, &spB4, &effect.unk7C) != 0)
             {
-                sp8.unk34 = spB4.pos;
-                sp8.unk70 = spB4.normal;
-                mathutil_vec_to_euler_xy(&spB4.normal, &sp8.unk4C, &sp8.unk4E);
-                sp8.unk50 = rand() & 0x7FFF;
-                sp8.unk30 = work->rain02Model;
-                spawn_effect(&sp8);
+                effect.pos = spB4.pos;
+                effect.unk70 = spB4.normal;
+                mathutil_vec_to_euler_xy(&spB4.normal, &effect.rotX, &effect.rotY);
+                effect.rotZ = rand() & 0x7FFF;
+                effect.model = work->rain02Model;
+                spawn_effect(&effect);
             }
         }
     }
@@ -151,9 +152,9 @@ void bg_storm_draw(void)
     float f25;
 
     bg_default_draw();
-    if (lbl_801EEC90.unk0 & (1 << 2))
+    if (polyDisp.unk0 & (1 << 2))
         return;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_inv_tf_tl(&sp7C);
     sp70 = work->unk10;
     sp70.x += (mathutil_ceil((sp7C.x - sp70.x) * 0.1666666716337204f) - 0.5f) * 6.0f;
@@ -182,7 +183,7 @@ void bg_storm_draw(void)
         {
             float alpha;
 
-            mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+            mathutil_mtxA_from_mtx(userWork->matrices[0]);
             mathutil_mtxA_tf_vec(r26, &sp28);
             if (sp28.z > 0.0f)
                 continue;
@@ -192,9 +193,9 @@ void bg_storm_draw(void)
             f25 = mathutil_vec_distance(&sp4C, &sp7C);
             if (f25 > 6.0f)
                 continue;
-            mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[4]);
+            mathutil_mtxA_from_mtx(userWork->matrices[4]);
             mathutil_mtxA_tf_point_xyz(&sp34, sp4C.x - sp64.x, sp4C.y - sp64.y, sp4C.z - sp64.z);
-            mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+            mathutil_mtxA_from_mtx(userWork->matrices[0]);
             mathutil_mtxA_tf_point(&sp4C, &sp40);
             if (sp40.z > 0.0f && sp34.z > 0.0f)
                 continue;

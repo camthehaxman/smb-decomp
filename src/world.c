@@ -16,11 +16,11 @@
 #include "recplay.h"
 #include "world.h"
 
-struct World *currentWorldStructPtr;
+struct World *currentWorld;
 struct World worldInfo[MAX_PLAYERS];
 Vec lbl_80206CF0;
 
-struct Struct80176434 tutorialStickInputs[] =
+struct OtherKeyframe tutorialStickInputs[] =
 {
     {    0,     0,    0,    0 },
     {  240,     0,    0,    0 },
@@ -64,7 +64,7 @@ struct Struct80176434 tutorialStickInputs[] =
     { 4380,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8228[] =
+struct OtherKeyframe lbl_801B8228[] =
 {
     {    0,     0,    0,    0 },
     { 1305,     0,    0,    0 },
@@ -80,7 +80,7 @@ struct Struct80176434 lbl_801B8228[] =
     { 2902, -2560,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B82E8[] =
+struct OtherKeyframe lbl_801B82E8[] =
 {
     {    0,     0,    0,    0 },
     { 1305,     0,    0,    0 },
@@ -93,7 +93,7 @@ struct Struct80176434 lbl_801B82E8[] =
     { 2902,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8378[] =
+struct OtherKeyframe lbl_801B8378[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -108,7 +108,7 @@ struct Struct80176434 lbl_801B8378[] =
     { 2902, -2048,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8428[] =
+struct OtherKeyframe lbl_801B8428[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -120,7 +120,7 @@ struct Struct80176434 lbl_801B8428[] =
     { 2902,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B84A8[] =
+struct OtherKeyframe lbl_801B84A8[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -131,7 +131,7 @@ struct Struct80176434 lbl_801B84A8[] =
     { 2902, -2048,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8518[] =
+struct OtherKeyframe lbl_801B8518[] =
 {
     {    0,     0,    0,    0 },
     { 1739,     0,    0,    0 },
@@ -143,7 +143,7 @@ struct Struct80176434 lbl_801B8518[] =
     { 2902,     0,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8598[] =
+struct OtherKeyframe lbl_801B8598[] =
 {
     {    0,     0,    0,    0 },
     { 1953,     0,    0,    0 },
@@ -155,7 +155,7 @@ struct Struct80176434 lbl_801B8598[] =
     { 2902, -1536,    0,    0 },
 };
 
-struct Struct80176434 lbl_801B8618[] =
+struct OtherKeyframe lbl_801B8618[] =
 {
     {    0,     0,    0,    0 },
     { 1953,     0,    0,    0 },
@@ -313,7 +313,7 @@ void world_sub_input_main(struct World *world)
     int inpYRot;
     Vec spC;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     if (gameMode == MD_ADV && !(advDemoInfo.flags & (1 << 8)) && gameSubmode != SMD_ADV_INFO_MAIN)
@@ -325,8 +325,8 @@ void world_sub_input_main(struct World *world)
 
         world->xrotPrev = world->xrot;
         world->zrotPrev = world->zrot;
-        inpXRot = advTutorialInfo.stickXRot = func_8008CDC0(f31, &tutorialStickInputs[0]);
-        inpYRot = advTutorialInfo.stickZRot = func_8008CDC0(f31, &tutorialStickInputs[0x19]);
+        inpXRot = advTutorialInfo.stickXRot = u_interpolate_other_keyframes(f31, &tutorialStickInputs[0]);
+        inpYRot = advTutorialInfo.stickZRot = u_interpolate_other_keyframes(f31, &tutorialStickInputs[0x19]);
 
         mathutil_mtxA_from_identity();
         mathutil_mtxA_rotate_y(cameraInfo[world->playerId].rotY);
@@ -347,8 +347,8 @@ void world_sub_input_main(struct World *world)
 
             world->xrotPrev = world->xrot;
             world->zrotPrev = world->zrot;
-            inpXRot = advTutorialInfo.stickXRot = func_8008CDC0(t, lbl_801B8688[world->playerId]);
-            inpYRot = advTutorialInfo.stickZRot = func_8008CDC0(t, lbl_801B8688[world->playerId + 4]);
+            inpXRot = advTutorialInfo.stickXRot = u_interpolate_other_keyframes(t, lbl_801B8688[world->playerId]);
+            inpYRot = advTutorialInfo.stickZRot = u_interpolate_other_keyframes(t, lbl_801B8688[world->playerId + 4]);
         }
         else if ((ballInfo[world->playerId].flags & (1 << 12))
          || world->unk20 > 0
@@ -364,8 +364,8 @@ void world_sub_input_main(struct World *world)
 
             world->xrotPrev = world->xrot;
             world->zrotPrev = world->zrot;
-            stickX = controllerInfo[lbl_80206BD0[world->playerId]].unk0[0].stickX / 60.0;
-            stickY = -(float)controllerInfo[lbl_80206BD0[world->playerId]].unk0[0].stickY / 60.0;
+            stickX = controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickX / 60.0;
+            stickY = -(float)controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickY / 60.0;
 
             if (stickX < -1.0)
                 stickX = -1.0f;
@@ -430,10 +430,10 @@ void world_sub_7(struct World *world)
     Vec sp10;
     struct ReplayWorldFrame spC;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
-    func_80049C1C(lbl_80250A68.unk0[world->playerId], &spC, lbl_80250A68.unk10);
+    func_80049C1C(replayInfo.unk0[world->playerId], &spC, replayInfo.unk10);
     var1 = -world->xrot;
     var2 = -world->zrot;
     world->xrot += var1 >> 2;
@@ -464,10 +464,10 @@ void world_sub_9(struct World *world)
     struct ReplayWorldFrame spC;
     Vec sp10;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
-    func_80049C1C(lbl_80250A68.unk0[world->playerId], &spC, lbl_80250A68.unk10);
+    func_80049C1C(replayInfo.unk0[world->playerId], &spC, replayInfo.unk10);
     var1 = spC.rotX - world->xrot;
     var2 = spC.rotZ - world->zrot;
     world->xrot += var1 >> 2;
@@ -492,10 +492,10 @@ void world_sub_11(struct World *world)
     Vec spC;
     int var;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
-    f1 = controllerInfo[lbl_80206BD0[world->playerId]].unk0[0].stickX / 60.0;
+    f1 = controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickX / 60.0;
     if (f1 < -1.0)
         f1 = -1.0f;
     else if (f1 > 1.0)

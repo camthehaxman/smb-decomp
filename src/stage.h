@@ -470,6 +470,22 @@ struct StageMirror
     struct GMAModel *model;  // filled in at runtime
 };
 
+struct Stage_Child90  // some model?
+{
+    u32 unk0;
+    Vec unk4;
+    
+    s16 unk10;
+    s16 unk12;
+    s16 unk14;
+    
+    Vec unk18;
+    /*
+    float unk18;
+    float unk1C;
+    float unk20;*/
+};
+
 struct Stage
 {
     s32 loopStartSeconds;
@@ -507,8 +523,8 @@ struct Stage
     /*0x80*/ s32 mirrorCount;
     /*0x84*/ void *mirrors;
     struct DecodedStageLzPtr_child6 *unk88;
-    u8 filler8C[4];
-    void *unk90;
+    s32 unk8C;
+    struct Stage_Child90 *unk90;
 };
 
 void ev_stage_init(void);
@@ -527,12 +543,12 @@ void preload_stage_files(int);
 void load_stage_files(int stageId);
 void func_80044E18(void);
 void func_80045194(void);
-// ? find_stage_or_bg_model();
+struct GMAModel *find_stage_or_bg_model(char *name);
 void u_initialize_stuff_for_dynamic_stage_parts(int stageId);
 int get_stage_background(int stageId);
 int get_stage_background_2(int stageId);
 void compute_stage_bounding_sphere(void);
-// ? func_800463E8();
+void func_800463E8(Vec *, float *);
 float func_80046884(struct NlModel *);
 void load_stagedef(int stageId);
 void free_stagedef(void);

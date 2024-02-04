@@ -1,4 +1,5 @@
 #include <dolphin.h>
+#include <dolphin/exi.h>
 
 #include "../os/__os.h"
 

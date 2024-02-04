@@ -18,6 +18,7 @@
 #include "pool.h"
 #include "ranking_screen.h"
 #include "recplay.h"
+#include "sound.h"
 #include "sprite.h"
 #include "textbox.h"
 
@@ -243,7 +244,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
     reset_text_draw_settings();
     set_text_font(sprite->fontId);
     func_80071B50(0x220000);
-    temp_r16 = (u32)((globalFrameCounter >> 2) & 1) * 255;
+    temp_r16 = (u32)((powerOnTimer >> 2) & 1) * 255;
     temp_r16 = RGBA(temp_r16, temp_r16, temp_r16, 0);
 
     for (i = 0; i < pauseMenuState.itemCount; i++)
@@ -279,7 +280,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
         // Display billiards guide toggle
         if (menuType == PAUSEMENU_CONT_GUIDE_HOW_EXIT && i == 1)
         {
-            u32 temp_r3 = (1.0 - __fabs(mathutil_sin(globalFrameCounter << 9))) * 255.0;
+            u32 temp_r3 = (1.0 - fabs(mathutil_sin(powerOnTimer << 9))) * 255.0;
             u32 flashColor = RGBA(temp_r3, temp_r3, temp_r3, 0);
 
             strcpy(text, "ON");
@@ -341,7 +342,7 @@ void hud_show_press_start_textbox(int a)
     tbox.y = (a == 2 || a == 3) ? 361 : 410;
     tbox.numRows = 1;
     tbox.callback = press_start_texbox_callback;
-    textbox_set_properties(0, 21, &tbox);
+    textbox_set_properties(0, TEXTBOX_STATE_21, &tbox);
     if (a == 3)
         textbox_add_text(0, "b/Select using the c/0xffffff/p/BUTTON_A/c/0x000000/ Button!");
     else
@@ -505,7 +506,7 @@ void hud_show_adv_copyright_info(int a)
         if (a == 1)
             sprite->drawFunc = lbl_80076710;
 
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->tag = 38;
@@ -682,7 +683,7 @@ static void title_sprite_main(s8 *arg0, struct Sprite *sprite)
             lbl_80292D08[i] = TRUE;
         if (lbl_80292D08[i])
         {
-            if (__abs(titleMonkeyBallOffsets[i].vel) <= 2.0 && __abs(titleMonkeyBallOffsets[i].pos) <= 2.0)
+            if (abs(titleMonkeyBallOffsets[i].vel) <= 2.0 && abs(titleMonkeyBallOffsets[i].pos) <= 2.0)
             {
                 titleMonkeyBallOffsets[i].vel = 0.0f;
                 titleMonkeyBallOffsets[i].pos = 0.0f;
@@ -783,7 +784,7 @@ static void title_sprite_draw(struct Sprite *sprite)
 
         params.bmpId = BMP_ADV_adv_title_spr_gawa;
         params.z = sprite->unk4C - 0.002;
-        params.opacity = 1.0 - __fabs(0.2 * mathutil_sin(512.0f * offset->pos));
+        params.opacity = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
         draw_naomi_sprite(&params);
     }
 
@@ -812,7 +813,7 @@ static void title_sprite_draw(struct Sprite *sprite)
 
         params.bmpId = BMP_ADV_adv_title_mnk_gawa;
         params.z = sprite->unk4C - 0.002;
-        params.opacity = 1.0 - __fabs(0.2 * mathutil_sin(512.0f * offset->pos));
+        params.opacity = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
         params.rotation = 0;
         draw_naomi_sprite(&params);
     }
@@ -833,7 +834,7 @@ static void title_sprite_draw(struct Sprite *sprite)
     params.scaleX = lbl_802F2010 * 0.7;
     params.scaleY = lbl_802F2010 * 0.7 * 0.65;
     params.opacity = 1.0f;
-    params.rotation = 1024.0f * mathutil_sin(unpausedFrameCounter << 8);
+    params.rotation = 1024.0f * mathutil_sin(globalAnimTimer << 8);
     params.flags = (sprite->flags & 0xFFFFFFF0) | 0x200000 | 0xA;
     draw_naomi_sprite(&params);
 }
@@ -982,7 +983,7 @@ void u_show_adv_ready_hud(void)
     struct Ball *ball;
     u8 filler[16];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     func_8000D5B8();
     hud_show_bomb(320.0f, 68.0f);
 
@@ -997,7 +998,7 @@ void u_show_adv_ready_hud(void)
         sprite->unk4C = 0.19f;
         sprite->mainFunc = normal_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = -4.0f;
@@ -1500,7 +1501,7 @@ static void floor_intro_sprite_draw(struct Sprite *sprite)
         }
 
         set_text_pos(sprite->x - centerX + 14.4 + 57.6 * i + xOffset, sprite->y - 25.6 + yOffset);
-        set_text_scale(sprite->scaleX - 0.01, sprite->scaleY + (0.01 * __fabs((float)yOffset)));
+        set_text_scale(sprite->scaleX - 0.01, sprite->scaleY + (0.01 * fabs((float)yOffset)));
         if (i > spacePos)
             set_text_opacity(MIN(0.0625 * (sprite->counter - 30 - spacePos * 16), sprite->opacity));
         else if (i > 0)
@@ -1540,7 +1541,7 @@ void hud_show_ready_banner(int duration)
         sprite = create_sprite();
         if (sprite != NULL)
         {
-            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBallStructPtr->playerId : 3;
+            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBall->playerId : 3;
 
             sprite->x = 785.0f;
             sprite->y = 310.0f;
@@ -1552,7 +1553,7 @@ void hud_show_ready_banner(int duration)
             sprite->userVar = -30;
             sprite->counter = 120;
             sprite->mainFunc = player_num_sprite_main;
-            sprintf(sprite->text, "%dP", currentBallStructPtr->playerId + 1);
+            sprintf(sprite->text, "%dP", currentBall->playerId + 1);
         }
     }
 
@@ -1573,7 +1574,7 @@ void hud_show_ready_banner(int duration)
         sprite->mainFunc = ready_sprite_main;
         strcpy(sprite->text, "READY");
     }
-    u_play_sound(4);
+    u_play_sound_0(4);
 }
 
 static void ready_sprite_main(s8 *arg0, struct Sprite *sprite)
@@ -1606,7 +1607,7 @@ static void ready_sprite_main(s8 *arg0, struct Sprite *sprite)
     }
     if (--sprite->counter <= 0)
     {
-        u_play_sound(5);
+        u_play_sound_0(5);
         *arg0 = 0;
     }
 }
@@ -1629,7 +1630,7 @@ void hud_show_normal_mode_info(void)
     int floorNum;
     u8 dummy[16];
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
         flags = lbl_8027CE24[0].unk4;
     else
@@ -1662,9 +1663,9 @@ void hud_show_normal_mode_info(void)
             sprintf(sprite->text, "EXTRA %d", floorNum);
         else
             sprintf(sprite->text, "FLOOR %d", floorNum);
-        if (gamePauseStatus & 4)
+        if (debugFlags & 4)
         {
-            sprite = create_linked_sprite(sprite);
+            sprite = create_child_sprite(sprite);
             if (sprite != NULL)
             {
                 sprite->x = 20.0f;
@@ -1737,7 +1738,7 @@ void hud_show_normal_mode_info(void)
         sprite->unk4C = 0.19f;
         sprite->mainFunc = competition_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = -4.0f;
@@ -1878,7 +1879,7 @@ void hud_show_normal_mode_info(void)
         sprite->unk4C = 0.2f;
         sprite->mainFunc = normal_ball_speed_sprite_main;
         strcpy(sprite->text, "00");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = 4.0f;
@@ -2046,7 +2047,7 @@ static void show_competition_player_hud(int playerId)
         sprite->unk4C = 0.2f;
         sprite->mainFunc = competition_ball_speed_sprite_main;
         strcpy(sprite->text, "00");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = 4.0f;
@@ -2087,9 +2088,9 @@ void hud_show_competition_mode_info(void)
             sprite->fontId = FONT_ASC_20x20;
             sprite->textAlign = ALIGN_LB;
             sprite->mainFunc = competition_round_sprite_main;
-            if (gamePauseStatus & 4)
+            if (debugFlags & 4)
             {
-                sprite = create_linked_sprite(sprite);
+                sprite = create_child_sprite(sprite);
                 if (sprite != NULL)
                 {
                     sprite->x = 20.0f;
@@ -2115,7 +2116,7 @@ void hud_show_competition_mode_info(void)
         sprite->unk4C = 0.19f;
         sprite->mainFunc = competition_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
-        sprite = create_linked_sprite(sprite);
+        sprite = create_child_sprite(sprite);
         if (sprite != NULL)
         {
             sprite->x = -4.0f;
@@ -2261,7 +2262,7 @@ static void lbl_8007A774(s8 *arg0, struct Sprite *sprite)
 {
     if (modeCtrl.courseFlags & 1)
     {
-        if (gamePauseStatus & 4)
+        if (debugFlags & 4)
             sprite->y = 436.0f;
         else
             sprite->y = 454.0f;
@@ -2272,7 +2273,7 @@ static void lbl_8007A774(s8 *arg0, struct Sprite *sprite)
 
 static void lbl_8007A7B8(s8 *arg0, struct Sprite *sprite)
 {
-    if (gamePauseStatus & 4)
+    if (debugFlags & 4)
         sprite->unk78 &= ~1;
     else
         sprite->unk78 |= 1;
@@ -2308,13 +2309,13 @@ static void competition_timer_100th_seconds_sprite_main(s8 *arg0, struct Sprite 
 
 static void normal_timer_seconds_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    int time = (int)func_80049E7C(lbl_80250A68.unk0[lbl_80250A68.unk14], lbl_80250A68.unk10) + 1;
+    int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
     sprintf(sprite->text, "%03d", time / 60);
 }
 
 static void normal_timer_100th_seconds_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    int time = (int)func_80049E7C(lbl_80250A68.unk0[lbl_80250A68.unk14], lbl_80250A68.unk10) + 1;
+    int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
     int val = 100.0 * ((float)(time % 60) / 60.0);
     sprintf(sprite->text, ":%02d", val);
 }
@@ -2365,7 +2366,7 @@ static void banana_count_sprite_draw(struct Sprite *sprite)
     int temp_r23;
     struct Struct80292C00 *r22;
 
-    ball = currentBallStructPtr;
+    ball = currentBall;
     reset_text_draw_settings();
     set_text_font(sprite->fontId);
     set_text_pos(sprite->x - 70.0f, sprite->y - 10.0f);
@@ -2388,7 +2389,7 @@ static void banana_count_sprite_draw(struct Sprite *sprite)
             if (ball->bananas < 90)
                 sprite->userVar = 0;
         }
-        if (!(gamePauseStatus & 0xA) && r22->unk4 > 0)
+        if (!(debugFlags & 0xA) && r22->unk4 > 0)
             r22->unk4--;
 
         temp_f28 = lbl_80118870[29 - r22->unk4];
@@ -2443,7 +2444,7 @@ static void lbl_8007ADF4(struct Sprite *sprite)
             r22->unk4 = 30;
             r22->unk0 = phi_r3;
         }
-        if (!(gamePauseStatus & 0xA) && r22->unk4 > 0)
+        if (!(debugFlags & 0xA) && r22->unk4 > 0)
             r22->unk4--;
 
         temp_f28 = lbl_80118870[29 - r22->unk4];
@@ -2490,7 +2491,7 @@ static void lbl_8007B134(struct Sprite *sprite)
 static void score_value_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
     struct Struct80292C60 *r31 = &lbl_80292C60;
-    struct Ball *ball = currentBallStructPtr;
+    struct Ball *ball = currentBall;
 
     if (r31->unk4 == 0)
     {
@@ -2522,7 +2523,7 @@ static void score_value_sprite_main(s8 *arg0, struct Sprite *sprite)
     {
         r31->unk0 += r31->unk8;
         if (gameSubmode == SMD_GAME_GOAL_REPLAY_MAIN && r31->unk4 % 4 == 0)
-            u_play_sound(0x2E);
+            u_play_sound_0(0x2E);
     }
     sprintf(sprite->text, "%d", r31->unk0);
 }
@@ -2534,7 +2535,7 @@ static void lbl_8007B490(s8 *arg0, struct Sprite *sprite)
 
 static void normal_ball_speed_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    float len = mathutil_vec_len(&currentBallStructPtr->vel);
+    float len = mathutil_vec_len(&currentBall->vel);
     float mph = ((216000.0 * len) / 1000.0) / 1.6093;
 
     if (mph > 999.0)
@@ -2572,7 +2573,7 @@ static void bananas_left_sprite_main(s8 *arg0, struct Sprite *sprite)
     else
         sprite->unk78 &= ~1;
     sprite->opacity = sprite->counter / 60.0f;
-    blueness = 2.0 * ((unpausedFrameCounter % 60) / 59.0);
+    blueness = 2.0 * ((globalAnimTimer % 60) / 59.0);
     if (blueness > 1.0)
         blueness = 2.0 - blueness;
     sprite->mulR = 255;
@@ -2813,7 +2814,7 @@ static void go_sprite_main(s8 *arg0, struct Sprite *sprite)
         int temp_r29 = (t - 15) * 0x888;
 
         sprite->opacity = 1.0f;
-        sprite->addR = ((unpausedFrameCounter >> 1) & 1) * 192;
+        sprite->addR = ((globalAnimTimer >> 1) & 1) * 192;
         sprite->addG = sprite->addR;
         sprite->addB = sprite->addR;
         sprite->scaleX = 1.0 - mathutil_sin(temp_r29) * 0.5;
@@ -2824,7 +2825,7 @@ static void go_sprite_main(s8 *arg0, struct Sprite *sprite)
         int temp_r29_2 = (t - 30) * 0x888;
 
         sprite->opacity = 1.0f;
-        sprite->addR = ((unpausedFrameCounter >> 1) & 1) * 192;
+        sprite->addR = ((globalAnimTimer >> 1) & 1) * 192;
         sprite->addG = sprite->addR;
         sprite->addB = sprite->addR;
         sprite->scaleX = 1.0 + mathutil_sin(temp_r29_2) * 0.75;
@@ -3143,7 +3144,7 @@ static void fall_out_sprite_main(s8 *arg0, struct Sprite *sprite)
     t = sprite->userVar - sprite->counter;
 
     if (modeCtrl.gameType != GAMETYPE_MINI_TARGET && t == 90)
-        u_play_sound(0xC);
+        u_play_sound_0(0xC);
 
     if (t < 30)
     {
@@ -3306,7 +3307,7 @@ static void bonus_finish_sprite_main(s8 *arg0, struct Sprite *sprite)
 
     sprite->scaleY = sprite->scaleX = temp_f3 * 0.8 + (1.0 - temp_f3) * 5.0;
     if (sprite->counter == 29)
-        u_play_sound((sprite->userVar != 0) ? 0x48 : 0x45);
+        u_play_sound_0((sprite->userVar != 0) ? 0x48 : 0x45);
     if (sprite->counter < 30)
         sprite->counter++;
 }
@@ -3414,7 +3415,7 @@ static void continue_sprite_main(s8 *arg0, struct Sprite *sprite)
     }
     if (sprite->userVar == 0)
     {
-        u_play_sound(0x47);
+        u_play_sound_0(0x47);
         sprite->userVar = 1;
     }
     sprite->opacity += 0.1 * (1.0 - sprite->opacity);
@@ -3455,7 +3456,7 @@ static void continue_yes_no_sprite_main(s8 *arg0, struct Sprite *sprite)
 
             sprite->x += 0.1 * (320.0 - sprite->x);
             sprite->y += 0.1 * (200.0 - sprite->y);
-            switch (unpausedFrameCounter & 7)
+            switch (globalAnimTimer & 7)
             {
             case 0:
             case 7:
@@ -3502,7 +3503,7 @@ static void continue_yes_no_sprite_main(s8 *arg0, struct Sprite *sprite)
     sprite->opacity += 0.1 * (1.0 - sprite->opacity);
     if (sprite->userVar == modeCtrl.unk10)
     {
-        float phi_f1 = 2.0 * ((float)((unpausedFrameCounter + 36) % 60) / 59.0);
+        float phi_f1 = 2.0 * ((float)((globalAnimTimer + 36) % 60) / 59.0);
         int temp_r0_2;
 
         if (phi_f1 > 1.0)
@@ -3565,7 +3566,7 @@ void hud_show_game_over_banner(int duration)
         sprite = create_sprite();
         if (sprite != NULL)
         {
-            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBallStructPtr->playerId : 3;
+            int phi_r0 = (modeCtrl.playerCount > 1) ? currentBall->playerId : 3;
 
             sprite->x = 785.0f;
             sprite->y = 310.0f;
@@ -3578,7 +3579,7 @@ void hud_show_game_over_banner(int duration)
             sprite->counter = 120;
             sprite->unk4C = 0.008f;
             sprite->mainFunc = game_over_player_num_sprite_main;
-            sprintf(sprite->text, "%dP", currentBallStructPtr->playerId + 1);
+            sprintf(sprite->text, "%dP", currentBall->playerId + 1);
         }
     }
 }
@@ -3627,7 +3628,7 @@ static void oneup_sprite_main(s8 *arg0, struct Sprite *sprite)
     {
         if (t == 0)
         {
-            func_8002B5C8(0xA00E);
+            u_play_sound_1(0xA00E);
             SoundRevID(0xE, 0x64);
             SoundChoID(0xE, 0x64);
         }
@@ -3917,7 +3918,7 @@ void hud_show_name_entry_banner(int arg0)
         sprite->mainFunc = ready_sprite_main;
         strcpy(sprite->text, "ENTRY");
     }
-    u_play_sound(4);
+    u_play_sound_0(4);
 }
 
 // Unused credits-related data. Possibly left over from arcade version?
@@ -4449,7 +4450,7 @@ static void floor_score_sprite_draw(struct Sprite *sprite)
 
 static void goal_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    if (!(gamePauseStatus & 0xA) && --sprite->counter <= 0)
+    if (!(debugFlags & 0xA) && --sprite->counter <= 0)
         *arg0 = 0;
 }
 
@@ -4508,7 +4509,7 @@ static void best_score_sprite_main(s8 *arg0, struct Sprite *sprite)
     switch (sprite->userVar)
     {
     case 1:
-        SoundPitch(func_8002B610(0xA11D), 0);
+        SoundPitch(u_play_sound_1_dupe(0xA11D), 0);
         u_play_music(0x1E, 8);
         sprite->userVar = 2;
         sprite->counter = 120;
@@ -4535,7 +4536,7 @@ static void best_score_sprite_draw(struct Sprite *sprite)
     r28 = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, 0);
     for (i = 0; i < 10; i++)
     {
-        int phi_r4 = sprite->userVar > 0 && (unpausedFrameCounter >> 4) % 2 == ((i > 4) ? i + 1 : i) % 2;
+        int phi_r4 = sprite->userVar > 0 && (globalAnimTimer >> 4) % 2 == ((i > 4) ? i + 1 : i) % 2;
 
         set_text_mul_color(phi_r4 ? RGBA(255, 0, 0, 0) : r28);
         set_text_pos(sprite->x + 20.0 * i * sprite->scaleX + ((i > 4) ? -8 : 0), sprite->y);
@@ -4565,8 +4566,8 @@ static void lbl_800800D4(struct Sprite *sprite)
     temp_r3 = find_sprite_with_tag(8);
     if (temp_r3 != NULL && temp_r3->userVar > 0)
     {
-        float temp_f31 = 1.0 - __fabs(mathutil_sin(temp_r3->counter << 9));
-        u32 temp_r30 = (1.0 - __fabs(mathutil_sin((temp_r3->counter << 9) + 0x4000))) * 255.0;
+        float temp_f31 = 1.0 - fabs(mathutil_sin(temp_r3->counter << 9));
+        u32 temp_r30 = (1.0 - fabs(mathutil_sin((temp_r3->counter << 9) + 0x4000))) * 255.0;
 
         func_80071B1C(0.09f);
         set_text_add_color(RGBA(temp_r30, temp_r30, temp_r30, 0));
@@ -4583,8 +4584,8 @@ static float func_800802E0(u16 arg0)
 
     if (arg0 > 60)
     {
-        float f4 = __fabs(mathutil_sin(((60 - ((u32)arg0 % 60)) & 0x3F) << 8));
-        return 0.20000000298023224 * (1.0 - __fabs(1.0f - f4 * 2.0f));
+        float f4 = fabs(mathutil_sin(((60 - ((u32)arg0 % 60)) & 0x3F) << 8));
+        return 0.20000000298023224 * (1.0 - fabs(1.0f - f4 * 2.0f));
     }
     if (arg0 < 15)
     {
@@ -4620,7 +4621,7 @@ static void bomb_crack_sprite_main(s8 *arg0, struct Sprite *sprite)
         if (infoWork.timerCurr < 240)
         {
             sprite->userVar += 40.0f - (infoWork.timerCurr * 40.0f) / 240.0f;
-            sprite->mulG = __abs(255 - (sprite->userVar % 510));
+            sprite->mulG = abs(255 - (sprite->userVar % 510));
             sprite->mulB = sprite->mulG;
             if (sprite->mulB < 128)
                 sprite->mulB = 128;

@@ -245,6 +245,24 @@ static inline float mathutil_sum_of_sq_3(register float a, register float b, reg
 #endif
 }
 
+static inline float mathutil_unk(register float a, register float b, register float c, register float d)
+{
+#ifdef C_ONLY
+    a -= c;
+    b -= d;
+    return mathutil_sqrt(a * a + b * b);
+#else
+    asm
+    {
+        fsubs a, a, c
+        fsubs b, b, d
+        fmuls a, a, a
+        fmadds a, b, b, a
+    }
+    return mathutil_sqrt(a);
+#endif
+}
+
 static inline float mathutil_vec_len(register Vec *v)
 {
 #ifdef C_ONLY
@@ -515,6 +533,32 @@ static inline void mathutil_mtxA_copy_translate(register Mtx mtx)
         stfs x, 0x0C(mtx)
         stfs y, 0x1C(mtx)
         stfs z, 0x2C(mtx)
+    }
+#endif
+}
+
+static inline void mathutil_mtxA_get_col2_scaled(register Vec *v, register float scale)
+{
+#ifdef C_ONLY
+    v->x = ((struct MathutilData *)LC_CACHE_BASE)->mtxA[0][2] * scale;
+    v->y = ((struct MathutilData *)LC_CACHE_BASE)->mtxA[1][2] * scale;
+    v->z = ((struct MathutilData *)LC_CACHE_BASE)->mtxA[2][2] * scale;
+#else
+    register float *mtxA;
+    register float x, y, z;
+
+    asm
+    {
+        lis mtxA, LC_CACHE_BASE@ha
+        lfs x, 0x08(mtxA)  // mtxA[0][2]
+        lfs y, 0x18(mtxA)  // mtxA[1][2]
+        lfs z, 0x28(mtxA)  // mtxA[2][2]
+        fmuls x, x, scale
+        stfs x, v->x
+        fmuls y, y, scale
+        stfs y, v->y
+        fmuls z, z, scale
+        stfs z, v->z
     }
 #endif
 }

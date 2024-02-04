@@ -2163,6 +2163,7 @@ lbl_801E8E40:
 
 .section .sdata
 
+	.balign 8
 .global tbl1
 tbl1:
 	# ROM: 0x1EC0F0

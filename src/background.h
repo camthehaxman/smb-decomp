@@ -69,7 +69,7 @@ struct BackgroundInfo  // size = 0xA8
     /*0x94*/ BallEnvFunc ballEnvFunc;
     void (*unk98)(void);
     void *work;
-    u32 unkA0;
+    u32 randSeed;
     u32 unkA4;
 };
 
@@ -306,6 +306,16 @@ struct BGSandWork
     u8 filler568[4];
 };
 
+struct BGMasterWork
+{
+    u8 filler0[0xB0C];
+    struct GMAModel *unkB0C;
+    u8 fillerB10[4];
+    BallEnvFunc unkB14;
+    u8 fillerB18[0xB60-0xB18];
+    Mtx unkB60;
+};
+
 typedef int (*BgModelFindProc)(int, struct GMAModelEntry *);
 typedef int (*BgObjFindProc)(int, struct StageBgObject *);
 
@@ -317,11 +327,11 @@ extern u8 stageBackgrounds[];
 void ev_background_init(void);
 void ev_background_main(void);
 void ev_background_dest(void);
-void func_80054FF0(void);
+void background_light_assign(void);
 void background_draw(void);
-void func_8005507C(void);
-void preload_bg_files(int);
-void load_bg_files(int bgId);
+void background_free(void);
+void background_preload(int);
+void background_change(int bgId);
 void background_interact(int);
 void bg_default_init(void);
 void bg_default_main(void);
@@ -359,17 +369,17 @@ void bg_bowling_interact(int);
 int func_80056610(struct NlModel *a, struct NlModel *b);
 void find_background_gma_models(struct BGModelSearch *a, BgModelFindProc func);
 void find_background_objects(struct StageBgObject *r28, int r30_, struct BGModelSearch *a, BgObjFindProc b);
-void func_80056934(void);
-void func_800569B4(int);
+void clear_background_parts_flag(void);
+void background_set_random_seed(int);
 void bg_old_bluesky_init(void);
 void bg_old_bluesky_main(void);
 void bg_old_bluesky_finish(void);
 void bg_old_bluesky_draw(void);
 void bg_old_bluesky_interact(int);
-// ? func_800573A4();
-// ? func_8005748C();
-// ? func_800578D0();
-// ? func_80057934();
+// ? effect_bird_kite_init();
+// ? effect_bird_kite_main();
+// ? effect_bird_kite_draw();
+// ? effect_bird_kite_destroy();
 void bg_old_cave_init(void);
 void bg_old_cave_main(void);
 void bg_old_cave_finish(void);
@@ -405,14 +415,14 @@ void bg_old_ice_main(void);
 void bg_old_ice_finish(void);
 void bg_old_ice_draw(void);
 void bg_old_ice_interact(int);
-// ? func_80058CE0();
-// ? func_80058D44();
-// ? func_80059058();
-// ? func_80059554();
-// ? func_80059560();
-// ? func_800595DC();
-// ? func_800596C0();
-// ? func_80059764();
+// ? effect_icewater_reflect_init();
+// ? effect_icewater_reflect_main();
+// ? effect_icewater_reflect_draw();
+// ? effect_icewater_reflect_destroy();
+// ? effect_icewater_particle_init();
+// ? effect_icewater_particle_main();
+// ? effect_icewater_particle_draw();
+// ? effect_icewater_particle_destroy();
 void bg_old_sand_init(void);
 void bg_old_sand_main(void);
 void bg_old_sand_finish(void);
@@ -485,5 +495,20 @@ void bg_end_main(void);
 void bg_end_finish(void);
 void bg_end_draw(void);
 void bg_end_interact(int);
+
+struct Effect;
+
+void effect_bird_kite_init(struct Effect *);
+void effect_bird_kite_main(struct Effect *);
+void effect_bird_kite_draw(struct Effect *);
+void effect_bird_kite_destroy(struct Effect *);
+void effect_icewater_reflect_init(struct Effect *);
+void effect_icewater_reflect_main(struct Effect *);
+void effect_icewater_reflect_draw(struct Effect *);
+void effect_icewater_reflect_destroy(struct Effect *);
+void effect_icewater_particle_init(struct Effect *);
+void effect_icewater_particle_main(struct Effect *);
+void effect_icewater_particle_draw(struct Effect *);
+void effect_icewater_particle_destroy(struct Effect *);
 
 #endif

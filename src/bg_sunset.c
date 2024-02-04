@@ -70,7 +70,7 @@ void bg_sunset_main(void)
     Vec newTexVel;
 
     bg_default_main();
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
     if (work->layersCount == 0)
         return;
@@ -114,7 +114,7 @@ void bg_sunset_draw(void)
     int i;
     struct BGSunsetLayer *layer;
 
-    if (lbl_801EEC90.unk0 & 1)
+    if (polyDisp.unk0 & 1)
         r28 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         r28 = 1 << (modeCtrl.unk30 - 1);
@@ -135,7 +135,7 @@ void bg_sunset_draw(void)
             if (bgObj->flags & r28)
             {
                 avdisp_set_custom_tex_mtx(0, layer->texMtx);
-                mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+                mathutil_mtxA_from_mtx(userWork->matrices[0]);
                 mathutil_mtxA_translate(&bgObj->pos);
                 mathutil_mtxA_rotate_z(bgObj->rotZ);
                 mathutil_mtxA_rotate_y(bgObj->rotY);

@@ -61,7 +61,7 @@ struct Camera
     /*0x1A*/ s16 rotY;  // rotation about Y axis (yaw)
     /*0x1C*/ s16 rotZ;  // rotation about Z axis (roll)
     /*0x1E*/ s8 state;
-    u8 unk1F;
+    s8 subState;  // used by other systems to track camera state
     float unk20;
     /*0x24*/ s16 flags;
     s8 unk26;
@@ -112,11 +112,25 @@ struct Camera
     u8 filler20C[0x284-0x20C];
 };  // size=0x284
 
+// runs 'code' for each camera
+#define CAMERA_FOREACH(code) \
+{ \
+    struct Camera *camera = &cameraInfo[0]; \
+    struct Camera *cameraBackup = currentCamera; \
+    int i; \
+    for (i = 0; i < 4; i++, camera++) \
+    { \
+        currentCamera = camera; \
+        { code } \
+    } \
+    currentCamera = cameraBackup; \
+}
+
 extern s16 lbl_802F1C30;
 //extern s8 lbl_802F1C32;
 extern s32 u_cameraId2;
 extern void (*minigameRelCameraCallback)(struct Camera *, struct Ball *);
-extern struct Camera *currentCameraStructPtr;
+extern struct Camera *currentCamera;
 extern s32 u_cameraId1;
 
 extern struct Camera cameraInfo[5];
@@ -126,20 +140,20 @@ void camera_init(void);
 void ev_camera_init(void);
 void ev_camera_main(void);
 void ev_camera_dest(void);
-void func_80017FCC(void);
+void default_camera_env(void);
 void setup_camera_viewport(int cameraId, float left, float top, float width, float height);
 void camera_setup_splitscreen_viewports(int playerCount);
-void camera_setup_singleplayer_viewport(void);
-void camera_apply_viewport(int);
-void u_call_camera_apply_viewport(int cameraId);
-// ? camera_apply_viewport_2();
-// ? func_800188A8();
-void func_800188D4(void);
-void func_8001898C(int cameraId, int b, Vec *c);
+void reset_camera_viewport(void);
+void set_current_camera(int);
+void change_current_camera();
+// ? set_current_camera_matrix();
+void change_current_camera_matrix(int cameraId);
+void reset_camera_perspective(void);
+void shake_camera(int cameraId, int b, Vec *c);
 void camera_set_state(int state);
 void camera_set_or_clear_flags(int flags, int set);
 void camera_clear(struct Camera *camera);
-void func_80018C58(struct Camera *camera);
+void camera_shake_main(struct Camera *camera);
 void camera_func_27(struct Camera *camera, struct Ball *ball);
 void camera_func_av_intro(struct Camera *camera, struct Ball *ball);
 void camera_func_29(struct Camera *camera, struct Ball *ball);

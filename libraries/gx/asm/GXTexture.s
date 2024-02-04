@@ -741,8 +741,8 @@ lbl_800E1864:
 /* 800E18B0 000DD7D0  98 03 00 0D */	stb r0, 0xd(r3)
 /* 800E18B4 000DD7D4  4E 80 00 20 */	blr
 
-.global GXInitTlutObj
-GXInitTlutObj:
+.global GXInitTlutRegion
+GXInitTlutRegion:
 /* 800E18B8 000DD7D8  38 00 00 00 */	li r0, 0
 /* 800E18BC 000DD7DC  90 03 00 00 */	stw r0, 0(r3)
 /* 800E18C0 000DD7E0  3C 04 FF F8 */	addis r0, r4, 0xfff8

@@ -463,7 +463,7 @@ s16 gameSubmodeRequest;
 void *modeStringPtr;
 void *submodeStringPtr;
 void (*unusedCallback)(void);  // always NULL
-void (*lbl_802F1B7C)(void);
+void (*submodeFinishFunc)(void);
 s32 lbl_802F1B78;
 void (*lbl_802F1B74)(void);
 void (*lbl_802F1B70)(void);
@@ -475,7 +475,7 @@ void gm_init(void)
     gameModeRequest = -1;
     gameSubmodeRequest = -1;
     unusedCallback = NULL;
-    lbl_802F1B7C = NULL;
+    submodeFinishFunc = NULL;
     modeCtrl.courseFlags = 0;
     modeCtrl.submodeTimer = 0;
     modeCtrl.splitscreenMode = 0;
@@ -681,10 +681,10 @@ void u_menu_input_debug(void)
                 }
                 else
                 {
-                    if (lbl_802F1B7C != NULL)
+                    if (submodeFinishFunc != NULL)
                     {
-                        lbl_802F1B7C();
-                        lbl_802F1B7C = NULL;
+                        submodeFinishFunc();
+                        submodeFinishFunc = NULL;
                     }
                     gameSubmodeRequest = SMD_MINI_SELECT_INIT;
                 }
@@ -697,10 +697,10 @@ void u_menu_input_debug(void)
                 }
                 else
                 {
-                    if (lbl_802F1B7C != NULL)
+                    if (submodeFinishFunc != NULL)
                     {
-                        lbl_802F1B7C();
-                        lbl_802F1B7C = NULL;
+                        submodeFinishFunc();
+                        submodeFinishFunc = NULL;
                     }
                     gameSubmodeRequest = SMD_TEST_SELECT_INIT;
                 }
@@ -709,16 +709,16 @@ void u_menu_input_debug(void)
                 gameSubmodeRequest = SMD_SEL_NGC_DEST;
                 break;
             default:
-                if (lbl_802F1B7C != NULL)
+                if (submodeFinishFunc != NULL)
                 {
-                    lbl_802F1B7C();
-                    lbl_802F1B7C = NULL;
+                    submodeFinishFunc();
+                    submodeFinishFunc = NULL;
                 }
                 gameModeRequest = MD_TEST;
                 gameSubmodeRequest = SMD_TEST_SELECT_INIT;
                 break;
             }
-            gamePauseStatus &= -12;
+            debugFlags &= -12;
             return;
         }
     }

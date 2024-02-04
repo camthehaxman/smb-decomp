@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dolphin.h>
@@ -179,7 +180,7 @@ void bg_sand_main(void)
     struct BGSandWork_sub_sub *var_r27;
 
     bg_default_main();
-    if ((gamePauseStatus & 0xA) && (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING))
+    if ((debugFlags & 0xA) && (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING))
         return;
 
     work->unk1C.y += 0.001f * (0.03f - work->unk1C.y);
@@ -201,7 +202,7 @@ void bg_sand_main(void)
         var_r28->unk18.x += var_r28->unk24;
         var_r28->unk18.y += var_r28->unk28;
         var_r28->unk18.z += var_r28->unk2C;
-        temp_f28 = __fabs(var_r28->unk28);
+        temp_f28 = fabs(var_r28->unk28);
         temp_f29 = 3.0f * temp_f28;
 
         var_r27 = var_r28->unk34;
@@ -236,7 +237,7 @@ void bg_sand_draw(void)
     struct MyDrawNode2 *temp_r24_2;
     int i;
 
-    if (lbl_801EEC90.unk0 & 0x11)
+    if (polyDisp.unk0 & 0x11)
         var_r30 = 1 << 4;
     else if (gameMode == 2 || gameMode == 4)
         var_r30 = 1 << (modeCtrl.unk30 - 1);
@@ -260,7 +261,7 @@ void bg_sand_draw(void)
             temp_r28 = *var_r27;
             if (temp_r28->flags & var_r30)
             {
-                mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+                mathutil_mtxA_from_mtx(userWork->matrices[0]);
                 mathutil_mtxA_translate(&temp_r28->pos);
                 mathutil_mtxA_rotate_z(temp_r28->rotZ);
                 mathutil_mtxA_rotate_y(temp_r28->rotY);
@@ -280,7 +281,7 @@ void bg_sand_draw(void)
 
     if (work->unk7C != 0)
     {
-        mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+        mathutil_mtxA_from_mtx(userWork->matrices[0]);
 
         var_r27 = work->fountainWater;
         for (i = 0; i < work->unk7C; i++, var_r27++)
@@ -374,10 +375,10 @@ static void func_8005C55C(int arg0, struct RenderEffect *arg1)
 
     fbWidth  = currRenderMode->fbWidth;
     fbHeight = currRenderMode->xfbHeight;
-    left   = fbWidth * currentCameraStructPtr->sub28.vp.left;
-    top    = fbHeight * currentCameraStructPtr->sub28.vp.top;
-    width  = fbWidth * currentCameraStructPtr->sub28.vp.width;
-    height = fbHeight * currentCameraStructPtr->sub28.vp.height;
+    left   = fbWidth * currentCamera->sub28.vp.left;
+    top    = fbHeight * currentCamera->sub28.vp.top;
+    width  = fbWidth * currentCamera->sub28.vp.width;
+    height = fbHeight * currentCamera->sub28.vp.height;
     left   = left & ~1;
     top    = top & ~1;
     width  = (width + 1) & ~1;
@@ -397,11 +398,11 @@ static void func_8005C55C(int arg0, struct RenderEffect *arg1)
     sp38.x = 0.0f;
     sp38.y = 0.0f;
     sp38.z = -1.0f;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_inv_tf_vec(&sp38, &sp38);
     mathutil_vec_to_euler_xy(&sp38, &sp36, &sp34);
-    temp_f9 = 32768.0f / currentCameraStructPtr->sub28.fov;
-    temp1 = (-temp_f9 * work->unk4.x / currentCameraStructPtr->sub28.aspect);
+    temp_f9 = 32768.0f / currentCamera->sub28.fov;
+    temp1 = (-temp_f9 * work->unk4.x / currentCamera->sub28.aspect);
     temp_f9 = (temp_f9 * work->unk4.y);
     sp38.x = work->unk10 + (sp34 / 65536.0f) * temp1;
     sp38.y = work->unk14 + (sp36 / 65536.0f) * temp_f9;
@@ -442,10 +443,10 @@ static void func_8005C55C(int arg0, struct RenderEffect *arg1)
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, 0U);
-    temp_f31 = currentCameraStructPtr->sub28.unk38;
-    temp_f30 = temp_f31 * currentCameraStructPtr->sub28.aspect;
-    temp_f29 = temp_f30 * currentCameraStructPtr->sub28.unk28;
-    temp_f28 = temp_f31 * currentCameraStructPtr->sub28.unk2C;
+    temp_f31 = currentCamera->sub28.unk38;
+    temp_f30 = temp_f31 * currentCamera->sub28.aspect;
+    temp_f29 = temp_f30 * currentCamera->sub28.unk28;
+    temp_f28 = temp_f31 * currentCamera->sub28.unk2C;
     GXBegin(GX_QUADS, GX_VTXFMT0, 4U);
         GXPosition3f32(-temp_f30 - temp_f29, temp_f31 - temp_f28, -1.0f);
         GXTexCoord2f32(0.0f, 0.0f);
@@ -494,7 +495,7 @@ static void lbl_8005CC4C(struct MyDrawNode2 *arg0)
     temp_r29 = work->fountainWater[arg0->unkC];
     temp_r28 = &work->unk80[arg0->unkC];
     work->unk564 = temp_r28;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&temp_r29->pos);
     mathutil_mtxA_rotate_z(temp_r29->rotZ);
     mathutil_mtxA_rotate_y(temp_r29->rotY);
@@ -635,13 +636,13 @@ static void lbl_8005CEAC(struct EnvMapSomething *arg0)
     r27_3 = sp64.unk8;
     r28_2 = sp64.unk4;
     GXSetTexCoordGen(r28_2, GX_TG_MTX3x4, GX_TG_POS, r27_3);
-    sp1C[0][0] = 1.05f * (-0.5f * currentCameraStructPtr->sub28.unk3C * (1.0f / currentCameraStructPtr->sub28.aspect));
+    sp1C[0][0] = 1.05f * (-0.5f * currentCamera->sub28.unk3C * (1.0f / currentCamera->sub28.aspect));
     sp1C[0][1] = 0.0f;
-    sp1C[0][2] = 0.5f + (-0.5f * currentCameraStructPtr->sub28.unk28);
+    sp1C[0][2] = 0.5f + (-0.5f * currentCamera->sub28.unk28);
     sp1C[0][3] = 0.0f;
     sp1C[1][0] = 0.0f;
-    sp1C[1][1] = 1.05f * (0.5f * currentCameraStructPtr->sub28.unk3C);
-    sp1C[1][2] = (0.5f + (-0.5f * currentCameraStructPtr->sub28.unk2C)) - 0.01f;
+    sp1C[1][1] = 1.05f * (0.5f * currentCamera->sub28.unk3C);
+    sp1C[1][2] = (0.5f + (-0.5f * currentCamera->sub28.unk2C)) - 0.01f;
     sp1C[1][3] = 0.0f;
     sp1C[2][0] = 0.0f;
     sp1C[2][1] = 0.0f;
@@ -762,13 +763,13 @@ static void lbl_8005D4B0(struct EnvMapSomething *arg0)
     r27_3 = sp64.unk8;
     r28_2 = sp64.unk4;
     GXSetTexCoordGen(r28_2, GX_TG_MTX3x4, GX_TG_POS, r27_3);
-    sp1C[0][0] = 1.05f * (-0.5f * currentCameraStructPtr->sub28.unk3C * (1.0f / currentCameraStructPtr->sub28.aspect));
+    sp1C[0][0] = 1.05f * (-0.5f * currentCamera->sub28.unk3C * (1.0f / currentCamera->sub28.aspect));
     sp1C[0][1] = 0.0f;
-    sp1C[0][2] = 0.5f + (-0.5f * currentCameraStructPtr->sub28.unk28);
+    sp1C[0][2] = 0.5f + (-0.5f * currentCamera->sub28.unk28);
     sp1C[0][3] = 0.0f;
     sp1C[1][0] = 0.0f;
-    sp1C[1][1] = 1.05f * (0.5f * currentCameraStructPtr->sub28.unk3C);
-    sp1C[1][2] = (0.5f + (-0.5f * currentCameraStructPtr->sub28.unk2C)) - 0.01f;
+    sp1C[1][1] = 1.05f * (0.5f * currentCamera->sub28.unk3C);
+    sp1C[1][2] = (0.5f + (-0.5f * currentCamera->sub28.unk2C)) - 0.01f;
     sp1C[1][3] = 0.0f;
     sp1C[2][0] = 0.0f;
     sp1C[2][1] = 0.0f;

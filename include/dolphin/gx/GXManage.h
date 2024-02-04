@@ -1,5 +1,5 @@
-#ifndef DOLPHIN_GXMANAGE_H
-#define DOLPHIN_GXMANAGE_H
+#ifndef _DOLPHIN_GX_GXMANAGE_H_
+#define _DOLPHIN_GX_GXMANAGE_H_
 
 #include <dolphin/gx/GXFifo.h>
 
@@ -9,7 +9,7 @@ extern "C" {
 
 typedef void (*GXDrawDoneCallback)(void);
 
-GXFifoObj* GXInit(void* base, u32 size);
+GXFifoObj *GXInit(void *base, u32 size);
 GXDrawDoneCallback GXSetDrawDoneCallback(GXDrawDoneCallback cb);
 void GXDrawDone(void);
 void GXSetDrawDone(void);

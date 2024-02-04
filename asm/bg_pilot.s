@@ -442,7 +442,7 @@ bg_pilot_main:
 /* 80064654 00060574  93 C1 00 08 */	stw r30, 8(r1)
 /* 80064658 00060578  83 E3 00 9C */	lwz r31, 0x9c(r3)
 /* 8006465C 0006057C  4B FF 0E 95 */	bl bg_default_main
-/* 80064660 00060580  80 0D 9D 00 */	lwz r0, gamePauseStatus@sda21(r13)
+/* 80064660 00060580  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 80064664 00060584  70 00 00 0A */	andi. r0, r0, 0xa
 /* 80064668 00060588  40 82 00 70 */	bne lbl_800646D8
 /* 8006466C 0006058C  3B DF 00 E4 */	addi r30, r31, 0xe4
@@ -486,12 +486,12 @@ bg_pilot_finish:
 .global bg_pilot_draw
 bg_pilot_draw:
 /* 800646F4 00060614  7C 08 02 A6 */	mflr r0
-/* 800646F8 00060618  3C 60 80 1F */	lis r3, lbl_801EEC90@ha
+/* 800646F8 00060618  3C 60 80 1F */	lis r3, polyDisp@ha
 /* 800646FC 0006061C  90 01 00 04 */	stw r0, 4(r1)
 /* 80064700 00060620  94 21 FE D8 */	stwu r1, -0x128(r1)
 /* 80064704 00060624  DB E1 01 20 */	stfd f31, 0x120(r1)
 /* 80064708 00060628  BF 61 01 0C */	stmw r27, 0x10c(r1)
-/* 8006470C 0006062C  80 03 EC 90 */	lwz r0, lbl_801EEC90@l(r3)
+/* 8006470C 0006062C  80 03 EC 90 */	lwz r0, polyDisp@l(r3)
 /* 80064710 00060630  3C 60 80 1C */	lis r3, backgroundInfo@ha
 /* 80064714 00060634  38 63 91 78 */	addi r3, r3, backgroundInfo@l
 /* 80064718 00060638  54 00 07 FF */	clrlwi. r0, r0, 0x1f
@@ -542,14 +542,14 @@ lbl_800647B0:
 /* 800647B0 000606D0  83 FE 00 14 */	lwz r31, 0x14(r30)
 /* 800647B4 000606D4  28 1F 00 00 */	cmplwi r31, 0
 /* 800647B8 000606D8  41 82 04 5C */	beq lbl_80064C14
-/* 800647BC 000606DC  3C 60 80 1F */	lis r3, lbl_801EEC90@ha
-/* 800647C0 000606E0  80 03 EC 90 */	lwz r0, lbl_801EEC90@l(r3)
+/* 800647BC 000606DC  3C 60 80 1F */	lis r3, polyDisp@ha
+/* 800647C0 000606E0  80 03 EC 90 */	lwz r0, polyDisp@l(r3)
 /* 800647C4 000606E4  54 00 07 7B */	rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 800647C8 000606E8  40 82 04 4C */	bne lbl_80064C14
 /* 800647CC 000606EC  83 BE 00 E0 */	lwz r29, 0xe0(r30)
 /* 800647D0 000606F0  28 1D 00 00 */	cmplwi r29, 0
 /* 800647D4 000606F4  41 82 03 F8 */	beq lbl_80064BCC
-/* 800647D8 000606F8  80 8D 9A 5C */	lwz r4, currentCameraStructPtr@sda21(r13)
+/* 800647D8 000606F8  80 8D 9A 5C */	lwz r4, currentCamera@sda21(r13)
 /* 800647DC 000606FC  3F 80 43 30 */	lis r28, 0x4330
 /* 800647E0 00060700  C8 22 9D B8 */	lfd f1, lbl_802F45B8@sda21(r2)
 /* 800647E4 00060704  38 61 00 50 */	addi r3, r1, 0x50
@@ -566,7 +566,7 @@ lbl_800647B0:
 /* 80064810 00060730  EC 25 00 32 */	fmuls f1, f5, f0
 /* 80064814 00060734  48 06 5E DD */	bl C_MTXPerspective
 /* 80064818 00060738  4B FA 2D 4D */	bl mathutil_mtxA_from_identity
-/* 8006481C 0006073C  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 8006481C 0006073C  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80064820 00060740  C0 21 00 50 */	lfs f1, 0x50(r1)
 /* 80064824 00060744  C0 03 00 28 */	lfs f0, 0x28(r3)
 /* 80064828 00060748  C0 43 00 34 */	lfs f2, 0x34(r3)
@@ -580,7 +580,7 @@ lbl_800647B0:
 /* 80064848 00060768  FC 03 00 28 */	fsub f0, f3, f0
 /* 8006484C 0006076C  FC 00 00 18 */	frsp f0, f0
 /* 80064850 00060770  D0 03 00 08 */	stfs f0, 8(r3)
-/* 80064854 00060774  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 80064854 00060774  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80064858 00060778  C0 21 00 64 */	lfs f1, 0x64(r1)
 /* 8006485C 0006077C  C0 03 00 2C */	lfs f0, 0x2c(r3)
 /* 80064860 00060780  C0 43 00 38 */	lfs f2, 0x38(r3)
@@ -591,7 +591,7 @@ lbl_800647B0:
 /* 80064874 00060794  FC 03 00 28 */	fsub f0, f3, f0
 /* 80064878 00060798  FC 00 00 18 */	frsp f0, f0
 /* 8006487C 0006079C  D0 03 00 18 */	stfs f0, 0x18(r3)
-/* 80064880 000607A0  80 6D 9A 5C */	lwz r3, currentCameraStructPtr@sda21(r13)
+/* 80064880 000607A0  80 6D 9A 5C */	lwz r3, currentCamera@sda21(r13)
 /* 80064884 000607A4  C8 22 9D B8 */	lfd f1, lbl_802F45B8@sda21(r2)
 /* 80064888 000607A8  A8 03 00 30 */	lha r0, 0x30(r3)
 /* 8006488C 000607AC  6C 00 80 00 */	xoris r0, r0, 0x8000
@@ -606,7 +606,7 @@ lbl_800647B0:
 /* 800648B0 000607D0  4B FA 29 C5 */	bl mathutil_tan
 /* 800648B4 000607D4  C0 02 9D D0 */	lfs f0, lbl_802F45D0@sda21(r2)
 /* 800648B8 000607D8  38 61 00 90 */	addi r3, r1, 0x90
-/* 800648BC 000607DC  80 AD 9A 5C */	lwz r5, currentCameraStructPtr@sda21(r13)
+/* 800648BC 000607DC  80 AD 9A 5C */	lwz r5, currentCamera@sda21(r13)
 /* 800648C0 000607E0  EC 20 08 24 */	fdivs f1, f0, f1
 /* 800648C4 000607E4  80 8D 99 80 */	lwz r4, mathutilData@sda21(r13)
 /* 800648C8 000607E8  C0 05 00 34 */	lfs f0, 0x34(r5)

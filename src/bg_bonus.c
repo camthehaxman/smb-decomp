@@ -4,12 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dolphin.h>
-
 #include <dolphin/gx/GXEnum.h>
+
 #include "global.h"
 #include "background.h"
 #include "ball.h"
 #include "camera.h"
+#include "effect.h"
 #include "gma.h"
 #include "gxcache.h"
 #include "gxutil.h"
@@ -81,7 +82,7 @@ void bg_bonus_main(void)
     Vec sp8;
 
     bg_default_main();
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     starpoint = work->starpoints;
@@ -140,7 +141,7 @@ void bg_bonus_draw(void)
     bg_default_draw();
     mainObj = work->mainObj;
     bgScale = mainObj->scale;
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&mainObj->pos);
     mathutil_mtxA_rotate_z(mainObj->rotZ);
     mathutil_mtxA_rotate_y(mainObj->rotY);
@@ -153,7 +154,7 @@ void bg_bonus_draw(void)
     {
         float pulse = (starpoint->red + starpoint->green + starpoint->blue) * 0.75f;
 
-        if (lbl_801EEC90.unk0 & (1 << 2))
+        if (polyDisp.unk0 & (1 << 2))
         {
             starPos.x = starpoint->u_pos.x * bgScale.x;
             starPos.y = starpoint->u_pos.y * bgScale.y;
@@ -179,7 +180,7 @@ void bg_bonus_draw(void)
             mathutil_mtxA_scale_s(pulse);
             avdisp_set_post_mult_color(starpoint->red, starpoint->green, starpoint->blue, 1.0f);
             avdisp_draw_model_culled_sort_translucent(starlightModel);
-            u_reset_post_mult_color();
+            fade_color_base_default();
         }
         mathutil_mtxA_pop();
     }
@@ -198,23 +199,23 @@ void bg_bonus_interact(int a)
     case 1:
         // spawn shooting star
         memset(&star, 0, sizeof(star));
-        star.unk8 = 32;
-        star.unk14 = currentBallStructPtr->playerId;
-        mathutil_mtxA_from_mtx(cameraInfo[star.unk14].unk1A4);
+        star.type = ET_BNS_STG_STAR;
+        star.playerId = currentBall->playerId;
+        mathutil_mtxA_from_mtx(cameraInfo[star.playerId].unk1A4);
         spC.z = -120.0f + RAND_FLOAT() * -225.0f;
-        spC.x = spC.z * -(8.0f / 3.0f) * currentCameraStructPtr->sub28.unk38 * (RAND_FLOAT() - 0.5f);
-        spC.y = spC.z * -1.1f * currentCameraStructPtr->sub28.unk38;
-        mathutil_mtxA_rigid_inv_tf_point(&spC, &star.unk34);
+        spC.x = spC.z * -(8.0f / 3.0f) * currentCamera->sub28.unk38 * (RAND_FLOAT() - 0.5f);
+        spC.y = spC.z * -1.1f * currentCamera->sub28.unk38;
+        mathutil_mtxA_rigid_inv_tf_point(&spC, &star.pos);
         f31 = -spC.z * (1.0f / 300.0f);
-        star.unk40.x = (1.0f + RAND_FLOAT()) * f31;
-        star.unk40.y = (-3.0f + RAND_FLOAT() * -1.0f) * f31;
-        star.unk40.z = (1.0f + RAND_FLOAT()) * f31;
+        star.vel.x = (1.0f + RAND_FLOAT()) * f31;
+        star.vel.y = (-3.0f + RAND_FLOAT() * -1.0f) * f31;
+        star.vel.z = (1.0f + RAND_FLOAT()) * f31;
         spC.x = 0.0f;
         spC.y = 0.0f;
         spC.z = 0.0f;
         mathutil_mtxA_rigid_inv_tf_point(&spC, &spC);
-        mathutil_ray_to_euler_xy(&spC, &star.unk34, &star.unk4C, &star.unk4E);
-        star.unk50 = rand() & 0x7FFF;
+        mathutil_ray_to_euler_xy(&spC, &star.pos, &star.rotX, &star.rotY);
+        star.rotZ = rand() & 0x7FFF;
         spawn_effect(&star);
         break;
     }
@@ -225,7 +226,7 @@ static void lbl_80061B58(void)
     struct BGBonusWork *work = (void *)backgroundInfo.work;
     Mtx sp8;
 
-    mathutil_mtxA_from_mtx(lbl_802F1B3C->matrices[0]);
+    mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_invert();
     mathutil_mtxA_to_mtx(sp8);
     mathutil_mtxA_mult_left(work->unk71C);

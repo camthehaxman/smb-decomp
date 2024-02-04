@@ -22,6 +22,8 @@ default: all
 # Tools
 #-------------------------------------------------------------------------------
 
+DEVKITPPC ?=
+
 COMPILER_DIR := mwcc_compiler/$(COMPILER_VERSION)
 AS      := $(DEVKITPPC)/bin/powerpc-eabi-as
 MWCC    := $(WINE) $(COMPILER_DIR)/mwcceppc.exe
@@ -46,7 +48,7 @@ MWCC_CFLAGS      := -O4,p -inline auto -nodefaults -proc gekko -fp hard -Cpp_exc
 MWCC_CPPFLAGS     = $(addprefix -i ,$(INCLUDE_DIRS) $(dir $^)) -I- $(addprefix -i ,$(SYSTEM_INCLUDE_DIRS))
 # GNU compiler flags
 GCC_CFLAGS       := -O2 -Wall -Wextra -Wno-unused -Wno-switch -Wno-main -Wno-unknown-pragmas \
-                    -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare \
+                    -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-strict-aliasing \
                     -Wno-missing-field-initializers -Wno-char-subscripts -Wno-empty-body \
                     -fno-jump-tables -fno-builtin -fsigned-char -fno-asynchronous-unwind-tables -mno-gnu-attribute
 GCC_CPPFLAGS     := -nostdinc $(addprefix -I ,$(INCLUDE_DIRS) $(SYSTEM_INCLUDE_DIRS)) -DNONMATCHING -DC_ONLY
@@ -122,7 +124,7 @@ SOURCES := \
 	src/bmp_list_cmd.c \
 	src/trig_tables.c \
 	src/perf.c \
-	asm/sound.s \
+	src/sound.c \
 	asm/window.s \
 	src/pool.c \
 	src/nl2ngc.c \
@@ -139,7 +141,7 @@ SOURCES := \
 	src/code_8.c \
 	src/recplay.c \
 	src/recplay_2.c \
-	asm/effect.s \
+	src/effect.c \
 	src/background.c \
 	asm/bg_old_bluesky.s \
 	src/bg_old_cave.c \
@@ -173,7 +175,7 @@ SOURCES := \
 	src/textbox.c \
 	src/hud.c \
 	asm/code_5.s \
-	asm/minimap.s \
+	src/minimap.c \
 	src/ord_tbl.c \
 	src/code_3.c \
 	src/ranking_screen.c \
@@ -183,7 +185,9 @@ SOURCES := \
 	src/avdisp.c \
 	src/load.c \
 	asm/shadow.s \
-	asm/mini.s \
+	src/mini.c \
+	src/mini_2.c \
+	src/mini_3.c \
 	src/mouse.c \
 	src/rend_efc.c \
 	src/rend_efc_mirror.c \
@@ -199,9 +203,12 @@ SOURCES := \
 	asm/mini_ranking.s \
 	src/dvd.c \
 	src/preview.c \
-	asm/name_entry.s \
+	src/name_entry.c \
 	asm/credits.s \
-	asm/vibration.s \
+	src/vibration.c \
+	src/ending.c \
+	src/ending_camera.c \
+	src/ending_dialogue.c \
 	libraries/base/asm/PPCArch.s \
 	libraries/os/__start.c \
 	libraries/os/asm/OS.s \
@@ -224,7 +231,7 @@ SOURCES := \
 	libraries/os/asm/OSRtc.s \
 	libraries/si/asm/SIBios.s \
 	libraries/os/OSSync.c \
-	libraries/os/asm/OSThread.s \
+	libraries/os/OSThread.c \
 	libraries/os/asm/OSTime.s \
 	libraries/exi/asm/EXIUart.s \
 	libraries/os/__ppc_eabi_init.c \
@@ -240,30 +247,30 @@ SOURCES := \
 	libraries/dvd/fstload.c \
 	libraries/vi/asm/vi.s \
 	libraries/demo/DEMOFont.c \
-	libraries/pad/asm/Pad.s \
-	libraries/ai/asm/ai.s \
+	libraries/pad/Pad.c \
+	libraries/ai/ai.c \
 	libraries/ar/asm/ar.s \
 	libraries/ar/asm/arq.s \
 	libraries/dsp/dsp.c \
 	libraries/dsp/dsp_debug.c \
 	libraries/dsp/dsp_task.c \
-	libraries/card/asm/CARDBios.s \
-	libraries/card/asm/CARDUnlock.s \
-	libraries/card/asm/CARDRdwr.s \
-	libraries/card/asm/CARDBlock.s \
-	libraries/card/asm/CARDDir.s \
-	libraries/card/asm/CARDCheck.s \
-	libraries/card/asm/CARDMount.s \
-	libraries/card/asm/CARDFormat.s \
-	libraries/card/asm/CARDOpen.s \
-	libraries/card/asm/CARDCreate.s \
-	libraries/card/asm/CARDRead.s \
-	libraries/card/asm/CARDWrite.s \
-	libraries/card/asm/CARDDelete.s \
-	libraries/card/asm/CARDStat.s \
-	libraries/card/asm/CARDRename.s \
+	libraries/card/CARDBios.c \
+	libraries/card/CARDUnlock.c \
+	libraries/card/CARDRdwr.c \
+	libraries/card/CARDBlock.c \
+	libraries/card/CARDDir.c \
+	libraries/card/CARDCheck.c \
+	libraries/card/CARDMount.c \
+	libraries/card/CARDFormat.c \
+	libraries/card/CARDOpen.c \
+	libraries/card/CARDCreate.c \
+	libraries/card/CARDRead.c \
+	libraries/card/CARDWrite.c \
+	libraries/card/CARDDelete.c \
+	libraries/card/CARDStat.c \
+	libraries/card/CARDRename.c \
 	libraries/hio/hio.c \
-	libraries/gx/asm/GXInit.s \
+	libraries/gx/GXInit.c \
 	libraries/gx/GXFifo.c \
 	libraries/gx/asm/GXAttr.s \
 	libraries/gx/asm/GXMisc.s \
@@ -283,28 +290,28 @@ SOURCES := \
 	libraries/perf/asm/perfdraw.s \
 	libraries/musyx/asm/seq.s \
 	libraries/musyx/asm/synth.s \
-	libraries/musyx/asm/seq_api.s \
-	libraries/musyx/asm/snd_synthapi.s \
+	libraries/musyx/seq_api.c \
+	libraries/musyx/snd_synthapi.c \
 	libraries/musyx/asm/stream.s \
 	libraries/musyx/asm/synthdata.s \
 	libraries/musyx/asm/synthmacros.s \
 	libraries/musyx/asm/synthvoice.s \
-	libraries/musyx/asm/synth_ac.s \
+	libraries/musyx/synth_ac.c \
 	libraries/musyx/asm/synth_adsr.s \
-	libraries/musyx/asm/synth_dbtab.s \
+	libraries/musyx/synth_dbtab.c \
 	libraries/musyx/asm/s_data.s \
 	libraries/musyx/asm/hw_dspctrl.s \
-	libraries/musyx/asm/hw_volconv.s \
-	libraries/musyx/asm/snd3d.s \
+	libraries/musyx/hw_volconv.c \
+	libraries/musyx/snd3d.c \
 	libraries/musyx/asm/synth_2.s \
-	libraries/musyx/asm/snd_math.s \
+	libraries/musyx/snd_math.c \
 	libraries/musyx/asm/snd_midictrl.s \
-	libraries/musyx/asm/snd_service.s \
-	libraries/musyx/asm/HARDWARE.s \
-	libraries/musyx/asm/hw_aramdma.s \
-	libraries/musyx/asm/hw_dolphin.s \
-	libraries/musyx/asm/hw_memory.s \
-	libraries/musyx/asm/reverb_fx.s \
+	libraries/musyx/snd_service.c \
+	libraries/musyx/HARDWARE.c \
+	libraries/musyx/hw_aramdma.c \
+	libraries/musyx/hw_dolphin.c \
+	libraries/musyx/hw_memory.c \
+	libraries/musyx/reverb_fx.c \
 	libraries/musyx/asm/reverb.s \
 	libraries/musyx/asm/chorus_fx.s \
 	libraries/dtk/asm/dtk.s \
@@ -323,7 +330,7 @@ SOURCES := \
 	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common/Src/direct_io.s \
 	libraries/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common/Src/mbstring.c \
 	libraries/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common/Src/mem.c \
-	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common/Src/mem_funcs.s \
+	libraries/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common/Src/mem_funcs.c \
 	libraries/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common/Src/misc_io.c \
 	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common/Src/printf.s \
 	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common/Src/float.s \
@@ -345,7 +352,7 @@ SOURCES := \
 	libraries/PowerPC_EABI_Support/math/s_sin.c \
 	libraries/PowerPC_EABI_Support/asm/math/inverse_trig.s \
 	libraries/PowerPC_EABI_Support/asm/math/trigf.s \
-	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common_Embedded/Math/Single_precision/common_float_tables.s \
+	libraries/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common_Embedded/Math/Single_precision/common_float_tables.c \
 	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common_Embedded/Math/Single_precision/exponentialsf.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/mainloop.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/nubevent.s \
@@ -353,11 +360,11 @@ SOURCES := \
 	libraries/TRK_MINNOW_DOLPHIN/asm/msg.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/msgbuf.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/serpoll.s \
-	libraries/TRK_MINNOW_DOLPHIN/asm/usr_put.s \
+	libraries/TRK_MINNOW_DOLPHIN/usr_put.c \
 	libraries/TRK_MINNOW_DOLPHIN/asm/dispatch.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/msghndlr.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/support.s \
-	libraries/TRK_MINNOW_DOLPHIN/asm/mutex_TRK.s \
+	libraries/TRK_MINNOW_DOLPHIN/mutex_TRK.c \
 	libraries/TRK_MINNOW_DOLPHIN/asm/notify.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/flush_cache.s \
 	libraries/TRK_MINNOW_DOLPHIN/Portable/mem_TRK.c \
@@ -368,7 +375,8 @@ SOURCES := \
 	libraries/TRK_MINNOW_DOLPHIN/asm/main_TRK.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/dolphin_trk_glue.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/targcont.s \
-	libraries/amcstubs/asm/AmcExi2Stubs.s \
+	libraries/amcExi/asm/AmcExi.s \
+	libraries/amcExi/AmcExi2Comm.c \
 	libraries/odemustubs/asm/odemustubs.s \
 	libraries/amcnotstub/amcnotstub.c
 O_FILES := $(addsuffix .o,$(SOURCES))
@@ -585,7 +593,8 @@ RUNTIME_OBJECTS := \
 	libraries/PowerPC_EABI_Support/Runtime/Src/ExceptionPPC.cp.o \
 	libraries/PowerPC_EABI_Support/Runtime/Src/__init_cpp_exceptions.cpp.o \
 	libraries/PowerPC_EABI_Support/Runtime/Src/global_destructor_chain.c.o \
-	libraries/PowerPC_EABI_Support/Runtime/Src/__va_arg.c.o
+	libraries/PowerPC_EABI_Support/Runtime/Src/__va_arg.c.o \
+	libraries/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common/Src/mem_funcs.c.o
 
 $(RUNTIME_OBJECTS): CC_CHECK := true
 $(RUNTIME_OBJECTS): SYSTEM_INCLUDE_DIRS += libraries/PowerPC_EABI_Support/Runtime/Inc

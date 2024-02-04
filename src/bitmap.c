@@ -1,4 +1,5 @@
 #include <string.h>
+#include <ppcintrinsic.h>
 
 #include <dolphin.h>
 
@@ -15,7 +16,7 @@
 #include "mouse.h"
 
 struct TPL *u_unkBitmapTPL;
-s32 lbl_802F1D04;
+s32 spriteParamsBufState;
 s32 spriteParamsBufCount;
 u16 lbl_802F1CFC;
 struct Bitmap *bitmapList;
@@ -98,7 +99,7 @@ void bitmap_init(void)
     lbl_802F1CFC = 0;
     currFont = 0;
     spriteParamsBufCount = 0;
-    lbl_802F1D04 = 0;
+    spriteParamsBufState = 0;
 }
 
 struct TPL *bitmap_load_tpl(char *filename)
@@ -254,7 +255,7 @@ void u_bitmap_set_some_tpl(enum BitmapGroupID grpId)
 void u_bitmap_frame_reset(void)
 {
     spriteParamsBufCount = 0;
-    lbl_802F1D04 = 0;
+    spriteParamsBufState = 0;
 }
 
 void bitmap_init_tev(void)
@@ -347,7 +348,7 @@ void bitmap_main(void)
     GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     MTXPerspective(m, 60.0f, 1.33333333f, 0.1f, 20000.0f);
     GXSetProjection(m, GX_PERSPECTIVE);
-    lbl_802F1D04 = 1;
+    spriteParamsBufState = 1;
     if (eventInfo[EVENT_SPRITE].state == EV_STATE_RUNNING)
         func_800700D8(0);
     GXGetProjectionv(projParams);
@@ -364,17 +365,17 @@ void bitmap_main(void)
     lbl_802F1CFC = 0;
 
     bitmap_draw_string();
-    lbl_802F1D04 = 2;
+    spriteParamsBufState = 2;
     u_draw_all_naomi_sprites();
     spriteParamsBufCount = 0;
-    lbl_802F1D04 = 1;
+    spriteParamsBufState = 1;
     if (eventInfo[EVENT_SPRITE].state == EV_STATE_RUNNING)
         func_800700D8(1);
     if (eventInfo[EVENT_MOUSE].state == EV_STATE_RUNNING)
         ev_mouse_update();
-    lbl_802F1D04 = 3;
+    spriteParamsBufState = 3;
     u_draw_screen_fade_mask();
-    lbl_802F1D04 = 2;
+    spriteParamsBufState = 2;
     u_draw_all_naomi_sprites();  // again?
 
     GXSetZMode_cached(GX_ENABLE, GX_ALWAYS, GX_DISABLE);

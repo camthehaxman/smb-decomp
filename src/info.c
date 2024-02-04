@@ -15,8 +15,10 @@
 #include "item.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "name_entry.h"
 #include "pool.h"
 #include "recplay.h"
+#include "sound.h"
 #include "sprite.h"
 #include "stage.h"
 #include "stcoli.h"
@@ -77,11 +79,11 @@ void ev_info_main(void)
     struct ReplayHeader spC8;
     struct PhysicsBall sp6C;
 
-    if (gamePauseStatus & 0xA)
+    if (debugFlags & 0xA)
         return;
 
     // handle goal
-    ballBackup = currentBallStructPtr;
+    ballBackup = currentBall;
     ball = ballInfo;
     r23 = g_poolInfo.playerPool.statusList;
     r20 = 0;
@@ -93,7 +95,7 @@ void ev_info_main(void)
         if (*r23 == 0 || *r23 == 4)
             continue;
 
-        currentBallStructPtr = ball;
+        currentBall = ball;
         if (!check_ball_entered_goal(ball, &goalId, &sp64))
             continue;
         infoWork.playerId = ball->playerId;
@@ -102,7 +104,7 @@ void ev_info_main(void)
         case GAMETYPE_MAIN_COMPETITION:
             if (ball->flags & BALL_FLAG_24)
             {
-                get_replay_header(lbl_80250A68.unk0[ball->playerId], &spC8);
+                get_replay_header(replayInfo.unk0[ball->playerId], &spC8);
                 if (!(spC8.flags & 1))
                     continue;
             }
@@ -163,7 +165,7 @@ void ev_info_main(void)
                 break;
             if (ball->flags & BALL_FLAG_24)
             {
-                get_replay_header(lbl_80250A68.unk0[ball->playerId], &spC8);
+                get_replay_header(replayInfo.unk0[ball->playerId], &spC8);
                 if (!(spC8.flags & 1))
                     break;
             }
@@ -193,7 +195,7 @@ void ev_info_main(void)
         infoWork.unk2C += r20 - 1;
     if (r20 > 0 && infoWork.unk2C >= modeCtrl.playerCount - 1)
         u_time_over_all_competition_mode_balls();
-    currentBallStructPtr = ballBackup;
+    currentBall = ballBackup;
 
     infoWork.bananasLeft = 0;
 
@@ -297,7 +299,7 @@ void ev_info_main(void)
             init_physball_from_ball(&ballInfo[0], &sp8);
             u_break_goal_tape(infoWork.goalEntered, &sp8);
             ball->unk12A = infoWork.timerCurr;
-            u_play_sound(0x16);
+            u_play_sound_0(0x16);
         }
     }
 
@@ -363,7 +365,7 @@ void ev_info_main(void)
                 {
                     struct Ball *ball;
 
-                    ball = currentBallStructPtr;
+                    ball = currentBall;
                     infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_TIMEOVER;
                     func_80049368(ball->playerId);
                     ball->flags |= BALL_FLAG_TIMEOVER;
@@ -568,7 +570,7 @@ void rank_icon_sprite_main(s8 *dummy, struct Sprite *sprite)
             countSprite->bmpId = ball->unk138;  //! Huh? This is a text sprite
             countSprite->mainFunc = bonus_count_sprite_main;
             sprintf(countSprite->text, "BONUS  +000", ball->unk138);  //! bad format
-            bananaSprite = create_linked_sprite(countSprite);
+            bananaSprite = create_child_sprite(countSprite);
             if (bananaSprite != NULL)
             {
                 bananaSprite->type = SPRITE_TYPE_BITMAP;
@@ -732,14 +734,14 @@ int func_800246F4(struct Ball *ball)
 void func_80024860(struct Ball *ball)
 {
     lbl_802F1DFC = ball->ape->charaId;
-    lbl_802F1DF8 = ball->playerId;
+    u_somePlayerId = ball->playerId;
     if (infoWork.timerCurr > (infoWork.timerMax >> 1))
     {
         if (infoWork.unk22 != 1)
-            u_play_sound(0x2859);
+            u_play_sound_0(0x2859);
         else
-            u_play_sound(0x2858);
+            u_play_sound_0(0x2858);
     }
     else
-        u_play_sound(0x281B);
+        u_play_sound_0(0x281B);
 }

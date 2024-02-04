@@ -353,11 +353,11 @@ asm void GXSetChanMatColor(GXChannelID chan, GXColor mat_color)
 
 void GXSetNumChans(u8 nChans)
 {
-    INSERT_FIELD(gx->unk204, nChans, 3, 4);
+    INSERT_FIELD(gx->genMode, nChans, 3, 4);
     GX_WRITE_U8(0x10);
     GX_WRITE_U32(0x1009);
     GX_WRITE_U32(nChans);
-    gx->unk4F0 |= 4;
+    gx->dirtyState |= 4;
 }
 
 void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc amb_src,

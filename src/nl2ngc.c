@@ -2,6 +2,7 @@
 #include <dolphin.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ppcintrinsic.h>
 #include <string.h>
 #include <dolphin/gx/GXEnum.h>
 
@@ -65,17 +66,17 @@ struct
     float prevScale;
 } s_renderParams = {{1.0f, 1.0f, 1.0f}, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 
-static BOOL convert_nlobj_offsets_to_pointers(struct NlObj *obj);
-static void init_model_flags(struct NlModel *model);
-static void reset_model_tev_material(void);
-static void build_mesh_tev_material(struct NlMesh *pmesh);
-static void reset_alpha_model_tev_material(void);
-void build_alpha_mesh_tev_material(struct NlMesh *pmesh);
+static BOOL nlObjModelListInit(struct NlObj *obj);
+static void nlObjPutCheckModel(struct NlModel *model);
+static void nlObjPut_InitRenderState(void);
+static void nlObjPut_SetMaterial(struct NlMesh *pmesh);
+static void nlObjPutTrnsl_InitRenderState(void);
+void nlObjPutTrnsl_SetMaterial(struct NlMesh *pmesh);
 
 #pragma force_active on
-void nl2ngc_set_line_width(float a)
+void nlLineSetThickness(float width)
 {
-    gxutil_set_line_width(a * 6.0f);
+    gxutil_set_line_width(width * 6.0f);
 }
 
 void nl2ngc_set_line_blend_params(GXBlendFactor srcFactor, GXBlendFactor dstFactor)
@@ -83,7 +84,7 @@ void nl2ngc_set_line_blend_params(GXBlendFactor srcFactor, GXBlendFactor dstFact
     gxutil_set_line_blend_params(GX_BM_BLEND, srcFactor, dstFactor, GX_LO_CLEAR);
 }
 
-void nl2ngc_draw_line(Point3d *start, Point3d *end, u32 color)
+void nlSingleLine(Point3d *start, Point3d *end, u32 color)
 {
     GXColor gxColor;
 
@@ -106,19 +107,19 @@ void nl2ngc_draw_line_deferred(Point3d *start, Point3d *end, u32 color)
     gxutil_draw_line_deferred(start, end, &gxColor);
 }
 
-void nl2ngc_set_scale(float x)
+void nlSetScaleFactor(float x)
 {
     s_renderParams.scale = x;
 }
 
-void nl2ngc_set_material_color(float r, float g, float b)
+void nlObjPutSetFadeColorBase(float r, float g, float b)
 {
     s_renderParams.materialColor.r = r;
     s_renderParams.materialColor.g = g;
     s_renderParams.materialColor.b = b;
 }
 
-BOOL load_nlobj(struct NlObj **nlObj, struct TPL **tpl, char *nlobjPath,
+BOOL nlObjModelListLoad(struct NlObj **nlObj, struct TPL **tpl, char *nlobjPath,
                         char *tplPath)
 {
     int len;
@@ -184,7 +185,7 @@ BOOL load_nlobj(struct NlObj **nlObj, struct TPL **tpl, char *nlobjPath,
     byteswap_nlobj((void *)*nlObj);
 #endif
 
-    convert_nlobj_offsets_to_pointers(*nlObj);
+    nlObjModelListInit(*nlObj);
     if (*tpl != NULL)
         bitmap_free_tpl(*tpl);
     *tpl = bitmap_load_tpl(tplPath);
@@ -194,13 +195,13 @@ BOOL load_nlobj(struct NlObj **nlObj, struct TPL **tpl, char *nlobjPath,
     pmodel = (*nlObj)->models;
     while (*pmodel != NULL)
     {
-        init_nl_model_textures(*pmodel, *tpl);
+        nlObjPutLoadTexture(*pmodel, *tpl);
         pmodel++;
     }
     return TRUE;
 }
 
-BOOL free_nlobj(struct NlObj **nlObj, struct TPL **tpl)
+BOOL nlObjModelListFree(struct NlObj **nlObj, struct TPL **tpl)
 {
     u8 unused[8];
 
@@ -219,7 +220,7 @@ BOOL free_nlobj(struct NlObj **nlObj, struct TPL **tpl)
 
 // This function converts file all file offsets in the struct into memory pointers
 // Featuring some insane pointer arithmetic.
-static BOOL convert_nlobj_offsets_to_pointers(struct NlObj *obj)
+static BOOL nlObjModelListInit(struct NlObj *obj)
 {
     struct NlModel *volatile *pmodel = obj->models;
     struct NlObj_UnkChild *volatile *unkptr;
@@ -240,7 +241,7 @@ static BOOL convert_nlobj_offsets_to_pointers(struct NlObj *obj)
         ptr = (u32 *)*pmodel;
         ptr[-1] += (u32)obj;
 
-        init_model_flags(*pmodel);
+        nlObjPutCheckModel(*pmodel);
         pmodel++;
     }
 
@@ -268,7 +269,7 @@ static BOOL convert_nlobj_offsets_to_pointers(struct NlObj *obj)
     return TRUE;
 }
 
-static void init_model_flags(struct NlModel *model)
+static void nlObjPutCheckModel(struct NlModel *model)
 {
     if (model->u_valid != -1)
     {
@@ -305,7 +306,7 @@ static void init_model_flags(struct NlModel *model)
     }
 }
 
-void init_nl_model_textures(struct NlModel *model, struct TPL *tpl)
+void nlObjPutLoadTexture(struct NlModel *model, struct TPL *tpl)
 {
     u8 unused[8];
 
@@ -390,10 +391,10 @@ struct DrawModelDeferredNode
     u32 fogEnabled;
 };
 
-static void draw_model_node_callback(struct DrawModelDeferredNode *);
+static void nlObjPut_TrnslList_OP(struct DrawModelDeferredNode *);
 
 // Draw opaque meshes in model immediately, depth sort translucent meshes
-void nl2ngc_draw_model_sort_translucent(struct NlModel *model)
+void nlObjPut(struct NlModel *model)
 {
     u32 *modelFlags;
 
@@ -418,14 +419,14 @@ void nl2ngc_draw_model_sort_translucent(struct NlModel *model)
         }
         modelFlags = &model->flags;
         if (model->flags & (NL_MODEL_FLAG_OPAQUE))
-            nl2ngc_draw_opaque_model_meshes(model);
+            nlObjPut_OpaqueList(model);
         if (*modelFlags & (NL_MODEL_FLAG_TRANSLUCENT))
         {
             struct DrawModelDeferredNode *drawNode;
             struct OrdTblNode *list = ord_tbl_get_entry_for_pos(&model->boundSphereCenter);
             drawNode = ord_tbl_alloc_node(sizeof(*drawNode));
 
-            drawNode->node.drawFunc = (OrdTblDrawFunc)draw_model_node_callback;
+            drawNode->node.drawFunc = (OrdTblDrawFunc)nlObjPut_TrnslList_OP;
             drawNode->model = model;
             drawNode->materialColor.r = s_renderParams.materialColor.r;
             drawNode->materialColor.g = s_renderParams.materialColor.g;
@@ -448,7 +449,7 @@ Mtx textureMatrix = {
 };
 
 // Draw opaque and translucent meshes in model immediately without depth sorting
-void nl2ngc_draw_model_sort_none(struct NlModel *model)
+void nlObjPutImm(struct NlModel *model)
 {
     struct NlMesh *mesh;
 
@@ -480,7 +481,7 @@ void nl2ngc_draw_model_sort_none(struct NlModel *model)
             s_nlMaterialCache.isVtxTypeA = FALSE;
         }
 
-        reset_model_tev_material();
+        nlObjPut_InitRenderState();
         GXLoadTexMtxImm(textureMatrix, GX_TEXMTX0, GX_MTX2x4);
         GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
@@ -491,7 +492,7 @@ void nl2ngc_draw_model_sort_none(struct NlModel *model)
             struct NlDispList *dlstart;
             struct NlMesh *next;
 
-            build_mesh_tev_material(mesh);
+            nlObjPut_SetMaterial(mesh);
             dlstart = (void *)(mesh->dispListStart);
             next = (void *)(mesh->dispListStart + mesh->dispListSize);
             switch (mesh->type)
@@ -500,10 +501,10 @@ void nl2ngc_draw_model_sort_none(struct NlModel *model)
                 // Other non-negative model types cover the lit + const material color case
                 break;
             case NL_MODEL_TYPE_UNLIT_VERT_MAT_COLOR:
-                draw_nl_disp_list_type_a(dlstart, next);
+                nlObjPut_PutStrip_VTC(dlstart, next);
                 break;
             default:
-                u_draw_nl_disp_list_type_b_1(dlstart, next);
+                nlObjPut_PutStrip(dlstart, next);
                 break;
             }
             mesh = next;
@@ -525,10 +526,10 @@ struct DrawAlphaModelDeferredNode
     u32 fogEnabled;
 };
 
-void draw_alpha_model_node_callback(struct DrawAlphaModelDeferredNode *);
+void nlObjPutTrnsl_TrnslList_OP(struct DrawAlphaModelDeferredNode *);
 
 // Draw model with global alpha blend. Both opaque and translucent meshes in model are depth-sorted
-void nl2ngc_draw_model_alpha_sort_all(struct NlModel *model, float alpha)
+void nlObjPutTrnsl(struct NlModel *model, float alpha)
 {
     struct DrawAlphaModelDeferredNode *node;
     struct OrdTblNode *entry;
@@ -555,7 +556,7 @@ void nl2ngc_draw_model_alpha_sort_all(struct NlModel *model, float alpha)
         entry = ord_tbl_get_entry_for_pos(&model->boundSphereCenter);
         node = ord_tbl_alloc_node(sizeof(*node));
 
-        node->node.drawFunc = (OrdTblDrawFunc)draw_alpha_model_node_callback;
+        node->node.drawFunc = (OrdTblDrawFunc)nlObjPutTrnsl_TrnslList_OP;
         node->model = model;
         node->alpha = alpha;
         node->materialColor.r = s_renderParams.materialColor.r;
@@ -605,7 +606,7 @@ void nl2ngc_draw_model_alpha_sort_none(struct NlModel *model, float alpha)
         }
 
         s_nlMaterialCache.alpha = alpha;
-        reset_alpha_model_tev_material();
+        nlObjPutTrnsl_InitRenderState();
         GXLoadTexMtxImm(textureMatrix, GX_TEXMTX0, GX_MTX2x4);
         GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
@@ -616,7 +617,7 @@ void nl2ngc_draw_model_alpha_sort_none(struct NlModel *model, float alpha)
             struct NlDispList *dlstart;
             struct NlMesh *next;
 
-            build_alpha_mesh_tev_material(mesh);
+            nlObjPutTrnsl_SetMaterial(mesh);
             dlstart = (void *)(mesh->dispListStart);
             next = (void *)(mesh->dispListStart + mesh->dispListSize);
             switch (mesh->type)
@@ -625,10 +626,10 @@ void nl2ngc_draw_model_alpha_sort_none(struct NlModel *model, float alpha)
                 // Other non-negative model types cover the lit + const material color case
                 break;
             case NL_MODEL_TYPE_UNLIT_VERT_MAT_COLOR:
-                draw_nl_disp_list_type_a_alpha(dlstart, next);
+                nlObjPutTrnsl_PutStrip_VTC(dlstart, next);
                 break;
             default:
-                u_draw_nl_disp_list_type_b_1(dlstart, next);
+                nlObjPut_PutStrip(dlstart, next);
                 break;
             }
             mesh = next;
@@ -639,12 +640,12 @@ void nl2ngc_draw_model_alpha_sort_none(struct NlModel *model, float alpha)
 
 void nl2ngc_draw_model_sort_translucent_alt(struct NlModel *model)
 {
-    nl2ngc_draw_model_sort_translucent(model);
+    nlObjPut(model);
 }
 
 void nl2ngc_draw_model_sort_none_alt(struct NlModel *model)
 {
-    nl2ngc_draw_model_sort_none(model);
+    nlObjPutImm(model);
 }
 
 // unused stuff?
@@ -667,7 +668,7 @@ GXCompare s_nlToGXCompare[] = {GX_NEVER,  GX_GEQUAL, GX_EQUAL,  GX_GEQUAL,
                                 GX_LEQUAL, GX_NEQUAL, GX_LEQUAL, GX_ALWAYS};
 GXCullMode s_nlToGXCullModes[] = {GX_CULL_ALL, GX_CULL_NONE, GX_CULL_BACK, GX_CULL_FRONT};
 
-static void reset_model_tev_material(void)
+static void nlObjPut_InitRenderState(void)
 {
     GXColor ambColor;
 
@@ -722,7 +723,7 @@ static void reset_model_tev_material(void)
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_TEXMTX0);
 }
 
-static void build_mesh_tev_material(struct NlMesh *pmesh)
+static void nlObjPut_SetMaterial(struct NlMesh *pmesh)
 {
     struct NlMesh mesh = *pmesh;
     GXColor color;
@@ -878,11 +879,11 @@ static void build_mesh_tev_material(struct NlMesh *pmesh)
     }
 }
 
-void u_draw_nl_disp_list_type_b_1(struct NlDispList *dl, void *end)
+void nlObjPut_PutStrip(struct NlDispList *dl, void *end)
 {
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_NRM) | (1 << GX_VA_TEX0));
 
-    if (s_nlMaterialCache.isVtxTypeA != 0)
+    if (s_nlMaterialCache.isVtxTypeA)
         s_nlMaterialCache.isVtxTypeA = FALSE;
 
     while (dl < (struct NlDispList *)end)
@@ -986,7 +987,7 @@ void u_draw_nl_disp_list_type_b_1(struct NlDispList *dl, void *end)
 }
 
 // Without global alpha param
-void draw_nl_disp_list_type_a(struct NlDispList *dl, void *end)
+void nlObjPut_PutStrip_VTC(struct NlDispList *dl, void *end)
 {
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_CLR0) | (1 << GX_VA_TEX0));
 
@@ -1123,7 +1124,7 @@ void draw_nl_disp_list_type_a(struct NlDispList *dl, void *end)
     }
 }
 
-static void reset_alpha_model_tev_material(void)
+static void nlObjPutTrnsl_InitRenderState(void)
 {
     GXColor sp18;
 
@@ -1180,7 +1181,7 @@ static void reset_alpha_model_tev_material(void)
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_TEXMTX0);
 }
 
-void build_alpha_mesh_tev_material(struct NlMesh *pmesh)
+void nlObjPutTrnsl_SetMaterial(struct NlMesh *pmesh)
 {
     struct NlMesh mesh = *pmesh;
     GXColor color;
@@ -1354,7 +1355,7 @@ static inline void write_vtx_type_a_with_alpha(struct NlVtxTypeA *vtx)
 }
 
 // With global alpha param
-void draw_nl_disp_list_type_a_alpha(struct NlDispList *dl, void *end)
+void nlObjPutTrnsl_PutStrip_VTC(struct NlDispList *dl, void *end)
 {
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_CLR0) | (1 << GX_VA_TEX0));
 
@@ -1451,44 +1452,44 @@ void draw_nl_disp_list_type_a_alpha(struct NlDispList *dl, void *end)
 
 void nl2ngc_draw_model_sort_translucent_alt2(struct NlModel *model)
 {
-    nl2ngc_draw_model_sort_translucent(model);
+    nlObjPut(model);
 }
 
 void nl2ngc_draw_model_sort_none_alt2(struct NlModel *model)
 {
-    nl2ngc_draw_model_sort_none(model);
+    nlObjPutImm(model);
 }
 
 void nl2ngc_draw_model_alpha_sort_all_alt(struct NlModel *model, float alpha)
 {
-    nl2ngc_draw_model_alpha_sort_all(model, alpha);
+    nlObjPutTrnsl(model, alpha);
 }
 
-void nl2ngc_set_light_mask(u32 lightMask)
+void nlLightMask(u32 lightMask)
 {
     s_lightMask = lightMask;
 }
 
-void nl2ngc_set_ambient(float r, float g, float b)
+void nlLightAmbRGB(float r, float g, float b)
 {
     s_ambientColor.r = r;
     s_ambientColor.g = g;
     s_ambientColor.b = b;
 }
 
-void nl2ngc_enable_fog(int enabled)
+void nlSetFog(int enabled)
 {
     s_fogEnabled = enabled;
 }
 
-void nl2ngc_set_fog_params(u32 a, float b, float c)
+void nlSetFogType(u32 a, float b, float c)
 {
     s_fogType = a;
     s_fogStartZ = b;
     s_fogEndZ = c;
 }
 
-void nl2ngc_set_fog_color(int r, int g, int b)
+void nlSetFogColor(int r, int g, int b)
 {
     s_fogColor.r = r;
     s_fogColor.g = g;
@@ -1496,7 +1497,7 @@ void nl2ngc_set_fog_color(int r, int g, int b)
 }
 
 // Draw all opaque meshes in model immediately
-void nl2ngc_draw_opaque_model_meshes(struct NlModel *model)
+void nlObjPut_OpaqueList(struct NlModel *model)
 {
     struct NlMesh *mesh;
 
@@ -1511,7 +1512,7 @@ void nl2ngc_draw_opaque_model_meshes(struct NlModel *model)
         s_nlMaterialCache.isVtxTypeA = FALSE;
     }
 
-    reset_model_tev_material();
+    nlObjPut_InitRenderState();
     GXLoadTexMtxImm(textureMatrix, GX_TEXMTX0, GX_MTX2x4);
     GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
@@ -1522,7 +1523,7 @@ void nl2ngc_draw_opaque_model_meshes(struct NlModel *model)
         struct NlDispList *dlstart;
         struct NlMesh *next;
 
-        build_mesh_tev_material(mesh);
+        nlObjPut_SetMaterial(mesh);
         next = (void *)(mesh->dispListStart + mesh->dispListSize);
         if (((mesh->flags >> 24) & 7) != 0)
             mesh = next;
@@ -1534,10 +1535,10 @@ void nl2ngc_draw_opaque_model_meshes(struct NlModel *model)
             case NL_MODEL_TYPE_LIT_CONST_MAT_COLOR:
                 break;
             case NL_MODEL_TYPE_UNLIT_VERT_MAT_COLOR:
-                draw_nl_disp_list_type_a(dlstart, next);
+                nlObjPut_PutStrip_VTC(dlstart, next);
                 break;
             default:
-                u_draw_nl_disp_list_type_b_1(dlstart, next);
+                nlObjPut_PutStrip(dlstart, next);
                 break;
             }
             mesh = next;
@@ -1546,7 +1547,7 @@ void nl2ngc_draw_opaque_model_meshes(struct NlModel *model)
     unk_empty();
 }
 
-static void draw_model_node_callback(struct DrawModelDeferredNode *a)
+static void nlObjPut_TrnslList_OP(struct DrawModelDeferredNode *a)
 {
     float f31, f30, f29;
 
@@ -1562,17 +1563,17 @@ static void draw_model_node_callback(struct DrawModelDeferredNode *a)
     if (!(a->model->flags & (1 << 10)))
     {
         load_light_group_cached(a->lightGroup);
-        nl2ngc_set_ambient(a->ambientColor.r, a->ambientColor.g, a->ambientColor.b);
+        nlLightAmbRGB(a->ambientColor.r, a->ambientColor.g, a->ambientColor.b);
     }
     s_fogEnabled = a->fogEnabled;
-    nl2ngc_draw_translucent_model_meshes(a->model);
+    nlObjPut_TrnslList(a->model);
 
     s_renderParams.materialColor.r = f31;
     s_renderParams.materialColor.g = f30;
     s_renderParams.materialColor.b = f29;
 }
 
-void nl2ngc_draw_translucent_model_meshes(struct NlModel *model)
+void nlObjPut_TrnslList(struct NlModel *model)
 {
     struct NlMesh *mesh;
 
@@ -1587,7 +1588,7 @@ void nl2ngc_draw_translucent_model_meshes(struct NlModel *model)
         s_nlMaterialCache.isVtxTypeA = FALSE;
     }
 
-    reset_model_tev_material();
+    nlObjPut_InitRenderState();
     GXLoadTexMtxImm(textureMatrix, GX_TEXMTX0, GX_MTX2x4);
     GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
@@ -1598,7 +1599,7 @@ void nl2ngc_draw_translucent_model_meshes(struct NlModel *model)
         struct NlDispList *dlstart;
         struct NlMesh *next;
 
-        build_mesh_tev_material(mesh);
+        nlObjPut_SetMaterial(mesh);
         next = (void *)(mesh->dispListStart + mesh->dispListSize);
         if (((mesh->flags >> 24) & 7) == 0)
             mesh = next;
@@ -1610,10 +1611,10 @@ void nl2ngc_draw_translucent_model_meshes(struct NlModel *model)
             case NL_MODEL_TYPE_LIT_CONST_MAT_COLOR:
                 break;
             case NL_MODEL_TYPE_UNLIT_VERT_MAT_COLOR:
-                draw_nl_disp_list_type_a(dlstart, next);
+                nlObjPut_PutStrip_VTC(dlstart, next);
                 break;
             default:
-                u_draw_nl_disp_list_type_b_1(dlstart, next);
+                nlObjPut_PutStrip(dlstart, next);
                 break;
             }
             mesh = next;
@@ -1622,7 +1623,7 @@ void nl2ngc_draw_translucent_model_meshes(struct NlModel *model)
     unk_empty();
 }
 
-void draw_alpha_model_node_callback(struct DrawAlphaModelDeferredNode *a)
+void nlObjPutTrnsl_TrnslList_OP(struct DrawAlphaModelDeferredNode *a)
 {
     float f31, f30, f29;
 
@@ -1639,10 +1640,10 @@ void draw_alpha_model_node_callback(struct DrawAlphaModelDeferredNode *a)
     if (!(a->model->flags & (1 << 10)))
     {
         load_light_group_cached(a->lightGroup);
-        nl2ngc_set_ambient(a->ambientColor.r, a->ambientColor.g, a->ambientColor.b);
+        nlLightAmbRGB(a->ambientColor.r, a->ambientColor.g, a->ambientColor.b);
     }
     s_fogEnabled = a->fogEnabled;
-    nl2ngc_draw_all_model_meshes_alpha(a->model);
+    nlObjPutTrnsl_TrnslList(a->model);
 
     s_renderParams.materialColor.r = f31;
     s_renderParams.materialColor.g = f30;
@@ -1650,7 +1651,7 @@ void draw_alpha_model_node_callback(struct DrawAlphaModelDeferredNode *a)
 }
 
 // Draw all meshes in model immediately with global alpha parameter
-void nl2ngc_draw_all_model_meshes_alpha(struct NlModel *model)
+void nlObjPutTrnsl_TrnslList(struct NlModel *model)
 {
     struct NlMesh *mesh;
 
@@ -1668,7 +1669,7 @@ void nl2ngc_draw_all_model_meshes_alpha(struct NlModel *model)
         s_nlMaterialCache.isVtxTypeA = FALSE;
     }
 
-    reset_alpha_model_tev_material();
+    nlObjPutTrnsl_InitRenderState();
     GXLoadTexMtxImm(textureMatrix, GX_TEXMTX0, GX_MTX2x4);
     GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
@@ -1679,7 +1680,7 @@ void nl2ngc_draw_all_model_meshes_alpha(struct NlModel *model)
         struct NlDispList *dlstart;
         struct NlMesh *next;
 
-        build_alpha_mesh_tev_material(mesh);
+        nlObjPutTrnsl_SetMaterial(mesh);
         next = (void *)(mesh->dispListStart + mesh->dispListSize);
         dlstart = (void *)(mesh->dispListStart);
         switch (mesh->type)
@@ -1687,10 +1688,10 @@ void nl2ngc_draw_all_model_meshes_alpha(struct NlModel *model)
         case NL_MODEL_TYPE_LIT_CONST_MAT_COLOR:
             break;
         case NL_MODEL_TYPE_UNLIT_VERT_MAT_COLOR:
-            draw_nl_disp_list_type_a_alpha(dlstart, next);
+            nlObjPutTrnsl_PutStrip_VTC(dlstart, next);
             break;
         default:
-            u_draw_nl_disp_list_type_b_1(dlstart, next);
+            nlObjPut_PutStrip(dlstart, next);
             break;
         }
         mesh = next;
@@ -1747,10 +1748,10 @@ void u_nl2ngc_draw_model_with_mesh_func(struct NlModel *model, int (*func)())
                 case NL_MODEL_TYPE_LIT_CONST_MAT_COLOR:
                     break;
                 case NL_MODEL_TYPE_UNLIT_VERT_MAT_COLOR:
-                    draw_nl_disp_list_type_a(dlstart, next);
+                    nlObjPut_PutStrip_VTC(dlstart, next);
                     break;
                 default:
-                    u_draw_nl_disp_list_type_b_1(dlstart, next);
+                    nlObjPut_PutStrip(dlstart, next);
                     break;
                 }
                 mesh = next;
