@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <dolphin.h>
 
 #include <dolphin/gx/GXEnum.h>
@@ -22,7 +23,12 @@ void perf_start_timer(int timerId)
 
 u32 perf_stop_timer(volatile /* why ?*/ int timerId)
 {
+    // no idea why this crashes
+#ifdef TARGET_PC
+    return 0;
+#else
     return OSTicksToMicroseconds(OSGetTick() - perfTimers[timerId]);
+#endif
 }
 
 void perf_free(void *ptr)
