@@ -1,8 +1,8 @@
-#ifndef _DOLPHIN_GXFRAMEBUFFER_H_
-#define _DOLPHIN_GXFRAMEBUFFER_H_
+#ifndef _DOLPHIN_GX_GXFRAMEBUFFER_H_
+#define _DOLPHIN_GX_GXFRAMEBUFFER_H_
 
-#include <dolphin/GXStruct.h>
-#include <dolphin/GXEnum.h>
+#include <dolphin/gx/GXStruct.h>
+#include <dolphin/gx/GXEnum.h>
 
 #define	GX_MAX_Z24	0x00ffffff
 

@@ -1,8 +1,8 @@
-#ifndef _DOLPHIN_GXLIGHTING_H_
-#define _DOLPHIN_GXLIGHTING_H_
+#ifndef _DOLPHIN_GX_GXLIGHTING_H_
+#define _DOLPHIN_GX_GXLIGHTING_H_
 
-#include <dolphin/GXEnum.h>
-#include <dolphin/GXStruct.h>
+#include <dolphin/gx/GXEnum.h>
+#include <dolphin/gx/GXStruct.h>
 
 void GXSetNumChans(u8 nChans);
 void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc amb_src,

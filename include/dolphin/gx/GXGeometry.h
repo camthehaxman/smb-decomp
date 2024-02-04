@@ -1,7 +1,7 @@
-#ifndef _DOLPHIN_GXGEOMETRY_H_
-#define _DOLPHIN_GXGEOMETRY_H_
+#ifndef _DOLPHIN_GX_GXGEOMETRY_H_
+#define _DOLPHIN_GX_GXGEOMETRY_H_
 
-#include <dolphin/GXEnum.h>
+#include <dolphin/gx/GXEnum.h>
 
 void GXSetVtxDesc(GXAttr attr, GXAttrType type);
 void GXClearVtxDesc(void);

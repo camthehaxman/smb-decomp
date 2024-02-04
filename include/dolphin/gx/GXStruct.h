@@ -1,5 +1,5 @@
-#ifndef _DOLPHIN_GXSTRUCT_H_
-#define _DOLPHIN_GXSTRUCT_H_
+#ifndef _DOLPHIN_GX_GXSTRUCT_H_
+#define _DOLPHIN_GX_GXSTRUCT_H_
 
 #include <dolphin/types.h>
 #include <dolphin/vitypes.h>

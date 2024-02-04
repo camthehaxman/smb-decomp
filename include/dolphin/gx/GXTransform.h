@@ -1,7 +1,7 @@
-#ifndef _DOLPHIN_GXTRANSFORM_H_
-#define _DOLPHIN_GXTRANSFORM_H_
+#ifndef _DOLPHIN_GX_GXTRANSFORM_H_
+#define _DOLPHIN_GX_GXTRANSFORM_H_
 
-#include <dolphin/GXEnum.h>
+#include <dolphin/gx/GXEnum.h>
 
 #define GX_PROJECTION_SZ  7
 

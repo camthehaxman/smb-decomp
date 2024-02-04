@@ -1,5 +1,5 @@
-#ifndef _DOLPHIN_GXENUM_H_
-#define _DOLPHIN_GXENUM_H_
+#ifndef _DOLPHIN_GX_GXENUM_H_
+#define _DOLPHIN_GX_GXENUM_H_
 
 #include <dolphin/types.h>
 

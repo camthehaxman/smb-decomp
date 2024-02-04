@@ -1,5 +1,5 @@
-#ifndef _DOLPHIN_GXVERT_H_
-#define _DOLPHIN_GXVERT_H_
+#ifndef _DOLPHIN_GX_GXVERT_H_
+#define _DOLPHIN_GX_GXVERT_H_
 
 #include <dolphin/types.h>
 

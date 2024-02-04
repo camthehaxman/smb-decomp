@@ -1,8 +1,8 @@
-#ifndef _DOLPHIN_GXTEXTURE_H_
-#define _DOLPHIN_GXTEXTURE_H_
+#ifndef _DOLPHIN_GX_GXTEXTURE_H_
+#define _DOLPHIN_GX_GXTEXTURE_H_
 
-#include <dolphin/GXEnum.h>
-#include <dolphin/GXStruct.h>
+#include <dolphin/gx/GXEnum.h>
+#include <dolphin/gx/GXStruct.h>
 
 typedef GXTexRegion *(*GXTexRegionCallback)(GXTexObj *t_obj, GXTexMapID id);
 typedef GXTlutRegion *(*GXTlutRegionCallback)(u32 idx);

@@ -1,7 +1,7 @@
-#ifndef _DOLPHIN_GXBUMP_H_
-#define _DOLPHIN_GXBUMP_H_
+#ifndef _DOLPHIN_GX_GXBUMP_H_
+#define _DOLPHIN_GX_GXBUMP_H_
 
-#include <dolphin/GXEnum.h>
+#include <dolphin/gx/GXEnum.h>
 
 void GXSetTevDirect(GXTevStageID tev_stage);
 void GXSetNumIndStages(u8 nIndStages);

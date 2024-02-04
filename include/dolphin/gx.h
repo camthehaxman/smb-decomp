@@ -1,25 +1,25 @@
 #ifndef _DOLPHIN_GX_H_
 #define _DOLPHIN_GX_H_
 
-#include <dolphin/GXStruct.h>
-#include <dolphin/GXTransform.h>
-#include <dolphin/GXTev.h>
-#include <dolphin/GXPixel.h>
-#include <dolphin/GXManage.h>
-#include <dolphin/GXFifo.h>
-#include <dolphin/GXCull.h>
-#include <dolphin/GXGeometry.h>
-#include <dolphin/GXVert.h>
-#include <dolphin/GXTexture.h>
-#include <dolphin/GXTev.h>
-#include <dolphin/GXLighting.h>
-#include <dolphin/GXDispList.h>
-#include <dolphin/GXCommandList.h>
-#include <dolphin/GXBump.h>
-#include <dolphin/GXFrameBuffer.h>
-#include <dolphin/GXGet.h>
-#include <dolphin/GXDraw.h>
-#include <dolphin/GXPerf.h>
-#include <dolphin/GXCpu2Efb.h>
+#include <dolphin/gx/GXStruct.h>
+#include <dolphin/gx/GXTransform.h>
+#include <dolphin/gx/GXTev.h>
+#include <dolphin/gx/GXPixel.h>
+#include <dolphin/gx/GXManage.h>
+#include <dolphin/gx/GXFifo.h>
+#include <dolphin/gx/GXCull.h>
+#include <dolphin/gx/GXGeometry.h>
+#include <dolphin/gx/GXVert.h>
+#include <dolphin/gx/GXTexture.h>
+#include <dolphin/gx/GXTev.h>
+#include <dolphin/gx/GXLighting.h>
+#include <dolphin/gx/GXDispList.h>
+#include <dolphin/gx/GXCommandList.h>
+#include <dolphin/gx/GXBump.h>
+#include <dolphin/gx/GXFrameBuffer.h>
+#include <dolphin/gx/GXGet.h>
+#include <dolphin/gx/GXDraw.h>
+#include <dolphin/gx/GXPerf.h>
+#include <dolphin/gx/GXCpu2Efb.h>
 
 #endif

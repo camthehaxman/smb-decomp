@@ -1,7 +1,7 @@
-#ifndef _DOLPHIN_GXCPU2EFB_H_
-#define _DOLPHIN_GXCPU2EFB_H_
+#ifndef _DOLPHIN_GX_GXCPU2EFB_H_
+#define _DOLPHIN_GX_GXCPU2EFB_H_
 
-#include <dolphin/GXEnum.h>
+#include <dolphin/gx/GXEnum.h>
 
 void GXPokeColorUpdate(GXBool update_enable);
 void GXPokeAlphaUpdate(GXBool update_enable);

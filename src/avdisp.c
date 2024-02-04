@@ -2,11 +2,11 @@
 #include <string.h>
 #include <dolphin.h>
 
-#include <dolphin/GXEnum.h>
-#include <dolphin/GXCommandList.h>
+#include <dolphin/gx/GXEnum.h>
+#include <dolphin/gx/GXCommandList.h>
 #include <dolphin/GDLight.h>
-#include <dolphin/GXLighting.h>
-#include <dolphin/GXVert.h>
+#include <dolphin/gx/GXLighting.h>
+#include <dolphin/gx/GXVert.h>
 
 #include <ppcintrinsic.h>
 
