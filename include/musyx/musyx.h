@@ -3,7 +3,9 @@
 
 #include <dolphin/types.h>
 
+#ifndef TARGET_PC
 typedef int bool;
+#endif
 
 #define SND_AUX_NUMPARAMETERS 4
 

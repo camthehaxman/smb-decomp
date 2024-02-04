@@ -58,6 +58,7 @@ SOURCES := \
 	src/bmp_list_cmd.c \
 	src/trig_tables.c \
 	src/perf.c \
+	src/sound.c \
 	src/pool.c \
 	src/nl2ngc.c \
 	src/motload.c \
@@ -73,6 +74,7 @@ SOURCES := \
 	src/code_8.c \
 	src/recplay.c \
 	src/recplay_2.c \
+	src/effect.c \
 	src/background.c \
 	src/bg_old_cave.c \
 	src/bg_old_night.c \
@@ -99,6 +101,7 @@ SOURCES := \
 	src/sprite.c \
 	src/textbox.c \
 	src/hud.c \
+	src/minimap.c \
 	src/ord_tbl.c \
 	src/code_3.c \
 	src/ranking_screen.c \
@@ -107,6 +110,9 @@ SOURCES := \
 	src/lzs_decompress.c \
 	src/avdisp.c \
 	src/load.c \
+	src/mini.c \
+	src/mini_2.c \
+	src/mini_3.c \
 	src/mouse.c \
 	src/rend_efc.c \
 	src/rend_efc_mirror.c \
@@ -120,6 +126,11 @@ SOURCES := \
 	src/code_6.c \
 	src/dvd.c \
 	src/preview.c \
+	src/name_entry.c \
+	src/vibration.c \
+	src/ending.c \
+	src/ending_camera.c \
+	src/ending_dialogue.c \
 	src/byteswap.cpp \
 	src/sel_stage_rel.c \
 	src/sel_stage_rel_2.c \
