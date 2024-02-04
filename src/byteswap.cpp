@@ -7,8 +7,8 @@
 
 extern "C"
 {
-#include "byteswap.h"
 #include "global.h"
+#include "byteswap.h"
 }
 
 template <typename T> [[nodiscard]] constexpr T bswap16(T val) noexcept

@@ -1015,5 +1015,6 @@ struct Struct80094870
 
 struct Effect;
 struct ScoreRecord;
+struct Struct80048084;
 
 #endif

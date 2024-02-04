@@ -1511,8 +1511,8 @@ void *draw_shape_reflection_maybe(struct GMAShape *shape, void *modelSamplers, s
                 {
                     u32 r3;
                     s_cullMode = cullMode;
-                    r3 = (gx->unk204 & ~0xC000) | cullMode << 14;
-                    gx->unk204 = r3;
+                    r3 = (gx->genMode & ~0xC000) | cullMode << 14;
+                    gx->genMode = r3;
                     func_8008D6BC(r3);
                 }
                 func_8008FBB0(shape->vtxAttrs, r29, d, shape->dispListSizes[i]);
