@@ -45,6 +45,7 @@ ASFLAGS     := -mgekko -I asm
 
 # Metrowerks compiler flags
 MWCC_CFLAGS      := -O4,p -inline auto -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off'
+#MWCC_CFLAGS      := -opt level=0 -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off' -DDEBUG
 MWCC_CPPFLAGS     = $(addprefix -i ,$(INCLUDE_DIRS) $(dir $^)) -I- $(addprefix -i ,$(SYSTEM_INCLUDE_DIRS))
 # GNU compiler flags
 GCC_CFLAGS       := -O2 -Wall -Wextra -Wno-unused -Wno-switch -Wno-main -Wno-unknown-pragmas \
@@ -377,7 +378,7 @@ SOURCES := \
 	libraries/TRK_MINNOW_DOLPHIN/asm/main_TRK.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/dolphin_trk_glue.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/targcont.s \
-	libraries/amcExi/asm/AmcExi.s \
+	libraries/amcExi/AmcExi.c \
 	libraries/amcExi/AmcExi2Comm.c \
 	libraries/odemustubs/asm/odemustubs.s \
 	libraries/amcnotstub/amcnotstub.c

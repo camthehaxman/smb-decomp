@@ -28,7 +28,6 @@
 #define CARD_STAT_SPEED_MASK 3
 
 #define TRUNC(n, a) (((u32)(n)) & ~((a)-1))
-#define OFFSET(n, a) (((u32)(n)) & ((a)-1))
 
 typedef struct CARDID
 {
