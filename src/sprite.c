@@ -2635,7 +2635,7 @@ void set_text_pos(float x, float y)
 
 void u_draw_char(char chr)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     struct FontParams *font = &fontInfo[textDrawInfo.fontId];
     int glyphIndex = chr - font->firstChar;
     int div = glyphIndex / font->unkC;
@@ -2643,28 +2643,28 @@ void u_draw_char(char chr)
     float f4;
     float f5;
 
-    params.bmpId = font->bmpId;
+    params.sprno = font->bmpId;
     params.x = textDrawInfo.x + font->unk18 * font->unk20;
     params.y = textDrawInfo.y + font->unk1C * font->unk22;
     params.z = textDrawInfo.unk1C;
     f4 = font->unk10 * mod;
     f5 = font->unk14 * div;
-    params.u1 = f4 + font->unk18 * font->unk20;
-    params.v1 = f5 + font->unk1C * font->unk22;
-    params.u2 = font->unk10 + (f4 - font->unk18 * font->unk21);
-    params.v2 = font->unk14 + (f5 - font->unk1C * font->unk23);
-    params.scaleX = textDrawInfo.scaleX * (font->unk10 - font->unk18 * font->unk20 - font->unk18 * font->unk21);
-    params.scaleY = textDrawInfo.scaleY * (font->unk14 - font->unk1C * font->unk22 - font->unk18 * font->unk23);
+    params.u0 = f4 + font->unk18 * font->unk20;
+    params.v0 = f5 + font->unk1C * font->unk22;
+    params.u1 = font->unk10 + (f4 - font->unk18 * font->unk21);
+    params.v1 = font->unk14 + (f5 - font->unk1C * font->unk23);
+    params.zm_x = textDrawInfo.scaleX * (font->unk10 - font->unk18 * font->unk20 - font->unk18 * font->unk21);
+    params.zm_y = textDrawInfo.scaleY * (font->unk14 - font->unk1C * font->unk22 - font->unk18 * font->unk23);
 
     !font->unk22;  // needed to match
 
-    params.rotation = textDrawInfo.unk18;
-    params.opacity = textDrawInfo.opacity;
-    params.unk30 = -1;
-    params.flags = (textDrawInfo.unk2C & ~0xF) | 5;
-    params.mulColor = ((int)(255.0f * textDrawInfo.opacity) << 24) | textDrawInfo.mulColor;
-    params.addColor = textDrawInfo.addColor;
-    draw_naomi_sprite(&params);
+    params.ang = textDrawInfo.unk18;
+    params.trnsl = textDrawInfo.opacity;
+    params.listType = NLSPR_LISTTYPE_AUTO;
+    params.attr = (textDrawInfo.unk2C & ~0xF) | NLSPR_DISP_LT;
+    params.base_color = ((int)(255.0f * textDrawInfo.opacity) << 24) | textDrawInfo.mulColor;
+    params.offset_color = textDrawInfo.addColor;
+    nlSprPut(&params);
 }
 
 static inline int func_80071E58_inline(int chr, int fontId, struct FontParams *font)
@@ -2696,7 +2696,7 @@ void u_draw_text(char *str)
     float f17;
     float f16;
     float f31;
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     struct StringParseState parseState;
     u8 dummy[8];
     s32 skip;
@@ -2707,14 +2707,14 @@ void u_draw_text(char *str)
     r22 = 0;
     fontIdBackup = drawInfo->fontId;
 
-    params.bmpId = font->bmpId;
+    params.sprno = font->bmpId;
     params.z = drawInfo->unk1C;
-    params.opacity = drawInfo->opacity;
-    params.rotation = drawInfo->unk18;
-    params.mulColor = ((int)(drawInfo->opacity * 255.0f) << 24) | drawInfo->mulColor;
-    params.addColor = drawInfo->addColor;
-    params.unk30 = -1;
-    params.flags = (drawInfo->unk2C & ~0xF) | 5;
+    params.trnsl = drawInfo->opacity;
+    params.ang = drawInfo->unk18;
+    params.base_color = ((int)(drawInfo->opacity * 255.0f) << 24) | drawInfo->mulColor;
+    params.offset_color = drawInfo->addColor;
+    params.listType = NLSPR_LISTTYPE_AUTO;
+    params.attr = (drawInfo->unk2C & ~0xF) | NLSPR_DISP_LT;
     f31 = drawInfo->scaleX;
     parseState.mode = TEXT_MODE_ASCII;
     parseState.unk4 = -1;
@@ -2754,10 +2754,10 @@ void u_draw_text(char *str)
         {
             skip = 0;
             special = 0;
-            color = params.mulColor;
+            color = params.base_color;
             glyphIndex = parse_char_sequence(&parseState, str, &color, &skip, &special);
             str += skip;
-            params.mulColor = color;
+            params.base_color = color;
             if (special == 1)
             {
                 drawInfo->fontId = FONT_JAP_24x24_2;
@@ -2817,7 +2817,7 @@ void u_draw_text(char *str)
                     font = &fontInfo[FONT_JAP_24x24_I];
                 else
                     font = &fontInfo[drawInfo->fontId];
-                params.bmpId = font->bmpId;
+                params.sprno = font->bmpId;
             }
         }
         if (drawInfo->fontId < FONT_JAP_TAG
@@ -2836,15 +2836,15 @@ void u_draw_text(char *str)
             params.y = drawInfo->y + font->unk22;
             f0 = font->unk10 * mod;
             f1 = font->unk14 * div;
-            params.u1 = f0 + font->unk18 * font->unk20 + f17;
-            params.v1 = f1 + font->unk1C * font->unk22;
-            params.u2 = font->unk10 + (f0 - font->unk18 * font->unk21) - f17 - font->unk10 * CLAMP(1.0 - drawInfo->scaleX, 0.0, 1.0) * 0.1;
-            params.v2 = font->unk14 + (f1 - font->unk1C * font->unk23);
-            params.scaleX = drawInfo->scaleX * ((font->unk10 - (font->unk18 * font->unk20)) - (font->unk18 * font->unk21) - f17 * 2.0);
-            params.scaleY = drawInfo->scaleY * (font->unk14 - font->unk1C * font->unk22 - font->unk18 * font->unk23);
+            params.u0 = f0 + font->unk18 * font->unk20 + f17;
+            params.v0 = f1 + font->unk1C * font->unk22;
+            params.u1 = font->unk10 + (f0 - font->unk18 * font->unk21) - f17 - font->unk10 * CLAMP(1.0 - drawInfo->scaleX, 0.0, 1.0) * 0.1;
+            params.v1 = font->unk14 + (f1 - font->unk1C * font->unk23);
+            params.zm_x = drawInfo->scaleX * ((font->unk10 - (font->unk18 * font->unk20)) - (font->unk18 * font->unk21) - f17 * 2.0);
+            params.zm_y = drawInfo->scaleY * (font->unk14 - font->unk1C * font->unk22 - font->unk18 * font->unk23);
             if (drawInfo->fontId == FONT_JAP_24x24_2Pg && *str == 'g')
-                params.y += params.scaleY * 80.0;
-            draw_naomi_sprite(&params);
+                params.y += params.zm_y * 80.0;
+            nlSprPut(&params);
         }
         r22++;
         drawInfo->x += f16 * (r23 * drawInfo->scaleX);
@@ -2865,7 +2865,7 @@ float u_get_text_width(char *str)
     int r22;
     float width;
     float f23;
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     struct StringParseState parseState;
     u8 dummy2[8];
     s32 skip;
@@ -2910,11 +2910,11 @@ float u_get_text_width(char *str)
         glyphIndex = *str;
         if (drawInfo->fontId > FONT_JAP_TAG)
         {
-            color = params.mulColor;
+            color = params.base_color;
             skip = 0;
             special = 0;
             glyphIndex = parse_char_sequence(&parseState, str, &color, &skip, &special);
-            params.mulColor = color;
+            params.base_color = color;
             str += skip;
             if (special == 1)
             {
@@ -3011,25 +3011,25 @@ void u_draw_text_sprite(struct Sprite *sprite)
 
 void draw_bitmap_sprite(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
 
-    params.bmpId = sprite->bmpId;
+    params.sprno = sprite->bmpId;
     params.x = (sprite->left + sprite->right) / 2;
     params.y = (sprite->top + sprite->bottom) / 2;
     params.z = sprite->unk4C;
-    params.scaleX = sprite->scaleX;
-    params.scaleY = sprite->scaleY;
-    params.u1 = sprite->unk7C;
-    params.v1 = sprite->unk80;
-    params.u2 = sprite->unk84;
-    params.v2 = sprite->unk88;
-    params.rotation = sprite->rotation;
-    params.opacity = sprite->opacity;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & ~0xF) | 10;
-    params.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
-    params.addColor = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
-    draw_naomi_sprite(&params);
+    params.zm_x = sprite->scaleX;
+    params.zm_y = sprite->scaleY;
+    params.u0 = sprite->unk7C;
+    params.v0 = sprite->unk80;
+    params.u1 = sprite->unk84;
+    params.v1 = sprite->unk88;
+    params.ang = sprite->rotation;
+    params.trnsl = sprite->opacity;
+    params.listType = NLSPR_LISTTYPE_AUTO;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
+    params.base_color = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
+    params.offset_color = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
+    nlSprPut(&params);
 }
 
 float func_80072DA8(int fontId, char *str, int c)
@@ -3135,7 +3135,7 @@ int u_get_jpn_text_width(int fontId, char *str)
 
 void u_draw_screen_fade_mask(void)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
 
     if (screenFadeInfo.timer == 0)
         return;
@@ -3152,31 +3152,31 @@ void u_draw_screen_fade_mask(void)
     switch (screenFadeInfo.type & 0xFF)
     {
     case FADE_IN:
-        params.opacity = (float)screenFadeInfo.timer / (float)screenFadeInfo.timerMax;
+        params.trnsl = (float)screenFadeInfo.timer / (float)screenFadeInfo.timerMax;
         break;
     case FADE_OUT:
-        params.opacity = 1.0 - (float)screenFadeInfo.timer / (float)screenFadeInfo.timerMax;
+        params.trnsl = 1.0 - (float)screenFadeInfo.timer / (float)screenFadeInfo.timerMax;
         break;
     case FADE_UNK2:
-        params.opacity = 1.0f;
+        params.trnsl = 1.0f;
         break;
     }
-    params.bmpId = BMP_COM_white_mask8x8;
+    params.sprno = BMP_COM_white_mask8x8;
     params.x = 320.0f;
     params.y = 240.1f;
     params.z = (screenFadeInfo.type & FADE_ABOVE_SPRITES) ? 0.009 : 0.25;
-    params.scaleX = 80.0f;
-    params.scaleY = 60.0f;
-    params.u1 = 0.0f;
-    params.v1 = 0.0f;
-    params.u2 = 1.0f;
-    params.v2 = 1.0f;
-    params.rotation = 0;
-    params.unk30 = -1;
-    params.flags = 0x2000A;
-    params.mulColor = screenFadeInfo.color;
-    params.addColor = RGBA(0, 0, 0, 0);
-    draw_naomi_sprite(&params);
+    params.zm_x = 80.0f;
+    params.zm_y = 60.0f;
+    params.u0 = 0.0f;
+    params.v0 = 0.0f;
+    params.u1 = 1.0f;
+    params.v1 = 1.0f;
+    params.ang = 0;
+    params.listType = NLSPR_LISTTYPE_AUTO;
+    params.attr = NLSPR_DISP_CC | NLSPR_UNKFLAG_17;
+    params.base_color = screenFadeInfo.color;
+    params.offset_color = RGBA(0, 0, 0, 0);
+    nlSprPut(&params);
     if ((screenFadeInfo.type & 0xFF) == FADE_OUT && screenFadeInfo.timer == 0)
     {
         screenFadeInfo.type = (screenFadeInfo.type & FADE_ABOVE_SPRITES) ? FADE_UNK2|FADE_ABOVE_SPRITES : FADE_UNK2;
@@ -3229,21 +3229,21 @@ void start_screen_fade(s32 type, u32 color, int duration)
     }
 }
 
-static inline int append_to_sprite_params_buf(struct NaomiSpriteParams *params)
+static inline int append_to_sprite_params_buf(NLsprarg *params)
 {
     if (spriteParamsBufCount == 256)
     {
-        func_8003026C(2, "nlSprPut : SPRITE BUFFER OVER !! bmp %d\n", params->bmpId);
-        OSReport("nlSprPut : SPRITE BUFFER OVER !! bmp %d\n", params->bmpId);
+        func_8003026C(2, "nlSprPut : SPRITE BUFFER OVER !! bmp %d\n", params->sprno);
+        OSReport("nlSprPut : SPRITE BUFFER OVER !! bmp %d\n", params->sprno);
         return 0;
     }
 
-    memcpy(&spriteParamsBuf[spriteParamsBufCount], params, sizeof(struct NaomiSpriteParams));
+    memcpy(&spriteParamsBuf[spriteParamsBufCount], params, sizeof(NLsprarg));
     spriteParamsBufCount++;
     return 1;
 }
 
-int add_naomi_sprite(struct NaomiSpriteParams *params)
+int nlSprPut_check(NLsprarg *params)
 {
     int r4;
 
@@ -3256,13 +3256,13 @@ int add_naomi_sprite(struct NaomiSpriteParams *params)
             return 1;
         break;
     case 1:
-        if (!(params->flags & (1 << 18))
+        if (!(params->attr & NLSPR_PERSP_SCALE)
          && screenFadeInfo.timer > 0
          && ((screenFadeInfo.type & FADE_ABOVE_SPRITES) ? 0.009 : 0.25) > params->z
          && append_to_sprite_params_buf(params))
             return 1;
         if ((advDemoInfo.flags & (1 << 7))
-         && (params->bmpId == BMP_COM_banana_01 || params->bmpId == BMP_COM_banana_10)
+         && (params->sprno == BMP_COM_banana_01 || params->sprno == BMP_COM_banana_10)
          && append_to_sprite_params_buf(params))
             return 1;
         break;
@@ -3270,7 +3270,9 @@ int add_naomi_sprite(struct NaomiSpriteParams *params)
     return 0;
 }
 
-int draw_naomi_sprite(struct NaomiSpriteParams *params)
+/* Implements nlSprPut from the Naomi SDK.
+ * Draws a Naomi sprite with the specified parameters */
+int nlSprPut(NLsprarg *params)
 {
     Vec topLeft = {0};
     Vec topRight = {0};
@@ -3279,12 +3281,8 @@ int draw_naomi_sprite(struct NaomiSpriteParams *params)
     GXColor color;
     u32 dummy;
     float z;
-    float u1;
-    float u2;
-    float v1;
-    float v2;
-    float x;
-    float y;
+    float u0, u1, v0, v1;
+    float x, y;
     float texWidth;
     float texHeight;
     float zero;
@@ -3292,59 +3290,59 @@ int draw_naomi_sprite(struct NaomiSpriteParams *params)
     s32 r29;
     u8 r28;
 
-    if (add_naomi_sprite(params))
+    if (nlSprPut_check(params))
         return 0;
 
-    if (!bitmapGroups[((u32)params->bmpId >> 8) & 0xFF].isLoaded)
+    if (!bitmapGroups[((u32)params->sprno >> 8) & 0xFF].isLoaded)
     {
         printf(
             "SPRITE WARNING!! bmp_%s's category %s is not load\n",
-            bitmapNames[params->bmpId >> 8][params->bmpId & 0xFF],
-            bitmapGroups[params->bmpId >> 8].name);
+            bitmapNames[params->sprno >> 8][params->sprno & 0xFF],
+            bitmapGroups[params->sprno >> 8].name);
         return 0;
     }
 
     z = -params->z;
     x = params->x;
     y = params->y;
-    texWidth  = bitmapGroups[(params->bmpId >> 8) & 0xFF].tpl->texHeaders[params->bmpId & 0xFF].width;
-    texHeight = bitmapGroups[(params->bmpId >> 8) & 0xFF].tpl->texHeaders[params->bmpId & 0xFF].height;
+    texWidth  = bitmapGroups[(params->sprno >> 8) & 0xFF].tpl->texHeaders[params->sprno & 0xFF].width;
+    texHeight = bitmapGroups[(params->sprno >> 8) & 0xFF].tpl->texHeaders[params->sprno & 0xFF].height;
+    u0 = params->u0;
     u1 = params->u1;
-    u2 = params->u2;
+    v0 = params->v0;
     v1 = params->v1;
-    v2 = params->v2;
 
-    switch (params->flags & 3)
+    switch (params->attr & 3)
     {
     default:
     case 0:
-    case 1:
+    case NLSPR_DISP_xL:
         topLeft.x = bottomLeft.x = 0.0f;
         topRight.x = bottomRight.x = texWidth;
         break;
-    case 2:
+    case NLSPR_DISP_xC:
         topLeft.x = bottomLeft.x = -texWidth / 2.0;
         topRight.x = bottomRight.x = texWidth / 2.0;
         break;
-    case 3:
+    case NLSPR_DISP_xR:
         topLeft.x = bottomLeft.x = -texWidth;
         topRight.x = bottomRight.x = 0.0f;
         break;
     }
 
-    switch ((params->flags >> 2) & 3)
+    switch ((params->attr >> 2) & 3)
     {
     default:
     case 0:
-    case 1:
+    case NLSPR_DISP_yT:
         topLeft.y = topRight.y = 0.0f;
         bottomLeft.y = bottomRight.y = texHeight;
         break;
-    case 2:
+    case NLSPR_DISP_yC:
         topLeft.y = topRight.y = -texHeight / 2.0;
         bottomLeft.y = bottomRight.y = texHeight  / 2.0;
         break;
-    case 3:
+    case NLSPR_DISP_yB:
         topLeft.y = topRight.y = -texHeight;
         bottomLeft.y = bottomRight.y = 0.0f;
         break;
@@ -3352,14 +3350,14 @@ int draw_naomi_sprite(struct NaomiSpriteParams *params)
 
     // Transform all vertices
     mathutil_mtxA_from_translate_xyz(x, y, 0.0f);
-    mathutil_mtxA_rotate_z((s16)-params->rotation);
-    mathutil_mtxA_scale_xyz(params->scaleX, params->scaleY, 1.0f);
+    mathutil_mtxA_rotate_z((s16)-params->ang);
+    mathutil_mtxA_scale_xyz(params->zm_x, params->zm_y, 1.0f);
     mathutil_mtxA_tf_point(&topLeft, &topLeft);
     mathutil_mtxA_tf_point(&topRight, &topRight);
     mathutil_mtxA_tf_point(&bottomLeft, &bottomLeft);
     mathutil_mtxA_tf_point(&bottomRight, &bottomRight);
 
-    if (params->flags & (1 << 18))
+    if (params->attr & NLSPR_PERSP_SCALE)
     {
         float f0 = params->z * 0.002405626;
 
@@ -3373,30 +3371,30 @@ int draw_naomi_sprite(struct NaomiSpriteParams *params)
         bottomRight.y = -((bottomRight.y - 240.0f) * f0);
     }
 
-    if (params->flags & (1 << 19))
+    if (params->attr & NLSPR_FLIP_H)
     {
-        u1 = params->u2;
-        u2 = params->u1;
+        u0 = params->u1;
+        u1 = params->u0;
     }
-    if (params->flags & (1 << 20))
+    if (params->attr & NLSPR_FLIP_V)
     {
-        v1 = params->v2;
-        v2 = params->v1;
+        v0 = params->v1;
+        v1 = params->v0;
     }
 
-    GXLoadTexObj_cached(&bitmapGroups[(params->bmpId >> 8) & 0xFF].tpl->texObjs[params->bmpId & 0xFF], GX_TEXMAP0);
-    color.r = (params->mulColor >> 16);
-    color.g = (params->mulColor >> 8);
-    color.b = (params->mulColor >> 0);
-    color.a = params->opacity * 255.0f;
+    GXLoadTexObj_cached(&bitmapGroups[(params->sprno >> 8) & 0xFF].tpl->texObjs[params->sprno & 0xFF], GX_TEXMAP0);
+    color.r = (params->base_color >> 16);
+    color.g = (params->base_color >> 8);
+    color.b = (params->base_color >> 0);
+    color.a = params->trnsl * 255.0f;
     GXSetTevColor(GX_TEVREG0, color);
-    color.r = (params->addColor >> 16);
-    color.g = (params->addColor >> 8);
-    color.b = (params->addColor >> 0);
-    color.a = (params->addColor >> 24);
+    color.r = (params->offset_color >> 16);
+    color.g = (params->offset_color >> 8);
+    color.b = (params->offset_color >> 0);
+    color.a = (params->offset_color >> 24);
     GXSetTevColor(GX_TEVREG1, color);
 
-    if (params->flags & (1 << 21))
+    if (params->attr & NLSPR_DEPTH_UPDATE)
     {
         GXCompare *r4 = &gxCache->compareFunc;
         r30 = gxCache->compareEnable;
@@ -3406,19 +3404,19 @@ int draw_naomi_sprite(struct NaomiSpriteParams *params)
         GXSetZMode_cached(GX_TRUE, GX_ALWAYS, GX_TRUE);
     }
 
-    zero = 0.0f;
+    zero = 0.0f;  // needed to match
     GXBegin(GX_QUADS, GX_VTXFMT7, 4);
         GXPosition3f32(topLeft.x, topLeft.y, z);
-        GXTexCoord2f32(u1 + zero, v1 + zero);
+        GXTexCoord2f32(u0 + zero, v0 + zero);
         GXPosition3f32(topRight.x, topRight.y, z);
-        GXTexCoord2f32(u2 - zero, v1 + zero);
+        GXTexCoord2f32(u1 - zero, v0 + zero);
         GXPosition3f32(bottomRight.x, bottomRight.y, z);
-        GXTexCoord2f32(u2 - zero, v2 - zero);
+        GXTexCoord2f32(u1 - zero, v1 - zero);
         GXPosition3f32(bottomLeft.x, bottomLeft.y, z);
-        GXTexCoord2f32(u1 + zero, v2 - zero);
+        GXTexCoord2f32(u0 + zero, v1 - zero);
     GXEnd();
 
-    if (params->flags & (1 << 21))
+    if (params->attr & NLSPR_DEPTH_UPDATE)
         GXSetZMode_cached(r30, r29, r28);
     return 0;
 }

@@ -6,7 +6,7 @@
 #include "gxcache.h"
 #include "preview.h"
 
-static void init_preview(struct Preview *preview, char *filename, int index, u32 width, u32 height, u32 format)
+static void preview_init_common(struct Preview *preview, char *filename, int index, u32 width, u32 height, GXTexFmt format)
 {
     preview->state = 0;
     preview->width = width;
@@ -44,16 +44,16 @@ static void init_preview(struct Preview *preview, char *filename, int index, u32
     start_preview_image_read(preview, index);
 }
 
-void preview_create_with_alloc_img(struct Preview *preview, char *filename, int index, u32 width, u32 height, u32 format)
+void preview_create_with_allocated_tex(struct Preview *preview, char *filename, int index, u32 width, u32 height, u32 format)
 {
     preview->flags = 0;
-    init_preview(preview, filename, index, width, height, format);
+    preview_init_common(preview, filename, index, width, height, format);
 }
 
 void preview_create(struct Preview *preview, char *filename, int index, u32 width, u32 height, u32 format)
 {
     preview->flags = 1;
-    init_preview(preview, filename, index, width, height, format);
+    preview_init_common(preview, filename, index, width, height, format);
 }
 
 static void read_callback(s32 result, DVDFileInfo *fileInfo)
@@ -99,14 +99,14 @@ void start_preview_image_read(struct Preview *preview, int index)
     }
 }
 
-void u_preview_wait_then_do_something(struct Preview *preview)
+void preview_sync(struct Preview *preview)
 {
     while (preview->isLoading)
-        func_800ACA40();
-    u_preview_maybe_invalidate_tex_cache(preview);
+        avDVDErrorHandling();
+    preview_main(preview);
 }
 
-void u_preview_maybe_invalidate_tex_cache(struct Preview *preview)
+void preview_main(struct Preview *preview)
 {
     switch (preview->state)
     {

@@ -3674,7 +3674,7 @@ lbl_00003458:
 /* 000034B8 C8010088 */ lfd f0, 0x88(r1)
 /* 000034BC EC000828 */ fsubs f0, f0, f1
 /* 000034C0 D0010010 */ stfs f0, 0x10(r1)
-/* 000034C4 4BFFCC99 */ bl draw_naomi_sprite
+/* 000034C4 4BFFCC99 */ bl nlSprPut
 /* 000034C8 3B5A0001 */ addi r26, r26, 1
 /* 000034CC 2C1A0008 */ cmpwi r26, 8
 /* 000034D0 3BDE0008 */ addi r30, r30, 8
@@ -3744,7 +3744,7 @@ lbl_000034DC:
 /* 000035CC 5080821E */ rlwimi r0, r4, 0x10, 8, 0xf
 /* 000035D0 7CA00378 */ or r0, r5, r0
 /* 000035D4 90010044 */ stw r0, 0x44(r1)
-/* 000035D8 4BFFCB85 */ bl draw_naomi_sprite
+/* 000035D8 4BFFCB85 */ bl nlSprPut
 lbl_000035DC:
 /* 000035DC 3C600000 */ lis r3, controllerInfo@ha
 /* 000035E0 A0030000 */ lhz r0, controllerInfo@l(r3)
@@ -4176,7 +4176,7 @@ lbl_00003B30:
 /* 00003C10 9001003C */ stw r0, 0x3c(r1)
 /* 00003C14 90810040 */ stw r4, 0x40(r1)
 /* 00003C18 90A10044 */ stw r5, 0x44(r1)
-/* 00003C1C 4BFFC541 */ bl draw_naomi_sprite
+/* 00003C1C 4BFFC541 */ bl nlSprPut
 lbl_00003C20:
 /* 00003C20 BB410058 */ lmw r26, 0x58(r1)
 /* 00003C24 80010074 */ lwz r0, 0x74(r1)
@@ -9679,7 +9679,7 @@ lbl_00008ADC:
 /* 00008AE0 90010004 */ stw r0, 4(r1)
 /* 00008AE4 9421FFF8 */ stwu r1, -8(r1)
 /* 00008AE8 8064002C */ lwz r3, 0x2c(r4)
-/* 00008AEC 4BFF7671 */ bl u_preview_maybe_invalidate_tex_cache
+/* 00008AEC 4BFF7671 */ bl preview_main
 /* 00008AF0 8001000C */ lwz r0, 0xc(r1)
 /* 00008AF4 38210008 */ addi r1, r1, 8
 /* 00008AF8 7C0803A6 */ mtlr r0
@@ -9833,7 +9833,7 @@ lbl_00008CB4:
 /* 00008D20 3881000C */ addi r4, r1, 0xc
 /* 00008D24 38A5FFFF */ addi r5, r5, -1  ;# fixed addi
 /* 00008D28 39000005 */ li r8, 5
-/* 00008D2C 4BFF7431 */ bl preview_create_with_alloc_img
+/* 00008D2C 4BFF7431 */ bl preview_create_with_allocated_tex
 /* 00008D30 381E0D6C */ addi r0, r30, 0xd6c
 /* 00008D34 901F002C */ stw r0, 0x2c(r31)
 /* 00008D38 3C600000 */ lis r3, lbl_0000FEC8@ha

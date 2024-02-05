@@ -6,6 +6,6 @@
 void ev_mouse_init(void);
 void ev_mouse_main(void);
 void ev_mouse_dest(void);
-void ev_mouse_update(void);
+void mouse_draw(void);
 
 #endif

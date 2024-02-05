@@ -615,29 +615,29 @@ void rank_icon_sprite_main(s8 *dummy, struct Sprite *sprite)
 
 static void rank_icon_sprite_draw(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     struct Struct801818D0 *r6;
     struct TPLTextureHeader *tex;
 
-    params.bmpId = BMP_NML_game_rank;
-    params.rotation = sprite->rotation;
-    params.opacity = sprite->opacity;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & ~0xF) | 0xA;
-    params.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
-    params.addColor = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
+    params.sprno = BMP_NML_game_rank;
+    params.ang = sprite->rotation;
+    params.trnsl = sprite->opacity;
+    params.listType = NLSPR_LISTTYPE_AUTO;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
+    params.base_color = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
+    params.offset_color = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
     r6 = &rankTexOffsets[sprite->userVar];
-    tex = &bitmapGroups[(params.bmpId >> 8) & 0xFF].tpl->texHeaders[params.bmpId & 0xFF];
+    tex = &bitmapGroups[(params.sprno >> 8) & 0xFF].tpl->texHeaders[params.sprno & 0xFF];
     params.x = sprite->x;
     params.y = sprite->y;
     params.z = sprite->unk4C;
-    params.u1 = r6->u1 / tex->width;
-    params.v1 = r6->v1 / tex->height;
-    params.u2 = params.u1 + r6->u2 / tex->width;
-    params.v2 = params.v1 + r6->v2 / tex->height;
-    params.scaleX = (params.u2 - params.u1) * sprite->scaleX;
-    params.scaleY = (params.v2 - params.v1) * sprite->scaleY;
-    draw_naomi_sprite(&params);
+    params.u0 = r6->u1 / tex->width;
+    params.v0 = r6->v1 / tex->height;
+    params.u1 = params.u0 + r6->u2 / tex->width;
+    params.v1 = params.v0 + r6->v2 / tex->height;
+    params.zm_x = (params.u1 - params.u0) * sprite->scaleX;
+    params.zm_y = (params.v1 - params.v0) * sprite->scaleY;
+    nlSprPut(&params);
 }
 
 void create_rank_icon(struct Ball *ball)

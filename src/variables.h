@@ -151,7 +151,7 @@ extern struct BgLightInfo s_bgLightInfos[];
 // extern ? rankTexOffsets;
 // extern ? lbl_80181970;
 // extern ? minigameGfxFiles;
-// extern ? lbl_80181B80;
+// extern ? padLimit;
 // extern ? lbl_80181BC0;
 // extern ? lbl_80181BD0;
 
@@ -1103,11 +1103,6 @@ extern struct GMA *decodedBgGma;
 extern struct TPL *decodedBgTpl;
 extern struct GMA *commonGma;
 // extern ? commonTpl;
-extern u8 resetCounter;
-extern u8 lbl_802F1CD1;
-extern u8 lbl_802F1CD2;
-extern u32 lbl_802F1CD4;
-extern u32 lbl_802F1CD8;
 
 extern s8 lbl_802F1C32;
 

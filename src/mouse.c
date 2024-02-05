@@ -144,32 +144,32 @@ void ev_mouse_dest(void){
     return;
 }
 
-void ev_mouse_update(void)
+void mouse_draw(void)
 {
-    struct NaomiSpriteParams _naomiSprite;
+    NLsprarg _naomiSprite;
     struct Sprite *_spriteInfo;
 
     if (
         (lbl_802F1EA8 == 0U)
     && ((dipSwitches & DIP_TEST_CAM) == 0)
     ) {
-        _naomiSprite.bmpId = 0x1;
+        _naomiSprite.sprno = BMP_COM_arrow;
         _naomiSprite.x = mouse.posHorizontal;
         _naomiSprite.y = mouse.posVertical;
         _naomiSprite.z = 0.01f;
-        _naomiSprite.scaleX = 1.0f;
-        _naomiSprite.scaleY = 1.0f;
-        _naomiSprite.u1 = 0.0f;
-        _naomiSprite.v1 = 0.0f;
-        _naomiSprite.u2 = 1.0f;
-        _naomiSprite.v2 = 1.0f;
-        _naomiSprite.rotation = 0x0;
-        _naomiSprite.opacity = 1.0f;
-        _naomiSprite.unk30 = -1;
-        _naomiSprite.flags = 5;
-        _naomiSprite.mulColor = -1;
-        _naomiSprite.addColor = 0x0;
-        draw_naomi_sprite(&_naomiSprite);
+        _naomiSprite.zm_x = 1.0f;
+        _naomiSprite.zm_y = 1.0f;
+        _naomiSprite.u0 = 0.0f;
+        _naomiSprite.v0 = 0.0f;
+        _naomiSprite.u1 = 1.0f;
+        _naomiSprite.v1 = 1.0f;
+        _naomiSprite.ang = 0x0;
+        _naomiSprite.trnsl = 1.0f;
+        _naomiSprite.listType = NLSPR_LISTTYPE_AUTO;
+        _naomiSprite.attr = NLSPR_DISP_LT;
+        _naomiSprite.base_color = -1;
+        _naomiSprite.offset_color = 0x0;
+        nlSprPut(&_naomiSprite);
         if (mouse.spriteIdx >= 0) {
             _spriteInfo = &spriteWork[mouse.spriteIdx];
             reset_text_draw_settings();

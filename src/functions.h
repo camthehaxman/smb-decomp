@@ -480,8 +480,8 @@ void submode_mini_ranking_main_func(void);
 // ? func_800AC248();
 // ? func_800AC43C();
 
-void func_800ACA40(void);
-int u_read_dvd_file(DVDFileInfo *file, void *arg1, u32 arg2, int arg3);
+void avDVDErrorHandling(void);
+int avDVDRead(DVDFileInfo *file, void *arg1, u32 arg2, int arg3);
 void init_loading_gct(void);
 
 void credits_finish(void);

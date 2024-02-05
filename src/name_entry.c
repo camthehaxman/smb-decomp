@@ -573,7 +573,7 @@ void ev_name_entry_dest(void)
 
 void draw_name_entry_hud(void)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     int x;
     int y;
     struct Ball *ball = &ballInfo[modeCtrl.currPlayer];
@@ -618,60 +618,60 @@ void draw_name_entry_hud(void)
         func_80072AC0("%07d", lbl_802C67D4[modeCtrl.currPlayer][0].score);
 
         // line start
-        params.bmpId = BMP_RNK_rnk_lines;
+        params.sprno = BMP_RNK_rnk_lines;
         params.z = 1.03f;
-        params.rotation = 0;
-        params.opacity = 1.0f;
-        params.unk30 = 2;
-        params.flags = 5;
-        params.mulColor = RGBA(255, 255, 255, 0);
-        params.addColor = RGBA(0, 0, 0, 0);
+        params.ang = 0;
+        params.trnsl = 1.0f;
+        params.listType = NLSPR_LISTTYPE_TRANS;
+        params.attr = NLSPR_DISP_LT;
+        params.base_color = RGBA(255, 255, 255, 0);
+        params.offset_color = RGBA(0, 0, 0, 0);
         params.x = x + 39;
         params.y = y + 32;
-        params.scaleX = 1.0f;
-        params.scaleY = 0.0234375f;
-        params.u1 = 0.0f;
-        params.v1 = 0.9765625f;
-        params.u2 = 1.0f;
-        params.v2 = 1.0f;
-        draw_naomi_sprite(&params);
+        params.zm_x = 1.0f;
+        params.zm_y = 0.0234375f;
+        params.u0 = 0.0f;
+        params.v0 = 0.9765625f;
+        params.u1 = 1.0f;
+        params.v1 = 1.0f;
+        nlSprPut(&params);
 
         // line middle
         params.x += 256.0f;
-        params.scaleX = 0.1953125f;
-        params.u1 = 0.0f;
-        params.v1 = 0.9296875f;
-        params.u2 = 0.1953125f;
-        params.v2 = 0.953125f;
-        draw_naomi_sprite(&params);
+        params.zm_x = 0.1953125f;
+        params.u0 = 0.0f;
+        params.v0 = 0.9296875f;
+        params.u1 = 0.1953125f;
+        params.v1 = 0.953125f;
+        nlSprPut(&params);
 
         // line end
         params.x += 50.0f;
-        params.scaleX = 1.0f;
-        params.u1 = 0.0f;
-        params.v1 = 0.953125f;
-        params.u2 = 1.0f;
-        params.v2 = 0.9765625f;
-        draw_naomi_sprite(&params);
+        params.zm_x = 1.0f;
+        params.u0 = 0.0f;
+        params.v0 = 0.953125f;
+        params.u1 = 1.0f;
+        params.v1 = 0.9765625f;
+        nlSprPut(&params);
 
         // monkey
-        params.bmpId = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[ball->playerId]);
+        params.sprno = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[ball->playerId]);
         params.x = x + s_nameEntry.unk30;
         params.y = 15.5 + y;
         params.z = 0.2f;
-        params.rotation = (s16)s_nameEntry.unk38;
-        params.opacity = 1.0f;
-        params.unk30 = 2;
-        params.flags = 0x100A;
-        params.mulColor = RGBA(255, 255, 255, 0);
-        params.addColor = RGBA(0, 0, 0, 0);
-        params.scaleX = 0.3846154f;
-        params.scaleY = 0.25f;
-        params.u1 = 0.0f;
-        params.v1 = 0.0f;
-        params.u2 = 1.0f;
-        params.v2 = 1.0f;
-        draw_naomi_sprite(&params);
+        params.ang = (s16)s_nameEntry.unk38;
+        params.trnsl = 1.0f;
+        params.listType = NLSPR_LISTTYPE_TRANS;
+        params.attr = NLSPR_DISP_CC | NLSPR_UNKFLAG_12;
+        params.base_color = RGBA(255, 255, 255, 0);
+        params.offset_color = RGBA(0, 0, 0, 0);
+        params.zm_x = 0.3846154f;
+        params.zm_y = 0.25f;
+        params.u0 = 0.0f;
+        params.v0 = 0.0f;
+        params.u1 = 1.0f;
+        params.v1 = 1.0f;
+        nlSprPut(&params);
     }
 }
 
