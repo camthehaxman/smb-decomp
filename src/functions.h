@@ -59,7 +59,7 @@ float func_8000E53C(Vec *pos);
 
 void u_reset_gamedata(void);
 void u_store_gamedata();
-void u_load_gamedata(struct MemcardGameData *data);
+void u_load_gamedata(struct MemcardContents *data);
 
 void mode_sel_func(void);
 void func_800123DC(void);
