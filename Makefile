@@ -180,7 +180,9 @@ SOURCES := \
 	src/code_3.c \
 	src/ranking_screen.c \
 	src/mot_ape.c \
-	src/code_2.c \
+	src/spline.c \
+	src/thread.c \
+	src/mt_effect.c \
 	src/lzs_decompress.c \
 	src/avdisp.c \
 	src/load.c \

@@ -15660,7 +15660,7 @@ lbl_0000E9D8:
 /* 0000E9F0 3883FFFF */ addi r4, r3, -1  ;# fixed addi
 /* 0000E9F4 80650030 */ lwz r3, 0x30(r5)
 /* 0000E9F8 3CA02400 */ lis r5, 0x2400
-/* 0000E9FC 4BFF1769 */ bl u_set_model_mesh_unk_flags
+/* 0000E9FC 4BFF1769 */ bl MTEfcChangeAttributeITI
 /* 0000EA00 8001000C */ lwz r0, 0xc(r1)
 /* 0000EA04 38210008 */ addi r1, r1, 8
 /* 0000EA08 7C0803A6 */ mtlr r0

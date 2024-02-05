@@ -246,17 +246,6 @@ void u_init_ape_materials(int, int, struct GMAModel *, struct GMAModel *);
 void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused);
 */
 
-// code_2.c
-float u_interpolate_other_keyframes(float, struct OtherKeyframe *);
-void thread_init(struct Thread *arg0, int arg1);
-void thread_loop(u32 arg0);
-int thread_unknown(void (*)(struct Ape *, int), struct Ape *, int);
-void thread_exit(void);
-void thread_kill(int);
-void u_set_model_mesh_flags(struct NlModel *arg0, u32 arg1, u32 arg2);
-void u_set_model_mesh_unk_flags(struct NlModel *arg0, u32 arg1, u32 arg2);
-void u_set_model_mesh_texflags(struct NlModel *arg0, u32 arg1, u32 arg2);
-
 int lzs_decompress(u8 *, void *);
 // ? func_8008D6BC();
 // ? set_tev_material_ambient_colors();

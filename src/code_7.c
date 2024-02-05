@@ -2,6 +2,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "mt_effect.h"
 #include "nl2ngc.h"
 
 #include "../data/common.nlobj.h"
@@ -50,10 +51,10 @@ int load_common_graphics(void)
     DVDChangeDir("/test");
     if (success)
     {
-        u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_circle_white), 0xFBFFFFFF, 0x4000000);
-        u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_CROSS_LIGHT), 0xFBFFFFFF, 0x4000000);
-        u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_SPOT_LIGHT), 0xFBFFFFFF, 0x4000000);
-        u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_SPOT_LIGHT_MULTI), 0xFBFFFFFF, 0x4000000);
+        MTEfcChangeAttributeITI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_circle_white), 0xFBFFFFFF, 0x4000000);
+        MTEfcChangeAttributeITI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_CROSS_LIGHT), 0xFBFFFFFF, 0x4000000);
+        MTEfcChangeAttributeITI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_SPOT_LIGHT), 0xFBFFFFFF, 0x4000000);
+        MTEfcChangeAttributeITI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_SPOT_LIGHT_MULTI), 0xFBFFFFFF, 0x4000000);
     }
     return success;
 }

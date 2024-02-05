@@ -20,6 +20,7 @@
 #include "recplay.h"
 #include "sound.h"
 #include "stage.h"
+#include "thread.h"
 #include "world.h"
 
 struct Thread lbl_801ED920[146];

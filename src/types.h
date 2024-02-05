@@ -327,14 +327,6 @@ struct Ape
     s16 unkC2;
 };  // size = 0xC4
 
-struct OtherKeyframe
-{
-    s32 unk0;
-    float unk4;
-    float unk8;
-    float unkC;
-};  // size=0x10
-
 struct AnimGroupInfo
 {
     /*0x00*/ Point3d pos;
@@ -947,18 +939,6 @@ enum
     PAUSEMENU_CONT_RETRY_VIEW_HOW_SELECT_EXIT,
     PAUSEMENU_CONT_RETRY_HOW_EXIT,
     PAUSEMENU_CONT_GUIDE_HOW_EXIT,
-};
-
-struct Thread
-{
-	void (*callback)(struct Ape *, int);
-	struct Ape *ape;
-	struct Thread *next;
-	struct Thread *prev;
-	u32 unk10;
-	u32 unk14;
-	u32 unk18;
-	u32 unk1C;
 };
 
 struct Stobj;

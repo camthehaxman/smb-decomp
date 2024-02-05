@@ -16,6 +16,7 @@
 #include "mode.h"
 #include "pool.h"
 #include "recplay.h"
+#include "spline.h"
 #include "stage.h"
 #include "world.h"
 
@@ -757,7 +758,7 @@ void camera_func_29(struct Camera *camera, struct Ball *ball)
 }
 
 // something to do with the attract screen camera positions
-struct OtherKeyframe lbl_80176434[] =
+struct Spline lbl_80176434[] =
 {
     {   0,  -15.414, 0, 0},
     { 165,  -14.751, 0, 0},
@@ -995,13 +996,13 @@ void camera_func_attract_cutscene(struct Camera *camera, struct Ball *ball)
     float f31 = advDemoInfo.unk8;
     Vec sp10;
 
-    camera->eye.x = u_interpolate_other_keyframes(f31, &lbl_80176434[0]);
-    camera->eye.y = u_interpolate_other_keyframes(f31, &lbl_80176434[0x10]);
-    camera->eye.z = u_interpolate_other_keyframes(f31, &lbl_80176434[0x20]);
+    camera->eye.x = calc_spline(f31, &lbl_80176434[0]);
+    camera->eye.y = calc_spline(f31, &lbl_80176434[0x10]);
+    camera->eye.z = calc_spline(f31, &lbl_80176434[0x20]);
 
-    camera->lookAt.x = u_interpolate_other_keyframes(f31, &lbl_80176434[0x30]);
-    camera->lookAt.y = u_interpolate_other_keyframes(f31, &lbl_80176434[0x40]);
-    camera->lookAt.z = u_interpolate_other_keyframes(f31, &lbl_80176434[0x50]);
+    camera->lookAt.x = calc_spline(f31, &lbl_80176434[0x30]);
+    camera->lookAt.y = calc_spline(f31, &lbl_80176434[0x40]);
+    camera->lookAt.z = calc_spline(f31, &lbl_80176434[0x50]);
 
     sp10.x = camera->lookAt.x - camera->eye.x;
     sp10.y = camera->lookAt.y - camera->eye.y;
@@ -1026,23 +1027,23 @@ void camera_func_attract_level(struct Camera *camera, struct Ball *ball)
      || (f31 >= 1954.0f && f31 < 2064.0f)  // "Choice" level scene
      || (f31 >= 2498.0f && f31 < 2902.0f))  // ???
     {
-        camera->eye.x = u_interpolate_other_keyframes(f31, &lbl_80176434[0x60]);
-        camera->eye.y = u_interpolate_other_keyframes(f31, &lbl_80176434[0x75]);
-        camera->eye.z = u_interpolate_other_keyframes(f31, &lbl_80176434[0x8A]);
+        camera->eye.x = calc_spline(f31, &lbl_80176434[0x60]);
+        camera->eye.y = calc_spline(f31, &lbl_80176434[0x75]);
+        camera->eye.z = calc_spline(f31, &lbl_80176434[0x8A]);
 
-        camera->lookAt.x = u_interpolate_other_keyframes(f31, &lbl_80176434[0x9F]);
-        camera->lookAt.y = u_interpolate_other_keyframes(f31, &lbl_80176434[0xB4]);
-        camera->lookAt.z = u_interpolate_other_keyframes(f31, &lbl_80176434[0xC9]);
+        camera->lookAt.x = calc_spline(f31, &lbl_80176434[0x9F]);
+        camera->lookAt.y = calc_spline(f31, &lbl_80176434[0xB4]);
+        camera->lookAt.z = calc_spline(f31, &lbl_80176434[0xC9]);
     }
     else
     {
-        camera->eye.x = ballInfo[advDemoInfo.unkC].ape->unk30.x + u_interpolate_other_keyframes(f31, &lbl_80176434[0x60]);
-        camera->eye.y = ballInfo[advDemoInfo.unkC].ape->unk30.y + u_interpolate_other_keyframes(f31, &lbl_80176434[0x75]);
-        camera->eye.z = ballInfo[advDemoInfo.unkC].ape->unk30.z + u_interpolate_other_keyframes(f31, &lbl_80176434[0x8A]);
+        camera->eye.x = ballInfo[advDemoInfo.unkC].ape->unk30.x + calc_spline(f31, &lbl_80176434[0x60]);
+        camera->eye.y = ballInfo[advDemoInfo.unkC].ape->unk30.y + calc_spline(f31, &lbl_80176434[0x75]);
+        camera->eye.z = ballInfo[advDemoInfo.unkC].ape->unk30.z + calc_spline(f31, &lbl_80176434[0x8A]);
 
-        camera->lookAt.x = ballInfo[advDemoInfo.unkC].ape->unk30.x + u_interpolate_other_keyframes(f31, &lbl_80176434[0x9F]);
-        camera->lookAt.y = ballInfo[advDemoInfo.unkC].ape->unk30.y + u_interpolate_other_keyframes(f31, &lbl_80176434[0xB4]);
-        camera->lookAt.z = ballInfo[advDemoInfo.unkC].ape->unk30.z + u_interpolate_other_keyframes(f31, &lbl_80176434[0xC9]);
+        camera->lookAt.x = ballInfo[advDemoInfo.unkC].ape->unk30.x + calc_spline(f31, &lbl_80176434[0x9F]);
+        camera->lookAt.y = ballInfo[advDemoInfo.unkC].ape->unk30.y + calc_spline(f31, &lbl_80176434[0xB4]);
+        camera->lookAt.z = ballInfo[advDemoInfo.unkC].ape->unk30.z + calc_spline(f31, &lbl_80176434[0xC9]);
     }
 
     sp10.x = camera->lookAt.x - camera->eye.x;

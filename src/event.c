@@ -21,6 +21,7 @@
 #include "sprite.h"
 #include "stage.h"
 #include "stobj.h"
+#include "thread.h"
 #include "vibration.h"
 #include "world.h"
 

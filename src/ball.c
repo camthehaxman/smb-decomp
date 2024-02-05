@@ -26,6 +26,7 @@
 #include "sound.h"
 #include "stage.h"
 #include "stcoli.h"
+#include "thread.h"
 #include "vibration.h"
 #include "world.h"
 

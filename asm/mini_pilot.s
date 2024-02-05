@@ -8659,27 +8659,27 @@ lbl_00007F7C:
 lbl_00007F8C:
 /* 00007F8C FC20F890 */ fmr f1, f31
 /* 00007F90 807D0000 */ lwz r3, 0(r29)
-/* 00007F94 4BFF81B9 */ bl u_interpolate_other_keyframes
+/* 00007F94 4BFF81B9 */ bl calc_spline
 /* 00007F98 D03B0000 */ stfs f1, 0(r27)
 /* 00007F9C FC20F890 */ fmr f1, f31
 /* 00007FA0 807D0004 */ lwz r3, 4(r29)
-/* 00007FA4 4BFF81A9 */ bl u_interpolate_other_keyframes
+/* 00007FA4 4BFF81A9 */ bl calc_spline
 /* 00007FA8 D03B0004 */ stfs f1, 4(r27)
 /* 00007FAC FC20F890 */ fmr f1, f31
 /* 00007FB0 807D0008 */ lwz r3, 8(r29)
-/* 00007FB4 4BFF8199 */ bl u_interpolate_other_keyframes
+/* 00007FB4 4BFF8199 */ bl calc_spline
 /* 00007FB8 D03B0008 */ stfs f1, 8(r27)
 /* 00007FBC FC20F890 */ fmr f1, f31
 /* 00007FC0 807C0000 */ lwz r3, 0(r28)
-/* 00007FC4 4BFF8189 */ bl u_interpolate_other_keyframes
+/* 00007FC4 4BFF8189 */ bl calc_spline
 /* 00007FC8 D03B000C */ stfs f1, 0xc(r27)
 /* 00007FCC FC20F890 */ fmr f1, f31
 /* 00007FD0 807C0004 */ lwz r3, 4(r28)
-/* 00007FD4 4BFF8179 */ bl u_interpolate_other_keyframes
+/* 00007FD4 4BFF8179 */ bl calc_spline
 /* 00007FD8 D03B0010 */ stfs f1, 0x10(r27)
 /* 00007FDC FC20F890 */ fmr f1, f31
 /* 00007FE0 807C0008 */ lwz r3, 8(r28)
-/* 00007FE4 4BFF8169 */ bl u_interpolate_other_keyframes
+/* 00007FE4 4BFF8169 */ bl calc_spline
 /* 00007FE8 D03B0014 */ stfs f1, 0x14(r27)
 /* 00007FEC 3C600000 */ lis r3, lbl_10000090@ha
 /* 00007FF0 88830000 */ lbz r4, lbl_10000090@l(r3)
@@ -8692,7 +8692,7 @@ lbl_00007F8C:
 /* 0000800C 408200A0 */ bne lbl_000080AC
 /* 00008010 FC20F890 */ fmr f1, f31
 /* 00008014 387E04A0 */ addi r3, r30, 0x4a0
-/* 00008018 4BFF8135 */ bl u_interpolate_other_keyframes
+/* 00008018 4BFF8135 */ bl calc_spline
 /* 0000801C C05B0000 */ lfs f2, 0(r27)
 /* 00008020 C01B000C */ lfs f0, 0xc(r27)
 /* 00008024 C87F0078 */ lfd f3, 0x78(r31)
