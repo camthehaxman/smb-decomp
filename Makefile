@@ -378,8 +378,8 @@ SOURCES := \
 	libraries/TRK_MINNOW_DOLPHIN/asm/main_TRK.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/dolphin_trk_glue.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/targcont.s \
-	libraries/amcExi/AmcExi.c \
-	libraries/amcExi/AmcExi2Comm.c \
+	libraries/amcExi2/AmcExi.c \
+	libraries/amcExi2/AmcExi2Comm.c \
 	libraries/odemustubs/asm/odemustubs.s \
 	libraries/amcnotstub/amcnotstub.c
 O_FILES := $(addsuffix .o,$(SOURCES))

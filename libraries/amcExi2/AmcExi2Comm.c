@@ -3,7 +3,7 @@
 #include <dolphin/amc/AmcExi2Comm.h> // from AMC DDH SDK
 #include <dolphin/hw_regs.h>
 
-#include "__amcExi.h"
+#include "__amcExi2.h"
 
 static u8 ucEXI2InputPending;
 static u8* pucEXI2InputPending = &ucEXI2InputPending;

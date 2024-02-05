@@ -3,7 +3,7 @@
 #include <dolphin/amc/AmcExi2Comm.h>
 #include <dolphin/hw_regs.h>
 
-#include "__amcExi.h"
+#include "__amcExi2.h"
 
 extern s32 __OSMaskInterrupts(s32);
 
