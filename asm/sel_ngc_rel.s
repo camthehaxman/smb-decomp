@@ -10524,7 +10524,7 @@ lbl_000094BC:
 /* 000094D0 80030008 */ lwz r0, 8(r3)
 /* 000094D4 60000001 */ ori r0, r0, 1
 /* 000094D8 90030008 */ stw r0, 8(r3)
-/* 000094DC 4BFF6CAD */ bl func_800668A0
+/* 000094DC 4BFF6CAD */ bl course_first
 /* 000094E0 3C600000 */ lis r3, infoWork@ha
 /* 000094E4 38830000 */ addi r4, r3, infoWork@l
 /* 000094E8 A804002E */ lha r0, 0x2e(r4)

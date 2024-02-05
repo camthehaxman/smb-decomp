@@ -13,6 +13,7 @@
 #include "mathutil.h"
 #include "minimap.h"
 #include "mode.h"
+#include "mt_effect.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
 #include "sprite.h"
@@ -70,11 +71,11 @@ static struct MinimapInfo minimapInfo =
 
 void ev_minimap_init(void)
 {
-    u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_hideball_mark), 0x1BFFFFFF, 0x24000000);
-    u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapring), 0x1FFFFFFF, 0xE0000000);
-    u_set_model_mesh_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0xF8FFFFFF, 0x02000000);
-    u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0x1FFFFFFF, 0xE0000000);
-    u_set_model_mesh_texflags(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0x90EFFFFF, 0x08000000);
+    MTEfcChangeAttributeITI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_hideball_mark), 0x1BFFFFFF, 0x24000000);
+    MTEfcChangeAttributeITI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapring), 0x1FFFFFFF, 0xE0000000);
+    MTEfcChangeAttributePC(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0xF8FFFFFF, 0x02000000);
+    MTEfcChangeAttributeITI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0x1FFFFFFF, 0xE0000000);
+    MTEfcChangeAttributeTI(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_mmapbase), 0x90EFFFFF, 0x08000000);
     if (gameSubmode == SMD_ADV_INFO_INIT)
     {
         minimapInfo.someY = 424;

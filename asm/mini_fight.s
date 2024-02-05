@@ -15410,7 +15410,7 @@ lbl_0000E550:
 /* 0000E630 80010094 */ lwz r0, 0x94(r1)
 /* 0000E634 98810041 */ stb r4, 0x41(r1)
 /* 0000E638 98010042 */ stb r0, 0x42(r1)
-/* 0000E63C 4BFF1B29 */ bl func_8009492C
+/* 0000E63C 4BFF1B29 */ bl set_poly_shadow
 lbl_0000E640:
 /* 0000E640 3BDEFFFF */ addi r30, r30, -1  ;# fixed addi
 /* 0000E644 3BFF0001 */ addi r31, r31, 1
@@ -15515,7 +15515,7 @@ lbl_0000E69C:
 /* 0000E7C8 808100A4 */ lwz r4, 0xa4(r1)
 /* 0000E7CC 98810041 */ stb r4, 0x41(r1)
 /* 0000E7D0 98010042 */ stb r0, 0x42(r1)
-/* 0000E7D4 4BFF1991 */ bl func_8009492C
+/* 0000E7D4 4BFF1991 */ bl set_poly_shadow
 lbl_0000E7D8:
 /* 0000E7D8 3BBDFFFF */ addi r29, r29, -1  ;# fixed addi
 /* 0000E7DC 3AD602E8 */ addi r22, r22, 0x2e8
@@ -15635,7 +15635,7 @@ lbl_0000E840:
 /* 0000E99C D8010078 */ stfd f0, 0x78(r1)
 /* 0000E9A0 8001007C */ lwz r0, 0x7c(r1)
 /* 0000E9A4 98010042 */ stb r0, 0x42(r1)
-/* 0000E9A8 4BFF17BD */ bl func_8009492C
+/* 0000E9A8 4BFF17BD */ bl set_poly_shadow
 lbl_0000E9AC:
 /* 0000E9AC 3B18FFFF */ addi r24, r24, -1  ;# fixed addi
 /* 0000E9B0 3B390001 */ addi r25, r25, 1
@@ -15660,7 +15660,7 @@ lbl_0000E9D8:
 /* 0000E9F0 3883FFFF */ addi r4, r3, -1  ;# fixed addi
 /* 0000E9F4 80650030 */ lwz r3, 0x30(r5)
 /* 0000E9F8 3CA02400 */ lis r5, 0x2400
-/* 0000E9FC 4BFF1769 */ bl u_set_model_mesh_unk_flags
+/* 0000E9FC 4BFF1769 */ bl MTEfcChangeAttributeITI
 /* 0000EA00 8001000C */ lwz r0, 0xc(r1)
 /* 0000EA04 38210008 */ addi r1, r1, 8
 /* 0000EA08 7C0803A6 */ mtlr r0

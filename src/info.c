@@ -25,14 +25,14 @@
 #include "stobj.h"
 
 s8 lbl_802F1CB0[8];
-s32 lbl_802F1CAC;
-s32 lbl_802F1CA8;
+s32 practiceBestScore;
+s32 practiceBestFlag;
 
 struct Struct801F3A58 infoWork;
 
-static void func_80023AF4(void);
+static void info_reset(void);
 
-void func_80022F14(void)
+void info_init_first(void)
 {
     infoWork.unk8 = 0;
     infoWork.attempts = 1;
@@ -41,8 +41,8 @@ void func_80022F14(void)
     infoWork.continuesUsed = 0;
     if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
     {
-        lbl_802F1CAC = 0;
-        lbl_802F1CA8 = 0;
+        practiceBestScore = 0;
+        practiceBestFlag = 0;
     }
 }
 
@@ -51,7 +51,7 @@ struct Struct801F3A58 playerInfos[4];  FORCE_BSS_ORDER(playerInfos)
 
 void ev_info_init(void)
 {
-    func_80023AF4();
+    info_reset();
 
     // Initialize timer
     infoWork.timerCurr = 60 * 60;
@@ -375,15 +375,15 @@ void ev_info_main(void)
         }
     }
 
-    BALL_FOREACH( func_8003CB88(ball); )
+    BALL_FOREACH( ball_ape_yang(ball); )
 }
 
 void ev_info_dest(void)
 {
-    func_80023AF4();
+    info_reset();
 }
 
-static void func_80023AF4(void)
+static void info_reset(void)
 {
     int unk8 = infoWork.unk8;
     int attempts = infoWork.attempts;
@@ -402,7 +402,7 @@ static void func_80023AF4(void)
     infoWork.u_currStageId = u_currStageId;
     infoWork.unk22 = 1;
     if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
-        lbl_802F1CA8 = 0;
+        practiceBestFlag = 0;
 }
 
 BOOL check_ball_entered_goal(struct Ball *ball, u32 *outGoalId, s32 *outGoalAnimGroupId)

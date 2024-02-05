@@ -71,13 +71,6 @@ void item_draw();
 void item_draw_shadows(void);
 void release_captured_item(int);
 void spawn_stage_banana_items(struct StageAnimGroup *, int);
-void item_dummy_init(struct Item *);
-void item_dummy_main(struct Item *);
-void item_dummy_draw(struct Item *);
-void item_dummy_collect(struct Item *, struct PhysicsBall *);
-void item_dummy_destroy(struct Item *);
-void func_80068C8C(struct Item *);
-void item_dummy_debug(struct Item *);
 void item_coin_init(struct Item *);
 void item_coin_main(struct Item *);
 void item_coin_draw(struct Item *);
@@ -91,7 +84,7 @@ void item_pilot_main(struct Item *);
 void item_pilot_draw(struct Item *);
 void item_pilot_collect(struct Item *, struct PhysicsBall *);
 void item_pilot_destroy(struct Item *);
-void func_8006A564(struct Item *);
+void item_pilot_release(struct Item *);
 void item_pilot_debug(struct Item *);
 
 #endif

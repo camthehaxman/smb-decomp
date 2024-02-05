@@ -11,6 +11,14 @@
 #include "stage.h"
 #include "stcoli.h"
 
+static void item_dummy_init(struct Item *);
+static void item_dummy_main(struct Item *);
+static void item_dummy_draw(struct Item *);
+static void item_dummy_collect(struct Item *, struct PhysicsBall *);
+static void item_dummy_destroy(struct Item *);
+static void item_dummy_release(struct Item *);
+static void item_dummy_debug(struct Item *);
+
 struct Item itemPool[256];
 
 s16 itemCurrUid;
@@ -37,7 +45,7 @@ enum
     IT_PILOT,
 };
 
-void (*itemInitFuncs[])(struct Item *) =
+static void (*itemInitFuncs[])(struct Item *) =
 {
     item_coin_init,
     item_dummy_init,
@@ -48,7 +56,7 @@ void (*itemInitFuncs[])(struct Item *) =
     NULL,
 };
 
-void (*itemMainFuncs[])(struct Item *) =
+static void (*itemMainFuncs[])(struct Item *) =
 {
     item_coin_main,
     item_dummy_main,
@@ -59,7 +67,7 @@ void (*itemMainFuncs[])(struct Item *) =
     NULL,
 };
 
-void (*itemDrawFuncs[])(struct Item *) =
+static void (*itemDrawFuncs[])(struct Item *) =
 {
     item_coin_draw,
     item_dummy_draw,
@@ -70,7 +78,7 @@ void (*itemDrawFuncs[])(struct Item *) =
     NULL,
 };
 
-void (*itemCollectFuncs[])(struct Item *, struct PhysicsBall *) =
+static void (*itemCollectFuncs[])(struct Item *, struct PhysicsBall *) =
 {
     item_coin_collect,
     item_dummy_collect,
@@ -81,7 +89,7 @@ void (*itemCollectFuncs[])(struct Item *, struct PhysicsBall *) =
     NULL,
 };
 
-void (*itemDestroyFuncs[])(struct Item *) =
+static void (*itemDestroyFuncs[])(struct Item *) =
 {
     item_coin_destroy,
     item_dummy_destroy,
@@ -92,14 +100,14 @@ void (*itemDestroyFuncs[])(struct Item *) =
     NULL,
 };
 
-void (*lbl_801BDD30[])(struct Item *) =
+static void (*itemReleaseFuncs[])(struct Item *) =
 {
     item_coin_release,
-    func_80068C8C,
-    func_80068C8C,
-    func_80068C8C,
-    func_80068C8C,
-    func_8006A564,
+    item_dummy_release,
+    item_dummy_release,
+    item_dummy_release,
+    item_dummy_release,
+    item_pilot_release,
     NULL,
 };
 
@@ -292,7 +300,7 @@ void item_draw_shadows(void)
     struct RaycastHit hit;
     Vec sp4C;
     Vec pos;
-    struct Struct8009492C sp8;
+    struct PolyShadowUnit sp8;
 
     r26 = g_poolInfo.itemPool.statusList;
     item = itemPool;
@@ -376,7 +384,7 @@ void item_draw_shadows(void)
         sp8.unk28 = item->shadowModel;
         sp8.unk20 = 0.075f;
         sp8.unk24 = 0.1f;
-        func_8009492C(&sp8);
+        set_poly_shadow(&sp8);
     }
 }
 
@@ -397,7 +405,7 @@ void release_captured_item(int a)
         if (*r26 != 0 && item->unk5E >= 0 && item->unk5E <= a)
         {
             r28 = item->id;
-            lbl_801BDD30[item->type](item);
+            itemReleaseFuncs[item->type](item);
             item->id = r28;
         }
     }
@@ -426,14 +434,14 @@ void spawn_stage_banana_items(struct StageAnimGroup *stageAg, int agCount)
     }
 }
 
-struct ItemFuncs dummyItemFuncs =
+static struct ItemFuncs dummyItemFuncs =
 {
     item_dummy_init,
     item_dummy_main,
     item_dummy_draw,
     item_dummy_collect,
     item_dummy_destroy,
-    func_80068C8C,
+    item_dummy_release,
     item_dummy_debug,
 };
 
@@ -467,21 +475,21 @@ void item_replace_type_funcs(int itemType, struct ItemFuncs *newFuncs)
     itemDrawFuncs[itemType]    = funcs.draw;
     itemCollectFuncs[itemType] = funcs.collect;
     itemDestroyFuncs[itemType] = funcs.destroy;
-    lbl_801BDD30[itemType]     = funcs.unk14;
+    itemReleaseFuncs[itemType]     = funcs.unk14;
     itemDebugFuncs[itemType]   = funcs.debug;
 }
 #pragma force_active reset
 
-void item_dummy_init(struct Item *item) {}
+static void item_dummy_init(struct Item *item) {}
 
-void item_dummy_main(struct Item *item) {}
+static void item_dummy_main(struct Item *item) {}
 
-void item_dummy_draw(struct Item *item) {}
+static void item_dummy_draw(struct Item *item) {}
 
-void item_dummy_collect(struct Item *item, struct PhysicsBall *b) {}
+static void item_dummy_collect(struct Item *item, struct PhysicsBall *b) {}
 
-void item_dummy_destroy(struct Item *item) {}
+static void item_dummy_destroy(struct Item *item) {}
 
-void func_80068C8C(struct Item *item) {}
+static void item_dummy_release(struct Item *item) {}
 
-void item_dummy_debug(struct Item *item) {}
+static void item_dummy_debug(struct Item *item) {}

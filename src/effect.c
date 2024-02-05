@@ -491,51 +491,51 @@ void u_give_points(int arg0, int arg1)
                     switch (ball->rank)
                     {
                     case 1:
-                        ball->unk7C += floorScore;
+                        ball->score += floorScore;
                         break;
                     case 2:
-                        ball->unk7C += floorScore / 2;
+                        ball->score += floorScore / 2;
                         break;
                     case 3:
-                        ball->unk7C += floorScore / 3;
+                        ball->score += floorScore / 3;
                         break;
                     }
-                    if (ball->unk7C > 999999999)
-                        ball->unk7C = 999999999;
+                    if (ball->score > 999999999)
+                        ball->score = 999999999;
                 }
             }
             break;
         case 0:
             ball = &ballInfo[modeCtrl.currPlayer];
-            ball->unk7C += floorScore;
-            if (ball->unk7C > 999999999)
-                ball->unk7C = 999999999;
+            ball->score += floorScore;
+            if (ball->score > 999999999)
+                ball->score = 999999999;
             break;
         case 2:
             ball = currentBall;
-            ball->unk7C += floorScore;
-            if (ball->unk7C > 999999999)
-                ball->unk7C = 999999999;
-            if (ball->unk7C > lbl_802F1CAC)
+            ball->score += floorScore;
+            if (ball->score > 999999999)
+                ball->score = 999999999;
+            if (ball->score > practiceBestScore)
             {
-                if (lbl_802F1CAC > 0)
-                    lbl_802F1CA8 = 1;
-                lbl_802F1CAC = ball->unk7C;
+                if (practiceBestScore > 0)
+                    practiceBestFlag = 1;
+                practiceBestScore = ball->score;
             }
             break;
         default:
             ball = currentBall;
-            ball->unk7C += floorScore;
-            if (ball->unk7C > 999999999)
-                ball->unk7C = 999999999;
+            ball->score += floorScore;
+            if (ball->score > 999999999)
+                ball->score = 999999999;
             break;
         }
         break;
     default:
         ball = currentBall;
-        ball->unk7C += arg1;
-        if (ball->unk7C > 999999999)
-            ball->unk7C = 999999999;
+        ball->score += arg1;
+        if (ball->score > 999999999)
+            ball->score = 999999999;
         break;
     }
 }

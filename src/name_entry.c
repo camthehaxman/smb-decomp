@@ -137,7 +137,7 @@ static char *s_censoredNames[] =
 static struct NameEntryButton *s_pushedButton;
 
 static void func_800AE8D0(void);
-static void func_800AE930(int);
+static void reset_efc_name_ent_code(int);
 static int is_censored_name(char *);
 static void load_default_score_records(void);
 static void func_800AED54(char *);
@@ -340,7 +340,7 @@ void ev_name_entry_main(void)
             }
             if (s_nameEntry.cursorPos == 2)
             {
-                func_800AE930(0);
+                reset_efc_name_ent_code(0);
                 camera->state = 0x24;
             }
             break;
@@ -353,7 +353,7 @@ void ev_name_entry_main(void)
                 s_nameEntry.cursorPos++;
                 if (s_nameEntry.cursorPos == 3)
                 {
-                    func_800AE930(1);
+                    reset_efc_name_ent_code(1);
                     camera->state = 0x25;
                 }
             }
@@ -693,10 +693,10 @@ static void func_800AE8D0(void)
     for (i = 0; i < NUM_BUTTONS; i++, button++)
         button->effectUid = -1;
 
-    func_800AE930(0);
+    reset_efc_name_ent_code(0);
 }
 
-static void func_800AE930(int arg0)
+static void reset_efc_name_ent_code(int arg0)
 {
     struct Effect effect;
     int i;
@@ -860,16 +860,16 @@ void func_800AEDDC(void) {}
 void func_800AEDE0(void)
 {
     struct ScoreRecord spC;
-    struct Ball *temp_r29;
+    struct Ball *ball;
     struct ScoreRecord *temp_r6;
     struct ScoreRecord *var_r5;
     int i;
     struct ScoreRecord *ptr;
     int j;
 
-    temp_r29 = (0, &ballInfo[modeCtrl.currPlayer]);
+    ball = (0, &ballInfo[modeCtrl.currPlayer]);
     strcpy(spC.initials, "---");
-    spC.score = temp_r29->unk7C;
+    spC.score = ball->score;
     spC.unk8 = infoWork.unk8;
     spC.floorNum = infoWork.currFloor;
     if (modeCtrl.courseFlags & 0x10)
@@ -1219,16 +1219,16 @@ void stobj_nameent_btn_destroy(struct Stobj *stobj) {}
 
 void stobj_nameent_btn_debug(struct Stobj *stobj) {}
 
-void func_800AFC1C(struct MemcardGameData *data)
+void func_800AFC1C(struct MemcardContents *data)
 {
-    memcpy(&data->unk5844.unk2C8, &lbl_802C6220, sizeof(data->unk5844.unk2C8));
+    memcpy(&data->gameData.unk2C8, &lbl_802C6220, sizeof(data->gameData.unk2C8));
 }
 
-void func_800AFC4C(struct MemcardGameData *data)
+void func_800AFC4C(struct MemcardContents *data)
 {
     int var_r0;
 
-    memcpy(&lbl_802C6220, &data->unk5844.unk2C8, sizeof(lbl_802C6220));
+    memcpy(&lbl_802C6220, &data->gameData.unk2C8, sizeof(lbl_802C6220));
     if (lbl_802C6220.size != sizeof(lbl_802C6220))
         var_r0 = FALSE;
     else

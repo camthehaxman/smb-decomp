@@ -460,7 +460,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
 
 void item_pilot_destroy(struct Item *item) {}
 
-void func_8006A564(struct Item *item)
+void item_pilot_release(struct Item *item)
 {
     if (item->state != 2)
     {

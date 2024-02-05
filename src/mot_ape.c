@@ -17,6 +17,7 @@
 #include "mot_ape.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
+#include "thread.h"
 #include "light.h"
 
 struct Ape_child lbl_801C7A70 =

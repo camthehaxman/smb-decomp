@@ -11,8 +11,8 @@ void func_800948F4(void)
 }
 
 static s32 lbl_802F2190;
-static struct Struct8009492C *lbl_802F2194;
-struct Struct8009492C lbl_802B9390[64];
+static struct PolyShadowUnit *lbl_802F2194;
+struct PolyShadowUnit lbl_802B9390[64];
 
 void func_80094914(void)
 {
@@ -20,7 +20,7 @@ void func_80094914(void)
     lbl_802F2194 = lbl_802B9390;
 }
 
-int func_8009492C(struct Struct8009492C *arg0)
+int set_poly_shadow(struct PolyShadowUnit *arg0)
 {
     if (lbl_802F2190 == 0)
         return 0;
@@ -37,7 +37,7 @@ void func_80094A34(void)
     Vec sp14;
     Vec sp8;
     int var_r29;
-    struct Struct8009492C *var_r28;
+    struct PolyShadowUnit *var_r28;
     float var_f28;
     float temp_f1;
     float temp_f27;

@@ -21,12 +21,12 @@
 
 static struct CourseCommand *s_courseScriptPtr;
 static s32 u_jumpFloors;  // number of floors to jump (or -1 if not jumping floors)
-static u32 lbl_802F1FA0;
+static u32 courseMesgTimer;
 
 u32 g_playPointsEarned;
 s8 g_currFloorStreak;  // number of floors cleared since last continue
 u32 g_totalPlayPoints;
-u32 g_maxPlayPointRecord;
+u32 g_recordPlayPoints;
 u32 lbl_802F1FB4;  // not used in this file
 int lbl_802F1FB0;
 u32 lbl_802F1FAC;  // not used in this file
@@ -43,7 +43,7 @@ int u_isCompetitionModeCourse;
 #define UNLOCKED_CONTINUES_SHIFT 4
 #define UNLOCKED_CONTINUES_MASK (7 << UNLOCKED_CONTINUES_SHIFT)
 
-// Play points per floor in each course
+// Play points awarded per floor in each course
 
 static s16 beginnerMainPlayPoints[] =
 {
@@ -99,43 +99,19 @@ static s16 *coursePlayPointLists[] =
     masterPlayPoints,
 };
 
-s16 u_unkPlayPointList[] =
+// Play points awarded per floor in addition to the per-course ones mentioned above
+
+static s16 basePlayPoints[] =
 {
-    0x0000, 0x0001,
-    0x0001, 0x0002,
-    0x0002, 0x0003,
-    0x0003, 0x0004,
-    0x0004, 0x0005,
-    0x0005, 0x0006,
-    0x0006, 0x0007,
-    0x0007, 0x0008,
-    0x0008, 0x0009,
-    0x0009, 0x000A,
-    0x000A, 0x000B,
-    0x000B, 0x000C,
-    0x000C, 0x000D,
-    0x000D, 0x000E,
-    0x000E, 0x000F,
-    0x000F, 0x0010,
-    0x0010, 0x0011,
-    0x0011, 0x0012,
-    0x0012, 0x0013,
-    0x0013, 0x0014,
-    0x0014, 0x0015,
-    0x0015, 0x0016,
-    0x0016, 0x0017,
-    0x0017, 0x0018,
-    0x0018, 0x0019,
-    0x0019, 0x001A,
-    0x001A, 0x001B,
-    0x001B, 0x001C,
-    0x001C, 0x001D,
-    0x001D, 0x001E,
-    0x001E, 0x001F,
-    0x001F, 0x0020,
-    0x0020, 0x0021,
-    0x0021, 0x0022,
-    0x0022, 0x0023,
+    0, 1, 1, 2, 2, 3, 3, 4, 4, 5,
+    5, 6, 6, 7, 7, 8, 8, 9, 9, 10,
+    10, 11, 11, 12, 12, 13, 13, 14,
+    14, 15, 15, 16, 16, 17, 17, 18,
+    18, 19, 19, 20, 20, 21, 21, 22,
+    22, 23, 23, 24, 24, 25, 25, 26,
+    26, 27, 27, 28, 28, 29, 29, 30,
+    30, 31, 31, 32, 32, 33, 33, 34,
+    34, 35,
 };
 
 struct Struct8027CC58_sub
@@ -151,48 +127,48 @@ struct Struct8027CC58
     s16 unk22;
 };
 
-static struct Struct8027CC58 lbl_8027CC58[4][3];
+static struct Struct8027CC58 rt_tbl[4][3];
 static u32 s_visitedFloors[4];  // bit mask of floors that have been played on at least once
 u32 playPointYieldPerDifficulty[3];
 
 static int difficulty_to_course_id(int, u32);
 static void mark_floor_visited(int, int, u32);
-static void func_800676E8(void);
-static void func_80067808(void);
+static void game_course_init(void);
+static void game_course_next(void);
 static void func_80067AD4(void);
 
 void course_init(void)
 {
-    int i;
+    int floor;
     int count;
 
-    for (i = 0; i < 4; i++)
-        s_visitedFloors[i] = 0;
+    for (floor = 0; floor < 4; floor++)
+        s_visitedFloors[floor] = 0;
     g_totalPlayPoints = 0;
-    g_maxPlayPointRecord = 0;
+    g_recordPlayPoints = 0;
 
     count = 0;
     playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] = 0;
-    for (i = 0; i < 10; i++, count++)
-        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerMainPlayPoints[i] + u_unkPlayPointList[i];
-    for (i = 0; i < 3; i++, count++)
-        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerExtraPlayPoints[i] + u_unkPlayPointList[count];
+    for (floor = 0; floor < 10; floor++, count++)
+        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerMainPlayPoints[floor] + basePlayPoints[count];
+    for (floor = 0; floor < 3; floor++, count++)
+        playPointYieldPerDifficulty[DIFFICULTY_BEGINNER] += beginnerExtraPlayPoints[floor] + basePlayPoints[count];
 
     count = 0;
     playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] = 0;
-    for (i = 0; i < 30; i++, count++)
-        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedMainPlayPoints[i] + u_unkPlayPointList[i];
-    for (i = 0; i < 5; i++, count++)
-        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedExtraPlayPoints[i] + u_unkPlayPointList[count];
+    for (floor = 0; floor < 30; floor++, count++)
+        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedMainPlayPoints[floor] + basePlayPoints[count];
+    for (floor = 0; floor < 5; floor++, count++)
+        playPointYieldPerDifficulty[DIFFICULTY_ADVANCED] += advancedExtraPlayPoints[floor] + basePlayPoints[count];
 
     count = 0;
     playPointYieldPerDifficulty[DIFFICULTY_EXPERT] = 0;
-    for (i = 0; i < 50; i++, count++)
-        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertMainPlayPoints[i] + u_unkPlayPointList[i];
-    for (i = 0; i < 10; i++, count++)
-        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertExtraPlayPoints[i] + u_unkPlayPointList[count];
-    for (i = 0; i < 10; i++, count++)
-        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += masterPlayPoints[i] + u_unkPlayPointList[count];
+    for (floor = 0; floor < 50; floor++, count++)
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertMainPlayPoints[floor] + basePlayPoints[count];
+    for (floor = 0; floor < 10; floor++, count++)
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += expertExtraPlayPoints[floor] + basePlayPoints[count];
+    for (floor = 0; floor < 10; floor++, count++)
+        playPointYieldPerDifficulty[DIFFICULTY_EXPERT] += masterPlayPoints[floor] + basePlayPoints[count];
 }
 
 void reset_earned_play_points(void)
@@ -203,7 +179,7 @@ void reset_earned_play_points(void)
         g_totalPlayPoints = 0;
 }
 
-void func_800662D4(void)
+void reset_curr_floor_streak(void)
 {
     g_currFloorStreak = 0;
 }
@@ -211,8 +187,8 @@ void func_800662D4(void)
 void record_play_points(void)
 {
     g_totalPlayPoints = MIN(g_totalPlayPoints + g_playPointsEarned, 9999);
-    if (are_all_continues_unlocked() != 0 && g_totalPlayPoints > g_maxPlayPointRecord)
-        g_maxPlayPointRecord = g_totalPlayPoints;
+    if (are_all_continues_unlocked() && g_totalPlayPoints > g_recordPlayPoints)
+        g_recordPlayPoints = g_totalPlayPoints;
 }
 
 #pragma force_active on
@@ -975,52 +951,52 @@ static void play_points_textbox_callback(struct TextBox *tbox)
         buy_extra_continues();
         return;
     }
-    if (lbl_802F1FA0 == 0)
+    if (courseMesgTimer == 0)
     {
         if (are_all_continues_unlocked() != 0)
         {
             textbox_add_textf(1, "a/Play Point record for this time : ft/%4d", g_totalPlayPoints);
-            textbox_add_textf(1, "a/Highest Play Point record c/0xffffff/a/timec/0x000000/ : ft/%4d", g_maxPlayPointRecord);
-            lbl_802F1FA0++;
+            textbox_add_textf(1, "a/Highest Play Point record c/0xffffff/a/timec/0x000000/ : ft/%4d", g_recordPlayPoints);
+            courseMesgTimer++;
         }
         else if (g_playPointsEarned == 0)
         {
             textbox_add_text(1, "a/You didn't get any play points.");
             textbox_add_textf(1, "z9/a/You now have a total of %d Play Points.", g_totalPlayPoints);
-            lbl_802F1FA0++;
+            courseMesgTimer++;
         }
         else
         {
             textbox_add_textf(1, "a/You received %d Play Points.", g_playPointsEarned);
             textbox_add_textf(1, "z9/a/You now have a total of %d Play Points.", g_totalPlayPoints);
-            lbl_802F1FA0++;
+            courseMesgTimer++;
         }
         return;
     }
     if (are_all_continues_unlocked() == 0 && g_totalPlayPoints >= 2500)
     {
-        if (++lbl_802F1FA0 == 480)
+        if (++courseMesgTimer == 480)
         {
             if (tbox->unk19 == 0)
-                lbl_802F1FA0 = 0;
+                courseMesgTimer = 0;
         }
         else
         {
             if (tbox->unk18 == 0 && (g_currPlayerButtons[2] & 0x100)
-             && lbl_802F1FA0 > 60 && lbl_802F1FA0 < 180)
+             && courseMesgTimer > 60 && courseMesgTimer < 180)
             {
                 if (!is_minigame_unlocked(GAMETYPE_MINI_BILLIARDS)
                  || !is_minigame_unlocked(GAMETYPE_MINI_BOWLING)
                  || !is_minigame_unlocked(GAMETYPE_MINI_GOLF))
-                    lbl_802F1FA0 = 180;
+                    courseMesgTimer = 180;
                 else if (tbox->unk19 != 0)
-                    lbl_802F1FA0 = 240;
+                    courseMesgTimer = 240;
                 else
-                    lbl_802F1FA0 = 180;
+                    courseMesgTimer = 180;
             }
-            if (lbl_802F1FA0 == 240)
+            if (courseMesgTimer == 240)
                 tbox->unk18 = 1;
-            if (lbl_802F1FA0 == 180)
+            if (courseMesgTimer == 180)
             {
                 if (!is_minigame_unlocked(GAMETYPE_MINI_BILLIARDS)
                  || !is_minigame_unlocked(GAMETYPE_MINI_BOWLING)
@@ -1056,7 +1032,7 @@ static void play_points_textbox_callback(struct TextBox *tbox)
         return;
     }
 
-    if (++lbl_802F1FA0 >= 60)
+    if (++courseMesgTimer >= 60)
         tbox->unk18 = 1;
 }
 
@@ -1074,10 +1050,10 @@ void show_play_points_textbox(int arg0, s16 x, s16 y)
     tbox.unk18 = 0;
     tbox.unk19 = arg0;
     tbox.callback = play_points_textbox_callback;
-    lbl_802F1FA0 = 0;
+    courseMesgTimer = 0;
     if (tbox.unk19 == 2)
     {
-        lbl_802F1FA0 = 0xB3;
+        courseMesgTimer = 0xB3;
         tbox.unk19 = 0;
         tbox.numColumns = TEXTBOX_FONT_SIZE;
         tbox.textWidth = tbox.numColumns * TEXTBOX_FONT_SIZE;
@@ -1094,20 +1070,20 @@ int is_play_points_textbox_done(void)
     return TRUE;
 }
 
-void func_800668A0(void)
+void course_first(void)
 {
     int var = difficulty_to_course_id(modeCtrl.difficulty, modeCtrl.courseFlags);
 
     s_courseScriptPtr = s_courseScripts[var];
     infoWork.u_currStageId = s_courseScriptPtr->value;
     s_courseScriptPtr++;
-    func_800676E8();
+    game_course_init();
 }
 
 void ev_course_init(void)
 {
     u_jumpFloors = -1;
-    func_80067808();
+    game_course_next();
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL)
         mark_floor_visited(modeCtrl.difficulty, infoWork.currFloor, modeCtrl.courseFlags);
 }
@@ -1179,12 +1155,12 @@ void ev_course_main(void)
                 if ((dipSwitches & DIP_DEBUG) && (dipSwitches & DIP_PLAY_PNT_X10))
                 {
                     g_playPointsEarned += coursePlayPointLists[difficulty_to_course_id(modeCtrl.difficulty, modeCtrl.courseFlags)][infoWork.currFloor - 1] * 10;
-                    g_playPointsEarned += u_unkPlayPointList[g_currFloorStreak - 1] * 10;
+                    g_playPointsEarned += basePlayPoints[g_currFloorStreak - 1] * 10;
                 }
                 else
                 {
                     g_playPointsEarned += coursePlayPointLists[difficulty_to_course_id(modeCtrl.difficulty, modeCtrl.courseFlags)][infoWork.currFloor - 1];
-                    g_playPointsEarned += u_unkPlayPointList[g_currFloorStreak - 1];
+                    g_playPointsEarned += basePlayPoints[g_currFloorStreak - 1];
                 }
             }
             infoWork.u_currStageId = cmd->value;
@@ -1248,12 +1224,12 @@ static void course_sub_give_play_points(struct CourseCommand *cmd)
         if ((dipSwitches & DIP_DEBUG) && (dipSwitches & DIP_PLAY_PNT_X10))
         {
             g_playPointsEarned += coursePlayPointLists[difficulty_to_course_id(modeCtrl.difficulty, modeCtrl.courseFlags)][infoWork.currFloor - 1] * 10;
-            g_playPointsEarned += u_unkPlayPointList[g_currFloorStreak - 1] * 10;
+            g_playPointsEarned += basePlayPoints[g_currFloorStreak - 1] * 10;
         }
         else
         {
             g_playPointsEarned += coursePlayPointLists[difficulty_to_course_id(modeCtrl.difficulty, modeCtrl.courseFlags)][infoWork.currFloor - 1];
-            g_playPointsEarned += u_unkPlayPointList[g_currFloorStreak - 1];
+            g_playPointsEarned += basePlayPoints[g_currFloorStreak - 1];
         }
     }
     infoWork.u_currStageId = -1;
@@ -1268,12 +1244,12 @@ static void course_sub_give_play_points_dupe(struct CourseCommand *cmd)
         if ((dipSwitches & DIP_DEBUG) && (dipSwitches & DIP_PLAY_PNT_X10))
         {
             g_playPointsEarned += coursePlayPointLists[difficulty_to_course_id(modeCtrl.difficulty, modeCtrl.courseFlags)][infoWork.currFloor - 1] * 10;
-            g_playPointsEarned += u_unkPlayPointList[g_currFloorStreak - 1] * 10;
+            g_playPointsEarned += basePlayPoints[g_currFloorStreak - 1] * 10;
         }
         else
         {
             g_playPointsEarned += coursePlayPointLists[difficulty_to_course_id(modeCtrl.difficulty, modeCtrl.courseFlags)][infoWork.currFloor - 1];
-            g_playPointsEarned += u_unkPlayPointList[g_currFloorStreak - 1];
+            g_playPointsEarned += basePlayPoints[g_currFloorStreak - 1];
         }
     }
     infoWork.u_currStageId = -1;
@@ -1603,13 +1579,13 @@ int are_all_continues_unlocked(void)
     return g_unlockFlags & UNLOCKED_ALL_CONTINUES;
 }
 
-static void func_800676E8(void)
+static void game_course_init(void)
 {
     int i, j;
 
     for (i = 0; i < 4; i++)
     {
-        struct Struct8027CC58 *r4 = lbl_8027CC58[i];
+        struct Struct8027CC58 *r4 = rt_tbl[i];
 
         for (j = 0; j < 3; j++, r4++)
         {
@@ -1638,9 +1614,9 @@ static void inline1(void)
         var_r3_3 = get_next_player();
     else
         var_r3_3 = temp_r27_3;
-    temp_r3_3 = lbl_8027CC58[var_r3_3];
+    temp_r3_3 = rt_tbl[var_r3_3];
     if (temp_r27_3 == var_r3_3)
-        infoWork.unk32 = lbl_8027CC58[temp_r27_3][0].unk0[1].unk4;
+        infoWork.unk32 = rt_tbl[temp_r27_3][0].unk0[1].unk4;
     else if (temp_r3_3->unk22 == -1)
         infoWork.unk32 = temp_r3_3->unk0[0].unk4;
     else
@@ -1700,7 +1676,7 @@ static inline void inline3(struct Struct8027CC58 *temp_r28)
 
 }
 
-static void func_80067808(void)
+static void game_course_next(void)
 {
     int temp_r27_2;
     struct Struct8027CC58 *temp_r28;
@@ -1712,13 +1688,13 @@ static void func_80067808(void)
     if (modeCtrl.gameType == 0)
         get_next_player();  // return value not used
 
-    if (infoWork.currFloor == lbl_8027CC58[temp_r27_2][0].unk0[0].unk0)
+    if (infoWork.currFloor == rt_tbl[temp_r27_2][0].unk0[0].unk0)
     {
         inline1();
         return;
     }
 
-    temp_r28 = lbl_8027CC58[temp_r27_2];
+    temp_r28 = rt_tbl[temp_r27_2];
 
     for (i = 1, var_r25 = &temp_r28[1]; i >= 0; i--, var_r25--)
     {
@@ -1743,7 +1719,7 @@ static void func_80067808(void)
 
 void func_80067AD4(void)
 {
-    struct Struct8027CC58 *temp_r8 = lbl_8027CC58[modeCtrl.currPlayer];
+    struct Struct8027CC58 *temp_r8 = rt_tbl[modeCtrl.currPlayer];
     int i;
 
     for (i = 0; i < 3; i++)
@@ -1762,7 +1738,7 @@ void func_80067AD4(void)
     inline1();
 }
 
-void lbl_80067C20(struct Sprite *sprite)
+void game_sprint_course(struct Sprite *sprite)
 {
     struct Struct8027CC58_sub *var_r31;
     int var_r0;
@@ -1779,7 +1755,7 @@ void lbl_80067C20(struct Sprite *sprite)
     x = sprite->x;
     y = sprite->y;
 
-    var_r27 = &lbl_8027CC58[modeCtrl.currPlayer][2];
+    var_r27 = &rt_tbl[modeCtrl.currPlayer][2];
     for (i = 2; i >= 0; i--, var_r27--)
     {
         if (var_r27->unk0[0].unk0 != 0)
@@ -1842,22 +1818,22 @@ void lbl_80067C20(struct Sprite *sprite)
     }
 }
 
-void func_80067FD0(struct MemcardGameData *data)
+void save_course_completion_data(struct MemcardContents *mcdata)
 {
-    data->unk5844.unk90 = s_visitedFloors[0];
-    data->unk5844.unk94 = s_visitedFloors[1];
-    data->unk5844.unk98 = s_visitedFloors[2];
-    data->unk5844.unk9C = s_visitedFloors[3];
-    data->unk5844.unk2C0 = g_totalPlayPoints;
-    data->unk5844.unk2C4 = g_maxPlayPointRecord;
+    mcdata->gameData.visitedFloors[0] = s_visitedFloors[0];
+    mcdata->gameData.visitedFloors[1] = s_visitedFloors[1];
+    mcdata->gameData.visitedFloors[2] = s_visitedFloors[2];
+    mcdata->gameData.visitedFloors[3] = s_visitedFloors[3];
+    mcdata->gameData.totalPlayPoints  = g_totalPlayPoints;
+    mcdata->gameData.recordPlayPoints = g_recordPlayPoints;
 }
 
-void func_8006800C(struct MemcardGameData *data)
+void load_course_completion_data(struct MemcardContents *mcdata)
 {
-    s_visitedFloors[0] = data->unk5844.unk90;
-    s_visitedFloors[1] = data->unk5844.unk94;
-    s_visitedFloors[2] = data->unk5844.unk98;
-    s_visitedFloors[3] = data->unk5844.unk9C;
-    g_totalPlayPoints = data->unk5844.unk2C0;
-    g_maxPlayPointRecord = data->unk5844.unk2C4;
+    s_visitedFloors[0] = mcdata->gameData.visitedFloors[0];
+    s_visitedFloors[1] = mcdata->gameData.visitedFloors[1];
+    s_visitedFloors[2] = mcdata->gameData.visitedFloors[2];
+    s_visitedFloors[3] = mcdata->gameData.visitedFloors[3];
+    g_totalPlayPoints  = mcdata->gameData.totalPlayPoints;
+    g_recordPlayPoints = mcdata->gameData.recordPlayPoints;
 }

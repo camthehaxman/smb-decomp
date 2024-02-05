@@ -1612,7 +1612,7 @@ static void ready_sprite_main(s8 *arg0, struct Sprite *sprite)
     }
 }
 
-void lbl_80067C20(struct Sprite *);
+void game_sprint_course(struct Sprite *);
 
 static void lbl_8007A774(s8 *, struct Sprite *);
 static void lbl_8007A7B8(s8 *, struct Sprite *);
@@ -1703,7 +1703,7 @@ void hud_show_normal_mode_info(void)
             sprite->scaleX = 1.5f;
             sprite->scaleY = 1.5f;
             sprite->mainFunc = lbl_8007A7B8;
-            sprite->drawFunc = lbl_80067C20;
+            sprite->drawFunc = game_sprint_course;
             sprintf(sprite->text, "course");
         }
     }
@@ -1846,11 +1846,11 @@ void hud_show_normal_mode_info(void)
     else
         printf("NULL\n");
 
-    lbl_80292C60.unk0 = ball->unk7C;
+    lbl_80292C60.unk0 = ball->score;
     lbl_80292C60.unk4 = 0;
     lbl_80292C60.unk8 = 0;
 
-    if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE && lbl_802F1CAC > 0)
+    if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE && practiceBestScore > 0)
         u_show_practice_mode_score_info(0);
 
     if (modeCtrl.playerCount > 1)
@@ -2495,9 +2495,9 @@ static void score_value_sprite_main(s8 *arg0, struct Sprite *sprite)
 
     if (r31->unk4 == 0)
     {
-        if (ball->unk7C > r31->unk0)
+        if (ball->score > r31->unk0)
         {
-            int temp_r3_2 = ball->unk7C - r31->unk0;
+            int temp_r3_2 = ball->score - r31->unk0;
 
             if (temp_r3_2 >= 1000)
                 r31->unk4 = 120;
@@ -2510,8 +2510,8 @@ static void score_value_sprite_main(s8 *arg0, struct Sprite *sprite)
         r31->unk4--;
     if (r31->unk4 == 0)
     {
-        r31->unk0 = ball->unk7C;
-        if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE && lbl_802F1CA8 != 0)
+        r31->unk0 = ball->score;
+        if (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE && practiceBestFlag != 0)
         {
             struct Sprite *temp_r3_4 = find_sprite_with_tag(8);
 
@@ -4496,7 +4496,7 @@ void u_show_practice_mode_score_info(int arg0)
         sprite->mulR = 255;
         sprite->mulG = 192;
         sprite->mulB = 0;
-        sprite->userVar = lbl_802F1CAC;
+        sprite->userVar = practiceBestScore;
         sprite->drawFunc = lbl_800800D4;
         sprintf(sprite->text, "%d", sprite->userVar);
     }
@@ -4573,7 +4573,7 @@ static void lbl_800800D4(struct Sprite *sprite)
         set_text_add_color(RGBA(temp_r30, temp_r30, temp_r30, 0));
         set_text_pos(sprite->left + (17.6 * strlen(sprite->text)), sprite->top);
         set_text_scale(0.8 + (0.3 * temp_f31), 0.8 + (0.4 * temp_f31));
-        func_80072AC0("+%d", lbl_802F1CAC - sprite->userVar);
+        func_80072AC0("+%d", practiceBestScore - sprite->userVar);
     }
 }
 

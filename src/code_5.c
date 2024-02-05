@@ -135,137 +135,137 @@ void u_reset_gamedata(void)
     lbl_802F1BE8.unk4 = 0;
 }
 
-void u_store_gamedata(struct MemcardGameData *data)
+void u_store_gamedata(struct MemcardContents *data)
 {
     int i;
 
-    data->unk5844.unk44 = lbl_802F1C10.unk0;
-    data->unk5844.unk45 = lbl_802F1C10.unk1;
-    data->unk5844.unk46 = lbl_802F1C10.unk2;
-    data->unk5844.unk47 = 0;
-    data->unk5844.unk48 = lbl_802F1C10.unk4[0];
-    data->unk5844.unk49 = lbl_802F1C10.unk4[1];
-    data->unk5844.unk4A = lbl_802F1C10.unk4[2];
-    data->unk5844.unk4B = lbl_802F1C10.unk4[3];
+    data->gameData.unk44 = lbl_802F1C10.unk0;
+    data->gameData.unk45 = lbl_802F1C10.unk1;
+    data->gameData.unk46 = lbl_802F1C10.unk2;
+    data->gameData.unk47 = 0;
+    data->gameData.unk48 = lbl_802F1C10.unk4[0];
+    data->gameData.unk49 = lbl_802F1C10.unk4[1];
+    data->gameData.unk4A = lbl_802F1C10.unk4[2];
+    data->gameData.unk4B = lbl_802F1C10.unk4[3];
 
-    data->unk5844.unk2BF = g_unlockFlags;
-    data->unk5844.unk4F = lbl_802F1C0C;
+    data->gameData.unk2BF = g_unlockFlags;
+    data->gameData.unk4F = lbl_802F1C0C;
 
-    data->unk5844.unk50 = lbl_801EED50.unk0;
-    data->unk5844.unk51 = lbl_801EED50.unk30;
-    data->unk5844.unk52 = lbl_801EED50.unk31;
-    data->unk5844.unk53 = lbl_801EED50.unk32;
-    data->unk5844.unk54 = lbl_801EED50.unk33;
-    data->unk5844.unk55 = lbl_801EED50.unk34;
-    data->unk5844.unk84 = lbl_801EED50.unk2C;
-    data->unk5844.unk58 = lbl_801EED50.unk6;
-    data->unk5844.unk5A = lbl_801EED50.unk4;
-    data->unk5844.unk70 = lbl_801EED50.unk8;
-    data->unk5844.unk5C = lbl_801EED50.unkE;
-    data->unk5844.unk5E = lbl_801EED50.unkC;
-    data->unk5844.unk74 = lbl_801EED50.unk10;
-    data->unk5844.unk60 = lbl_801EED50.unk16;
-    data->unk5844.unk62 = lbl_801EED50.unk14;
-    data->unk5844.unk78 = lbl_801EED50.unk18;
-    data->unk5844.unk64 = lbl_801EED50.unk1E;
-    data->unk5844.unk66 = lbl_801EED50.unk1C;
-    data->unk5844.unk7C = lbl_801EED50.unk20;
-    data->unk5844.unk68 = lbl_801EED50.unk26;
-    data->unk5844.unk6A = lbl_801EED50.unk24;
-    data->unk5844.unk80 = lbl_801EED50.unk28;
+    data->gameData.unk50 = lbl_801EED50.unk0;
+    data->gameData.unk51 = lbl_801EED50.unk30;
+    data->gameData.unk52 = lbl_801EED50.unk31;
+    data->gameData.unk53 = lbl_801EED50.unk32;
+    data->gameData.unk54 = lbl_801EED50.unk33;
+    data->gameData.unk55 = lbl_801EED50.unk34;
+    data->gameData.unk84 = lbl_801EED50.unk2C;
+    data->gameData.unk58 = lbl_801EED50.unk6;
+    data->gameData.unk5A = lbl_801EED50.unk4;
+    data->gameData.unk70 = lbl_801EED50.unk8;
+    data->gameData.unk5C = lbl_801EED50.unkE;
+    data->gameData.unk5E = lbl_801EED50.unkC;
+    data->gameData.unk74 = lbl_801EED50.unk10;
+    data->gameData.unk60 = lbl_801EED50.unk16;
+    data->gameData.unk62 = lbl_801EED50.unk14;
+    data->gameData.unk78 = lbl_801EED50.unk18;
+    data->gameData.unk64 = lbl_801EED50.unk1E;
+    data->gameData.unk66 = lbl_801EED50.unk1C;
+    data->gameData.unk7C = lbl_801EED50.unk20;
+    data->gameData.unk68 = lbl_801EED50.unk26;
+    data->gameData.unk6A = lbl_801EED50.unk24;
+    data->gameData.unk80 = lbl_801EED50.unk28;
 
-    data->unk5844.unk88 = lbl_802F1C04.unk2;
-    data->unk5844.unk8A = lbl_802F1C04.unk0;
-    data->unk5844.unk8C = lbl_802F1C04.unk4;
+    data->gameData.unk88 = lbl_802F1C04.unk2;
+    data->gameData.unk8A = lbl_802F1C04.unk0;
+    data->gameData.unk8C = lbl_802F1C04.unk4;
 
     for (i = 0; i < 6; i++)
-        data->unk5844.unkA4[i] = lbl_801EED88.unk1[i];
-    data->unk5844.unkAA = lbl_801EED88.unk0;
-    data->unk5844.unkAB = lbl_801EED88.unkC;
-    data->unk5844.unkA0 = lbl_801EED88.unk8;
+        data->gameData.unkA4[i] = lbl_801EED88.unk1[i];
+    data->gameData.unkAA = lbl_801EED88.unk0;
+    data->gameData.unkAB = lbl_801EED88.unkC;
+    data->gameData.unkA0 = lbl_801EED88.unk8;
 
-    data->unk5844.unk2AC = lbl_801EED98.unk48;
-    data->unk5844.unk2B0 = lbl_801EED98.unk4E;
-    data->unk5844.unk2B1 = lbl_801EED98.unk4F;
-    data->unk5844.unk2B2 = lbl_801EED98.unk50;
-    data->unk5844.unk2B3 = lbl_801EED98.unk4C;
-    data->unk5844.unk2B4 = lbl_801EED98.unk4D;
+    data->gameData.unk2AC = lbl_801EED98.unk48;
+    data->gameData.unk2B0 = lbl_801EED98.unk4E;
+    data->gameData.unk2B1 = lbl_801EED98.unk4F;
+    data->gameData.unk2B2 = lbl_801EED98.unk50;
+    data->gameData.unk2B3 = lbl_801EED98.unk4C;
+    data->gameData.unk2B4 = lbl_801EED98.unk4D;
 
-    data->unk5844.unkAE = lbl_802F1BFC.unk0;
-    data->unk5844.unk2B8 = lbl_802F1BFC.unk4;
+    data->gameData.unkAE = lbl_802F1BFC.unk0;
+    data->gameData.unk2B8 = lbl_802F1BFC.unk4;
 
-    data->unk5844.unk2B5 = lbl_802F1BF4.unk0;
-    data->unk5844.unk2B6 = lbl_802F1BF4.unk1;
-    data->unk5844.unk2B7 = lbl_802F1BF4.unk4;
-    data->unk5844.unkAF = lbl_802F1BF0;
-    data->unk5844.unk2BC = lbl_802F1BE8.unk0;
-    data->unk5844.unk2BD = lbl_802F1BE8.unk4;
+    data->gameData.unk2B5 = lbl_802F1BF4.unk0;
+    data->gameData.unk2B6 = lbl_802F1BF4.unk1;
+    data->gameData.unk2B7 = lbl_802F1BF4.unk4;
+    data->gameData.unkAF = lbl_802F1BF0;
+    data->gameData.unk2BC = lbl_802F1BE8.unk0;
+    data->gameData.unk2BD = lbl_802F1BE8.unk4;
 }
 
-void u_load_gamedata(struct MemcardGameData *data)
+void u_load_gamedata(struct MemcardContents *data)
 {
     int i;
 
-    lbl_802F1C10.unk0 = data->unk5844.unk44;
-    lbl_802F1C10.unk1 = data->unk5844.unk45;
-    lbl_802F1C10.unk2 = data->unk5844.unk46;
-    lbl_802F1C10.unk3 = data->unk5844.unk47;
+    lbl_802F1C10.unk0 = data->gameData.unk44;
+    lbl_802F1C10.unk1 = data->gameData.unk45;
+    lbl_802F1C10.unk2 = data->gameData.unk46;
+    lbl_802F1C10.unk3 = data->gameData.unk47;
 
-    lbl_802F1C10.unk4[0] = data->unk5844.unk48;
-    lbl_802F1C10.unk4[1] = data->unk5844.unk49;
-    lbl_802F1C10.unk4[2] = data->unk5844.unk4A;
-    lbl_802F1C10.unk4[3] = data->unk5844.unk4B;
+    lbl_802F1C10.unk4[0] = data->gameData.unk48;
+    lbl_802F1C10.unk4[1] = data->gameData.unk49;
+    lbl_802F1C10.unk4[2] = data->gameData.unk4A;
+    lbl_802F1C10.unk4[3] = data->gameData.unk4B;
 
-    g_unlockFlags = data->unk5844.unk2BF;
-    lbl_802F1C0C = data->unk5844.unk4F;
+    g_unlockFlags = data->gameData.unk2BF;
+    lbl_802F1C0C = data->gameData.unk4F;
 
-    lbl_801EED50.unk0 = data->unk5844.unk50;
-    lbl_801EED50.unk30 = data->unk5844.unk51;
-    lbl_801EED50.unk31 = data->unk5844.unk52;
-    lbl_801EED50.unk32 = data->unk5844.unk53;
-    lbl_801EED50.unk33 = data->unk5844.unk54;
-    lbl_801EED50.unk34 = data->unk5844.unk55;
-    lbl_801EED50.unk2C = data->unk5844.unk84;
-    lbl_801EED50.unk6 = data->unk5844.unk58;
-    lbl_801EED50.unk4 = data->unk5844.unk5A;
-    lbl_801EED50.unk8 = data->unk5844.unk70;
-    lbl_801EED50.unkE = data->unk5844.unk5C;
-    lbl_801EED50.unkC = data->unk5844.unk5E;
-    lbl_801EED50.unk10 = data->unk5844.unk74;
-    lbl_801EED50.unk16 = data->unk5844.unk60;
-    lbl_801EED50.unk14 = data->unk5844.unk62;
-    lbl_801EED50.unk18 = data->unk5844.unk78;
-    lbl_801EED50.unk1E = data->unk5844.unk64;
-    lbl_801EED50.unk1C = data->unk5844.unk66;
-    lbl_801EED50.unk20 = data->unk5844.unk7C;
-    lbl_801EED50.unk26 = data->unk5844.unk68;
-    lbl_801EED50.unk24 = data->unk5844.unk6A;
-    lbl_801EED50.unk28 = data->unk5844.unk80;
+    lbl_801EED50.unk0 = data->gameData.unk50;
+    lbl_801EED50.unk30 = data->gameData.unk51;
+    lbl_801EED50.unk31 = data->gameData.unk52;
+    lbl_801EED50.unk32 = data->gameData.unk53;
+    lbl_801EED50.unk33 = data->gameData.unk54;
+    lbl_801EED50.unk34 = data->gameData.unk55;
+    lbl_801EED50.unk2C = data->gameData.unk84;
+    lbl_801EED50.unk6 = data->gameData.unk58;
+    lbl_801EED50.unk4 = data->gameData.unk5A;
+    lbl_801EED50.unk8 = data->gameData.unk70;
+    lbl_801EED50.unkE = data->gameData.unk5C;
+    lbl_801EED50.unkC = data->gameData.unk5E;
+    lbl_801EED50.unk10 = data->gameData.unk74;
+    lbl_801EED50.unk16 = data->gameData.unk60;
+    lbl_801EED50.unk14 = data->gameData.unk62;
+    lbl_801EED50.unk18 = data->gameData.unk78;
+    lbl_801EED50.unk1E = data->gameData.unk64;
+    lbl_801EED50.unk1C = data->gameData.unk66;
+    lbl_801EED50.unk20 = data->gameData.unk7C;
+    lbl_801EED50.unk26 = data->gameData.unk68;
+    lbl_801EED50.unk24 = data->gameData.unk6A;
+    lbl_801EED50.unk28 = data->gameData.unk80;
 
-    lbl_802F1C04.unk2 = data->unk5844.unk88;
-    lbl_802F1C04.unk0 = data->unk5844.unk8A;
-    lbl_802F1C04.unk4 = data->unk5844.unk8C;
+    lbl_802F1C04.unk2 = data->gameData.unk88;
+    lbl_802F1C04.unk0 = data->gameData.unk8A;
+    lbl_802F1C04.unk4 = data->gameData.unk8C;
 
     for (i = 0; i < 6; i++)
-        lbl_801EED88.unk1[i] = data->unk5844.unkA4[i];
-    lbl_801EED88.unk0 = data->unk5844.unkAA;
-    lbl_801EED88.unkC = data->unk5844.unkAB;
-    lbl_801EED88.unk8 = data->unk5844.unkA0;
+        lbl_801EED88.unk1[i] = data->gameData.unkA4[i];
+    lbl_801EED88.unk0 = data->gameData.unkAA;
+    lbl_801EED88.unkC = data->gameData.unkAB;
+    lbl_801EED88.unk8 = data->gameData.unkA0;
 
-    lbl_801EED98.unk48 = data->unk5844.unk2AC;
-    lbl_801EED98.unk4E = data->unk5844.unk2B0;
-    lbl_801EED98.unk4F = data->unk5844.unk2B1;
-    lbl_801EED98.unk50 = data->unk5844.unk2B2;
-    lbl_801EED98.unk4C = data->unk5844.unk2B3;
-    lbl_801EED98.unk4D = data->unk5844.unk2B4;
+    lbl_801EED98.unk48 = data->gameData.unk2AC;
+    lbl_801EED98.unk4E = data->gameData.unk2B0;
+    lbl_801EED98.unk4F = data->gameData.unk2B1;
+    lbl_801EED98.unk50 = data->gameData.unk2B2;
+    lbl_801EED98.unk4C = data->gameData.unk2B3;
+    lbl_801EED98.unk4D = data->gameData.unk2B4;
 
-    lbl_802F1BFC.unk0 = data->unk5844.unkAE;
-    lbl_802F1BFC.unk4 = data->unk5844.unk2B8;
+    lbl_802F1BFC.unk0 = data->gameData.unkAE;
+    lbl_802F1BFC.unk4 = data->gameData.unk2B8;
 
-    lbl_802F1BF4.unk0 = data->unk5844.unk2B5;
-    lbl_802F1BF4.unk1 = data->unk5844.unk2B6;
-    lbl_802F1BF4.unk4 = data->unk5844.unk2B7;
-    lbl_802F1BF0 = data->unk5844.unkAF;
-    lbl_802F1BE8.unk0 = data->unk5844.unk2BC;
-    lbl_802F1BE8.unk4 = data->unk5844.unk2BD;
+    lbl_802F1BF4.unk0 = data->gameData.unk2B5;
+    lbl_802F1BF4.unk1 = data->gameData.unk2B6;
+    lbl_802F1BF4.unk4 = data->gameData.unk2B7;
+    lbl_802F1BF0 = data->gameData.unkAF;
+    lbl_802F1BE8.unk0 = data->gameData.unk2BC;
+    lbl_802F1BE8.unk4 = data->gameData.unk2BD;
 }

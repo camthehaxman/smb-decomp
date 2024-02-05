@@ -327,14 +327,6 @@ struct Ape
     s16 unkC2;
 };  // size = 0xC4
 
-struct OtherKeyframe
-{
-    s32 unk0;
-    float unk4;
-    float unk8;
-    float unkC;
-};  // size=0x10
-
 struct AnimGroupInfo
 {
     /*0x00*/ Point3d pos;
@@ -376,7 +368,7 @@ struct Struct80092B98
     void *unk3C;
 };  // size = 0x40
 
-struct Struct8009492C
+struct PolyShadowUnit
 {
     Vec unk0;
     S16Vec unkC;
@@ -728,7 +720,7 @@ struct Struct802C6220
     struct ScoreRecord records[3*5];
 };
 
-struct MemcardGameData_sub
+struct MemcardGameData
 {
     /*0x5844*/ u8 filler0[0x44-0x00];
     /*0x5888*/ u8 unk44;
@@ -770,10 +762,7 @@ struct MemcardGameData_sub
     /*0x58CC*/ s16 unk88;
     /*0x58CE*/ s16 unk8A;
     /*0x58D0*/ u32 unk8C;
-    /*0x58D4*/ u32 unk90;
-    /*0x58D8*/ u32 unk94;
-    /*0x58DC*/ u32 unk98;
-    /*0x58E0*/ u32 unk9C;
+    /*0x58D4*/ u32 visitedFloors[4];
     /*0x58E4*/ u32 unkA0;
     /*0x58E8*/ u8 unkA4[6];
     /*0x58EE*/ u8 unkAA;
@@ -797,20 +786,20 @@ struct MemcardGameData_sub
     /*0x5B01*/ u8 unk2BD;
     /*0x5B02*/ u8 filler2BE[1];
     /*0x5B03*/ u8 unk2BF;
-    /*0x5B04*/ u32 unk2C0;
-    /*0x5B08*/ u32 unk2C4;
+    /*0x5B04*/ u32 totalPlayPoints;
+    /*0x5B08*/ u32 recordPlayPoints;
     /*0x5B0C*/ struct Struct802C6220 unk2C8;
     /*0x5C00*/ u32 unk3BC;
 };  // size = 0x3C0
 
-struct MemcardGameData
+struct MemcardContents
 {
     /*0x0000*/ u16 crc;
     /*0x0002*/ u16 version;
     /*0x0004*/ u8 bannerAndIcon[0x5800];
     /*0x5804*/ char comment[32];
     /*0x5824*/ char title[32];
-    /*0x5844*/ struct MemcardGameData_sub unk5844;
+    /*0x5844*/ struct MemcardGameData gameData;
 };
 
 struct Keyframe
@@ -950,18 +939,6 @@ enum
     PAUSEMENU_CONT_RETRY_VIEW_HOW_SELECT_EXIT,
     PAUSEMENU_CONT_RETRY_HOW_EXIT,
     PAUSEMENU_CONT_GUIDE_HOW_EXIT,
-};
-
-struct Thread
-{
-	void (*callback)(struct Ape *, int);
-	struct Ape *ape;
-	struct Thread *next;
-	struct Thread *prev;
-	u32 unk10;
-	u32 unk14;
-	u32 unk18;
-	u32 unk1C;
 };
 
 struct Stobj;

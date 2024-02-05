@@ -26,6 +26,7 @@
 #include "sound.h"
 #include "stage.h"
 #include "stcoli.h"
+#include "thread.h"
 #include "vibration.h"
 #include "world.h"
 
@@ -1003,9 +1004,9 @@ void func_80038528(struct Ball *ball)
     float f31;
     float f1;
 
-    func_8003D3C4(ball);
+    ball_set_highspeed_efc(ball);
     if (ball->flags & BALL_FLAG_02)
-        func_8003C550(ball);
+        ball_set_strongcoli_efc(ball);
 
     mathutil_mtxA_from_mtx(ball->unk30);
     ball->unkC4 = mathutil_vec_len(&ball->unkB8);
@@ -1046,11 +1047,11 @@ void func_80038528(struct Ball *ball)
     else
         ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
 
-    func_8003CB88(ball);
-    func_8003CCB0();
+    ball_ape_yang(ball);
+    ball_effect();
     if (modeCtrl.gameType != GAMETYPE_MINI_RACE)
         animate_ball_size_change(ball);
-    func_8003CDC0(ball);
+    ball_sound(ball);
     if (ball->unk14E > 0)
         ball->unk14E--;
 }
@@ -1299,7 +1300,7 @@ void u_ball_shadow_something_1(void)
 
 void u_ball_shadow_something_2(void)
 {
-    struct Struct8009492C sp30;
+    struct PolyShadowUnit sp30;
     struct RaycastHit hit;
     Vec sp8;
     struct Ball *ball;
@@ -1338,7 +1339,7 @@ void u_ball_shadow_something_2(void)
         mathutil_vec_to_euler(&hit.normal, &sp30.unkC);
         sp30.unkC.z = ball->rotZ;
         sp30.unk0 = hit.pos;
-        func_8009492C(&sp30);
+        set_poly_shadow(&sp30);
     }
 }
 
@@ -1528,7 +1529,7 @@ void u_ball_init_1(struct Ball *ball)
 
     ball->bananas = 0;
     ball->unk134 = 0;
-    ball->unk7C = 0;
+    ball->score = 0;
     ball->ape = backup.ape;
     ball->playerId = backup.playerId;
     ball->winStreak = 0;
@@ -1543,7 +1544,7 @@ void u_ball_init_2(struct Ball *ball)
     {
     case GAMETYPE_MAIN_PRACTICE:
         ball->bananas = 0;
-        ball->unk7C = 0;
+        ball->score = 0;
         break;
     case GAMETYPE_MAIN_COMPETITION:
         if (ball->flags & BALL_FLAG_23)
@@ -1559,7 +1560,7 @@ void u_ball_init_2(struct Ball *ball)
     backup.lives = ball->lives;
     backup.bananas = ball->bananas;
     backup.unk134 = ball->unk134;
-    backup.unk7C = ball->unk7C;
+    backup.score = ball->score;
     backup.ape = ball->ape;
     backup.winStreak = ball->winStreak;
     backup.unk128 = ball->unk128;
@@ -1570,7 +1571,7 @@ void u_ball_init_2(struct Ball *ball)
     ball->lives = backup.lives;
     ball->bananas = backup.bananas;
     ball->unk134 = backup.unk134;
-    ball->unk7C = backup.unk7C;
+    ball->score = backup.score;
     ball->ape = backup.ape;
     ball->winStreak = backup.winStreak;
     ball->unk128 = backup.unk128;
@@ -2655,7 +2656,7 @@ void ball_set_type(struct Ball *ball, int b)
         ball->colorId = 3;
 }
 
-void func_8003C550(struct Ball *ball)
+void ball_set_strongcoli_efc(struct Ball *ball)
 {
     struct Effect effect;
     Vec sp24;
@@ -2786,7 +2787,7 @@ void func_8003CB3C(struct Ball *ball, struct PhysicsBall *physBall)
     ball->vel.z = physBall->vel.z;
 }
 
-void func_8003CB88(struct Ball *ball)
+void ball_ape_yang(struct Ball *ball)
 {
     Vec spC;
     int r31;
@@ -2817,7 +2818,7 @@ void func_8003CB88(struct Ball *ball)
     ball->unk92 = r31 + var * f3;
 }
 
-void func_8003CCB0(void)
+void ball_effect(void)
 {
     struct Ball *ball = currentBall;
     int bvar;
@@ -2866,7 +2867,7 @@ static inline void func_8003CDC0_sub(struct Ball *ball)
         u_play_sound_0(lbl_801179D4[(rand() >> 12) & 7]);
 }
 
-void func_8003CDC0(struct Ball *ball)
+void ball_sound(struct Ball *ball)
 {
     if (advDemoInfo.flags & (1 << 8))
         return;
@@ -2943,7 +2944,7 @@ void func_8003CDC0(struct Ball *ball)
             r28 = MIN(f4 * 127.0f * 10.0f, 80.0f) * 0.85f;
         }
         if ((globalAnimTimer & 7) == 0 || r31 == 0)
-            func_8002CA5C(ball->playerId, r31, r28);
+            SoundIcsReq(ball->playerId, r31, r28);
     }
     else if (modeCtrl.gameType != GAMETYPE_MINI_BOWLING)
     {
@@ -2962,11 +2963,11 @@ void func_8003CDC0(struct Ball *ball)
             r5 = 0;
         }
         if ((globalAnimTimer & 7) == 0 || r4 == 0)
-            func_8002CA5C(ball->playerId, r4, r5);
+            SoundIcsReq(ball->playerId, r4, r5);
     }
 }
 
-void func_8003D3C4(struct Ball *ball)
+void ball_set_highspeed_efc(struct Ball *ball)
 {
     float f26;
 

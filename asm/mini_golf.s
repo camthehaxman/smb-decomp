@@ -322,7 +322,7 @@ lbl_00000464:
 /* 000004F8 5463103A */ slwi r3, r3, 2
 /* 000004FC 7C630010 */ subfc r3, r3, r0
 /* 00000500 4BFFFCD1 */ bl setup_camera_viewport
-/* 00000504 4BFFFCCD */ bl func_80022F14
+/* 00000504 4BFFFCCD */ bl info_init_first
 /* 00000508 38600100 */ li r3, 0x100
 /* 0000050C 38800000 */ li r4, 0
 /* 00000510 38A0003C */ li r5, 0x3c
@@ -449,7 +449,7 @@ lbl_00000688:
 /* 000006E4 7C630214 */ add r3, r3, r0
 /* 000006E8 8863002E */ lbz r3, 0x2e(r3)
 /* 000006EC 7C630774 */ extsb r3, r3
-/* 000006F0 4BFFFAE1 */ bl func_8002CA5C
+/* 000006F0 4BFFFAE1 */ bl SoundIcsReq
 /* 000006F4 48004830 */ b lbl_00004F24
 lbl_000006F8:
 /* 000006F8 801D00CC */ lwz r0, 0xcc(r29)

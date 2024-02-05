@@ -45,14 +45,14 @@ struct Struct801F3A58
 };
 
 extern s8 lbl_802F1CB0[8];
-extern s32 lbl_802F1CAC;
-extern s32 lbl_802F1CA8;
+extern s32 practiceBestScore;
+extern s32 practiceBestFlag;
 
 extern struct Struct801F3A58 infoWork;
 extern u32 lbl_801F3A8C[4];
 extern struct Struct801F3A58 playerInfos[4];
 
-void func_80022F14(void);
+void info_init_first(void);
 void ev_info_init(void);
 void ev_info_main(void);
 void ev_info_dest(void);

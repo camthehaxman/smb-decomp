@@ -26,6 +26,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "textbox.h"
+#include "thread.h"
 
 #include "../data/common.nlobj.h"
 #include "../data/common.gma.h"

@@ -28,6 +28,7 @@
 #include "recplay.h"
 #include "rend_efc.h"
 #include "sound.h"
+#include "spline.h"
 #include "sprite.h"
 #include "stage.h"
 #include "textbox.h"
@@ -186,7 +187,7 @@ void update_av_logo_pos_and_sound(void)
         r29 = CLAMP(advLogoInfo.pos.x * 16.0, -64.0, 63.0);
         r28 = CLAMP((280.0 - advLogoInfo.pos.z) * 0.1, -64.0, 63.0);
         u_somePlayerId = 0;
-        func_8002CA5C(0, r4, r5);
+        SoundIcsReq(0, r4, r5);
         u_somePlayerId = 0;
         SoundPan(0x51, r29, r28);
         u_somePlayerId = 0;
@@ -709,7 +710,7 @@ void submode_adv_demo_main_func(void)
     modeCtrl.submodeTimer--;
 }
 
-struct OtherKeyframe lbl_80174254[] =
+struct Spline lbl_80174254[] =
 {
     {    0, -15.51,   0,   0 },
     {  433, -15.51,   0,   0 },
@@ -725,7 +726,7 @@ struct OtherKeyframe lbl_80174254[] =
     { 2902,    0.5,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174314[] =
+struct Spline lbl_80174314[] =
 {
     {    0, -58.591,   0,   0 },
     {  433, -58.591,   0,   0 },
@@ -743,7 +744,7 @@ struct OtherKeyframe lbl_80174314[] =
     { 2902,       0,   0,   0 },
 };
 
-struct OtherKeyframe lbl_801743F4[] =
+struct Spline lbl_801743F4[] =
 {
     {    0, -43.288,   0,   0 },
     {  433, -43.288,   0,   0 },
@@ -759,7 +760,7 @@ struct OtherKeyframe lbl_801743F4[] =
     { 2902,       0,   0,   0 },
 };
 
-struct OtherKeyframe lbl_801744B4[] =
+struct Spline lbl_801744B4[] =
 {
     {    0,   61440,   0,   0 },
     {  433,   61440,   0,   0 },
@@ -775,7 +776,7 @@ struct OtherKeyframe lbl_801744B4[] =
     { 2902,   32768,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174574[] =
+struct Spline lbl_80174574[] =
 {
     {    0,   -14.11,   0,   0 },
     {  433,   -14.11,   0,   0 },
@@ -794,7 +795,7 @@ struct OtherKeyframe lbl_80174574[] =
     { 2902,     -0.5,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174664[] =
+struct Spline lbl_80174664[] =
 {
     {    0,  -58.591,   0,   0 },
     {  433,  -58.591,   0,   0 },
@@ -812,7 +813,7 @@ struct OtherKeyframe lbl_80174664[] =
     { 2902,        0,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174744[] =
+struct Spline lbl_80174744[] =
 {
     {    0,  -41.888,   0,   0 },
     {  433,  -41.888,   0,   0 },
@@ -830,7 +831,7 @@ struct OtherKeyframe lbl_80174744[] =
     { 2902,     -0.2,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174824[] =
+struct Spline lbl_80174824[] =
 {
     {    0,     4096,   0,   0 },
     {  433,     4096,   0,   0 },
@@ -848,7 +849,7 @@ struct OtherKeyframe lbl_80174824[] =
     { 2902,    32768,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174904[] =
+struct Spline lbl_80174904[] =
 {
     {    0,   -15.06,   0,   0 },
     {  433,   -15.06,   0,   0 },
@@ -864,7 +865,7 @@ struct OtherKeyframe lbl_80174904[] =
     { 2902,     -0.1,   0,   0 },
 };
 
-struct OtherKeyframe lbl_801749C4[] =
+struct Spline lbl_801749C4[] =
 {
     {    0,  -58.591,   0,   0 },
     {  433,  -58.591,   0,   0 },
@@ -882,7 +883,7 @@ struct OtherKeyframe lbl_801749C4[] =
     { 2902,     -0.1,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174AA4[] =
+struct Spline lbl_80174AA4[] =
 {
     {    0,  -41.688,   0,   0 },
     {  433,  -41.688,   0,   0 },
@@ -898,7 +899,7 @@ struct OtherKeyframe lbl_80174AA4[] =
     { 2902,      0.1,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174B64[] =
+struct Spline lbl_80174B64[] =
 {
     {    0,    61440,   0,   0 },
     {  433,    61440,   0,   0 },
@@ -914,7 +915,7 @@ struct OtherKeyframe lbl_80174B64[] =
     { 2902,    32768,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174C24[] =
+struct Spline lbl_80174C24[] =
 {
     { 1306,        0,   0,   0 },
     { 1953,        0,   0,   0 },
@@ -924,7 +925,7 @@ struct OtherKeyframe lbl_80174C24[] =
     { 2902,      0.1,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174C84[] =
+struct Spline lbl_80174C84[] =
 {
     { 1306,        0,   0,   0 },
     { 1953,        0,   0,   0 },
@@ -937,7 +938,7 @@ struct OtherKeyframe lbl_80174C84[] =
     { 2902,      0.1,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174D14[] =
+struct Spline lbl_80174D14[] =
 {
     { 1306,        0,   0,   0 },
     { 1953,        0,   0,   0 },
@@ -947,7 +948,7 @@ struct OtherKeyframe lbl_80174D14[] =
     { 2902,     -0.3,   0,   0 },
 };
 
-struct OtherKeyframe lbl_80174D74[] =
+struct Spline lbl_80174D74[] =
 {
     { 1306,    32768,   0,   0 },
     { 1953,    32768,   0,   0 },
@@ -958,7 +959,7 @@ struct OtherKeyframe lbl_80174D74[] =
 };
 
 // x positions?
-struct OtherKeyframe *lbl_80174DD4[] =
+struct Spline *lbl_80174DD4[] =
 {
     lbl_80174254,
     lbl_80174574,
@@ -967,7 +968,7 @@ struct OtherKeyframe *lbl_80174DD4[] =
 };
 
 // y positions?
-struct OtherKeyframe *lbl_80174DE4[] =
+struct Spline *lbl_80174DE4[] =
 {
     lbl_80174314,
     lbl_80174664,
@@ -976,7 +977,7 @@ struct OtherKeyframe *lbl_80174DE4[] =
 };
 
 // z positions?
-struct OtherKeyframe *lbl_80174DF4[] =
+struct Spline *lbl_80174DF4[] =
 {
     lbl_801743F4,
     lbl_80174744,
@@ -985,7 +986,7 @@ struct OtherKeyframe *lbl_80174DF4[] =
 };
 
 // unknown
-struct OtherKeyframe *lbl_80174E04[] =
+struct Spline *lbl_80174E04[] =
 {
     lbl_801744B4,
     lbl_80174824,
@@ -1064,10 +1065,10 @@ void lbl_8000F790(struct Ape *ape, int b)
     {
         ape->flags &= ~0x13;
         ape->flags |= 1;
-        ape->unk30.x = u_interpolate_other_keyframes(f31, lbl_80174DD4[ape->charaId]);
-        ape->unk30.y = u_interpolate_other_keyframes(f31, lbl_80174DE4[ape->charaId]);
-        ape->unk30.z = u_interpolate_other_keyframes(f31, lbl_80174DF4[ape->charaId]);
-        r30 = u_interpolate_other_keyframes(f31, lbl_80174E04[ape->charaId]);
+        ape->unk30.x = calc_spline(f31, lbl_80174DD4[ape->charaId]);
+        ape->unk30.y = calc_spline(f31, lbl_80174DE4[ape->charaId]);
+        ape->unk30.z = calc_spline(f31, lbl_80174DF4[ape->charaId]);
+        r30 = calc_spline(f31, lbl_80174E04[ape->charaId]);
         if (ape->charaId == lbl_802F1EB4)
         {
             ape->unk30.x += lbl_802F1ECC * 0.1;

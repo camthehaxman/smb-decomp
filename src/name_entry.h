@@ -29,7 +29,7 @@ void stobj_nameent_btn_draw(struct Stobj *);
 void stobj_nameent_btn_coli(struct Stobj *, struct PhysicsBall *);
 void stobj_nameent_btn_destroy(struct Stobj *);
 void stobj_nameent_btn_debug(struct Stobj *);
-void func_800AFC1C(struct MemcardGameData *);
-void func_800AFC4C(struct MemcardGameData *);
+void func_800AFC1C(struct MemcardContents *);
+void func_800AFC4C(struct MemcardContents *);
 
 #endif

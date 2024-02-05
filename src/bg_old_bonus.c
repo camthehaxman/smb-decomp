@@ -11,6 +11,7 @@
 #include "camera.h"
 #include "effect.h"
 #include "mathutil.h"
+#include "mt_effect.h"
 #include "nl2ngc.h"
 
 void bg_old_bonus_init(void)
@@ -19,7 +20,7 @@ void bg_old_bonus_init(void)
     struct NlModel **modelIter;
     int len;
 
-    u_set_model_mesh_unk_flags(NLOBJ_MODEL(g_bgNlObj, 1), 0xFBFFFFFF, 0x4000000);
+    MTEfcChangeAttributeITI(NLOBJ_MODEL(g_bgNlObj, 1), 0xFBFFFFFF, 0x4000000);
     backgroundInfo.unk80 = NLOBJ_MODEL(g_bgNlObj, 39);
     backgroundInfo.unk84 = 1.0f;
     mathutil_mtxA_from_identity();

@@ -71,7 +71,7 @@ void submode_sel_main_func(void);
 void func_800125A4(void);
 
 void clip_init_detail(Vec *, S16Vec *, float, float, float, float);
-// ? func_80020DB4();
+// ? clip_z();
 BOOL test_sphere_in_frustum(Point3d *p, float radius);
 BOOL test_scaled_sphere_in_frustum(Point3d *p, float radius, float scale);
 
@@ -246,17 +246,6 @@ void u_init_ape_materials(int, int, struct GMAModel *, struct GMAModel *);
 void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused);
 */
 
-// code_2.c
-float u_interpolate_other_keyframes(float, struct OtherKeyframe *);
-void thread_init(struct Thread *arg0, int arg1);
-void thread_loop(u32 arg0);
-int thread_unknown(void (*)(struct Ape *, int), struct Ape *, int);
-void thread_exit(void);
-void thread_kill(int);
-void u_set_model_mesh_flags(struct NlModel *arg0, u32 arg1, u32 arg2);
-void u_set_model_mesh_unk_flags(struct NlModel *arg0, u32 arg1, u32 arg2);
-void u_set_model_mesh_texflags(struct NlModel *arg0, u32 arg1, u32 arg2);
-
 int lzs_decompress(u8 *, void *);
 // ? func_8008D6BC();
 // ? set_tev_material_ambient_colors();
@@ -373,7 +362,7 @@ void *func_80094870(void);
 void func_800948D0(struct Struct80094870 *);
 void func_800948F4(void);
 void func_80094914(void);
-int func_8009492C(struct Struct8009492C *);
+int set_poly_shadow(struct PolyShadowUnit *);
 void func_80094A34(void);
 
 void submode_mini_commend_init_func(void);

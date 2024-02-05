@@ -15,7 +15,7 @@ bg_old_extramaster_init:
 /* 80057ABC 000539DC  80 AD 99 1C */	lwz r5, g_bgNlObj@sda21(r13)
 /* 80057AC0 000539E0  80 65 00 08 */	lwz r3, 8(r5)
 /* 80057AC4 000539E4  3C A0 04 00 */	lis r5, 0x400
-/* 80057AC8 000539E8  48 03 58 A5 */	bl u_set_model_mesh_unk_flags
+/* 80057AC8 000539E8  48 03 58 A5 */	bl MTEfcChangeAttributeITI
 /* 80057ACC 000539EC  80 8D 99 1C */	lwz r4, g_bgNlObj@sda21(r13)
 /* 80057AD0 000539F0  3C 60 80 1C */	lis r3, backgroundInfo@ha
 /* 80057AD4 000539F4  3B A3 91 78 */	addi r29, r3, backgroundInfo@l

@@ -1356,7 +1356,7 @@ static void get_game_results(struct GameResultInfo *out)
     result.unk24 = 2500 - result.unk8;
     result.unk28 = (result.unk14 != 0 && result.lockedMinigames == 0);
     result.unk2C = !(lbl_802F22C8 & 1);
-    result.unk30 = g_maxPlayPointRecord;
+    result.unk30 = g_recordPlayPoints;
     result.unk34 = playPointYieldPerDifficulty[modeCtrl.difficulty];
     *out = result;
 }
