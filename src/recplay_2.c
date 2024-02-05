@@ -242,7 +242,7 @@ void func_8004B5AC(void)
     if (lbl_80250B70.unk0 == 1)
     {
         s_replayData.header.flags |= REPLAY_FLAG_FALLOUT;
-        s_replayData.header.unk10 = ballInfo[modeCtrl.currPlayer].unk7C - lbl_802F1F80;
+        s_replayData.header.unk10 = ballInfo[modeCtrl.currPlayer].score - lbl_802F1F80;
         s_replayData.unk1C = infoWork.timerCurr;
     }
 }
@@ -252,13 +252,13 @@ void func_8004B60C(void)
     if (lbl_80250B70.unk0 == 1)
     {
         s_replayData.header.flags |= REPLAY_FLAG_TIME_OVER;
-        s_replayData.header.unk10 = ballInfo[modeCtrl.currPlayer].unk7C - lbl_802F1F80;
+        s_replayData.header.unk10 = ballInfo[modeCtrl.currPlayer].score - lbl_802F1F80;
     }
 }
 
 void func_8004B65C(void)
 {
-    s_replayData.header.unk10 = ballInfo[modeCtrl.currPlayer].unk7C - lbl_802F1F80;
+    s_replayData.header.unk10 = ballInfo[modeCtrl.currPlayer].score - lbl_802F1F80;
 }
 
 void func_8004B694(void)

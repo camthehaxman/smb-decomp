@@ -95,7 +95,7 @@ struct MemcardInfo
     u8 unused64[0xC];
 } memcardInfo;
 u8 cardWorkArea[0xA100];
-struct MemcardGameData_sub lbl_802C4480;
+struct MemcardGameData lbl_802C4480;
 char strFmtBufferLine1[64];
 char strFmtBufferLine2[64];
 char strFmtBufferLine3[64];
@@ -151,7 +151,7 @@ s8 lbl_802F21B2;
 u8 lbl_802F21B1;
 
 u8 memcardMode;
-struct MemcardGameData *memcardGameData;
+struct MemcardContents *memcardContents;
 u8 lbl_802F21A8;
 
 #define BLOCK_SIZE 0x2000
@@ -705,23 +705,23 @@ void init_gamedata_file(void)
     void *buffer;
 
     // set banner and icon
-    buffer = OSAlloc(sizeof(memcardGameData->bannerAndIcon));
+    buffer = OSAlloc(sizeof(memcardContents->bannerAndIcon));
     if (buffer == NULL)
         OSPanic("memcard.c", 927, "cannot OSAlloc");
     if (DVDOpen("banner_and_icon.bin", &file) == 0)
         OSPanic("memcard.c", 931, "cannot open banner_and_icon.bin");
-    if (u_read_dvd_file(&file, buffer, sizeof(memcardGameData->bannerAndIcon), 0) == 0)
+    if (u_read_dvd_file(&file, buffer, sizeof(memcardContents->bannerAndIcon), 0) == 0)
         OSPanic("memcard.c", 935, "cannot read banner_and_icon.bin");
-    memcpy(memcardGameData->bannerAndIcon, buffer, sizeof(memcardGameData->bannerAndIcon));
+    memcpy(memcardContents->bannerAndIcon, buffer, sizeof(memcardContents->bannerAndIcon));
     OSFree(buffer);
     DVDClose(&file);
 
     // set comment
-    cardStat.commentAddr = (u32)memcardGameData->comment - (u32)memcardGameData;
-    strcpy(memcardGameData->comment, "Super Monkey Ball");
+    cardStat.commentAddr = (u32)memcardContents->comment - (u32)memcardContents;
+    strcpy(memcardContents->comment, "Super Monkey Ball");
     OSTicksToCalendarTime(memcardInfo.time, &calendarTime);
     sprintf(
-        memcardGameData->title,
+        memcardContents->title,
         "GameData%02d-%02d-%02d %02d:%02d",
         calendarTime.mon + 1,
         calendarTime.mday,
@@ -729,7 +729,7 @@ void init_gamedata_file(void)
         calendarTime.hour,
         calendarTime.min);
 
-    cardStat.iconAddr = (u32)memcardGameData->bannerAndIcon - (u32)memcardGameData;
+    cardStat.iconAddr = (u32)memcardContents->bannerAndIcon - (u32)memcardContents;
     cardStat.bannerFormat = (cardStat.bannerFormat & ~0x3) | 2;
 
     // These loops match except for stack
@@ -1829,8 +1829,8 @@ void check_read_memcard_file_result(void)
             memcardInfo.state = 0x13;
         else
         {
-            u8 *r4 = (u8 *)memcardGameData + 2;
-            if (memcardGameData->crc != mathutil_calc_crc16(0x5C04 - (r4 - (u8 *)memcardGameData), r4))
+            u8 *r4 = (u8 *)memcardContents + 2;
+            if (memcardContents->crc != mathutil_calc_crc16(0x5C04 - (r4 - (u8 *)memcardContents), r4))
             {
                 memcardInfo.unk42 = (memcardInfo.statusFlags & (1 << 6)) ? 0xB4 : 0;
                 memcardInfo.statusFlags |= MC_STATUS_ERROR;
@@ -1840,7 +1840,7 @@ void check_read_memcard_file_result(void)
             }
             else
             {
-                if (memcardGameData->version != 0x16)
+                if (memcardContents->version != 0x16)
                 {
                     memcardInfo.unk42 = (memcardInfo.statusFlags & (1 << 6)) ? 0xB4 : 0;
                     memcardInfo.statusFlags |= MC_STATUS_ERROR;
@@ -2592,9 +2592,9 @@ void load_sequence(void)
         probe_memcard();
         break;
     case MC_STATE_MOUNT:
-        if ((memcardGameData = OSAlloc(memcardInfo.fileSize)) == NULL)
+        if ((memcardContents = OSAlloc(memcardInfo.fileSize)) == NULL)
             OSPanic("memcard.c", 3062, "cannot OSAlloc");
-        memset(memcardGameData, 0, memcardInfo.fileSize);
+        memset(memcardContents, 0, memcardInfo.fileSize);
         memcardInfo.statusFlags |= (1 << 17);
         mount_memcard();
         break;
@@ -2627,7 +2627,7 @@ void load_sequence(void)
         check_card_free_space();
         break;
     case 0xF:
-        read_memcard_file(memcardGameData);
+        read_memcard_file(memcardContents);
         break;
     case 0x10:
         check_read_memcard_file_result();
@@ -2665,9 +2665,9 @@ void save_sequence(void)
         probe_memcard();
         break;
     case MC_STATE_MOUNT:
-        if ((memcardGameData = OSAlloc(memcardInfo.fileSize)) == NULL)
+        if ((memcardContents = OSAlloc(memcardInfo.fileSize)) == NULL)
             OSPanic("memcard.c", 3178, "cannot OSAlloc");
-        memset(memcardGameData, 0, memcardInfo.fileSize);
+        memset(memcardContents, 0, memcardInfo.fileSize);
         mount_memcard();
         break;
     case MC_STATE_CHECK_MOUNT_RESULT:
@@ -2795,10 +2795,10 @@ void save_sequence(void)
     case 0x11:
         init_gamedata_file();
         func_800A4E70();
-        memcardGameData->version = 0x16;
-        r4 = (u8 *)memcardGameData + 2;
-        memcardGameData->crc = mathutil_calc_crc16(0x5C04 - (r4 - (u8 *)memcardGameData), r4);
-        write_memcard_file(memcardGameData);
+        memcardContents->version = 0x16;
+        r4 = (u8 *)memcardContents + 2;
+        memcardContents->crc = mathutil_calc_crc16(0x5C04 - (r4 - (u8 *)memcardContents), r4);
+        write_memcard_file(memcardContents);
         break;
     case 0x12:
         check_write_memcard_file_result();
@@ -3122,12 +3122,12 @@ void ev_memcard_init(void)
 
     if (memcardMode == MC_MODE_LOAD_GAMEDATA_2)
     {
-        if ((memcardGameData = OSAlloc(sizeof(*memcardGameData))) == NULL)
+        if ((memcardContents = OSAlloc(sizeof(*memcardContents))) == NULL)
             OSPanic("memcard.c", 3835, "cannot OSAlloc");
         func_800A4E70();
-        memcpy(&lbl_802C4480, &memcardGameData->unk5844, sizeof(lbl_802C4480));
-        OSFree(memcardGameData);
-        memcardGameData = NULL;
+        memcpy(&lbl_802C4480, &memcardContents->gameData, sizeof(lbl_802C4480));
+        OSFree(memcardContents);
+        memcardContents = NULL;
     }
     if (!(memcardInfo.statusFlags & (1 << 6)))
         g_currPlayerButtons[2] = 0;
@@ -3231,16 +3231,16 @@ void ev_memcard_dest(void)
         }
     }
 
-    if (memcardGameData != NULL
+    if (memcardContents != NULL
      && !(memcardInfo.statusFlags & (MC_STATUS_SAVING | (1 << 8) | MC_STATUS_REPLAY_FILE | (1 << 14)))
-     && memcardGameData->version == 0x16)
+     && memcardContents->version == 0x16)
         func_800A4F04();
     memcardInfo.state = 0;
     memcardInfo.statusFlags &= 3;
-    if (memcardGameData != NULL)
+    if (memcardContents != NULL)
     {
-        OSFree(memcardGameData);
-        memcardGameData = NULL;
+        OSFree(memcardContents);
+        memcardContents = NULL;
     }
     if (memcardReplayData != NULL)
     {
@@ -3561,12 +3561,12 @@ error:
 
 void func_800A4DF0(void)
 {
-    if ((memcardGameData = OSAlloc(sizeof(*memcardGameData))) == NULL)
+    if ((memcardContents = OSAlloc(sizeof(*memcardContents))) == NULL)
         OSPanic("memcard.c", 4462, "cannot OSAlloc");
-    memcpy(&memcardGameData->unk5844, &lbl_802C4480, sizeof(memcardGameData->unk5844));
+    memcpy(&memcardContents->gameData, &lbl_802C4480, sizeof(memcardContents->gameData));
     func_800A4F04();
-    OSFree(memcardGameData);
-    memcardGameData = NULL;
+    OSFree(memcardContents);
+    memcardContents = NULL;
 }
 
 extern u8 lbl_801D5A20[];
@@ -3574,28 +3574,28 @@ extern u32 lbl_802F22C8;
 
 void func_800A4E70(void)
 {
-    memcardGameData->unk5844.unk4E = lbl_802F21A8;
-    func_80025E5C(memcardGameData);
-    u_store_gamedata(memcardGameData);
-    func_8002DB10(memcardGameData);
-    func_80067FD0(memcardGameData);
-    memcardGameData->unk5844.unkAC = modeCtrl.splitscreenMode;
-    memcpy(memcardGameData->unk5844.unkB0, lbl_801D5A20, sizeof(memcardGameData->unk5844.unkB0));
-    memcardGameData->unk5844.unkAD = vibration_get_cont_enable_mask();
-    func_800AFC1C(memcardGameData);
-    memcardGameData->unk5844.unk3BC = lbl_802F22C8;
+    memcardContents->gameData.unk4E = lbl_802F21A8;
+    func_80025E5C(memcardContents);
+    u_store_gamedata(memcardContents);
+    func_8002DB10(memcardContents);
+    save_course_completion_data(memcardContents);
+    memcardContents->gameData.unkAC = modeCtrl.splitscreenMode;
+    memcpy(memcardContents->gameData.unkB0, lbl_801D5A20, sizeof(memcardContents->gameData.unkB0));
+    memcardContents->gameData.unkAD = vibration_get_cont_enable_mask();
+    func_800AFC1C(memcardContents);
+    memcardContents->gameData.unk3BC = lbl_802F22C8;
 }
 
 void func_800A4F04(void)
 {
-    lbl_802F21A8 = memcardGameData->unk5844.unk4E;
-    func_80025E8C(memcardGameData);
-    u_load_gamedata(memcardGameData);
-    func_8002DB24(memcardGameData);
-    func_8006800C(memcardGameData);
-    modeCtrl.splitscreenMode = memcardGameData->unk5844.unkAC;
-    memcpy(lbl_801D5A20, memcardGameData->unk5844.unkB0, sizeof(memcardGameData->unk5844.unkB0));
-    vibration_set_cont_enable_mask(memcardGameData->unk5844.unkAD);
-    func_800AFC4C(memcardGameData);
-    lbl_802F22C8 = memcardGameData->unk5844.unk3BC;
+    lbl_802F21A8 = memcardContents->gameData.unk4E;
+    func_80025E8C(memcardContents);
+    u_load_gamedata(memcardContents);
+    func_8002DB24(memcardContents);
+    load_course_completion_data(memcardContents);
+    modeCtrl.splitscreenMode = memcardContents->gameData.unkAC;
+    memcpy(lbl_801D5A20, memcardContents->gameData.unkB0, sizeof(memcardContents->gameData.unkB0));
+    vibration_set_cont_enable_mask(memcardContents->gameData.unkAD);
+    func_800AFC4C(memcardContents);
+    lbl_802F22C8 = memcardContents->gameData.unk3BC;
 }

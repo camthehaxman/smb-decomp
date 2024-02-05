@@ -3212,7 +3212,7 @@ static struct OtherKeyframe lbl_801B3A04[] =
 };
 
 // SoundIcsReq?
-void func_8002CA5C(u32 arg0, u8 arg1, s8 arg2)
+void SoundIcsReq(u32 arg0, u8 arg1, s8 arg2)
 {
     s8 var_r23;
     s8 var_r22;
@@ -3607,16 +3607,16 @@ void u_change_sound_mode(u32 mode)
 }
 #pragma force_active reset
 
-void func_8002DB10(struct MemcardGameData *arg0)
+void func_8002DB10(struct MemcardContents *mc)
 {
-    arg0->unk5844.unk4C = u_volumeRelated1;
-    arg0->unk5844.unk4D = lbl_802F1DF5;
+    mc->gameData.unk4C = u_volumeRelated1;
+    mc->gameData.unk4D = lbl_802F1DF5;
 }
 
-void func_8002DB24(struct MemcardGameData *arg0)
+void func_8002DB24(struct MemcardContents *mc)
 {
-    u_volumeRelated1 = arg0->unk5844.unk4C;
-    lbl_802F1DF5 = arg0->unk5844.unk4D;
+    u_volumeRelated1 = mc->gameData.unk4C;
+    lbl_802F1DF5 = mc->gameData.unk4D;
 }
 
 void func_8002DB38(void)

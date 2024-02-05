@@ -71,7 +71,7 @@ void submode_sel_main_func(void);
 void func_800125A4(void);
 
 void clip_init_detail(Vec *, S16Vec *, float, float, float, float);
-// ? func_80020DB4();
+// ? clip_z();
 BOOL test_sphere_in_frustum(Point3d *p, float radius);
 BOOL test_scaled_sphere_in_frustum(Point3d *p, float radius, float scale);
 
@@ -373,7 +373,7 @@ void *func_80094870(void);
 void func_800948D0(struct Struct80094870 *);
 void func_800948F4(void);
 void func_80094914(void);
-int func_8009492C(struct Struct8009492C *);
+int set_poly_shadow(struct PolyShadowUnit *);
 void func_80094A34(void);
 
 void submode_mini_commend_init_func(void);

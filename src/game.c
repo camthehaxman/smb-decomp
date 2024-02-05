@@ -71,7 +71,7 @@ void submode_game_first_init_func(void)
     BALL_FOREACH( ball->state = 1; )
     BALL_FOREACH( ball->ape->flags |= (1 << 5); )
     minimap_set_state(MINIMAP_STATE_4);
-    func_80022F14();
+    info_init_first();
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1)
         reset_earned_play_points();
     if (stageSelection.difficulty != 0)
@@ -272,7 +272,7 @@ void submode_game_ready_init_func(void)
             soundId = 0x184;
         u_play_sound_0(soundId);
     }
-    lbl_802F1F80 = ballInfo[modeCtrl.currPlayer].unk7C;
+    lbl_802F1F80 = ballInfo[modeCtrl.currPlayer].score;
     gameSubmodeRequest = SMD_GAME_READY_MAIN;
 }
 
@@ -1574,7 +1574,7 @@ void submode_game_extra_wait_func(void)
     if (--modeCtrl.submodeTimer > 0)
         return;
     infoWork.currFloor = 1;
-    func_800668A0();
+    course_first();
     loadingStageId = infoWork.u_currStageId;
     start_screen_fade(FADE_IN, RGBA(0, 0, 0, 0), 30);
     infoWork.attempts = 1;
@@ -1925,7 +1925,7 @@ u32 lose_life(void)
     infoWork.livesLost++;
     BALL_FOREACH( ball->lives--; )
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1)
-        func_800662D4();
+        reset_curr_floor_streak();
     if (currentBall->lives > 0)
         return TRUE;
     return FALSE;

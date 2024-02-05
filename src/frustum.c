@@ -3,13 +3,13 @@
 #include "global.h"
 #include "mathutil.h"
 
-Vec lbl_801EFC18;
-Vec lbl_801EFC24[4];
-Vec lbl_801EFC54[4];
+static Vec clip;
+static Vec lbl_801EFC24[4];
+static Vec lnormal[4];
 
-FORCE_BSS_ORDER(lbl_801EFC18)
+FORCE_BSS_ORDER(clip)
 FORCE_BSS_ORDER(lbl_801EFC24)
-FORCE_BSS_ORDER(lbl_801EFC54)
+FORCE_BSS_ORDER(lnormal)
 
 double force_sdata2_802F2F50() { return 182.04444885253906; }
 double force_sdata2_802F2F58() { return 0.5; }
@@ -27,29 +27,29 @@ void clip_init_detail(Vec *a, S16Vec *b, float c, float d, float e, float f)
     float f27;
     float sincos[2];
 
-    lbl_801EFC18 = *a;
+    clip = *a;
     if (f == 0.0f)
     {
-        temp = (s16)(c * 182.04444885253906f);
+        temp = DEGREES_TO_S16(c);
         r30 = -temp / 2;
         r29 = temp / 2;
     }
     else
     {
-        f27 = mathutil_tan((s16)((c * 0.5f) * 182.04444885253906f));
+        f27 = mathutil_tan(DEGREES_TO_S16(c * 0.5f));
         r30 = -mathutil_atan(f27 * (1.0 - f));
         r29 = mathutil_atan(f27 * (1.0 + f));
     }
     if (e == 0.0f)
     {
-        temp = mathutil_atan(mathutil_tan((s16)((c * 0.5) * 182.04444885253906)) * d) * 2;
+        temp = mathutil_atan(mathutil_tan(DEGREES_TO_S16(c * 0.5)) * d) * 2;
         r26 = temp / 2;
         r25 = -temp / 2;
     }
     else
     {
         if (f == 0.0f)
-            f28 = d * mathutil_tan((s16)((c * 0.5f) * 182.04444885253906f));
+            f28 = d * mathutil_tan(DEGREES_TO_S16(c * 0.5f));
         else
             f28 = f27 * d;
         r26 = mathutil_atan(f28 * (1.0 + e));
@@ -62,38 +62,38 @@ void clip_init_detail(Vec *a, S16Vec *b, float c, float d, float e, float f)
     mathutil_mtxA_rotate_z(b->z);
 
     mathutil_sin_cos_v(r26 - 0x4000, sincos);
-    lbl_801EFC54[0].x = -sincos[0];
-    lbl_801EFC54[0].y = 0.0f;
-    lbl_801EFC54[0].z = -sincos[1];
-    mathutil_mtxA_tf_vec(&lbl_801EFC54[0], &lbl_801EFC24[0]);
+    lnormal[0].x = -sincos[0];
+    lnormal[0].y = 0.0f;
+    lnormal[0].z = -sincos[1];
+    mathutil_mtxA_tf_vec(&lnormal[0], &lbl_801EFC24[0]);
 
     mathutil_sin_cos_v(r25 + 0x4000, sincos);
-    lbl_801EFC54[1].x = -sincos[0];
-    lbl_801EFC54[1].y = 0.0f;
-    lbl_801EFC54[1].z = -sincos[1];
-    mathutil_mtxA_tf_vec(&lbl_801EFC54[1], &lbl_801EFC24[1]);
+    lnormal[1].x = -sincos[0];
+    lnormal[1].y = 0.0f;
+    lnormal[1].z = -sincos[1];
+    mathutil_mtxA_tf_vec(&lnormal[1], &lbl_801EFC24[1]);
 
     mathutil_sin_cos_v(r30 + 0x4000, sincos);
-    lbl_801EFC54[2].x = 0.0f;
-    lbl_801EFC54[2].y = -sincos[0];
-    lbl_801EFC54[2].z = -sincos[1];
-    mathutil_mtxA_tf_vec(&lbl_801EFC54[2], &lbl_801EFC24[2]);
+    lnormal[2].x = 0.0f;
+    lnormal[2].y = -sincos[0];
+    lnormal[2].z = -sincos[1];
+    mathutil_mtxA_tf_vec(&lnormal[2], &lbl_801EFC24[2]);
 
     mathutil_sin_cos_v(r29 - 0x4000, sincos);
-    lbl_801EFC54[3].x = 0.0f;
-    lbl_801EFC54[3].y = -sincos[0];
-    lbl_801EFC54[3].z = -sincos[1];
-    mathutil_mtxA_tf_vec(&lbl_801EFC54[3], &lbl_801EFC24[3]);
+    lnormal[3].x = 0.0f;
+    lnormal[3].y = -sincos[0];
+    lnormal[3].z = -sincos[1];
+    mathutil_mtxA_tf_vec(&lnormal[3], &lbl_801EFC24[3]);
 }
 
-BOOL func_80020DB4(Vec *a, float b)
+BOOL clip_z(Vec *a, float b)
 {
     Vec v;
     int i;
 
-    v.x = a->x - lbl_801EFC18.x;
-    v.y = a->y - lbl_801EFC18.y;
-    v.z = a->z - lbl_801EFC18.z;
+    v.x = a->x - clip.x;
+    v.y = a->y - clip.y;
+    v.z = a->z - clip.z;
 
     for (i = 0; i < 4; i++)
     {
@@ -118,7 +118,7 @@ BOOL test_sphere_in_frustum(Point3d *p, float radius)
     radius = -radius;
     for (i = 0; i < 4; i++)
     {
-        if (x * lbl_801EFC54[i].x + y * lbl_801EFC54[i].y + z * lbl_801EFC54[i].z < radius)
+        if (x * lnormal[i].x + y * lnormal[i].y + z * lnormal[i].z < radius)
             return FALSE;
     }
     return TRUE;
@@ -140,7 +140,7 @@ BOOL test_scaled_sphere_in_frustum(Point3d *p, float radius, float scale)
     radius = -radius;
     for (i = 0; i < 4; i++)
     {
-        if (x * lbl_801EFC54[i].x + y * lbl_801EFC54[i].y + z * lbl_801EFC54[i].z < radius)
+        if (x * lnormal[i].x + y * lnormal[i].y + z * lnormal[i].z < radius)
             return FALSE;
     }
     return TRUE;

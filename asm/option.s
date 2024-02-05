@@ -7684,8 +7684,8 @@ lbl_00006FB0:
 /* 000071A0 2C030000 */ cmpwi r3, 0
 /* 000071A4 41820108 */ beq lbl_000072AC
 /* 000071A8 C01F0160 */ lfs f0, 0x160(r31)
-/* 000071AC 3C600000 */ lis r3, g_maxPlayPointRecord@ha
-/* 000071B0 38A30000 */ addi r5, r3, g_maxPlayPointRecord@l
+/* 000071AC 3C600000 */ lis r3, g_recordPlayPoints@ha
+/* 000071B0 38A30000 */ addi r5, r3, g_recordPlayPoints@l
 /* 000071B4 4CC63182 */ crclr 6
 /* 000071B8 D0010020 */ stfs f0, 0x20(r1)
 /* 000071BC 7FA3EB78 */ mr r3, r29

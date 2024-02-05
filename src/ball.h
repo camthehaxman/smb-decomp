@@ -74,11 +74,11 @@ struct Ball
     s16 unk64;
     /*0x66*/ s16 oldModelId;  // id of Naomi model
     /*0x68*/ float currRadius;
-    float accel;
+    /*0x6C*/ float accel;
     /*0x70*/ float restitution;
     /*0x74*/ float modelScale;
     /*0x78*/ s32 bananas;
-    s32 unk7C;
+    /*0x7C*/ s32 score;
     s32 unk80;
     Vec unk84;
     s16 unk90;
@@ -202,14 +202,14 @@ void update_ball_ape_transform(struct Ball *, struct PhysicsBall *, int);
 void handle_ball_rotational_kinematics(struct Ball *, struct PhysicsBall *, int);
 void func_8003C38C(struct Ball *);
 void ball_set_type(struct Ball *, int);
-void func_8003C550(struct Ball *);
+void ball_set_strongcoli_efc(struct Ball *);
 void init_physball_from_ball(struct Ball *, struct PhysicsBall *b);
 void func_8003CB3C(struct Ball *, struct PhysicsBall *b);
-void func_8003CB88(struct Ball *);
-void func_8003CCB0(void);
+void ball_ape_yang(struct Ball *);
+void ball_effect(void);
 void func_8003CDB0(struct Ball *);
-void func_8003CDC0(struct Ball *);
-void func_8003D3C4(struct Ball *);
+void ball_sound(struct Ball *);
+void ball_set_highspeed_efc(struct Ball *);
 void animate_ball_size_change(struct Ball *);
 // ? draw_ball_hemispheres();
 

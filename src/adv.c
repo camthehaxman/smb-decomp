@@ -184,7 +184,7 @@ void update_av_logo_pos_and_sound(void)
         r29 = CLAMP(advLogoInfo.pos.x * 16.0, -64.0, 63.0);
         r28 = CLAMP((280.0 - advLogoInfo.pos.z) * 0.1, -64.0, 63.0);
         u_somePlayerId = 0;
-        func_8002CA5C(0, r4, r5);
+        SoundIcsReq(0, r4, r5);
         u_somePlayerId = 0;
         SoundPan(0x51, r29, r28);
         u_somePlayerId = 0;
