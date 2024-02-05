@@ -24,3 +24,16 @@ supermonkeyball.dol: `sha1: 424e8ce10135686de0709a147e6a3a5a3fda02f1`
   - mwldeppc.exe
   - lmgr326b.dll
 * Run `make` from the repository root directory. If you are using a version of CodeWarrior besides 1.1, you must run `make COMPILER_VERSION=<VERSION>` (where `<VERSION>` is your CodeWarrior version).
+
+## Build Instructions (for PC port)
+
+* Install gcc and OpenGL libraries. On Windows, this requires MSYS2.
+* Run `make -f Makefile_pc` and wait for it to finish compiling
+* Create a folder called GMBE8P and extract the files (entire disc) of your Super Monkey Ball game disc into that directory using Dolphin. Your directory structure should be something like this:
+```
+smb-decomp/GMBE8P +-- files/ +-- test/ +-- ape/
+                  |          |         +-- bg/
+                  |          |         +-- bmp/
+                  |          +-- opening.bnr
+                  +-- sys/
+```
