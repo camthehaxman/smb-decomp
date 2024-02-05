@@ -3,12 +3,12 @@
 
 struct Spline
 {
-    s32 unk0;
-    float unk4;
-    float unk8;
-    float unkC;
+    long int start_x;
+    float start_y;
+    float end_tangent;
+    float start_tangent;
 };
 
-float calc_spline(float t, struct Spline *arg1);
+float calc_spline(float x, struct Spline *splineSegments);
 
 #endif

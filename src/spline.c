@@ -1,37 +1,60 @@
-#include <dolphin.h>
-
-#include "global.h"
 #include "spline.h"
 
-float calc_spline(float t, struct Spline *arg1)
+// Calculates the cubic spline interpolation at a given point.
+//
+// This function computes the interpolated value of a cubic spline at a specific
+// point t. It assumes the spline is defined by a series of segments, each represented
+// by a struct Spline. The spline is smooth and continuous, with each segment contributing
+// to the overall shape based on its control parameters.
+//
+// Parameters:
+//   - t: The x-coordinate at which to evaluate the spline.
+//   - splineSegments: Pointer to the first segment in the array of spline segments.
+//
+// Returns:
+//   The interpolated y-value of the spline at x-coordinate t.
+//
+// Notes:
+//   Each Spline struct is expected to have the following fields:
+//   - start_x: The x-coordinate at the start of the segment.
+//   - start_y: The y-value or control parameter associated with start_x.
+//   - end_tangent: Tangent or derivative information at the end of the segment.
+//   - start_tangent: Tangent or derivative information at the start of the segment.
+//   - A segment where start_x is 0xFFFF marks the end of the spline data.
+//
+// The function handles edge cases where t is outside the range of the defined spline
+// and ensures smooth transitions between segments using cubic interpolation.
+float calc_spline(float x, struct Spline *splineSegments)
 {
-    float temp_f10;
-    float temp_f11;
-    float temp_f12;
-    float temp_f13;
-    float ret;
-    struct Spline *phi_r6;
+    float deltaX;
+    float normalizedX;
+    float squaredNormalizedX;
+    float cubedNormalizedX;
+    float interpolatedY;
+    struct Spline *currentSegment;
 
-    if (t < arg1->unk0)
-        return arg1->unk4;
+    // Edge case: x before the start of the spline
+    if (x < splineSegments->start_x)
+        return splineSegments->start_y;
 
-    phi_r6 = arg1 + 1;
-    while (t > phi_r6->unk0)
+    currentSegment = splineSegments + 1;
+    while (x > currentSegment->start_x)
     {
-		if (phi_r6->unk0 == 0xFFFF)
-		{
-			phi_r6--;
-			break;
-		}
-		phi_r6++;
-	}
+        if (currentSegment->start_x == 0xFFFF)
+        {
+            currentSegment--;
+            break;
+        }
+        currentSegment++;
+    }
 
-    temp_f10 = phi_r6->unk0 - phi_r6[-1].unk0;
-    temp_f11 = (t - phi_r6[-1].unk0) / temp_f10;
-    temp_f12 = temp_f11 * temp_f11;
-    temp_f13 = temp_f12 * temp_f11;
-    ret = phi_r6[-1].unk4 * (2.0 * temp_f13 - 3.0 * temp_f12 + 1.0)
-        + phi_r6->unk4 * (-2.0 * temp_f13 + 3.0 * temp_f12);
-    ret += temp_f10 * (phi_r6[-1].unkC * (temp_f13 - 2.0 * temp_f12 + temp_f11) + phi_r6->unk8 * (temp_f13 - temp_f12));
-    return ret;
+    deltaX = currentSegment->start_x - (currentSegment - 1)->start_x;
+    normalizedX = (x - (currentSegment - 1)->start_x) / deltaX;
+    squaredNormalizedX = normalizedX * normalizedX;
+    cubedNormalizedX = squaredNormalizedX * normalizedX;
+    interpolatedY = (currentSegment - 1)->start_y * (2.0 * cubedNormalizedX - 3.0 * squaredNormalizedX + 1.0)
+        + currentSegment->start_y * (-2.0 * cubedNormalizedX + 3.0 * squaredNormalizedX);
+    interpolatedY += deltaX * ((currentSegment - 1)->start_tangent * (cubedNormalizedX - 2.0 * squaredNormalizedX + normalizedX) 
+        + currentSegment->end_tangent * (cubedNormalizedX - squaredNormalizedX));
+    return interpolatedY;
 }
