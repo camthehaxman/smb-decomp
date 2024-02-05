@@ -8,6 +8,7 @@
 #include "global.h"
 #include "background.h"
 #include "info.h"
+#include "lens_flare.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "stage.h"

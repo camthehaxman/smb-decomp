@@ -18,6 +18,7 @@
 #include "info.h"
 #include "input.h"
 #include "item.h"
+#include "lens_flare.h"
 #include "light.h"
 #include "load.h"
 #include "mathutil.h"

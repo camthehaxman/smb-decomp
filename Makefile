@@ -189,7 +189,8 @@ SOURCES := \
 	src/load.c \
 	asm/shadow.s \
 	src/mini.c \
-	src/mini_2.c \
+	src/lens_flare.c \
+	src/code_9.c \
 	src/mini_3.c \
 	src/mouse.c \
 	src/rend_efc.c \

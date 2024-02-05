@@ -347,13 +347,7 @@ void func_80093E28(void);
 void submode_mini_ending_init_func(void);
 void submode_mini_ending_main_func(void);
 void u_draw_ending_viewer_text(void);
-void lens_flare_init(void);
-void lens_flare_main(void);
-void lens_flare_draw();
-void lens_flare_draw_mask();
-void lens_flare_set_light_position(Vec *);
-void lens_flare_set_light_angle(int, int);
-void lens_flare_set_scale(float);
+
 void func_80094750(int);
 void func_800947B0(void);
 int func_800947F8(void);

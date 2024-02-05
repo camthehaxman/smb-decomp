@@ -4,6 +4,7 @@
 #include "ball.h"
 #include "camera.h"
 #include "gma.h"
+#include "lens_flare.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "pool.h"
@@ -12,7 +13,7 @@
 
 static Vec flareWork[4][13];
 static float lensFlareOpacity[4];
-static Vec lensFlareLightPos;
+static Point3d lensFlareLightPos;
 static float shineCoefficients[4];
 static float lensFlareScale;
 
@@ -49,19 +50,19 @@ struct FlareSpot
 
 const struct FlareSpot flareData[] =
 {
-    {  0.990f, 0.010993125f, 29 },
-    {  0.663f, 0.004125f,    23 },
-    {  0.473f, 0.002475f,    28 },
-    {  0.370f, 0.003135f,    28 },
-    {  0.304f, 0.001155f,    28 },
-    {  0.145f, 0.001320f,    26 },
-    { -0.141f, 0.000825f,    27 },
-    { -0.288f, 0.001815f,    26 },
-    { -0.353f, 0.002970f,    26 },
-    { -0.424f, 0.001155f,    26 },
-    { -0.489f, 0.001155f,    25 },
-    { -0.625f, 0.003630f,    24 },
-    { -0.729f, 0.006105f,    23 },
+    {  0.990f, 0.010993125f, LENSFLARE_7_NEW },
+    {  0.663f, 0.004125f,    LENSFLARE_1_NEW },
+    {  0.473f, 0.002475f,    LENSFLARE_6_NEW },
+    {  0.370f, 0.003135f,    LENSFLARE_6_NEW },
+    {  0.304f, 0.001155f,    LENSFLARE_6_NEW },
+    {  0.145f, 0.001320f,    LENSFLARE_4_NEW },
+    { -0.141f, 0.000825f,    LENSFLARE_5_NEW },
+    { -0.288f, 0.001815f,    LENSFLARE_4_NEW },
+    { -0.353f, 0.002970f,    LENSFLARE_4_NEW },
+    { -0.424f, 0.001155f,    LENSFLARE_4_NEW },
+    { -0.489f, 0.001155f,    LENSFLARE_3_NEW },
+    { -0.625f, 0.003630f,    LENSFLARE_2_NEW },
+    { -0.729f, 0.006105f,    LENSFLARE_1_NEW },
 };
 
 const Vec lbl_80171AA4 = { 0.0f, 0.0f, -1.0f };
@@ -220,7 +221,7 @@ void lens_flare_draw_mask(int cameraId)
     avdisp_draw_model_culled_sort_all(commonGma->modelEntries[BLACK_SCREEN].model);
 }
 
-void lens_flare_set_light_position(Vec *pos)
+void lens_flare_set_light_position(Point3d *pos)
 {
     lensFlareLightPos = *pos;
 }
@@ -236,77 +237,3 @@ void lens_flare_set_scale(float scale)
 {
     lensFlareScale = scale;
 }
-
-void func_80094750(int arg0)
-{
-    lbl_802C5D60.unk0 = arg0;
-    DCFlushRange(&lbl_802C5D60, sizeof(lbl_802C5D60));
-    HIOWrite(0x1000, &lbl_802C5D60, sizeof(lbl_802C5D60));
-    HIOWriteMailbox(arg0);
-}
-
-void func_800947B0(void)
-{
-    HIORead(0x1000, &lbl_802C5D60, sizeof(lbl_802C5D60));
-    DCInvalidateRange(&lbl_802C5D60, sizeof(lbl_802C5D60));
-}
-
-int func_800947F8(void)
-{
-    u32 spC;
-    u8 filler[4];
-
-    OSGetTick();
-    while (1)
-    {
-        HIOReadMailbox(&spC);
-        if (spC == 2)
-            return 0;
-        if (spC == 1)
-            return 1;
-    }
-}
-
-void func_80094840(void)
-{
-    u32 sp8;
-
-    do
-    {
-        HIOReadMailbox(&sp8);
-    } while (sp8 != 0);
-}
-
-static s32 lbl_802F2180 ATTRIBUTE_ALIGN(8);
-static u8 *lbl_802F2184;
-static u32 lbl_802F2188;
-
-void *func_80094870(void)
-{
-    int i;
-
-    if (lbl_802F2180 == 0)
-        return 0;
-    for (i = 0; i < 16; i++)
-    {
-        u32 bit = 1 << i;
-        if (!(lbl_802F2188 & bit))
-        {
-            lbl_802F2188 |= bit;
-            return lbl_802F2184 + i * 0xC;
-        }
-    }
-    return 0;
-}
-
-void func_800948D0(struct Struct80094870 *arg0)
-{
-    lbl_802F2188 &= ~(1 << arg0->unk8);
-}
-
-#pragma force_active on
-int func_800948EC(void)
-{
-    return lbl_802F2180;
-}
-#pragma force_active reset
