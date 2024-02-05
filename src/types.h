@@ -855,7 +855,7 @@ struct Struct80061BC4_sub
     u8 filler20[0x2C-0x24];
 };
 
-struct EnvMapSomething
+struct GCMMatState_Unit
 {
     s32 unk0;
     u8 filler4[0xC-0x4];
@@ -863,7 +863,7 @@ struct EnvMapSomething
     u32 unk2C;
 };
 
-typedef void (*BallEnvFunc)(struct EnvMapSomething *);
+typedef void (*EnvMapFunc)(struct GCMMatState_Unit *);
 
 struct BgLightInfo
 {

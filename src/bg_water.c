@@ -42,11 +42,11 @@ static struct BGModelSearch waterBgObjFind[] =
 };
 
 static void lbl_8005E914(void);
-static void lbl_8005E998(struct EnvMapSomething *);
-static void lbl_8005EB8C();
-static void func_8005ED80(struct EnvMapSomething *);
-static void lbl_8005F124(struct EnvMapSomething *);
-static void lbl_8005F520(struct EnvMapSomething *);
+static void bg_water_envmap_stage(struct GCMMatState_Unit *);
+static void bg_water_envmap_background();
+static void func_8005ED80(struct GCMMatState_Unit *);
+static void bg_water_envmap_ball(struct GCMMatState_Unit *);
+static void lbl_8005F520(struct GCMMatState_Unit *);
 static int model_find_proc(int, struct GMAModelEntry *);
 static int obj_find_proc(int, struct StageBgObject *);
 
@@ -57,10 +57,10 @@ void bg_water_init(void)
     bg_default_init();
     if (modeCtrl.unk30 < 2)
     {
-        backgroundInfo.unk8C = lbl_8005E998;
-        backgroundInfo.unk90 = lbl_8005EB8C;
+        backgroundInfo.stageEnvMapFunc = bg_water_envmap_stage;
+        backgroundInfo.bgEnvMapFunc = bg_water_envmap_background;
     }
-    backgroundInfo.ballEnvFunc = lbl_8005F124;
+    backgroundInfo.ballEnvMapFunc = bg_water_envmap_ball;
     if (work->unk0 == 0)
     {
         u_debug_set_cursor_pos(4, 4);
@@ -212,7 +212,7 @@ static void lbl_8005E914(void)
 
 struct Struct80061BC4_sub lbl_8027CBF8;
 
-static void lbl_8005E998(struct EnvMapSomething *arg0)
+static void bg_water_envmap_stage(struct GCMMatState_Unit *arg0)
 {
     struct Struct80061BC4_sub sp24 = arg0->unkC;
     float spC[2][3];
@@ -246,7 +246,7 @@ static void lbl_8005E998(struct EnvMapSomething *arg0)
     func_8005ED80(arg0);
 }
 
-static void lbl_8005EB8C(struct EnvMapSomething *arg0)
+static void bg_water_envmap_background(struct GCMMatState_Unit *arg0)
 {
     struct Struct80061BC4_sub sp24 = arg0->unkC;
     float spC[2][3];
@@ -280,7 +280,7 @@ static void lbl_8005EB8C(struct EnvMapSomething *arg0)
     func_8005ED80(arg0);
 }
 
-static void func_8005ED80(struct EnvMapSomething *arg0)
+static void func_8005ED80(struct GCMMatState_Unit *arg0)
 {
     struct BGWaterWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp2C = arg0->unkC;
@@ -326,7 +326,7 @@ static void func_8005ED80(struct EnvMapSomething *arg0)
     arg0->unkC = sp2C;
 }
 
-static void lbl_8005F124(struct EnvMapSomething *arg0)
+static void bg_water_envmap_ball(struct GCMMatState_Unit *arg0)
 {
     struct BGWaterWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp2C = arg0->unkC;
@@ -385,7 +385,7 @@ static void lbl_8005F124(struct EnvMapSomething *arg0)
 }
 
 #ifdef NONMATCHING
-static void lbl_8005F520(struct EnvMapSomething *arg0)
+static void lbl_8005F520(struct GCMMatState_Unit *arg0)
 {
     struct BGWaterWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp2C = arg0->unkC;
@@ -447,7 +447,7 @@ const float lbl_802F4324 = 360.0f;
 const float lbl_802F4328 = 0.004999999888241291f;
 const float lbl_802F432C = 0.25f;
 const float lbl_802F4330 = -0.0099999997764825821f;
-static asm void lbl_8005F520(struct EnvMapSomething *arg0)
+static asm void lbl_8005F520(struct GCMMatState_Unit *arg0)
 {
     nofralloc
 #include "../asm/nonmatchings/lbl_8005F520.s"

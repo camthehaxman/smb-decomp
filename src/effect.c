@@ -2914,7 +2914,7 @@ static void effect_bgmst_water_draw(struct Effect *effect)
 {
     struct StageBgObject *bgObj = (struct StageBgObject *)effect->model;
     struct BGMasterWork *bgWork = backgroundInfo.work;
-    BallEnvFunc func;
+    EnvMapFunc func;
     u32 var_r3;
 
     if (polyDisp.unk0 & 1)
@@ -3233,7 +3233,7 @@ static void effect_bgend_water_draw(struct Effect *effect)
 {
     struct StageBgObject *bgObj = (struct StageBgObject *)effect->model;
     struct BGEndWork *bgWork = backgroundInfo.work;
-    BallEnvFunc func;
+    EnvMapFunc func;
     u32 var_r3;
 
     if (polyDisp.unk0 & 1)

@@ -64,9 +64,9 @@ struct BackgroundInfo  // size = 0xA8
     struct NlModel *unk80;
     float unk84;
     u8 filler88[4];
-    BallEnvFunc unk8C;
-    void (*unk90)();
-    /*0x94*/ BallEnvFunc ballEnvFunc;
+    /*0x9C*/ EnvMapFunc stageEnvMapFunc;
+    /*0x90*/ EnvMapFunc bgEnvMapFunc;
+    /*0x94*/ EnvMapFunc ballEnvMapFunc;
     void (*unk98)(void);
     void *work;
     u32 randSeed;
@@ -311,7 +311,7 @@ struct BGMasterWork
     u8 filler0[0xB0C];
     struct GMAModel *unkB0C;
     u8 fillerB10[4];
-    BallEnvFunc unkB14;
+    EnvMapFunc unkB14;
     u8 fillerB18[0xB60-0xB18];
     Mtx unkB60;
 };

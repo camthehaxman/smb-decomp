@@ -60,9 +60,9 @@ static void func_8005C540(struct RenderEffect *);
 static void func_8005C55C(int, struct RenderEffect *);
 static void lbl_8005CB90(struct MyDrawNode *);
 static void lbl_8005CC4C(struct MyDrawNode2 *);
-static void lbl_8005CEAC(struct EnvMapSomething *);
-static void lbl_8005D4B0(struct EnvMapSomething *);
-static void lbl_8005DCA8(struct EnvMapSomething *);
+static void lbl_8005CEAC(struct GCMMatState_Unit *);
+static void lbl_8005D4B0(struct GCMMatState_Unit *);
+static void lbl_8005DCA8(struct GCMMatState_Unit *);
 static int model_find_proc(int, struct GMAModelEntry *);
 static int obj_find_proc(int, struct StageBgObject *);
 
@@ -487,8 +487,8 @@ static void lbl_8005CC4C(struct MyDrawNode2 *arg0)
     struct BGSandWork *work = backgroundInfo.work;
     struct StageBgObject *temp_r29;
     struct BGSandWork_sub *temp_r28;
-    BallEnvFunc var_r28;
-    BallEnvFunc var_r31_2;
+    EnvMapFunc var_r28;
+    EnvMapFunc var_r31_2;
     struct BGSandWork_sub_sub *var_r27;
 
     load_light_group_cached(arg0->unk8);
@@ -554,7 +554,7 @@ static void lbl_8005CC4C(struct MyDrawNode2 *arg0)
 
 static struct Struct80061BC4_sub lbl_8027CBC8;
 
-static void lbl_8005CEAC(struct EnvMapSomething *arg0)
+static void lbl_8005CEAC(struct GCMMatState_Unit *arg0)
 {
     struct BGSandWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp64;
@@ -671,7 +671,7 @@ static void lbl_8005CEAC(struct EnvMapSomething *arg0)
     arg0->unkC = sp64;
 }
 
-static void lbl_8005D4B0(struct EnvMapSomething *arg0)
+static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
 {
     struct BGSandWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp64;
@@ -824,7 +824,7 @@ static void lbl_8005D4B0(struct EnvMapSomething *arg0)
     arg0->unkC = sp64;
 }
 
-static void lbl_8005DCA8(struct EnvMapSomething *arg0)
+static void lbl_8005DCA8(struct GCMMatState_Unit *arg0)
 {
     struct BGSandWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp2C;

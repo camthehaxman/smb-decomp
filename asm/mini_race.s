@@ -11670,7 +11670,7 @@ lbl_0000ABCC:
 /* 0000ABD8 540007FF */ clrlwi. r0, r0, 0x1f
 /* 0000ABDC 4182000C */ beq lbl_0000ABE8
 /* 0000ABE0 7EA3AB78 */ mr r3, r21
-/* 0000ABE4 4BFF5599 */ bl u_something_with_lens_flare_2
+/* 0000ABE4 4BFF5599 */ bl lens_flare_draw
 lbl_0000ABE8:
 /* 0000ABE8 88160000 */ lbz r0, 0(r22)
 /* 0000ABEC 2C000002 */ cmpwi r0, 2
@@ -12499,7 +12499,7 @@ lbl_0000B7D0:
 /* 0000B7DC 540007FF */ clrlwi. r0, r0, 0x1f
 /* 0000B7E0 4182000C */ beq lbl_0000B7EC
 /* 0000B7E4 7F03C378 */ mr r3, r24
-/* 0000B7E8 4BFF4995 */ bl u_something_with_lens_flare_2
+/* 0000B7E8 4BFF4995 */ bl lens_flare_draw
 lbl_0000B7EC:
 /* 0000B7EC 88190000 */ lbz r0, 0(r25)
 /* 0000B7F0 2C000002 */ cmpwi r0, 2

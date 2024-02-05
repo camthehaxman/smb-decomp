@@ -303,11 +303,11 @@ void stobj_draw(void)
     s32 i;
     struct Stobj *stobj;
     s8 *phi_r29;
-    BallEnvFunc func;
+    EnvMapFunc func;
     int phi_r25;
     Mtx mtx;
 
-    func = backgroundInfo.unk8C;
+    func = backgroundInfo.stageEnvMapFunc;
     if (func != 0)
         u_avdisp_set_some_func_1(func);
     mathutil_mtx_copy(mathutilData->mtxB, mtx);
@@ -721,7 +721,7 @@ static void stobj_bumper_draw(struct Stobj *stobj)
             avdisp_draw_model_unculled_sort_translucent(model);
         else
         {
-            BallEnvFunc temp_r31 = u_avdisp_set_some_func_1(NULL);
+            EnvMapFunc temp_r31 = u_avdisp_set_some_func_1(NULL);
             avdisp_draw_model_unculled_sort_translucent(model);
             u_avdisp_set_some_func_1(temp_r31);
         }

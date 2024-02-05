@@ -19635,14 +19635,14 @@ lbl_00011AD0:
 /* 00011AE0 540007FF */ clrlwi. r0, r0, 0x1f
 /* 00011AE4 4182000C */ beq lbl_00011AF0
 /* 00011AE8 38600000 */ li r3, 0
-/* 00011AEC 4BFEE69D */ bl u_something_with_lens_flare_1
+/* 00011AEC 4BFEE69D */ bl lens_flare_draw_mask
 lbl_00011AF0:
 /* 00011AF0 4BFEE699 */ bl ord_tbl_draw_nodes
 /* 00011AF4 801D0000 */ lwz r0, 0(r29)
 /* 00011AF8 540007FF */ clrlwi. r0, r0, 0x1f
 /* 00011AFC 4182000C */ beq lbl_00011B08
 /* 00011B00 38600000 */ li r3, 0
-/* 00011B04 4BFEE685 */ bl u_something_with_lens_flare_2
+/* 00011B04 4BFEE685 */ bl lens_flare_draw
 lbl_00011B08:
 /* 00011B08 881E0000 */ lbz r0, 0(r30)
 /* 00011B0C 2C000002 */ cmpwi r0, 2

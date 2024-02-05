@@ -12107,7 +12107,7 @@ lbl_0000B1FC:
 /* 0000B208 540007FF */ clrlwi. r0, r0, 0x1f
 /* 0000B20C 4182000C */ beq lbl_0000B218
 /* 0000B210 7EC3B378 */ mr r3, r22
-/* 0000B214 4BFF4FBD */ bl u_something_with_lens_flare_1
+/* 0000B214 4BFF4FBD */ bl lens_flare_draw_mask
 lbl_0000B218:
 /* 0000B218 4BFF4FB9 */ bl draw_test_camera_target
 /* 0000B21C 4BFF4FB5 */ bl ord_tbl_draw_nodes
@@ -12116,7 +12116,7 @@ lbl_0000B218:
 /* 0000B228 540007FF */ clrlwi. r0, r0, 0x1f
 /* 0000B22C 4182000C */ beq lbl_0000B238
 /* 0000B230 7EC3B378 */ mr r3, r22
-/* 0000B234 4BFF4F9D */ bl u_something_with_lens_flare_2
+/* 0000B234 4BFF4F9D */ bl lens_flare_draw
 lbl_0000B238:
 /* 0000B238 880E01E0 */ lbz r0, 0x1e0(r14)
 /* 0000B23C 2C000002 */ cmpwi r0, 2
@@ -12247,7 +12247,7 @@ lbl_0000B3D8:
 lbl_0000B400:
 /* 0000B400 38600000 */ li r3, 0
 /* 0000B404 38804000 */ li r4, 0x4000
-/* 0000B408 4BFF4DC9 */ bl func_800946DC
+/* 0000B408 4BFF4DC9 */ bl lens_flare_set_light_angle
 /* 0000B40C C01E0000 */ lfs f0, 0(r30)
 /* 0000B410 D01F0020 */ stfs f0, 0x20(r31)
 /* 0000B414 807D0004 */ lwz r3, 4(r29)
@@ -12286,7 +12286,7 @@ lbl_0000B400:
 lbl_0000B498:
 /* 0000B498 38600000 */ li r3, 0
 /* 0000B49C 38804000 */ li r4, 0x4000
-/* 0000B4A0 4BFF4D31 */ bl func_800946DC
+/* 0000B4A0 4BFF4D31 */ bl lens_flare_set_light_angle
 /* 0000B4A4 C01E0000 */ lfs f0, 0(r30)
 /* 0000B4A8 D01F0020 */ stfs f0, 0x20(r31)
 /* 0000B4AC 48000288 */ b lbl_0000B734
@@ -12297,7 +12297,7 @@ lbl_0000B4B0:
 /* 0000B4BC D01F0020 */ stfs f0, 0x20(r31)
 /* 0000B4C0 38800C00 */ li r4, 0xc00
 /* 0000B4C4 A8630042 */ lha r3, 0x42(r3)
-/* 0000B4C8 4BFF4D09 */ bl func_800946DC
+/* 0000B4C8 4BFF4D09 */ bl lens_flare_set_light_angle
 /* 0000B4CC 387C0000 */ addi r3, r28, 0
 /* 0000B4D0 389D0000 */ addi r4, r29, 0
 /* 0000B4D4 480034C9 */ bl lbl_0000E99C
@@ -12312,7 +12312,7 @@ lbl_0000B4DC:
 lbl_0000B4F4:
 /* 0000B4F4 38600000 */ li r3, 0
 /* 0000B4F8 38804000 */ li r4, 0x4000
-/* 0000B4FC 4BFF4CD5 */ bl func_800946DC
+/* 0000B4FC 4BFF4CD5 */ bl lens_flare_set_light_angle
 /* 0000B500 387C0000 */ addi r3, r28, 0
 /* 0000B504 389D0000 */ addi r4, r29, 0
 /* 0000B508 48000E35 */ bl lbl_0000C33C
@@ -12365,7 +12365,7 @@ lbl_0000B510:
 /* 0000B5C0 EC020024 */ fdivs f0, f2, f0
 /* 0000B5C4 EC03002A */ fadds f0, f3, f0
 /* 0000B5C8 D01C0008 */ stfs f0, 8(r28)
-/* 0000B5CC 4BFF4C05 */ bl func_800946DC
+/* 0000B5CC 4BFF4C05 */ bl lens_flare_set_light_angle
 /* 0000B5D0 801F001C */ lwz r0, 0x1c(r31)
 /* 0000B5D4 2800003C */ cmplwi r0, 0x3c
 /* 0000B5D8 4081015C */ ble lbl_0000B734
@@ -12391,7 +12391,7 @@ lbl_0000B5E8:
 lbl_0000B624:
 /* 0000B624 38600000 */ li r3, 0
 /* 0000B628 38804000 */ li r4, 0x4000
-/* 0000B62C 4BFF4BA5 */ bl func_800946DC
+/* 0000B62C 4BFF4BA5 */ bl lens_flare_set_light_angle
 /* 0000B630 387C0000 */ addi r3, r28, 0
 /* 0000B634 389D0000 */ addi r4, r29, 0
 /* 0000B638 48002015 */ bl lbl_0000D64C
@@ -12410,7 +12410,7 @@ lbl_0000B65C:
 /* 0000B660 901F001C */ stw r0, 0x1c(r31)
 /* 0000B664 38600000 */ li r3, 0
 /* 0000B668 38804000 */ li r4, 0x4000
-/* 0000B66C 4BFF4B65 */ bl func_800946DC
+/* 0000B66C 4BFF4B65 */ bl lens_flare_set_light_angle
 /* 0000B670 387C0000 */ addi r3, r28, 0
 /* 0000B674 389D0000 */ addi r4, r29, 0
 /* 0000B678 48001FD5 */ bl lbl_0000D64C
@@ -12429,7 +12429,7 @@ lbl_0000B690:
 /* 0000B6A4 901F0034 */ stw r0, 0x34(r31)
 /* 0000B6A8 38800C00 */ li r4, 0xc00
 /* 0000B6AC A8630042 */ lha r3, 0x42(r3)
-/* 0000B6B0 4BFF4B21 */ bl func_800946DC
+/* 0000B6B0 4BFF4B21 */ bl lens_flare_set_light_angle
 /* 0000B6B4 387C0000 */ addi r3, r28, 0
 /* 0000B6B8 389D0000 */ addi r4, r29, 0
 /* 0000B6BC 48001F91 */ bl lbl_0000D64C
@@ -12439,7 +12439,7 @@ lbl_0000B6C4:
 /* 0000B6C8 901F001C */ stw r0, 0x1c(r31)
 /* 0000B6CC 38600000 */ li r3, 0
 /* 0000B6D0 38804000 */ li r4, 0x4000
-/* 0000B6D4 4BFF4AFD */ bl func_800946DC
+/* 0000B6D4 4BFF4AFD */ bl lens_flare_set_light_angle
 /* 0000B6D8 387C0000 */ addi r3, r28, 0
 /* 0000B6DC 389D0000 */ addi r4, r29, 0
 /* 0000B6E0 48000B51 */ bl lbl_0000C230

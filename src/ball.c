@@ -1081,7 +1081,7 @@ void ball_draw(void)
     s8 *r27;
     int i;
     int (*func)();
-    BallEnvFunc envFunc;
+    EnvMapFunc envFunc;
     int unused;
 
     if (dipSwitches & DIP_OLD_BALL)
@@ -1148,7 +1148,7 @@ void ball_draw(void)
                 mathutil_mtxA_pop();
         }
 
-        envFunc = backgroundInfo.ballEnvFunc;
+        envFunc = backgroundInfo.ballEnvMapFunc;
         if (envFunc != NULL)
         {
             u_avdisp_set_some_func_1(envFunc);
@@ -3092,7 +3092,7 @@ void ball_draw_callback(struct BallDrawNode *node)
 {
     struct Ball *ball = &ballInfo[node->ballId];
     int (*r30)() = backgroundInfo.unk7C;
-    BallEnvFunc envFunc;
+    EnvMapFunc envFunc;
 
     if (gameMode == MD_GAME && modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && modeCtrl.playerCount > 3)
         r30 = NULL;
@@ -3121,7 +3121,7 @@ void ball_draw_callback(struct BallDrawNode *node)
             mathutil_mtxA_pop();
     }
 
-    envFunc = backgroundInfo.ballEnvFunc;
+    envFunc = backgroundInfo.ballEnvMapFunc;
     if (envFunc != NULL)
     {
         u_avdisp_set_some_func_1(envFunc);

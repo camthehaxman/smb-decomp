@@ -366,11 +366,11 @@ void draw_adv_demo_scene(void)
     }
     draw_monkey();
     if (backgroundInfo.bgId == BG_TYPE_JUN || backgroundInfo.bgId == BG_TYPE_SPA)
-        u_something_with_lens_flare_1(0);
+        lens_flare_draw_mask(0);
     draw_test_camera_target();
     ord_tbl_draw_nodes();
     if (backgroundInfo.bgId == BG_TYPE_JUN || backgroundInfo.bgId == BG_TYPE_SPA)
-        u_something_with_lens_flare_2(0);
+        lens_flare_draw(0);
     if (eventInfo[EVENT_REND_EFC].state == EV_STATE_RUNNING)
         rend_efc_draw(8);
     default_camera_env();
@@ -610,11 +610,11 @@ void draw_normal_game_scene(void)
             if (eventInfo[EVENT_BALL].state == EV_STATE_RUNNING)
                 ball_draw();
             if (backgroundInfo.unk8 & 1)
-                u_something_with_lens_flare_1(i);
+                lens_flare_draw_mask(i);
             draw_test_camera_target();
             ord_tbl_draw_nodes();
             if (backgroundInfo.unk8 & 1)
-                u_something_with_lens_flare_2(i);
+                lens_flare_draw(i);
             if (eventInfo[EVENT_REND_EFC].state == EV_STATE_RUNNING)
                 rend_efc_draw(8);
         }
@@ -695,8 +695,8 @@ void draw_live_arrow(void)
 
 void draw_continue_scene(void)
 {
-    BallEnvFunc r31;
-    BallEnvFunc r30;
+    EnvMapFunc func;
+    EnvMapFunc prevFunc;
     int r4;
     u32 r5;
     Vec sp5C;
@@ -711,14 +711,14 @@ void draw_continue_scene(void)
 
     if (u_stageBoxModel != NULL)
     {
-        r31 = (void *)backgroundInfo.unk8C;
-        if (r31 != NULL)
-            r30 = u_avdisp_set_some_func_1(r31);
+        func = backgroundInfo.stageEnvMapFunc;
+        if (func != NULL)
+            prevFunc = u_avdisp_set_some_func_1(func);
         mathutil_mtxA_from_mtxB();
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(u_stageBoxModel);
-        if (r31 != NULL)
-            u_avdisp_set_some_func_1(r30);
+        if (func != NULL)
+            u_avdisp_set_some_func_1(prevFunc);
     }
     else
     {
@@ -891,11 +891,11 @@ void draw_results_scene(void)
             if (eventInfo[EVENT_BALL].state == EV_STATE_RUNNING)
                 ball_draw();
             if (backgroundInfo.unk8 & 1)
-                u_something_with_lens_flare_1(i);
+                lens_flare_draw_mask(i);
             draw_test_camera_target();
             ord_tbl_draw_nodes();
             if (backgroundInfo.unk8 & 1)
-                u_something_with_lens_flare_2(i);
+                lens_flare_draw(i);
             if (eventInfo[EVENT_REND_EFC].state == EV_STATE_RUNNING)
                 rend_efc_draw(8);
             if (cameraInfo[i].flags & (1 << 6))

@@ -4247,7 +4247,7 @@ lbl_00003E80:
 /* 00003E84 540007FF */ clrlwi. r0, r0, 0x1f
 /* 00003E88 4182000C */ beq lbl_00003E94
 /* 00003E8C 7E439378 */ mr r3, r18
-/* 00003E90 4BFFC2BD */ bl u_something_with_lens_flare_1
+/* 00003E90 4BFFC2BD */ bl lens_flare_draw_mask
 lbl_00003E94:
 /* 00003E94 4BFFC2B9 */ bl draw_test_camera_target
 /* 00003E98 4BFFC2B5 */ bl ord_tbl_draw_nodes
@@ -4331,7 +4331,7 @@ lbl_00003FC4:
 /* 00003FCC 540007FF */ clrlwi. r0, r0, 0x1f
 /* 00003FD0 4182000C */ beq lbl_00003FDC
 /* 00003FD4 7E439378 */ mr r3, r18
-/* 00003FD8 4BFFC175 */ bl u_something_with_lens_flare_2
+/* 00003FD8 4BFFC175 */ bl lens_flare_draw
 lbl_00003FDC:
 /* 00003FDC 881901E0 */ lbz r0, 0x1e0(r25)
 /* 00003FE0 2C000002 */ cmpwi r0, 2
