@@ -1038,7 +1038,6 @@ void func_8008B0AC(void)
 void new_ape_close(struct Ape *ape)
 {
     thread_kill(ape->unk5C);
-#ifndef TARGET_PC
     if (lbl_802F2074 == 2)
     {
         OSFreeToHeap(backgroundHeap, ape->unk0);
@@ -1055,7 +1054,6 @@ void new_ape_close(struct Ape *ape)
         OSFreeToHeap(subHeap, ape->unk4);
     }
     OSFreeToHeap(subHeap, ape->unk98);
-#endif
     apeStructPtrs[--nextApeIndex] = ape;
     u_free_character_graphics(ape->charaId, (ape->unk90 >= 2));
 }
@@ -1141,10 +1139,8 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 
     find_motskl_entry(skelName, &skel);
 
-#ifndef TARGET_PC
     r24 = u_create_joints_probably(skel);
     r31 = u_create_joints_probably(skel);
-#endif
 
     ape->unk94 = 5;
     ape->unk98 = OSAllocFromHeap(subHeap, ape->unk94 * sizeof(*ape->unk98));
@@ -1163,10 +1159,8 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
         var->unk14[3] = 0;
     }
 
-#ifndef TARGET_PC
     ape->unk0 = r24;
     ape->unk4 = r31;
-#endif
     ape->unk1C = &lbl_801C7A70;
     ape->unk20 = 0;
     ape->unk8 = 0.0f;
@@ -1195,11 +1189,9 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 
     u_make_ape_inline(ape);
     r23 = find_motskl_entry_idx(skelName);
-#ifndef TARGET_PC
     func_8008B3B8_inline_3(r23, ape->unk0);
     r23++;r23--;
     func_8008B3B8_inline_3(r23, ape->unk4);
-#endif
 
     ape->unkB8 = lbl_8008A10C;
     ape->unkBC = lbl_8008A108;

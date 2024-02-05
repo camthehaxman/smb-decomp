@@ -1210,7 +1210,7 @@ static GLenum gx_prim_to_gl_prim(GXPrimitive in)
     return 0;
 }
 
-static u8 s_vertexBuffer[8192];
+static u8 s_vertexBuffer[0x4000];
 size_t s_vertexBufferPos;
 static int s_currPrim;
 static int s_vertexCount;
