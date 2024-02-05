@@ -248,7 +248,7 @@ static void __OSSwitchThread(OSThread *nextThread)
 static OSThread *SelectThread(BOOL yield)
 {
     OSContext *currentContext;
-    OSThread *currentThread;
+    OSThread *s_currentThread;
     OSThread *nextThread;
     OSPriority priority;
     OSThreadQueue *queue;
@@ -257,25 +257,25 @@ static OSThread *SelectThread(BOOL yield)
         return 0;
 
     currentContext = OSGetCurrentContext();
-    currentThread = OSGetCurrentThread();
-    if (currentContext != &currentThread->context)
+    s_currentThread = OSGetCurrentThread();
+    if (currentContext != &s_currentThread->context)
         return 0;
 
-    if (currentThread)
+    if (s_currentThread)
     {
-        if (currentThread->state == OS_THREAD_STATE_RUNNING)
+        if (s_currentThread->state == OS_THREAD_STATE_RUNNING)
         {
             if (!yield)
             {
                 priority = __cntlzw(RunQueueBits);
-                if (currentThread->priority <= priority)
+                if (s_currentThread->priority <= priority)
                     return 0;
             }
-            currentThread->state = OS_THREAD_STATE_READY;
-            SetRun(currentThread);
+            s_currentThread->state = OS_THREAD_STATE_READY;
+            SetRun(s_currentThread);
         }
 
-        if (!(currentThread->context.state & OS_CONTEXT_STATE_EXC) && OSSaveContext(&currentThread->context))
+        if (!(s_currentThread->context.state & OS_CONTEXT_STATE_EXC) && OSSaveContext(&s_currentThread->context))
             return 0;
     }
 
@@ -420,14 +420,14 @@ s32 OSSuspendThread(OSThread *thread)
 void OSSleepThread(OSThreadQueue *queue)
 {
     BOOL enabled;
-    OSThread *currentThread;
+    OSThread *s_currentThread;
 
     enabled = OSDisableInterrupts();
-    currentThread = OSGetCurrentThread();
+    s_currentThread = OSGetCurrentThread();
 
-    currentThread->state = OS_THREAD_STATE_WAITING;
-    currentThread->queue = queue;
-    AddPrio(queue, currentThread, link);
+    s_currentThread->state = OS_THREAD_STATE_WAITING;
+    s_currentThread->queue = queue;
+    AddPrio(queue, s_currentThread, link);
     RunQueueHint = TRUE;
     __OSReschedule();
     OSRestoreInterrupts(enabled);

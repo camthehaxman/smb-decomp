@@ -186,7 +186,7 @@ static void draw_nodes(struct OrdTblNode *node)
     }
 }
 
-struct
+static struct
 {
     u8 *currPtr;
     u8 *initPtr;

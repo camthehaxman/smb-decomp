@@ -306,7 +306,7 @@ struct Ape
     Vec unk48;
     s32 unk54;
     /*0x58*/ float modelScale;  // model scale?
-    u32 unk5C;
+    u32 threadId;
     Quaternion unk60;  // orientation?
     u32 unk70;
     u32 unk74;

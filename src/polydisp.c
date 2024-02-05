@@ -1341,7 +1341,7 @@ void set_backdrop_color(void)
 void draw_monkey(void)
 {
     ord_tbl_add_depth_offset(0.5f);
-    thread_loop(0x00FFFF7F);
+    thread_loop(ALL_THREAD_MASK & ~(1 << THREAD_GROUP_7));
     ord_tbl_add_depth_offset(-0.5f);
 }
 

@@ -4359,7 +4359,7 @@ lbl_00003E64:
 /* 00003EBC 5400103A */ slwi r0, r0, 2
 /* 00003EC0 7C9F0214 */ add r4, r31, r0
 /* 00003EC4 808400BC */ lwz r4, 0xbc(r4)
-/* 00003EC8 4BFFC295 */ bl thread_unknown
+/* 00003EC8 4BFFC295 */ bl thread_create
 /* 00003ECC 801F013C */ lwz r0, 0x13c(r31)
 /* 00003ED0 5400103A */ slwi r0, r0, 2
 /* 00003ED4 7C9F0214 */ add r4, r31, r0
@@ -17158,7 +17158,7 @@ lbl_0000F940:
 /* 0000F970 38630000 */ addi r3, r3, lbl_0000F6F0@l
 /* 0000F974 38800000 */ li r4, 0
 /* 0000F978 38A00005 */ li r5, 5
-/* 0000F97C 4BFF07E1 */ bl thread_unknown
+/* 0000F97C 4BFF07E1 */ bl thread_create
 /* 0000F980 907F0000 */ stw r3, 0(r31)
 /* 0000F984 38800000 */ li r4, 0
 /* 0000F988 3C600000 */ lis r3, lbl_000156F0@ha
@@ -17230,7 +17230,7 @@ lbl_0000FA2C:
 /* 0000FA88 C01E000C */ lfs f0, 0xc(r30)
 /* 0000FA8C 80640000 */ lwz r3, 0(r4)
 /* 0000FA90 D0030014 */ stfs f0, 0x14(r3)
-/* 0000FA94 4BFF06C9 */ bl func_8008B0AC
+/* 0000FA94 4BFF06C9 */ bl u_something_with_skel_model_names
 /* 0000FA98 3C600000 */ lis r3, motSkeleton@ha
 /* 0000FA9C 3BA30000 */ addi r29, r3, motSkeleton@l
 /* 0000FAA0 807D0000 */ lwz r3, 0(r29)

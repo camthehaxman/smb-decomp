@@ -139,12 +139,13 @@ struct Ball
         currentBall = ballBackup_; \
     }
 
-// extern ? lbl_80205E20;
-// extern ? lbl_80205E30;
-extern struct Ball ballInfo[];
-extern s32 apeThreadNo[];
-extern s32 playerCharacterSelection[4];
-extern s32 playerControllerIDs[];
+extern struct Ball ballInfo[8];
+extern struct Ball *currentBall;
+extern void (*minigameRelBallCallback)(struct Ball *);
+extern s32 apeThreadNo[16];
+extern s32 playerCharacterSelection[MAX_PLAYERS];
+extern s32 playerControllerIDs[4];
+extern s32 lbl_80206BE0[4];
 
 extern s16 clearHemisphereOutsideParts[];
 extern s16 clearHemisphereInsideParts[];

@@ -1230,7 +1230,7 @@ lbl_00001288:
 /* 000012A0 809B00FC */ lwz r4, 0xfc(r27)
 /* 000012A4 387C0000 */ addi r3, r28, 0
 /* 000012A8 38A00005 */ li r5, 5
-/* 000012AC 4BFFEEA1 */ bl thread_unknown
+/* 000012AC 4BFFEEA1 */ bl thread_create
 /* 000012B0 907A0000 */ stw r3, 0(r26)
 /* 000012B4 38800001 */ li r4, 1
 /* 000012B8 38A00000 */ li r5, 0

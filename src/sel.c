@@ -3,6 +3,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "ball.h"
 #include "camera.h"
 #include "event.h"
 #include "mode.h"

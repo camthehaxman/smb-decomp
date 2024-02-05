@@ -246,7 +246,7 @@ lbl_000003D4:
 /* 000003E4 809A00FC */ lwz r4, 0xfc(r26)
 /* 000003E8 387B0000 */ addi r3, r27, 0
 /* 000003EC 38A00005 */ li r5, 5
-/* 000003F0 4BFFFD71 */ bl thread_unknown
+/* 000003F0 4BFFFD71 */ bl thread_create
 /* 000003F4 90790000 */ stw r3, 0(r25)
 lbl_000003F8:
 /* 000003F8 3B180001 */ addi r24, r24, 1

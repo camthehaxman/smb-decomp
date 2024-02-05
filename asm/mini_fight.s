@@ -17232,7 +17232,7 @@ lbl_000100A8:
 /* 000100AC 809E00FC */ lwz r4, 0xfc(r30)
 /* 000100B0 38630000 */ addi r3, r3, lbl_0001106C@l
 /* 000100B4 38A00005 */ li r5, 5
-/* 000100B8 4BFF00AD */ bl thread_unknown
+/* 000100B8 4BFF00AD */ bl thread_create
 /* 000100BC 88BE002E */ lbz r5, 0x2e(r30)
 /* 000100C0 3C800000 */ lis r4, apeThreadNo@ha
 /* 000100C4 38040000 */ addi r0, r4, apeThreadNo@l
