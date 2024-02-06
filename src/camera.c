@@ -1247,9 +1247,16 @@ void camera_func_ready_main(struct Camera *camera, struct Ball *ball)
         camera->lookAt.y = camera->unk74.y * (1.0 - t) + camera->unk54.y * t;
         camera->lookAt.z = camera->unk74.z * (1.0 - t) + camera->unk54.z * t;
 
+#ifdef TARGET_PC
+        // double to s16 conversion doesn't work as expected on Windows, but converting to int first does.
+        camera->rotX = (int)((double)camera->unk68 + (s16)(camera->unk88 - camera->unk68) * (1.0 - t));
+        camera->rotY = (int)((double)camera->unk6C + (camera->unk8C - camera->unk6C) * (1.0 - t));
+        camera->rotZ = (int)((double)camera->unk70 + (s16)(camera->unk90 - camera->unk70) * (1.0 - t));
+#else
         camera->rotX = (double)camera->unk68 + (s16)(camera->unk88 - camera->unk68) * (1.0 - t);
         camera->rotY = (double)camera->unk6C + (camera->unk8C - camera->unk6C) * (1.0 - t);
         camera->rotZ = (double)camera->unk70 + (s16)(camera->unk90 - camera->unk70) * (1.0 - t);
+#endif
 
         mathutil_mtxA_from_translate(&camera->lookAt);
         mathutil_mtxA_rotate_y(camera->rotY);
