@@ -1344,6 +1344,7 @@ lbl_802F45E8:
 
 .section .data
 
+	.balign 8
 .global lbl_801BA210
 lbl_801BA210:
 	# ROM: 0x1B7210

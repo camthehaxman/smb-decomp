@@ -176,6 +176,8 @@ struct BGBonusWork
     Mtx unk7DC;
 };
 
+/* Ending Background */
+
 struct BGEndWork
 {
     s32 unk0;
@@ -199,6 +201,8 @@ struct BGEndWork
     u8 filler60[4];
     Mtx unk64;
 };
+
+/* Water Background */
 
 struct BGWaterWork
 {
@@ -230,6 +234,8 @@ struct BGWaterWork
     struct StageBgObject *waterSurface;
 };
 
+/* Space Background */
+
 struct BGSpaceWork
 {
     s32 unk0;
@@ -249,6 +255,8 @@ struct BGSpaceWork
     Mtx unk64;
     float unk94[2][3];
 };
+
+/* Sand Background */
 
 struct BGSandWork_sub_sub
 {
@@ -306,13 +314,51 @@ struct BGSandWork
     u8 filler568[4];
 };
 
+/* Master Background */
+
+struct BGMasterWork_sub
+{
+    struct StageBgObject *unk0;
+    Vec unk4;
+    Vec unk10;
+    Vec unk1C;
+    Mtx unk28;
+};
+
+struct BGMasterWork_sub2
+{
+    struct StageBgObject *unk0;
+    Vec unk4;
+    s16 unk10;
+    s16 unk12;
+    Vec unk14;
+    Vec unk20;
+    Vec unk2C;
+    Mtx unk38;
+    Mtx unk68;
+};
+
 struct BGMasterWork
 {
-    u8 filler0[0xB0C];
+    s32 unk0;
+    GXTexObj *stgCloudTex;
+    s32 unk8;
+    struct BGMasterWork_sub unkC[4];
+    s32 unk16C;
+    s32 unk170;
+    struct BGMasterWork_sub2 unk174[16];
+    s32 miniCloudModelsCount;
+    struct GMAModel *miniCloudModels[4];
+    struct GMAModel *unkB08;
     struct GMAModel *unkB0C;
-    u8 fillerB10[4];
+    GXTexObj *waterTex;
     EnvMapFunc unkB14;
-    u8 fillerB18[0xB60-0xB18];
+    Vec unkB18;
+    Vec unkB24;
+    Vec unkB30;
+    Vec unkB3C;
+    Vec unkB48;
+    Vec unkB54;
     Mtx unkB60;
 };
 

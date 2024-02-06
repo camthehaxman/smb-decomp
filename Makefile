@@ -162,7 +162,7 @@ SOURCES := \
 	src/bg_sunset.c \
 	src/bg_bonus.c \
 	src/bg_storm.c \
-	asm/bg_master.s \
+	src/bg_master.c \
 	asm/bg_pilot.s \
 	src/bg_end.c \
 	src/course.c \

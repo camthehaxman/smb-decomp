@@ -820,7 +820,7 @@ struct Struct80061BC4_sub
     u32 unk18;
     s32 unk1C;
     u32 unk20;
-    u8 filler20[0x2C-0x24];
+    u8 filler24[0x2C-0x24];
 };
 
 struct GCMMatState_Unit
