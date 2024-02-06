@@ -33,7 +33,7 @@ static float s_materialAlpha; // Alpha of MAT in lighting equation: MAT * (RAS +
 static u32 s_lightMask;
 static float s_boundSphereScale;
 static GXCullMode s_cullMode;
-static BallEnvFunc lbl_802F20EC;
+static EnvMapFunc lbl_802F20EC;
 static Func802F20F0 u_customMaterialFunc;
 static float u_someColorScaleR;
 static float u_someColorScaleG;
@@ -716,9 +716,9 @@ void avdisp_set_z_mode(GXBool compareEnable, GXCompare compareFunc, GXBool updat
     s_zModeUpdateEnable  = updateEnable;
 }
 
-BallEnvFunc u_avdisp_set_some_func_1(BallEnvFunc func)
+EnvMapFunc u_avdisp_set_some_func_1(EnvMapFunc func)
 {
-    BallEnvFunc old = lbl_802F20EC;
+    EnvMapFunc old = lbl_802F20EC;
     lbl_802F20EC = func;
     return old;
 }
@@ -822,7 +822,7 @@ struct DrawShapeDeferredNode
     GXCullMode cullMode;
     u32 unk48;
     float alpha;
-    BallEnvFunc unk50;
+    EnvMapFunc unk50;
     Func802F20F0 unk54;
     u8 zCompEnable;
     u8 zUpdEnable;
@@ -1173,7 +1173,7 @@ void u_iteratively_multiply_model_matrices(struct GMAModel *model)
 
 void draw_shape_deferred_callback(struct DrawShapeDeferredNode *node)
 {
-    BallEnvFunc r31;
+    EnvMapFunc r31;
     Func802F20F0 r30;
     GXBool zModeCompareEnable;
     GXBool zModeUpdateEnable;

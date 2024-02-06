@@ -710,7 +710,7 @@ void init_gamedata_file(void)
         OSPanic("memcard.c", 927, "cannot OSAlloc");
     if (DVDOpen("banner_and_icon.bin", &file) == 0)
         OSPanic("memcard.c", 931, "cannot open banner_and_icon.bin");
-    if (u_read_dvd_file(&file, buffer, sizeof(memcardContents->bannerAndIcon), 0) == 0)
+    if (avDVDRead(&file, buffer, sizeof(memcardContents->bannerAndIcon), 0) == 0)
         OSPanic("memcard.c", 935, "cannot read banner_and_icon.bin");
     memcpy(memcardContents->bannerAndIcon, buffer, sizeof(memcardContents->bannerAndIcon));
     OSFree(buffer);
@@ -776,7 +776,7 @@ void init_replay_file_data(void)
     // copy banner image
     if (DVDOpen("preview/96x32.tpl", &file) == 0)
         OSPanic("memcard.c", 1026, "cannot open replay banner image");
-    if (u_read_dvd_file(&file, buffer, 0x1800, (sp88.stageId - 1) * 0x1800) == 0)
+    if (avDVDRead(&file, buffer, 0x1800, (sp88.stageId - 1) * 0x1800) == 0)
         OSPanic("memcard.c", 1029, "cannot read replay banner image");
     memcpy(memcardReplayData->bannerImg, buffer, 0x1800);
     DVDClose(&file);
@@ -784,7 +784,7 @@ void init_replay_file_data(void)
     // copy replay icon
     if (DVDOpen("replay_icon.bin", &file) == 0)
         OSPanic("memcard.c", 1040, "cannot open replay_icon.bin");
-    if (u_read_dvd_file(&file, buffer, 0x800, 0) == 0)
+    if (avDVDRead(&file, buffer, 0x800, 0) == 0)
         OSPanic("memcard.c", 1043, "cannot read replay_icon.bin");
     memcpy(memcardReplayData->replayIcon, buffer, 0x800);
     DVDClose(&file);
@@ -3252,7 +3252,7 @@ void ev_memcard_dest(void)
     replayFileInfo = NULL;
 }
 
-struct NaomiSpriteParams lbl_801D5724 =
+NLsprarg lbl_801D5724 =
 {
     0x4B,
     320.0f,
@@ -3306,11 +3306,11 @@ void draw_memcard_msg(struct MemCardMessage *msg, float x, float y)
         float var2 = f2;
         var1 *= 0.125;
         var2 *= 0.125;
-        lbl_801D5724.scaleX = var1;
-        lbl_801D5724.scaleY = var2;
-        lbl_801D5724.opacity = 0.65 + 0.1 * lbl_802F1ECC;
+        lbl_801D5724.zm_x = var1;
+        lbl_801D5724.zm_y = var2;
+        lbl_801D5724.trnsl = 0.65 + 0.1 * lbl_802F1ECC;
     }
-    draw_naomi_sprite(&lbl_801D5724);
+    nlSprPut(&lbl_801D5724);
     for (i = 0; i < msg->numLines; i++)
     {
         float param1 = x - 0.5 * u_get_text_width(msg->lines[i].str);
@@ -3575,7 +3575,7 @@ extern u32 lbl_802F22C8;
 void func_800A4E70(void)
 {
     memcardContents->gameData.unk4E = lbl_802F21A8;
-    func_80025E5C(memcardContents);
+    save_input_data(memcardContents);
     u_store_gamedata(memcardContents);
     func_8002DB10(memcardContents);
     save_course_completion_data(memcardContents);
@@ -3589,7 +3589,7 @@ void func_800A4E70(void)
 void func_800A4F04(void)
 {
     lbl_802F21A8 = memcardContents->gameData.unk4E;
-    func_80025E8C(memcardContents);
+    load_input_data(memcardContents);
     u_load_gamedata(memcardContents);
     func_8002DB24(memcardContents);
     load_course_completion_data(memcardContents);

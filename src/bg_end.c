@@ -27,8 +27,8 @@ static struct BGModelSearch endBgObjFind[] =
     { BG_MDL_CMP_END,    NULL },
 };
 
-static void lbl_800654F4(struct EnvMapSomething *arg0);
-static void lbl_8006582C(struct EnvMapSomething *arg0);
+static void lbl_800654F4(struct GCMMatState_Unit *arg0);
+static void lbl_8006582C(struct GCMMatState_Unit *arg0);
 static int model_find_proc(int, struct GMAModelEntry *);
 static int obj_find_proc(int, struct StageBgObject *);
 
@@ -90,7 +90,7 @@ void bg_end_draw(void)
 
 void bg_end_interact(int arg0) {}
 
-static void lbl_800654F4(struct EnvMapSomething *arg0)
+static void lbl_800654F4(struct GCMMatState_Unit *arg0)
 {
     struct BGEndWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp2C = arg0->unkC;
@@ -134,7 +134,7 @@ static void lbl_800654F4(struct EnvMapSomething *arg0)
     arg0->unkC = sp2C;
 }
 
-static void lbl_8006582C(struct EnvMapSomething *arg0)
+static void lbl_8006582C(struct GCMMatState_Unit *arg0)
 {
     struct BGEndWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp2C = arg0->unkC;

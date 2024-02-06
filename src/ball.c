@@ -33,27 +33,19 @@
 #include "../data/common.gma.h"
 #include "../data/common.nlobj.h"
 
+struct Ball ballInfo[8];
 struct Ball *currentBall;
 void (*minigameRelBallCallback)(struct Ball *);
-void (*lbl_802F1F10)(void);
-u32 lbl_802F1F0C;
-u32 lbl_802F1F08;
-
-float lbl_80205E20[4];
-Mtx lbl_80205E30;
-struct Ball ballInfo[8];
 s32 apeThreadNo[16];
 s32 playerCharacterSelection[MAX_PLAYERS];
 s32 playerControllerIDs[4];
 s32 lbl_80206BE0[4];
 
-FORCE_BSS_ORDER(lbl_80205E20)
-FORCE_BSS_ORDER(lbl_80205E30)
-FORCE_BSS_ORDER(ballInfo)
-FORCE_BSS_ORDER(apeThreadNo)
-FORCE_BSS_ORDER(playerCharacterSelection)
-FORCE_BSS_ORDER(playerControllerIDs)
-FORCE_BSS_ORDER(lbl_80206BE0)
+static u32 lbl_802F1F08;
+static u32 lbl_802F1F0C;
+static void (*lbl_802F1F10)(void);
+static float lbl_80205E20[4];
+static Mtx lbl_80205E30;
 
 void func_8003699C(struct Ape *ape)
 {
@@ -448,7 +440,7 @@ void func_80037718(struct Ape *a)
     mathutil_mtxA_mult_right(lbl_80205E30);
 }
 
-void lbl_8003781C(struct Ape *ape, int b)
+void u_ball_ape_thread(struct Ape *ape, int status)
 {
     struct Ball *r31;
     struct Ball *r29 = &ballInfo[ape->ballId];
@@ -456,9 +448,9 @@ void lbl_8003781C(struct Ape *ape, int b)
     int r27;
     float speed;
 
-    switch (b)
+    switch (status)
     {
-    case 3:
+    case THREAD_STATUS_KILLED:
         new_ape_close(ape);
         return;
     }
@@ -618,7 +610,7 @@ void ev_ball_init(void)
             break;
         default:
             if (!(advDemoInfo.flags & (1 << 8)))
-                apeThreadNo[i] = thread_unknown(lbl_8003781C, ape, 5);
+                apeThreadNo[i] = thread_create(u_ball_ape_thread, ape, THREAD_GROUP_5);
             break;
         }
         switch (modeCtrl.gameType)
@@ -677,14 +669,14 @@ void ev_ball_init(void)
     func_8008BEF8(1);
 }
 
-struct Ape *ape_get_by_type(int a, enum Character character, void (*c)(struct Ape *, int))
+struct Ape *ape_get_by_type(int a, enum Character character, void (*func)(struct Ape *, int))
 {
     struct Ape *ape = u_make_ape(character);
 
     ape->unk74 = 0;
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_y(0x8000);
-    apeThreadNo[a] = thread_unknown(c, ape, 5);
+    apeThreadNo[a] = thread_create(func, ape, THREAD_GROUP_5);
     u_switch_ape_character_lod_maybe(ape, 0);
     mathutil_mtxA_to_quat(&ape->unk60);
     lbl_802F1F08 = 0;
@@ -1091,7 +1083,7 @@ void ball_draw(void)
     s8 *r27;
     int i;
     int (*func)();
-    BallEnvFunc envFunc;
+    EnvMapFunc envFunc;
     int unused;
 
     if (dipSwitches & DIP_OLD_BALL)
@@ -1158,7 +1150,7 @@ void ball_draw(void)
                 mathutil_mtxA_pop();
         }
 
-        envFunc = backgroundInfo.ballEnvFunc;
+        envFunc = backgroundInfo.ballEnvMapFunc;
         if (envFunc != NULL)
         {
             u_avdisp_set_some_func_1(envFunc);
@@ -2070,7 +2062,7 @@ void ball_func_20(struct Ball *ball)
     ball->state = 4;
 }
 
-void lbl_8000F790(struct Ape *, int);
+void adv_ape_thread(struct Ape *, int);
 
 void ball_func_demo_init(struct Ball *ball)
 {
@@ -2079,7 +2071,7 @@ void ball_func_demo_init(struct Ball *ball)
     ball->colorId = 3;
 
     if (!(advDemoInfo.flags & (1 << 6)))
-        apeThreadNo[ball->playerId] = thread_unknown(lbl_8000F790, ball->ape, 5);
+        apeThreadNo[ball->playerId] = thread_create(adv_ape_thread, ball->ape, THREAD_GROUP_5);
 
     ball->pos.x = decodedStageLzPtr->startPos->pos.x;
     ball->pos.y = decodedStageLzPtr->startPos->pos.y;
@@ -3102,7 +3094,7 @@ void ball_draw_callback(struct BallDrawNode *node)
 {
     struct Ball *ball = &ballInfo[node->ballId];
     int (*r30)() = backgroundInfo.unk7C;
-    BallEnvFunc envFunc;
+    EnvMapFunc envFunc;
 
     if (gameMode == MD_GAME && modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION && modeCtrl.playerCount > 3)
         r30 = NULL;
@@ -3131,7 +3123,7 @@ void ball_draw_callback(struct BallDrawNode *node)
             mathutil_mtxA_pop();
     }
 
-    envFunc = backgroundInfo.ballEnvFunc;
+    envFunc = backgroundInfo.ballEnvMapFunc;
     if (envFunc != NULL)
     {
         u_avdisp_set_some_func_1(envFunc);

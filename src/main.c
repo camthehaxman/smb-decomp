@@ -182,7 +182,7 @@ void main(void)
         beginframe_main();
         perfInfo.unk0 = perf_stop_timer(4);
 
-        func_800ACA40();
+        avDVDErrorHandling();
 
         perf_start_timer(4);
         sound_main();

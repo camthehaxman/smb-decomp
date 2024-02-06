@@ -87,7 +87,7 @@ void func_80099968(int arg0, struct RenderEffect *arg1);
 void func_800999CC(int unused, struct RenderEffect *arg1);
 void func_8009A13C(int arg0, struct RenderEffect *arg1);
 void func_8009A2A4(struct RenderEffect *rendEfc);
-void lbl_8009A31C(struct EnvMapSomething *arg0);
+void lbl_8009A31C(struct GCMMatState_Unit *arg0);
 void func_8009A6E0(struct RenderEffect *rendEfc);
 
 struct RenderEffectFuncs lbl_801D3D78 =
@@ -429,7 +429,7 @@ void func_8009A2A4(struct RenderEffect *rendEfc)
 {
     struct Struct800993A8 *temp_r31;
     struct BGPilotWork *temp_r30;
-    void (*temp_r30_2)(struct EnvMapSomething *);
+    void (*temp_r30_2)(struct GCMMatState_Unit *);
 
     temp_r31 = (void *)rendEfc->work;
     temp_r30 = (struct BGPilotWork *)backgroundInfo.work;
@@ -441,7 +441,7 @@ void func_8009A2A4(struct RenderEffect *rendEfc)
     u_avdisp_set_some_func_1(temp_r30_2);
 }
 
-void lbl_8009A31C(struct EnvMapSomething *arg0)
+void lbl_8009A31C(struct GCMMatState_Unit *arg0)
 {
     struct BGPilotWork *temp_r31;
     struct Struct80061BC4_sub sp10;

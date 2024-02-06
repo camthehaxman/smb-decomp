@@ -1,91 +1,117 @@
+/**
+ * thread.c - implements a callback system (only used for ape animation processing, I think?).
+ *
+ * These aren't really threads since there is no concurrency, but more like a callback system.
+ * Each thread consists of a function that is run once each frame (when thread_loop is called) until
+ * the thread exits (by calling thread_exit) or is killed from outside the thread (by calling thread_kill).
+ */
 #include <stddef.h>
 #include <dolphin.h>
 
 #include "global.h"
 #include "thread.h"
 
-static struct Thread *freeThread;
-static struct Thread *threadWork;
-static struct Thread *currentThread;
-static struct Thread *restoreThread;  // set, but not used
-static struct Thread *executeLevels[20];
+static struct Thread *s_freeThread;  // current head of the linked list, which new threads are assigned to
+static struct Thread *s_threadWork;  // array of all Thread structures
+static struct Thread *s_currentThread;  // currently executing thread
+static struct Thread *s_restoreThread;  // (unused) It's called "RestoreThread" in the SMBDX symbol map. It's initialized in thread_init, but never used again.
 
-void dummy_thread(struct Ape *a, int b) {}
+// array of linked lists, each representing a group of threads
+// The first element of each group is a dummy thread, which does nothing.
+// New threads are added to the beginning of the group, but after the dummy thread.
+static struct Thread *s_threadGroups[THREAD_GROUP_COUNT + 4 /* why the extra space? */];
 
-void thread_init(struct Thread *nodes, int count)
+static void dummy_thread(struct Ape *a, int b) {}
+
+// Initializes the thread system
+void thread_init(struct Thread *work, int count)
 {
-	u8 dummy[8];
-	struct Thread *r8 = NULL;
-	int i;
+    u8 dummy[8];
+    struct Thread *prev = NULL;
+    int i;
 
-	currentThread = nodes;
-	restoreThread = nodes;
-	for (i = 0; i < count; i++)
-	{
-		nodes[i].callback = NULL;
-		nodes[i].ape = NULL;
-		nodes[i].unk10 = 0;
-		nodes[i].unk14 = 0;
-		nodes[i].unk18 = i;
-		nodes[i].unk1C = 0;
-		nodes[i].prev = r8;
-		nodes[i].next = &nodes[i + 1];
-		r8 = &nodes[i];
-	}
-	for (i = 0; i < 16; i++)
-	{
-		executeLevels[i] = &nodes[i];
-		nodes[i].callback = dummy_thread;
-		nodes[i].next = NULL;
-		nodes[i].prev = NULL;
-	}
-	threadWork = nodes;
-	freeThread = &nodes[i];
-	nodes[i].prev = NULL;
+    s_currentThread = work;
+    s_restoreThread = work;
+
+    // Initialize all Thread structs
+    for (i = 0; i < count; i++)
+    {
+	work[i].callback = NULL;
+	work[i].ape = NULL;
+	work[i].unused1 = 0;
+	work[i].unused2 = 0;
+	work[i].threadId = i;
+	work[i].unused3 = 0;
+	// Make this array into a linked list
+	work[i].prev = prev;
+	work[i].next = &work[i + 1];
+	prev = &work[i];
+    }
+
+    // Set up thread groups
+    // The first thread of each group is a dummy one which does nothing.
+    for (i = 0; i < THREAD_GROUP_COUNT; i++)
+    {
+	s_threadGroups[i] = &work[i];
+	work[i].callback = dummy_thread;
+	work[i].next = NULL;
+	work[i].prev = NULL;
+    }
+
+    s_threadWork = work;
+
+    // The rest of the threads are free to be assigned
+    s_freeThread = &work[i];
+    work[i].prev = NULL;
 }
 
-void thread_loop(u32 arg0)
+/* Runs all thread groups in order, except the ones specified in excludeMask */
+void thread_loop(u32 excludeMask)
 {
-	int i;
-	struct Thread *next;
-	struct Thread *node;
+    int group;
+    struct Thread *next;
+    struct Thread *curr;
 
-	for (i = 0; i < 16; i++)
+    for (group = 0; group < THREAD_GROUP_COUNT; group++)
+    {
+	if (excludeMask & (1 << group))
+	    continue;
+	curr = s_threadGroups[group];
+	while (curr != NULL)
 	{
-		if (!(arg0 & (1 << i)))
-		{
-			node = executeLevels[i];
-			while (node != NULL)
-			{
-				currentThread = node;
-				next = node->next;
-				node->callback(node->ape, 0);
-				node = next;
-			}
-		}
+	    s_currentThread = curr;
+	    next = curr->next;
+	    curr->callback(curr->ape, THREAD_STATUS_RUNNING);
+	    curr = next;
 	}
+    }
 }
 
-int thread_unknown(void (*func)(struct Ape *, int), struct Ape *ape, int listId)
+/* Adds the thread to the beginning of the specified thread group. Returns its ID */
+int thread_create(ThreadCallback func, struct Ape *ape, enum ThreadGroup group)
 {
-    struct Thread *oldHead = freeThread;
+    struct Thread *new = s_freeThread;
 
-    freeThread = oldHead->next;
-    freeThread->prev = NULL;
-    oldHead->next = executeLevels[listId]->next;
-    if (oldHead->next != NULL)
-        oldHead->next->prev = oldHead;
-    executeLevels[listId]->next = oldHead;
-    oldHead->prev = executeLevels[listId];
-    oldHead->ape = ape;
-    oldHead->callback = func;
-    return oldHead->unk18;
+    s_freeThread = s_freeThread->next;
+    s_freeThread->prev = NULL;
+
+    // Insert between the first (dummy) thread of the group and the rest of the group
+    new->next = s_threadGroups[group]->next;
+    if (new->next != NULL)
+        new->next->prev = new;
+    s_threadGroups[group]->next = new;
+    new->prev = s_threadGroups[group];
+
+    new->ape = ape;
+    new->callback = func;
+    return new->threadId;
 }
 
+/* Exits the currently running thread. This function should only be called from a thread callback. */
 void thread_exit(void)
 {
-    struct Thread *prev = currentThread->prev;
-    struct Thread *next = currentThread->next;
+    struct Thread *prev = s_currentThread->prev;
+    struct Thread *next = s_currentThread->next;
 
     // remove from list
     if (prev != NULL)
@@ -94,36 +120,38 @@ void thread_exit(void)
         next->prev = prev;
 
     // insert at beginning
-    currentThread->prev = NULL;
-    currentThread->next = freeThread;
-    if (freeThread != NULL)
-        freeThread->prev = currentThread;
-    freeThread = currentThread;
+    s_currentThread->prev = NULL;
+    s_currentThread->next = s_freeThread;
+    if (s_freeThread != NULL)
+        s_freeThread->prev = s_currentThread;
+    s_freeThread = s_currentThread;
 }
 
-void thread_kill(int arg0)
+/* Stops the specified thread from running. */
+void thread_kill(int threadId)
 {
-    struct Thread *backupCurr = currentThread;
-    struct Thread *node = &threadWork[arg0];
-    struct Thread *prev = node->prev;
-    struct Thread *next = node->next;
+    struct Thread *backupCurr = s_currentThread;
+    struct Thread *thread = &s_threadWork[threadId];
+    struct Thread *prev = thread->prev;
+    struct Thread *next = thread->next;
 
-    currentThread = node;
+    s_currentThread = thread;
 
-    // remove from list
+    // Remove thread from list
     if (prev != NULL)
         prev->next = next;
     if (next != NULL)
         next->prev = prev;
 
-    // insert at beginning
-    node->prev = NULL;
-    node->next = freeThread;
-    if (freeThread != NULL)
-        freeThread->prev = node;
-    freeThread = node;
+    // Free the thread by inserting it right before s_freeThread
+    thread->prev = NULL;
+    thread->next = s_freeThread;
+    if (s_freeThread != NULL)
+        s_freeThread->prev = thread;
+    s_freeThread = thread;
 
-    node->callback(node->ape, 3);
+    // Notify the thread of its termination
+    thread->callback(thread->ape, THREAD_STATUS_KILLED);
 
-    currentThread = backupCurr;
+    s_currentThread = backupCurr;
 }

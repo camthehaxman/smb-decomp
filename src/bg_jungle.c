@@ -8,6 +8,7 @@
 #include "global.h"
 #include "background.h"
 #include "info.h"
+#include "lens_flare.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "stage.h"
@@ -28,8 +29,8 @@ void bg_jungle_init(void)
     Vec sp8;
 
     bg_default_init();
-    func_800940B8();
-    func_800946DC(s_bgLightInfo.infLightRotY, 0xC00);
+    lens_flare_init();
+    lens_flare_set_light_angle(s_bgLightInfo.infLightRotY, 0xC00);
     backgroundInfo.unk8 |= 1;
 
     // find models
@@ -70,7 +71,7 @@ void bg_jungle_main(void)
     int speedUpTexVel;
     Vec sp8;
 
-    func_800940E0();
+    lens_flare_main();
     bg_default_main();
     if (gameSubmode == SMD_GAME_CONTINUE_INIT
      || gameSubmode == SMD_GAME_CONTINUE_MAIN

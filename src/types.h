@@ -306,7 +306,7 @@ struct Ape
     Vec unk48;
     s32 unk54;
     /*0x58*/ float modelScale;  // model scale?
-    u32 unk5C;
+    u32 threadId;
     Quaternion unk60;  // orientation?
     u32 unk70;
     u32 unk74;
@@ -569,39 +569,6 @@ struct StageSelection
     s32 levelNum;
 };
 
-// Parameters for drawing a sprite to the screen
-struct NaomiSpriteParams
-{
-    /*0x00*/ s32 bmpId;  // ID of bitmap image to use as texture
-
-    // Position
-    /*0x04*/ float x;  // position of sprite (0-640) from left edge of screen
-    /*0x08*/ float y;  // position of sprite (0-480) from top edge of screen
-    /*0x0C*/ float z;
-
-    // Scale. The size of the sprite is this scale multiplied by the dimensions of the sprite's texture.
-    /*0x10*/ float scaleX;
-    /*0x14*/ float scaleY;
-
-    // Texture coordinates
-    /*0x18*/ float u1;  // x texture coordinate of left edge
-    /*0x1C*/ float v1;  // y texture coordinate of top edge
-    /*0x20*/ float u2;  // x texture coordinate of right edge
-    /*0x24*/ float v2;  // y texture coordinate of bottom edge
-
-    /*0x28*/ s32 rotation;  // counterclockwise rotation in units of 1/65536 turn
-    /*0x2C*/ float opacity;
-    s32 unk30;
-    /*0x34*/ u32 flags;
-
-    // Color of sprite. The final color is computed by texColor * mulColor + addColor
-    /*0x38*/ u32 mulColor;  // RGBA color. Note: The alpha component of this color is ignored.
-                            // The above "opacity" field is used instead.
-    /*0x3C*/ u32 addColor;  // RGBA color
-
-    u8 filler40[0x50-0x40];
-};
-
 struct NlVtxTypeB;
 struct NlVtxTypeA;
 
@@ -722,7 +689,8 @@ struct Struct802C6220
 
 struct MemcardGameData
 {
-    /*0x5844*/ u8 filler0[0x44-0x00];
+    /*0x5844*/ u8 filler0[0x4];
+    /*0x5848*/ s8 padLimit[32][2];
     /*0x5888*/ u8 unk44;
     /*0x5889*/ u8 unk45;
     /*0x588A*/ u8 unk46;
@@ -852,10 +820,10 @@ struct Struct80061BC4_sub
     u32 unk18;
     s32 unk1C;
     u32 unk20;
-    u8 filler20[0x2C-0x24];
+    u8 filler24[0x2C-0x24];
 };
 
-struct EnvMapSomething
+struct GCMMatState_Unit
 {
     s32 unk0;
     u8 filler4[0xC-0x4];
@@ -863,7 +831,7 @@ struct EnvMapSomething
     u32 unk2C;
 };
 
-typedef void (*BallEnvFunc)(struct EnvMapSomething *);
+typedef void (*EnvMapFunc)(struct GCMMatState_Unit *);
 
 struct BgLightInfo
 {

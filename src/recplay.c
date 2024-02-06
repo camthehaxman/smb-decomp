@@ -85,9 +85,9 @@ void recplay_init(void)
         {
             size_t size = MIN(file.length, sizeof(s_builtinReplays));
 #ifdef TARGET_PC
-            u_read_dvd_file(&file, s_builtinReplays, size, 0);
+            avDVDRead(&file, s_builtinReplays, size, 0);
 #else
-            u_read_dvd_file(&file, s_builtinReplays, OSRoundUp32B(size), 0);
+            avDVDRead(&file, s_builtinReplays, OSRoundUp32B(size), 0);
 #endif
             DVDClose(&file);
         }
@@ -182,7 +182,7 @@ void u_load_random_builtin_replay(void)
         temp_r3_2 = OSAllocFromHeap(__OSCurrHeap, fileSize);
         if (temp_r3_2 != NULL)
         {
-            u_read_dvd_file(&file, temp_r3_2, fileSize, 0);
+            avDVDRead(&file, temp_r3_2, fileSize, 0);
             var_r28 = temp_r3_2;
 
             for (; var_r29 > 0; var_r29--, var_r28++)

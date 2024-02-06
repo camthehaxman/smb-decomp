@@ -27,7 +27,7 @@ float lbl_802F1CE8;
 u16 textY;
 u16 textX;
 u16 textStartX;
-struct NaomiSpriteParams spriteParamsBuf[0x100];
+NLsprarg spriteParamsBuf[0x100];
 
 extern char *bmpComNames[];
 extern char *bmpAdvNames[];
@@ -363,7 +363,23 @@ void bitmap_main(void)
         lbl_802F1CFC--;
     }
     lbl_802F1CFC = 0;
-
+/*
+    {
+        NLsprarg params = {0};
+        params.bmpId = BMP_COM_banana_10;
+    params.x = 640/2;
+    params.y = 448/2;
+    params.z = 0.01;
+    params.scaleX = 1.0f;
+    params.scaleY = 1.0f;
+    params.u1 = params.v1 = 0;
+    params.u2 = params.v2 = 1;
+    params.opacity = 1.0f;
+    params.mulColor = -1;
+    params.flags = NLSPR_DISP_CC | NLSPR_FLIP_H;
+    nlSprPut(&params);
+    }
+*/
     bitmap_draw_string();
     spriteParamsBufState = 2;
     u_draw_all_naomi_sprites();
@@ -372,7 +388,7 @@ void bitmap_main(void)
     if (eventInfo[EVENT_SPRITE].state == EV_STATE_RUNNING)
         func_800700D8(1);
     if (eventInfo[EVENT_MOUSE].state == EV_STATE_RUNNING)
-        ev_mouse_update();
+        mouse_draw();
     spriteParamsBufState = 3;
     u_draw_screen_fade_mask();
     spriteParamsBufState = 2;
@@ -634,8 +650,8 @@ void bitmap_draw_string(void)
 void u_draw_all_naomi_sprites(void)
 {
     int i;
-    struct NaomiSpriteParams *params = &spriteParamsBuf[0];
+    NLsprarg *params = &spriteParamsBuf[0];
 
     for (i = 0; i < spriteParamsBufCount; i++, params++)
-        draw_naomi_sprite(params);
+        nlSprPut(params);
 }

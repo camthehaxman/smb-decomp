@@ -65,7 +65,7 @@ void event_main(void)
     struct Event *event;
     int i;
     
-    thread_loop(0x00FFFFEF);
+    thread_loop(ALL_THREAD_MASK & ~(1 << THREAD_GROUP_4));
     for (i = 0, event = eventInfo; i < ARRAY_COUNT(eventInfo); i++, event++)
     {
         perf_start_timer(5);
@@ -83,7 +83,7 @@ void event_main(void)
         }
         event->time = perf_stop_timer(5);
     }
-    thread_loop(0x00FFFFDF);
+    thread_loop(ALL_THREAD_MASK & ~(1 << THREAD_GROUP_5));
 }
 
 void event_start(int id)

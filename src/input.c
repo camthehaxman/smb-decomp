@@ -27,13 +27,13 @@ FORCE_BSS_ORDER(controllerRepeatCounts);
 FORCE_BSS_ORDER(g_currPlayerButtons);
 FORCE_BSS_ORDER(g_currPlayerAnalogButtons);
 
-u32 lbl_802F1CD8;
-u32 lbl_802F1CD4;
-u8 lbl_802F1CD2;
-u8 lbl_802F1CD1;
-u8 resetCounter;
+static u8 resetCounter;
+static u8 lbl_802F1CD1;
+static u8 initialized;
+static u32 lbl_802F1CD4;
+static u32 lbl_802F1CD8;
 
-s8 lbl_80181B80[][2] =
+s8 padLimit[32][2] =
 {
     { 0x54, 0x00 },
     { 0x3B, 0x3B },
@@ -140,11 +140,11 @@ const s8 lbl_80110320_74[4][8][2] =
 
 void input_init(void)
 {
-    if (lbl_802F1CD2 == 0)
+    if (initialized == 0)
     {
         PADInit();
         PADSetAnalogMode(3);
-        lbl_802F1CD2++;
+        initialized++;
     }
     memset(controllerInfo, 0, sizeof(controllerInfo));
     resetCounter = 0;
@@ -216,10 +216,11 @@ void input_main(void)
 
         spC.x = sp10[i].stickX;
         spC.y = sp10[i].stickY;
-        func_80025B1C(&spC, lbl_80181B80[i]);
+        func_80025B1C(&spC, padLimit[i]);
         sp10[i].stickX = spC.x;
         sp10[i].stickY = spC.y;
 
+        // TODO: separate inline function: calc_input_square
         for (r3 = 0; r3 < 8; r3++)
         {
             float f5;
@@ -472,6 +473,7 @@ void get_key_repeats(void)
     }
 }
 
+// make_act_input?
 void func_80025640(void)
 {
     int i;
@@ -620,12 +622,12 @@ void func_80025B1C(struct CoordsS8 *a, s8 *b)
     }
 }
 
-void func_80025E5C(void *dest)
+void save_input_data(struct MemcardContents *dest)
 {
-    memcpy((u8 *)dest + 0x5848, lbl_80181B80, 0x40);
+    memcpy(dest->gameData.padLimit, padLimit, sizeof(padLimit));
 }
 
-void func_80025E8C(void *src)
+void load_input_data(const struct MemcardContents *src)
 {
-    memcpy(lbl_80181B80, (u8 *)src + 0x5848, 0x40);
+    memcpy(padLimit, src->gameData.padLimit, sizeof(padLimit));
 }

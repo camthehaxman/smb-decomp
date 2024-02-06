@@ -287,14 +287,14 @@ void load_character_resources(void)
     OSSetCurrentHeap(oldHeap);
 }
 
-void func_80089A04(struct ApeGfxFileInfo *a, int b, struct Struct80089A04 *c)
+void u_find_ape_face_part(const struct ApeGfxFileInfo *filesInfo, int b, struct Struct80089A04 *c)
 {
     int i;
-    struct ApeGfxFileInfo *dunno = &a[(b >> 1) & 1];
+    const struct ApeGfxFileInfo *thisFile = &filesInfo[(b >> 1) & 1];
 
-    for (i = 0; i < dunno->partCounts[b & 1]; i++)
+    for (i = 0; i < thisFile->partCounts[b & 1]; i++)
     {
-        struct ApeFacePart *faceParts = dunno->facePartInfo[b & 1];
+        struct ApeFacePart *faceParts = thisFile->facePartInfo[b & 1];
 
         if (strcmp(faceParts[i].name, c->names[b]) == 0)
         {
@@ -996,11 +996,11 @@ void mot_ape_init(void)
     mathutil_mtxA_rotate_z(0x2FA4);
     mathutil_mtxA_to_mtx(lbl_802B4820);
     mathutil_mtxA_pop();
-    func_8008B0AC();
+    u_something_with_skel_model_names();
     nlObjModelListLoad(&apeFaceObj, &apeFaceTpl, "ape/face_p.lz", "ape/face.lz");
 }
 
-void func_8008B0AC(void)
+void u_something_with_skel_model_names(void)
 {
     int i;
     int j;
@@ -1037,7 +1037,7 @@ void func_8008B0AC(void)
 
 void new_ape_close(struct Ape *ape)
 {
-    thread_kill(ape->unk5C);
+    thread_kill(ape->threadId);
     if (lbl_802F2074 == 2)
     {
         OSFreeToHeap(backgroundHeap, ape->unk0);
@@ -1073,7 +1073,7 @@ void u_make_ape_inline(struct Ape *ape)
         r19 = &lbl_801C63B0[ape->charaId][i];
         for (j = 0; j < 4; j++)
         {
-            func_80089A04(&apeGfxFileInfo[index], j, r19);
+            u_find_ape_face_part(&apeGfxFileInfo[index], j, r19);
             ape->unk98[i].unk14[j] = r19->unk30[j];
         }
     }
@@ -1134,7 +1134,7 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 
     ape = apeStructPtrs[nextApeIndex];
     r20 = ape->unk70;
-    memset(ape, 0, sizeof (*ape));
+    memset(ape, 0, sizeof(*ape));
     ape->unk70 = r20;
 
     find_motskl_entry(skelName, &skel);
@@ -1195,7 +1195,7 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 
     ape->unkB8 = lbl_8008A10C;
     ape->unkBC = lbl_8008A108;
-    ape->unk5C = thread_unknown(func_8008C924, ape, 7);
+    ape->threadId = thread_create(mot_ape_thread, ape, THREAD_GROUP_7);
     nextApeIndex++;
     return ape;
 }
@@ -1705,10 +1705,10 @@ struct Struct8008C924
 
 void lbl_8008CA80(struct Struct8008C924 *);
 
-void func_8008C924(struct Ape *ape, int b)
+void mot_ape_thread(struct Ape *ape, int status)
 {
 #ifndef TARGET_PC
-    int r3 = (b == 3 || (ape->flags & (1 << 5)));
+    int r3 = (status == THREAD_STATUS_KILLED || (ape->flags & (1 << 5)));
     u8 dummy[16];
 
     if (r3)

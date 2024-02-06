@@ -194,20 +194,20 @@ static char **pauseMenus[] =
 
 static void pause_menu_sprite_draw(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     int bmpId;
     int menuType;
     int temp_r16;
     int i;
 
-    params.u1 = 0.0f;
-    params.v1 = 0.0f;
-    params.u2 = 1.0f;
-    params.v2 = 1.0f;
-    params.rotation = 0;
-    params.addColor = 0;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
+    params.u0 = 0.0f;
+    params.v0 = 0.0f;
+    params.u1 = 1.0f;
+    params.v1 = 1.0f;
+    params.ang = 0;
+    params.offset_color = 0;
+    params.listType = -1;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
 
     if (pauseMenuState.itemCount >= 4)
     {
@@ -218,25 +218,25 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
     }
     else
         bmpId = BMP_COM_menu_kiwaku;
-    params.bmpId = bmpId;
+    params.sprno = bmpId;
     params.x = sprite->x;
     params.y = sprite->y;
     params.z = sprite->unk4C + 0.001;
-    params.scaleX = 1.0f;
-    params.scaleY = 1.0f;
-    params.opacity = 1.0f;
-    params.mulColor = RGBA(255, 255, 255, (int)(sprite->opacity * 255.0f));
-    draw_naomi_sprite(&params);
+    params.zm_x = 1.0f;
+    params.zm_y = 1.0f;
+    params.trnsl = 1.0f;
+    params.base_color = RGBA(255, 255, 255, (int)(sprite->opacity * 255.0f));
+    nlSprPut(&params);
 
-    params.bmpId = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[pauseMenuState.playerId]);
+    params.sprno = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[pauseMenuState.playerId]);
     params.x = sprite->x - 110.0f;
     params.y = sprite->y + sprite->scaleY + 12.0f;
     params.z = sprite->unk4C;
-    params.scaleX = 0.5f;
-    params.scaleY = 0.325f;
-    params.opacity = 1.0f;
-    params.mulColor = RGBA(255, 255, 255, (int)(sprite->opacity * 255.0f));
-    draw_naomi_sprite(&params);
+    params.zm_x = 0.5f;
+    params.zm_y = 0.325f;
+    params.trnsl = 1.0f;
+    params.base_color = RGBA(255, 255, 255, (int)(sprite->opacity * 255.0f));
+    nlSprPut(&params);
 
     menuType = pauseMenuState.menuType;
     if (pauseMenuState.unk4 & 4)
@@ -321,15 +321,15 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
             sprite->scaleX = phi_f22;
     }
 
-    params.bmpId = BMP_COM_white_mask8x8;
+    params.sprno = BMP_COM_white_mask8x8;
     params.x = 320.1f;
     params.y = 240.1f;
     params.z = (sprite->userVar == 2) ? 0.001 : sprite->unk4C + 0.002;
-    params.scaleX = 80.0f;
-    params.scaleY = 60.0f;
-    params.opacity = sprite->opacity;
-    params.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
-    draw_naomi_sprite(&params);
+    params.zm_x = 80.0f;
+    params.zm_y = 60.0f;
+    params.trnsl = sprite->opacity;
+    params.base_color = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
+    nlSprPut(&params);
 }
 
 void hud_show_press_start_textbox(int a)
@@ -463,26 +463,26 @@ static void sega_logo_sprite_main(s8 *a, struct Sprite *sprite)
 
 static void lbl_80076AC0(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     int r5 = sprite->userVar;
 
-    params.bmpId = sprite->bmpId;
+    params.sprno = sprite->bmpId;
     params.x = sprite->x + (r5 % 2 == 1 ? 128 : -128);
     params.y = sprite->y + (sprite->userVar == 0 ? 50 : 0);
     params.z = sprite->unk4C;
-    params.u1 = 0.0f;
-    params.v1 = 0.15625 * r5;
-    params.u2 = 1.0f;
-    params.v2 = 0.15625 + 0.15625 * r5;
-    params.scaleX = sprite->scaleX * (params.u2 - params.u1);
-    params.scaleY = sprite->scaleY * 0.15625;
-    params.rotation = sprite->rotation;
-    params.opacity = sprite->opacity;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
-    params.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
-    params.addColor = 0;
-    draw_naomi_sprite(&params);
+    params.u0 = 0.0f;
+    params.v0 = 0.15625 * r5;
+    params.u1 = 1.0f;
+    params.v1 = 0.15625 + 0.15625 * r5;
+    params.zm_x = sprite->scaleX * (params.u1 - params.u0);
+    params.zm_y = sprite->scaleY * 0.15625;
+    params.ang = sprite->rotation;
+    params.trnsl = sprite->opacity;
+    params.listType = -1;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
+    params.base_color = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
+    params.offset_color = 0;
+    nlSprPut(&params);
 }
 
 static void copyright_sprite_main(s8 *, struct Sprite *);
@@ -739,53 +739,53 @@ static void title_sprite_draw(struct Sprite *sprite)
     int i;
     struct TitleLetter *letter;
     struct TitleLetterOffset *offset;
-    struct NaomiSpriteParams params;
+    NLsprarg params;
 
-    params.u1 = 0.0f;
-    params.v1 = 0.0f;
-    params.u2 = 1.0f;
-    params.v2 = 1.0f;
-    params.scaleX = 1.0f;
-    params.scaleY = 1.0f;
-    params.opacity = 1.0f;
-    params.rotation = 0;
-    params.mulColor = RGBA(255, 255, 255, (u8)(255.0f * sprite->opacity));
-    params.addColor = 0;
-    params.unk30 = -1;
+    params.u0 = 0.0f;
+    params.v0 = 0.0f;
+    params.u1 = 1.0f;
+    params.v1 = 1.0f;
+    params.zm_x = 1.0f;
+    params.zm_y = 1.0f;
+    params.trnsl = 1.0f;
+    params.ang = 0;
+    params.base_color = RGBA(255, 255, 255, (u8)(255.0f * sprite->opacity));
+    params.offset_color = 0;
+    params.listType = -1;
 
-    params.bmpId = BMP_ADV_adv_title_bg;
+    params.sprno = BMP_ADV_adv_title_bg;
     params.x = 320.1f;
     params.y = 240.1f;
     params.z = 0.004 + sprite->unk4C;
-    params.opacity = sprite->opacity;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
-    draw_naomi_sprite(&params);
+    params.trnsl = sprite->opacity;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
+    nlSprPut(&params);
 
     // draw "SUPER" letters
     letter = titleLettersSuper;
     offset = titleSuperOffsets;
     for (i = 0; i < 5; i++, letter++, offset++)
     {
-        params.bmpId = BMP_ADV_adv_title_spr_kage;
+        params.sprno = BMP_ADV_adv_title_spr_kage;
         params.x = letter->x - 8.0f;
         params.y = letter->y + offset->pos - 5.0f;
         params.z = 0.002 + sprite->unk4C;
-        params.opacity = sprite->opacity;
-        params.flags = (sprite->flags & 0xFFFFFFF0) | 0x200000 | 5;
-        draw_naomi_sprite(&params);
+        params.trnsl = sprite->opacity;
+        params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_DEPTH_UPDATE;
+        nlSprPut(&params);
 
-        params.bmpId = letter->bmpId;
+        params.sprno = letter->bmpId;
         params.x = letter->x;
         params.y = letter->y + offset->pos;
         params.z = sprite->unk4C;
-        params.opacity = 1.0f;
-        params.flags = (sprite->flags & 0xFFFFFFF0) | 0x200000 | 5;
-        draw_naomi_sprite(&params);
+        params.trnsl = 1.0f;
+        params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_DEPTH_UPDATE;
+        nlSprPut(&params);
 
-        params.bmpId = BMP_ADV_adv_title_spr_gawa;
+        params.sprno = BMP_ADV_adv_title_spr_gawa;
         params.z = sprite->unk4C - 0.002;
-        params.opacity = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
-        draw_naomi_sprite(&params);
+        params.trnsl = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
+        nlSprPut(&params);
     }
 
     // draw "MONKEY BALL" letters
@@ -793,50 +793,50 @@ static void title_sprite_draw(struct Sprite *sprite)
     offset = titleMonkeyBallOffsets;
     for (i = 0; i < 10; i++, letter++, offset++)
     {
-        params.bmpId = BMP_ADV_adv_title_mnk_kage;
+        params.sprno = BMP_ADV_adv_title_mnk_kage;
         params.x = 56.0f + (letter->x + offset->pos - 12.0f);
         params.y = 56.0f + (letter->y - 5.0f);
         params.z = 0.002 + sprite->unk4C;
-        params.opacity = sprite->opacity;
-        params.rotation = 0;
-        params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
-        draw_naomi_sprite(&params);
+        params.trnsl = sprite->opacity;
+        params.ang = 0;
+        params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
+        nlSprPut(&params);
 
-        params.bmpId = letter->bmpId;
+        params.sprno = letter->bmpId;
         params.x = 44.0f + (letter->x + offset->pos);
         params.y = 44.0f + letter->y;
         params.z = sprite->unk4C;
-        params.opacity = 1.0f;
-        params.rotation = -256.0f * offset->pos;
-        params.flags = (sprite->flags & 0xFFFFFFF0) | 0x200000 | 0xA;
-        draw_naomi_sprite(&params);
+        params.trnsl = 1.0f;
+        params.ang = -256.0f * offset->pos;
+        params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC | NLSPR_DEPTH_UPDATE;
+        nlSprPut(&params);
 
-        params.bmpId = BMP_ADV_adv_title_mnk_gawa;
+        params.sprno = BMP_ADV_adv_title_mnk_gawa;
         params.z = sprite->unk4C - 0.002;
-        params.opacity = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
-        params.rotation = 0;
-        draw_naomi_sprite(&params);
+        params.trnsl = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
+        params.ang = 0;
+        nlSprPut(&params);
     }
 
-    params.bmpId = BMP_ADV_adv_title_tm;
+    params.sprno = BMP_ADV_adv_title_tm;
     params.x = 482.0f;
     params.y = 338.0f;
     params.z = sprite->unk4C;
-    params.opacity = lbl_802F2014;
-    params.rotation = 0;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0x200000 | 5;
-    draw_naomi_sprite(&params);
+    params.trnsl = lbl_802F2014;
+    params.ang = 0;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_DEPTH_UPDATE;
+    nlSprPut(&params);
 
-    params.bmpId = lbl_80118AC8[0];
+    params.sprno = lbl_80118AC8[0];
     params.x = 320.0f;
     params.y = 331.0f;
     params.z = sprite->unk4C - 0.004;
-    params.scaleX = lbl_802F2010 * 0.7;
-    params.scaleY = lbl_802F2010 * 0.7 * 0.65;
-    params.opacity = 1.0f;
-    params.rotation = 1024.0f * mathutil_sin(globalAnimTimer << 8);
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0x200000 | 0xA;
-    draw_naomi_sprite(&params);
+    params.zm_x = lbl_802F2010 * 0.7;
+    params.zm_y = lbl_802F2010 * 0.7 * 0.65;
+    params.trnsl = 1.0f;
+    params.ang = 1024.0f * mathutil_sin(globalAnimTimer << 8);
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC | NLSPR_DEPTH_UPDATE;
+    nlSprPut(&params);
 }
 
 static void gamestart_sprite_main(s8 *, struct Sprite *);
@@ -1248,19 +1248,19 @@ static void eieipu_sprite_draw(struct Sprite *sprite)
 {
     f32 temp_f29;
     int i;
-    struct NaomiSpriteParams params;
+    NLsprarg params;
 
     params.z = sprite->unk4C;
-    params.u1 = 0.0f;
-    params.v1 = 0.0f;
-    params.u2 = 1.0f;
-    params.v2 = 1.0f;
-    params.opacity = 1.0f;
-    params.rotation = 0;
-    params.mulColor = RGBA(255, 255, 255, (u8)(255.0f * sprite->opacity));
-    params.addColor = 0;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
+    params.u0 = 0.0f;
+    params.v0 = 0.0f;
+    params.u1 = 1.0f;
+    params.v1 = 1.0f;
+    params.trnsl = 1.0f;
+    params.ang = 0;
+    params.base_color = RGBA(255, 255, 255, (u8)(255.0f * sprite->opacity));
+    params.offset_color = 0;
+    params.listType = -1;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
 
     temp_f29 = 0.5 * mathutil_sin((sprite->counter << 9) + 0x4000);
 
@@ -1269,59 +1269,59 @@ static void eieipu_sprite_draw(struct Sprite *sprite)
     case 0:
         for (i = 0; i < 13; i++)
         {
-            params.bmpId = BMP_COM_banana_10;
+            params.sprno = BMP_COM_banana_10;
             params.x = lbl_801C17FC[i].unk0;
             params.y = lbl_801C17FC[i].unk4;
-            params.scaleX = 1.0 + ((i % 2 == 0) ? temp_f29 : -temp_f29);
-            params.scaleY = 1.0 + ((i % 2 == 0) ? temp_f29 : -temp_f29);
-            draw_naomi_sprite(&params);
+            params.zm_x = 1.0 + ((i % 2 == 0) ? temp_f29 : -temp_f29);
+            params.zm_y = 1.0 + ((i % 2 == 0) ? temp_f29 : -temp_f29);
+            nlSprPut(&params);
         }
         break;
     case 1:
         for (i = 0; i < 21; i++)
         {
-            params.bmpId = BMP_COM_banana_01;
+            params.sprno = BMP_COM_banana_01;
             params.x = lbl_801C1864[i].unk0;
             params.y = lbl_801C1864[i].unk4;
             params.x += (i % 2 == 0) ? -sprite->counter : sprite->counter;
             params.y += (i % 2 == 0) ? sprite->counter * 2 : -sprite->counter * 2;
-            params.scaleX = 1.0f;
-            params.scaleY = 1.0f;
-            draw_naomi_sprite(&params);
+            params.zm_x = 1.0f;
+            params.zm_y = 1.0f;
+            nlSprPut(&params);
         }
         break;
     case 2:
         for (i = 0; i < 13; i++)
         {
-            params.bmpId = lbl_801C1984[i % 3];
+            params.sprno = lbl_801C1984[i % 3];
             params.x = lbl_801C17FC[i].unk0;
             params.y = lbl_801C17FC[i].unk4;
-            params.scaleX = 1.0f;
-            params.scaleY = 0.65f;
-            params.rotation = 4096.0f * temp_f29;
-            draw_naomi_sprite(&params);
+            params.zm_x = 1.0f;
+            params.zm_y = 0.65f;
+            params.ang = 4096.0f * temp_f29;
+            nlSprPut(&params);
         }
         break;
     case 3:
         for (i = 0; i < 13; i++)
         {
-            params.bmpId = BMP_COM_icon_gol_angry03;
+            params.sprno = BMP_COM_icon_gol_angry03;
             params.x = lbl_801C17FC[i].unk0;
             params.y = lbl_801C17FC[i].unk4;
-            params.scaleX = 1.0 + temp_f29;
-            params.scaleY = 0.65 * (1.0 + temp_f29);
-            draw_naomi_sprite(&params);
+            params.zm_x = 1.0 + temp_f29;
+            params.zm_y = 0.65 * (1.0 + temp_f29);
+            nlSprPut(&params);
         }
         break;
     case 4:
         for (i = 0; i < 15; i++)
         {
-            params.bmpId = (i % 2 == 0) ? BMP_COM_banana_10 : BMP_COM_banana_01;
+            params.sprno = (i % 2 == 0) ? BMP_COM_banana_10 : BMP_COM_banana_01;
             params.x = lbl_801C190C[i].unk0 + ((i / 5 == 1) ? -sprite->counter : sprite->counter);
             params.y = lbl_801C190C[i].unk4;
-            params.scaleX = 0.8f;
-            params.scaleY = 0.8f;
-            draw_naomi_sprite(&params);
+            params.zm_x = 0.8f;
+            params.zm_y = 0.8f;
+            nlSprPut(&params);
         }
         break;
     }
@@ -2196,31 +2196,31 @@ static void competition_round_sprite_main(s8 *arg0, struct Sprite *sprite)
 
 static void competition_separator_sprite_draw(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     u8 dummy[4];
 
-    params.bmpId = sprite->bmpId;
+    params.sprno = sprite->bmpId;
     params.x = 320.0f;
     params.y = 240.0f;
     params.z = sprite->unk4C;
-    params.scaleX = sprite->scaleX;
-    params.scaleY = sprite->scaleY;
-    params.u1 = sprite->unk7C;
-    params.v1 = sprite->unk80;
-    params.u2 = sprite->unk84;
-    params.v2 = sprite->unk88;
-    params.rotation = 0;
-    params.opacity = 1.0f;
-    params.unk30 = -1;
-    params.flags = 0xA;
-    params.mulColor = RGBA(255, 255, 255, 255);
-    params.addColor = 0;
+    params.zm_x = sprite->scaleX;
+    params.zm_y = sprite->scaleY;
+    params.u0 = sprite->unk7C;
+    params.v0 = sprite->unk80;
+    params.u1 = sprite->unk84;
+    params.v1 = sprite->unk88;
+    params.ang = 0;
+    params.trnsl = 1.0f;
+    params.listType = -1;
+    params.attr = NLSPR_DISP_CC;
+    params.base_color = RGBA(255, 255, 255, 255);
+    params.offset_color = 0;
 
     switch (modeCtrl.playerCount)
     {
     case 2:
-        params.rotation = 0xC000;
-        draw_naomi_sprite(&params);
+        params.ang = 0xC000;
+        nlSprPut(&params);
         break;
     case 3:
         switch (modeCtrl.splitscreenMode)
@@ -2228,32 +2228,32 @@ static void competition_separator_sprite_draw(struct Sprite *sprite)
         default:
         case SPLITSCREEN_1P_WIDE:
         case SPLITSCREEN_2P_WIDE:
-            params.rotation = 0xC000;
-            draw_naomi_sprite(&params);
+            params.ang = 0xC000;
+            nlSprPut(&params);
             params.y += 320.0f;
-            params.rotation = 0;
-            draw_naomi_sprite(&params);
+            params.ang = 0;
+            nlSprPut(&params);
             break;
         case SPLITSCREEN_3P_WIDE:
-            params.rotation = 0xC000;
-            draw_naomi_sprite(&params);
+            params.ang = 0xC000;
+            nlSprPut(&params);
             params.y -= 320.0f;
-            params.rotation = 0;
-            draw_naomi_sprite(&params);
+            params.ang = 0;
+            nlSprPut(&params);
             break;
         case SPLITSCREEN_4_SPLIT:
-            params.rotation = 0xC000;
-            draw_naomi_sprite(&params);
-            params.rotation = 0;
-            draw_naomi_sprite(&params);
+            params.ang = 0xC000;
+            nlSprPut(&params);
+            params.ang = 0;
+            nlSprPut(&params);
             break;
         }
         break;
     case 4:
-        params.rotation = 0xC000;
-        draw_naomi_sprite(&params);
-        params.rotation = 0;
-        draw_naomi_sprite(&params);
+        params.ang = 0xC000;
+        nlSprPut(&params);
+        params.ang = 0;
+        nlSprPut(&params);
         break;
     }
 }
@@ -2463,29 +2463,29 @@ static void lbl_8007ADF4(struct Sprite *sprite)
 
 static void lbl_8007B134(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     struct TPLTextureHeader *texHdr;
     int phi_r5;
 
     phi_r5 = (modeCtrl.playerCount > 1) ? ballInfo[sprite->userVar].playerId : 3;
-    params.bmpId = BMP_NML_game_player;
-    params.rotation = sprite->rotation;
-    params.opacity = sprite->opacity;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
-    params.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (int)(sprite->opacity * 255.0f));
-    params.addColor = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
-    texHdr = &bitmapGroups[(params.bmpId >> 8) & 0xFF].tpl->texHeaders[params.bmpId & 0xFF];
+    params.sprno = BMP_NML_game_player;
+    params.ang = sprite->rotation;
+    params.trnsl = sprite->opacity;
+    params.listType = -1;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
+    params.base_color = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (int)(sprite->opacity * 255.0f));
+    params.offset_color = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
+    texHdr = &bitmapGroups[(params.sprno >> 8) & 0xFF].tpl->texHeaders[params.sprno & 0xFF];
     params.x = sprite->x;
     params.y = sprite->y;
     params.z = sprite->unk4C;
-    params.u1 = (16.0f * sprite->userVar) / texHdr->width;
-    params.v1 = (16.0f * phi_r5) / texHdr->height;
-    params.u2 = params.u1 + (16.0f / texHdr->width);
-    params.v2 = params.v1 + (10.0f / texHdr->height);
-    params.scaleX = sprite->scaleX * (params.u2 - params.u1);
-    params.scaleY = sprite->scaleY * (params.v2 - params.v1);
-    draw_naomi_sprite(&params);
+    params.u0 = (16.0f * sprite->userVar) / texHdr->width;
+    params.v0 = (16.0f * phi_r5) / texHdr->height;
+    params.u1 = params.u0 + (16.0f / texHdr->width);
+    params.v1 = params.v0 + (10.0f / texHdr->height);
+    params.zm_x = sprite->scaleX * (params.u1 - params.u0);
+    params.zm_y = sprite->scaleY * (params.v1 - params.v0);
+    nlSprPut(&params);
 }
 
 static void score_value_sprite_main(s8 *arg0, struct Sprite *sprite)
@@ -2949,7 +2949,7 @@ void hud_show_goal_banner(int duration)
 
 static void goal_sprite_draw(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     float opacity;
     int temp_r29;
     int t;
@@ -2957,11 +2957,11 @@ static void goal_sprite_draw(struct Sprite *sprite)
     int flash;
     int i;
 
-    params.bmpId = BMP_NML_game_goal;
+    params.sprno = BMP_NML_game_goal;
     params.z = sprite->unk4C;
-    params.rotation = sprite->rotation;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
+    params.ang = sprite->rotation;
+    params.listType = -1;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
 
     t = sprite->userVar - sprite->counter;
     if (t < 30)
@@ -2984,9 +2984,9 @@ static void goal_sprite_draw(struct Sprite *sprite)
         opacity = 1.0f;
         flash = 0;
     }
-    params.opacity = opacity;
-    params.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(opacity * 255.0f));
-    params.addColor = RGBA(flash, flash, flash, 0);
+    params.trnsl = opacity;
+    params.base_color = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(opacity * 255.0f));
+    params.offset_color = RGBA(flash, flash, flash, 0);
 
     if (t >= 210)
     {
@@ -3007,12 +3007,12 @@ static void goal_sprite_draw(struct Sprite *sprite)
         sprite->scaleY = sprite->scaleX;
     }
 
-    params.u1 = 0.0f;
-    params.v1 = 0.0f;
-    params.u2 = 1.0f;
-    params.v2 = 1.0f;
-    params.scaleX = sprite->scaleX;
-    params.scaleY = sprite->scaleY;
+    params.u0 = 0.0f;
+    params.v0 = 0.0f;
+    params.u1 = 1.0f;
+    params.v1 = 1.0f;
+    params.zm_x = sprite->scaleX;
+    params.zm_y = sprite->scaleY;
 
     if (t < 30)
     {
@@ -3033,14 +3033,14 @@ static void goal_sprite_draw(struct Sprite *sprite)
             lbl_802F201C += temp_f29 * (192.0f * spC[i].y);
             params.x = lbl_802F2018;
             params.y = lbl_802F201C;
-            draw_naomi_sprite(&params);
+            nlSprPut(&params);
         }
     }
     else
     {
         params.x = sprite->x;
         params.y = sprite->y;
-        draw_naomi_sprite(&params);
+        nlSprPut(&params);
     }
     reset_text_draw_settings();
 }
@@ -4190,29 +4190,29 @@ float lbl_801C212C[] = { -36.0f, 0.0f, 36.0f };  // unused
 
 static void lbl_8007F1A4(struct Sprite *sprite)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     struct TPLTextureHeader *texHdr;
     struct Struct801C20EC *temp_r6;
 
-    params.bmpId = BMP_NML_game_rank;
-    params.rotation = sprite->rotation;
-    params.opacity = sprite->opacity;
-    params.unk30 = -1;
-    params.flags = (sprite->flags & 0xFFFFFFF0) | 0xA;
-    params.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
-    params.addColor = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
+    params.sprno = BMP_NML_game_rank;
+    params.ang = sprite->rotation;
+    params.trnsl = sprite->opacity;
+    params.listType = NLSPR_LISTTYPE_AUTO;
+    params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
+    params.base_color = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
+    params.offset_color = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
     temp_r6 = &lbl_801C20EC[sprite->userVar];
-    texHdr = &bitmapGroups[(params.bmpId >> 8) & 0xFF].tpl->texHeaders[params.bmpId & 0xFF];
+    texHdr = &bitmapGroups[(params.sprno >> 8) & 0xFF].tpl->texHeaders[params.sprno & 0xFF];
     params.x = sprite->x;
     params.y = sprite->y;
     params.z = sprite->unk4C;
-    params.u1 = temp_r6->unk0 / texHdr->width;
-    params.v1 = temp_r6->unk4 / texHdr->height;
-    params.u2 = params.u1 + temp_r6->unk8 / texHdr->width;
-    params.v2 = params.v1 + temp_r6->unkC / texHdr->height;
-    params.scaleX = sprite->scaleX * (params.u2 - params.u1);
-    params.scaleY = sprite->scaleY * (params.v2 - params.v1);
-    draw_naomi_sprite(&params);
+    params.u0 = temp_r6->unk0 / texHdr->width;
+    params.v0 = temp_r6->unk4 / texHdr->height;
+    params.u1 = params.u0 + temp_r6->unk8 / texHdr->width;
+    params.v1 = params.v0 + temp_r6->unkC / texHdr->height;
+    params.zm_x = sprite->scaleX * (params.u1 - params.u0);
+    params.zm_y = sprite->scaleY * (params.v1 - params.v0);
+    nlSprPut(&params);
 }
 
 static void clear_score_sprite_draw(struct Sprite *);

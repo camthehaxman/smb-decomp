@@ -51,7 +51,7 @@ void get_key_repeats(void);
 void func_80025640(void);
 void handle_reset_input(PADStatus *);
 void func_80025B1C(struct CoordsS8 *, s8 *);
-void func_80025E5C(void *);
-void func_80025E8C(void *);
+void save_input_data(struct MemcardContents *);
+void load_input_data(const struct MemcardContents *);
 
 #endif

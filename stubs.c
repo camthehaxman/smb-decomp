@@ -148,11 +148,6 @@ OSInterruptMask __OSUnmaskInterrupts(OSInterruptMask mask){puts("__OSUnmaskInter
 volatile u16 *__cpReg;
 volatile u32 *__piReg;
 void __sync(){puts("__sync is a stub");}
-void bg_master_draw(){puts("bg_master_draw is a stub");}
-void bg_master_finish(){puts("bg_master_finish is a stub");}
-void bg_master_init(){puts("bg_master_init is a stub");}
-void bg_master_interact(){puts("bg_master_interact is a stub");}
-void bg_master_main(){puts("bg_master_main is a stub");}
 void bg_old_bluesky_draw(){puts("bg_old_bluesky_draw is a stub");}
 void bg_old_bluesky_finish(){puts("bg_old_bluesky_finish is a stub");}
 void bg_old_bluesky_init(){puts("bg_old_bluesky_init is a stub");}
@@ -182,9 +177,6 @@ void credits_finish(){puts("credits_finish is a stub");}
 void credits_init(){puts("credits_init is a stub");}
 void credits_main(){puts("credits_main is a stub");}
 u32 dipSwitches;
-void func_80029788(void){puts("func_80029788 is a stub");}
-void func_8002B5C8(int a){puts("func_8002B5C8 is a stub");}
-int func_8002B610(int a){puts("func_8002B610 is a stub");return 0;}
 void func_8002F0E4(void){puts("func_8002F0E4 is a stub");}
 void func_8002FCC0(int a, char *b, ...){puts("func_8002FCC0 is a stub");}
 void func_8002FD68(int a, const char *b){puts("func_8002FD68 is a stub");}

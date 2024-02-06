@@ -3,6 +3,8 @@
 
 #include <dolphin/types.h>
 
+#include "nlsprite.h"
+
 enum FontID
 {
     FONT_ASCII,  // 0x00
@@ -331,7 +333,7 @@ void u_draw_screen_fade_mask(void);
 #define FADE_ABOVE_SPRITES (1 << 8)  // fades everything on screen
 void start_screen_fade(s32, u32, int);
 
-int draw_naomi_sprite(struct NaomiSpriteParams *);
+int nlSprPut(NLsprarg *);
 void func_80073E00(int bmpId, GXTexWrapMode s, GXTexWrapMode t);
 
 #endif

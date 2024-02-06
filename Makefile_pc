@@ -90,6 +90,7 @@ SOURCES := \
 	src/bg_sunset.c \
 	src/bg_bonus.c \
 	src/bg_storm.c \
+	src/bg_master.c \
 	src/bg_end.c \
 	src/course.c \
 	src/item.c \
@@ -113,7 +114,8 @@ SOURCES := \
 	src/avdisp.c \
 	src/load.c \
 	src/mini.c \
-	src/mini_2.c \
+	src/lens_flare.c \
+	src/code_9.c \
 	src/mini_3.c \
 	src/mouse.c \
 	src/rend_efc.c \

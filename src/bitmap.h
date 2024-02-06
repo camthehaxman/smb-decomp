@@ -5,6 +5,7 @@
 #include <dolphin/OSAlloc.h>
 
 #include "types.h"
+#include "nlsprite.h"
 
 enum BitmapGroupID
 {
@@ -264,9 +265,11 @@ extern s32 spriteParamsBufCount;
 extern s32 spriteParamsBufState;
 extern struct TPL *u_unkBitmapTPL;
 
+struct asdf;
+
 extern struct BitmapGroup bitmapGroups[];
 extern char **bitmapNames[];
-extern struct NaomiSpriteParams spriteParamsBuf[];
+extern NLsprarg spriteParamsBuf[];
 
 void bitmap_init(void);
 struct TPL *bitmap_load_tpl(char *filename);

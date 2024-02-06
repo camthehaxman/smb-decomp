@@ -181,7 +181,7 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
         return 0;
     size = OSRoundUp32B(file.length);
     motLabel = OSAlloc(size);
-    u_read_dvd_file(&file, motLabel, size, 0);
+    avDVDRead(&file, motLabel, size, 0);
     DVDClose(&file);
 #ifdef TARGET_PC
     byteswap_motlabel((u8 *)motLabel);
@@ -194,7 +194,7 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
     // dat file
     if (!DVDOpen(datname, &file))
         return 0;
-    if (u_read_dvd_file(&file, lzssHeader, 32, 0) < 0)
+    if (avDVDRead(&file, lzssHeader, 32, 0) < 0)
         OSPanic("motload.c", 90, "cannot dvd_read");
     compSize = OSRoundUp32B(__lwbrx(lzssHeader, 0));
     uncompSize = OSRoundUp32B(__lwbrx(lzssHeader, 4));
@@ -204,7 +204,7 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
     compressed = OSAlloc(compSize);
     if (compressed == NULL)
         OSPanic("motload.c", 95, "cannot OSAlooc\n");
-    if (u_read_dvd_file(&file, compressed, compSize, 0) < 0)
+    if (avDVDRead(&file, compressed, compSize, 0) < 0)
         OSPanic("motload.c", 97, "cannot dvd_read");
     if (DVDClose(&file) != 1)
         OSPanic("motload.c", 98, "cannot DVDClose");
@@ -221,7 +221,7 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
         return 0;
     size = OSRoundUp32B(file.length);
     motSkeleton = OSAlloc(size);
-    u_read_dvd_file(&file, motSkeleton, size, 0);
+    avDVDRead(&file, motSkeleton, size, 0);
     DVDClose(&file);
 #ifdef TARGET_PC
     byteswap_motskeleton(motSkeleton);
@@ -232,7 +232,7 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
     // info file
     if (!DVDOpen(infoname, &file))
         return 0;
-    if (u_read_dvd_file(&file, lzssHeader, 32, 0) < 0)
+    if (avDVDRead(&file, lzssHeader, 32, 0) < 0)
         OSPanic("motload.c", 151, "cannot dvd_read");
     compSize = OSRoundUp32B(__lwbrx(lzssHeader, 0));
     uncompSize = OSRoundUp32B(__lwbrx(lzssHeader, 4));
@@ -242,7 +242,7 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
     compressed = OSAlloc(compSize);
     if (compressed == NULL)
         OSPanic("motload.c", 156, "cannot OSAlooc\n");
-    if (u_read_dvd_file(&file, compressed, compSize, 0) < 0)
+    if (avDVDRead(&file, compressed, compSize, 0) < 0)
         OSPanic("motload.c", 158, "cannot dvd_read");
     if (DVDClose(&file) != 1)
         OSPanic("motload.c", 159, "cannot DVDClose");

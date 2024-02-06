@@ -316,9 +316,9 @@ void ev_background_init(void)
     mathutil_mtxA_to_mtx(backgroundInfo.unk48);
     backgroundInfo.unk78 = lbl_801B96CC[backgroundInfo.bgId];
     backgroundInfo.unk7C = lbl_801B9740[backgroundInfo.bgId];
-    backgroundInfo.unk8C = 0;
-    backgroundInfo.unk90 = 0;
-    backgroundInfo.ballEnvFunc = NULL;
+    backgroundInfo.stageEnvMapFunc = NULL;
+    backgroundInfo.bgEnvMapFunc = NULL;
+    backgroundInfo.ballEnvMapFunc = NULL;
     if (backgroundInfo.bgId > 0)
     {
         int temp = rand();
@@ -348,9 +348,9 @@ void ev_background_dest(void)
     backgroundInfo.unk98 = NULL;
     backgroundInfo.unk78 = 0;
     backgroundInfo.unk7C = 0;
-    backgroundInfo.unk8C = 0;
-    backgroundInfo.unk90 = 0;
-    backgroundInfo.ballEnvFunc = NULL;
+    backgroundInfo.stageEnvMapFunc = NULL;
+    backgroundInfo.bgEnvMapFunc = NULL;
+    backgroundInfo.ballEnvMapFunc = NULL;
 }
 
 void background_light_assign(void)
@@ -739,8 +739,8 @@ void draw_bg_objects(Mtx viewFromWorld, struct StageBgObject *bgObj, int bgObjCo
             push_light_group();
             load_light_group_uncached(customLightGroup + LIGHT_GROUP_BG_0);
         }
-        if (backgroundInfo.unk90 != 0 && (bgObj->flags & (1 << 24)))
-            u_avdisp_set_some_func_1(backgroundInfo.unk90);
+        if (backgroundInfo.bgEnvMapFunc != 0 && (bgObj->flags & (1 << 24)))
+            u_avdisp_set_some_func_1(backgroundInfo.bgEnvMapFunc);
         avdisp_set_bound_sphere_scale(scale);
         if (bgObj->translucency < FLT_EPSILON)
             avdisp_draw_model_unculled_sort_translucent(model);

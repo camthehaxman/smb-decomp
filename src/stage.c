@@ -107,9 +107,9 @@ void ev_stage_init(void)
             int r5 = func_800673BC();
             if (r5 > 0 && r5 <= 200)
             {
-                preview_create_with_alloc_img(&stagePreview, "preview/140x140.tpl", r5 - 1, 140,
+                preview_create_with_allocated_tex(&stagePreview, "preview/140x140.tpl", r5 - 1, 140,
                                               140, GX_TF_RGB5A3);
-                u_preview_wait_then_do_something(&stagePreview);
+                preview_sync(&stagePreview);
                 previewLoaded = TRUE;
             }
         }
@@ -2026,8 +2026,8 @@ void stage_draw(void)
 
     r31 = func_80092D34();
     r25 = backgroundInfo.unk78;
-    if (backgroundInfo.unk8C != 0)
-        u_avdisp_set_some_func_1((void *)backgroundInfo.unk8C);
+    if (backgroundInfo.stageEnvMapFunc != 0)
+        u_avdisp_set_some_func_1(backgroundInfo.stageEnvMapFunc);
     sp7C.unk0 = 32;
 
     // draw goals
@@ -2321,7 +2321,7 @@ void stage_draw(void)
             fade_color_base_default();
         }
     }
-    if (backgroundInfo.unk8C != 0)
+    if (backgroundInfo.stageEnvMapFunc != NULL)
         u_avdisp_set_some_func_1(NULL);
     if (dipSwitches & DIP_FALL_DISP)
     {

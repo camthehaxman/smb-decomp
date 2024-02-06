@@ -382,7 +382,7 @@ static void update_ranking_screen(void)
 
 static void draw_ranking_screen(void)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     u8 unused[0x88];
     int var_r30;
     int var_r22;
@@ -396,69 +396,69 @@ static void draw_ranking_screen(void)
     if (lbl_802B37F0.unk1C != 0)
     {
         params.z = 1.02f;
-        params.opacity = lbl_802B37F0.unkC;
-        params.unk30 = 2;
-        params.flags = 0xA;
-        params.mulColor = RGBA(255, 255, 255, 0);
-        params.addColor = 0;
-        params.scaleX = 1.0f;
-        params.scaleY = 1.0f;
-        params.u1 = 0.0f;
-        params.v1 = 0.0f;
-        params.u2 = 1.0f;
-        params.v2 = 1.0f;
+        params.trnsl = lbl_802B37F0.unkC;
+        params.listType = NLSPR_LISTTYPE_TRANS;
+        params.attr = NLSPR_DISP_CC;
+        params.base_color = RGBA(255, 255, 255, 0);
+        params.offset_color = 0;
+        params.zm_x = 1.0f;
+        params.zm_y = 1.0f;
+        params.u0 = 0.0f;
+        params.v0 = 0.0f;
+        params.u1 = 1.0f;
+        params.v1 = 1.0f;
 
         // draw the balls that spell out "RANKING"
         letterBall = lbl_802B37F0.letterBalls;
         for (var_r22 = 7; var_r22 > 0; var_r22--, letterBall++)
         {
-            params.bmpId = letterBall->bmpId;
-            params.rotation = letterBall->rotation;
+            params.sprno = letterBall->bmpId;
+            params.ang = letterBall->rotation;
             params.x = (int)letterBall->x;
             params.y = (int)(letterBall->unkC + lbl_802B37F0.unk14);
-            draw_naomi_sprite(&params);
+            nlSprPut(&params);
         }
     }
 
     y = 60.0f + lbl_802B37F0.unk14;
-    params.bmpId = BMP_RNK_rnk_lines;
+    params.sprno = BMP_RNK_rnk_lines;
     params.z = 1.03f;
-    params.rotation = 0;
-    params.opacity = lbl_802B37F0.unkC;
-    params.unk30 = 2;
-    params.flags = 5;
-    params.mulColor = RGBA(255, 255, 255, 0);
-    params.addColor = 0;
+    params.ang = 0;
+    params.trnsl = lbl_802B37F0.unkC;
+    params.listType = NLSPR_LISTTYPE_TRANS;
+    params.attr = NLSPR_DISP_LT;
+    params.base_color = RGBA(255, 255, 255, 0);
+    params.offset_color = 0;
 
     params.x = 26.0f;
     params.y = y;
-    params.scaleX = 1.0f;
-    params.scaleY = 0.26171875f;
-    params.u1 = 0.0f;
-    params.v1 = 0.26171875f;
-    params.u2 = 1.0f;
-    params.v2 = 0.5234375f;
-    draw_naomi_sprite(&params);
+    params.zm_x = 1.0f;
+    params.zm_y = 0.26171875f;
+    params.u0 = 0.0f;
+    params.v0 = 0.26171875f;
+    params.u1 = 1.0f;
+    params.v1 = 0.5234375f;
+    nlSprPut(&params);
 
     params.x = 282.0f;
     params.y = y;
-    params.scaleX = 0.296875f;
-    params.scaleY = 0.26171875f;
-    params.u1 = 0.0f;
-    params.v1 = 0.5234375f;
-    params.u2 = 0.296875f;
-    params.v2 = 0.78515625f;
-    draw_naomi_sprite(&params);
+    params.zm_x = 0.296875f;
+    params.zm_y = 0.26171875f;
+    params.u0 = 0.0f;
+    params.v0 = 0.5234375f;
+    params.u1 = 0.296875f;
+    params.v1 = 0.78515625f;
+    nlSprPut(&params);
 
     params.x = 358.0f;
     params.y = y;
-    params.scaleX = 1.0f;
-    params.scaleY = 0.26171875f;
-    params.u1 = 0.0f;
-    params.v1 = 0.0f;
-    params.u2 = 1.0f;
-    params.v2 = 0.26171875f;
-    draw_naomi_sprite(&params);
+    params.zm_x = 1.0f;
+    params.zm_y = 0.26171875f;
+    params.u0 = 0.0f;
+    params.v0 = 0.0f;
+    params.u1 = 1.0f;
+    params.v1 = 0.26171875f;
+    nlSprPut(&params);
 
     reset_text_draw_settings();
     set_text_font(FONT_ICON_TPL);
@@ -474,14 +474,14 @@ static void draw_ranking_screen(void)
     u_draw_char(0x33);
     set_text_opacity(1.0f);
 
-    params.bmpId = BMP_RNK_rnk_lines;
+    params.sprno = BMP_RNK_rnk_lines;
     params.z = 1.03f;
-    params.rotation = 0;
-    params.opacity = 1.0f;
-    params.unk30 = 2;
-    params.flags = 5;
-    params.mulColor = RGBA(255, 255, 255, 0);
-    params.addColor = 0;
+    params.ang = 0;
+    params.trnsl = 1.0f;
+    params.listType = NLSPR_LISTTYPE_TRANS;
+    params.attr = NLSPR_DISP_LT;
+    params.base_color = RGBA(255, 255, 255, 0);
+    params.offset_color = 0;
 
     // Draw score list
     var_r29 = 160.0f + lbl_802B37F0.unk14;
@@ -514,31 +514,31 @@ static void draw_ranking_screen(void)
             // line start
             params.x = x + 39;
             params.y = var_r29 + 32;
-            params.scaleX = 1.0f;
-            params.scaleY = 0.0234375f;
-            params.u1 = 0.0f;
-            params.v1 = 0.9765625f;
-            params.u2 = 1.0f;
-            params.v2 = 1.0f;
-            draw_naomi_sprite(&params);
+            params.zm_x = 1.0f;
+            params.zm_y = 0.0234375f;
+            params.u0 = 0.0f;
+            params.v0 = 0.9765625f;
+            params.u1 = 1.0f;
+            params.v1 = 1.0f;
+            nlSprPut(&params);
 
             // line middle
             params.x += 256.0f;
-            params.scaleX = 0.1953125f;
-            params.u1 = 0.0f;
-            params.v1 = 0.9296875f;
-            params.u2 = 0.1953125f;
-            params.v2 = 0.953125f;
-            draw_naomi_sprite(&params);
+            params.zm_x = 0.1953125f;
+            params.u0 = 0.0f;
+            params.v0 = 0.9296875f;
+            params.u1 = 0.1953125f;
+            params.v1 = 0.953125f;
+            nlSprPut(&params);
 
             // line end
             params.x += 50.0f;
-            params.scaleX = 1.0f;
-            params.u1 = 0.0f;
-            params.v1 = 0.953125f;
-            params.u2 = 1.0f;
-            params.v2 = 0.9765625f;
-            draw_naomi_sprite(&params);
+            params.zm_x = 1.0f;
+            params.u0 = 0.0f;
+            params.v0 = 0.953125f;
+            params.u1 = 1.0f;
+            params.v1 = 0.9765625f;
+            nlSprPut(&params);
         }
     }
 
@@ -550,30 +550,30 @@ static void draw_ranking_screen(void)
     bitmap_init_tev();
 
     params.z = 1.005f;
-    params.rotation = 0;
-    params.opacity = 1.0f;
-    params.scaleX = 0.9609375f;
-    params.scaleY = 0.06640625f;
-    params.u1 = 0.0f;
-    params.v1 = ((18.0f * (lbl_802B37F0.unk164.unk0 - 48)) + 0.5f) / 256.0f;
-    params.u2 = 0.9609375f;
-    params.v2 = params.v1 + 0.06640625f;
-    params.unk30 = 2;
-    params.flags = 5;
-    params.mulColor = RGBA(255, 255, 255, 0);
-    params.addColor = 0;
-    params.bmpId = BMP_RNK_rnk_obiword;
+    params.ang = 0;
+    params.trnsl = 1.0f;
+    params.zm_x = 0.9609375f;
+    params.zm_y = 0.06640625f;
+    params.u0 = 0.0f;
+    params.v0 = ((18.0f * (lbl_802B37F0.unk164.unk0 - 48)) + 0.5f) / 256.0f;
+    params.u1 = 0.9609375f;
+    params.v1 = params.v0 + 0.06640625f;
+    params.listType = NLSPR_LISTTYPE_TRANS;
+    params.attr = NLSPR_DISP_LT;
+    params.base_color = RGBA(255, 255, 255, 0);
+    params.offset_color = 0;
+    params.sprno = BMP_RNK_rnk_obiword;
     params.x = 0x298 - lbl_802B37F0.unk12C;
     params.y = 7.0f;
-    draw_naomi_sprite(&params);
+    nlSprPut(&params);
     params.x = -24 - lbl_802B37F0.unk164.unk2 + lbl_802B37F0.unk12C;
     params.y = 455.0f;
-    draw_naomi_sprite(&params);
+    nlSprPut(&params);
 }
 
 void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord *record)
 {
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     char text[8];
     double x = (float)startX;
     float  y = (float)startY;
@@ -584,12 +584,12 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
     s16 var;
 
     params.z = 1.03f;
-    params.rotation = 0;
-    params.opacity = 1.0f;
-    params.unk30 = 2;
-    params.flags = 0x20005;
-    params.mulColor = RGBA(255, 255, 255, 0);
-    params.addColor = 0;
+    params.ang = 0;
+    params.trnsl = 1.0f;
+    params.listType = NLSPR_LISTTYPE_TRANS;
+    params.attr = NLSPR_DISP_LT | NLSPR_UNKFLAG_17;
+    params.base_color = RGBA(255, 255, 255, 0);
+    params.offset_color = 0;
 
     switch (record->unkD)
     {
@@ -611,29 +611,29 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
         sprintf(text, "%d", record->floorNum);
         set_text_pos(32.0 + (x = 328.0 + x - 29.0), y);
         u_draw_text(text);
-        params.bmpId = BMP_RNK_rnk_ex_icon;
+        params.sprno = BMP_RNK_rnk_ex_icon;
         params.x = x;
         params.y = y;
-        params.scaleX = 0.96875f;
-        params.scaleY = 0.96875f;
-        params.u1 = 0.0f;
-        params.v1 = 0.0f;
-        params.u2 = 0.96875f;
-        params.v2 = 0.96875f;
-        draw_naomi_sprite(&params);
+        params.zm_x = 0.96875f;
+        params.zm_y = 0.96875f;
+        params.u0 = 0.0f;
+        params.v0 = 0.0f;
+        params.u1 = 0.96875f;
+        params.v1 = 0.96875f;
+        nlSprPut(&params);
         break;
     default:
         func_80073E00(BMP_RNK_rnk_ex2_icon, 1, 1);
         x = 328.0 + x;
-        params.bmpId = BMP_RNK_rnk_ex2_icon;
+        params.sprno = BMP_RNK_rnk_ex2_icon;
         params.x = x - 47.0;
         params.y = y;
-        params.scaleX = 0.7265625f;
-        params.scaleY = 0.96875f;
-        params.u1 = 0.0f;
-        params.v1 = 0.0f;
-        params.u2 = params.u1 + 0.7265625;
-        params.v2 = 0.96875f;
+        params.zm_x = 0.7265625f;
+        params.zm_y = 0.96875f;
+        params.u0 = 0.0f;
+        params.v0 = 0.0f;
+        params.u1 = params.u0 + 0.7265625;
+        params.v1 = 0.96875f;
         var = ((globalAnimTimer << 10) + rank);
         temp_f29 = 384.0 * (mathutil_sin(var) - 0.5);
         if (temp_f29 > 0.0)
@@ -657,9 +657,9 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
                 b = 0;
             else if (b > 255)
                 b = 255;
-            params.addColor = RGBA(r, g, b, 0);
+            params.offset_color = RGBA(r, g, b, 0);
         }
-        draw_naomi_sprite(&params);
+        nlSprPut(&params);
         sprintf(text, "%d", record->floorNum);
         len = strlen(text);
         set_text_pos(x - len * 13.0, y);

@@ -32,6 +32,7 @@
 #include "sprite.h"
 #include "stage.h"
 #include "textbox.h"
+#include "thread.h"
 #include "world.h"
 #include "stcoli.h"
 #include "light.h"
@@ -994,7 +995,7 @@ struct Spline *lbl_80174E04[] =
     lbl_80174D74,
 };
 
-void lbl_8000F790(struct Ape *ape, int b)
+void adv_ape_thread(struct Ape *ape, int status)
 {
     struct RaycastHit sp38;
     s16 r30;
@@ -1002,9 +1003,9 @@ void lbl_8000F790(struct Ape *ape, int b)
     int r4, r5, r6;
     float f31 = advDemoInfo.unk8;
 
-    switch (b)
+    switch (status)
     {
-    case 3:
+    case THREAD_STATUS_KILLED:
         new_ape_close(ape);
         return;
     }

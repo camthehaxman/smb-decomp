@@ -329,7 +329,7 @@ void minimap_draw(void)
     Mtx44 spA4;
     struct Struct800847FC sp90;
     Point3d focusPos;
-    struct NaomiSpriteParams params;
+    NLsprarg params;
     Vec sp28;
     Vec sp1C;
     struct Struct800847FC sp8;
@@ -446,12 +446,12 @@ void minimap_draw(void)
         if ((minimapInfo.size - 160) / 160.0f > 0.0f)
             var_f30 = (minimapInfo.size - 160) / 160.0f;
 
-        params.unk30 = 2;
-        params.addColor = 0;
-        params.u1 = 0.0f;
-        params.v1 = 0.0f;
-        params.u2 = 1.0f;
-        params.v2 = 1.0f;
+        params.listType = NLSPR_LISTTYPE_TRANS;
+        params.offset_color = 0;
+        params.u0 = 0.0f;
+        params.v0 = 0.0f;
+        params.u1 = 1.0f;
+        params.v1 = 1.0f;
         u_math_unk16(&ball->pos, &sp28, 0.57735026f);
 
         temp_f31 = minimapInfo.unk3C;
@@ -461,22 +461,22 @@ void minimap_draw(void)
             sp1C.x = -sp28.y - (0.5 * sp28.x);
             sp1C.y = sp28.x - (0.5 * sp28.y);
             sp1C.z = 0.0f;
-            params.rotation = mathutil_atan2(sp1C.y, (4.0 / 3.0) * sp1C.x) + 0x4000;
+            params.ang = mathutil_atan2(sp1C.y, (4.0 / 3.0) * sp1C.x) + 0x4000;
             if (sp1C.x == 0.0 && sp1C.y == 0.0)
                 sp1C.y = 1.0f;
             mathutil_vec_set_len(&sp1C, &sp1C, 0.1125 * temp_f31);
             sp28.x += sp1C.x;
             sp28.y += sp1C.y;
-            params.bmpId = BMP_NML_fukidashi;
-            params.mulColor = s_speechBubbleColors[playerCharacterSelection[modeCtrl.currPlayer]];
-            params.opacity = 0.75 * var_f30;
+            params.sprno = BMP_NML_fukidashi;
+            params.base_color = s_speechBubbleColors[playerCharacterSelection[modeCtrl.currPlayer]];
+            params.trnsl = 0.75 * var_f30;
             params.x = 320.0 + (320.0 * (sp28.x + temp_f29));
             params.y = 240.0 + (-240.0 * (sp28.y + temp_f28));
             params.z = -sp28.z;
-            params.scaleX = temp_f31;
-            params.scaleY = temp_f31;
-            params.flags = 0x2000A;
-            draw_naomi_sprite(&params);
+            params.zm_x = temp_f31;
+            params.zm_y = temp_f31;
+            params.attr = NLSPR_DISP_CC | NLSPR_UNKFLAG_17;
+            nlSprPut(&params);
 
             mathutil_vec_set_len(&sp1C, &sp1C, 0.025 * temp_f31);
             sp28.x = sp28.x + sp1C.x;
@@ -487,17 +487,17 @@ void minimap_draw(void)
             nlObjPut(g_commonNlObj->models[NLMODEL_common_BALL_BLK]);
         }
 
-        params.bmpId = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[modeCtrl.currPlayer]);
-        params.mulColor = 0xFFFFFFFF;
-        params.opacity = (double)var_f30;
+        params.sprno = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[modeCtrl.currPlayer]);
+        params.base_color = 0xFFFFFFFF;
+        params.trnsl = (double)var_f30;
         params.x = 320.0 + (320.0 * (sp28.x + temp_f29));
         params.y = 240.0 + (-240.0 * (sp28.y + temp_f28));
         params.z = -sp28.z - 0.5;
-        params.rotation = 0;
-        params.scaleX = 0.28846154f;
-        params.scaleY = 0.1875f;
-        params.flags = 0x100A;
-        draw_naomi_sprite(&params);
+        params.ang = 0;
+        params.zm_x = 0.28846154f;
+        params.zm_y = 0.1875f;
+        params.attr = NLSPR_DISP_CC | NLSPR_UNKFLAG_12;
+        nlSprPut(&params);
 
         u_set_some_minimap_light_param(minimapInfo.stageScale);
         mathutil_mtxA_from_mtxB();

@@ -34,7 +34,7 @@ static struct BGModelSearch bonusBgObjFind[] =
 };
 
 static void lbl_80061B58(void);
-static void lbl_80061BC4(struct EnvMapSomething *a);
+static void bg_bonus_envmap_ball(struct GCMMatState_Unit *a);
 static int model_find_proc(int, struct GMAModelEntry *);
 static int obj_find_proc(int, struct StageBgObject *);
 
@@ -45,7 +45,7 @@ void bg_bonus_init(void)
     struct BGBonusStarpoint *starpoint;
 
     bg_default_init();
-    backgroundInfo.ballEnvFunc = lbl_80061BC4;
+    backgroundInfo.ballEnvMapFunc = bg_bonus_envmap_ball;
     backgroundInfo.unk98 = lbl_80061B58;
 
     // find models
@@ -236,7 +236,7 @@ static void lbl_80061B58(void)
     mathutil_mtxA_to_mtx(work->unk7DC);
 }
 
-static void lbl_80061BC4(struct EnvMapSomething *a)
+static void bg_bonus_envmap_ball(struct GCMMatState_Unit *a)
 {
     struct BGBonusWork *work = (void *)backgroundInfo.work;
     struct Struct80061BC4_sub spC = a->unkC;

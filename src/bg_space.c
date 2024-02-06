@@ -12,6 +12,7 @@
 #include "event.h"
 #include "gxcache.h"
 #include "info.h"
+#include "lens_flare.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "stage.h"
@@ -30,11 +31,11 @@ static struct BGModelSearch spaceBgObjFind[] =
     { BG_MDL_CMP_END },
 };
 
-static void lbl_800609AC(struct EnvMapSomething *);
+static void lbl_800609AC(struct GCMMatState_Unit *);
 static int model_find_proc(int, struct GMAModelEntry *);
 static int obj_find_proc(int, struct StageBgObject *);
 
-void func_80094748(float);
+void lens_flare_set_scale(float);
 
 void bg_space_init(void)
 {
@@ -45,7 +46,7 @@ void bg_space_init(void)
     float temp_f31;
 
     bg_default_init();
-    func_800940B8();
+    lens_flare_init();
     switch (currStageId)
     {
     case ST_101_BLUR_BRIDGE:
@@ -74,8 +75,8 @@ void bg_space_init(void)
         spB4.z = 0.0f;
         break;
     }
-    func_800946BC(&spB4);
-    func_80094748(0.5f);
+    lens_flare_set_light_position(&spB4);
+    lens_flare_set_scale(0.5f);
     backgroundInfo.unk8 |= 1;
     if (work->unk0 == 0)
     {
@@ -193,7 +194,7 @@ void bg_space_main(void)
 {
     struct BGSpaceWork *work = backgroundInfo.work;
 
-    func_800940E0();
+    lens_flare_main();
     bg_default_main();
     if (!(debugFlags & 0xA) || (eventInfo[EVENT_VIEW].state == EV_STATE_RUNNING))
     {
@@ -281,7 +282,7 @@ void bg_space_interact(int arg0) {}
 
 static struct Struct80061BC4_sub lbl_8027CC28;
 
-static void lbl_800609AC(struct EnvMapSomething *arg0)
+static void lbl_800609AC(struct GCMMatState_Unit *arg0)
 {
     struct BGSpaceWork *work = backgroundInfo.work;
     struct Struct80061BC4_sub sp14 = arg0->unkC;

@@ -77,7 +77,7 @@ static void ending_chara_main(void);
 static void func_800BC820(void);
 static void ending_chara_draw(void);
 static int set_ending_chara(int, enum Character);
-static void ending_ape(struct Ape *, int);
+static void ending_ape_thread(struct Ape *, int);
 static void ending_banana_init(void);
 static void ending_banana_main(void);
 static void ending_banana_each_coli(void);
@@ -2605,21 +2605,21 @@ static void lbl_800BCD30(struct MyDrawNode *node)
     avdisp_set_z_mode(1, 3, 1);
 }
 
-static int set_ending_chara(int arg0, enum Character charaId)
+static int set_ending_chara(int apeId, enum Character charaId)
 {
     struct EndingSceneCharacter *chara;
     struct Ape *ape;
 
-    chara = &endingInfo.work->characters[arg0];
+    chara = &endingInfo.work->characters[apeId];
     if (chara->ape != NULL)
     {
-        thread_kill(apeThreadNo[arg0]);
+        thread_kill(apeThreadNo[apeId]);
         chara->ape = NULL;
     }
 
     if (charaId >= 0)
     {
-        chara->ape = ape_get_by_type(arg0, charaId, ending_ape);
+        chara->ape = ape_get_by_type(apeId, charaId, ending_ape_thread);
         ape = chara->ape;
         if (ape == NULL)
             return 0;
@@ -2634,18 +2634,18 @@ static int set_ending_chara(int arg0, enum Character charaId)
     return 1;
 }
 
-static void ending_ape(struct Ape *ape, int arg1)
+static void ending_ape_thread(struct Ape *ape, int status)
 {
     int var_r4;
     struct EndingSceneCharacter *chara;
     int i;
-    int b = (arg1 == 3);
+    int done = (status == THREAD_STATUS_KILLED);
     Vec sp10;
 
-    if (b)
+    if (done)
     {
         new_ape_close(ape);
-        if (arg1 != 3)
+        if (status != THREAD_STATUS_KILLED)
             thread_exit();
         return;
     }
@@ -3433,14 +3433,14 @@ static void func_800BF774(void)
     }
 }
 
-static void set_freefall_ending_bananas(int arg0)
+static void set_freefall_ending_bananas(int count)
 {
     int modelId;
     int i;
     struct EndingSceneObject *obj;
 
     obj = endingInfo.work->objects;
-    for (i = 512; i > 0 && arg0 > 0; i--, obj++)
+    for (i = 512; i > 0 && count > 0; i--, obj++)
     {
         if (!obj->isActive)
         {
@@ -3451,20 +3451,20 @@ static void set_freefall_ending_bananas(int arg0)
                 modelId = HOUSE_BANANA;
             else
                 modelId = SEAL_BANANA;
-            arg0 -= 1;
+            count--;
             obj->model = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[modelId].model;
         }
     }
 }
 
-static void set_cam_ride_ending_bananas(int arg0, int arg1)
+static void set_cam_ride_ending_bananas(int count, int arg1)
 {
     int modelId;
     int i;
     struct EndingSceneObject *obj;
 
     obj = endingInfo.work->objects;
-    for (i = 512; i > 0 && arg0 > 0; i--, obj++)
+    for (i = 512; i > 0 && count > 0; i--, obj++)
     {
         if (!obj->isActive)
         {
@@ -3475,7 +3475,7 @@ static void set_cam_ride_ending_bananas(int arg0, int arg1)
                 modelId = HOUSE_BANANA;
             else
                 modelId = SEAL_BANANA;
-            arg0 -= 1;
+            count--;
             obj->model = (struct SomeBigEndingStruct_sub4_sub2 *) decodedBgGma->modelEntries[modelId].model;
         }
     }

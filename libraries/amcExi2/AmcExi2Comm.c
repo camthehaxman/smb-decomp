@@ -1,26 +1,14 @@
 #include <stdio.h>
 #include <dolphin/os.h>
 #include <dolphin/amc/AmcExi2Comm.h> // from AMC DDH SDK
+#include <dolphin/hw_regs.h>
 
-#ifdef __MWERKS__
-extern u32 OS_PI_INTR_CAUSE[] : 0xCC003000;
-#else
-#define OS_PI_INTR_CAUSE ((u32 *)0xCC003000)
-#endif
+#include "__amcExi2.h"
 
 static u8 ucEXI2InputPending;
 static u8* pucEXI2InputPending = &ucEXI2InputPending;
 static s32 fExi2Selected;
 static void (*TRK_Callback)(s32 chan, OSContext* context);
-
-// extern functions for AmcExi.s
-s32 AmcEXISelect();
-s32 AmcEXIDeselect();
-s32 AmcEXIImm(u32*, s32, s32, s32);
-s32 AmcEXISync();
-void AmcEXISetExiCallback(void*);
-void AmcEXIEnableInterrupts(void);
-void AmcEXIInit(void);
 
 static void EXI2_SetTRKCallback(EXICallback monitorCallback) {
     BOOL intrEnable = OSDisableInterrupts();
@@ -28,10 +16,10 @@ static void EXI2_SetTRKCallback(EXICallback monitorCallback) {
     OSRestoreInterrupts(intrEnable);
 }
 
-void EXI2_CallBack(u32 unused, OSContext *arg1) {
+void EXI2_CallBack(s32 chan, OSContext *ctx) {
     *pucEXI2InputPending = 1;
     if (TRK_Callback) {
-        TRK_Callback(0, arg1);
+        TRK_Callback(0, ctx);
     }
 }
 
@@ -109,7 +97,7 @@ static s32 EXI2_SendCmd(u8 arg0, u32 arg1, s32 arg2, u32 arg3) {
 }
 
 
-void EXI2_Init( volatile unsigned char **inputPendingPtrRef, EXICallback monitorCallback ) {
+void EXI2_Init(volatile unsigned char **inputPendingPtrRef, EXICallback monitorCallback ) {
     *inputPendingPtrRef = pucEXI2InputPending;
     EXI2_SetTRKCallback(monitorCallback);
     AmcEXIInit();
@@ -117,12 +105,12 @@ void EXI2_Init( volatile unsigned char **inputPendingPtrRef, EXICallback monitor
 }
 
 void EXI2_EnableInterrupts(void) {
-    AmcEXISetExiCallback(&EXI2_CallBack);
+    AmcEXISetExiCallback(EXI2_CallBack);
     AmcEXIEnableInterrupts();
 }
 
 #ifndef NONMATCHING
-static inline s32 EXI2_StartRead_hack(void) {
+static s32 EXI2_StartRead_hack(void) {
     u32 sp8[2];
     s32 var_r31;
 
@@ -150,7 +138,7 @@ int EXI2_Poll(void) {
     if (!(OS_PI_INTR_CAUSE[0] & 0x1000) && (*pucEXI2InputPending == 0)) {
         sp18 = 0;
     } else {
-#ifdef NONMATCHING
+#if defined(NONMATCHING) || defined(DEBUG)
         EXI2_StartRead();
 #else
         // should be calling EXI2_StartRead here, but I can't get the stack allocation to match in the inline call
@@ -205,8 +193,10 @@ AmcExiError	EXI2_WriteN( const void *bytes, unsigned long length) {
     u32 sp10;
     register s32 res;
     register u32 i;
+#ifndef DEBUG
     s32 unused_stack; // comment this out to match the debug version. the real match is
                       // probably something else, but not worth figuring out right now
+#endif
     u32* arg0 = (u32*)bytes;
     u32 temp_r29;
 
@@ -251,9 +241,10 @@ void EXI2_Unreserve(void) {
 AmcExiError EXI2_GetStatusReg( u16* pu16StatusReg ) {
     u32 spC;
     s32 result = 0;
+#ifndef DEBUG
     s32 unused_stack; // comment this out to match the debug version. the real match is
                       // probably something else, but not worth figuring out right now
-
+#endif
     if (!(result = EXI2_Select(5, 0))) {
         return AMC_EXI_UNSELECTED;
     }

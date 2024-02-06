@@ -15,15 +15,15 @@ static s32 lbl_802F21FC;
 static volatile s32 s_readResult;
 static u32 lbl_802F2204;
 
-struct Struct801D6744
+struct ErrorString
 {
     char *text;
     s32 unused;
 };
 
-struct Struct801D6894
+struct ErrorMessage
 {
-    struct Struct801D6744 *lines;
+    struct ErrorString *lines;
     s32 count;
 };
 
@@ -36,31 +36,31 @@ enum
     MSG_FATAL_ERROR,
 };
 
-static struct Struct801D6744 s_errMsgCoverOpen[] =
+static struct ErrorString s_errMsgCoverOpen[] =
 {
     {"a/Please close the Disc Cover.", 0},
 };
 
-static struct Struct801D6744 s_errMsgNoDisk[] =
+static struct ErrorString s_errMsgNoDisk[] =
 {
     {"a/Please insert", 0},
     {"a/the Super Monkey Ball Game Disc.", 0},
 };
 
-static struct Struct801D6744 s_errMsgWrongDisk[] =
+static struct ErrorString s_errMsgWrongDisk[] =
 {
     {"a/Please insert", 0},
     {"a/the Super Monkey Ball Game Disc.", 0},
 };
 
-static struct Struct801D6744 s_errMsgReadError[] =
+static struct ErrorString s_errMsgReadError[] =
 {
     {"a/Could not read Game Disc.", 0},
     {"", 0},
     {"a/Please see the Instruction Booklet for details.", 0},
 };
 
-static struct Struct801D6744 s_errMsgFatalError[] =
+static struct ErrorString s_errMsgFatalError[] =
 {
     {"a/An error has occurred.", 0},
     {"", 0},
@@ -70,7 +70,7 @@ static struct Struct801D6744 s_errMsgFatalError[] =
     {"a/Follow the instructions in the Instruction Booklet.", 0},
 };
 
-static struct Struct801D6894 s_errMessages[] =
+static struct ErrorMessage s_errMessages[] =
 {
     {s_errMsgCoverOpen,  ARRAY_COUNT(s_errMsgCoverOpen)},
     {s_errMsgNoDisk,     ARRAY_COUNT(s_errMsgNoDisk)},
@@ -81,31 +81,31 @@ static struct Struct801D6894 s_errMessages[] =
 
 // Same messages as above, but without the "a/" prefix (for use with DEMO font)
 
-static struct Struct801D6744 s_errMsgCoverOpenDemoFont[] =
+static struct ErrorString s_errMsgCoverOpenDemoFont[] =
 {
     {"Please close the Disc Cover.", 0},
 };
 
-static struct Struct801D6744 s_errMsgNoDiskDemoFont[] =
+static struct ErrorString s_errMsgNoDiskDemoFont[] =
 {
     {"Please insert", 0},
     {"the Super Monkey Ball Game Disc.", 0},
 };
 
-static struct Struct801D6744 s_errMsgWrongDiskDemoFont[] =
+static struct ErrorString s_errMsgWrongDiskDemoFont[] =
 {
     {"Please insert", 0},
     {"the Super Monkey Ball Game Disc.", 0},
 };
 
-static struct Struct801D6744 s_errMsgReadErrorDemoFont[] =
+static struct ErrorString s_errMsgReadErrorDemoFont[] =
 {
     {"Could not read Game Disc.", 0},
     {"", 0},
     {"Please see the Instruction Booklet for details.", 0},
 };
 
-static struct Struct801D6744 s_errMsgFatalErrorDemoFont[] =
+static struct ErrorString s_errMsgFatalErrorDemoFont[] =
 {
     {"An error has occurred.", 0},
     {"", 0},
@@ -115,7 +115,7 @@ static struct Struct801D6744 s_errMsgFatalErrorDemoFont[] =
     {"Follow the instructions in the Instruction Booklet.", 0},
 };
 
-static struct Struct801D6894 s_errMessagesDemoFont[] =
+static struct ErrorMessage s_errMessagesDemoFont[] =
 {
     {s_errMsgCoverOpenDemoFont,  ARRAY_COUNT(s_errMsgCoverOpenDemoFont)},
     {s_errMsgNoDiskDemoFont,     ARRAY_COUNT(s_errMsgNoDiskDemoFont)},
@@ -158,7 +158,7 @@ static void show_dvd_err_msg(int msgId)
         if (bitmap_is_group_loaded(BMP_COM))
         {
             int i;
-            struct Struct801D6894 *errMsg;
+            struct ErrorMessage *errMsg;
 
             bitmap_init_tev();
             func_800AC718_sub();
@@ -182,7 +182,7 @@ static void show_dvd_err_msg(int msgId)
         }
         else
         {
-            struct Struct801D6894 *errMsg;
+            struct ErrorMessage *errMsg;
             int i;
 
             if (lbl_802F21F8 == 0)
@@ -221,7 +221,7 @@ const GXColor lbl_802F5EC8 = { 0, 0, 0, 255 };
 #pragma peephole on
 #endif
 
-void func_800ACA40(void)
+void avDVDErrorHandling(void)
 {
     u8 unused[0x20];
     OSHeapHandle heap;
@@ -296,7 +296,7 @@ static void read_callback(s32 result, DVDFileInfo *file)
         s_readResult = 0;
 }
 
-int u_read_dvd_file(DVDFileInfo *file, void *arg1, u32 arg2, int arg3)
+int avDVDRead(DVDFileInfo *file, void *arg1, u32 arg2, int arg3)
 {
     u8 unused[0x20];
     OSHeapHandle heap;
@@ -361,7 +361,7 @@ void init_loading_gct(void)
     int i;
 
     preview_create(&preview, "loading.gct", 0, 640, 480, GX_TF_CMPR);
-    u_preview_wait_then_do_something(&preview);
+    preview_sync(&preview);
     for (i = 0; i < 5; i++)
     {
         beginframe_main();
