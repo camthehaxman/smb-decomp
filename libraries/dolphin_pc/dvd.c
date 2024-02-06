@@ -116,7 +116,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo *fileInfo, void *addr, s32 length, s32 offset,
     FILE *f = fileInfo->cb.addr;
     BOOL success;
 
-    printf("DVDReadAsyncPrio: length %li, offset %li\n", length, offset);
+    printf("DVDReadAsyncPrio: addr %p, length %li, offset %li\n", addr, length, offset);
     fseek(f, offset, SEEK_SET);
     success = (fread(addr, length, 1, f) == 1) || feof(f);
     if (!success)

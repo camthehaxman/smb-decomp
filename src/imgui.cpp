@@ -10,6 +10,10 @@ extern "C"
 #include <fmt/format.h>
 #include <imgui.h>
 #include <numeric>
+#include <limits.h>
+#ifndef _POSIX_SEM_VALUE_MAX
+#define _POSIX_SEM_VALUE_MAX 32767
+#endif
 #include <thread>
 
 static bool m_frameRate = true;

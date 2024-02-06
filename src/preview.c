@@ -26,7 +26,6 @@ static void preview_init_common(struct Preview *preview, char *filename, int ind
 
     if (preview->imagePtr == NULL)
         OSPanic("preview.c", 55, "cannot OSAlloc");
-
     GXInitTexObj(
         &preview->texObj,  // obj
         preview->imagePtr,  // image_ptr

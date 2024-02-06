@@ -320,7 +320,7 @@ void DTKSetState(u32){puts("DTKSetState is a stub");}
 void DTKSetVolume(int,int){puts("DTKSetVolume is a stub");}
 u32 OSGetSoundMode(){puts("OSGetSoundMode is a stub");return 0;}
 void OSSetSoundMode(u32){puts("OSSetSoundMode is a stub");}
-void PADControlAllMotors(const u32*){puts("PADControlAllMotors is a stub");}
+//void PADControlAllMotors(const u32*){puts("PADControlAllMotors is a stub");}
 void PADControlMotor(s32,u32){puts("PADControlMotor is a stub");}
 float camPerspAngle;
 s32 camPerspChange;

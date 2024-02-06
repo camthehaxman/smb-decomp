@@ -35,7 +35,11 @@ typedef struct
 
 typedef struct
 {
+#ifdef AURORA
+    u32 dummy[22];
+#else
     u32 dummy[8];
+#endif
 } GXTexObj;
 
 typedef struct

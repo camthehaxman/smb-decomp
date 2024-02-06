@@ -142,4 +142,6 @@ BOOL PADReset(u32 mask)
     return TRUE;
 }
 
+void PADControlAllMotors(const u32*){puts("PADControlAllMotors is a stub");}
+
 #endif  // __linux__
