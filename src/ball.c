@@ -77,7 +77,7 @@ void func_8003699C(struct Ape *ape)
         {
             if (f1 * 100.0f < ball->unkC4)
                 ball->flags |= BALL_FLAG_05;
-            else if (f1 * 3.0f < ball->unkC4 && f31 * 1.5f < ball->unkF8)
+            else if (f1 * 3.0f < ball->unkC4 && f31 * 1.5f < ball->speed)
                 ball->flags |= BALL_FLAG_05;
         }
     }
@@ -1609,7 +1609,7 @@ void ball_func_ready_main(struct Ball *ball)
     ball->ape->flags |= 0x20;
     ball->state = 0;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -1651,7 +1651,7 @@ void ball_func_3(struct Ball *ball)
     u_play_sound_0(0x1E);
     ball->state = 4;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unk98 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -1671,11 +1671,11 @@ void ball_func_4(struct Ball *ball)
 void ball_func_goal_init(struct Ball *ball)
 {
     ball->state = BALL_STATE_GOAL_MAIN;
-    ball->flags |= (BALL_FLAG_08|BALL_FLAG_10);
+    ball->flags |= (BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
     if (ball->flags & (BALL_FLAG_GOAL|BALL_FLAG_13))
         ball->flags |= BALL_FLAG_06;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
     ball->unk98 = ball->unkA8;
@@ -1686,11 +1686,11 @@ void ball_func_goal_main(struct Ball *ball)
 {
     struct PhysicsBall physBall;
 
-    if (!(ball->flags & BALL_FLAG_09)
+    if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY)
      && (ball->ape->flags & (1 << 14)))
     {
-        ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_10);
-        ball->flags |= BALL_FLAG_09;
+        ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+        ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
         u_play_sound_0(0x126);
     }
 
@@ -1707,7 +1707,7 @@ void ball_func_7(struct Ball *ball)
 
     ball->unk80 = 0;
     ball->state = 10;
-    ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_09|BALL_FLAG_10);
+    ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_REVERSE_GRAVITY|BALL_FLAG_IGNORE_GRAVITY);
     ball->flags &= ~BALL_FLAG_INVISIBLE;
     if (ball->ape != NULL)
         ball->ape->flags &= ~(1 << 5);
@@ -1717,7 +1717,7 @@ void ball_func_7(struct Ball *ball)
     ball->pos.z = sp3C.pos.z;
     ball->ape->unk30 = ball->pos;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -1807,7 +1807,7 @@ void ball_func_11(struct Ball *ball)
     ball->ape->unk48.y = 0.0f;
     ball->ape->unk48.z = 0.0f;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -1843,7 +1843,7 @@ void ball_func_13(struct Ball *ball)
     ball->ape->unk48.y = 0.0f;
     ball->ape->unk48.z = 0.0f;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -1903,7 +1903,7 @@ void ball_func_15(struct Ball *ball)
     ball->ape->unk48.y = 0.0f;
     ball->ape->unk48.z = 0.0f;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -1962,7 +1962,7 @@ void ball_func_16(struct Ball *ball)
     ball->ape->unk48.y = 0.0f;
     ball->ape->unk48.z = 0.0f;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -1999,7 +1999,7 @@ void ball_func_18(struct Ball *ball)
 
     ball->state = 0;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unk98 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -2136,7 +2136,7 @@ void ball_func_demo_init(struct Ball *ball)
     ball->ape->unk48.y = 0.0f;
     ball->ape->unk48.z = 0.0f;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->ape->flags &= ~(1 << 14);
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
@@ -2184,19 +2184,19 @@ static void func_8003B0F4_inline(struct Ball *ball)
 void ball_func_27(struct Ball *ball)
 {
     ball->state = 28;
-    ball->flags |= (BALL_FLAG_08|BALL_FLAG_10);
+    ball->flags |= (BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
     if (ball->flags & (BALL_FLAG_GOAL|BALL_FLAG_13))
         ball->flags |= BALL_FLAG_06;
     ball->unkC4 = 0.0f;
-    ball->unkF8 = 0.0f;
+    ball->speed = 0.0f;
     ball->unkB8 = (Vec){0.0f, 0.0f, 0.0f};
     ball->unkA8 = (Quaternion){0.0f, 0.0f, 0.0f, 1.0f};
     ball->unk98 = ball->unkA8;
 
-    if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & (1 << 14)))
+    if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & (1 << 14)))
     {
-        ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_10);
-        ball->flags |= BALL_FLAG_09;
+        ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+        ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
         u_play_sound_0(0x126);
     }
 
@@ -2207,10 +2207,10 @@ void ball_func_28(struct Ball *ball)
 {
     struct PhysicsBall physBall;
 
-    if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & (1 << 14)))
+    if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & (1 << 14)))
     {
-        ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_10);
-        ball->flags |= BALL_FLAG_09;
+        ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+        ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
         u_play_sound_0(0x126);
     }
 
@@ -2229,7 +2229,7 @@ void handle_ball_linear_kinematics(struct Ball *ball, struct PhysicsBall *physBa
     ball->prevPos.y = ball->pos.y;
     ball->prevPos.z = ball->pos.z;
 
-    ball->unkF8 = mathutil_vec_len(&ball->vel);
+    ball->speed = mathutil_vec_len(&ball->vel);
     ball->flags &= ~BALL_FLAG_05;
 
     mathutil_mtxA_from_identity();
@@ -2243,7 +2243,7 @@ void handle_ball_linear_kinematics(struct Ball *ball, struct PhysicsBall *physBa
     accel.x = 0.0f;
     accel.y = -ball->accel;
     accel.z = 0.0f;
-    if (ball->flags & BALL_FLAG_09)
+    if (ball->flags & BALL_FLAG_REVERSE_GRAVITY)
         accel.y = -accel.y;
     else if (ball->flags & BALL_FLAG_08)
         accel.y = 0.0f;
@@ -2318,7 +2318,7 @@ void handle_ball_linear_kinematics_ignore_collision(struct Ball *ball, struct Ph
     ball->prevPos.y = ball->pos.y;
     ball->prevPos.z = ball->pos.z;
 
-    ball->unkF8 = mathutil_vec_len(&ball->vel);
+    ball->speed = mathutil_vec_len(&ball->vel);
     ball->flags &= ~BALL_FLAG_05;
 
     mathutil_mtxA_from_identity();
@@ -2332,7 +2332,7 @@ void handle_ball_linear_kinematics_ignore_collision(struct Ball *ball, struct Ph
     accel.x = 0.0f;
     accel.y = -ball->accel;
     accel.z = 0.0f;
-    if (ball->flags & BALL_FLAG_09)
+    if (ball->flags & BALL_FLAG_REVERSE_GRAVITY)
         accel.y = -accel.y;
     else if (ball->flags & BALL_FLAG_08)
         accel.y = 0.0f;
@@ -2558,7 +2558,7 @@ void handle_ball_rotational_kinematics(struct Ball *ball, struct PhysicsBall *ph
         ball->unk62 = sp2C.y * f2;
         ball->unk64 = sp2C.z * f2;
 
-        if (ball->flags & BALL_FLAG_10)
+        if (ball->flags & BALL_FLAG_IGNORE_GRAVITY)
             func_8003BD68(physBall, &sp20, &sp38);
 
         if (ball->currRadius > FLT_EPSILON)
@@ -2574,7 +2574,7 @@ void handle_ball_rotational_kinematics(struct Ball *ball, struct PhysicsBall *ph
             }
         }
     }
-    else if (ball->flags & BALL_FLAG_10)
+    else if (ball->flags & BALL_FLAG_IGNORE_GRAVITY)
     {
         ball->vel.x *= 0.95;
         ball->vel.y *= 0.95;
@@ -2821,8 +2821,8 @@ void ball_effect(void)
         return;
 
     if (modeCtrl.gameType != GAMETYPE_MAIN_COMPETITION)
-        bvar = ((ball->flags & BALL_FLAG_09) || (ball->unk80 & 1));
-    else if (ball->flags & BALL_FLAG_09)
+        bvar = ((ball->flags & BALL_FLAG_REVERSE_GRAVITY) || (ball->unk80 & 1));
+    else if (ball->flags & BALL_FLAG_REVERSE_GRAVITY)
         bvar = ball->unk80 & 1;
     else
         bvar = (ball->unk80 & 3) == 1;
@@ -2885,7 +2885,7 @@ void ball_sound(struct Ball *ball)
             if ((!(infoWork.flags & INFO_FLAG_05) && !(infoWork.flags & INFO_FLAG_TIMER_PAUSED))
              || (infoWork.flags & INFO_FLAG_REPLAY))
             {
-                if (!(ball->flags & BALL_FLAG_08) && !(ball->flags & BALL_FLAG_09))
+                if (!(ball->flags & BALL_FLAG_08) && !(ball->flags & BALL_FLAG_REVERSE_GRAVITY))
                     func_8003CDC0_sub(ball);
             }
         }

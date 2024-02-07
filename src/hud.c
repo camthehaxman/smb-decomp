@@ -4573,37 +4573,42 @@ static void lbl_800800D4(struct Sprite *sprite)
     }
 }
 
-#pragma dont_inline on
-static float func_800802E0(u16 arg0)
+static float calc_bomb_scale(u16 timer)
 {
-    float temp_f2;
+    float t;
 
-    if (arg0 > 60)
+    if (timer > 60)
     {
-        float f4 = fabs(mathutil_sin(((60 - ((u32)arg0 % 60)) & 0x3F) << 8));
-        return 0.20000000298023224 * (1.0 - fabs(1.0f - f4 * 2.0f));
+        float t = fabs(mathutil_sin(((60 - ((u32)timer % 60)) & 0x3F) << 8));
+        return 0.20000000298023224 * (1.0 - fabs(1.0f - t * 2.0f));
     }
-    if (arg0 < 15)
+    if (timer < 15)
     {
-        temp_f2 = (u32)(15 - arg0) / 15.0f;
-        if (temp_f2 < 0.5f)
-            return 0.2f - temp_f2;
+        t = (u32)(15 - timer) / 15.0f;
+        if (t < 0.5f)
+            return 0.2f - t;
         else
-            return (-0.3f + temp_f2) - 0.5f;
+            return (-0.3f + t) - 0.5f;
     }
     else
     {
-        temp_f2 = 1.0f - (u32)(arg0 - 15) / 45.0f;
-        temp_f2 *= 0.2f;
-        return temp_f2;
+        t = 1.0f - (u32)(timer - 15) / 45.0f;
+        t *= 0.2f;
+        return t;
     }
 }
-#pragma dont_inline reset
 
-static void bomb_crack_sprite_main(s8 *arg0, struct Sprite *sprite)
+static void scale_bomb_timer(struct Sprite *sprite)  // inline
 {
-    float temp_f0;
-    u8 dummy[8];
+    float scale = calc_bomb_scale(infoWork.timerCurr) + 1.0f;
+
+    sprite->scaleX = scale;
+    sprite->scaleY = scale;
+}
+
+static void bomb_crack_sprite_main(s8 *status, struct Sprite *sprite)
+{
+    u8 unused[8];
 
     if (infoWork.timerCurr <= 480)
     {
@@ -4611,9 +4616,7 @@ static void bomb_crack_sprite_main(s8 *arg0, struct Sprite *sprite)
             sprite->opacity = 1.0f - ((infoWork.timerCurr - 420) / 60.0f);
         else
             sprite->opacity = 1.0f;
-        temp_f0 = func_800802E0(infoWork.timerCurr) + 1.0f;
-        sprite->scaleX = temp_f0;
-        sprite->scaleY = temp_f0;
+        scale_bomb_timer(sprite);
         if (infoWork.timerCurr < 240)
         {
             sprite->userVar += 40.0f - (infoWork.timerCurr * 40.0f) / 240.0f;
@@ -4624,37 +4627,36 @@ static void bomb_crack_sprite_main(s8 *arg0, struct Sprite *sprite)
             sprite->mulB = (sprite->mulB - 128) * 2.0f;
         }
         if (infoWork.timerCurr <= 0)
-            *arg0 = 0;
+            *status = 0;
     }
 }
 
-float force_lbl_802F50C0() { return 0.19699999690055847f; }
+float force_lbl_802F50C0() { return 0.197f; }
 
-static void bomb_frag_sprite_main(s8 *arg0, struct Sprite *sprite)
+static void bomb_frag_sprite_main(s8 *status, struct Sprite *sprite)
 {
-    s16 temp_r7;
-    s16 temp_r8;
-    float temp;
-    float x, y;
+    s16 x, y;
+    float dx, dy;
 
     sprite->opacity *= 0.95f;
     sprite->scaleX *= 1.01f;
     sprite->scaleY *= 1.01f;
 
-    temp_r7 = ((s16*)&sprite->userVar)[0];
-    temp_r8 = ((s16*)&sprite->userVar)[1];
+    x = ((s16*)&sprite->userVar)[0];
+    y = ((s16*)&sprite->userVar)[1];
 
-    x = (temp_r7 * 0.9f) * (sprite->opacity * sprite->opacity);
-    y = (temp_r8 * 0.97f) * (sprite->opacity * sprite->opacity) + (1.0f - (sprite->opacity * sprite->opacity));
+    dx = (x * 0.9f) * (sprite->opacity * sprite->opacity);
+    dy = (y * 0.97f) * (sprite->opacity * sprite->opacity) + (1.0f - (sprite->opacity * sprite->opacity));
 
-    sprite->x += x;
-    sprite->y += y;
+    sprite->x += dx;
+    sprite->y += dy;
 
-    ((s16*)&sprite->userVar)[0] = temp_r7;
-    ((s16*)&sprite->userVar)[1] = temp_r8;
+    // pointless, since the variables aren't modified
+    ((s16*)&sprite->userVar)[0] = x;
+    ((s16*)&sprite->userVar)[1] = y;
 
     if (sprite->opacity < 0.005f)
-        *arg0 = 0;
+        *status = 0;
 }
 
 static s16 bombFragBitmapIds[] =
@@ -4674,14 +4676,13 @@ static s16 bombFragBitmapIds[] =
 static float bombFragX[] = { 7.0f, 16.0f, 26.0f, 48.0f,  0.0f,  9.0f, 55.0f, 12.0f, 33.0f, 71.0f };
 static float bombFragY[] = { 9.0f,  0.0f,  0.0f, 4.0f,  24.0f, 16.0f, 23.0f, 63.0f, 56.0f, 69.0f };
 
-static void bomb_sprite_main(s8 *arg0, struct Sprite *sprite)
+static void bomb_sprite_main(s8 *status, struct Sprite *sprite)
 {
-    u8 dummy[8];
-    float temp_f0;
+    u8 unused[8];
     float x;
     float y;
-    float temp_f30;
-    float temp_f29;
+    float xscale;
+    float yscale;
     struct Sprite *fragSprite;
     u32 i;
 
@@ -4689,18 +4690,16 @@ static void bomb_sprite_main(s8 *arg0, struct Sprite *sprite)
     {
         if (infoWork.timerCurr > 0)
         {
-            temp_f0 = 1.0f + func_800802E0(infoWork.timerCurr);
-            sprite->scaleX = temp_f0;
-            sprite->scaleY = temp_f0;
+            scale_bomb_timer(sprite);
             return;
         }
 
         // with no time left on clock, destroy this sprite and spawn fragments
         x = sprite->x;
         y = sprite->y;
-        temp_f30 = sprite->scaleX;
-        temp_f29 = sprite->scaleY;
-        *arg0 = 0;
+        xscale = sprite->scaleX;
+        yscale = sprite->scaleY;
+        *status = 0;
         u_debug_set_cursor_pos(5, 5);
         for (i = 0; i < 10; i++)
         {
@@ -4716,8 +4715,8 @@ static void bomb_sprite_main(s8 *arg0, struct Sprite *sprite)
             fragSprite->textAlign = ALIGN_LT;
             fragSprite->unk4C = 0.2f;
             fragSprite->mainFunc = bomb_frag_sprite_main;
-            fragSprite->scaleX = temp_f30;
-            fragSprite->scaleY = temp_f29;
+            fragSprite->scaleX = xscale;
+            fragSprite->scaleY = yscale;
             ((s16 *)&fragSprite->userVar)[0] = 1.2f * (bombFragX[i] - 30.0f);
             ((s16 *)&fragSprite->userVar)[1] = 1.2f * (bombFragY[i] - 20.0f);
             sprintf(fragSprite->text, "bomb_scat%d.pic", i);
@@ -4725,27 +4724,27 @@ static void bomb_sprite_main(s8 *arg0, struct Sprite *sprite)
     }
 }
 
-void hud_show_bomb(float arg8, float arg9)
+void hud_show_bomb(float x, float y)
 {
     struct Sprite *sprite;
-    float x;
-    float y;
+    float crackX;
+    float crackY;
 
     sprite = create_sprite();
     if (sprite != NULL)
     {
         sprite->type = SPRITE_TYPE_BITMAP;
         sprite->tag = 2;
-        sprite->x = arg8;
-        sprite->y = arg9;
+        sprite->x = x;
+        sprite->y = y;
         sprite->fontId = FONT_ASCII;
         sprite->bmpId = BMP_NML_icon_bombtimer;
         sprite->textAlign = ALIGN_CC;
         sprite->unk4C = 0.2f;
         sprite->mainFunc = bomb_sprite_main;
         sprintf(sprite->text, "timer.pic");
-        y = sprite->y;
-        x = sprite->x;
+        crackY = sprite->y;
+        crackX = sprite->x;
 
         // spawn a second sprite to show cracks
         sprite = create_sprite();
@@ -4753,8 +4752,8 @@ void hud_show_bomb(float arg8, float arg9)
         {
             sprite->type = SPRITE_TYPE_BITMAP;
             sprite->tag = 2;
-            sprite->x = x;
-            sprite->y = y;
+            sprite->x = crackX;
+            sprite->y = crackY;
             sprite->fontId = FONT_ASCII;
             sprite->bmpId = BMP_NML_icon_bomb_hibi;
             sprite->textAlign = ALIGN_CC;

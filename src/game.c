@@ -445,7 +445,7 @@ void submode_game_goal_main_func(void)
     if (!r31)
     {
         BALL_FOREACH(
-            if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & (1 << 14)))
+            if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & (1 << 14)))
             {
                 modeCtrl.courseFlags |= 0x400;
                 u_play_sound_0(0x126);
@@ -478,7 +478,7 @@ void submode_game_goal_replay_init_func(void)
         modeCtrl.submodeTimer = 300;
     modeCtrl.courseFlags &= ~(1 << 10);
     modeCtrl.unk18 = 30;
-    BALL_FOREACH( ball->flags &= ~BALL_FLAG_09; )
+    BALL_FOREACH( ball->flags &= ~BALL_FLAG_REVERSE_GRAVITY; )
     BALL_FOREACH( ball->state = 9; )
     WORLD_FOREACH( world->state = 6; )
     camera_set_state(16);
@@ -510,10 +510,10 @@ void submode_game_goal_replay_main_func(void)
         infoWork.flags &= ~INFO_FLAG_REPLAY;
 
     BALL_FOREACH(
-        if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & (1 << 14)))
+        if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & (1 << 14)))
         {
-            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_10);
-            ball->flags |= BALL_FLAG_09;
+            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+            ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
             modeCtrl.courseFlags |= 0x400;
             u_play_sound_0(0x126);
         }
@@ -936,7 +936,7 @@ void submode_game_bonus_clear_init_func(void)
     event_finish(EVENT_VIBRATION);
     minimap_set_state(MINIMAP_STATE_CLOSE);
     BALL_FOREACH( ball->state = 5; )
-    BALL_FOREACH( ball->flags |= BALL_FLAG_08|BALL_FLAG_10; )
+    BALL_FOREACH( ball->flags |= BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY; )
     camera_set_state(14);
     if (infoWork.flags & INFO_FLAG_10)
         hud_show_time_over_banner(modeCtrl.submodeTimer);
@@ -957,10 +957,10 @@ void submode_game_bonus_clear_main_func(void)
         stop_recplay();
 
     BALL_FOREACH(
-        if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & BALL_FLAG_14))
+        if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & BALL_FLAG_14))
         {
-            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_10);
-            ball->flags |= BALL_FLAG_09;
+            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+            ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
             modeCtrl.courseFlags |= (1 << 10);
             u_play_sound_0(0x126);
         }
@@ -976,7 +976,7 @@ void submode_game_bonus_clear_main_func(void)
     }
     if (--modeCtrl.submodeTimer > 0)
         return;
-    BALL_FOREACH( ball->flags &= ~BALL_FLAG_09; )
+    BALL_FOREACH( ball->flags &= ~BALL_FLAG_REVERSE_GRAVITY; )
     if (loadingStageId < 0 && modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         gameSubmodeRequest = SMD_GAME_RESULT_INIT;
     else

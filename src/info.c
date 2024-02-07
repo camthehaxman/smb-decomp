@@ -467,7 +467,7 @@ void u_time_over_all_competition_mode_balls(void)
         BALL_FOREACH(
             if (!(ball->flags & BALL_FLAG_GOAL))
             {
-                ball->flags |= (BALL_FLAG_08|BALL_FLAG_10);
+                ball->flags |= (BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
                 ball->winStreak = 0;
                 ball->unk128++;
                 ball->flags |= BALL_FLAG_TIMEOVER;

@@ -262,7 +262,7 @@ void ev_name_entry_main(void)
     case 3:
         s_nameEntry.counter++;
         if (s_nameEntry.counter == 15.0)
-            ball->flags |= BALL_FLAG_10;
+            ball->flags |= BALL_FLAG_IGNORE_GRAVITY;
         if (s_nameEntry.counter == 60.0)
         {
             func_800AE8D0();
@@ -287,7 +287,7 @@ void ev_name_entry_main(void)
         break;
     case 4:
         s_nameEntry.state = 5;
-        ball->flags &= ~BALL_FLAG_10;
+        ball->flags &= ~BALL_FLAG_IGNORE_GRAVITY;
         s_nameEntry.unk14 = 1;
         s_nameEntry.unk20 = 0.0f;
         s_nameEntry.unk24 = 60.0f;
