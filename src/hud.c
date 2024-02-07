@@ -4630,40 +4630,32 @@ static void bomb_crack_sprite_main(s8 *arg0, struct Sprite *sprite)
 
 float force_lbl_802F50C0() { return 0.19699999690055847f; }
 
-#ifdef NONMATCHING
 static void bomb_frag_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    s16 *asdf = (s16 *)&sprite->userVar;
-    float temp_f0;
-    float temp_f6;
     s16 temp_r7;
     s16 temp_r8;
+    float temp;
+    float x, y;
 
     sprite->opacity *= 0.95f;
     sprite->scaleX *= 1.01f;
     sprite->scaleY *= 1.01f;
-    temp_r7 = asdf[0];
-    temp_r8 = asdf[1];
-    temp_f0 = sprite->opacity;
-    temp_f6 = temp_f0 * temp_f0;
-    sprite->x += 0.9f * temp_r7 * temp_f6;
-    sprite->y += (0.97f * temp_r8 * temp_f6) + (1.0f - temp_f6);
-    asdf[0] = temp_r7;
-    asdf[1] = temp_r8;
+
+    temp_r7 = ((s16*)&sprite->userVar)[0];
+    temp_r8 = ((s16*)&sprite->userVar)[1];
+
+    x = (temp_r7 * 0.9f) * (sprite->opacity * sprite->opacity);
+    y = (temp_r8 * 0.97f) * (sprite->opacity * sprite->opacity) + (1.0f - (sprite->opacity * sprite->opacity));
+
+    sprite->x += x;
+    sprite->y += y;
+
+    ((s16*)&sprite->userVar)[0] = temp_r7;
+    ((s16*)&sprite->userVar)[1] = temp_r8;
+
     if (sprite->opacity < 0.005f)
         *arg0 = 0;
 }
-#else
-const float lbl_802F50C4 = 0.94999998807907104f;
-const float lbl_802F50C8 = 0.97000002861022949f;
-const float lbl_802F50CC = 0.89999997615814209f;
-static asm void bomb_frag_sprite_main(s8 *arg0, struct Sprite *sprite)
-{
-    nofralloc
-#include "../asm/nonmatchings/bomb_frag_sprite_main.s"
-}
-#pragma peephole on
-#endif
 
 static s16 bombFragBitmapIds[] =
 {

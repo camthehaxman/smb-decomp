@@ -46,7 +46,7 @@ struct GoalTape
     struct GoalTape_sub unk18[8];
 };  // size = 0x198
 
-struct GoalTape goalTapes[MAX_GOALS];
+static struct GoalTape goalTapes[MAX_GOALS];
 
 struct GoalBag  // The "party ball", known as a "goal bag" internally
 {
@@ -58,9 +58,9 @@ struct GoalBag  // The "party ball", known as a "goal bag" internally
     s32 unk24;  // time ball was opened?
 };  // size = 0x28
 
-struct GoalBag goalBags[MAX_GOALS];
+static struct GoalBag goalBags[MAX_GOALS];
 
-s16 smallLCDModelIDs[] =
+static s16 smallLCDModelIDs[] =
 {
     NLMODEL_common_S_LCD_0,
     NLMODEL_common_S_LCD_1,
@@ -74,7 +74,7 @@ s16 smallLCDModelIDs[] =
     NLMODEL_common_S_LCD_9,
 };
 
-s16 largeLCDModelIDs[] =
+static s16 largeLCDModelIDs[] =
 {
     NLMODEL_common_L_LCD_0,
     NLMODEL_common_L_LCD_1,
@@ -181,23 +181,21 @@ void u_spawn_goal_stobjs(struct StageAnimGroup *arg0, int arg1)
     }
 }
 
-struct NlModel *smallLCDModels[10];
-struct NlModel *largeLCDModels[10];
+static struct NlModel *smallLCDModels[10];
+static struct NlModel *largeLCDModels[10];
 
-// https://decomp.me/scratch/L6SNU
-#ifdef NONMATCHING
 void stobj_goaltape_init(struct Stobj *stobj)
 {
-    struct RaycastHit spC;
-    f32 temp_f10;
-    f32 temp_f11;
+    float temp_f10;
+    float temp_f11;
     int i;
     int j;
     struct GoalTape_sub *var_r7;
     struct GoalTape *temp_r31;
-    struct NlModel **mdlPtr;
-    //s16 *idxPtr;
     Point3d sp28;
+    struct RaycastHit spC;
+    s16 *idxPtr;
+    struct NlModel **mdlPtr;
 
     stobj->state = 0;
     stobj->unk8 |= 2;
@@ -247,48 +245,15 @@ void stobj_goaltape_init(struct Stobj *stobj)
     temp_r31->unk8 = temp_f11;
     temp_r31->unkC = temp_f11;
 
+    idxPtr = smallLCDModelIDs;
     mdlPtr = smallLCDModels;
-    //idxPtr = smallLCDModelIDs;
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[0]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[1]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[2]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[3]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[4]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[5]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[6]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[7]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[8]];
-    *mdlPtr++ = g_commonNlObj->models[smallLCDModelIDs[9]];
-
+    for (i = 0; i < 10; i++, mdlPtr++, idxPtr++)
+         *mdlPtr = NLOBJ_MODEL(g_commonNlObj, *idxPtr);
+    idxPtr = largeLCDModelIDs;
     mdlPtr = largeLCDModels;
-    //idxPtr = largeLCDModelIDs;
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[0]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[1]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[2]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[3]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[4]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[5]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[6]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[7]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[8]];
-    *mdlPtr++ = g_commonNlObj->models[largeLCDModelIDs[9]];
+    for(i = 0; i < 10; i++, mdlPtr++, idxPtr++)
+         *mdlPtr = NLOBJ_MODEL(g_commonNlObj, *idxPtr);
 }
-#else
-float  force_lbl_802F48F0() { return 1.3125f; }
-double force_lbl_802F48F8() { return 0.002; }
-float  force_lbl_802F4900() { return 0.0020000000949949026f; }
-float  force_lbl_802F4904() { return 7.0f; }
-double force_lbl_802F4908() { return 1.75; }
-double force_lbl_802F4910() { return 0.875; }
-float  force_lbl_802F4918() { return 1.0f; }
-float  force_lbl_802F491C() { return 0.22499999403953552f; }
-asm void stobj_goaltape_init(struct Stobj *stobj)
-{
-    nofralloc
-#include "../asm/nonmatchings/stobj_goaltape_init.s"
-}
-#pragma peephole on
-#endif
 
 void stobj_goaltape_main(struct Stobj *stobj)
 {
@@ -783,7 +748,7 @@ void stobj_goalbag_init(struct Stobj *stobj)
     bag->unk8 = 0.0f;
 }
 
-const Vec lbl_80117A58 = { 0.0f, 3.549999952316284f, 0.0f };
+const Vec lbl_80117A58 = { 0.0f, 3.55f, 0.0f };
 const Vec lbl_80117A64 = { 1.0f, 0.0f, 0.0f };
 
 void stobj_goalbag_main(struct Stobj *stobj)
@@ -908,9 +873,9 @@ void stobj_goalbag_main(struct Stobj *stobj)
         sp3C.y -= sp48.y;
         sp3C.z -= sp48.z;
         mathutil_mtxA_rigid_inv_tf_vec(&sp3C, &sp3C);
-        stobj->u_local_vel.x += 0.020000000000000018 * (sp3C.x - stobj->u_local_vel.x);
-        stobj->u_local_vel.y += 0.020000000000000018 * (sp3C.y - stobj->u_local_vel.y);
-        stobj->u_local_vel.z += 0.020000000000000018 * (sp3C.z - stobj->u_local_vel.z);
+        stobj->u_local_vel.x += (1.0 - 0.98) * (sp3C.x - stobj->u_local_vel.x);
+        stobj->u_local_vel.y += (1.0 - 0.98) * (sp3C.y - stobj->u_local_vel.y);
+        stobj->u_local_vel.z += (1.0 - 0.98) * (sp3C.z - stobj->u_local_vel.z);
     }
     else
     {
