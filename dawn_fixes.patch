@@ -1,0 +1,48 @@
+diff --git a/src/dawn/native/CacheKey.h b/src/dawn/native/CacheKey.h
+index 357ce4b325..fad178af42 100644
+--- a/extern/aurora/extern/dawn/src/dawn/native/CacheKey.h
++++ b/extern/aurora/extern/dawn/src/dawn/native/CacheKey.h
+@@ -16,6 +16,7 @@
+ #define SRC_DAWN_NATIVE_CACHEKEY_H_
+ 
+ #include <bitset>
++#include <cstdint>
+ #include <iostream>
+ #include <limits>
+ #include <string>
+diff --git a/src/tint/reader/spirv/entry_point_info.h b/src/tint/reader/spirv/entry_point_info.h
+index bc13759f00..39bce7f198 100644
+--- a/extern/aurora/extern/dawn/src/tint/reader/spirv/entry_point_info.h
++++ b/extern/aurora/extern/dawn/src/tint/reader/spirv/entry_point_info.h
+@@ -15,6 +15,7 @@
+ #ifndef SRC_TINT_READER_SPIRV_ENTRY_POINT_INFO_H_
+ #define SRC_TINT_READER_SPIRV_ENTRY_POINT_INFO_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+diff --git a/src/tint/reader/spirv/namer.h b/src/tint/reader/spirv/namer.h
+index 7a20e8738b..655f69ce36 100644
+--- a/extern/aurora/extern/dawn/src/tint/reader/spirv/namer.h
++++ b/extern/aurora/extern/dawn/src/tint/reader/spirv/namer.h
+@@ -15,6 +15,7 @@
+ #ifndef SRC_TINT_READER_SPIRV_NAMER_H_
+ #define SRC_TINT_READER_SPIRV_NAMER_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <unordered_map>
+ #include <vector>
+diff --git a/third_party/abseil-cpp/absl/strings/internal/str_format/extension.h b/third_party/abseil-cpp/absl/strings/internal/str_format/extension.h
+index 55cbb56d0a..0e0251212e 100644
+--- a/extern/aurora/extern/dawn/third_party/abseil-cpp/absl/strings/internal/str_format/extension.h
++++ b/extern/aurora/extern/dawn/third_party/abseil-cpp/absl/strings/internal/str_format/extension.h
+@@ -19,6 +19,7 @@
+ #include <limits.h>
+ 
+ #include <cstddef>
++#include <cstdint>
+ #include <cstring>
+ #include <ostream>
+ 
