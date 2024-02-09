@@ -576,16 +576,6 @@ FORCE_BSS_ORDER(titleMonkeyBallOffsets)
 s8 lbl_80292D08[0x10];
 FORCE_BSS_ORDER(lbl_80292D08)
 
-extern struct
-{
-    u32 unk0;
-    u32 unk4;
-    u32 unk8;
-    u8 fillerC[0x14-0xC];
-    u32 unk14;
-} lbl_80292D18;
-//FORCE_BSS_ORDER(lbl_80292D18)
-
 struct TitleLetter
 {
     u32 bmpId;
@@ -728,7 +718,7 @@ static void title_sprite_main(s8 *arg0, struct Sprite *sprite)
         lbl_802F2010 += 0.25 * (1.0 - lbl_802F2010);
 }
 
-extern u32 lbl_80118AC8[];
+extern u32 smileFaceTable[];
 
 static void title_sprite_draw(struct Sprite *sprite)
 {
@@ -823,7 +813,7 @@ static void title_sprite_draw(struct Sprite *sprite)
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_DEPTH_UPDATE;
     nlSprPut(&params);
 
-    params.sprno = lbl_80118AC8[0];
+    params.sprno = smileFaceTable[0];
     params.x = 320.0f;
     params.y = 331.0f;
     params.z = sprite->unk4C - 0.004;
@@ -959,10 +949,10 @@ void hud_show_title_screen_monkey_sprite(void)
         sprite->drawFunc = monkey_sprite_draw;
         sprintf(sprite->text, "saru");
     }
-    lbl_80292D18.unk4 = 0;
-    lbl_80292D18.unk0 = 0;
-    lbl_80292D18.unk8 = 0;
-    lbl_80292D18.unk14 = 0xE;
+    apeIconInfo.unk4 = 0;
+    apeIconInfo.emotion = 0;
+    apeIconInfo.frameNum = 0;
+    apeIconInfo.unk14 = 14;
 }
 
 float force_lbl_802F4D9C() { return 0.1f; }
@@ -1704,6 +1694,7 @@ void hud_show_normal_mode_info(void)
         }
     }
 
+    // life icon
     sprite = create_sprite();
     if (sprite != NULL)
     {
@@ -1716,10 +1707,10 @@ void hud_show_normal_mode_info(void)
         sprintf(sprite->text, "saru");
     }
 
-    lbl_80292D18.unk4 = 0;
-    lbl_80292D18.unk0 = 0;
-    lbl_80292D18.unk8 = 0;
-    lbl_80292D18.unk14 = 0x33;
+    apeIconInfo.unk4 = 0;
+    apeIconInfo.emotion = 0;
+    apeIconInfo.frameNum = 0;
+    apeIconInfo.unk14 = 0x33;
     func_8000D5B8();
     hud_show_bomb(320.0f, 68.0f);
 
@@ -1937,10 +1928,10 @@ static void show_competition_player_hud(int playerId)
     float right = left + (640.0f * vp.width);
     float bottom = top + 480.0f * vp.height;
 
-    lbl_80292D18.unk4 = 0;
-    lbl_80292D18.unk0 = 0;
-    lbl_80292D18.unk8 = 0;
-    lbl_80292D18.unk14 = 0x33;
+    apeIconInfo.unk4 = 0;
+    apeIconInfo.emotion = 0;
+    apeIconInfo.frameNum = 0;
+    apeIconInfo.unk14 = 0x33;
 
     sprite = create_sprite();
     if (sprite != NULL)
@@ -1998,7 +1989,7 @@ static void show_competition_player_hud(int playerId)
         else
             sprite->x = right - 28.0f;
         sprite->y = top + 22.0f;
-        sprite->bmpId = u_get_monkey_bitmap_id(lbl_80292D18.unk0, lbl_80292D18.unk8, playerCharacterSelection[playerId]);
+        sprite->bmpId = u_get_monkey_bitmap_id(apeIconInfo.emotion, apeIconInfo.frameNum, playerCharacterSelection[playerId]);
         sprite->textAlign = ALIGN_CC;
         sprite->scaleX = 0.375f;
         sprite->scaleY = 0.24374999f;
@@ -2526,7 +2517,7 @@ static void score_value_sprite_main(s8 *arg0, struct Sprite *sprite)
 
 static void lbl_8007B490(s8 *arg0, struct Sprite *sprite)
 {
-    sprite->bmpId = u_get_monkey_bitmap_id(lbl_80292D18.unk0, lbl_80292D18.unk8, playerCharacterSelection[sprite->userVar]);
+    sprite->bmpId = u_get_monkey_bitmap_id(apeIconInfo.emotion, apeIconInfo.frameNum, playerCharacterSelection[sprite->userVar]);
 }
 
 static void normal_ball_speed_sprite_main(s8 *arg0, struct Sprite *sprite)

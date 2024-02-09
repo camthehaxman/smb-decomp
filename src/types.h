@@ -958,6 +958,16 @@ struct Struct80094870
     u16 unk8;
 };
 
+struct Struct80292D18
+{
+    s32 emotion;
+    s32 unk4;
+    s32 frameNum;
+    s16 angle;
+    s32 unk10;
+    s32 unk14;
+};
+
 struct Effect;
 struct ScoreRecord;
 

@@ -1,9 +1,11 @@
 #include <stddef.h>
+#include <string.h>
 #include <dolphin.h>
 
 #include "global.h"
 #include "adv.h"
 #include "ball.h"
+#include "bitmap.h"
 #include "info.h"
 #include "mathutil.h"
 #include "mode.h"
@@ -11,306 +13,488 @@
 #include "sprite.h"
 #include "textbox.h"
 
-// todo: this is also in hud.c
-/*extern*/ struct
+struct Struct80292D18 apeIconInfo;
+
+static const u32 neutralFaceTable[] =
 {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-    s16 unkC;
-    s32 unk10;
-    s32 unk14;
-} lbl_80292D18;
-
-void func_8008BFB4(struct Ape *ape, int b, int *c, float *d);
-
-const u32 lbl_80118938[] = {
-    0xF,
-    0x20,
-    0x33,
-    3,
-};
-const u32 lbl_80118938_0x10[] = {
-    0x15,
-    0x16,
-    0x17,
-    0x17,
-    0x16,
-    0x16,
-    0x16,
-    0x17,
-    0x16,
-    0x16,
-    0x16,
-    0x17,
-    0x25,
-    0x26,
-    0x27,
-    0x27,
-    0x26,
-    0x26,
-    0x26,
-    0x27,
-    0x26,
-    0x26,
-    0x26,
-    0x27,
-    0x37,
-    0x38,
-    0x39,
-    0x39,
-    0x38,
-    0x38,
-    0x38,
-    0x39,
-    0x38,
-    0x38,
-    0x38,
-    0x39,
-    0xB,
-    0xE,
-    0x4D,
-    0x4D,
-    0xE,
-    0xE,
-    0xE,
-    0x4D,
-    0xE,
-    0xE,
-    0xE,
-    0x4D,
-    0x18,
-    0x19,
-    0x18,
-    0xF,
-    0x18,
-    0x18,
-    0x18,
-    0x18,
-    0x18,
-    0xF,
-    0x18,
-    0x19,
-    0x28,
-    0x29,
-    0x28,
-    0x20,
-    0x28,
-    0x28,
-    0x28,
-    0x28,
-    0x28,
-    0x20,
-    0x28,
-    0x29,
-    0x3A,
-    0x3B,
-    0x3A,
-    0x33,
-    0x3A,
-    0x3A,
-    0x3A,
-    0x3A,
-    0x3A,
-    0x33,
-    0x3A,
-    0x3B,
-    0x4E,
-    0x4F,
-    0x4E,
-    3,
-    0x4E,
-    0x4E,
-    0x4E,
-    0x4E,
-    0x4E,
-    3,
-    0x4E,
-    0x4F,
-}; /* const */
-
-const u32 lbl_80118938_0x190[(0x220-0x190)/4] =
-{
-	0
+    BMP_COM_icon_ape_00,
+    BMP_COM_icon_gal_00,
+    BMP_COM_icon_kid_00,
+    BMP_COM_icon_gol_00,
 };
 
-const u32 lbl_80118938_0x220[(0x320-0x220)/4] =
+static const u32 angryFaceTable[] =
 {
-	0
+    BMP_COM_icon_ape_angry01,
+    BMP_COM_icon_ape_angry02,
+    BMP_COM_icon_ape_angry03,
+    BMP_COM_icon_ape_angry03,
+    BMP_COM_icon_ape_angry02,
+    BMP_COM_icon_ape_angry02,
+    BMP_COM_icon_ape_angry02,
+    BMP_COM_icon_ape_angry03,
+    BMP_COM_icon_ape_angry02,
+    BMP_COM_icon_ape_angry02,
+    BMP_COM_icon_ape_angry02,
+    BMP_COM_icon_ape_angry03,
+
+    BMP_COM_icon_gal_angry01,
+    BMP_COM_icon_gal_angry02,
+    BMP_COM_icon_gal_angry03,
+    BMP_COM_icon_gal_angry03,
+    BMP_COM_icon_gal_angry02,
+    BMP_COM_icon_gal_angry02,
+    BMP_COM_icon_gal_angry02,
+    BMP_COM_icon_gal_angry03,
+    BMP_COM_icon_gal_angry02,
+    BMP_COM_icon_gal_angry02,
+    BMP_COM_icon_gal_angry02,
+    BMP_COM_icon_gal_angry03,
+
+    BMP_COM_icon_kid_angry01,
+    BMP_COM_icon_kid_angry02,
+    BMP_COM_icon_kid_angry03,
+    BMP_COM_icon_kid_angry03,
+    BMP_COM_icon_kid_angry02,
+    BMP_COM_icon_kid_angry02,
+    BMP_COM_icon_kid_angry02,
+    BMP_COM_icon_kid_angry03,
+    BMP_COM_icon_kid_angry02,
+    BMP_COM_icon_kid_angry02,
+    BMP_COM_icon_kid_angry02,
+    BMP_COM_icon_kid_angry03,
+
+    BMP_COM_icon_gol_angry01,
+    BMP_COM_icon_gol_angry02,
+    BMP_COM_icon_gol_angry03,
+    BMP_COM_icon_gol_angry03,
+    BMP_COM_icon_gol_angry02,
+    BMP_COM_icon_gol_angry02,
+    BMP_COM_icon_gol_angry02,
+    BMP_COM_icon_gol_angry03,
+    BMP_COM_icon_gol_angry02,
+    BMP_COM_icon_gol_angry02,
+    BMP_COM_icon_gol_angry02,
+    BMP_COM_icon_gol_angry03,
 };
 
-const u32 lbl_80118938_0x320[69] =
+static const u32 blinkFaceTable[] =
 {
-	0
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_blink02,
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_00,
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_00,
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_blink02,
+
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_blink02,
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_00,
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_00,
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_blink02,
+
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_blink02,
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_00,
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_00,
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_blink02,
+
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_blink02,
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_00,
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_00,
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_blink02,
 };
 
-void monkey_sprite_draw(struct Sprite *arg0 /*r26*/)
+const u32 smileFaceTable[] =
 {
-    s32 var_r29;
-    u32 var_r30;
+    BMP_COM_icon_smile01,
+    BMP_COM_icon_smile02,
+    BMP_COM_icon_smile03,
+    BMP_COM_icon_smile04,
+    BMP_COM_icon_smile03,
+    BMP_COM_icon_smile04,
+
+    BMP_COM_icon_gal_smile01,
+    BMP_COM_icon_gal_smile02,
+    BMP_COM_icon_gal_smile03,
+    BMP_COM_icon_gal_smile04,
+    BMP_COM_icon_gal_smile03,
+    BMP_COM_icon_gal_smile04,
+
+    BMP_COM_icon_kid_smile01,
+    BMP_COM_icon_kid_smile02,
+    BMP_COM_icon_kid_smile01,
+    BMP_COM_icon_kid_smile02,
+    BMP_COM_icon_kid_smile01,
+    BMP_COM_icon_kid_smile02,
+
+    BMP_COM_icon_gol_smile01,
+    BMP_COM_icon_gol_smile02,
+    BMP_COM_icon_gol_smile03,
+    BMP_COM_icon_gol_smile04,
+    BMP_COM_icon_gol_smile03,
+    BMP_COM_icon_gol_smile04,
+};
+
+static const u32 blinkFaceTable2[] =
+{
+    BMP_COM_icon_ape_blink01,
+    BMP_COM_icon_ape_blink02,
+    BMP_COM_icon_ape_blink01,
+
+    BMP_COM_icon_gal_blink01,
+    BMP_COM_icon_gal_blink02,
+    BMP_COM_icon_gal_blink01,
+
+    BMP_COM_icon_kid_blink01,
+    BMP_COM_icon_kid_blink02,
+    BMP_COM_icon_kid_blink01,
+
+    BMP_COM_icon_gol_blink01,
+    BMP_COM_icon_gol_blink02,
+    BMP_COM_icon_gol_blink01,
+};
+
+static const u32 afraidFaceTable[] =
+{
+    BMP_COM_icon_ape_afraid01,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid03,
+    BMP_COM_icon_ape_afraid03,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid03,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid03,
+
+    BMP_COM_icon_gal_afraid01,
+    BMP_COM_icon_gal_afraid02,
+    BMP_COM_icon_gal_afraid03,
+    BMP_COM_icon_gal_afraid04,
+    BMP_COM_icon_gal_afraid03,
+    BMP_COM_icon_gal_afraid03,
+    BMP_COM_icon_gal_afraid03,
+    BMP_COM_icon_gal_afraid04,
+    BMP_COM_icon_gal_afraid03,
+    BMP_COM_icon_gal_afraid03,
+    BMP_COM_icon_gal_afraid03,
+    BMP_COM_icon_gal_afraid04,
+
+    BMP_COM_icon_kid_afraid01,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid03,
+    BMP_COM_icon_kid_afraid03,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid03,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid03,
+
+    BMP_COM_icon_gol_afraid01,
+    BMP_COM_icon_gol_afraid02,
+    BMP_COM_icon_gol_afraid03,
+    BMP_COM_icon_gol_afraid03,
+    BMP_COM_icon_gol_afraid02,
+    BMP_COM_icon_gol_afraid02,
+    BMP_COM_icon_gol_afraid02,
+    BMP_COM_icon_gol_afraid03,
+    BMP_COM_icon_gol_afraid02,
+    BMP_COM_icon_gol_afraid02,
+    BMP_COM_icon_gol_afraid02,
+    BMP_COM_icon_gol_afraid03,
+};
+
+static const u32 afraidFaceTable2[] =
+{
+    BMP_COM_icon_ape_afraid03,
+    BMP_COM_icon_gal_afraid04,
+    BMP_COM_icon_kid_afraid03,
+    BMP_COM_icon_gol_afraid03,
+};
+
+static const u32 afraidFaceTable3[] =
+{
+    BMP_COM_icon_ape_afraid05,
+    BMP_COM_icon_ape_afraid05,
+    BMP_COM_icon_ape_afraid04,
+
+    BMP_COM_icon_gal_afraid01,
+    BMP_COM_icon_gal_afraid02,
+    BMP_COM_icon_gal_afraid03,
+
+    BMP_COM_icon_kid_afraid01,
+    BMP_COM_icon_kid_afraid02,
+    BMP_COM_icon_kid_afraid03,
+
+    BMP_COM_icon_gol_afraid05,
+    BMP_COM_icon_gol_afraid05,
+    BMP_COM_icon_gol_afraid04,
+};
+
+static const u32 booingFaceTable[] =
+{
+    BMP_COM_icon_ape_booing01,
+    BMP_COM_icon_ape_booing02,
+    BMP_COM_icon_ape_booing03,
+    BMP_COM_icon_ape_booing04,
+
+    BMP_COM_icon_gal_booing01,
+    BMP_COM_icon_gal_booing02,
+    BMP_COM_icon_gal_booing03,
+    BMP_COM_icon_gal_booing04,
+
+    BMP_COM_icon_kid_booing01,
+    BMP_COM_icon_kid_booing02,
+    BMP_COM_icon_kid_booing03,
+    BMP_COM_icon_kid_booing04,
+
+    BMP_COM_icon_gol_booing01,
+    BMP_COM_icon_gol_booing02,
+    BMP_COM_icon_gol_booing03,
+    BMP_COM_icon_gol_booing04,
+};
+
+static const u32 booingFaceTable2[] =
+{
+    BMP_COM_icon_ape_booing01,
+    BMP_COM_icon_ape_booing02,
+    BMP_COM_icon_ape_booing03,
+    BMP_COM_icon_ape_booing04,
+
+    BMP_COM_icon_gal_booing01,
+    BMP_COM_icon_gal_booing02,
+    BMP_COM_icon_gal_booing03,
+    BMP_COM_icon_gal_booing04,
+
+    BMP_COM_icon_kid_booing01,
+    BMP_COM_icon_kid_booing02,
+    BMP_COM_icon_kid_booing03,
+    BMP_COM_icon_kid_booing04,
+
+    BMP_COM_icon_gol_booing01,
+    BMP_COM_icon_gol_booing02,
+    BMP_COM_icon_gol_booing03,
+    BMP_COM_icon_gol_booing04,    
+};
+
+static const u32 unknownFaceTable[] =
+{
+    BMP_COM_icon_ape_wakka,
+    BMP_COM_icon_gal_wakka,
+    BMP_COM_icon_kid_wakka,
+    BMP_COM_icon_gol_wakka,
+    BMP_COM_icon_kid_booing03,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_kid_smile02,
+    BMP_COM_icon_kid_booing03,
+    BMP_COM_icon_ape_afraid05,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid02,
+    BMP_COM_icon_ape_afraid02,
+};
+
+// sprite callback for the monkey icon on the title screen as well
+// as the in-game life counter
+void monkey_sprite_draw(struct Sprite *sprite)
+{
+    s32 i;
+    u32 bvar;
     s32 var_r15;
     u32 var_r14;
-    s32 var_r28;
-    struct TextBox *temp_r27;
+    int bmpId;
+    struct TextBox *tbox;
     s32 temp_r17_2;
-    struct Ball *temp_r17;
-    NLsprarg sp1C;
+    struct Ball *ball;
+    NLsprarg params;
     int sp18_2;
-    s16 var_r3;
+    s16 angle;
     s32 temp_r0_2;
     s32 var_r0_3;
     f32 sp14;
     f32 temp_f4;
     f64 a;
 
-    temp_r17 = currentBall;
-    mathutil_vec_len(&temp_r17->vel);
+    ball = currentBall;
+    mathutil_vec_len(&ball->vel);
     if (!(debugFlags & 0xA))
-        lbl_80292D18.unk8++;
+        apeIconInfo.frameNum++;
 
-	var_r30 = ((modeCtrl.courseFlags & 1)
-           && modeCtrl.difficulty == 0
-	       && !(modeCtrl.courseFlags & 8)
-	       && temp_r17->lives == 1);
+    bvar = ((modeCtrl.courseFlags & 1)
+           && modeCtrl.difficulty == DIFFICULTY_BEGINNER
+           && !(modeCtrl.courseFlags & COURSE_FLAG_EXTRA)
+           && ball->lives == 1);
 
-    if (lbl_80292D18.unk8 > 0x20)
+    if (apeIconInfo.frameNum > 32)
     {
         var_r14 = 0;
-        if (lbl_80292D18.unk14 == 0x12)
-            lbl_80292D18.unk0 = 0;
-        else if (var_r30)
+        if (apeIconInfo.unk14 == 0x12)
+            apeIconInfo.emotion = 0;
+        else if (bvar)
         {
-            lbl_80292D18.unk0 = 2;
-            if (lbl_80292D18.unk8 == 0x12C)
+            apeIconInfo.emotion = 2;
+            if (apeIconInfo.frameNum == 0x12C)
                 var_r14 = 1;
         }
-        else if (find_sprite_with_tag(0x10) != NULL)
-            lbl_80292D18.unk0 = 0xB;
-        else if ((infoWork.flags & 0x20) && modeCtrl.submodeTimer == 0x20)
-            lbl_80292D18.unk0 = 4;
+        else if (find_sprite_with_tag(16) != NULL)
+            apeIconInfo.emotion = 0xB;
+        else if ((infoWork.flags & 0x20) && modeCtrl.submodeTimer == 32)
+            apeIconInfo.emotion = 4;
         else if (infoWork.flags & 0x20)
-            lbl_80292D18.unk0 = 3;
-        else if (gameSubmode == 0x3B && !(infoWork.flags & 0x40) && modeCtrl.submodeTimer <= 0x20)
-            lbl_80292D18.unk0 = 0xA;
-        else if (gameSubmode == 0x3B && (infoWork.flags & 0x40) && modeCtrl.submodeTimer <= 0x20)
-            lbl_80292D18.unk0 = 0xF;
-        else if (gameSubmode == 0x3B && !(infoWork.flags & 0x40) && modeCtrl.submodeTimer <= 0x40 && lbl_80292D18.unkC > 0 && lbl_80292D18.unkC <= 0x1000)
-            lbl_80292D18.unk0 = 0xD;
-        else if (gameSubmode == 0x3B && !(infoWork.flags & 0x40))
+            apeIconInfo.emotion = 3;
+        else if (gameSubmode == SMD_GAME_RINGOUT_MAIN && !(infoWork.flags & 0x40) && modeCtrl.submodeTimer <= 0x20)
+            apeIconInfo.emotion = 10;
+        else if (gameSubmode == SMD_GAME_RINGOUT_MAIN && (infoWork.flags & 0x40) && modeCtrl.submodeTimer <= 0x20)
+            apeIconInfo.emotion = 15;
+        else if (gameSubmode == SMD_GAME_RINGOUT_MAIN && !(infoWork.flags & 0x40) && modeCtrl.submodeTimer <= 0x40 && apeIconInfo.angle > 0 && apeIconInfo.angle <= 0x1000)
+            apeIconInfo.emotion = 13;
+        else if (gameSubmode == SMD_GAME_RINGOUT_MAIN && !(infoWork.flags & 0x40))
         {
-            lbl_80292D18.unk0 = 8;
-            if (!(infoWork.flags & 0x40) && temp_r17->lives == 5)
-                lbl_80292D18.unk10 = -0x258;
+            apeIconInfo.emotion = 8;
+            if (!(infoWork.flags & 0x40) && ball->lives == 5)
+                apeIconInfo.unk10 = -0x258;
         }
-        else if (gameSubmode == 0x39 && modeCtrl.submodeTimer == 0x20)
-            lbl_80292D18.unk0 = 0xC;
-        else if (gameSubmode == 0x39)
+        else if (gameSubmode == SMD_GAME_TIMEOVER_MAIN && modeCtrl.submodeTimer == 32)
+            apeIconInfo.emotion = 12;
+        else if (gameSubmode == SMD_GAME_TIMEOVER_MAIN)
         {
-            lbl_80292D18.unk0 = 9;
-            if (!(infoWork.flags & 0x40) && temp_r17->lives == 5)
-                lbl_80292D18.unk10 = -0x258;
+            apeIconInfo.emotion = 9;
+            if (!(infoWork.flags & 0x40) && ball->lives == 5)
+                apeIconInfo.unk10 = -0x258;
         }
-        else if (temp_r17->flags & 2)
+        else if (ball->flags & 2)
         {
-            lbl_80292D18.unk0 = 0xE;
-            if (lbl_80292D18.unk8 == 0x78)
+            apeIconInfo.emotion = 14;
+            if (apeIconInfo.frameNum == 0x78)
                 var_r14 = 1;
         }
-        else if (gameMode != 1)
+        else if (gameMode != MD_SEL)
         {
-			switch (temp_r17->ape->unk0->unk32)
-			{
-			case 0xF:
-			case 0x10:
-			case 0x11:
-			case 0x1F:
-			case 0x20:
-			case 0x72:
-			case 0x73:
-				lbl_80292D18.unk0 = 0xE;
-				if (lbl_80292D18.unk8 == 0x12C)
-					var_r14 = 1;
-				break;
-			case 0xD:
-			case 0x1D:
-			case 0x71:
-		    	lbl_80292D18.unk0 = 0x10;
-				if (lbl_80292D18.unk8 == 0x78)
-					var_r14 = 1;
-				break;
-			case 0xE:
-			case 0x1E:
-			case 0x6B:
-				lbl_80292D18.unk0 = 1;
-                if (lbl_80292D18.unk8 == 0x12C)
+            switch (ball->ape->unk0->unk32)
+            {
+            case 0xF:
+            case 0x10:
+            case 0x11:
+            case 0x1F:
+            case 0x20:
+            case 0x72:
+            case 0x73:
+                apeIconInfo.emotion = 14;
+                if (apeIconInfo.frameNum == 0x12C)
+                    var_r14 = 1;
+                break;
+            case 0xD:
+            case 0x1D:
+            case 0x71:
+                apeIconInfo.emotion = 16;
+                if (apeIconInfo.frameNum == 120)
+                    var_r14 = 1;
+                break;
+            case 0xE:
+            case 0x1E:
+            case 0x6B:
+                apeIconInfo.emotion = 1;
+                if (apeIconInfo.frameNum == 0x12C)
                     var_r14 = 1;
                 break;
             default:
-				lbl_80292D18.unk0 = 0;
-				break;
-			}
+                apeIconInfo.emotion = 0;
+                break;
+            }
         }
-        if (lbl_80292D18.unk0 != lbl_80292D18.unk4 || var_r14 != 0)
+        if (apeIconInfo.emotion != apeIconInfo.unk4 || var_r14 != 0)
         {
-            lbl_80292D18.unk8 = 0;
-            switch (lbl_80292D18.unk4)
+            apeIconInfo.frameNum = 0;
+            switch (apeIconInfo.unk4)
             {
             case 1:
-                lbl_80292D18.unk0 = 5;
+                apeIconInfo.emotion = 5;
                 break;
             case 2:
-                lbl_80292D18.unk0 = 6;
+                apeIconInfo.emotion = 6;
                 break;
             case 3:
             case 11:
-                if (lbl_80292D18.unk0 != 0xB)
-                {
-                    lbl_80292D18.unk0 = 4;
-                }
+                if (apeIconInfo.emotion != 11)
+                    apeIconInfo.emotion = 4;
                 break;
             case 14:
-                lbl_80292D18.unk0 = 0xF;
+                apeIconInfo.emotion = 15;
                 break;
             case 16:
-                lbl_80292D18.unk0 = 0x11;
+                apeIconInfo.emotion = 17;
                 break;
             }
-            if (lbl_80292D18.unk0 == 8)
-                lbl_80292D18.unkC = (1800.0f * mathutil_sin(lbl_80292D18.unkC));
-            lbl_80292D18.unk4 = lbl_80292D18.unk0;
+            if (apeIconInfo.emotion == 8)
+                apeIconInfo.angle = (1800.0f * mathutil_sin(apeIconInfo.angle));
+            apeIconInfo.unk4 = apeIconInfo.emotion;
         }
     }
-    if (gameMode != 2)
+    if (gameMode != MD_GAME)
     {
-        if (lbl_80292D18.unk14 == 0xE && modeCtrl.submodeTimer == 0x10DF)
-            lbl_80292D18.unk10 = 0x20;
-        if (lbl_80292D18.unk10 > 0 && !(debugFlags & 0xA))
-            lbl_80292D18.unk10--;
-        if (arg0->userVar == 1)
+        if (apeIconInfo.unk14 == 14 && modeCtrl.submodeTimer == 0x10DF)
+            apeIconInfo.unk10 = 32;
+        if (apeIconInfo.unk10 > 0 && !(debugFlags & 0xA))
+            apeIconInfo.unk10--;
+        if (sprite->userVar == 1)
         {
-            arg0->userVar = 2;
-            lbl_80292D18.unk10 = -0x1F;
+            sprite->userVar = 2;
+            apeIconInfo.unk10 = -31;
         }
-        if (lbl_80292D18.unk10 < -1 && !(debugFlags & 0xA))
-            lbl_80292D18.unk10++;
+        if (apeIconInfo.unk10 < -1 && !(debugFlags & 0xA))
+            apeIconInfo.unk10++;
     }
     else
     {
-        if (lbl_80292D18.unk10 > 0 && !(debugFlags & 0xA))
-            lbl_80292D18.unk10 -= 1;
-        else if (find_sprite_with_tag(0x10) != NULL && find_sprite_with_tag(0x10)->counter == 0x95)
-            lbl_80292D18.unk10 = 0x20;
-        if (lbl_80292D18.unk10 < 0 && !(debugFlags & 0xA))
+        if (apeIconInfo.unk10 > 0 && !(debugFlags & 0xA))
+            apeIconInfo.unk10 -= 1;
+        else if (find_sprite_with_tag(16) != NULL && find_sprite_with_tag(16)->counter == 0x95)
+            apeIconInfo.unk10 = 32;
+        if (apeIconInfo.unk10 < 0 && !(debugFlags & 0xA))
         {
-            if (gameSubmode == 0x30 && lbl_80292D18.unk10 < -0x20)
-                lbl_80292D18.unk10 = -32;
-            lbl_80292D18.unk10 += 1;
+            if (gameSubmode == SMD_GAME_READY_INIT && apeIconInfo.unk10 < -32)
+                apeIconInfo.unk10 = -32;
+            apeIconInfo.unk10 += 1;
         }
     }
-    var_r28 = u_get_monkey_bitmap_id(lbl_80292D18.unk0, lbl_80292D18.unk8, playerCharacterSelection[modeCtrl.currPlayer]);
-    if (!var_r30 && gameMode == 2)
+    bmpId = u_get_monkey_bitmap_id(apeIconInfo.emotion, apeIconInfo.frameNum, playerCharacterSelection[modeCtrl.currPlayer]);
+    if (!bvar && gameMode == MD_GAME)
     {
-        func_8008BFB4(temp_r17->ape, 0, &sp18_2, &sp14);
+        func_8008BFB4(ball->ape, 0, &sp18_2, &sp14);
         temp_r0_2 = mathutil_ceil(sp14 * 0.266660004854f);
         if (sp18_2 >= 0 && sp18_2 < 8)
         {
@@ -318,266 +502,332 @@ void monkey_sprite_draw(struct Sprite *arg0 /*r26*/)
             {
             case 0:
                 if (temp_r0_2 == 0)
-                    var_r28 = lbl_80118938[playerCharacterSelection[modeCtrl.currPlayer]];
+                    bmpId = neutralFaceTable[playerCharacterSelection[modeCtrl.currPlayer]];
                 else
-                    var_r28 = lbl_80118938_0x190[temp_r0_2 - 1 + playerCharacterSelection[modeCtrl.currPlayer] * 6];
+                    bmpId = smileFaceTable[temp_r0_2 - 1 + playerCharacterSelection[modeCtrl.currPlayer] * 6];
                 break;
             case 1:
-                var_r28 = lbl_80118938_0x10[temp_r0_2 + (playerCharacterSelection[modeCtrl.currPlayer] * 0xC)];
+                bmpId = angryFaceTable[temp_r0_2 + (playerCharacterSelection[modeCtrl.currPlayer] * 0xC)];
                 break;
             case 4:
                 if (temp_r0_2 == 0)
-                    var_r28 = lbl_80118938[playerCharacterSelection[modeCtrl.currPlayer]];
+                    bmpId = neutralFaceTable[playerCharacterSelection[modeCtrl.currPlayer]];
                 else
-                    var_r28 = lbl_80118938_0x220[temp_r0_2 - 1 + playerCharacterSelection[modeCtrl.currPlayer] * 0xC];
+                    bmpId = afraidFaceTable[temp_r0_2 - 1 + playerCharacterSelection[modeCtrl.currPlayer] * 0xC];
                 break;
             case 5:
                 if (temp_r0_2 == 0)
-                    var_r28 = lbl_80118938[playerCharacterSelection[modeCtrl.currPlayer]];
+                    bmpId = neutralFaceTable[playerCharacterSelection[modeCtrl.currPlayer]];
                 else
-                    var_r28 = lbl_80118938_0x320[temp_r0_2 - 1 + playerCharacterSelection[modeCtrl.currPlayer] * 4];
+                    bmpId = booingFaceTable[temp_r0_2 - 1 + playerCharacterSelection[modeCtrl.currPlayer] * 4];
                 break;
             }
         }
     }
-    var_r3 = lbl_80292D18.unkC;
+
+    angle = apeIconInfo.angle;
     if (!(debugFlags & 0xA))
     {
-        switch (lbl_80292D18.unk0)
+        switch (apeIconInfo.emotion)
         {
+        case 9:
+            break;
         default:
-            var_r3 += 0x180;
+            angle += 0x180;
             break;
         case 1:
-            var_r3 += 0x280;
+            angle += 0x280;
             break;
         case 6:
         case 7:
-            var_r3 += 0x100;
+            angle += 0x100;
             break;
         case 2:
-            var_r3 += 0x80;
+            angle += 0x80;
             break;
         case 8:
-            var_r3 -= MIN(lbl_80292D18.unk8 << 5, 0x1000);
+            angle -= MIN(apeIconInfo.frameNum << 5, 0x1000);
             break;
         case 10:
         case 13:
-            var_r3 += 0.1 * -(u16)var_r3;
+            angle += 0.1 * -(u16)angle;
             break;
         case 12:
-            var_r3 += 0.1 * -var_r3;
+            angle += 0.1 * -angle;
             break;
         }
     }
-    lbl_80292D18.unkC = var_r3;
+    apeIconInfo.angle = angle;
 
-    switch (lbl_80292D18.unk0)
+    switch (apeIconInfo.emotion)
     {
-	default:
-        var_r3 = (1800.0f * mathutil_sin(var_r3));
-		break;
-	case 8:
-	case 10:
-	case 13:
-		var_r3 = lbl_80292D18.unkC;
-		break;
-	}
+    default:
+        angle = (1800.0f * mathutil_sin(angle));
+        break;
+    case 8:
+    case 10:
+    case 13:
+        angle = apeIconInfo.angle;
+        break;
+    }
 
-    if (temp_r17->lives < 5 || (( temp_r17->lives == 5) && (lbl_80292D18.unk10 > 0)) || (gameMode != 2) || (var_r30 != 0U))
+    if (ball->lives < 5
+     || (ball->lives == 5 && apeIconInfo.unk10 > 0)
+     || gameMode != MD_GAME
+     || bvar)
     {
-        if (lbl_80292D18.unk14 == 0xE)
+        // Display ape face icons for each life
+
+        if (apeIconInfo.unk14 == 0xE)
             var_r15 = 3;
-        else if (lbl_80292D18.unk14 == 0x12)
+        else if (apeIconInfo.unk14 == 0x12)
             var_r15 = 2;
-        else if (gameMode == 1)
+        else if (gameMode == MD_SEL)
             var_r15 = 4;
-        else if (var_r30 != 0)
+        else if (bvar != 0)
             var_r15 = 2;
         else
-            var_r15 = temp_r17->lives;
-        temp_f4 = lbl_80292D18.unk14 == 0xE ? 0.3 : gameMode == 1 ? 1.0 : 0.5;
+            var_r15 = ball->lives;
+        temp_f4 = apeIconInfo.unk14 == 0xE ? 0.3 : gameMode == MD_SEL ? 1.0 : 0.5;
         a = temp_f4;
-        for (var_r29 = 0; var_r29 < var_r15 - 1; var_r29++)
+        for (i = 0; i < var_r15 - 1; i++)
         {
-            temp_r27 = &textBoxes[1];
-            if (gameMode == 1)
-                sp1C.sprno = u_get_monkey_bitmap_id(lbl_80292D18.unk0, lbl_80292D18.unk8, var_r29);
+            tbox = &textBoxes[1];
+            if (gameMode == MD_SEL)
+                params.sprno = u_get_monkey_bitmap_id(apeIconInfo.emotion, apeIconInfo.frameNum, i);
             else
-                sp1C.sprno = var_r28;
-            if (var_r30 != 0U)
-                sp1C.x = arg0->x + (10.0f * mathutil_sin((globalAnimTimer * 0x60) + 0x4000));
-            else if (gameMode == 1)
-            {
+                params.sprno = bmpId;
 
-                sp1C.x = arg0->x + (var_r29 * 90);
-                if (lbl_80292D18.unk10 < 0)
-                    sp1C.x += (lbl_80292D18.unk10 + 0x1F) * 5;
-            }
-            else if (gameMode != 2)
+            if (bvar)
+                params.x = sprite->x + (10.0f * mathutil_sin((globalAnimTimer * 0x60) + 0x4000));
+            else if (gameMode == MD_SEL)
             {
-                sp1C.x = arg0->x + (var_r29 * 356);
-                if (lbl_80292D18.unk10 < 0)
-                    sp1C.x += (var_r29 == 0) ?  (lbl_80292D18.unk10 + 0x1F) * -5 : (lbl_80292D18.unk10 + 0x1F) * 5;
+                params.x = sprite->x + (i * 90);
+                if (apeIconInfo.unk10 < 0)
+                    params.x += (apeIconInfo.unk10 + 0x1F) * 5;
             }
-            else if (var_r15 == 5 && lbl_80292D18.unk10 > 0)
-                sp1C.x = arg0->x + (0.03125 * lbl_80292D18.unk10 * (var_r29 * 80));
-            else if (lbl_80292D18.unk10 < 0)
-                sp1C.x = arg0->x + (0.03125 * (lbl_80292D18.unk10 + 0x20) * (var_r29 * 80));
+            else if (gameMode != MD_GAME)
+            {
+                params.x = sprite->x + (i * 356);
+                if (apeIconInfo.unk10 < 0)
+                    params.x += (i == 0) ?  (apeIconInfo.unk10 + 31) * -5 : (apeIconInfo.unk10 + 0x1F) * 5;
+            }
+            else if (var_r15 == 5 && apeIconInfo.unk10 > 0)
+                params.x = sprite->x + (0.03125 * apeIconInfo.unk10 * (i * 80));
+            else if (apeIconInfo.unk10 < 0)
+                params.x = sprite->x + (0.03125 * (apeIconInfo.unk10 + 32) * (i * 80));
             else
-                sp1C.x = arg0->x + (var_r29 * 80);
+                params.x = sprite->x + (i * 80);
 
-            if (var_r30 != 0U)
-                sp1C.y = arg0->y + (4.0f * mathutil_sin(globalAnimTimer << 9));
-            else if (gameMode != 2)
+            if (bvar)
+                params.y = sprite->y + (4.0f * mathutil_sin(globalAnimTimer << 9));
+            else if (gameMode != MD_GAME)
             {
-                if (lbl_80292D18.unk10 > 0)
+                if (apeIconInfo.unk10 > 0)
                 {
-                    if (lbl_80292D18.unk10 >= 0x10)
-                        sp1C.y = arg0->y - (3.0 * (lbl_80292D18.unk10 - 0x10));
+                    if (apeIconInfo.unk10 >= 16)
+                        params.y = sprite->y - (3.0 * (apeIconInfo.unk10 - 0x10));
                     else
-                        sp1C.y = arg0->y - (12.0f * mathutil_sin((0x10 - lbl_80292D18.unk10) << 0xB));
+                        params.y = sprite->y - (12.0f * mathutil_sin((0x10 - apeIconInfo.unk10) << 0xB));
                 }
                 else
-                    sp1C.y = arg0->y;
+                    params.y = sprite->y;
             }
-            else if (var_r29 == (var_r15 - 2))
+            else if (i == (var_r15 - 2))
             {
-                if (lbl_80292D18.unk0 == 0xB)
+                if (apeIconInfo.emotion == 11)
                 {
-                    if (lbl_80292D18.unk8 < 0x10)
-                        sp1C.y = arg0->y - (3.0 * (0x10 - lbl_80292D18.unk8));
-                    else if (lbl_80292D18.unk8 < 0x20)
-                        sp1C.y = arg0->y - (12.0f * mathutil_sin((lbl_80292D18.unk8 - 0x10) << 0xB));
+                    if (apeIconInfo.frameNum < 16)
+                        params.y = sprite->y - (3.0 * (0x10 - apeIconInfo.frameNum));
+                    else if (apeIconInfo.frameNum < 32)
+                        params.y = sprite->y - (12.0f * mathutil_sin((apeIconInfo.frameNum - 0x10) << 0xB));
                     else
-                        sp1C.y = arg0->y;
+                        params.y = sprite->y;
                 }
-                else if (lbl_80292D18.unk10 <= 0)
-                    sp1C.y = arg0->y;
+                else if (apeIconInfo.unk10 <= 0)
+                    params.y = sprite->y;
                 else
                     continue;
             }
             else
-                sp1C.y = arg0->y;
-            if ((s32)advSubmode == 0xE && lbl_80292D18.unk10 < 0)
-            {
-                if (var_r29 == 0)
-                    var_r0_3 = (lbl_80292D18.unk10 + 0x1F) << 0xB;
-                else
-                    var_r0_3 = -((lbl_80292D18.unk10 + 0x1F) << 0xB);
-                sp1C.ang = var_r3 + var_r0_3;
-            }
-            else if (gameMode != 2 && lbl_80292D18.unk10 < 0)
-            {
-                var_r0_3 = -((lbl_80292D18.unk10 + 0x1F) << 0xB);
-                sp1C.ang = var_r3 + var_r0_3;
-            }
-            else
-                sp1C.ang = var_r3;
+                params.y = sprite->y;
 
-            if (var_r30)
+            if ((s32)advSubmode == 14 && apeIconInfo.unk10 < 0)
             {
-                if (temp_r27->state == 1)
-                {
-                    sp1C.trnsl = (0.25 * temp_r27->timer) / 30.0;
-                }
-                else if (temp_r27->state >= 0x14)
-                {
-                    sp1C.trnsl = (0.25 * (30 - temp_r27->timer)) / 30.0;
-                }
-                else if (temp_r27->state >= 0xA)
-                    sp1C.trnsl = 0.25f;
+                if (i == 0)
+                    var_r0_3 = (apeIconInfo.unk10 + 31) << 11;
                 else
-                    sp1C.trnsl = 0.0f;
+                    var_r0_3 = -((apeIconInfo.unk10 + 31) << 11);
+                params.ang = angle + var_r0_3;
             }
-            else if (gameMode != 2 && lbl_80292D18.unk10 > 0)
-                sp1C.trnsl = 0.03125 * (0x20 - lbl_80292D18.unk10);
-            else if (gameMode != 2 && lbl_80292D18.unk10 < 0)
-                sp1C.trnsl = -0.032258 * lbl_80292D18.unk10;
-            else if (var_r29 == var_r15 - 2)
+            else if (gameMode != MD_GAME && apeIconInfo.unk10 < 0)
             {
-                if (lbl_80292D18.unk0 == 11)
-                    sp1C.trnsl = 0.03125 * lbl_80292D18.unk8;
-                else if ((lbl_80292D18.unk0 == 10 || lbl_80292D18.unk0 == 12) && !(infoWork.flags & 0x40))
-                    sp1C.trnsl = ((modeCtrl.submodeTimer % 10) < 5) ? 0.25 + (0.25 * (modeCtrl.submodeTimer / 10)) : 0.0;
+                var_r0_3 = -((apeIconInfo.unk10 + 31) << 11);
+                params.ang = angle + var_r0_3;
+            }
+            else
+                params.ang = angle;
+
+            if (bvar)
+            {
+                if (tbox->state == 1)
+                {
+                    params.trnsl = (0.25 * tbox->timer) / 30.0;
+                }
+                else if (tbox->state >= 20)
+                {
+                    params.trnsl = (0.25 * (30 - tbox->timer)) / 30.0;
+                }
+                else if (tbox->state >= 10)
+                    params.trnsl = 0.25f;
                 else
-                     sp1C.trnsl = 1.0f;
+                    params.trnsl = 0.0f;
+            }
+            else if (gameMode != MD_GAME && apeIconInfo.unk10 > 0)
+                params.trnsl = 0.03125 * (32 - apeIconInfo.unk10);
+            else if (gameMode != MD_GAME && apeIconInfo.unk10 < 0)
+                params.trnsl = -0.032258 * apeIconInfo.unk10;
+            else if (i == var_r15 - 2)
+            {
+                if (apeIconInfo.emotion == 11)
+                    params.trnsl = 0.03125 * apeIconInfo.frameNum;
+                else if ((apeIconInfo.emotion == 10 || apeIconInfo.emotion == 12) && !(infoWork.flags & 0x40))
+                    params.trnsl = ((modeCtrl.submodeTimer % 10) < 5) ? 0.25 + (0.25 * (modeCtrl.submodeTimer / 10)) : 0.0;
+                else
+                     params.trnsl = 1.0f;
             }
             else
-                sp1C.trnsl = 1.0f;
-            if (gameMode == 1 && (var_r29 != playerCharacterSelection[modeCtrl.currPlayer]))
+                params.trnsl = 1.0f;
+            if (gameMode == MD_SEL && (i != playerCharacterSelection[modeCtrl.currPlayer]))
+                params.trnsl *= 0.6;
+
+            if (gameMode == MD_SEL && (i != playerCharacterSelection[modeCtrl.currPlayer]))
             {
-                sp1C.trnsl *= 0.6;
-            }
-            if (gameMode == 1 && (var_r29 != playerCharacterSelection[modeCtrl.currPlayer]))
-            {
-                sp1C.zm_x = a * 0.5;
-                sp1C.zm_y = (0.65 * a) * 0.5;
+                params.zm_x = a * 0.5;
+                params.zm_y = (0.65 * a) * 0.5;
             }
             else
             {
-                sp1C.zm_x = a;
-                sp1C.zm_y = 0.65 * a;
+                params.zm_x = a;
+                params.zm_y = 0.65 * a;
             }
-            if (gameMode == 1 && var_r29 == playerCharacterSelection[modeCtrl.currPlayer])
-                sp1C.z = arg0->unk4C + (0.01 * var_r29) - 0.02;
+
+            if (gameMode == MD_SEL && i == playerCharacterSelection[modeCtrl.currPlayer])
+                params.z = sprite->unk4C + (0.01 * i) - 0.02;
             else
-                sp1C.z = arg0->unk4C + (0.01 * var_r29);
-            sp1C.u0 = 0.0f;
-            sp1C.v0 = 0.0f;
-            sp1C.u1 = 1.0f;
-            sp1C.v1 = 1.0f;
-            sp1C.listType = -1;
-            sp1C.attr = 0x100A;
-            sp1C.base_color = -1U;
-            sp1C.offset_color = 0;
-            nlSprPut(&sp1C);
-            if (var_r30)
+                params.z = sprite->unk4C + (0.01 * i);
+
+            params.u0 = 0.0f;
+            params.v0 = 0.0f;
+            params.u1 = 1.0f;
+            params.v1 = 1.0f;
+            params.listType = NLSPR_LISTTYPE_AUTO;
+            params.attr = NLSPR_DISP_CC | NLSPR_UNKFLAG_12;
+            params.base_color = -1U;
+            params.offset_color = 0;
+            nlSprPut(&params);
+            if (bvar)
             {
-                sp1C.sprno = u_get_monkey_bitmap_id(-1, 0, playerCharacterSelection[modeCtrl.currPlayer]);
-                sp1C.z = arg0->unk4C - 0.01;
-                nlSprPut(&sp1C);
+                params.sprno = u_get_monkey_bitmap_id(-1, 0, playerCharacterSelection[modeCtrl.currPlayer]);
+                params.z = sprite->unk4C - 0.01;
+                nlSprPut(&params);
             }
         }
-        return;
     }
-    sp1C.sprno = var_r28;
-    sp1C.x = arg0->x;
-    sp1C.y = arg0->y;
-    sp1C.z = arg0->unk4C;
-    sp1C.zm_x = 0.5f;
-    sp1C.zm_y = 0.325f;
-    sp1C.u0 = 0.0f;
-    sp1C.v0 = 0.0f;
-    sp1C.u1 = 1.0f;
-    sp1C.v1 = 1.0f;
-    sp1C.ang = var_r3;
-    sp1C.trnsl = 1.0f;
-    sp1C.listType = -1;
-    sp1C.attr = 0x100A;
-    sp1C.base_color = -1U;
-    sp1C.offset_color = 0;
-    nlSprPut(&sp1C);
-
-    if (lbl_80292D18.unk0 == 0xB)
+    else
     {
-        if (lbl_80292D18.unk8 < 0x10)
-            sp1C.y = arg0->y - (3.0 * (16 - lbl_80292D18.unk8));
-        else if (lbl_80292D18.unk8 < 0x20)
-            sp1C.y = arg0->y - (12.0f * mathutil_sin((lbl_80292D18.unk8 - 0x10) << 0xB));
-        else
-            sp1C.y = arg0->y;
-        sp1C.z = arg0->unk4C - 0.01;
-        sp1C.trnsl = 0.03125 * lbl_80292D18.unk8;
-        nlSprPut(&sp1C);
-    }
-    reset_text_draw_settings();
-    set_text_font(0x5F);
-    func_80071B1C(arg0->unk4C);
-    set_text_pos(36.0f + sp1C.x, 8.0f + sp1C.y);
-    func_80072AC0("X%d", temp_r17->lives - 1);
+        // Display X number of lives
 
-    // needed to match
-    temp_r27 == 0;
-    var_r29 == 0;
+        params.sprno = bmpId;
+        params.x = sprite->x;
+        params.y = sprite->y;
+        params.z = sprite->unk4C;
+        params.zm_x = 0.5f;
+        params.zm_y = 0.325f;
+        params.u0 = 0.0f;
+        params.v0 = 0.0f;
+        params.u1 = 1.0f;
+        params.v1 = 1.0f;
+        params.ang = angle;
+        params.trnsl = 1.0f;
+        params.listType = NLSPR_LISTTYPE_AUTO;
+        params.attr = NLSPR_DISP_CC | NLSPR_UNKFLAG_12;
+        params.base_color = -1U;
+        params.offset_color = 0;
+        nlSprPut(&params);
+
+        if (apeIconInfo.emotion == 11)
+        {
+            if (apeIconInfo.frameNum < 0x10)
+                params.y = sprite->y - (3.0 * (16 - apeIconInfo.frameNum));
+            else if (apeIconInfo.frameNum < 0x20)
+                params.y = sprite->y - (12.0f * mathutil_sin((apeIconInfo.frameNum - 0x10) << 0xB));
+            else
+                params.y = sprite->y;
+            params.z = sprite->unk4C - 0.01;
+            params.trnsl = 0.03125 * apeIconInfo.frameNum;
+            nlSprPut(&params);
+        }
+        reset_text_draw_settings();
+        set_text_font(FONT_ASC_16x16);
+        func_80071B1C(sprite->unk4C);
+        set_text_pos(36.0f + params.x, 8.0f + params.y);
+        func_80072AC0("X%d", ball->lives - 1);
+
+        tbox == 0; i == 0;  // needed to match
+    }
 }
+
+int u_get_monkey_bitmap_id(int emotion, int frame, int charaId)
+{
+    int idx;
+
+    switch (emotion)
+    {
+    default:
+        return neutralFaceTable[charaId];
+    case 1:
+        idx = frame >> 3;
+        return angryFaceTable[(charaId * 12) + MIN(idx, 11)];
+    case 2:
+        idx = frame >> 4;
+        return blinkFaceTable[(charaId * 12) + MIN(idx, 11)];
+    case 3:
+    case 11:
+        idx = frame >> 3;
+        return smileFaceTable[(charaId * 6) + MIN(idx, 5)];
+    case 4:
+        idx = frame >> 3;
+        return smileFaceTable[(charaId * 6) + (idx < 5 ? 5 - idx : 0)];
+    case 5:
+        idx = frame >> 3;
+        return angryFaceTable[(charaId * 12) + (idx < 3 ? 3 - idx : 0)];
+    case 6:
+        idx = frame >> 4;
+        return blinkFaceTable2[(charaId * 3) + (idx < 2 ? 2 - idx : 0)];
+    case 7:
+        return neutralFaceTable[charaId];
+    case 8:
+    case 14:
+        idx = frame >> 3;
+        return afraidFaceTable[(charaId * 12) + MIN(idx, 11)];
+    case 10:
+    case 15:
+        idx = frame >> 3;
+        return afraidFaceTable3[(charaId * 3) + (idx < 2 ? 2 - idx : 0)];
+    case 13:
+        return afraidFaceTable2[charaId];
+    case 9:
+    case 16:
+        idx = frame >> 3;
+        return booingFaceTable[(charaId * 4) + MIN(idx, 3)];
+    case 12:
+    case 17:
+        idx = frame >> 3;
+        return booingFaceTable2[(charaId * 4) + (idx < 3 ? 3 - idx : 0)];
+    case -1:
+        return unknownFaceTable[charaId];
+    }
+}
+
+
