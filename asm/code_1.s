@@ -3396,6 +3396,7 @@ lbl_800838A8:
 /* 80083904 0007F824  C9 C1 00 A8 */	lfd f14, 0xa8(r1)
 /* 80083908 0007F828  38 21 01 38 */	addi r1, r1, 0x138
 /* 8008390C 0007F82C  4E 80 00 20 */	blr
+.global lbl_80083910
 lbl_80083910:
 /* 80083910 0007F830  7C 08 02 A6 */	mflr r0
 /* 80083914 0007F834  90 01 00 04 */	stw r0, 4(r1)
@@ -4433,9 +4434,8 @@ lbl_802F52AC:
 .global lbl_802F52B0
 lbl_802F52B0:
 	# ROM: 0x1EECD0
-glabel string__333
-	.asciz "?333"
-	.balign 4
+	.4byte 0x3F333333
+	.4byte 0
 
 .global lbl_802F52B8
 lbl_802F52B8:
@@ -5197,6 +5197,7 @@ glabel lbl_801C2F38
 	.4byte string_a_Y_Button  ;# ptr
 	.4byte string_a_Raise_camera  ;# ptr
 	.4byte 0
+glabel lbl_801C2318_0xC2C
 	.4byte 0x0300000F
 	.4byte 0x00870000
 	.4byte lbl_801C2718  ;# ptr
@@ -5302,6 +5303,7 @@ glabel lbl_801C2F38
 	.4byte 0x000000F3
 	.4byte 0x004F0000
 	.4byte lbl_801C2F38  ;# ptr
+glabel lbl_801C2318_0xDD0
 	.4byte lbl_802F1190  ;# ptr
 	.4byte lbl_802F1194  ;# ptr
 	.4byte lbl_802F1198  ;# ptr
@@ -5320,6 +5322,7 @@ glabel lbl_801C2F38
 	.4byte lbl_802F11B0  ;# ptr
 	.4byte 0
 	.4byte lbl_802F11C8  ;# ptr
+glabel lbl_801C2318_0xE18
 	.4byte 0x43230000
 	.4byte 0x43210000
 	.4byte 0x435E0000
@@ -5495,6 +5498,7 @@ glabel lbl_801C2F38
 	.4byte 0x43BE8000
 	.4byte 0x433E0000
 	.4byte 0x00A3ABBA
+glabel lbl_801C2318_0x10D4
 	.4byte 0x003761E2
 	.4byte 0x0019A871
 	.4byte 0x00FACE19
@@ -5525,6 +5529,7 @@ glabel lbl_801C3440
 	.4byte 0x00FACE19
 	.4byte 0x00E2193E
 	.4byte 0x00962897
+glabel lbl_801C2318_0x113C
 	.4byte 0
 	.4byte lbl_801C3400  ;# ptr
 	.4byte lbl_801C3418  ;# ptr
@@ -5548,6 +5553,7 @@ glabel lbl_801C348C
 	.4byte 0x43850000
 	.4byte 0x43A10000
 	.4byte 0x43BD0000
+glabel lbl_801C2318_0x118C
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -5571,6 +5577,7 @@ glabel lbl_801C34E0
 	.4byte 0
 	.4byte 0
 	.4byte 0x0000000F
+glabel lbl_801C2318_0x11DC
 	.4byte lbl_801C34C0  ;# ptr
 	.4byte lbl_801C34D0  ;# ptr
 	.4byte lbl_801C34E0  ;# ptr
@@ -5599,6 +5606,7 @@ glabel lbl_801C3540
 	.4byte 0x00000C11
 	.4byte 0x00000C15
 	.4byte 0x00000C0D
+glabel lbl_801C2318_0x123C
 	.4byte 0
 	.4byte lbl_801C3500  ;# ptr
 	.4byte lbl_801C3518  ;# ptr
@@ -5959,6 +5967,7 @@ glabel lbl_801C4B1C
 	.4byte string_a_the_pins_in_all_the_different_patterns_  ;# ptr
 	.4byte string_a_You_have_12_tries_to_knock_down_the_pins__Once_you_ve_thrown  ;# ptr
 	.4byte string_a_the_ball_12_times__it_s_game_over_  ;# ptr
+glabel somespacesidk
 	.4byte lbl_802F11D0  ;# ptr
 	.4byte lbl_802F11D0  ;# ptr
 glabel string_a_Play_the_selected_number_of_holes__and_total_the_scores_
@@ -6010,6 +6019,7 @@ glabel lbl_801C4E58
 	.4byte string_a_of_Bounds__A_penalty_of_1_stroke_will_be_incurred_  ;# ptr
 	.4byte string_a_If_you_can_t_knock_the_ball_into_the_hole_within_9_hits__you_will  ;# ptr
 	.4byte string_a_be_forced_to_give_up__You_will_be_given_a_score_of_10_for_that_hole_  ;# ptr
+glabel lbl_801C2318_0x2B80
 	.4byte lbl_801C371C  ;# ptr
 	.4byte lbl_801C3914  ;# ptr
 	.4byte lbl_801C3AE8  ;# ptr
@@ -6177,6 +6187,7 @@ glabel lbl_801C56D4
 	.4byte string_a_If_you_fly_into_one__you_ll_be_forced_to_land_  ;# ptr
 	.4byte string_a_Big_Bomb___There_are_bombs_set_on_top_of_some  ;# ptr
 	.4byte string_a_of_the_targets__If_you_land_on_one__it_will_explode_  ;# ptr
+glabel lbl_801C2318_0x33E4
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -6254,6 +6265,7 @@ glabel lbl_802F11C0
 glabel lbl_802F11C8
 	.4byte 0x081D1E1F
 	.4byte 0x202122FF
+
 glabel lbl_802F11D0
 	.4byte 0x20000000
 

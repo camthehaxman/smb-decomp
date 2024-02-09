@@ -44,7 +44,7 @@ SYSTEM_INCLUDE_DIRS := include
 ASFLAGS     := -mgekko -I asm
 
 # Metrowerks compiler flags
-MWCC_CFLAGS      := -O4,p -inline auto -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off'
+MWCC_CFLAGS      := -sym on -O4,p -inline auto -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off'
 #MWCC_CFLAGS      := -opt level=0 -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off' -DDEBUG
 MWCC_CPPFLAGS     = $(addprefix -i ,$(INCLUDE_DIRS) $(dir $^)) -I- $(addprefix -i ,$(SYSTEM_INCLUDE_DIRS))
 # GNU compiler flags
