@@ -175,6 +175,7 @@ SOURCES := \
 	src/sprite.c \
 	src/textbox.c \
 	src/hud.c \
+	src/code_1.c \
 	asm/code_1.s \
 	src/minimap.c \
 	src/ord_tbl.c \
