@@ -1352,101 +1352,43 @@ char **lbl_801C2318_0x33E4[] =
 
 void func_80083138(s8 arg0, struct Sprite *arg1, NLsprarg *arg2, s8 arg3, s8 arg4, s8 arg5, s8 arg6)
 {
-    //f64 sp50;
-    //f64 sp48;
-    //f64 sp40;
-    //f64 sp38;
-    //f64 sp30;
-    //f64 sp28;
-    //f64 sp20;
-    //s32 sp1C;
-    //u32 **sp18;
-    f32 temp_f24;
-    f32 temp_f25;
-    f32 temp_f25_2;
-    //f32 temp_f28;
-    f32 var_f28;
-    #define temp_f28 var_f28
-    //f64 var_f0;
-    //f64 var_f0_3;
-    //f64 var_f0_4;
-    //s32 var_r0;
-    //s32 var_r0_2;
-    //s32 var_r24;
-    //s32 var_r28;
+    float temp_f24;
+    float temp_f25;
+    float temp_f25_2;
+    float var_f28;
     char *var_r22;
     char *var_r23;
-    //s8 temp_r21;
-    //s8 temp_r27;
-    s8 var_r29;
-    //u32 *temp_r19;
-    //u32 *temp_r3;
-    //u32 *var_r17;
-    //u32 temp_r16;
-    //void *temp_r3_2;
-    //void *temp_r3_3;
-    //void *temp_r3_4;
+    s8 i;
 
     u_debug_set_cursor_pos(1, 1);
-    #define sp50 14.0f
-    #define sp20 400.0f
-    #define sp28 32.0f
-    //temp_r21 = (s8) arg3;
-    #define temp_r21 arg3
-    #define sp30 0.001
-    //temp_r27 = (s8) arg0;
-    #define temp_r27 arg0
-    #define sp38 0.002
-    //temp_r3 = &lbl_801C2318[temp_r27];
-    #define sp40 0.4f
-    #define sp1C 0x01000000
-    //sp18 = temp_r3;
-    //var_r17 = lbl_801C2318 + 0x10D4;
-    #define temp_r16 (sp1C - 1)
-    //var_r24 = (s8) arg6 * ((s8) arg4 * 2);// * 4;
-    #define var_r24 ((arg6 * arg4 + var_r29) * 2)
-    //var_r29 = 0;
-    #define sp48 0.26
-    //var_r28 = 0;
-    //sp18 = temp_r3 + 0x113C;
-    //sp18 = &lbl_801C2318_0x113C[temp_r27];
-    //temp_r19 = &lbl_801C2318[temp_r21] + 0x118C;
-    for (var_r29 = 0; var_r29 < temp_r21; var_r29++)
+
+    for (i = 0; i < arg3; i++)
     {
-        if ((s8) arg0 == 0)
+        if (arg0 == 0)
         {
             var_f28 = 42.0f;
-            //arg2->y = ((f32) sp20 * lbl_802F204C) + *(*temp_r19 + var_r28);
-            arg2->y = ((f32) sp20 * lbl_802F204C) + lbl_801C2318_0x118C[temp_r27][var_r29];
+            arg2->y = (400.0f * lbl_802F204C) + lbl_801C2318_0x118C[arg3][i];
         }
-        else if (temp_r27 == 4)
+        else if (arg0 == 4)
         {
             var_f28 = 42.0f - (640.0f * lbl_802F2058);
-            //arg2->y = *(*temp_r19 + var_r28);
-            arg2->y = lbl_801C2318_0x118C[temp_r27][var_r29];
+            arg2->y = lbl_801C2318_0x118C[arg3][i];
         }
         else
         {
             var_f28 = 42.0f + (640.0f * lbl_802F2054);
-            //arg2->y = *(*temp_r19 + var_r28);
-            arg2->y = lbl_801C2318_0x118C[temp_r27][var_r29];
+            arg2->y = lbl_801C2318_0x118C[arg3][i];
         }
-        if ((s8) arg0 == 0)
-        {
-            //arg2->base_color = *var_r17;
-            arg2->base_color = lbl_801C2318_0x10D4[var_r29];
-        }
+        if (arg0 == 0)
+            arg2->base_color = lbl_801C2318_0x10D4[i];
         else
-        {
-            //arg2->base_color = *(*sp18 + var_r28);
-            arg2->base_color = lbl_801C2318_0x113C[temp_r27][var_r29];
-        }
+            arg2->base_color = lbl_801C2318_0x113C[arg0][i];
 
-        temp_f24 = (temp_r21 == 6) ? 0.86666 : 1.0;
+        temp_f24 = (arg3 == 6) ? 0.86666 : 1.0;
         arg2->zm_y = temp_f24;
         arg2->sprno = 0xC01;
         arg2->x = var_f28;
-        if (((s8) arg0 == 0) || ((temp_r27 >= 3) && ((s8) var_r29 == 0)))
+        if ((arg0 == 0) || ((arg0 >= 3) && (i == 0)))
         {
             arg2->u0 = 0.0f;
             arg2->u1 = 0.333333f;
@@ -1459,93 +1401,69 @@ void func_80083138(s8 arg0, struct Sprite *arg1, NLsprarg *arg2, s8 arg3, s8 arg
         arg2->zm_x = arg2->u1 - arg2->u0;
         nlSprPut(arg2);
         arg2->sprno = 0xC01;
-        temp_f25 = (f32) sp28 + var_f28;
+        temp_f25 = 32.0f + var_f28;
         arg2->x = temp_f25;
         arg2->u0 = 0.333333f;
         arg2->u1 = 0.666666f;
-        if ((s8) arg0 == 0)
-        {
-            arg2->zm_x = (f32) ((f64) lbl_802F2048 * (14.775 * (f64) (arg2->u1 - arg2->u0)));
-        }
+        if (arg0 == 0)
+            arg2->zm_x = (lbl_802F2048 * (14.775 * (arg2->u1 - arg2->u0)));
         else
-        {
-            arg2->zm_x = (f32) (14.775 * (f64) (arg2->u1 - arg2->u0));
-        }
+            arg2->zm_x = (14.775 * (arg2->u1 - arg2->u0));
         nlSprPut(arg2);
         arg2->zm_x = 1.0f;
         arg2->sprno = 0xC01;
-        if ((s8) arg0 == 0)
-        {
+        if (arg0 == 0)
             arg2->x = temp_f25 + (492.0f * lbl_802F2048);
-        }
         else
-        {
-            arg2->x = 492.0f + temp_f25;
-        }
+            arg2->x = temp_f25 + 492.0f;
         arg2->u0 = 0.666666f;
         arg2->u1 = 1.0f;
         arg2->zm_x = arg2->u1 - arg2->u0;
         nlSprPut(arg2);
-        temp_f28 = 3.0f + var_f28;
+        var_f28 = 3.0f + var_f28;
         arg2->sprno = 0xC02;
-        arg2->x = temp_f28;
+        arg2->x = var_f28;
         arg2->y += 2.0f;
-        arg2->z = (f32) ((f64) arg1->unk4C - sp30);
+        arg2->z = arg1->unk4C - 0.001;
         arg2->u0 = 0.0f;
         arg2->u1 = 1.0f;
         arg2->zm_x = arg2->u1 - arg2->u0;
-        arg2->base_color = temp_r16;
-        if (((s8) arg0 == 0) || ((temp_r27 >= 3) && ((s8) var_r29 == 0)))
-        {
+        arg2->base_color = 0xFFFFFF;
+        if ((arg0 == 0) || ((arg0 >= 3) && (i == 0)))
             nlSprPut(arg2);
-        }
-        if ((s8) arg0 == 0)
-        {
-            //arg2->sprno = *(*(&lbl_801C2318[(s8) arg5] + 0x11DC) + var_r28);
-            arg2->sprno = lbl_801C2318_0x11DC[arg5][var_r29];
-        }
+        if (arg0 == 0)
+            arg2->sprno = lbl_801C2318_0x11DC[arg5][i];
         else
-        {
-            //arg2->sprno = *(*(&lbl_801C2318[temp_r27] + 0x123C) + var_r28);
-            arg2->sprno = lbl_801C2318_0x123C[arg5][var_r29];
-        }
-        arg2->x = temp_f28;
-        arg2->y += (temp_r21 == 6) ? 6 : 7;
+            arg2->sprno = lbl_801C2318_0x123C[arg0][i];
+        arg2->x = var_f28;
+        arg2->y += (arg3 == 6) ? 6 : 7;
         temp_f25_2 = arg2->y;
-        arg2->z = (f32) ((f64) arg1->unk4C - sp38);
+        arg2->z = (arg1->unk4C - 0.002);
         arg2->u0 = 0.0f;
         arg2->u1 = 1.0f;
-        if (((s8) arg0 == 0) || ((s32) arg2->sprno == 0xF))
+        if (arg0 == 0 || arg2->sprno == 0xF)
         {
-            arg2->zm_x = (f32) sp40;
-            arg2->zm_y = (f32) (sp48 * (f64) temp_f24);
+            arg2->zm_x = 0.4f;
+            arg2->zm_y = (0.26 * temp_f24);
         }
         else
         {
             arg2->x += 3.0f;
-            switch (temp_r27)                       /* irregular */
+            switch (arg0)    
             {
             case 1:
                 arg2->x += 2.0f;
-                if ((s8) var_r29 > 0)
-                {
+                if (i > 0)
                     arg2->x += 1.0f;
-                }
-                if ((s8) var_r29 == 0)
-                {
+                if (i == 0)
                     arg2->y -= 2.0f;
-                }
                 break;
             case 2:
                 arg2->x += 2.0f;
-                if ((s8) var_r29 > 0)
-                {
+                if (i > 0)
                     arg2->x += 2.0f;
-                }
-                if ((s8) var_r29 == 0)
-                {
+                if (i == 0)
                     arg2->y -= 2.0f;
-                }
                 break;
             case 3:
                 arg2->y += 2.0f;
@@ -1555,66 +1473,48 @@ void func_80083138(s8 arg0, struct Sprite *arg1, NLsprarg *arg2, s8 arg3, s8 arg
                 break;
             }
             arg2->zm_x = 1.0f;
-            arg2->zm_y = (f32)(f64)temp_f24;
+            arg2->zm_y = temp_f24 + 0.0;
         }
-        arg2->base_color = temp_r16;
-        if ((s32) arg2->sprno != 0)
-        {
+        arg2->base_color = 0xFFFFFF;
+        if (arg2->sprno != 0)
             nlSprPut(arg2);
-        }
         else
         {
             set_text_scale(1.3f, 1.3f);
             set_text_mul_color(0U);
-            set_text_pos((f32) sp50 + arg2->x, 4.0f + arg2->y);
-            func_80072AC0("%d", (s8) var_r29 + 1);
-            set_text_scale(0.68f, lbl_802F52B0);
-            set_text_mul_color(sp1C - 0x40);
+            set_text_pos(14.0f + arg2->x, 4.0f + arg2->y);
+            func_80072AC0("%d", i + 1);
+            set_text_scale(0.68f, 0.7f);
+            set_text_mul_color(0xFFFFC0);
         }
         arg2->z = arg1->unk4C;
         arg2->zm_y = 1.0f;
-        arg2->x = temp_f28;
+        arg2->x = var_f28;
         arg2->y = temp_f25_2;
 
         set_text_opacity(arg0 == 0 ? lbl_802F2050 : 1.0);
-        if ((s8) arg0 == 0)
+        if (arg0 == 0)
         {
-            //temp_r3_2 = lbl_801C2318[modeCtrl.gameType].unk2B80 + var_r24;
-            //var_r22 = temp_r3_2->unk0;
-            //var_r23 = temp_r3_2->unk4;
-            var_r22 = lbl_801C2318_0x2B80[modeCtrl.gameType][var_r24];
-            var_r23 = lbl_801C2318_0x2B80[modeCtrl.gameType][var_r24 + 1];
+            var_r22 = lbl_801C2318_0x2B80[modeCtrl.gameType][(arg6 * (arg4 * 2) + i * 2)];
+            var_r23 = lbl_801C2318_0x2B80[modeCtrl.gameType][(arg6 * (arg4 * 2) + i * 2) + 1];
         }
-        else if (temp_r27 == 4)
+        else if (arg0 == 4)
         {
-            //temp_r3_3 = lbl_801C2318[modeCtrl.gameType].unk33E8 + var_r24;
-            //var_r22 = temp_r3_3->unk0;
-            //var_r23 = temp_r3_3->unk4;
-            var_r22 = lbl_801C2318_0x33E4[modeCtrl.gameType + 1][var_r24];
-            var_r23 = lbl_801C2318_0x33E4[modeCtrl.gameType + 1][var_r24 + 1];
+            var_r22 = lbl_801C2318_0x33E4[modeCtrl.gameType + 1][(arg6 * (arg4 * 2) + i * 2)];
+            var_r23 = lbl_801C2318_0x33E4[modeCtrl.gameType + 1][(arg6 * (arg4 * 2) + i * 2) + 1];
         }
         else
         {
-            //temp_r3_4 = lbl_801C2318[modeCtrl.gameType].unk33E4 + var_r24;
-            //var_r22 = temp_r3_4->unk0;
-            //var_r23 = temp_r3_4->unk4;
-            var_r22 = lbl_801C2318_0x33E4[modeCtrl.gameType][var_r24];
-            var_r23 = lbl_801C2318_0x33E4[modeCtrl.gameType][var_r24 + 1];
+            var_r22 = lbl_801C2318_0x33E4[modeCtrl.gameType][(arg6 * (arg4 * 2) + i * 2)];
+            var_r23 = lbl_801C2318_0x33E4[modeCtrl.gameType][(arg6 * (arg4 * 2) + i * 2) + 1];
         }
-//        var_f0_3 = MIN(474.0 / u_get_jpn_text_width(arg1->fontId, var_r22), 0.68);
-        set_text_scale(MIN(474.0 / u_get_jpn_text_width(arg1->fontId, var_r22), 0.68), lbl_802F52B0);
+        set_text_scale(MIN(474.0 / u_get_jpn_text_width(arg1->fontId, var_r22), 0.68), 0.7f);
         set_text_pos(56.0f + arg2->x, arg2->y - 1.0f);
         u_draw_text(var_r22);
-//        var_f0_4 = MIN(474.0 / u_get_jpn_text_width(arg1->fontId, var_r23), 0.68);
-        set_text_scale(MIN(474.0 / u_get_jpn_text_width(arg1->fontId, var_r23), 0.68), lbl_802F52B0);
-        set_text_pos(56.0f + arg2->x, arg2->y + ((temp_r21 == 6) ? 16 : 21));
+        set_text_scale(MIN(474.0 / u_get_jpn_text_width(arg1->fontId, var_r23), 0.68), 0.7f);
+        set_text_pos(56.0f + arg2->x, arg2->y + ((arg3 == 6) ? 16 : 21));
         u_draw_text(var_r23);
         set_text_opacity(1.0f);
-        set_text_scale(0.68f, lbl_802F52B0);
-        //var_r28 += 4;
-        //var_r17 += 4;
-        //var_r24 += 2;//8;
-        //var_r29 += 1;
-        //goto loop_75;
+        set_text_scale(0.68f, 0.7f);
     }
 }
