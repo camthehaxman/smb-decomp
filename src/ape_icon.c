@@ -3,16 +3,18 @@
 
 #include "global.h"
 #include "adv.h"
+#include "ape_icon.h"
 #include "ball.h"
 #include "bitmap.h"
 #include "info.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "mot_ape.h"
 #include "nlsprite.h"
 #include "sprite.h"
 #include "textbox.h"
 
-struct Struct80292D18 apeIconInfo;
+struct ApeIconInfo apeIconInfo;
 
 static const u32 neutralFaceTable[] =
 {

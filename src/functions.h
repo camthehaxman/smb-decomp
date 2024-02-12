@@ -149,8 +149,6 @@ void u_apply_func_to_nl_disp_list_type_a(struct NlDispList *dl, void *end, void 
 // ? func_80048084();
 void func_80048420();
 
-void monkey_sprite_draw(struct Sprite *);
-int u_get_monkey_bitmap_id(int, int, int);
 // ? func_80081D34();
 // ? func_80081D64();
 // ? func_80081D90();
@@ -165,9 +163,9 @@ int u_get_monkey_bitmap_id(int, int, int);
 // ? func_80081EF0();
 // ? func_80081F20();
 void func_80081F30(void);
-void func_80082024(s8 *, struct Sprite *);
-// ? func_80082C6C();
-// ? func_80083138();
+void help_sprite_main(s8 *, struct Sprite *);
+// ? draw_controls_info();
+// ? draw_help_blurbs();
 
 // ? func_80085C0C();
 // ? draw_aiai_hair();

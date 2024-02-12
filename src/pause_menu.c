@@ -482,7 +482,7 @@ void unkFunc8000AECC(struct Sprite *menuSprite)
     case 4:
         sprite = find_sprite_with_tag(10);
         if (sprite != NULL)
-            func_80082024(0, sprite);
+            help_sprite_main(0, sprite);
         if ((controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_A)
          || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_B)
          || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_START))

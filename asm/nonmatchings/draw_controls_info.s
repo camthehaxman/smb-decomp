@@ -27,8 +27,8 @@
 /* 80082CD4 0007EBF4  3B E5 00 00 */	addi r31, r5, 0
 /* 80082CD8 0007EBF8  80 63 00 28 */	lwz r3, 0x28(r3)
 /* 80082CDC 0007EBFC  7C 03 02 14 */	add r0, r3, r0
-/* 80082CE0 0007EC00  3C 60 80 1C */	lis r3, lbl_801C2318@ha
-/* 80082CE4 0007EC04  3B 03 23 18 */	addi r24, r3, lbl_801C2318@l
+/* 80082CE0 0007EC00  3C 60 80 1C */	lis r3, pageCounts@ha
+/* 80082CE4 0007EC04  3B 03 23 18 */	addi r24, r3, pageCounts@l
 /* 80082CE8 0007EC08  54 00 10 3A */	slwi r0, r0, 2
 /* 80082CEC 0007EC0C  7C 78 02 14 */	add r3, r24, r0
 /* 80082CF0 0007EC10  82 E3 0D D0 */	lwz r23, 0xdd0(r3)

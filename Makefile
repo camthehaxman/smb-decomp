@@ -175,7 +175,7 @@ SOURCES := \
 	src/sprite.c \
 	src/textbox.c \
 	src/hud.c \
-	src/code_1.c \
+	src/ape_icon.c \
 	src/help.c \
 	asm/unk_anim_data.s \
 	src/minimap.c \

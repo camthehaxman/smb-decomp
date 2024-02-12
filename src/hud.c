@@ -6,6 +6,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "ape_icon.h"
 #include "ball.h"
 #include "bitmap.h"
 #include "camera.h"
