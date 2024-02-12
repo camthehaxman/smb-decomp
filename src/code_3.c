@@ -10,7 +10,7 @@
 #include "mot_ape.h"
 #include "nl2ngc.h"
 
-extern s8 lbl_802F2060;
+static s8 lbl_802F2060;
 
 u8 lbl_802B2E70[0x900];
 FORCE_BSS_ORDER(lbl_802B2E70)

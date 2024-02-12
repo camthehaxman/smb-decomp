@@ -34,7 +34,7 @@ void func_8008BA24(int);
 void new_ape_stat_motion(struct Ape *, int, int, int, float);
 void func_8008BEF8(int);
 void u_switch_ape_character_lod_maybe(struct Ape *, int);
-// ? func_8008BFB4();
+void func_8008BFB4(struct Ape *ape, int b, int *c, float *d);
 void func_8008BFDC(struct Ape *, u16, u16);
 void ape_face_dir(struct Ape *, Vec *);
 void func_8008C408(struct Ape *, Vec *);

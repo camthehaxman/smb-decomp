@@ -64,7 +64,7 @@ __attribute__((section(".text")))
 #endif
 void main(void)
 {
-    //dipSwitches |= DIP_DEBUG;
+    //dipSwitches |= DIP_DEBUG | DIP_PLAY_STG_ALL;
     powerOnTimer = 0;
     initialize();
     gm_init();
