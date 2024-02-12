@@ -177,7 +177,7 @@ SOURCES := \
 	src/hud.c \
 	src/code_1.c \
 	src/help.c \
-	asm/code_1.s \
+	asm/unk_anim_data.s \
 	src/minimap.c \
 	src/ord_tbl.c \
 	src/code_3.c \
