@@ -71,7 +71,7 @@ void submode_sel_main_func(void);
 void func_800125A4(void);
 
 void clip_init_detail(Vec *, S16Vec *, float, float, float, float);
-// ? clip_z();
+BOOL clip_z(Vec *a, float b);
 BOOL test_sphere_in_frustum(Point3d *p, float radius);
 BOOL test_scaled_sphere_in_frustum(Point3d *p, float radius, float scale);
 
@@ -281,7 +281,7 @@ void avdisp_draw_model_unculled_sort_translucent(struct GMAModel *a);
 // ? skip_mesh();
 void avdisp_draw_model_unculled_sort_none(struct GMAModel *a);
 void avdisp_draw_model_unculled_sort_all(struct GMAModel *a);
-// ? u_avdisp_draw_model_4();
+void u_avdisp_draw_model_4(struct GMAModel *model);
 int get_texture_max_lod(int width, int height);
 // ? init_material();
 GXTexObj *init_model(struct GMAModel *a, struct TPL *b, GXTexObj *c);
@@ -321,15 +321,6 @@ void build_unk3_layer_uncached(struct TevStageInfo *a, GXTevColorArg colorArg, G
 void build_unk3_layer_cached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg);
 void unk3_layer_next(struct TevStageInfo *a);
 
-void func_80092498(void);
-void func_800924CC(void);
-void shadowerase_main(void);
-void u_init_shadow_stuff_probably(struct Struct80092B98 *);
-int func_80092D34(void);
-void u_draw_ball_shadow(void);
-void func_80092F90(void *);
-// ? func_800934B0();
-// ? func_80093920();
 void mode_mini_func(void);
 void set_minigame_callbacks(void (*arg0)(), void (*arg1)(), void (*ballCb)(struct Ball *), void (*cameraCb)(struct Camera *, struct Ball *));
 void submode_mini_game_init_func(void);

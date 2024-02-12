@@ -29,6 +29,7 @@
 #include "ord_tbl.h"
 #include "pool.h"
 #include "rend_efc.h"
+#include "shadow.h"
 #include "sprite.h"
 #include "stage.h"
 #include "stobj.h"

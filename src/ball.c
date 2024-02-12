@@ -23,6 +23,7 @@
 #include "ord_tbl.h"
 #include "pool.h"
 #include "recplay.h"
+#include "shadow.h"
 #include "sound.h"
 #include "stage.h"
 #include "stcoli.h"
@@ -1252,7 +1253,7 @@ void u_ball_shadow_something_1(void)
         GXGetTexObjMipMap(tex1));
     GXInitTexObjLOD(&lbl_801B7EC0.unk4, 1, 1, 0.0f, 0.0f, 0.0f, 0, 0, 0);
 
-    sp18.unk3C = &lbl_801B7EC0;
+    sp18.unk3C = (void *)&lbl_801B7EC0;
 
     r26 = g_poolInfo.playerPool.statusList;
     ball = &ballInfo[0];
@@ -1263,9 +1264,9 @@ void u_ball_shadow_something_1(void)
         if (ball->flags & BALL_FLAG_INVISIBLE)
             continue;
         sp18.unk38 = ballShadowColors[ball->colorId];
-        sp18.unk0 = spC.x + ball->pos.x;
-        sp18.unk4 = spC.y + ball->pos.y;
-        sp18.unk8 = spC.z + ball->pos.z;
+        sp18.unk0.x = spC.x + ball->pos.x;
+        sp18.unk0.y = spC.y + ball->pos.y;
+        sp18.unk0.z = spC.z + ball->pos.z;
         sp18.unkC = 5.0f;
         sp18.unk10 = ball->pos;
         sp18.unk1C = ball->currRadius * 1.4f;

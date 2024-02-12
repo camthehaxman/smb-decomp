@@ -21,6 +21,7 @@
 #include "nl2ngc.h"
 #include "ord_tbl.h"
 #include "rend_efc.h"
+#include "shadow.h"
 #include "sound.h"
 #include "sprite.h"
 #include "stage.h"

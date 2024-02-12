@@ -322,12 +322,3 @@ void empty_file_cache(void)
 {
     aramAllocEnd = ARAM_BASE;
 }
-
-u8 lbl_802B57A0[0x3800];
-
-void func_80092498(void)
-{
-    func_800924CC();
-    lbl_802F2150 = 0;
-    lbl_802F2154 = lbl_802B57A0;
-}

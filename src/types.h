@@ -344,29 +344,20 @@ struct RaycastHit
     Vec normal;
 };
 
-typedef u32 (*Func802F20F0)();
+struct UnkStruct27
+{
+    u8 filler0[4];
+    struct GMAShape *shape;
+    struct GMATevLayer *modelTevs;
+    u8 fillerC[0x38-0xC];
+};
+
+typedef u32 (*Func802F20F0)(struct UnkStruct27 *);
 typedef void (*CameraCallback)(struct Camera *, struct Ball *);
 typedef void (*BallCallback)(struct Ball *);
 
 struct NlModel;
 struct NlObj;
-
-struct Struct80092B98
-{
-    float unk0;
-    float unk4;
-    float unk8;
-    float unkC;
-    Vec unk10;
-    float unk1C;
-    Vec unk20;
-    s16 unk2C;
-    u16 unk2E;
-    float unk30;
-    float unk34;
-    GXColor unk38;
-    void *unk3C;
-};  // size = 0x40
 
 struct PolyShadowUnit
 {

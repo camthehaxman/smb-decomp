@@ -20,6 +20,7 @@
 #include "nl2ngc.h"
 #include "preview.h"
 #include "recplay.h"
+#include "shadow.h"
 #include "stage.h"
 #include "stcoli.h"
 #include "light.h"
@@ -1987,13 +1988,6 @@ Struct80206DEC_Func func_80047518(Struct80206DEC_Func func)
 }
 #pragma force_active reset
 
-struct Struct80092F90
-{
-    u16 unk0;
-    u16 unk2;
-    void *unk4;
-};
-
 #define lbl_802F3768 1.0f
 
 void stage_draw(void)
@@ -2057,14 +2051,14 @@ void stage_draw(void)
                     GXLoadNrmMtxImm(mathutilData->mtxA, 0);
                     avdisp_draw_model_culled_sort_translucent(model);
                     sp7C.unk2 = 4;
-                    sp7C.unk4 = model;
+                    sp7C.model.gma = model;
                 }
                 else
                 {
                     nl2ngc_draw_model_sort_translucent_alt2(
                         NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_GOAL_01));
                     sp7C.unk2 = 0;
-                    sp7C.unk4 = NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_GOAL_01);
+                    sp7C.model.naomi = NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_GOAL_01);
                 }
                 if (r31 != 0)
                     func_80092F90(&sp7C);
@@ -2124,7 +2118,7 @@ void stage_draw(void)
                                 avdisp_draw_model_culled_sort_none(model);
                                 if (r31 != 0)
                                 {
-                                    sp7C.unk4 = model;
+                                    sp7C.model.gma = model;
                                     func_80092F90(&sp7C);
                                 }
                             }
@@ -2214,7 +2208,7 @@ void stage_draw(void)
                                 if (r31 != 0)
                                 {
                                     sp7C.unk2 = 0;
-                                    sp7C.unk4 = model;
+                                    sp7C.model.naomi = model;
                                     func_80092F90(&sp7C);
                                 }
                                 if (r25 != NULL)
@@ -2248,7 +2242,7 @@ void stage_draw(void)
                 if (r31 != 0)
                 {
                     sp7C.unk2 = 0;
-                    sp7C.unk4 = dyn->tempModel;
+                    sp7C.model.naomi = dyn->tempModel;
                     func_80092F90(&sp7C);
                 }
                 dyn++;

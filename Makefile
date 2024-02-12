@@ -189,7 +189,7 @@ SOURCES := \
 	src/lzs_decompress.c \
 	src/avdisp.c \
 	src/load.c \
-	asm/shadow.s \
+	src/shadow.c \
 	src/mini.c \
 	src/lens_flare.c \
 	src/code_9.c \
