@@ -1,3 +1,4 @@
+#include <math.h>
 #include <string.h>
 #include <dolphin.h>
 
@@ -5,31 +6,32 @@
 #include "input.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "sound.h"
 #include "sprite.h"
 
 void func_80082024(s8 *, struct Sprite *);
-void lbl_80083910(struct Sprite *);
-void lbl_800841E8(struct Sprite *);
+void func_80083910(struct Sprite *);
+void func_800841E8(struct Sprite *);
 
-extern s8 lbl_802F2020;
-extern s8 lbl_802F2021;
-extern s8 lbl_802F2022;
-extern s8 lbl_802F2023;
-extern u8 lbl_802F2024;
-extern s8 lbl_802F2025;
-extern float lbl_802F2028;
-extern float lbl_802F202C;
-extern float lbl_802F2030;
-extern float lbl_802F2034;
-extern float lbl_802F2038;
-extern float lbl_802F203C;
-extern float lbl_802F2040;
-extern float lbl_802F2044;
-extern float lbl_802F2048;
-extern float lbl_802F204C;
-extern float lbl_802F2050;
-extern float lbl_802F2054;
-extern float lbl_802F2058;
+static s8 lbl_802F2020;
+static s8 lbl_802F2021;
+static s8 lbl_802F2022;
+static s8 lbl_802F2023;
+static s8 lbl_802F2024;
+static s8 lbl_802F2025;
+static float lbl_802F2028;
+static float lbl_802F202C;
+static float lbl_802F2030;
+static float lbl_802F2034;
+static float lbl_802F2038;
+static float lbl_802F203C;
+static float lbl_802F2040;
+static float lbl_802F2044;
+static float lbl_802F2048;
+static float lbl_802F204C;
+static float lbl_802F2050;
+static float lbl_802F2054;
+static float lbl_802F2058;
 
 void func_80081F30(void)
 {
@@ -47,8 +49,8 @@ void func_80081F30(void)
         temp_r3->fontId = 0xB1;
         if (gameMode == 1)
             temp_r3->mainFunc = func_80082024;
-        temp_r3->drawFunc = lbl_80083910;
-        temp_r3->destFunc = lbl_800841E8;
+        temp_r3->drawFunc = func_80083910;
+        temp_r3->destFunc = func_800841E8;
         strcpy(temp_r3->text, "how to");
         lbl_802F2020 = 0xF;
         lbl_802F2021 = 0;
@@ -165,18 +167,18 @@ struct SomeMessageThing2
 
 struct SomeMessageThing2 lbl_801C2318_0x32C[] =
 {
-    { 0xC24, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC23, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC26, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
+    { 0xC24, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC23, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC26, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
     { 0xC22, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
-    { 0xC25, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC19, { 0x05, 0x1A, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC1A, { 0x05, 0x1A, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC1C, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC1B, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC1E, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC1D, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
-    { 0xC29, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } }, 
+    { 0xC25, { 0x05, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC19, { 0x05, 0x1A, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC1A, { 0x05, 0x1A, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC1C, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC1B, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC1E, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC1D, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+    { 0xC29, { 0x05, 0x1A, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00 } },
     { 0xC20, { 0x05, 0x1A, 0x31, 0x43, 0x55, 0x00, 0x00, 0x00 } },
     { 0xC1F, { 0x05, 0x1A, 0x2C, 0x43, 0x55, 0x00, 0x00, 0x00 } },
     { 0xC21, { 0x05, 0x1A, 0x2C, 0x43, 0x55, 0x67, 0x79, 0x00 } },
@@ -528,7 +530,7 @@ s8 *lbl_801C2318_0xDD0[] =
     NULL,
     lbl_802F11B0,
     NULL,
-    lbl_802F11C8,    
+    lbl_802F11C8,
 };
 
 struct SomeHelpThing
@@ -825,31 +827,18 @@ void func_80082024(s8 *arg0, struct Sprite *arg1)
     }
 }
 
+#ifdef NONMATCHING
+// https://decomp.me/scratch/Oe5CA
 void func_80082C6C(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
 {
-    f32 temp_f21;
-    f32 temp_f20;
-    //f32 temp_f18;
-    f32 temp_f16;
-    f32 temp_f15;
-    f32 temp_f17;
-//    f32 temp_f16_2;
-    #define temp_f16_2 temp_f16
-    
-    
-    //f32 temp_f21_2;
-    #define temp_f21_2 temp_f21
-//    f32 temp_f15_2;
-    #define temp_f15_2 temp_f15
-    //f32 temp_f15_3;
-    #define temp_f15_3 temp_f15
-
-    //f64 temp_f19;
+    float temp_f21;
+    float temp_f20;
+    float temp_f17;
+    float temp_f16;
+    float temp_f15;
     s32 var_r21;
     s32 var_r20;
-    
     u32 temp_r20;
-    
     s8 *temp_r23;
     u32 var_r0;
     struct SomeMessageThing *temp_r19;
@@ -866,47 +855,43 @@ void func_80082C6C(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
             temp_r19 = &lbl_801C2318_0xC2C[temp_r23[var_r21]];
             func_80071B1C(arg1->unk4C - 0.002);
             temp_r28 = &lbl_801C2318_0x32C[temp_r19->unk0];
-            //arg2->sprno = temp_r28->unk32C;
             arg2->sprno = temp_r28->unk0;
             arg2->x = temp_r19->unk2;
             arg2->y = temp_r19->unk4;
             nlSprPut(arg2);
             for (var_r20 = 0; temp_r19->unk8[var_r20] != NULL; var_r20++)
             {
-                float temp_f17;
-                float temp_f15;
-                temp_f15 = (var_r20 == 0) ? 0.541666 : 0.5;
-                temp_f17 = (var_r20 == 0) ? 0.541666 : 0.58;
+                float temp_f16;
+                float temp_f15 = (var_r20 == 0) ? 0.541666 : 0.5;
+                float temp_f17 = (var_r20 == 0) ? 0.541666 : 0.58;
+
                 var_r0 = (var_r20 == 0) ? 0xFFFFFF : 0;
                 temp_f16 = u_get_jpn_text_width(arg1->fontId, temp_r19->unk8[var_r20]);
-                temp_f15_2 = MIN(140.0 / temp_f16, temp_f15);
+                temp_f15 = MIN(140.0 / temp_f16, temp_f15);
                 set_text_mul_color(var_r0);
-                set_text_scale(temp_f15_2, temp_f17);
+                set_text_scale(temp_f15, temp_f17);
                 set_text_pos(
-                    (76.0f + arg2->x) - (0.5 * temp_f16 * temp_f15_2),
+                    (76.0f + arg2->x) - (0.5 * temp_f16 * temp_f15),
                     arg2->y + temp_r28->unk4[var_r20]);
                 u_draw_text(temp_r19->unk8[var_r20]);
             }
             temp_r19_3 = &lbl_801C2318_0xE18[temp_r23[var_r21]];
+
             temp_f17 = arg2->z;
-            temp_f16_2 = arg2->zm_x;
-            temp_f15_3 = arg2->zm_y;
+            temp_f16 = arg2->zm_x;
+            temp_f15 = arg2->zm_y;
             temp_r20 = arg2->attr;
             temp_r18 = arg2->base_color;
             temp_f21 = temp_r19_3->unk8 - temp_r19_3->unk0;
             temp_f20 = temp_r19_3->unkC - temp_r19_3->unk4;
-            arg2->z = temp_f17 + 0.0005;
+            arg2->z += 0.0005;
             arg2->trnsl = (arg0 != 0) ? lbl_802F2044 : lbl_802F203C;
-            //temp_f19 = 0.5 * (f64) temp_f20;
-            #define temp_f19 (0.5 * (f64) temp_f20)
             arg2->base_color = temp_r19_3->unk10;
             arg2->sprno = 0xC2B;
-            //temp_f18 = temp_f20 * temp_f20;
-            #define temp_f18  (temp_f20 * temp_f20)
             arg2->x = (0.5 * temp_f21) + temp_r19_3->unk0;
-            arg2->y = temp_f19 + temp_r19_3->unk4;
+            arg2->y = (0.5 * temp_f20) + temp_r19_3->unk4;
             arg2->zm_x = 1.0f;
-            arg2->zm_y = 0.125 * mathutil_sqrt((temp_f21 * temp_f21) + temp_f18);
+            arg2->zm_y = 0.125 * mathutil_sqrt((temp_f21 * temp_f21) + (temp_f20 * temp_f20));
             arg2->ang = mathutil_atan2(temp_f21, temp_f20);
             arg2->attr = (arg1->flags & 0xFFFFFFF0) | 0xA;
             nlSprPut(arg2);
@@ -920,14 +905,14 @@ void func_80082C6C(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
             nlSprPut(arg2);
             if (temp_r23[var_r21] == 0x16)
             {
-                temp_f21_2 = 140.0f + (temp_r19_3->unk8 - temp_r19_3->unk0);
+                temp_f21 = 140.0f + (temp_r19_3->unk8 - temp_r19_3->unk0);
                 arg2->sprno = 0xC2B;
-                arg2->x = (0.5 * temp_f21_2) + temp_r19_3->unk0;
-                arg2->y = temp_f19 + temp_r19_3->unk4;
+                arg2->x = (0.5 * temp_f21) + temp_r19_3->unk0;
+                arg2->y = (0.5 * temp_f20) + temp_r19_3->unk4;
                 arg2->z = temp_f17;
                 arg2->zm_x = 1.0f;
-                arg2->zm_y = 0.125 * mathutil_sqrt((temp_f21_2 * temp_f21_2) + temp_f18);
-                arg2->ang = mathutil_atan2(temp_f21_2, temp_f20);
+                arg2->zm_y = 0.125 * mathutil_sqrt((temp_f21 * temp_f21) + (temp_f20 * temp_f20));
+                arg2->ang = mathutil_atan2(temp_f21, temp_f20);
                 nlSprPut(arg2);
                 arg2->sprno = 0xC2A;
                 arg2->x = 140.0f + temp_r19_3->unk8;
@@ -939,8 +924,8 @@ void func_80082C6C(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
                 nlSprPut(arg2);
             }
             arg2->z = temp_f17;
-            arg2->zm_x = temp_f16_2;
-            arg2->zm_y = temp_f15_3;
+            arg2->zm_x = temp_f16;
+            arg2->zm_y = temp_f15;
             arg2->ang = 0;
             arg2->trnsl = 1.0f;
             arg2->attr = temp_r20;
@@ -948,13 +933,29 @@ void func_80082C6C(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
         }
     }
 }
-#undef temp_f18
-#undef temp_f19
-#undef temp_f16_2
-#undef temp_f21_2
-#undef temp_f15_2
-#undef temp_f15_3
-
+#else
+void help_c_force_float_order(void)
+{
+    volatile double d;
+    volatile float f;
+    d = 0.002;
+    d = 0.541666;
+    d = 0.5;
+    d = 0.58;
+    d = 140.0;
+    f = 76.0f;
+    d = 0.0005;
+    d = 0.125;
+    d = 0.001;
+    f = 140.0f;
+}
+asm void func_80082C6C(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
+{
+    nofralloc
+#include "../asm/nonmatchings/func_80082C6C.s"
+}
+#pragma peephole on
+#endif
 
 u32 lbl_801C2318_0x10D4[] =
 {
@@ -1078,11 +1079,11 @@ u32 lbl_801C3518[] =
     0xC05,
     0xC03,
     0xC06,
-    0xF,
 };
 
 u32 lbl_801C3528[] =
 {
+    0xF,
     0xC18,
     0xC14,
     0xC0F,
@@ -1240,8 +1241,8 @@ char *lbl_801C4B1C[] =
 
 char *somespacesidk[] =
 {
-    "",
-    "",
+    " ",
+    " ",
 };
 
 char *lbl_801C4E58[] =
@@ -1449,7 +1450,7 @@ void func_80083138(s8 arg0, struct Sprite *arg1, NLsprarg *arg2, s8 arg3, s8 arg
         else
         {
             arg2->x += 3.0f;
-            switch (arg0)    
+            switch (arg0)
             {
             case 1:
                 arg2->x += 2.0f;
@@ -1517,4 +1518,243 @@ void func_80083138(s8 arg0, struct Sprite *arg1, NLsprarg *arg2, s8 arg3, s8 arg
         set_text_opacity(1.0f);
         set_text_scale(0.68f, 0.7f);
     }
+}
+
+
+void func_80083910(struct Sprite *arg0)
+{
+    NLsprarg spC;
+    s8 var_r29;
+    s8 var_r30;
+    s8 var_r31;
+    s8 var_r27;
+    char *temp_r25;
+    int temp_r25_2;
+    s8 var_r9;
+    u8 temp_r25_3;
+
+    spC.z = arg0->unk4C;
+    spC.u0 = 0.0f;
+    spC.v0 = 0.0f;
+    spC.u1 = 1.0f;
+    spC.v1 = 1.0f;
+    spC.zm_x = 1.0f;
+    spC.zm_y = 1.0f;
+    spC.trnsl = 1.0f;
+    spC.ang = 0;
+    spC.base_color = RGBA(255, 255, 255, (int)(255.0f * arg0->opacity));
+    spC.offset_color = 0;
+    spC.listType = -1;
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 5;
+    reset_text_draw_settings();
+    set_text_font(arg0->fontId);
+    func_80071B1C(arg0->unk4C);
+    spC.sprno = 0x4B;
+    spC.x = 320.1f;
+    spC.y = 240.1f;
+    spC.z = 0.001 + arg0->unk4C;
+    spC.zm_x = lbl_802F202C;
+    spC.zm_y = lbl_802F2030;
+    spC.trnsl = 0.6666f;
+    spC.base_color = 0xC0C030;
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 0xA;
+    nlSprPut(&spC);
+    spC.z = arg0->unk4C;
+    spC.zm_x = 1.0f;
+    spC.zm_y = 1.0f;
+    spC.trnsl = 1.0f;
+    spC.base_color = RGBA(255, 255, 255, (int)(255.0f * arg0->opacity));
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 5;
+    spC.sprno = 0xC00;
+    spC.x = 112.0f;
+    spC.y = 18.0f - (56.0f * lbl_802F2028);
+    nlSprPut(&spC);
+    temp_r25 = lbl_801C2318_0x308[modeCtrl.gameType][lbl_802F2025];
+    func_80071B50(0x220000);
+    set_text_scale(0.95f, 1.0f);
+    func_80071B1C(arg0->unk4C - 0.001);
+    set_text_mul_color(0x201000U);
+    set_text_pos(
+        3.0 + (320.0 - (0.95 * (0.5 * u_get_jpn_text_width(arg0->fontId, temp_r25)))),
+        3.0f + (15.0f + spC.y));
+    u_draw_text(temp_r25);
+    func_80071B1C(arg0->unk4C - 0.002);
+    set_text_mul_color(0xFF8000U);
+    set_text_pos(
+        320.0 - (0.95 * (0.5 * u_get_jpn_text_width(arg0->fontId, temp_r25))),
+        15.0f + spC.y);
+    u_draw_text(temp_r25);
+    func_80071B50(0x20000);
+    set_text_scale(1.0f, 1.0f);
+    func_80071B1C(arg0->unk4C);
+    set_text_mul_color(RGBA(255, 255, 255, 0));
+    set_text_mul_color(RGBA(0, 0, 0, 0));
+    set_text_scale(0.5f, 0.6f);
+    spC.sprno = 0xC27;
+    spC.x = 24.0f - (40.0f * lbl_802F2028);
+    spC.y = 36.0f;
+    nlSprPut(&spC);
+    set_text_pos(6.5 + spC.x - 4.0, 40.0f + spC.y);
+    u_draw_text("a/Back");
+    spC.x = 576.0f + (40.0f * lbl_802F2028);
+    spC.y = 36.0f;
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 0x80000 | 5;
+    nlSprPut(&spC);
+    set_text_pos(6.5 + spC.x - 4.0, 40.0f + spC.y);
+    u_draw_text("a/Next");
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 5;
+    set_text_mul_color(RGBA(255, 255, 255, 0));
+    set_text_scale(1.0f, 1.0f);
+    set_text_mul_color(RGBA(255, 255, 255, 0));
+    set_text_pos(446.0f + (160.0f * lbl_802F2028), 440.0f);
+    u_draw_text("p/LEVER/");
+    temp_r25_2 = 255.0 * (1.0 - fabs(mathutil_sin(powerOnTimer << 9)));
+    set_text_mul_color(RGBA(0, 255, 255, 0));
+    set_text_add_color(RGBA(temp_r25_2, temp_r25_2, temp_r25_2, 0));
+    set_text_pos(422.0f + (160.0f * lbl_802F2028), 440.0f);
+    u_draw_text("p/SANNKAKU_L/a/  p/SANNKAKU_R/");
+    set_text_mul_color(0U);
+    set_text_add_color(0U);
+    set_text_pos(48.0f + (30.0f + (422.0f + (160.0f * lbl_802F2028))), 440.0f);
+    set_text_scale(0.8f, 1.0f);
+    u_draw_text("a/Movement");
+    set_text_scale(1.0f, 1.0f);
+    set_text_mul_color(0xFFFFFFU);
+    spC.sprno = 0xC28;
+    spC.x = 320.0f;
+    spC.y = 254.0f;
+    spC.zm_x = lbl_802F2034;
+    spC.zm_y = lbl_802F2034;
+    spC.ang = 65535.0 * (1.0 - lbl_802F2034);
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 0xA;
+    nlSprPut(&spC);
+    spC.zm_x = 1.0f;
+    spC.zm_y = 1.0f;
+    spC.ang = 0;
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 5;
+    temp_r25_3 = arg0->fontId;
+    spC.zm_x = 1.0f;
+    spC.zm_y = lbl_802F2038;
+    spC.z = arg0->unk4C - 0.001;
+    arg0->fontId = 0xB1;
+    set_text_font(arg0->fontId);
+    set_text_opacity(lbl_802F203C);
+    func_80071B50(0x220000);
+    func_80082C6C(0, arg0, &spC);
+    spC.zm_x = 1.0f;
+    spC.zm_y = lbl_802F2040;
+    spC.z = arg0->unk4C - 0.001;
+    set_text_opacity(lbl_802F2044);
+    func_80082C6C(1, arg0, &spC);
+    spC.z = arg0->unk4C;
+    spC.zm_x = 1.0f;
+    spC.zm_y = 1.0f;
+    spC.ang = 0;
+    spC.attr = (arg0->flags & 0xFFFFFFF0) | 5;
+    arg0->fontId = temp_r25_3;
+    set_text_font(arg0->fontId);
+    set_text_mul_color(0xFFFFFFU);
+    func_80071B1C(arg0->unk4C);
+    set_text_scale(1.0f, 1.0f);
+    set_text_opacity(1.0f);
+    func_80071B50(0x20000);
+    set_text_scale(0.68f, 0.7f);
+    set_text_mul_color(0xFFFFC0U);
+    func_80071B1C(arg0->unk4C - 0.002);
+
+    var_r27 = 0;
+    var_r29 = 4;
+    var_r31 = 4;
+    var_r9 = 0;
+    var_r30 = (modeCtrl.gameType == 0 || modeCtrl.gameType == 8) ? 1 : 0;
+    switch (modeCtrl.gameType)
+    {
+    case 3:
+        if (gameMode == 1)
+        {
+            if (lbl_802F2024 > 0 && lbl_802F2024 < 4)
+                var_r9 = lbl_802F2024 - 1;
+        }
+        else
+            var_r9 = lbl_801EED88.unkC;
+        break;
+    case 6:
+        if (gameMode == 1)
+        {
+            if (lbl_802F2024 > 1)
+                var_r9 = lbl_802F2024 - 2;
+        }
+        else
+            var_r9 = lbl_802F1BF4.unk4;
+        break;
+    case 7:
+        if (gameMode == 1)
+        {
+            if (lbl_802F2024 > 0)
+                var_r9 = lbl_802F2024 - 1;
+            var_r31 = 5;
+        }
+        else
+        {
+            var_r31 = 5;
+            var_r9 = lbl_802F1BF0;
+        }
+        if (var_r9 == 0)
+        {
+            var_r29 = 5;
+            var_r30 = 2;
+        }
+        break;
+    case 8:
+        if (gameMode == 1)
+        {
+            if (lbl_802F2024 > 1)
+                var_r9 = lbl_802F2024 - 2;
+        }
+        else
+            var_r9 = lbl_802F1BE8.unk0;
+        break;
+    }
+    func_80083138(0, arg0, &spC, var_r29, var_r31, var_r30, var_r9);
+    switch (modeCtrl.gameType)
+    {
+    case 3:
+        var_r27 = 1;
+        var_r29 = 6;
+        var_r31 = 6;
+        break;
+    case 4:
+        var_r27 = 2;
+        var_r29 = 4;
+        var_r31 = 4;
+        break;
+    case 5:
+        var_r27 = 3;
+        var_r29 = 6;
+        var_r31 = 6;
+        break;
+    }
+    if (var_r27 != 0)
+        func_80083138(var_r27, arg0, &spC, var_r29, var_r31, var_r30, 0);
+    switch (modeCtrl.gameType)
+    {
+    case 5:
+        var_r27 = 4;
+        var_r29 = 5;
+        var_r31 = 5;
+        break;
+    }
+    if (var_r27 == 4)
+        func_80083138(var_r27, arg0, &spC, var_r29, var_r31, var_r30, 0);
+}
+
+void func_800841E8(struct Sprite *arg0)
+{
+    OSHeapHandle var_r30;
+
+    if (modeCtrl.gameType == 5 || modeCtrl.gameType == 8)
+        var_r30 = OSSetCurrentHeap(charaHeap);
+    call_bitmap_free_group(0xC);
+    if (modeCtrl.gameType == 5 || modeCtrl.gameType == 8)
+        OSSetCurrentHeap(var_r30);
 }
