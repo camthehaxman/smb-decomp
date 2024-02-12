@@ -144,7 +144,7 @@ SOURCES := \
 	src/recplay_2.c \
 	src/effect.c \
 	src/background.c \
-	asm/bg_old_bluesky.s \
+	src/bg_old_bluesky.c \
 	src/bg_old_cave.c \
 	asm/bg_old_extramaster.s \
 	src/bg_old_night.c \
