@@ -333,7 +333,7 @@ static void bg_water_envmap_ball(struct GCMMatState_Unit *arg0)
     float sp14[2][3];
 
     GXSetBlendMode_cached(1, 1, 1, 0);
-    func_8009AC8C();
+    fog_gx_set();
     GXLoadTexObj_cached(work->lightmapStageTex, sp2C.u_texMapId);
     sp14[0][0] = 0.6f;
     sp14[0][1] = 0.0f;

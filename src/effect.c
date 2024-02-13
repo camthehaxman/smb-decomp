@@ -1793,7 +1793,7 @@ static void effect_raindrop_ripple_draw(struct Effect *effect)
     mathutil_mtxA_rotate_x(-0x4000);
     mathutil_mtxA_scale_xyz(effect->scale.x, effect->scale.x, effect->scale.x);
     nlSetScaleFactor(effect->scale.x);
-    nlObjPutSetFadeColorBase(s_bgLightInfo.unk14 * var_f31, s_bgLightInfo.unk18 * var_f31, s_bgLightInfo.unk1C * var_f31);
+    nlObjPutSetFadeColorBase(g_bgLightInfo.unk14 * var_f31, g_bgLightInfo.unk18 * var_f31, g_bgLightInfo.unk1C * var_f31);
     nl2ngc_draw_model_sort_translucent_alt2((struct NlModel *)effect->model);
     fade_color_base_default();
 }

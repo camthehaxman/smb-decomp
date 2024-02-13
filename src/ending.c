@@ -2478,8 +2478,8 @@ static void ending_chara_draw(void)
     Vec sp14;
     Vec sp8;
 
-    mathutil_mtxA_from_rotate_y(s_bgLightInfo.infLightRotY);
-    mathutil_mtxA_rotate_x(s_bgLightInfo.infLightRotX);
+    mathutil_mtxA_from_rotate_y(g_bgLightInfo.infLightRotY);
+    mathutil_mtxA_rotate_x(g_bgLightInfo.infLightRotX);
     mathutil_mtxA_tf_vec_xyz(&sp2C, 0.0f, 0.0f, -1.0f);
 
     chara = &endingInfo.work->characters[0];

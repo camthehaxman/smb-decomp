@@ -21,7 +21,7 @@ void u_init_bg_fog_params(void);
 void fog_main(void);
 void u_gxutil_set_fog_enabled(s8);
 void u_gxutil_fog_something_2(void);
-void func_8009AC8C(void);
+void fog_gx_set(void);
 void gxutil_set_line_width(int);
 void gxutil_set_line_blend_params(GXBlendMode blendMode, GXBlendFactor srcFactor, GXBlendFactor dstFactor, GXLogicOp blendLogicOp);
 void gxutil_draw_line(Vec *pos1, Vec *pos2, GXColor *c);

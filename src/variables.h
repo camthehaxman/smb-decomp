@@ -511,7 +511,7 @@ extern struct Struct801EEDA8 lbl_801EEDA8;
 // extern ? s_u_lightPool;
 // extern ? lbl_801F0000;
 // extern ? lbl_801F003C;
-extern struct BgLightInfo s_bgLightInfo;
+extern struct BgLightInfo g_bgLightInfo;
 // extern ? s_lightGroups;
 // extern ? lbl_801F39FC;
 // extern ? lbl_801F3A08;

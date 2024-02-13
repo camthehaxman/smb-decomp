@@ -232,7 +232,7 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     GXSetZMode_cached(0, GX_ALWAYS, 0);
     GXSetCullMode_cached(GX_CULL_BACK);
-    func_8009AC8C();
+    fog_gx_set();
     temp_f31 = 3.0f / width;
     temp_f30 = 3.0f / height;
     mathutil_mtxA_from_identity();
@@ -340,7 +340,7 @@ void rend_efc_motion_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     GXSetZMode_cached(0, GX_ALWAYS, 0);
     GXSetCullMode_cached(GX_CULL_BACK);
-    func_8009AC8C();
+    fog_gx_set();
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, 0U);
@@ -531,7 +531,7 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     GXSetZMode_cached(0, GX_ALWAYS, 0);
     GXSetCullMode_cached(GX_CULL_BACK);
-    func_8009AC8C();
+    fog_gx_set();
     temp_f30 = var_f31 / width;
     temp_f31 = var_f31 / height;
     mathutil_mtxA_from_identity();
@@ -702,7 +702,7 @@ void rend_efc_kaleidoscope_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     GXSetZMode_cached(0, GX_ALWAYS, 0);
     GXSetCullMode_cached(GX_CULL_BACK);
-    func_8009AC8C();
+    fog_gx_set();
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, 0);

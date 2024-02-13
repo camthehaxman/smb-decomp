@@ -20,66 +20,6 @@
 #include "stobj.h"
 #include "stage.h"
 
-struct Struct800993A8_sub
-{
-    s32 unk0;
-    Vec unk4;
-    Vec unk10;
-    struct GMAModel *unk1C;
-    float unk20;
-    float unk24;
-    s16 unk28;
-    s16 unk2A;
-    float unk2C;
-};  // size = 0x30
-
-struct Struct800993A8
-{
-    GXTexObj unk0;
-    u32 unk20;
-    void *unk24;
-    u16 unk28;
-    u16 unk2A;
-    GXTexObj unk2C;
-    void *unk4C;
-    Mtx unk50;
-    u8 filler80[4];
-    u8 unk84;
-    u8 filler85[0x88-0x85];
-    float unk88;
-    s32 unk8C;
-    struct Struct800993A8_sub unk90[256];
-};
-
-struct BGPilotWork_child
-{
-    u8 filler0[0xC];
-    Vec unkC;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    Vec unk20;
-};
-
-struct BGPilotWork
-{
-    u8 filler0[0x14];
-    struct BGPilotWork_child *unk14;
-    u8 filler18[0x20-0x18];
-    GXTexObj *unk20;
-    struct GMAModel *unk24;
-    u8 filler28[4];
-    s32 unk2C;
-    struct GMAModel *unk30[0x2C];
-    void *unkE0;
-    u8 fillerE4[0x10C-0xE4];
-    Mtx unk10C;
-    u8 filler13C[0x164-0x13C];
-    Mtx unk164;
-    u8 filler194[0x1BC-0x194];
-    Mtx unk1BC;
-};
-
 void func_800993A8(struct RenderEffect *rendEfc);
 void func_800994A8(struct RenderEffect *rendEfc);
 void func_80099518(struct RenderEffect *rendEfc);
@@ -244,7 +184,7 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
     Vec sp11C;
     struct Struct800993A8 *temp_r30;
     struct Camera *camera;
-    struct BGPilotWork_child *temp_r28;
+    struct StageBgObject *temp_r28;
     int r31;
 
     set_current_camera(modeCtrl.currPlayer);
@@ -255,11 +195,11 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
 
     temp_r28 = ((struct BGPilotWork *)backgroundInfo.work)->unk14;
 
-    mathutil_mtxA_from_translate(&temp_r28->unkC);
-    mathutil_mtxA_rotate_z(temp_r28->unk1C);
-    mathutil_mtxA_rotate_y(temp_r28->unk1A);
-    mathutil_mtxA_rotate_x(temp_r28->unk18);
-    mathutil_mtxA_scale(&temp_r28->unk20);
+    mathutil_mtxA_from_translate(&temp_r28->pos);
+    mathutil_mtxA_rotate_z(temp_r28->rotZ);
+    mathutil_mtxA_rotate_y(temp_r28->rotY);
+    mathutil_mtxA_rotate_x(temp_r28->rotX);
+    mathutil_mtxA_scale(&temp_r28->scale);
     mathutil_mtxA_to_mtx(temp_r30->unk50);
     mathutil_mtxA_mult_left(mathutilData->mtxB);
     mathutil_mtxA_rigid_inv_tf_tl(&sp11C);
@@ -450,7 +390,7 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     temp_r31 = (struct BGPilotWork *)backgroundInfo.work;
     sp10 = arg0->unkC;
     GXLoadTexObj_cached(temp_r31->unk20, sp10.u_texMapId);
-    GXLoadTexMtxImm(temp_r31->unk10C, sp10.unk8, GX_MTX2x4);
+    GXLoadTexMtxImm(temp_r31->unkE4[0].unk28, sp10.unk8, GX_MTX2x4);
     GXSetTexCoordGen(sp10.unk4, GX_TG_MTX2x4, GX_TG_POS, sp10.unk8);
     GXSetTevSwapMode_cached(sp10.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.unk0, sp10.unk4, sp10.u_texMapId, GX_COLOR_NULL);
@@ -462,7 +402,7 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     sp10.unk0 += 1;
     sp10.unk4 += 1;
     sp10.unk8 += 3;
-    GXLoadTexMtxImm(temp_r31->unk164, sp10.unk8, GX_MTX2x4);
+    GXLoadTexMtxImm(temp_r31->unkE4[1].unk28, sp10.unk8, GX_MTX2x4);
     GXSetTexCoordGen(sp10.unk4, GX_TG_MTX2x4, GX_TG_POS, sp10.unk8);
     GXSetTevSwapMode_cached(sp10.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.unk0, sp10.unk4, sp10.u_texMapId, GX_COLOR_NULL);
@@ -474,7 +414,7 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     sp10.unk0 += 1;
     sp10.unk4 += 1;
     sp10.unk8 += 3;
-    GXLoadTexMtxImm(temp_r31->unk1BC, sp10.unk8, GX_MTX2x4);
+    GXLoadTexMtxImm(temp_r31->unkE4[2].unk28, sp10.unk8, GX_MTX2x4);
     GXSetTexCoordGen(sp10.unk4, GX_TG_MTX2x4, GX_TG_POS, sp10.unk8);
     GXSetTevSwapMode_cached(sp10.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.unk0, sp10.unk4, sp10.u_texMapId, GX_COLOR_NULL);

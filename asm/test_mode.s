@@ -2484,7 +2484,7 @@ lbl_000023AC:
 /* 000023E0 80650000 */ lwz r3, 0(r5)
 /* 000023E4 98030008 */ stb r0, 8(r3)
 lbl_000023E8:
-/* 000023E8 4BFFDD75 */ bl func_8009AC8C
+/* 000023E8 4BFFDD75 */ bl fog_gx_set
 /* 000023EC 38600200 */ li r3, 0x200
 /* 000023F0 4BFFDD6D */ bl gxutil_set_vtx_attrs
 /* 000023F4 38600001 */ li r3, 1
@@ -10798,7 +10798,7 @@ lbl_00009B24:
 /* 00009B50 80640000 */ lwz r3, 0(r4)
 /* 00009B54 98030008 */ stb r0, 8(r3)
 lbl_00009B58:
-/* 00009B58 4BFF6605 */ bl func_8009AC8C
+/* 00009B58 4BFF6605 */ bl fog_gx_set
 /* 00009B5C 38600200 */ li r3, 0x200
 /* 00009B60 4BFF65FD */ bl gxutil_set_vtx_attrs
 /* 00009B64 38600006 */ li r3, 6
@@ -11180,7 +11180,7 @@ lbl_0000A100:
 /* 0000A130 80640000 */ lwz r3, 0(r4)
 /* 0000A134 98030008 */ stb r0, 8(r3)
 lbl_0000A138:
-/* 0000A138 4BFF6025 */ bl func_8009AC8C
+/* 0000A138 4BFF6025 */ bl fog_gx_set
 /* 0000A13C 38602200 */ li r3, 0x2200
 /* 0000A140 4BFF601D */ bl gxutil_set_vtx_attrs
 /* 0000A144 38600006 */ li r3, 6
@@ -11872,7 +11872,7 @@ lbl_0000AB7C:
 /* 0000ABA8 80640000 */ lwz r3, 0(r4)
 /* 0000ABAC 98030008 */ stb r0, 8(r3)
 lbl_0000ABB0:
-/* 0000ABB0 4BFF55AD */ bl func_8009AC8C
+/* 0000ABB0 4BFF55AD */ bl fog_gx_set
 /* 0000ABB4 3C600000 */ lis r3, mathutilData@ha
 /* 0000ABB8 3BC30000 */ addi r30, r3, mathutilData@l
 /* 0000ABBC 3B600014 */ li r27, 0x14
@@ -12172,7 +12172,7 @@ lbl_0000AFFC:
 /* 0000B02C 80640000 */ lwz r3, 0(r4)
 /* 0000B030 98030008 */ stb r0, 8(r3)
 lbl_0000B034:
-/* 0000B034 4BFF5129 */ bl func_8009AC8C
+/* 0000B034 4BFF5129 */ bl fog_gx_set
 /* 0000B038 480001D8 */ b lbl_0000B210
 lbl_0000B03C:
 /* 0000B03C 4BFF5121 */ bl mathutil_mtxA_from_mtxB
@@ -12293,7 +12293,7 @@ lbl_0000B1D8:
 /* 0000B204 80640000 */ lwz r3, 0(r4)
 /* 0000B208 98030008 */ stb r0, 8(r3)
 lbl_0000B20C:
-/* 0000B20C 4BFF4F51 */ bl func_8009AC8C
+/* 0000B20C 4BFF4F51 */ bl fog_gx_set
 lbl_0000B210:
 /* 0000B210 4BFF4F4D */ bl mathutil_mtxA_from_identity
 /* 0000B214 7FA3EB78 */ mr r3, r29
@@ -13260,7 +13260,7 @@ lbl_0000C068:
 /* 0000C094 80640000 */ lwz r3, 0(r4)
 /* 0000C098 98030008 */ stb r0, 8(r3)
 lbl_0000C09C:
-/* 0000C09C 4BFF40C1 */ bl func_8009AC8C
+/* 0000C09C 4BFF40C1 */ bl fog_gx_set
 /* 0000C0A0 8001000C */ lwz r0, 0xc(r1)
 /* 0000C0A4 38210008 */ addi r1, r1, 8
 /* 0000C0A8 7C0803A6 */ mtlr r0
@@ -13778,7 +13778,7 @@ lbl_0000C84C:
 /* 0000C880 80650000 */ lwz r3, 0(r5)
 /* 0000C884 98030008 */ stb r0, 8(r3)
 lbl_0000C888:
-/* 0000C888 4BFF38D5 */ bl func_8009AC8C
+/* 0000C888 4BFF38D5 */ bl fog_gx_set
 /* 0000C88C 38602200 */ li r3, 0x2200
 /* 0000C890 4BFF38CD */ bl gxutil_set_vtx_attrs
 /* 0000C894 38600006 */ li r3, 6
@@ -14229,7 +14229,7 @@ lbl_0000CF2C:
 /* 0000CF60 80650000 */ lwz r3, 0(r5)
 /* 0000CF64 98030008 */ stb r0, 8(r3)
 lbl_0000CF68:
-/* 0000CF68 4BFF31F5 */ bl func_8009AC8C
+/* 0000CF68 4BFF31F5 */ bl fog_gx_set
 /* 0000CF6C 38602200 */ li r3, 0x2200
 /* 0000CF70 4BFF31ED */ bl gxutil_set_vtx_attrs
 /* 0000CF74 38600006 */ li r3, 6

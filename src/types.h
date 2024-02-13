@@ -956,6 +956,37 @@ struct Struct802099E8
     s32 unk8;
 };
 
+struct Struct800993A8_sub
+{
+    s32 unk0;
+    Vec unk4;
+    Vec unk10;
+    struct GMAModel *unk1C;
+    float unk20;
+    float unk24;
+    s16 unk28;
+    s16 unk2A;
+    float unk2C;
+};  // size = 0x30
+
+struct Struct800993A8
+{
+    GXTexObj unk0;
+    u32 unk20;
+    void *unk24;
+    u16 unk28;
+    u16 unk2A;
+    GXTexObj unk2C;
+    void *unk4C;
+    Mtx unk50;
+    u8 filler80[4];
+    u8 unk84;
+    u8 filler85[0x88-0x85];
+    float unk88;
+    s32 unk8C;
+    struct Struct800993A8_sub unk90[256];
+};
+
 struct Effect;
 struct ScoreRecord;
 

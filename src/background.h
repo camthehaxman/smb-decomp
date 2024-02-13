@@ -363,6 +363,39 @@ struct BGMasterWork
     Mtx unkB60;
 };
 
+/* Pilot Background */
+
+struct BGPilotWork_sub
+{
+    Vec unk0;
+    Vec unkC;
+    Vec unk18;
+    s16 unk24;
+    Mtx unk28;
+};
+
+struct BGPilotWork
+{
+    s32 unk0;
+    struct GMAModel *unk4;
+    struct GMAModel *unk8;
+    struct GMAModel *unkC;
+    struct GMAModel *unk10;
+    struct StageBgObject *unk14;
+    struct GMAModel *unk18;
+    GXTexObj *unk1C;
+    GXTexObj *unk20;
+    struct GMAModel *unk24;
+    struct GMAModel *unk28;
+    s32 unk2C;
+    struct GMAModel *unk30[8];
+    Mtx unk50;
+    Mtx unk80;
+    Mtx unkB0;
+    struct Struct800993A8 *unkE0;
+    struct BGPilotWork_sub unkE4[3];
+};
+
 typedef int (*BgModelFindProc)(int, struct GMAModelEntry *);
 typedef int (*BgObjFindProc)(int, struct StageBgObject *);
 

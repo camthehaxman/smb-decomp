@@ -438,7 +438,7 @@ static void func_8005C55C(int arg0, struct RenderEffect *arg1)
     GXSetNumIndStages(1U);
     GXSetBlendMode_cached(1, 4, 5, 0);
     GXSetZMode_cached(0U, GX_LEQUAL, 0U);
-    func_8009AC8C();
+    fog_gx_set();
     GXSetCullMode_cached(2);
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();

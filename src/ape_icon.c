@@ -775,7 +775,9 @@ void monkey_sprite_draw(struct Sprite *sprite)
         set_text_pos(36.0f + params.x, 8.0f + params.y);
         func_80072AC0("X%d", ball->lives - 1);
 
+#ifndef NONMATCHING
         tbox == 0; i == 0;  // needed to match
+#endif
     }
 }
 
