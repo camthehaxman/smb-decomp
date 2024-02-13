@@ -206,7 +206,7 @@ extern float unknownTrigTable[];
 // extern ? coloredBallPartModelIDs;
 // extern ? ballShadowColors;
 // extern ? ballFuncs;
-// extern ? lbl_801B7CF8;
+extern struct Color3f lbl_801B7CF8[];
 // extern ? lbl_801B7EE8;
 // extern ? lbl_801B7F88;
 // extern ? tutorialStickInputs;

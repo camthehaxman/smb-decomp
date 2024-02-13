@@ -18,21 +18,16 @@
 #include "sprite.h"
 #include "thread.h"
 
-struct UnkMiniCommendStruct  // maybe GXColor?
-{
-	s8 unk0;
-	s8 unk1;
-	s8 unk2;
-	s8 unk3;
-};
-
-void func_8009BED8(void);
-void func_8009C5E4(s8 *arg0, s8 *arg1);
-void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2);
-void func_8009CC34(void);
-void func_8009CD5C(void);
-u32 func_8009D5F4(void);
-void func_8009DB40(Mtx arg0);
+static void func_8009BED8(void);
+static void lbl_8009C5E0(struct Sprite *);
+static void func_8009C5E4(s8 *arg0, s8 *arg1);
+static void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2);
+static void func_8009CC34(void);
+static void func_8009CD5C(void);
+static void func_8009D3AC(struct Ape *, int);
+static u32 func_8009D5F4(void);
+static int func_8009D794(void);
+static void func_8009DB40(Mtx arg0);
 
 void submode_mini_commend_init_func(void)
 {
@@ -239,7 +234,7 @@ void submode_mini_commend_main_func(void)
 	func_8009DB40(mathutilData->mtxA);
 }
 
-void func_8009BED8(void)
+static void func_8009BED8(void)
 {
     func_8009CC34();
 }
@@ -255,7 +250,7 @@ void func_8009BEF8(void)
         effect_draw();
 }
 
-s8 lbl_801D3F5C[] =
+static s8 lbl_801D3F5C[] =
 {
     0x30, 0x1E, 0x21, 0x20,
     0x1C, 0x25, 0x2C, 0x2B,
@@ -346,7 +341,7 @@ static struct Struct801D404C_child lbl_801D3FF8[] =
 	{ 0x82, 0x1EE },
 };
 
-struct Struct801D404C lbl_801D404C[] =
+static struct Struct801D404C lbl_801D404C[] =
 {
     { "CONGRATULATIONS:", 1.65, 0.25, 0, lbl_802F1370, 1 },
     { "CONGRATULATIONS:", 1.90, 0.22, 0, lbl_802F1368, 1 },
@@ -361,6 +356,50 @@ struct Struct801D404C lbl_801D404C[] =
     { "RANK IN",          1.43, 0.32, 1, lbl_801D3FF8, 2 },
     { "",                 0.00, 0.00, 0, lbl_802F1368, 1 },
     { "YOU WIN",          1.43, 0.32, 1, lbl_801D3F88, 2 },
+};
+
+u32 mini_commend_unused[] =
+{
+    0x00000D00,
+    0,
+    0,
+    0x3F800000,
+    0x3F000000,
+    0x3F800000,
+    0,
+    0,
+    0x3F000000,
+    0x3F800000,
+    0,
+    0x3F800000,
+    0xFFFFFFFF,
+    0x00000005,
+    0xFFFFFFFF,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0x00000D00,
+    0x44200000,
+    0,
+    0x3F800000,
+    0x3F000000,
+    0x3F800000,
+    0x3F000000,
+    0,
+    0x3F800000,
+    0x3F800000,
+    0,
+    0x3F800000,
+    0xFFFFFFFF,
+    0x00000007,
+    0xFFFFFFFF,
+    0,
+    0,
+    0,
+    0,
+    0,
 };
 
 struct
@@ -380,9 +419,13 @@ struct
 	u8 unk74;
 	s8 unk75;
 	s32 unk78;
+    u8 unused[0x10];
 } lbl_802BA210;
 
-void func_8009BF74(int arg0)
+static const s8 lbl_802F59D4[] = { 84, 85, 86, 87 };
+static const s8 lbl_802F59D8[] = { 0, 1, 2, 9, 10 };
+
+static void func_8009BF74(int arg0)
 {
 	Mtx sp24;
     Vec sp18;
@@ -435,7 +478,7 @@ void func_8009BF74(int arg0)
     }
 }
 
-void func_8009C178(u8 *arg0, s8 *arg1, s8 *arg2, int arg3)
+static void func_8009C178(s8 *arg0, s8 *arg1, s8 *arg2, int arg3)
 {
 	int var_r8 = 0;
 	int var_r9 = 0;
@@ -487,7 +530,7 @@ void func_8009C178(u8 *arg0, s8 *arg1, s8 *arg2, int arg3)
     lbl_802BA210.unk75 = var_r0;
 }
 
-void func_8009C2A4(s8 *status, struct Sprite *sprite)
+static void func_8009C2A4(s8 *status, struct Sprite *sprite)
 {
     struct Effect effect;
     Vec sp34;
@@ -587,12 +630,6 @@ void func_8009C2A4(s8 *status, struct Sprite *sprite)
     }
 }
 
-void func_8009D3AC(struct Ape *, int);
-void lbl_8009C5E0(struct Sprite *);
-void func_8008BA2C(struct Ape *, int, u8);
-
-u8 datafiller[0xA0] = {0};
-
 static void create_some_sprite(void)
 {
     struct Sprite *temp_r3_5 = create_sprite();
@@ -605,9 +642,9 @@ static void create_some_sprite(void)
     }
 }
 
-void lbl_8009C5E0(struct Sprite *sprite) {}
+static void lbl_8009C5E0(struct Sprite *sprite) {}
 
-void func_8009C5E4(s8 *arg0, s8 *arg1)
+static void func_8009C5E4(s8 *arg0, s8 *arg1)
 {
 	s8 sp1C[4];
     int var_r22;
@@ -700,7 +737,7 @@ void func_8009C5E4(s8 *arg0, s8 *arg1)
         if (arg1[sp1C[0]] < arg1[sp1C[1]])
             arg1[sp1C[1]] = 3;
     }
-    func_8009C178((void *)arg0, (void *)arg1, (void *)&sp1C, var_r22);
+    func_8009C178(arg0, arg1, sp1C, var_r22);
     if (var_r22 > 2 && !(lbl_802BA210.unk0 & 6))
     {
         u8 temp = sp1C[0];
@@ -736,7 +773,7 @@ void func_8009C5E4(s8 *arg0, s8 *arg1)
             mathutil_mtxA_rotate_y(-0x4000);
             mathutil_mtxA_to_quat(&temp_r3_4->unk60);
             func_8009D7FC(var_r22, &temp_r3_4->unk30);
-            func_8008BA2C(temp_r3_4, 0xA, temp_r3_4->unk74);
+            func_8008BA2C(temp_r3_4, 0xA, (u8)temp_r3_4->unk74);
             lbl_802BA210.unk4[var_r22] = temp_r3_4;
         }
     }
@@ -747,9 +784,9 @@ void func_8009C5E4(s8 *arg0, s8 *arg1)
     lbl_802BA210.unk0 |= 1;
 }
 
-extern const float lbl_80171B60[];
+static const float lbl_80171B60[] = { 1.0f, 0.65f, 0.4f, 0.0f };
 
-void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
+static void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
 {
     struct Ape *ape;
     int i;
@@ -768,7 +805,7 @@ void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
         ape->unk30.x = -0.5f;
         ape->unk30.y = lbl_80171B60[0];
         ape->unk30.z = 1.0f;
-        func_8008BA2C(ape, 0xA, ape->unk74);
+        func_8008BA2C(ape, 0xA, (u8)ape->unk74);
         lbl_802BA210.unk6C = (void *)ape;
         lbl_802BA210.unk74 = arg2;
         lbl_802BA210.unk0 |= 8;
@@ -781,7 +818,7 @@ void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
     }
 }
 
-void func_8009CC34(void)
+static void func_8009CC34(void)
 {
     int i;
 
@@ -830,11 +867,7 @@ void func_8009CC34(void)
     }
 }
 
-extern const s8 lbl_802F59D8[8];
-extern struct Color3f lbl_801B7CF8[];
-extern s8 lbl_802F59D4[8];
-
-void func_8009CD5C(void)
+static void func_8009CD5C(void)
 {
     int i;
     int var_r4;
@@ -1009,7 +1042,7 @@ void func_8009CD5C(void)
 
 #define SOME_MACRO(a, b) (((a) << 18) & 0x1FC0000) | (b) | (((a) << 25) & 0xFE000000)
 
-void func_8009D3AC(struct Ape *ape, int status)
+static void func_8009D3AC(struct Ape *ape, int status)
 {
     s32 var_r0;
     u32 temp_r0;
@@ -1085,7 +1118,7 @@ int func_8009D5D8(void)
     return (lbl_802BA210.unk0 & 1) != 0;
 }
 
-u32 func_8009D5F4(void)
+static u32 func_8009D5F4(void)
 {
     int i;
     u32 var_r3;
@@ -1113,7 +1146,7 @@ u32 func_8009D5F4(void)
     return var_r3;
 }
 
-int func_8009D794(void)
+static int func_8009D794(void)
 {
     if (cameraInfo->timerCurr < lbl_802BA210.unk24 * 0x110)
         return 0;
@@ -1140,6 +1173,7 @@ void func_8009D7FC(int arg0, Vec *arg1)
     arg1->z = 0.0f;
 }
 
+#pragma force_active on
 void func_8009D8A4(int arg0, Vec *arg1)
 {
     int i;
@@ -1156,6 +1190,7 @@ void func_8009D8A4(int arg0, Vec *arg1)
         }
     }
 }
+#pragma force_active reset
 
 void func_8009D98C(Vec *arg0)
 {
@@ -1193,7 +1228,7 @@ void func_8009D98C(Vec *arg0)
     arg0->z = 0.5 * (vec1.z + vec2.z);
 }
 
-void func_8009DB40(Mtx arg0)
+static void func_8009DB40(Mtx arg0)
 {
     mathutil_mtx_copy(arg0, lbl_802BA210.unk3C);
 }
@@ -1203,14 +1238,16 @@ void func_8009DB6C(Mtx arg0)
     mathutil_mtx_copy(lbl_802BA210.unk3C, arg0);
 }
 
+#pragma force_active on
 void func_8009DB9C(int arg0)
 {
     lbl_802BA210.unk75 = arg0;
 }
+#pragma force_active reset
 
 int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
 {
-    int var_r12;
+    int i;
     Vec vec1;
     int count;
 
@@ -1231,9 +1268,9 @@ int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
     }
 
     count = lbl_802BA210.unk24;
-    for (var_r12 = 0; var_r12 < count; var_r12++)
+    for (i = 0; i < count; i++)
     {
-        func_8009D7FC(var_r12, &vec1);
+        func_8009D7FC(i, &vec1);
         if (!(arg0->x < vec1.x - 0.5)
          && !(arg0->z < vec1.z - 0.5)
          && !(arg0->x > vec1.x + 0.5)
@@ -1258,6 +1295,7 @@ int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
     return (arg1->unk0 & 1) != 0;
 }
 
+#pragma force_active on
 void func_8009DDC4(int arg0)
 {
     switch (arg0)       
@@ -1276,3 +1314,4 @@ void func_8009DDC4(int arg0)
         return;
     }
 }
+#pragma force_active reset
