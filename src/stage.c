@@ -689,13 +689,6 @@ void load_stage_files(int stageId)
     }
 }
 
-struct Struct802099E8
-{
-    u32 *unk0;
-    void *unk4;
-    s32 unk8;
-};
-
 struct Struct80209D48 // maybe AnimGroupModel?
 {
     u32 unk0;

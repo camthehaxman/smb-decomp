@@ -146,7 +146,7 @@ SOURCES := \
 	src/background.c \
 	src/bg_old_bluesky.c \
 	src/bg_old_cave.c \
-	asm/bg_old_extramaster.s \
+	src/bg_old_extramaster.c \
 	src/bg_old_night.c \
 	src/bg_old_space.c \
 	src/bg_old_sunset.c \

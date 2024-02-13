@@ -949,6 +949,13 @@ struct Struct80094870
     u16 unk8;
 };
 
+struct Struct802099E8
+{
+    u32 *unk0;
+    void *unk4;
+    s32 unk8;
+};
+
 struct Effect;
 struct ScoreRecord;
 
