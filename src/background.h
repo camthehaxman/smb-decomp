@@ -49,21 +49,22 @@ enum
 struct BackgroundInfo  // size = 0xA8
 {
     s16 bgId;
+    s16 unk2;
     float animTimer; // Current animation time in frames
     u32 unk8;
     GXColor backdropColor;
-    u8 filler10[0x14-0x10];
+    s32 unk10;
     Vec unk14;
     Vec unk20;
     Vec unk2C;
     Vec unk38;
-    u8 filler44[4];
+    float unk44;
     Mtx unk48;
     int (*unk78)();
     int (*unk7C)();
     struct NlModel *unk80;
     float unk84;
-    u8 filler88[4];
+    float unk88;
     /*0x9C*/ EnvMapFunc stageEnvMapFunc;
     /*0x90*/ EnvMapFunc bgEnvMapFunc;
     /*0x94*/ EnvMapFunc ballEnvMapFunc;

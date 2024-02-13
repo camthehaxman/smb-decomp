@@ -30,84 +30,84 @@ void bg_old_bluesky_init(void)
     mathutil_mtxA_scale_xyz(0.33333334f, 0.33333334f, 0.33333334f);
     mathutil_mtxA_to_mtx(backgroundInfo.unk48);
     if (gameMode == 1)
-		return;
-	temp_f28 = 0.5 * g_bgNlObj->models[1]->boundSphereRadius;
-	sp8.x = 0.0f;
-	sp8.y = 0.0f;
-	sp8.z = 0.75 * g_bgNlObj->models[1]->boundSphereRadius;
-	mathutil_mtxA_from_identity();
-	mathutil_mtxA_rotate_y(SOME_MACRO(-0x6000));
-	mathutil_mtxA_tf_vec(&sp8, &sp8);
-	memset(&effect, 0, sizeof(effect));
-	effect.type = 3;
-	var_r31 = 0x15000;
-	effect.unk88.y = 12.5f;
-	effect.pos.y = decodedStageLzPtr->startPos->pos.y + effect.unk88.y;
-	for (i = 16, var_r30 = 0x150; i > 0; i--)
-	{
-		if (gameSubmode == SMD_ADV_DEMO_INIT || gameSubmode == SMD_ADV_DEMO_MAIN)
-		{
-			effect.rotY = (u16)var_r31;
-			effect.unk54 = (u8)var_r30 + 0x30;
-			if (i & 1)
-				effect.unk54 = -effect.unk54;
-			effect.pos.x = sp8.x + (temp_f28 * ((i / 16) - 0.5));
-			effect.pos.z = sp8.z + (temp_f28 * ((i / 16) - 0.5));
-		}
-		else
-		{
-			effect.rotY = rand() & 0x7FFF;
-			effect.unk54 = (rand() & 0xFF) + 0x30;
-			if (rand() & 1)
-				effect.unk54 = -effect.unk54;
-			effect.pos.x = sp8.x + (temp_f28 * (RAND_FLOAT() - 0.5));
-			effect.pos.z = sp8.z + (temp_f28 * (RAND_FLOAT() - 0.5));
-		}
-		spawn_effect(&effect);
-		var_r31 -= 0x1500;
-		var_r30 -= 0x15;
-		effect.pos.y += 5.0;
-		effect.unk88.y += 5.0;
-	}
-	memset(&effect, 0, sizeof(effect));
-	effect.type = 4;
-	effect.unkA0 = (SOME_MACRO(0) & 0xFFF) - 0x7FF;
-	effect.unkA2 = (SOME_MACRO(0xABC) & 0xFFF) - 0x7FF;
-	effect.unkA4 = (SOME_MACRO(0x1578) & 0xFFF) - 0x7FF;
-	effect.unk54 = SOME_MACRO(0x2034) & 0xF;
-	effect.model = (void *)g_bgNlObj->models[1];
-	spawn_effect(&effect);
-	effect.unkA0 = (SOME_MACRO(0x2AF0) & 0xFFF) - 0x7FF;
-	effect.unkA2 = (SOME_MACRO(0x35AC) & 0xFFF) - 0x7FF;
-	effect.unkA4 = (SOME_MACRO(0x4068) & 0xFFF) - 0x7FF;
-	effect.unk54 = SOME_MACRO(0x4B24) & 0xF;
-	effect.model = (void *)g_bgNlObj->models[2];
-	spawn_effect(&effect);
-	effect.unkA0 = (SOME_MACRO(0x55E0) & 0xFFF) - 0x7FF;
-	effect.unkA2 = (SOME_MACRO(0x609C) & 0xFFF) - 0x7FF;
-	effect.unkA4 = (SOME_MACRO(0x6B58) & 0xFFF) - 0x7FF;
-	effect.unk54 = SOME_MACRO(0x7614) & 0xF;
-	effect.model = (void *)g_bgNlObj->models[3];
-	spawn_effect(&effect);
-	effect.unkA0 = (SOME_MACRO(0x80D0) & 0x7FF) - 0x7FF;
-	effect.unkA2 = (SOME_MACRO(0x8B8C) & 0x7FF) - 0x7FF;
-	effect.unkA4 = (SOME_MACRO(0x9648) & 0x7FF) - 0x7FF;
-	effect.unk54 = SOME_MACRO(0xA104) & 0xF;
-	effect.model = (void *)g_bgNlObj->models[5];
-	spawn_effect(&effect);
-	effect.unkA0 = (SOME_MACRO(0xABC0) & 0xFFF) - 0x7FF;
-	effect.unkA2 = (SOME_MACRO(0xB67C) & 0xFFF) - 0x7FF;
-	effect.unkA4 = (SOME_MACRO(0xC138) & 0xFFF) - 0x7FF;
-	effect.unk54 = SOME_MACRO(0xCBF4) & 0xF;
-	effect.model = (void *)g_bgNlObj->models[6];
-	spawn_effect(&effect);
-	effect.unkA0 = (SOME_MACRO(0xD6B0) & 0xFFF) - 0x7FF;
-	effect.unkA2 = (SOME_MACRO(0xE16C) & 0xFFF) - 0x7FF;
-	effect.unkA4 = (SOME_MACRO(0xEC28) & 0xFFF) - 0x7FF;
-	effect.unk54 = SOME_MACRO(0xF6E4) & 0xF;
-	effect.model = (void *)g_bgNlObj->models[7];
-	spawn_effect(&effect);
-	u_apply_func_to_nl_model_vertices(g_bgNlObj->models[11], NULL, lbl_80057940);
+        return;
+    temp_f28 = 0.5 * g_bgNlObj->models[1]->boundSphereRadius;
+    sp8.x = 0.0f;
+    sp8.y = 0.0f;
+    sp8.z = 0.75 * g_bgNlObj->models[1]->boundSphereRadius;
+    mathutil_mtxA_from_identity();
+    mathutil_mtxA_rotate_y(SOME_MACRO(-0x6000));
+    mathutil_mtxA_tf_vec(&sp8, &sp8);
+    memset(&effect, 0, sizeof(effect));
+    effect.type = 3;
+    var_r31 = 0x15000;
+    effect.unk88.y = 12.5f;
+    effect.pos.y = decodedStageLzPtr->startPos->pos.y + effect.unk88.y;
+    for (i = 16, var_r30 = 0x150; i > 0; i--)
+    {
+        if (gameSubmode == SMD_ADV_DEMO_INIT || gameSubmode == SMD_ADV_DEMO_MAIN)
+        {
+            effect.rotY = (u16)var_r31;
+            effect.unk54 = (u8)var_r30 + 0x30;
+            if (i & 1)
+                effect.unk54 = -effect.unk54;
+            effect.pos.x = sp8.x + (temp_f28 * ((i / 16) - 0.5));
+            effect.pos.z = sp8.z + (temp_f28 * ((i / 16) - 0.5));
+        }
+        else
+        {
+            effect.rotY = rand() & 0x7FFF;
+            effect.unk54 = (rand() & 0xFF) + 0x30;
+            if (rand() & 1)
+                effect.unk54 = -effect.unk54;
+            effect.pos.x = sp8.x + (temp_f28 * (RAND_FLOAT() - 0.5));
+            effect.pos.z = sp8.z + (temp_f28 * (RAND_FLOAT() - 0.5));
+        }
+        spawn_effect(&effect);
+        var_r31 -= 0x1500;
+        var_r30 -= 0x15;
+        effect.pos.y += 5.0;
+        effect.unk88.y += 5.0;
+    }
+    memset(&effect, 0, sizeof(effect));
+    effect.type = 4;
+    effect.unkA0 = (SOME_MACRO(0) & 0xFFF) - 0x7FF;
+    effect.unkA2 = (SOME_MACRO(0xABC) & 0xFFF) - 0x7FF;
+    effect.unkA4 = (SOME_MACRO(0x1578) & 0xFFF) - 0x7FF;
+    effect.unk54 = SOME_MACRO(0x2034) & 0xF;
+    effect.model = (void *)g_bgNlObj->models[1];
+    spawn_effect(&effect);
+    effect.unkA0 = (SOME_MACRO(0x2AF0) & 0xFFF) - 0x7FF;
+    effect.unkA2 = (SOME_MACRO(0x35AC) & 0xFFF) - 0x7FF;
+    effect.unkA4 = (SOME_MACRO(0x4068) & 0xFFF) - 0x7FF;
+    effect.unk54 = SOME_MACRO(0x4B24) & 0xF;
+    effect.model = (void *)g_bgNlObj->models[2];
+    spawn_effect(&effect);
+    effect.unkA0 = (SOME_MACRO(0x55E0) & 0xFFF) - 0x7FF;
+    effect.unkA2 = (SOME_MACRO(0x609C) & 0xFFF) - 0x7FF;
+    effect.unkA4 = (SOME_MACRO(0x6B58) & 0xFFF) - 0x7FF;
+    effect.unk54 = SOME_MACRO(0x7614) & 0xF;
+    effect.model = (void *)g_bgNlObj->models[3];
+    spawn_effect(&effect);
+    effect.unkA0 = (SOME_MACRO(0x80D0) & 0x7FF) - 0x7FF;
+    effect.unkA2 = (SOME_MACRO(0x8B8C) & 0x7FF) - 0x7FF;
+    effect.unkA4 = (SOME_MACRO(0x9648) & 0x7FF) - 0x7FF;
+    effect.unk54 = SOME_MACRO(0xA104) & 0xF;
+    effect.model = (void *)g_bgNlObj->models[5];
+    spawn_effect(&effect);
+    effect.unkA0 = (SOME_MACRO(0xABC0) & 0xFFF) - 0x7FF;
+    effect.unkA2 = (SOME_MACRO(0xB67C) & 0xFFF) - 0x7FF;
+    effect.unkA4 = (SOME_MACRO(0xC138) & 0xFFF) - 0x7FF;
+    effect.unk54 = SOME_MACRO(0xCBF4) & 0xF;
+    effect.model = (void *)g_bgNlObj->models[6];
+    spawn_effect(&effect);
+    effect.unkA0 = (SOME_MACRO(0xD6B0) & 0xFFF) - 0x7FF;
+    effect.unkA2 = (SOME_MACRO(0xE16C) & 0xFFF) - 0x7FF;
+    effect.unkA4 = (SOME_MACRO(0xEC28) & 0xFFF) - 0x7FF;
+    effect.unk54 = SOME_MACRO(0xF6E4) & 0xF;
+    effect.model = (void *)g_bgNlObj->models[7];
+    spawn_effect(&effect);
+    u_apply_func_to_nl_model_vertices(g_bgNlObj->models[11], NULL, lbl_80057940);
 }
 
 void bg_old_bluesky_main(void) {}
@@ -134,7 +134,7 @@ void effect_bird_kite_init(struct Effect *arg0)
 
 void effect_bird_kite_main(struct Effect *arg0)
 {
-	Mtx sp18;
+    Mtx sp18;
     Vec spC;
     struct Ball *ball = currentBall;
     float temp_f5;

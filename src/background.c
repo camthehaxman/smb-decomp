@@ -24,6 +24,7 @@
 struct BackgroundInfo backgroundInfo =
 {
     0,
+    0,
     8421504.0,
     0x80,
     { 128, 0, 0, 0 },

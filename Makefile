@@ -154,7 +154,7 @@ SOURCES := \
 	asm/bg_old_ice.s \
 	src/bg_old_sand.c \
 	src/bg_old_storm.c \
-	asm/bg_old_water.s \
+	src/bg_old_water.c \
 	src/bg_jungle.c \
 	src/bg_sand.c \
 	src/bg_water.c \

@@ -146,7 +146,7 @@ void draw_stage_preview(void);
 void u_apply_func_to_nl_model_vertices(struct NlModel *model, void (*b)(struct NlVtxTypeB *), void (*c)(struct NlVtxTypeA *));
 void u_apply_func_to_nl_disp_list_type_b(struct NlDispList *dl, void *end, void (*func)(struct NlVtxTypeB *));
 void u_apply_func_to_nl_disp_list_type_a(struct NlDispList *dl, void *end, void (*func)(struct NlVtxTypeA *));
-// ? func_80048084();
+void func_80048084(struct NlModel *arg0, struct NlModel *arg1, float *arg2);
 void func_80048420();
 
 // ? func_80081D34();
