@@ -28,6 +28,11 @@ struct UnkMiniCommendStruct  // maybe GXColor?
 
 void func_8009BED8(void);
 void func_8009C5E4(s8 *arg0, s8 *arg1);
+void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2);
+void func_8009CC34(void);
+void func_8009CD5C(void);
+u32 func_8009D5F4(void);
+void func_8009DB40(Mtx arg0);
 
 void submode_mini_commend_init_func(void)
 {
@@ -231,7 +236,7 @@ void submode_mini_commend_main_func(void)
 	mathutil_mtxA_rotate_y(lbl_802F1ED2);
 	mathutil_mtxA_rotate_x(lbl_802F1ED4);
 	mathutil_mtxA_rotate_z(lbl_802F1ED0);
-	func_8009DB40(mathutilData);
+	func_8009DB40(mathutilData->mtxA);
 }
 
 void func_8009BED8(void)
@@ -276,7 +281,7 @@ struct Struct801D404C
 	char *unk0;
 	float unk4;
 	float unk8;
-	u32 fillerC;
+	u32 unkC;
 	struct Struct801D404C_child *unk10;
 	s32 unk14;
 };
@@ -358,14 +363,6 @@ struct Struct801D404C lbl_801D404C[] =
     { "YOU WIN",          1.43, 0.32, 1, lbl_801D3F88, 2 },
 };
 
-struct SomeChildStruct
-{
-	u8 filler0[0x30];
-	float unk30;
-	u8 filler34[4];
-	float unk38;
-};
-
 struct
 {
 	u32 unk0;
@@ -378,9 +375,9 @@ struct
 	struct TPL *unk34;
 	struct GMA *unk38;
 	Mtx unk3C;
-	struct SomeChildStruct *unk6C;
+	struct Ape *unk6C;
 	s32 unk70;
-	u8 filler74;
+	u8 unk74;
 	s8 unk75;
 	s32 unk78;
 } lbl_802BA210;
@@ -521,7 +518,7 @@ void func_8009C2A4(s8 *status, struct Sprite *sprite)
     {
         if (lbl_802BA210.unk6C != NULL)
         {
-            mathutil_mtxA_from_translate_xyz(lbl_802BA210.unk6C->unk30, 3.8 + lbl_802F1EC8, lbl_802BA210.unk6C->unk38);
+            mathutil_mtxA_from_translate_xyz(lbl_802BA210.unk6C->unk30.x, 3.8 + lbl_802F1EC8, lbl_802BA210.unk6C->unk30.z);
             var_f27 = 0.4f;
         }
         else
@@ -590,7 +587,7 @@ void func_8009C2A4(s8 *status, struct Sprite *sprite)
     }
 }
 
-void lbl_8009D3AC(struct Ape *, int);
+void func_8009D3AC(struct Ape *, int);
 void lbl_8009C5E0(struct Sprite *);
 void func_8008BA2C(struct Ape *, int, u8);
 
@@ -607,6 +604,8 @@ static void create_some_sprite(void)
         strcpy(temp_r3_5->text, "commend disp");
     }
 }
+
+void lbl_8009C5E0(struct Sprite *sprite) {}
 
 void func_8009C5E4(s8 *arg0, s8 *arg1)
 {
@@ -717,7 +716,7 @@ void func_8009C5E4(s8 *arg0, s8 *arg1)
         lbl_802BA210.unk29[var_ctr_4] = sp1C[var_ctr_4];
         lbl_802BA210.unk2D[var_ctr_4] = (arg0[sp1C[var_ctr_4]] & 0x40) != 0;
         arg0[sp1C[var_ctr_4]] &= 0xFFFFFFBF;
-    } 
+    }
 
     for (var_r22 = 0; var_r22 < lbl_802BA210.unk24; var_r22++)
     {
@@ -726,7 +725,7 @@ void func_8009C5E4(s8 *arg0, s8 *arg1)
         {
             temp_r20 = lbl_802BA210.unk25[var_r22];
             temp_r3_4 = u_make_ape(temp_r3_3);
-            lbl_802BA210.unk14[var_r22] = thread_create(lbl_8009D3AC, temp_r3_4, 5);
+            lbl_802BA210.unk14[var_r22] = thread_create(func_8009D3AC, temp_r3_4, 5);
             temp_r3_4->unk74 = temp_r20;
             if (lbl_802BA210.unk0 & 0x20)
                 temp_r3_4->unk74 = 0;
@@ -746,4 +745,534 @@ void func_8009C5E4(s8 *arg0, s8 *arg1)
     create_some_sprite();
     u_play_music(0x40U, 0);
     lbl_802BA210.unk0 |= 1;
+}
+
+extern const float lbl_80171B60[];
+
+void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
+{
+    struct Ape *ape;
+    int i;
+
+    func_8009C5E4(arg0, arg1);
+    if (arg0[4] >= 0)
+    {
+        ape = u_make_ape(arg0[4]);
+        lbl_802BA210.unk70 = thread_create(&func_8009D3AC, ape, 5);
+        ape->unk74 = 0;
+        ape->unk74 |= arg2 << 8;
+        ape->colorId = arg2;
+        mathutil_mtxA_from_quat(&ape->unk60);
+        mathutil_mtxA_rotate_y(-0x4000);
+        mathutil_mtxA_to_quat(&ape->unk60);
+        ape->unk30.x = -0.5f;
+        ape->unk30.y = lbl_80171B60[0];
+        ape->unk30.z = 1.0f;
+        func_8008BA2C(ape, 0xA, ape->unk74);
+        lbl_802BA210.unk6C = (void *)ape;
+        lbl_802BA210.unk74 = arg2;
+        lbl_802BA210.unk0 |= 8;
+        lbl_802BA210.unk75 = arg2 + 5;
+        for (i = 0; i < 4; i++)
+        {
+            if (lbl_802BA210.unk4[i] != NULL)
+                lbl_802BA210.unk4[i]->colorId = 1;
+        }
+    }
+}
+
+void func_8009CC34(void)
+{
+    int i;
+
+    if (lbl_802BA210.unk0 & 1)
+    {
+        destroy_sprite_with_tag(0x62);
+        if (lbl_802BA210.unk34 != NULL || lbl_802BA210.unk38 != NULL)
+        {
+            VISetNextFrameBuffer(gfxBufferInfo->currFrameBuf);
+            VIWaitForRetrace();
+        }
+        if (lbl_802BA210.unk34 != NULL)
+        {
+            free_tpl(lbl_802BA210.unk34);
+            lbl_802BA210.unk34 = NULL;
+        }
+        if (lbl_802BA210.unk38 != NULL)
+        {
+            free_gma(lbl_802BA210.unk38);
+            lbl_802BA210.unk38 = NULL;
+        }
+        if (lbl_802BA210.unk6C != NULL)
+        {
+            new_ape_close(lbl_802BA210.unk6C);
+            lbl_802BA210.unk6C = NULL;
+        }
+        if (lbl_802BA210.unk70 >= 0)
+        {
+            thread_kill(lbl_802BA210.unk70);
+            lbl_802BA210.unk70 = -1;
+        }
+        for (i = 3; i >= 0; i--)
+        {
+            if (lbl_802BA210.unk4[i] != NULL)
+            {
+                new_ape_close(lbl_802BA210.unk4[i]);
+                lbl_802BA210.unk4[i] = NULL;
+            }
+            if (lbl_802BA210.unk14[i] >= 0)
+            {
+                thread_kill(lbl_802BA210.unk14[i]);
+                lbl_802BA210.unk14[i] = -1;
+            }
+        }
+        lbl_802BA210.unk0 &= 0xFFFFFFFE;
+    }
+}
+
+extern const s8 lbl_802F59D8[8];
+extern struct Color3f lbl_801B7CF8[];
+extern s8 lbl_802F59D4[8];
+
+void func_8009CD5C(void)
+{
+    int i;
+    int var_r4;
+    struct Ape *temp_r27;
+    struct Ape *var_r25_2;
+    EnvMapFunc temp_r26;
+    struct Color3f *temp_r3_2;
+    Mtx sp8C;
+    Vec sp80;
+    Mtx sp50;
+    Vec sp44;
+    Mtx sp14;
+    Vec sp8;
+
+    if (lbl_802BA210.unk0 & 1)
+    {
+        mathutil_mtx_copy(mathutilData->mtxB, sp8C);
+        mathutil_mtxA_from_mtxB();
+        mathutil_mtxA_mult_right(lbl_802BA210.unk3C);
+        mathutil_mtxA_to_mtx(mathutilData->mtxB);
+        temp_r26 = backgroundInfo.stageEnvMapFunc;
+        if (backgroundInfo.stageEnvMapFunc != NULL)
+            u_avdisp_set_some_func_1(temp_r26);
+        mathutil_mtxA_from_mtxB();
+        mathutil_mtxA_rotate_y(-0x8000);
+        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        avdisp_draw_model_unculled_sort_translucent(lbl_802BA210.unk38->modelEntries[8].model);
+        for (i = 0; i < lbl_802BA210.unk24; i++)
+        {
+            func_8009D7FC(i, &sp80);
+            mathutil_mtxA_from_mtxB_translate(&sp80);
+            mathutil_mtxA_rotate_y(-0x8000);
+            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[3].model);
+            if (lbl_802BA210.unk25[i] < 5U)
+            {
+                var_r4 = lbl_802F59D8[lbl_802BA210.unk25[i]];
+                if (lbl_802BA210.unk24 == 2 && lbl_802BA210.unk25[i] == 0 && !(lbl_802BA210.unk0 & 2))
+                    var_r4 = 11;
+                avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[var_r4].model);
+            }
+        }
+        if (lbl_802BA210.unk6C != NULL)
+        {
+            mathutil_mtxA_from_mtxB_translate(&lbl_802BA210.unk6C->unk30);
+            mathutil_mtxA_rotate_y(-0x8000);
+            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[3].model);
+            avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[11].model);
+        }
+        if (temp_r26 != NULL)
+            u_avdisp_set_some_func_1(NULL);
+        avdisp_set_post_mult_color(0.3f, 0.3f, 0.3f, 0.3f);
+        avdisp_set_z_mode(1U, GX_LEQUAL, 0U);
+        for (i = 0; i < lbl_802BA210.unk24; i++)
+        {
+            temp_r27 = lbl_802BA210.unk4[i];
+            if (temp_r27 != NULL)
+            {
+                sp44.x = temp_r27->unk0->joints[0].transformMtx[0][3];
+                sp44.y = 0.0f;
+                sp44.z = temp_r27->unk0->joints[0].transformMtx[2][3];
+                mathutil_mtxA_from_quat(&temp_r27->unk60);
+                mathutil_mtxA_to_mtx(sp50);
+                mathutil_mtxA_from_translate(&temp_r27->unk30);
+                mathutil_mtxA_scale_xyz(temp_r27->modelScale, temp_r27->modelScale, temp_r27->modelScale);
+                mathutil_mtxA_translate(&temp_r27->unk3C);
+                mathutil_mtxA_mult_right(sp50);
+                mathutil_mtxA_tf_point(&sp44, &sp44);
+                mathutil_mtxA_from_identity();
+                mathutil_mtxA_scale_s(0.95f);
+                mathutil_mtxA_to_mtx(sp50);
+                mathutil_mtxA_from_mtxB_translate(&sp44);
+                mathutil_mtxA_mult_left(sp50);
+                mathutil_mtxA_rotate_x(0x4000);
+                switch (temp_r27->charaId)
+                {
+                case CHARACTER_BABY:
+                    mathutil_mtxA_scale_s(0.2f);
+                    break;
+                default:
+                    mathutil_mtxA_scale_s(0.25f);
+                    break;
+                }
+                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                avdisp_set_alpha(0.25f);
+                avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[78].model);
+            }
+        }
+        avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
+        avdisp_set_z_mode(1U, GX_LEQUAL, 1U);
+        for (i = 0; i < lbl_802BA210.unk24 + 1; i++)
+        {
+            if (i == lbl_802BA210.unk24)
+                var_r25_2 = lbl_802BA210.unk6C;
+            else
+                var_r25_2 = lbl_802BA210.unk4[i];
+            if (var_r25_2 != NULL && (u8)var_r25_2->unk74 == 0)
+            {
+                mathutil_mtxA_from_quat(&var_r25_2->unk60);
+                mathutil_mtxA_to_mtx(sp14);
+                mathutil_mtxA_from_mtxB_translate(&var_r25_2->unk30);
+                mathutil_mtxA_scale_xyz(var_r25_2->modelScale, var_r25_2->modelScale, var_r25_2->modelScale);
+                mathutil_mtxA_translate(&var_r25_2->unk3C);
+                mathutil_mtxA_mult_right(sp14);
+                switch (var_r25_2->charaId)
+                {
+                case 0:
+                    mathutil_mtxA_mult_right(var_r25_2->unk0->joints[0xA].transformMtx);
+                    mathutil_mtxA_translate_xyz(0.04f, -0.17f, 0.03f);
+                    mathutil_mtxA_rotate_z(0x1111);
+                    mathutil_mtxA_rotate_y(0x416C);
+                    mathutil_mtxA_rotate_x(0x127D);
+                    break;
+                case 1:
+                    mathutil_mtxA_mult_right(var_r25_2->unk0->joints[0xA].transformMtx);
+                    mathutil_mtxA_translate_xyz(0.03f, -0.15f, 0.03f);
+                    mathutil_mtxA_rotate_y(0x4000);
+                    break;
+                case 2:
+                    mathutil_mtxA_from_mtxB_translate(&var_r25_2->unk30);
+                    break;
+                case 3:
+                    mathutil_mtxA_mult_right(var_r25_2->unk0->joints[0xF].transformMtx);
+                    mathutil_mtxA_translate_xyz(0.07f, -0.16f, -0.03f);
+                    mathutil_mtxA_rotate_z(-0x6D);
+                    mathutil_mtxA_rotate_y(0x638E);
+                    mathutil_mtxA_rotate_x(0x753);
+                    break;
+                }
+                mathutil_mtxA_scale_xyz(0.1f, 0.1f, 0.1f);
+                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                avdisp_draw_model_unculled_sort_translucent(lbl_802BA210.unk38->modelEntries[7].model);
+            }
+        }
+        for (i = 0; i < lbl_802BA210.unk24; i++)
+            mot_ape_thread(lbl_802BA210.unk4[i], 0);
+        if (lbl_802BA210.unk6C != NULL)
+            mot_ape_thread(lbl_802BA210.unk6C, 0);
+        if (lbl_802BA210.unk24 >= 2 && !(lbl_802BA210.unk0 & 8))
+        {
+            for (i = 0; i < lbl_802BA210.unk24; i++)
+            {
+                func_8009D7FC(i, &sp8);
+                mathutil_mtxA_from_mtxB_translate(&sp8);
+                mathutil_mtxA_translate_xyz(0.3f, -0.125f, -0.4f);
+                mathutil_mtxA_rotate_y(-0x8000);
+                mathutil_mtxA_scale_s(0.25f);
+                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                if (lbl_802BA210.unk2D[i] != 0)
+                {
+                    temp_r3_2 = &lbl_801B7CF8[lbl_802BA210.unk29[i]];
+                    avdisp_set_post_mult_color(temp_r3_2->r, temp_r3_2->g, temp_r3_2->b, 1.0f);
+                    avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[88].model);
+                    avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
+                }
+                else
+                {
+                    avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[lbl_802F59D4[lbl_802BA210.unk29[i]]].model);
+                }
+            }
+        }
+        if (func_8009D794() != 0)
+        {
+            func_8009BF74(lbl_802BA210.unk75);
+            if (lbl_801D404C[lbl_802BA210.unk75].unkC & 1)
+                func_8009BF74(1);
+        }
+        mathutil_mtx_copy(sp8C, mathutilData->mtxB);
+    }
+}
+
+#define SOME_MACRO(a, b) (((a) << 18) & 0x1FC0000) | (b) | (((a) << 25) & 0xFE000000)
+
+void func_8009D3AC(struct Ape *ape, int status)
+{
+    s32 var_r0;
+    u32 temp_r0;
+    u32 temp_r3_2;
+    u8 temp_r4;
+    int temp_r5;
+    u32 r4;
+
+    if (status == THREAD_STATUS_KILLED)
+    {
+        if (status != THREAD_STATUS_KILLED)  // WTF? never true
+            thread_exit();
+        return;
+    }
+
+    if (debugFlags & 0xA)
+        return;
+
+    temp_r4 = ape->unk74 >> 16;
+    temp_r5 = ape->unk74 & 0xFF;
+    if (temp_r4 < (u32)(lbl_802BA210.unk24 / 2)
+     && (temp_r5 == 2 || (ape->charaId == 1 && temp_r5 == 3)))
+        ape->unk0->unk0 |= 4;
+    new_ape_stat_motion(ape, 0xA, temp_r5, 0, 0.0f);
+    new_ape_calc(ape);
+    temp_r3_2 = func_8009D5F4();
+    temp_r0 = 1 << (u8)(ape->unk74 >> 8);
+    if (temp_r3_2 == temp_r0 || ((temp_r3_2 & temp_r0) && (rand() & 0x7FFF) % 3 == 0))
+    {
+        switch (ape->unk0->unk32)
+        {
+        case 0x172:
+            var_r0 = ape->unk0->unk38 == 0x60;
+            break;
+        case 0x173:
+            var_r0 = ape->unk0->unk38 == 0x4D;
+            break;
+        case 0x14F:
+            var_r0 = ape->unk0->unk38 == 0x1B;
+            break;
+        case 0x174:
+            var_r0 = ape->unk0->unk38 == 0x58;
+            break;
+        default:
+            var_r0 = ape->unk0->unk38 == 1;
+            break;
+        }
+        if (var_r0)
+        {
+            lbl_802F1DFC = ape->charaId;
+            u_somePlayerId = r4 = 0;
+            switch (ape->unk74 & 0xFF)
+            {
+            case 0:
+                u_play_sound_0(SOME_MACRO(r4, 0x1B));
+                return;
+            case 1:
+                u_play_sound_0(SOME_MACRO(r4, 0x58));
+                return;
+            case 2:
+                u_play_sound_0(SOME_MACRO(r4, 0x59));
+                return;
+            case 3:
+                u_play_sound_0(SOME_MACRO(r4, 0x1C));
+                break;
+            }
+        }
+    }
+}
+
+int func_8009D5D8(void)
+{
+    return (lbl_802BA210.unk0 & 1) != 0;
+}
+
+u32 func_8009D5F4(void)
+{
+    int i;
+    u32 var_r3;
+
+    for (i = 0; i < lbl_802BA210.unk24; i++)
+    {
+        if (cameraInfo->timerCurr < (i + 1) * 0x110)
+        {
+            s32 var_r0 = i;
+            if (lbl_802BA210.unk24 > 2)
+            {
+                if (var_r0 == 0)
+                    var_r0 = 1;
+                else if (var_r0 == 1)
+                    var_r0 = 0;
+            }
+            return 1 << (s8) (u8) lbl_802BA210.unk29[var_r0];
+        }
+    }
+
+    var_r3 = 0;
+    for (i = 0; i < lbl_802BA210.unk24; i++)
+        var_r3 |= 1 << lbl_802BA210.unk29[i];
+
+    return var_r3;
+}
+
+int func_8009D794(void)
+{
+    if (cameraInfo->timerCurr < lbl_802BA210.unk24 * 0x110)
+        return 0;
+    else
+        return 1;
+}
+
+int func_8009D7CC(void)
+{
+    return (lbl_802BA210.unk0 & 0x26) == 0;
+}
+
+int func_8009D7E8(void)
+{
+    return lbl_802BA210.unk24;
+}
+
+void func_8009D7FC(int arg0, Vec *arg1)
+{
+    arg1->x = (0.5 * (lbl_802BA210.unk24 - 1)) - arg0 - 0.5;
+    arg1->y = lbl_80171B60[lbl_802BA210.unk25[arg0]];
+    if (lbl_802BA210.unk0 & 0x20)
+        arg1->y = *lbl_80171B60;
+    arg1->z = 0.0f;
+}
+
+void func_8009D8A4(int arg0, Vec *arg1)
+{
+    int i;
+
+    arg1->x = 0.0f;
+    arg1->y = 0.0f;
+    arg1->z = 0.0f;
+    for (i = 0; i < lbl_802BA210.unk24; i++)
+    {
+        if (arg0 == lbl_802BA210.unk29[i])
+        {
+            func_8009D7FC(i, arg1);
+            break;
+        }
+    }
+}
+
+void func_8009D98C(Vec *arg0)
+{
+    int i;
+    Vec vec1;
+    Vec vec2;
+    Vec vec3;
+
+    for (i = 0; i < lbl_802BA210.unk24; i++)
+    {
+        func_8009D7FC(i, &vec3);
+        if (i == 0)
+        {
+            vec1.x = vec2.x = vec3.x;
+            vec1.y = vec2.y = vec3.y;
+            vec1.z = vec2.z = vec3.z;
+            if (vec1.y >= 0.0)
+                vec1.y = 0.0;
+            continue;
+        }
+        vec1.x = MIN(vec1.x, vec3.x);
+        vec1.y = MIN(vec1.y, vec3.y);
+        vec1.z = MIN(vec1.z, vec3.z);
+        vec2.x = MAX(vec2.x, vec3.x);
+        vec2.y = MAX(vec2.y, vec3.y);
+        vec2.z = MAX(vec2.z, vec3.z);
+    }
+    if (lbl_802BA210.unk6C != NULL)
+    {
+        vec1.y = MIN(vec1.y, lbl_802BA210.unk6C->unk30.y);
+        vec2.y = MAX(vec2.y, lbl_802BA210.unk6C->unk30.y);
+    }
+    arg0->x = 0.5 * (vec1.x + vec2.x);
+    arg0->y = 0.5 * (vec1.y + vec2.y);
+    arg0->z = 0.5 * (vec1.z + vec2.z);
+}
+
+void func_8009DB40(Mtx arg0)
+{
+    mathutil_mtx_copy(arg0, lbl_802BA210.unk3C);
+}
+
+void func_8009DB6C(Mtx arg0)
+{
+    mathutil_mtx_copy(lbl_802BA210.unk3C, arg0);
+}
+
+void func_8009DB9C(int arg0)
+{
+    lbl_802BA210.unk75 = arg0;
+}
+
+int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
+{
+    int var_r12;
+    Vec vec1;
+    int count;
+
+    arg1->unk0 = 0;
+    arg2->x = 0.0f;
+    arg2->y = 0.0f;
+    arg2->z = 0.0f;
+    arg1->unk4.x = arg0->x;
+    arg1->unk4.z = arg0->z;
+    arg1->unk10.x = 0.0f;
+    arg1->unk10.y = 1.0f;
+    arg1->unk10.z = 0.0f;
+    if (-2.5 <= arg0->x && arg0->x <= 1.5
+     && -0.5 <= arg0->z && arg0->z <= 0.5)
+    {
+        arg1->unk0 = 1;
+        arg1->unk4.y = -0.05f;
+    }
+
+    count = lbl_802BA210.unk24;
+    for (var_r12 = 0; var_r12 < count; var_r12++)
+    {
+        func_8009D7FC(var_r12, &vec1);
+        if (!(arg0->x < vec1.x - 0.5)
+         && !(arg0->z < vec1.z - 0.5)
+         && !(arg0->x > vec1.x + 0.5)
+         && !(arg0->z > vec1.z + 0.5))
+        {
+            arg1->unk0 = 1;
+            arg1->unk4.y = vec1.y;
+        }
+    }
+    if (lbl_802BA210.unk6C != NULL)
+    {
+        struct Ape *ape = lbl_802BA210.unk6C;
+        if (arg0->x >= ape->unk30.x - 0.5
+         && arg0->z >= ape->unk30.z - 0.5
+         && arg0->x <= ape->unk30.x + 0.5
+         && arg0->z <= ape->unk30.z + 0.5)
+        {
+            arg1->unk0 = 1;
+            arg1->unk4.y = ape->unk30.y;
+        }
+    }
+    return (arg1->unk0 & 1) != 0;
+}
+
+void func_8009DDC4(int arg0)
+{
+    switch (arg0)       
+    {
+    case 0:
+        lbl_802BA210.unk0 |= 0x40;
+        lbl_802BA210.unk0 &= 0xFFFFFF7F;
+        return;
+    case 1:
+        lbl_802BA210.unk0 &= 0xFFFFFFBF;
+        lbl_802BA210.unk0 &= 0xFFFFFF7F;
+        return;
+    case 2:
+        lbl_802BA210.unk0 &= 0xFFFFFFBF;
+        lbl_802BA210.unk0 |= 0x80;
+        return;
+    }
 }
