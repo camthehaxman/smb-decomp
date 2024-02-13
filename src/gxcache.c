@@ -12,6 +12,7 @@
 #include "global.h"
 #include "gxcache.h"
 
+struct GXCache *gxCache;
 GXColor lbl_802F5A88;
 
 u32 gxcache_init(void)

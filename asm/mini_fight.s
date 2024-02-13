@@ -11237,7 +11237,7 @@ lbl_0000A974:
 /* 0000A9CC 80630000 */ lwz r3, 0(r3)
 /* 0000A9D0 4BFF5795 */ bl OSSetCurrentHeap
 /* 0000A9D4 7C7D1B78 */ mr r29, r3
-/* 0000A9D8 4BFF578D */ bl func_8009CC34
+/* 0000A9D8 4BFF578D */ bl mini_commend_free_data
 /* 0000A9DC 7FA3EB78 */ mr r3, r29
 /* 0000A9E0 4BFF5785 */ bl OSSetCurrentHeap
 /* 0000A9E4 801E0000 */ lwz r0, 0(r30)
@@ -13739,7 +13739,7 @@ lbl_0000CDC8:
 /* 0000CDE8 80630000 */ lwz r3, 0(r3)
 /* 0000CDEC 4BFF3379 */ bl OSSetCurrentHeap
 /* 0000CDF0 7C7F1B78 */ mr r31, r3
-/* 0000CDF4 4BFF3371 */ bl func_8009CC34
+/* 0000CDF4 4BFF3371 */ bl mini_commend_free_data
 /* 0000CDF8 7FE3FB78 */ mr r3, r31
 /* 0000CDFC 4BFF3369 */ bl OSSetCurrentHeap
 /* 0000CE00 3C600000 */ lis r3, lbl_10018CFC@ha

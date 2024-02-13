@@ -4040,7 +4040,7 @@ lbl_00003B34:
 /* 00003B50 801E0000 */ lwz r0, 0(r30)
 /* 00003B54 2C002530 */ cmpwi r0, 0x2530
 /* 00003B58 408001B0 */ bge lbl_00003D08
-/* 00003B5C 4BFFC605 */ bl func_8009CC34
+/* 00003B5C 4BFFC605 */ bl mini_commend_free_data
 /* 00003B60 4BFFC601 */ bl event_finish_all
 /* 00003B64 38600010 */ li r3, 0x10
 /* 00003B68 4BFFC5F9 */ bl event_start

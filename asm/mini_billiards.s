@@ -8280,7 +8280,7 @@ lbl_0000793C:
 /* 0000793C 801F0020 */ lwz r0, 0x20(r31)
 /* 00007940 2C00FFFF */ cmpwi r0, -1
 /* 00007944 40820018 */ bne lbl_0000795C
-/* 00007948 4BFF87ED */ bl func_8009CC34
+/* 00007948 4BFF87ED */ bl mini_commend_free_data
 /* 0000794C 3C600000 */ lis r3, modeCtrl@ha
 /* 00007950 38630000 */ addi r3, r3, modeCtrl@l
 /* 00007954 80630028 */ lwz r3, 0x28(r3)

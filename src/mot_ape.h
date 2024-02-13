@@ -30,7 +30,7 @@ void new_ape_close(struct Ape *);
 // ? u_make_ape_sub();
 struct Ape *u_make_ape(enum Character);
 void func_8008BA24(int);
-// ? func_8008BA2C();
+void func_8008BA2C(struct Ape *, int, int);
 void new_ape_stat_motion(struct Ape *, int, int, int, float);
 void func_8008BEF8(int);
 void u_switch_ape_character_lod_maybe(struct Ape *, int);

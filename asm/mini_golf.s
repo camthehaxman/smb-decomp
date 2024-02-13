@@ -1517,7 +1517,7 @@ lbl_000015FC:
 /* 00001624 88030004 */ lbz r0, 4(r3)
 /* 00001628 7C000775 */ extsb. r0, r0
 /* 0000162C 40820050 */ bne lbl_0000167C
-/* 00001630 4BFFEBA1 */ bl func_8009CC34
+/* 00001630 4BFFEBA1 */ bl mini_commend_free_data
 /* 00001634 4BFFEB9D */ bl event_finish_all
 /* 00001638 4BFFEB99 */ bl free_all_bitmap_groups_except_com
 /* 0000163C 4BFFEB95 */ bl u_free_minigame_graphics
@@ -1537,7 +1537,7 @@ lbl_000015FC:
 /* 00001674 4BFFEB5D */ bl start_screen_fade
 /* 00001678 48004034 */ b lbl_000056AC
 lbl_0000167C:
-/* 0000167C 4BFFEB55 */ bl func_8009CC34
+/* 0000167C 4BFFEB55 */ bl mini_commend_free_data
 /* 00001680 3C600000 */ lis r3, modeCtrl@ha
 /* 00001684 38630000 */ addi r3, r3, modeCtrl@l
 /* 00001688 80630028 */ lwz r3, 0x28(r3)

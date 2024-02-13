@@ -200,7 +200,7 @@ SOURCES := \
 	src/rend_efc_3.c \
 	src/relocation.c \
 	src/gxutil.c \
-	asm/mini_commend.s \
+	src/mini_commend.c \
 	src/gxcache.c \
 	src/memcard.c \
 	src/DEMOPuts.c \
