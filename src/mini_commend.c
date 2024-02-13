@@ -18,11 +18,11 @@
 #include "sprite.h"
 #include "thread.h"
 
-static void func_8009BED8(void);
+static void mini_commend_finish(void);
 static void lbl_8009C5E0(struct Sprite *);
 static void func_8009C5E4(s8 *arg0, s8 *arg1);
 static void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2);
-static void func_8009CC34(void);
+static void mini_commend_free_data(void);
 static void func_8009CD5C(void);
 static void func_8009D3AC(struct Ape *, int);
 static u32 func_8009D5F4(void);
@@ -57,8 +57,8 @@ void submode_mini_commend_init_func(void)
 
     func_8009C5E4(spC, sp8);
     modeCtrl.unk10 = 0;
-    submodeFinishFunc = func_8009BED8;
-    gameSubmodeRequest = 0xA3;
+    submodeFinishFunc = mini_commend_finish;
+    gameSubmodeRequest = SMD_MINI_COMMEND_MAIN;
 }
 
 void submode_mini_commend_main_func(void)
@@ -74,26 +74,22 @@ void submode_mini_commend_main_func(void)
 	var_r30 = modeCtrl.unk10;
 	if (controllerInfo[0].unk0[2].button & 2)
 	{
-		var_r30 += 1;
-		if (var_r30 >= 0xB)
-		{
+		var_r30++;
+		if (var_r30 >= 11)
 			var_r30 = 0;
-		}
 	}
 	if (controllerInfo[0].unk0[2].button & 1)
 	{
-		var_r30 -= 1;
+		var_r30--;
 		if (var_r30 < 0)
-		{
-			var_r30 = 0xA;
-		}
+			var_r30 = 10;
 	}
 	if (var_r30 != modeCtrl.unk10)
 	{
 		switch (var_r30)
 		{
 		case 0:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 0;
 			sp1C[1] = 1;
@@ -105,7 +101,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 1:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 3;
 			sp1C[1] = 1;
@@ -117,7 +113,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 2:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 2;
 			sp1C[1] = 1;
@@ -129,7 +125,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 3:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 1;
 			sp1C[1] = 1;
@@ -141,7 +137,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 4:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 3;
 			sp1C[1] = 0x41;
@@ -153,7 +149,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 5:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0x40;
 			sp18[0] = 0;
 			sp1C[1] = 1;
@@ -165,7 +161,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 6:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 0;
 			sp1C[1] = 0x41;
@@ -177,7 +173,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 7:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp18[0] = 0;
 			sp1C[0] = 0;
 			sp1C[1] = 1;
@@ -189,7 +185,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 8:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 3;
 			sp1C[1] = 1;
@@ -201,7 +197,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 9:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp1C[0] = 0;
 			sp18[0] = 2;
 			sp1C[1] = -1;
@@ -210,7 +206,7 @@ void submode_mini_commend_main_func(void)
 			func_8009C5E4(sp1C, sp18);
 			break;
 		case 10:
-			func_8009CC34();
+			mini_commend_free_data();
 			sp10[0] = 0x40;
 			sp8[0] = 3;
 			sp10[1] = 0x41;
@@ -234,9 +230,9 @@ void submode_mini_commend_main_func(void)
 	func_8009DB40(mathutilData->mtxA);
 }
 
-static void func_8009BED8(void)
+static void mini_commend_finish(void)
 {
-    func_8009CC34();
+    mini_commend_free_data();
 }
 
 void func_8009BEF8(void)
@@ -405,14 +401,14 @@ u32 mini_commend_unused[] =
 struct
 {
 	u32 unk0;
-	struct Ape *unk4[4];
-	int unk14[4];  // thread IDs
+	struct Ape *apePtrs[4];
+	int apeThreads[4];
 	s8 unk24;
 	s8 unk25[4];
 	s8 unk29[4];
 	s8 unk2D[4];
-	struct TPL *unk34;
-	struct GMA *unk38;
+	struct TPL *tpl;
+	struct GMA *gma;
 	Mtx unk3C;
 	struct Ape *unk6C;
 	s32 unk70;
@@ -420,7 +416,7 @@ struct
 	s8 unk75;
 	s32 unk78;
     u8 unused[0x10];
-} lbl_802BA210;
+} miniCommendInfo;
 
 static const s8 lbl_802F59D4[] = { 84, 85, 86, 87 };
 static const s8 lbl_802F59D8[] = { 0, 1, 2, 9, 10 };
@@ -435,7 +431,7 @@ static void func_8009BF74(int arg0)
     struct Struct801D404C *temp_r27;
     int i;
 
-    if (lbl_802BA210.unk24 > 0)
+    if (miniCommendInfo.unk24 > 0)
     {
         func_8009D98C(&spC);
         temp_r27 = &lbl_801D404C[arg0];
@@ -473,7 +469,7 @@ static void func_8009BF74(int arg0)
             mathutil_mtxA_rotate_z(globalAnimTimer << 9);
             GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
             if (*c != ' ')
-                avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[lbl_801D3F5C[*c - '0']].model);
+                avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[lbl_801D3F5C[*c - '0']].model);
         }
     }
 }
@@ -503,11 +499,11 @@ static void func_8009C178(s8 *arg0, s8 *arg1, s8 *arg2, int arg3)
 			var_r10 = arg1[temp_r7];
 	}
 
-    if (lbl_802BA210.unk0 & 0x20)
+    if (miniCommendInfo.unk0 & 0x20)
         var_r0 = 10;
     else if (var_r9 > 1)
         var_r0 = 0;
-    else if (lbl_802BA210.unk0 & 4)
+    else if (miniCommendInfo.unk0 & 4)
         var_r0 = 3;
     else if (var_r8 == 1)
     {
@@ -527,7 +523,7 @@ static void func_8009C178(s8 *arg0, s8 *arg1, s8 *arg2, int arg3)
     }
     else
         var_r0 = 0;
-    lbl_802BA210.unk75 = var_r0;
+    miniCommendInfo.unk75 = var_r0;
 }
 
 static void func_8009C2A4(s8 *status, struct Sprite *sprite)
@@ -547,29 +543,29 @@ static void func_8009C2A4(s8 *status, struct Sprite *sprite)
 
     if (func_8009D794() != 0)
     {
-        var_r27 = lbl_801D404C[lbl_802BA210.unk75].unk10;
+        var_r27 = lbl_801D404C[miniCommendInfo.unk75].unk10;
         var_r28 = 0;
-        for (var_r28 = 0; var_r28 < lbl_801D404C[lbl_802BA210.unk75].unk14; var_r28++, var_r27++)
+        for (var_r28 = 0; var_r28 < lbl_801D404C[miniCommendInfo.unk75].unk14; var_r28++, var_r27++)
         {
-            if (var_r27->unk0 == lbl_802BA210.unk78)
+            if (var_r27->unk0 == miniCommendInfo.unk78)
                 u_play_sound_0(var_r27->unk4);
         }
-        if (lbl_802BA210.unk78 < 0x258)
-            lbl_802BA210.unk78++;
+        if (miniCommendInfo.unk78 < 0x258)
+            miniCommendInfo.unk78++;
     }
-    if (eventInfo[EVENT_EFFECT].state == EV_STATE_RUNNING && !(lbl_802BA210.unk0 & 0x40))
+    if (eventInfo[EVENT_EFFECT].state == EV_STATE_RUNNING && !(miniCommendInfo.unk0 & 0x40))
     {
-        if (lbl_802BA210.unk6C != NULL)
+        if (miniCommendInfo.unk6C != NULL)
         {
-            mathutil_mtxA_from_translate_xyz(lbl_802BA210.unk6C->unk30.x, 3.8 + lbl_802F1EC8, lbl_802BA210.unk6C->unk30.z);
+            mathutil_mtxA_from_translate_xyz(miniCommendInfo.unk6C->unk30.x, 3.8 + lbl_802F1EC8, miniCommendInfo.unk6C->unk30.z);
             var_f27 = 0.4f;
         }
         else
         {
 			var_r27_2 = 0;
-			for (var_r28_2 = 0; var_r28_2 < lbl_802BA210.unk24; var_r28_2++)
+			for (var_r28_2 = 0; var_r28_2 < miniCommendInfo.unk24; var_r28_2++)
 			{
-				if (lbl_802BA210.unk25[var_r28_2] == 0)
+				if (miniCommendInfo.unk25[var_r28_2] == 0)
 				{
 					func_8009D7FC(var_r28_2, &sp28);
 					if (var_r27_2 <= 0)
@@ -607,7 +603,7 @@ static void func_8009C2A4(s8 *status, struct Sprite *sprite)
 		effect.vel.y = 0.0f;
 		effect.vel.z = 0.0f;
 		var_r29 = 2;
-		if (lbl_802BA210.unk0 & 0x80)
+		if (miniCommendInfo.unk0 & 0x80)
 			var_r29 = 1;
 		sp34.x = 0.0f;
 		sp34.y = 0.0f;
@@ -660,22 +656,22 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
     s8 temp_r7;
     int i;
 
-    if (lbl_802BA210.unk0 & 1)
+    if (miniCommendInfo.unk0 & 1)
         OSPanic("mini_commend.c", 726, "multiple CommendInit without CommendDest\n");
-    lbl_802BA210.unk0 = 0;
-    lbl_802BA210.unk75 = 0;
-    lbl_802BA210.unk78 = 0;
-    lbl_802BA210.unk6C = NULL;
-    lbl_802BA210.unk70 = -1;
+    miniCommendInfo.unk0 = 0;
+    miniCommendInfo.unk75 = 0;
+    miniCommendInfo.unk78 = 0;
+    miniCommendInfo.unk6C = NULL;
+    miniCommendInfo.unk70 = -1;
     for (i = 0; i < 4; i++)
     {
-        lbl_802BA210.unk4[i] = NULL;
-        lbl_802BA210.unk14[i] = -1;
+        miniCommendInfo.apePtrs[i] = NULL;
+        miniCommendInfo.apeThreads[i] = -1;
     }
     DVDChangeDir("init");
-    lbl_802BA210.unk34 = load_tpl("commend.tpl");
-    if (lbl_802BA210.unk34 != NULL)
-        lbl_802BA210.unk38 = load_gma("commend.gma", lbl_802BA210.unk34);
+    miniCommendInfo.tpl = load_tpl("commend.tpl");
+    if (miniCommendInfo.tpl != NULL)
+        miniCommendInfo.gma = load_gma("commend.gma", miniCommendInfo.tpl);
     DVDChangeDir("..");
 
     var_r22 = 0;
@@ -702,7 +698,7 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
         }
     }
     if (var_r22 <= 1)
-        lbl_802BA210.unk0 |= 0x20;
+        miniCommendInfo.unk0 |= 0x20;
     if (var_r22 > 1)
     {
 		var_r4_2 = 1;
@@ -715,10 +711,10 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
 			}
 		}
 		if (var_r4_2 != 0)
-            lbl_802BA210.unk0 |= 2;
+            miniCommendInfo.unk0 |= 2;
 	}
 
-    if (!(lbl_802BA210.unk0 & 2) && (var_r22 > 1))
+    if (!(miniCommendInfo.unk0 & 2) && (var_r22 > 1))
     {
 		var_r4_2 = 1;
 		for (var_ctr_2 = 0; var_ctr_2 < var_r22; var_ctr_2++)
@@ -730,7 +726,7 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
 			}
 		}
 		if (var_r4_2 != 0)
-            lbl_802BA210.unk0 |= 4;
+            miniCommendInfo.unk0 |= 4;
     }
     if (var_r22 == 2)
     {
@@ -738,33 +734,33 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
             arg1[sp1C[1]] = 3;
     }
     func_8009C178(arg0, arg1, sp1C, var_r22);
-    if (var_r22 > 2 && !(lbl_802BA210.unk0 & 6))
+    if (var_r22 > 2 && !(miniCommendInfo.unk0 & 6))
     {
         u8 temp = sp1C[0];
         sp1C[0] = sp1C[1];
         sp1C[1] = temp;
     }
 
-    lbl_802BA210.unk24 = var_r22;
+    miniCommendInfo.unk24 = var_r22;
 
     for (var_ctr_4 = 0; var_ctr_4 < var_r22; var_ctr_4++)
     {
-        lbl_802BA210.unk25[var_ctr_4] = CLAMP(arg1[sp1C[var_ctr_4]], 0, 4);
-        lbl_802BA210.unk29[var_ctr_4] = sp1C[var_ctr_4];
-        lbl_802BA210.unk2D[var_ctr_4] = (arg0[sp1C[var_ctr_4]] & 0x40) != 0;
+        miniCommendInfo.unk25[var_ctr_4] = CLAMP(arg1[sp1C[var_ctr_4]], 0, 4);
+        miniCommendInfo.unk29[var_ctr_4] = sp1C[var_ctr_4];
+        miniCommendInfo.unk2D[var_ctr_4] = (arg0[sp1C[var_ctr_4]] & 0x40) != 0;
         arg0[sp1C[var_ctr_4]] &= 0xFFFFFFBF;
     }
 
-    for (var_r22 = 0; var_r22 < lbl_802BA210.unk24; var_r22++)
+    for (var_r22 = 0; var_r22 < miniCommendInfo.unk24; var_r22++)
     {
         temp_r3_3 = arg0[sp1C[var_r22]];
         if (temp_r3_3 >= 0)
         {
-            temp_r20 = lbl_802BA210.unk25[var_r22];
+            temp_r20 = miniCommendInfo.unk25[var_r22];
             temp_r3_4 = u_make_ape(temp_r3_3);
-            lbl_802BA210.unk14[var_r22] = thread_create(func_8009D3AC, temp_r3_4, 5);
+            miniCommendInfo.apeThreads[var_r22] = thread_create(func_8009D3AC, temp_r3_4, 5);
             temp_r3_4->unk74 = temp_r20;
-            if (lbl_802BA210.unk0 & 0x20)
+            if (miniCommendInfo.unk0 & 0x20)
                 temp_r3_4->unk74 = 0;
             temp_r3_4->unk74 |= sp1C[var_r22] << 8;
             temp_r3_4->unk74 |= var_r22 * 0x10000;
@@ -773,15 +769,15 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
             mathutil_mtxA_rotate_y(-0x4000);
             mathutil_mtxA_to_quat(&temp_r3_4->unk60);
             func_8009D7FC(var_r22, &temp_r3_4->unk30);
-            func_8008BA2C(temp_r3_4, 0xA, (u8)temp_r3_4->unk74);
-            lbl_802BA210.unk4[var_r22] = temp_r3_4;
+            func_8008BA2C(temp_r3_4, 10, (u8)temp_r3_4->unk74);
+            miniCommendInfo.apePtrs[var_r22] = temp_r3_4;
         }
     }
     mathutil_mtxA_from_identity();
-    mathutil_mtxA_to_mtx(lbl_802BA210.unk3C);
+    mathutil_mtxA_to_mtx(miniCommendInfo.unk3C);
     create_some_sprite();
     u_play_music(0x40U, 0);
-    lbl_802BA210.unk0 |= 1;
+    miniCommendInfo.unk0 |= 1;
 }
 
 static const float lbl_80171B60[] = { 1.0f, 0.65f, 0.4f, 0.0f };
@@ -795,7 +791,7 @@ static void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
     if (arg0[4] >= 0)
     {
         ape = u_make_ape(arg0[4]);
-        lbl_802BA210.unk70 = thread_create(&func_8009D3AC, ape, 5);
+        miniCommendInfo.unk70 = thread_create(&func_8009D3AC, ape, 5);
         ape->unk74 = 0;
         ape->unk74 |= arg2 << 8;
         ape->colorId = arg2;
@@ -805,65 +801,65 @@ static void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
         ape->unk30.x = -0.5f;
         ape->unk30.y = lbl_80171B60[0];
         ape->unk30.z = 1.0f;
-        func_8008BA2C(ape, 0xA, (u8)ape->unk74);
-        lbl_802BA210.unk6C = (void *)ape;
-        lbl_802BA210.unk74 = arg2;
-        lbl_802BA210.unk0 |= 8;
-        lbl_802BA210.unk75 = arg2 + 5;
+        func_8008BA2C(ape, 10, (u8)ape->unk74);
+        miniCommendInfo.unk6C = ape;
+        miniCommendInfo.unk74 = arg2;
+        miniCommendInfo.unk0 |= 8;
+        miniCommendInfo.unk75 = arg2 + 5;
         for (i = 0; i < 4; i++)
         {
-            if (lbl_802BA210.unk4[i] != NULL)
-                lbl_802BA210.unk4[i]->colorId = 1;
+            if (miniCommendInfo.apePtrs[i] != NULL)
+                miniCommendInfo.apePtrs[i]->colorId = 1;
         }
     }
 }
 
-static void func_8009CC34(void)
+static void mini_commend_free_data(void)
 {
     int i;
 
-    if (lbl_802BA210.unk0 & 1)
+    if (miniCommendInfo.unk0 & 1)
     {
         destroy_sprite_with_tag(0x62);
-        if (lbl_802BA210.unk34 != NULL || lbl_802BA210.unk38 != NULL)
+        if (miniCommendInfo.tpl != NULL || miniCommendInfo.gma != NULL)
         {
             VISetNextFrameBuffer(gfxBufferInfo->currFrameBuf);
             VIWaitForRetrace();
         }
-        if (lbl_802BA210.unk34 != NULL)
+        if (miniCommendInfo.tpl != NULL)
         {
-            free_tpl(lbl_802BA210.unk34);
-            lbl_802BA210.unk34 = NULL;
+            free_tpl(miniCommendInfo.tpl);
+            miniCommendInfo.tpl = NULL;
         }
-        if (lbl_802BA210.unk38 != NULL)
+        if (miniCommendInfo.gma != NULL)
         {
-            free_gma(lbl_802BA210.unk38);
-            lbl_802BA210.unk38 = NULL;
+            free_gma(miniCommendInfo.gma);
+            miniCommendInfo.gma = NULL;
         }
-        if (lbl_802BA210.unk6C != NULL)
+        if (miniCommendInfo.unk6C != NULL)
         {
-            new_ape_close(lbl_802BA210.unk6C);
-            lbl_802BA210.unk6C = NULL;
+            new_ape_close(miniCommendInfo.unk6C);
+            miniCommendInfo.unk6C = NULL;
         }
-        if (lbl_802BA210.unk70 >= 0)
+        if (miniCommendInfo.unk70 >= 0)
         {
-            thread_kill(lbl_802BA210.unk70);
-            lbl_802BA210.unk70 = -1;
+            thread_kill(miniCommendInfo.unk70);
+            miniCommendInfo.unk70 = -1;
         }
         for (i = 3; i >= 0; i--)
         {
-            if (lbl_802BA210.unk4[i] != NULL)
+            if (miniCommendInfo.apePtrs[i] != NULL)
             {
-                new_ape_close(lbl_802BA210.unk4[i]);
-                lbl_802BA210.unk4[i] = NULL;
+                new_ape_close(miniCommendInfo.apePtrs[i]);
+                miniCommendInfo.apePtrs[i] = NULL;
             }
-            if (lbl_802BA210.unk14[i] >= 0)
+            if (miniCommendInfo.apeThreads[i] >= 0)
             {
-                thread_kill(lbl_802BA210.unk14[i]);
-                lbl_802BA210.unk14[i] = -1;
+                thread_kill(miniCommendInfo.apeThreads[i]);
+                miniCommendInfo.apeThreads[i] = -1;
             }
         }
-        lbl_802BA210.unk0 &= 0xFFFFFFFE;
+        miniCommendInfo.unk0 &= 0xFFFFFFFE;
     }
 }
 
@@ -882,11 +878,11 @@ static void func_8009CD5C(void)
     Mtx sp14;
     Vec sp8;
 
-    if (lbl_802BA210.unk0 & 1)
+    if (miniCommendInfo.unk0 & 1)
     {
         mathutil_mtx_copy(mathutilData->mtxB, sp8C);
         mathutil_mtxA_from_mtxB();
-        mathutil_mtxA_mult_right(lbl_802BA210.unk3C);
+        mathutil_mtxA_mult_right(miniCommendInfo.unk3C);
         mathutil_mtxA_to_mtx(mathutilData->mtxB);
         temp_r26 = backgroundInfo.stageEnvMapFunc;
         if (backgroundInfo.stageEnvMapFunc != NULL)
@@ -894,37 +890,37 @@ static void func_8009CD5C(void)
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_rotate_y(-0x8000);
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-        avdisp_draw_model_unculled_sort_translucent(lbl_802BA210.unk38->modelEntries[8].model);
-        for (i = 0; i < lbl_802BA210.unk24; i++)
+        avdisp_draw_model_unculled_sort_translucent(miniCommendInfo.gma->modelEntries[8].model);
+        for (i = 0; i < miniCommendInfo.unk24; i++)
         {
             func_8009D7FC(i, &sp80);
             mathutil_mtxA_from_mtxB_translate(&sp80);
             mathutil_mtxA_rotate_y(-0x8000);
             u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-            avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[3].model);
-            if (lbl_802BA210.unk25[i] < 5U)
+            avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[3].model);
+            if (miniCommendInfo.unk25[i] < 5U)
             {
-                var_r4 = lbl_802F59D8[lbl_802BA210.unk25[i]];
-                if (lbl_802BA210.unk24 == 2 && lbl_802BA210.unk25[i] == 0 && !(lbl_802BA210.unk0 & 2))
+                var_r4 = lbl_802F59D8[miniCommendInfo.unk25[i]];
+                if (miniCommendInfo.unk24 == 2 && miniCommendInfo.unk25[i] == 0 && !(miniCommendInfo.unk0 & 2))
                     var_r4 = 11;
-                avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[var_r4].model);
+                avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[var_r4].model);
             }
         }
-        if (lbl_802BA210.unk6C != NULL)
+        if (miniCommendInfo.unk6C != NULL)
         {
-            mathutil_mtxA_from_mtxB_translate(&lbl_802BA210.unk6C->unk30);
+            mathutil_mtxA_from_mtxB_translate(&miniCommendInfo.unk6C->unk30);
             mathutil_mtxA_rotate_y(-0x8000);
             u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-            avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[3].model);
-            avdisp_draw_model_culled_sort_translucent(lbl_802BA210.unk38->modelEntries[11].model);
+            avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[3].model);
+            avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[11].model);
         }
         if (temp_r26 != NULL)
             u_avdisp_set_some_func_1(NULL);
         avdisp_set_post_mult_color(0.3f, 0.3f, 0.3f, 0.3f);
         avdisp_set_z_mode(1U, GX_LEQUAL, 0U);
-        for (i = 0; i < lbl_802BA210.unk24; i++)
+        for (i = 0; i < miniCommendInfo.unk24; i++)
         {
-            temp_r27 = lbl_802BA210.unk4[i];
+            temp_r27 = miniCommendInfo.apePtrs[i];
             if (temp_r27 != NULL)
             {
                 sp44.x = temp_r27->unk0->joints[0].transformMtx[0][3];
@@ -959,12 +955,12 @@ static void func_8009CD5C(void)
         }
         avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
         avdisp_set_z_mode(1U, GX_LEQUAL, 1U);
-        for (i = 0; i < lbl_802BA210.unk24 + 1; i++)
+        for (i = 0; i < miniCommendInfo.unk24 + 1; i++)
         {
-            if (i == lbl_802BA210.unk24)
-                var_r25_2 = lbl_802BA210.unk6C;
+            if (i == miniCommendInfo.unk24)
+                var_r25_2 = miniCommendInfo.unk6C;
             else
-                var_r25_2 = lbl_802BA210.unk4[i];
+                var_r25_2 = miniCommendInfo.apePtrs[i];
             if (var_r25_2 != NULL && (u8)var_r25_2->unk74 == 0)
             {
                 mathutil_mtxA_from_quat(&var_r25_2->unk60);
@@ -1000,16 +996,16 @@ static void func_8009CD5C(void)
                 }
                 mathutil_mtxA_scale_xyz(0.1f, 0.1f, 0.1f);
                 u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-                avdisp_draw_model_unculled_sort_translucent(lbl_802BA210.unk38->modelEntries[7].model);
+                avdisp_draw_model_unculled_sort_translucent(miniCommendInfo.gma->modelEntries[7].model);
             }
         }
-        for (i = 0; i < lbl_802BA210.unk24; i++)
-            mot_ape_thread(lbl_802BA210.unk4[i], 0);
-        if (lbl_802BA210.unk6C != NULL)
-            mot_ape_thread(lbl_802BA210.unk6C, 0);
-        if (lbl_802BA210.unk24 >= 2 && !(lbl_802BA210.unk0 & 8))
+        for (i = 0; i < miniCommendInfo.unk24; i++)
+            mot_ape_thread(miniCommendInfo.apePtrs[i], 0);
+        if (miniCommendInfo.unk6C != NULL)
+            mot_ape_thread(miniCommendInfo.unk6C, 0);
+        if (miniCommendInfo.unk24 >= 2 && !(miniCommendInfo.unk0 & 8))
         {
-            for (i = 0; i < lbl_802BA210.unk24; i++)
+            for (i = 0; i < miniCommendInfo.unk24; i++)
             {
                 func_8009D7FC(i, &sp8);
                 mathutil_mtxA_from_mtxB_translate(&sp8);
@@ -1017,23 +1013,23 @@ static void func_8009CD5C(void)
                 mathutil_mtxA_rotate_y(-0x8000);
                 mathutil_mtxA_scale_s(0.25f);
                 u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-                if (lbl_802BA210.unk2D[i] != 0)
+                if (miniCommendInfo.unk2D[i] != 0)
                 {
-                    temp_r3_2 = &lbl_801B7CF8[lbl_802BA210.unk29[i]];
+                    temp_r3_2 = &lbl_801B7CF8[miniCommendInfo.unk29[i]];
                     avdisp_set_post_mult_color(temp_r3_2->r, temp_r3_2->g, temp_r3_2->b, 1.0f);
                     avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[88].model);
                     avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
                 }
                 else
                 {
-                    avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[lbl_802F59D4[lbl_802BA210.unk29[i]]].model);
+                    avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[lbl_802F59D4[miniCommendInfo.unk29[i]]].model);
                 }
             }
         }
         if (func_8009D794() != 0)
         {
-            func_8009BF74(lbl_802BA210.unk75);
-            if (lbl_801D404C[lbl_802BA210.unk75].unkC & 1)
+            func_8009BF74(miniCommendInfo.unk75);
+            if (lbl_801D404C[miniCommendInfo.unk75].unkC & 1)
                 func_8009BF74(1);
         }
         mathutil_mtx_copy(sp8C, mathutilData->mtxB);
@@ -1063,7 +1059,7 @@ static void func_8009D3AC(struct Ape *ape, int status)
 
     temp_r4 = ape->unk74 >> 16;
     temp_r5 = ape->unk74 & 0xFF;
-    if (temp_r4 < (u32)(lbl_802BA210.unk24 / 2)
+    if (temp_r4 < (u32)(miniCommendInfo.unk24 / 2)
      && (temp_r5 == 2 || (ape->charaId == 1 && temp_r5 == 3)))
         ape->unk0->unk0 |= 4;
     new_ape_stat_motion(ape, 0xA, temp_r5, 0, 0.0f);
@@ -1115,7 +1111,7 @@ static void func_8009D3AC(struct Ape *ape, int status)
 
 int func_8009D5D8(void)
 {
-    return (lbl_802BA210.unk0 & 1) != 0;
+    return (miniCommendInfo.unk0 & 1) != 0;
 }
 
 static u32 func_8009D5F4(void)
@@ -1123,32 +1119,32 @@ static u32 func_8009D5F4(void)
     int i;
     u32 var_r3;
 
-    for (i = 0; i < lbl_802BA210.unk24; i++)
+    for (i = 0; i < miniCommendInfo.unk24; i++)
     {
         if (cameraInfo->timerCurr < (i + 1) * 0x110)
         {
             s32 var_r0 = i;
-            if (lbl_802BA210.unk24 > 2)
+            if (miniCommendInfo.unk24 > 2)
             {
                 if (var_r0 == 0)
                     var_r0 = 1;
                 else if (var_r0 == 1)
                     var_r0 = 0;
             }
-            return 1 << (s8) (u8) lbl_802BA210.unk29[var_r0];
+            return 1 << miniCommendInfo.unk29[var_r0];
         }
     }
 
     var_r3 = 0;
-    for (i = 0; i < lbl_802BA210.unk24; i++)
-        var_r3 |= 1 << lbl_802BA210.unk29[i];
+    for (i = 0; i < miniCommendInfo.unk24; i++)
+        var_r3 |= 1 << miniCommendInfo.unk29[i];
 
     return var_r3;
 }
 
 static int func_8009D794(void)
 {
-    if (cameraInfo->timerCurr < lbl_802BA210.unk24 * 0x110)
+    if (cameraInfo->timerCurr < miniCommendInfo.unk24 * 0x110)
         return 0;
     else
         return 1;
@@ -1156,19 +1152,19 @@ static int func_8009D794(void)
 
 int func_8009D7CC(void)
 {
-    return (lbl_802BA210.unk0 & 0x26) == 0;
+    return (miniCommendInfo.unk0 & 0x26) == 0;
 }
 
 int func_8009D7E8(void)
 {
-    return lbl_802BA210.unk24;
+    return miniCommendInfo.unk24;
 }
 
 void func_8009D7FC(int arg0, Vec *arg1)
 {
-    arg1->x = (0.5 * (lbl_802BA210.unk24 - 1)) - arg0 - 0.5;
-    arg1->y = lbl_80171B60[lbl_802BA210.unk25[arg0]];
-    if (lbl_802BA210.unk0 & 0x20)
+    arg1->x = (0.5 * (miniCommendInfo.unk24 - 1)) - arg0 - 0.5;
+    arg1->y = lbl_80171B60[miniCommendInfo.unk25[arg0]];
+    if (miniCommendInfo.unk0 & 0x20)
         arg1->y = *lbl_80171B60;
     arg1->z = 0.0f;
 }
@@ -1181,9 +1177,9 @@ void func_8009D8A4(int arg0, Vec *arg1)
     arg1->x = 0.0f;
     arg1->y = 0.0f;
     arg1->z = 0.0f;
-    for (i = 0; i < lbl_802BA210.unk24; i++)
+    for (i = 0; i < miniCommendInfo.unk24; i++)
     {
-        if (arg0 == lbl_802BA210.unk29[i])
+        if (arg0 == miniCommendInfo.unk29[i])
         {
             func_8009D7FC(i, arg1);
             break;
@@ -1199,7 +1195,7 @@ void func_8009D98C(Vec *arg0)
     Vec vec2;
     Vec vec3;
 
-    for (i = 0; i < lbl_802BA210.unk24; i++)
+    for (i = 0; i < miniCommendInfo.unk24; i++)
     {
         func_8009D7FC(i, &vec3);
         if (i == 0)
@@ -1218,10 +1214,10 @@ void func_8009D98C(Vec *arg0)
         vec2.y = MAX(vec2.y, vec3.y);
         vec2.z = MAX(vec2.z, vec3.z);
     }
-    if (lbl_802BA210.unk6C != NULL)
+    if (miniCommendInfo.unk6C != NULL)
     {
-        vec1.y = MIN(vec1.y, lbl_802BA210.unk6C->unk30.y);
-        vec2.y = MAX(vec2.y, lbl_802BA210.unk6C->unk30.y);
+        vec1.y = MIN(vec1.y, miniCommendInfo.unk6C->unk30.y);
+        vec2.y = MAX(vec2.y, miniCommendInfo.unk6C->unk30.y);
     }
     arg0->x = 0.5 * (vec1.x + vec2.x);
     arg0->y = 0.5 * (vec1.y + vec2.y);
@@ -1230,18 +1226,18 @@ void func_8009D98C(Vec *arg0)
 
 static void func_8009DB40(Mtx arg0)
 {
-    mathutil_mtx_copy(arg0, lbl_802BA210.unk3C);
+    mathutil_mtx_copy(arg0, miniCommendInfo.unk3C);
 }
 
 void func_8009DB6C(Mtx arg0)
 {
-    mathutil_mtx_copy(lbl_802BA210.unk3C, arg0);
+    mathutil_mtx_copy(miniCommendInfo.unk3C, arg0);
 }
 
 #pragma force_active on
 void func_8009DB9C(int arg0)
 {
-    lbl_802BA210.unk75 = arg0;
+    miniCommendInfo.unk75 = arg0;
 }
 #pragma force_active reset
 
@@ -1267,7 +1263,7 @@ int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
         arg1->unk4.y = -0.05f;
     }
 
-    count = lbl_802BA210.unk24;
+    count = miniCommendInfo.unk24;
     for (i = 0; i < count; i++)
     {
         func_8009D7FC(i, &vec1);
@@ -1280,9 +1276,9 @@ int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
             arg1->unk4.y = vec1.y;
         }
     }
-    if (lbl_802BA210.unk6C != NULL)
+    if (miniCommendInfo.unk6C != NULL)
     {
-        struct Ape *ape = lbl_802BA210.unk6C;
+        struct Ape *ape = miniCommendInfo.unk6C;
         if (arg0->x >= ape->unk30.x - 0.5
          && arg0->z >= ape->unk30.z - 0.5
          && arg0->x <= ape->unk30.x + 0.5
@@ -1298,19 +1294,19 @@ int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
 #pragma force_active on
 void func_8009DDC4(int arg0)
 {
-    switch (arg0)       
+    switch (arg0)
     {
     case 0:
-        lbl_802BA210.unk0 |= 0x40;
-        lbl_802BA210.unk0 &= 0xFFFFFF7F;
+        miniCommendInfo.unk0 |= 0x40;
+        miniCommendInfo.unk0 &= 0xFFFFFF7F;
         return;
     case 1:
-        lbl_802BA210.unk0 &= 0xFFFFFFBF;
-        lbl_802BA210.unk0 &= 0xFFFFFF7F;
+        miniCommendInfo.unk0 &= 0xFFFFFFBF;
+        miniCommendInfo.unk0 &= 0xFFFFFF7F;
         return;
     case 2:
-        lbl_802BA210.unk0 &= 0xFFFFFFBF;
-        lbl_802BA210.unk0 |= 0x80;
+        miniCommendInfo.unk0 &= 0xFFFFFFBF;
+        miniCommendInfo.unk0 |= 0x80;
         return;
     }
 }

@@ -251,7 +251,7 @@ lbl_000003B4:
 /* 00000400 801F0000 */ lwz r0, 0(r31)
 /* 00000404 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 00000408 41820014 */ beq lbl_0000041C
-/* 0000040C 4BFFFD41 */ bl func_8009CC34
+/* 0000040C 4BFFFD41 */ bl mini_commend_free_data
 /* 00000410 801F0000 */ lwz r0, 0(r31)
 /* 00000414 540007B8 */ rlwinm r0, r0, 0, 0x1e, 0x1c
 /* 00000418 901F0000 */ stw r0, 0(r31)
@@ -3858,7 +3858,7 @@ lbl_000038D4:
 /* 000038F0 3C600000 */ lis r3, lbl_802F1FD4@ha
 /* 000038F4 38000000 */ li r0, 0
 /* 000038F8 90030000 */ stw r0, lbl_802F1FD4@l(r3)
-/* 000038FC 4BFFC851 */ bl func_8009CC34
+/* 000038FC 4BFFC851 */ bl mini_commend_free_data
 /* 00003900 3C600000 */ lis r3, lbl_802F1FD0@ha
 /* 00003904 3BC30000 */ addi r30, r3, lbl_802F1FD0@l
 /* 00003908 801E0000 */ lwz r0, 0(r30)

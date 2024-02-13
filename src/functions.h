@@ -355,7 +355,7 @@ void func_8009BEF8(void);
 // ? func_8009C178();
 // ? func_8009C5E4();
 // ? func_8009CAE0();
-// ? func_8009CC34();
+// ? mini_commend_free_data();
 // ? func_8009CD5C();
 int func_8009D5D8(void);
 // ? func_8009D5F4();

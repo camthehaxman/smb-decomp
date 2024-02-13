@@ -594,7 +594,7 @@ extern struct ApeIconInfo apeIconInfo;
 // extern ? lbl_802BA190;
 // extern ? s_renderEffects;
 extern struct FogInfo fogInfo;
-// extern ? lbl_802BA210;
+// extern ? miniCommendInfo;
 // extern ? cardStat;
 // extern ? memcardInfo;
 // extern ? cardWorkArea;
