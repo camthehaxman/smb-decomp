@@ -177,7 +177,7 @@ SOURCES := \
 	src/hud.c \
 	src/ape_icon.c \
 	src/help.c \
-	asm/unk_anim_data.s \
+	src/unk_anim_data.c \
 	src/minimap.c \
 	src/ord_tbl.c \
 	src/code_3.c \
@@ -559,6 +559,11 @@ $(MWCC_ONLY_OBJECTS): CPPFLAGS  = $(MWCC_CPPFLAGS)
 	$(COMPILE)
 %.cp.o: %.cp
 	$(COMPILE)
+
+# remove 8-byte alignment for this file
+src/unk_anim_data.c.o: src/unk_anim_data.c
+	$(COMPILE)
+	$(OBJCOPY) -j .rodata --set-section-alignment=.rodata=1 $@ $@
 
 %.s.o: %.s
 	@echo Assembling $<

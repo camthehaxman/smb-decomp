@@ -134,7 +134,7 @@ void mathutil_mtxA_to_euler(S16Vec *rot);
 void u_math_unk14(s16 *a, s16 *b, s16 *c);
 void u_math_unk15(Vec *a, Vec *b, float c);
 void u_math_unk16(Vec *a, Vec *b, float c);
-void mathutil_scale_ray(Vec *rayStart, Vec *rayEnd, Vec *outRayEnd, float scale);
+void mathutil_scale_ray(const Vec *rayStart, const Vec *rayEnd, Vec *outRayEnd, float scale);
 u16 mathutil_calc_crc16(s32 length, u8 *data);
 
 static inline float mathutil_floor(register float n)

@@ -2933,7 +2933,7 @@ void u_math_unk16(Vec *a, Vec *b, float c)
     }
 }
 
-void mathutil_scale_ray(Vec *rayStart, Vec *rayEnd, Vec *outRayEnd, float scale)
+void mathutil_scale_ray(const Vec *rayStart, const Vec *rayEnd, Vec *outRayEnd, float scale)
 {
     outRayEnd->x = (rayEnd->x - rayStart->x) * scale + rayStart->x;
     outRayEnd->y = (rayEnd->y - rayStart->y) * scale + rayStart->y;

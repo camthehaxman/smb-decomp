@@ -987,6 +987,20 @@ struct Struct800993A8
     struct Struct800993A8_sub unk90[256];
 };
 
+struct Struct8008669C_sub
+{
+    Vec unk0;
+    Vec unkC;
+};
+
+struct Struct8008669C
+{
+    Vec unk0;
+    Vec unkC;
+    struct Struct8008669C_sub unk18[3];
+    s16 unk60[4];
+};
+
 struct Effect;
 struct ScoreRecord;
 
