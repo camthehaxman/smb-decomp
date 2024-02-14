@@ -196,9 +196,8 @@ glabel lbl_80118D0C
 	.4byte 0x3F2D3251
 	.4byte 0xBF246BCF
 	.4byte 0x3EB870DA
-glabel string___2a
-	.asciz "?-2a"
-	.balign 4
+	.4byte 0x3F2D3261
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -613,9 +612,8 @@ glabel string___2a
 	.4byte 0xBEA0064B
 	.4byte 0x3F27077D
 	.4byte 0x3F419620
-glabel string__KSP
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -1732,9 +1730,8 @@ glabel string__KSP
 	.4byte 0xBEA00863
 	.4byte 0x3F27077D
 	.4byte 0xBF419620
-glabel string__KSP_2
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -4073,9 +4070,8 @@ glabel string__KSP_2
 	.4byte 0xBD8EF6F9
 	.4byte 0x3F7834A0
 	.4byte 0xBE7ABE6A
-glabel string___
-	.asciz ";\"U*"
-	.balign 4
+	.4byte 0x3B22552A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -4256,9 +4252,8 @@ glabel string___
 	.4byte 0x3F396883
 	.4byte 0x3F17E1EB
 	.4byte 0xBEE59514
-glabel string_____
-	.asciz "?+%-"
-	.balign 4
+	.4byte 0x3F2B252D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -5063,9 +5058,8 @@ glabel string_____
 	.4byte 0xBED01D5C
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T_
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -5246,9 +5240,8 @@ glabel string___T_
 	.4byte 0xBEC054AC
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -5351,9 +5344,8 @@ glabel string____J
 	.4byte 0xBE71DA38
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -5742,9 +5734,8 @@ glabel string___T_t
 	.4byte 0xBE7348F5
 	.4byte 0x3F7B22E2
 	.4byte 0xBE40D024
-glabel string___T_t_2
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -6286,9 +6277,8 @@ glabel string___T_t_2
 	.4byte 0x4025ED9E
 	.4byte 0x3F04F6CF
 	.4byte 0x3DC5247D
-glabel string__Y____
-	.asciz "?Y^}?$"
-	.byte 0x97
+	.4byte 0x3F595E7D
+	.4byte 0x3F240097
 	.4byte 0x3E50FA16
 	.4byte 0x3F3D7FB7
 	.4byte 0
@@ -6348,9 +6338,8 @@ glabel string__Y____
 	.4byte 0x3F37FED2
 	.4byte 0x3F2F892F
 	.4byte 0xBCE4FDB1
-glabel string___4D
-	.asciz "?:4D"
-	.balign 4
+	.4byte 0x3F3A3444
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -6427,9 +6416,8 @@ glabel string___4D
 	.4byte 0x3F5BD9A9
 	.4byte 0x3F038C76
 	.4byte 0xBEBCA926
-glabel string__FS3
-	.asciz "?FS3"
-	.balign 4
+	.4byte 0x3F465333
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -6786,9 +6774,8 @@ glabel string__FS3
 	.4byte 0x3F60F53C
 	.4byte 0x3EF39475
 	.4byte 0x3649539C
-glabel string__a__
-	.asciz "?a,|"
-	.balign 4
+	.4byte 0x3F612C7C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -7359,9 +7346,8 @@ glabel string__a__
 	.4byte 0x3F4B0037
 	.4byte 0x3EB54478
 	.4byte 0xBE758F2E
-glabel string__gj_
-	.asciz "?gj/"
-	.balign 4
+	.4byte 0x3F676A2F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -7386,9 +7372,8 @@ glabel string__gj_
 	.4byte 0x3F4B0047
 	.4byte 0x3EB543AF
 	.4byte 0x3E7590C1
-glabel string__gj__2
-	.asciz "?gj@"
-	.balign 4
+	.4byte 0x3F676A40
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -7517,9 +7502,8 @@ glabel string__gj__2
 	.4byte 0x3F0EE771
 	.4byte 0x3EEFB5F2
 	.4byte 0xBEEF1759
-glabel string____n_
-	.asciz "?@\n["
-	.balign 4
+	.4byte 0x3F400A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -8324,9 +8308,8 @@ glabel string____n_
 	.4byte 0x3E7B24EA
 	.4byte 0xBF782E66
 	.4byte 0xB58637BD
-glabel string____d
-	.asciz ">{$d"
-	.balign 4
+	.4byte 0x3E7B2464
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -8949,9 +8932,8 @@ glabel string____d
 	.4byte 0x3F570942
 	.4byte 0x3EE49470
 	.4byte 0xBE9DE658
-glabel string__W_tc
-	.asciz "?W\tc"
-	.balign 4
+	.4byte 0x3F570963
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -8976,9 +8958,8 @@ glabel string__W_tc
 	.4byte 0x3F570963
 	.4byte 0x3EE4944F
 	.4byte 0x3E9DE679
-glabel string__W_tc_2
-	.asciz "?W\tc"
-	.balign 4
+	.4byte 0x3F570963
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -9107,9 +9088,8 @@ glabel string__W_tc_2
 	.4byte 0x3F6C6940
 	.4byte 0xBEBB4CA1
 	.4byte 0x3DECB74E
-glabel string__li_
-	.asciz "?li@"
-	.balign 4
+	.4byte 0x3F6C6940
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -9134,9 +9114,8 @@ glabel string__li_
 	.4byte 0x3F6C6951
 	.4byte 0xBEBB4C3C
 	.4byte 0xBDECB641
-glabel string__liQ
-	.asciz "?liQ"
-	.balign 4
+	.4byte 0x3F6C6951
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -9239,9 +9218,8 @@ glabel string__liQ
 	.4byte 0x3F687A5B
 	.4byte 0x3E9A3DF7
 	.4byte 0x3E94E50C
-glabel string__hz_
-	.asciz "?hz["
-	.balign 4
+	.4byte 0x3F687A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -9318,9 +9296,8 @@ glabel string__hz_
 	.4byte 0x3F687A4A
 	.4byte 0x3E9A3DF7
 	.4byte 0xBE94E4EB
-glabel string__hz__2
-	.asciz "?hz["
-	.balign 4
+	.4byte 0x3F687A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -11296,9 +11273,8 @@ glabel lbl_8012346C
 	.4byte 0x3D0A350D
 	.4byte 0x3F27077D
 	.4byte 0x3F419620
-glabel string__KSP_3
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -12155,9 +12131,8 @@ glabel string__KSP_3
 	.4byte 0x3D0A265F
 	.4byte 0x3F27077D
 	.4byte 0xBF419620
-glabel string__KSP_4
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -14262,9 +14237,8 @@ glabel string__KSP_4
 	.4byte 0xBE4480E9
 	.4byte 0x3F7834A0
 	.4byte 0xBE7ABE6A
-glabel string____2
-	.asciz ";\"U*"
-	.balign 4
+	.4byte 0x3B22552A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -14445,9 +14419,8 @@ glabel string____2
 	.4byte 0x3F16A1D7
 	.4byte 0x3F17E1EB
 	.4byte 0xBEE59514
-glabel string______2
-	.asciz "?+%-"
-	.balign 4
+	.4byte 0x3F2B252D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -15226,9 +15199,8 @@ glabel string______2
 	.4byte 0xBE799E0E
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__2
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -15409,9 +15381,8 @@ glabel string___T__2
 	.4byte 0xBEB5A2B6
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_2
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -15514,9 +15485,8 @@ glabel string____J_2
 	.4byte 0xBECC97D9
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_3
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -15905,9 +15875,8 @@ glabel string___T_t_3
 	.4byte 0xBECC97FA
 	.4byte 0x3F7B22E2
 	.4byte 0xBE40D024
-glabel string___T_t_4
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -16510,9 +16479,8 @@ glabel string___T_t_4
 	.4byte 0x3F0DC465
 	.4byte 0x3F2F892F
 	.4byte 0xBCE4FDB1
-glabel string___4D_2
-	.asciz "?:4D"
-	.balign 4
+	.4byte 0x3F3A3444
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -16537,9 +16505,8 @@ glabel string___4D_2
 	.4byte 0x3F0DC572
 	.4byte 0x3F2F892F
 	.4byte 0x3CE4FB98
-glabel string___4D_3
-	.asciz "?:4D"
-	.balign 4
+	.4byte 0x3F3A3444
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -16668,9 +16635,8 @@ glabel string___4D_3
 	.4byte 0x3F3796D1
 	.4byte 0x3F038C76
 	.4byte 0xBEBCA926
-glabel string__FS3_2
-	.asciz "?FS3"
-	.balign 4
+	.4byte 0x3F465333
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -16747,9 +16713,8 @@ glabel string__FS3_2
 	.4byte 0x3F3797FF
 	.4byte 0x3F038C54
 	.4byte 0x3EBCA948
-glabel string__FS3_3
-	.asciz "?FS3"
-	.balign 4
+	.4byte 0x3F465333
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -17190,9 +17155,8 @@ glabel string__FS3_3
 	.4byte 0x3F1C4A1F
 	.4byte 0x3EDDCEC0
 	.4byte 0x3F22D7E9
-glabel string___u_
-	.asciz "?#u!"
-	.balign 4
+	.4byte 0x3F237521
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -17217,9 +17181,8 @@ glabel string___u_
 	.4byte 0x3F1C476F
 	.4byte 0x3ED61F7D
 	.4byte 0xBF239347
-glabel string___G9
-	.asciz "?%G9"
-	.balign 4
+	.4byte 0x3F254739
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -17264,9 +17227,8 @@ glabel string___G9
 	.4byte 0x3F60F3AA
 	.4byte 0x3EF39475
 	.4byte 0x3649539C
-glabel string__a___2
-	.asciz "?a,|"
-	.balign 4
+	.4byte 0x3F612C7C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -17837,9 +17799,8 @@ glabel string__a___2
 	.4byte 0x3F77D8BE
 	.4byte 0x3EB54478
 	.4byte 0xBE758F2E
-glabel string__gj__3
-	.asciz "?gj/"
-	.balign 4
+	.4byte 0x3F676A2F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -17864,9 +17825,8 @@ glabel string__gj__3
 	.4byte 0x3F77D8CF
 	.4byte 0x3EB543AF
 	.4byte 0x3E7590C1
-glabel string__gj__4
-	.asciz "?gj@"
-	.balign 4
+	.4byte 0x3F676A40
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -17995,9 +17955,8 @@ glabel string__gj__4
 	.4byte 0x3F754AE4
 	.4byte 0x3EEFB5F2
 	.4byte 0xBEEF1759
-glabel string____n__2
-	.asciz "?@\n["
-	.balign 4
+	.4byte 0x3F400A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -18360,9 +18319,8 @@ glabel string____n__2
 	.4byte 0x3E793A71
 	.4byte 0xBF782E66
 	.4byte 0xB58637BD
-glabel string____d_2
-	.asciz ">{$d"
-	.balign 4
+	.4byte 0x3E7B2464
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -20182,9 +20140,8 @@ glabel lbl_8012C234
 	.4byte 0x3E4E5259
 	.4byte 0x3F27077D
 	.4byte 0x3F419620
-glabel string__KSP_5
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -20807,9 +20764,8 @@ glabel string__KSP_5
 	.4byte 0x3E4E5215
 	.4byte 0x3F27077D
 	.4byte 0xBF419620
-glabel string__KSP_6
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -22290,9 +22246,8 @@ glabel string__KSP_6
 	.4byte 0xBEEE5083
 	.4byte 0x3F7834A0
 	.4byte 0xBE7ABE6A
-glabel string____3
-	.asciz ";\"U*"
-	.balign 4
+	.4byte 0x3B22552A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -22473,9 +22428,8 @@ glabel string____3
 	.4byte 0x3E3671EF
 	.4byte 0x3F17E1EB
 	.4byte 0xBEE59514
-glabel string______3
-	.asciz "?+%-"
-	.balign 4
+	.4byte 0x3F2B252D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -22942,9 +22896,8 @@ glabel string______3
 	.4byte 0x3F29A87A
 	.4byte 0x3EB54478
 	.4byte 0xBE758F2E
-glabel string__gj__5
-	.asciz "?gj/"
-	.balign 4
+	.4byte 0x3F676A2F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -22969,9 +22922,8 @@ glabel string__gj__5
 	.4byte 0x3F29A88B
 	.4byte 0x3EB543AF
 	.4byte 0x3E7590C1
-glabel string__gj__6
-	.asciz "?gj@"
-	.balign 4
+	.4byte 0x3F676A40
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -23048,9 +23000,8 @@ glabel string__gj__6
 	.4byte 0x3F277AE5
 	.4byte 0x3EEFB5F2
 	.4byte 0xBEEF1759
-glabel string____n__3
-	.asciz "?@\n["
-	.balign 4
+	.4byte 0x3F400A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -24974,9 +24925,8 @@ glabel lbl_80130AEC
 	.4byte 0xBD92FF4C
 	.4byte 0x3F27077D
 	.4byte 0x3F419620
-glabel string__KSP_7
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -25781,9 +25731,8 @@ glabel string__KSP_7
 	.4byte 0xBD92FE3F
 	.4byte 0x3F27077D
 	.4byte 0xBF419620
-glabel string__KSP_8
-	.asciz "=KSP"
-	.balign 4
+	.4byte 0x3D4B5350
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -26245,9 +26194,8 @@ glabel string__KSP_8
 	.4byte 0x3FC9D502
 	.4byte 0x358637BD
 	.4byte 0x3F7B06F7
-glabel string__i_R
-	.asciz "?i&R"
-	.balign 4
+	.4byte 0x3F692652
+	.4byte 0x00000000
 	.4byte 0x3ED371FC
 	.4byte 0x3F7A0F2C
 	.4byte 0
@@ -27499,9 +27447,8 @@ glabel string__i_R
 	.4byte 0xBE576E1E
 	.4byte 0x3F7834A0
 	.4byte 0xBE7ABE6A
-glabel string____4
-	.asciz ";\"U*"
-	.balign 4
+	.4byte 0x3B22552A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -27682,9 +27629,8 @@ glabel string____4
 	.4byte 0x3F4B39C1
 	.4byte 0x3F17E1EB
 	.4byte 0xBEE59514
-glabel string______4
-	.asciz "?+%-"
-	.balign 4
+	.4byte 0x3F2B252D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -28437,9 +28383,8 @@ glabel string______4
 	.4byte 0xBED1DDA0
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__3
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -28620,9 +28565,8 @@ glabel string___T__3
 	.4byte 0xBED66ABA
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_3
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -28731,9 +28675,8 @@ glabel string____J_3
 	.4byte 0xBEB4B03A
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_5
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -29096,9 +29039,8 @@ glabel string___T_t_5
 	.4byte 0xBEB4B03A
 	.4byte 0x3F7B22E2
 	.4byte 0xBE40D024
-glabel string___T_t_6
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -30027,9 +29969,8 @@ glabel string___T_t_6
 	.4byte 0x3F65BAA1
 	.4byte 0x3EB54478
 	.4byte 0xBE758F2E
-glabel string__gj__7
-	.asciz "?gj/"
-	.balign 4
+	.4byte 0x3F676A2F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -30054,9 +29995,8 @@ glabel string__gj__7
 	.4byte 0x3F65BAB2
 	.4byte 0x3EB543AF
 	.4byte 0x3E7590C1
-glabel string__gj__8
-	.asciz "?gj@"
-	.balign 4
+	.4byte 0x3F676A40
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -30133,9 +30073,8 @@ glabel string__gj__8
 	.4byte 0x3F3E6CE3
 	.4byte 0x3EEFB5F2
 	.4byte 0xBEEF1759
-glabel string____n__4
-	.asciz "?@\n["
-	.balign 4
+	.4byte 0x3F400A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -31649,9 +31588,8 @@ glabel lbl_80137A3C
 	.4byte 0x3E33D5FE
 	.4byte 0x3EEB7DC8
 	.4byte 0x3F5B4FA5
-glabel string__o_l
-	.asciz ">o&l"
-	.balign 4
+	.4byte 0x3E6F266C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -32372,9 +32310,8 @@ glabel string__o_l
 	.4byte 0xBED83276
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__4
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -32555,9 +32492,8 @@ glabel string___T__4
 	.4byte 0xBEC4D20B
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_4
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -32666,9 +32602,8 @@ glabel string____J_4
 	.4byte 0xBEB636B1
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_7
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -32791,9 +32726,8 @@ glabel string___T_t_7
 	.4byte 0x3DAAA9F8
 	.4byte 0x3F142279
 	.4byte 0xBF490D8D
-glabel string__a4H
-	.asciz ">a4H"
-	.balign 4
+	.4byte 0x3E613448
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -32818,9 +32752,8 @@ glabel string__a4H
 	.4byte 0xBD66D374
 	.4byte 0x3F2550EC
 	.4byte 0xBF4303D1
-glabel string__T_0
-	.asciz "=T+0"
-	.balign 4
+	.4byte 0x3D542B30
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -33059,9 +32992,8 @@ glabel string__T_0
 	.4byte 0xBEB636B1
 	.4byte 0x3F7B22E2
 	.4byte 0xBE40D024
-glabel string___T_t_8
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -33658,9 +33590,8 @@ glabel string___T_t_8
 	.4byte 0x3F37FFDE
 	.4byte 0x3F2F891E
 	.4byte 0xBCE4FDB1
-glabel string___4U
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -33685,9 +33616,8 @@ glabel string___4U
 	.4byte 0x3F37FFCE
 	.4byte 0x3F2F891E
 	.4byte 0x3CE4FB98
-glabel string___4U_2
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -34460,9 +34390,8 @@ glabel string___4U_2
 	.4byte 0x3F35931D
 	.4byte 0x3ECC81B2
 	.4byte 0x3F04D738
-glabel string__AzF
-	.asciz "?AzF"
-	.balign 4
+	.4byte 0x3F417A46
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -34747,9 +34676,8 @@ glabel string__AzF
 	.4byte 0x3E3CF894
 	.4byte 0x3F6DA576
 	.4byte 0x3E9B39C1
-glabel string____kH
-	.asciz ">\\kH"
-	.balign 4
+	.4byte 0x3E5C6B48
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -34878,9 +34806,8 @@ glabel string____kH
 	.4byte 0x3F66073E
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -34905,9 +34832,8 @@ glabel string____A
 	.4byte 0x3F66073E
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A_2
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -35244,9 +35170,8 @@ glabel string____A_2
 	.4byte 0x3F61B8BB
 	.4byte 0xBF241BDA
 	.4byte 0xBB5C65C7
-glabel string__Dz_
-	.asciz "?Dz["
-	.balign 4
+	.4byte 0x3F447A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -35484,9 +35409,9 @@ glabel string__Dz_
 	.4byte 0x3F459F6F
 	.4byte 0x3D8C6C55
 	.4byte 0x3F1B8BAC
-glabel string__KK__h_J
-	.asciz "?KK@<h)J"
-	.balign 4
+	.4byte 0x3F4B4B40
+	.4byte 0x3C68294A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -35512,9 +35437,8 @@ glabel lbl_8013B65C
 	.4byte 0x3E828CBD
 	.4byte 0x3EEB7DC8
 	.4byte 0x3F5B4FA5
-glabel string__o_l_2
-	.asciz ">o&l"
-	.balign 4
+	.4byte 0x3E6F266C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -36261,9 +36185,8 @@ glabel string__o_l_2
 	.4byte 0xBE799E0E
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__5
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -36444,9 +36367,8 @@ glabel string___T__5
 	.4byte 0xBEB5A2B6
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_5
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -36555,9 +36477,8 @@ glabel string____J_5
 	.4byte 0xBF092E30
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_9
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -36680,9 +36601,8 @@ glabel string___T_t_9
 	.4byte 0x3EB1713B
 	.4byte 0x3F142279
 	.4byte 0xBF490D8D
-glabel string__a4H_2
-	.asciz ">a4H"
-	.balign 4
+	.4byte 0x3E613448
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -36707,9 +36627,8 @@ glabel string__a4H_2
 	.4byte 0x3D7A41E5
 	.4byte 0x3F2550EC
 	.4byte 0xBF4303D1
-glabel string__T_0_2
-	.asciz "=T+0"
-	.balign 4
+	.4byte 0x3D542B30
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -36948,9 +36867,8 @@ glabel string__T_0_2
 	.4byte 0xBF092E0E
 	.4byte 0x3F7B22E2
 	.4byte 0xBE40D024
-glabel string___T_t_10
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -37547,9 +37465,8 @@ glabel string___T_t_10
 	.4byte 0x3F0DC50D
 	.4byte 0x3F2F891E
 	.4byte 0xBCE4FDB1
-glabel string___4U_3
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -37574,9 +37491,8 @@ glabel string___4U_3
 	.4byte 0x3F0DC5B5
 	.4byte 0x3F2F891E
 	.4byte 0x3CE4FB98
-glabel string___4U_4
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -38323,9 +38239,8 @@ glabel string___4U_4
 	.4byte 0x3F326762
 	.4byte 0x3ECC81D4
 	.4byte 0xBF04D728
-glabel string__AzF_2
-	.asciz "?AzF"
-	.balign 4
+	.4byte 0x3F417A46
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -38350,9 +38265,8 @@ glabel string__AzF_2
 	.4byte 0x3F3267F9
 	.4byte 0x3ECC81B2
 	.4byte 0x3F04D738
-glabel string__AzF_3
-	.asciz "?AzF"
-	.balign 4
+	.4byte 0x3F417A46
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -38507,9 +38421,8 @@ glabel string__AzF_3
 	.4byte 0x3F110B85
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A_3
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -38534,9 +38447,8 @@ glabel string____A_3
 	.4byte 0x3F110B85
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A_4
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -38904,9 +38816,9 @@ glabel string____A_4
 	.4byte 0x3F555087
 	.4byte 0x3D4154CA
 	.4byte 0x3F1B8BAC
-glabel string__KK__h_J_2
-	.asciz "?KK@<h)J"
-	.balign 4
+	.4byte 0x3F4B4B40
+	.4byte 0x3C68294A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -39337,13 +39249,11 @@ glabel lbl_8013EB94
 	.4byte 0x3FAAF0D0
 	.4byte 0x358637BD
 	.4byte 0x3EA1E8A3
-glabel string__GYX
-	.asciz "?GYX"
-	.balign 4
+	.4byte 0x3F475958
+	.4byte 0x00000000
 	.4byte 0xBF209C80
-glabel string__GYX_2
-	.asciz "?GYX"
-	.balign 4
+	.4byte 0x3F475958
+	.4byte 0x00000000
 	.4byte 0xBF209C80
 	.4byte 0
 	.4byte 0
@@ -39656,9 +39566,8 @@ glabel string__GYX_2
 	.4byte 0x3F171306
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A_5
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -39683,9 +39592,8 @@ glabel string____A_5
 	.4byte 0x3F171306
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A_6
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -39840,9 +39748,8 @@ glabel string____A_6
 	.4byte 0x3F2AFC37
 	.4byte 0xBF241BDA
 	.4byte 0xBB5C65C7
-glabel string__Dz__2
-	.asciz "?Dz["
-	.balign 4
+	.4byte 0x3F447A5B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -39887,9 +39794,8 @@ glabel string__Dz__2
 	.4byte 0x3F17351A
 	.4byte 0x3FB4EF24
 	.4byte 0xBD55E397
-glabel string__2jf_
-	.asciz "?2jf?"
-	.byte 0x03, 0xAC
+	.4byte 0x3F326A66
+	.4byte 0x3F0003AC
 	.4byte 0x3F3083A9
 	.4byte 0x3F062175
 	.4byte 0xBEE07486
@@ -39979,9 +39885,8 @@ glabel lbl_8013FBD4
 	.4byte 0x3E389657
 	.4byte 0x3EEB7DC8
 	.4byte 0x3F5B4FA5
-glabel string__o_l_3
-	.asciz ">o&l"
-	.balign 4
+	.4byte 0x3E6F266C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -40676,9 +40581,8 @@ glabel string__o_l_3
 	.4byte 0xBED1DDA0
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__6
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -40859,9 +40763,8 @@ glabel string___T__6
 	.4byte 0xBED66ABA
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_6
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -40970,9 +40873,8 @@ glabel string____J_6
 	.4byte 0xBEB4B03A
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_11
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -41095,9 +40997,8 @@ glabel string___T_t_11
 	.4byte 0x3E274CD3
 	.4byte 0x3F142279
 	.4byte 0xBF490D8D
-glabel string__a4H_3
-	.asciz ">a4H"
-	.balign 4
+	.4byte 0x3E613448
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -41122,9 +41023,8 @@ glabel string__a4H_3
 	.4byte 0xBD20B806
 	.4byte 0x3F2550EC
 	.4byte 0xBF4303D1
-glabel string__T_0_3
-	.asciz "=T+0"
-	.balign 4
+	.4byte 0x3D542B30
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -41337,9 +41237,8 @@ glabel string__T_0_3
 	.4byte 0xBEB4B03A
 	.4byte 0x3F7B22E2
 	.4byte 0xBE40D024
-glabel string___T_t_12
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -42242,9 +42141,8 @@ glabel string___T_t_12
 	.4byte 0x3F4181AE
 	.4byte 0x3ECC81B2
 	.4byte 0x3F04D738
-glabel string__AzF_4
-	.asciz "?AzF"
-	.balign 4
+	.4byte 0x3F417A46
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -42431,9 +42329,8 @@ glabel string__AzF_4
 	.4byte 0x3D8BE61D
 	.4byte 0x3F76CDD1
 	.4byte 0x3E859A0F
-glabel string__KT__
-	.asciz "=KT\\"
-	.balign 4
+	.4byte 0x3D4B545C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -42530,9 +42427,8 @@ glabel string__KT__
 	.4byte 0x3F56F32C
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A_7
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -42557,9 +42453,8 @@ glabel string____A_7
 	.4byte 0x3F56F32C
 	.4byte 0xBF24B31C
 	.4byte 0xBE4D0071
-glabel string____A_8
-	.asciz "?=*A"
-	.balign 4
+	.4byte 0x3F3D2A41
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -43135,9 +43030,9 @@ glabel string____A_8
 	.4byte 0x3F51B8ED
 	.4byte 0x3D272863
 	.4byte 0x3F1B8BAC
-glabel string__KK__h_J_3
-	.asciz "?KK@<h)J"
-	.balign 4
+	.4byte 0x3F4B4B40
+	.4byte 0x3C68294A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -43625,9 +43520,8 @@ glabel lbl_80142D64
 	.4byte 0x3F09FD05
 	.4byte 0x3E716095
 	.4byte 0x3F271B26
-glabel string__8OL
-	.asciz "?8OL"
-	.balign 4
+	.4byte 0x3F384F4C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -43964,9 +43858,8 @@ glabel string__8OL
 	.4byte 0x3F67676F
 	.4byte 0x3F062A80
 	.4byte 0xBDDCB146
-glabel string__XF_
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -44095,9 +43988,8 @@ glabel string__XF_
 	.4byte 0x3F22F8F0
 	.4byte 0x3F40620B
 	.4byte 0xBDB6177F
-glabel string___Z_
-	.asciz "?'Z!"
-	.balign 4
+	.4byte 0x3F275A21
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -44200,9 +44092,8 @@ glabel string___Z_
 	.4byte 0x3F63C793
 	.4byte 0x3F2D05F3
 	.4byte 0x3E3434A0
-glabel string__78_
-	.asciz "?78."
-	.balign 4
+	.4byte 0x3F37382E
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -44721,9 +44612,8 @@ glabel string__78_
 	.4byte 0x3F37430F
 	.4byte 0x3F56F0AE
 	.4byte 0x3DAE0221
-glabel string___tXC
-	.asciz "?\tXC"
-	.balign 4
+	.4byte 0x3F095843
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -45268,9 +45158,8 @@ glabel string___tXC
 	.4byte 0x3F09FD15
 	.4byte 0x3E716095
 	.4byte 0xBF271B48
-glabel string__8O_
-	.asciz "?8O+"
-	.balign 4
+	.4byte 0x3F384F2B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -45321,9 +45210,8 @@ glabel string__8O_
 	.4byte 0x3F5B8F58
 	.4byte 0x3DEEC9E2
 	.4byte 0xBE8C623D
-glabel string__t__
-	.asciz "?t_|"
-	.balign 4
+	.4byte 0x3F745F7C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -45400,9 +45288,8 @@ glabel string__t__
 	.4byte 0x3F62DAEC
 	.4byte 0x3F128AC6
 	.4byte 0xBE1DF117
-glabel string__N_0
-	.asciz "?N)0"
-	.balign 4
+	.4byte 0x3F4E2930
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -45609,9 +45496,8 @@ glabel string__N_0
 	.4byte 0x3F67676F
 	.4byte 0x3F062A80
 	.4byte 0x3DDCB253
-glabel string__XF__2
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -45844,9 +45730,8 @@ glabel string__XF__2
 	.4byte 0x3F63C793
 	.4byte 0x3F2D05E2
 	.4byte 0xBE3434A0
-glabel string__78__2
-	.asciz "?78?"
-	.balign 4
+	.4byte 0x3F37383F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -46545,9 +46430,8 @@ glabel string__78__2
 	.4byte 0x3F2D5864
 	.4byte 0x358637BD
 	.4byte 0x3F3C6184
-glabel string____A_9
-	.asciz "?>~A"
-	.balign 4
+	.4byte 0x3F3E7E41
+	.4byte 0x00000000
 	.4byte 0x3F2B0585
 	.4byte 0
 	.4byte 0
@@ -47250,9 +47134,8 @@ glabel string____A_9
 	.4byte 0x3F5E66ED
 	.4byte 0x3D396399
 	.4byte 0xBEAFB613
-glabel string__p_M
-	.asciz "?p,M"
-	.balign 4
+	.4byte 0x3F702C4D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -48187,9 +48070,9 @@ glabel lbl_80146F9C
 	.4byte 0x3F68E1F8
 	.4byte 0xBD1D68C7
 	.4byte 0x3F1B445F
-glabel string__Bgs_q__
-	.asciz "?Bgs>q+^"
-	.balign 4
+	.4byte 0x3F426773
+	.4byte 0x3E712B5E
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -48474,9 +48357,8 @@ glabel string__Bgs_q__
 	.4byte 0x3F5ADD16
 	.4byte 0x3E9573C9
 	.4byte 0xBDE1B867
-glabel string__s8P
-	.asciz "?s8P"
-	.balign 4
+	.4byte 0x3F733850
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -48735,9 +48617,8 @@ glabel string__s8P
 	.4byte 0x3F0CDEB1
 	.4byte 0x3E716095
 	.4byte 0x3F271B26
-glabel string__8OL_2
-	.asciz "?8OL"
-	.balign 4
+	.4byte 0x3F384F4C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -49074,9 +48955,8 @@ glabel string__8OL_2
 	.4byte 0x3F5C9364
 	.4byte 0x3F062A80
 	.4byte 0xBDDCB146
-glabel string__XF__3
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -49205,9 +49085,8 @@ glabel string__XF__3
 	.4byte 0x3F22F8F0
 	.4byte 0x3F40620B
 	.4byte 0xBDB6177F
-glabel string___Z__2
-	.asciz "?'Z!"
-	.balign 4
+	.4byte 0x3F275A21
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -49310,9 +49189,8 @@ glabel string___Z__2
 	.4byte 0x3F3CE93E
 	.4byte 0x3F2D05F3
 	.4byte 0x3E3434A0
-glabel string__78__3
-	.asciz "?78."
-	.balign 4
+	.4byte 0x3F37382E
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -49857,9 +49735,8 @@ glabel string__78__3
 	.4byte 0x3EE86B7B
 	.4byte 0x3F56F0AE
 	.4byte 0x3DAE0221
-glabel string___tXC_2
-	.asciz "?\tXC"
-	.balign 4
+	.4byte 0x3F095843
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -50768,9 +50645,8 @@ glabel string___tXC_2
 	.4byte 0xBD1D66AE
 	.4byte 0x3F1B445F
 	.4byte 0xBF426784
-glabel string__q_R
-	.asciz ">q*R"
-	.balign 4
+	.4byte 0x3E712A52
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -51055,9 +50931,8 @@ glabel string__q_R
 	.4byte 0x3F5ADD37
 	.4byte 0x3E957386
 	.4byte 0x3DE1B867
-glabel string__s8P_2
-	.asciz "?s8P"
-	.balign 4
+	.4byte 0x3F733850
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -51290,9 +51165,8 @@ glabel string__s8P_2
 	.4byte 0x3F0CDEB1
 	.4byte 0x3E716095
 	.4byte 0xBF271B48
-glabel string__8O__2
-	.asciz "?8O+"
-	.balign 4
+	.4byte 0x3F384F2B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -51343,9 +51217,8 @@ glabel string__8O__2
 	.4byte 0x3F5A161E
 	.4byte 0x3DEEC9E2
 	.4byte 0xBE8C623D
-glabel string__t___2
-	.asciz "?t_|"
-	.balign 4
+	.4byte 0x3F745F7C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -51422,9 +51295,8 @@ glabel string__t___2
 	.4byte 0x3F4BEA60
 	.4byte 0x3F128AC6
 	.4byte 0xBE1DF117
-glabel string__N_0_2
-	.asciz "?N)0"
-	.balign 4
+	.4byte 0x3F4E2930
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -51631,9 +51503,8 @@ glabel string__N_0_2
 	.4byte 0x3F5C9364
 	.4byte 0x3F062A80
 	.4byte 0x3DDCB253
-glabel string__XF__4
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -51866,9 +51737,8 @@ glabel string__XF__4
 	.4byte 0x3F3CE93E
 	.4byte 0x3F2D05E2
 	.4byte 0xBE3434A0
-glabel string__78__4
-	.asciz "?78?"
-	.balign 4
+	.4byte 0x3F37383F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -52541,9 +52411,8 @@ glabel string__78__4
 	.4byte 0x3F74C9B8
 	.4byte 0
 	.4byte 0xBE95DD90
-glabel string__C_1
-	.asciz "?C^1"
-	.balign 4
+	.4byte 0x3F435E31
+	.4byte 0x00000000
 	.4byte 0xBF256E59
 	.4byte 0
 	.4byte 0
@@ -52620,9 +52489,8 @@ glabel string__C_1
 	.4byte 0x3F438141
 	.4byte 0xB58637BD
 	.4byte 0x3F2544CC
-glabel string____A_10
-	.asciz "?>~A"
-	.balign 4
+	.4byte 0x3F3E7E41
+	.4byte 0x00000000
 	.4byte 0x3F2B0585
 	.4byte 0
 	.4byte 0
@@ -52669,9 +52537,9 @@ glabel string____A_10
 	.4byte 0x40087768
 	.4byte 0x3FE9830E
 	.4byte 0x358637BD
-glabel string___ns__yY_
-	.asciz "@\ns*?yY."
-	.balign 4
+	.4byte 0x400A732A
+	.4byte 0x3F79592E
+	.4byte 0x00000000
 	.4byte 0xBE67E996
 	.4byte 0x3F7CB31C
 	.4byte 0
@@ -53533,9 +53401,8 @@ glabel string___ns__yY_
 	.4byte 0x3F700B9A
 	.4byte 0x3D396399
 	.4byte 0xBEAFB613
-glabel string__p_M_2
-	.asciz "?p,M"
-	.balign 4
+	.4byte 0x3F702C4D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -54574,9 +54441,9 @@ glabel lbl_8014D184
 	.4byte 0x3F54563F
 	.4byte 0x3E0DDF44
 	.4byte 0x3F1B445F
-glabel string__Bgs_q___2
-	.asciz "?Bgs>q+^"
-	.balign 4
+	.4byte 0x3F426773
+	.4byte 0x3E712B5E
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -54861,9 +54728,8 @@ glabel string__Bgs_q___2
 	.4byte 0x3F732EAE
 	.4byte 0x3E9573C9
 	.4byte 0xBDE1B867
-glabel string__s8P_3
-	.asciz "?s8P"
-	.balign 4
+	.4byte 0x3F733850
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -55174,9 +55040,8 @@ glabel string__s8P_3
 	.4byte 0x3EA93986
 	.4byte 0x3E716095
 	.4byte 0x3F271B26
-glabel string__8OL_3
-	.asciz "?8OL"
-	.balign 4
+	.4byte 0x3F384F4C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -55513,9 +55378,8 @@ glabel string__8OL_3
 	.4byte 0x3F6644E9
 	.4byte 0x3F062A80
 	.4byte 0xBDDCB146
-glabel string__XF__5
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -55644,9 +55508,8 @@ glabel string__XF__5
 	.4byte 0x3F2E009F
 	.4byte 0x3F40620B
 	.4byte 0xBDB6177F
-glabel string___Z__3
-	.asciz "?'Z!"
-	.balign 4
+	.4byte 0x3F275A21
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -55749,9 +55612,8 @@ glabel string___Z__3
 	.4byte 0x3F636018
 	.4byte 0x3F2D05F3
 	.4byte 0x3E3434A0
-glabel string__78__5
-	.asciz "?78."
-	.balign 4
+	.4byte 0x3F37382E
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -56296,9 +56158,8 @@ glabel string__78__5
 	.4byte 0x3EE592DA
 	.4byte 0x3F56F0AE
 	.4byte 0x3DAE0221
-glabel string___tXC_3
-	.asciz "?\tXC"
-	.balign 4
+	.4byte 0x3F095843
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -57259,9 +57120,8 @@ glabel string___tXC_3
 	.4byte 0x3E0DDF01
 	.4byte 0x3F1B445F
 	.4byte 0xBF426784
-glabel string__q_R_2
-	.asciz ">q*R"
-	.balign 4
+	.4byte 0x3E712A52
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -57546,9 +57406,8 @@ glabel string__q_R_2
 	.4byte 0x3F732EAE
 	.4byte 0x3E957386
 	.4byte 0x3DE1B867
-glabel string__s8P_4
-	.asciz "?s8P"
-	.balign 4
+	.4byte 0x3F733850
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -57833,9 +57692,8 @@ glabel string__s8P_4
 	.4byte 0x3EA93986
 	.4byte 0x3E716095
 	.4byte 0xBF271B48
-glabel string__8O__3
-	.asciz "?8O+"
-	.balign 4
+	.4byte 0x3F384F2B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -57886,9 +57744,8 @@ glabel string__8O__3
 	.4byte 0x3F3BB82C
 	.4byte 0x3DEEC9E2
 	.4byte 0xBE8C623D
-glabel string__t___3
-	.asciz "?t_|"
-	.balign 4
+	.4byte 0x3F745F7C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -57965,9 +57822,8 @@ glabel string__t___3
 	.4byte 0x3F6C347F
 	.4byte 0x3F128AC6
 	.4byte 0xBE1DF117
-glabel string__N_0_3
-	.asciz "?N)0"
-	.balign 4
+	.4byte 0x3F4E2930
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -58174,9 +58030,8 @@ glabel string__N_0_3
 	.4byte 0x3F6644E9
 	.4byte 0x3F062A80
 	.4byte 0x3DDCB253
-glabel string__XF__6
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -58409,9 +58264,8 @@ glabel string__XF__6
 	.4byte 0x3F635FD4
 	.4byte 0x3F2D05E2
 	.4byte 0xBE3434A0
-glabel string__78__6
-	.asciz "?78?"
-	.balign 4
+	.4byte 0x3F37383F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -59188,9 +59042,8 @@ glabel string__78__6
 	.4byte 0x3EAE527A
 	.4byte 0
 	.4byte 0xBF70B47C
-glabel string__C_1_2
-	.asciz "?C^1"
-	.balign 4
+	.4byte 0x3F435E31
+	.4byte 0x00000000
 	.4byte 0xBF256E59
 	.4byte 0
 	.4byte 0
@@ -59264,9 +59117,8 @@ glabel string__C_1_2
 	.4byte 0x3FF5251C
 	.4byte 0x358637BD
 	.4byte 0x4017FFC9
-glabel string___d_
-	.asciz "?`d$"
-	.balign 4
+	.4byte 0x3F606424
+	.4byte 0x00000000
 	.4byte 0xBEF673A3
 	.4byte 0x3F644806
 	.4byte 0
@@ -59294,9 +59146,8 @@ glabel string___d_
 	.4byte 0x3F1B2043
 	.4byte 0
 	.4byte 0x3F4BA57F
-glabel string____A_11
-	.asciz "?>~A"
-	.balign 4
+	.4byte 0x3F3E7E41
+	.4byte 0x00000000
 	.4byte 0x3F2B0585
 	.4byte 0
 	.4byte 0
@@ -60259,9 +60110,8 @@ glabel string____A_11
 	.4byte 0x3F2DCAB0
 	.4byte 0x3D396399
 	.4byte 0xBEAFB613
-glabel string__p_M_3
-	.asciz "?p,M"
-	.balign 4
+	.4byte 0x3F702C4D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -60859,9 +60709,8 @@ glabel lbl_80153A54
 	.4byte 0x3F010E13
 	.4byte 0x3E716095
 	.4byte 0x3F271B26
-glabel string__8OL_4
-	.asciz "?8OL"
-	.balign 4
+	.4byte 0x3F384F4C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -61198,9 +61047,8 @@ glabel string__8OL_4
 	.4byte 0x3F643372
 	.4byte 0x3F062A80
 	.4byte 0xBDDCB146
-glabel string__XF__7
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -61329,9 +61177,8 @@ glabel string__XF__7
 	.4byte 0x3F228BE3
 	.4byte 0x3F40620B
 	.4byte 0xBDB6177F
-glabel string___Z__4
-	.asciz "?'Z!"
-	.balign 4
+	.4byte 0x3F275A21
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -61434,9 +61281,8 @@ glabel string___Z__4
 	.4byte 0x3F57DEF8
 	.4byte 0x3F2D05F3
 	.4byte 0x3E3434A0
-glabel string__78__7
-	.asciz "?78."
-	.balign 4
+	.4byte 0x3F37382E
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -61955,9 +61801,8 @@ glabel string__78__7
 	.4byte 0x3F34D0DD
 	.4byte 0x3F56F0AE
 	.4byte 0x3DAE0221
-glabel string___tXC_4
-	.asciz "?\tXC"
-	.balign 4
+	.4byte 0x3F095843
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -62476,9 +62321,8 @@ glabel string___tXC_4
 	.4byte 0x3F010E13
 	.4byte 0x3E716095
 	.4byte 0xBF271B48
-glabel string__8O__4
-	.asciz "?8O+"
-	.balign 4
+	.4byte 0x3F384F2B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -62529,9 +62373,8 @@ glabel string__8O__4
 	.4byte 0x3F4CE91D
 	.4byte 0x3DEEC9E2
 	.4byte 0xBE8C623D
-glabel string__t___4
-	.asciz "?t_|"
-	.balign 4
+	.4byte 0x3F745F7C
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -62608,9 +62451,8 @@ glabel string__t___4
 	.4byte 0x3F53A4B5
 	.4byte 0x3F128AC6
 	.4byte 0xBE1DF117
-glabel string__N_0_4
-	.asciz "?N)0"
-	.balign 4
+	.4byte 0x3F4E2930
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -62817,9 +62659,8 @@ glabel string__N_0_4
 	.4byte 0x3F643372
 	.4byte 0x3F062A80
 	.4byte 0x3DDCB253
-glabel string__XF__8
-	.asciz "?XF "
-	.balign 4
+	.4byte 0x3F584620
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -63052,9 +62893,8 @@ glabel string__XF__8
 	.4byte 0x3F57DF1A
 	.4byte 0x3F2D05E2
 	.4byte 0xBE3434A0
-glabel string__78__8
-	.asciz "?78?"
-	.balign 4
+	.4byte 0x3F37383F
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -63753,9 +63593,8 @@ glabel string__78__8
 	.4byte 0x3F3685BA
 	.4byte 0
 	.4byte 0x3F3380FE
-glabel string____A_12
-	.asciz "?>~A"
-	.balign 4
+	.4byte 0x3F3E7E41
+	.4byte 0x00000000
 	.4byte 0x3F2B0585
 	.4byte 0
 	.4byte 0
@@ -64458,9 +64297,8 @@ glabel string____A_12
 	.4byte 0x3F32C3DB
 	.4byte 0x3D396399
 	.4byte 0xBEAFB613
-glabel string__p_M_4
-	.asciz "?p,M"
-	.balign 4
+	.4byte 0x3F702C4D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -64485,9 +64323,8 @@ glabel string__p_M_4
 	.4byte 0x3F32C3DB
 	.4byte 0x3D396399
 	.4byte 0xBEAFB613
-glabel string__p_M_5
-	.asciz "?p,M"
-	.balign 4
+	.4byte 0x3F702C4D
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -65189,9 +65026,8 @@ glabel lbl_80157BBC
 	.4byte 0xBED9949F
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__7
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -65372,9 +65208,8 @@ glabel string___T__7
 	.4byte 0xBEAFFD3F
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_7
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -65483,9 +65318,8 @@ glabel string____J_7
 	.4byte 0xBF262D41
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_13
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -66466,9 +66300,8 @@ glabel string___T_t_13
 	.4byte 0x3F092546
 	.4byte 0x3F2F892F
 	.4byte 0xBCE4FDB1
-glabel string___4D_4
-	.asciz "?:4D"
-	.balign 4
+	.4byte 0x3F3A3444
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -66493,9 +66326,8 @@ glabel string___4D_4
 	.4byte 0x3F092546
 	.4byte 0x3F2F892F
 	.4byte 0xBCE4FDB1
-glabel string___4D_5
-	.asciz "?:4D"
-	.balign 4
+	.4byte 0x3F3A3444
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -66520,9 +66352,8 @@ glabel string___4D_5
 	.4byte 0x3F09259A
 	.4byte 0x3F2F891E
 	.4byte 0x3CE4F97F
-glabel string___4U_5
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -66547,9 +66378,8 @@ glabel string___4U_5
 	.4byte 0x3F09259A
 	.4byte 0x3F2F891E
 	.4byte 0x3CE4F97F
-glabel string___4U_6
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -66678,9 +66508,8 @@ glabel string___4U_6
 	.4byte 0xBD9BC87E
 	.4byte 0x3F160297
 	.4byte 0xBF462C56
-glabel string__uIs
-	.asciz ">uIs"
-	.balign 4
+	.4byte 0x3E754973
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -67590,9 +67419,8 @@ glabel lbl_8015A11C
 	.4byte 0xBED62D62
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__8
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -67773,9 +67601,8 @@ glabel string___T__8
 	.4byte 0xBEAC9ADD
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_8
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -67884,9 +67711,8 @@ glabel string____J_8
 	.4byte 0xBF33DE94
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_14
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -68873,9 +68699,8 @@ glabel string___T_t_14
 	.4byte 0x3F1CA3E8
 	.4byte 0x3F2F892F
 	.4byte 0xBCE4FDB1
-glabel string___4D_6
-	.asciz "?:4D"
-	.balign 4
+	.4byte 0x3F3A3444
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -68894,9 +68719,8 @@ glabel string___4D_6
 	.4byte 0x3E4C2374
 	.4byte 0x3F2F892F
 	.4byte 0xBCE4FDB1
-glabel string___4D_7
-	.asciz "?:4D"
-	.balign 4
+	.4byte 0x3F3A3444
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -68927,9 +68751,8 @@ glabel string___4D_7
 	.4byte 0x3F1CA3E8
 	.4byte 0x3F2F891E
 	.4byte 0x3CE4F97F
-glabel string___4U_7
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -68948,9 +68771,8 @@ glabel string___4U_7
 	.4byte 0x3E4C2614
 	.4byte 0x3F2F891E
 	.4byte 0x3CE4F97F
-glabel string___4U_8
-	.asciz "?:4U"
-	.balign 4
+	.4byte 0x3F3A3455
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -69599,9 +69421,8 @@ glabel string___4U_8
 	.4byte 0x3D52556D
 	.4byte 0x3F160297
 	.4byte 0xBF462C56
-glabel string__uIs_2
-	.asciz ">uIs"
-	.balign 4
+	.4byte 0x3E754973
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -70823,9 +70644,8 @@ glabel lbl_8015D1DC
 	.4byte 0xBED1593E
 	.4byte 0x3F3A51E3
 	.4byte 0x3F2F89F8
-glabel string___T__9
-	.asciz "<)T\""
-	.balign 4
+	.4byte 0x3C295422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -71006,9 +70826,8 @@ glabel string___T__9
 	.4byte 0xBED64DE4
 	.4byte 0x3F5D1A11
 	.4byte 0x3F010225
-glabel string____J_9
-	.asciz "<'&J"
-	.balign 4
+	.4byte 0x3C27264A
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -71117,9 +70936,8 @@ glabel string____J_9
 	.4byte 0xBEB4B03A
 	.4byte 0x3F7B22E2
 	.4byte 0x3E40D068
-glabel string___T_t_15
-	.asciz "=?T\t"
-	.balign 4
+	.4byte 0x3D3F5409
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -72178,9 +71996,8 @@ glabel string___T_t_15
 	.4byte 0x3E25D28D
 	.4byte 0x3F160297
 	.4byte 0xBF462C56
-glabel string__uIs_3
-	.asciz ">uIs"
-	.balign 4
+	.4byte 0x3E754973
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -75067,9 +74884,8 @@ glabel lbl_80161684
 	.4byte 0x3E66262D
 	.4byte 0x3EBBCB60
 	.4byte 0xBF6919AC
-glabel string__CI_
-	.asciz ">CI{"
-	.balign 4
+	.4byte 0x3E43497B
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -84539,9 +84355,8 @@ glabel lbl_8016AEDC
 	.4byte 0x3F7FBC90
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -84566,9 +84381,8 @@ glabel string___18
 	.4byte 0x3F7FBC90
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18_2
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -84957,9 +84771,8 @@ glabel string___18_2
 	.4byte 0x3E8DAA71
 	.4byte 0x3F6A743A
 	.4byte 0xBEB884E8
-glabel string__5Yq
-	.asciz ">5Yq"
-	.balign 4
+	.4byte 0x3E355971
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -85583,9 +85396,8 @@ glabel lbl_8016BF84
 	.4byte 0x3F7FC59C
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18_3
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -85610,9 +85422,8 @@ glabel string___18_3
 	.4byte 0x3F7FC59C
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18_4
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -86001,9 +85812,8 @@ glabel string___18_4
 	.4byte 0x3E415D2D
 	.4byte 0x3F6A743A
 	.4byte 0xBEB884E8
-glabel string__5Yq_2
-	.asciz ">5Yq"
-	.balign 4
+	.4byte 0x3E355971
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -86601,9 +86411,8 @@ glabel lbl_8016CEF4
 	.4byte 0x3F6470EB
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18_5
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -86628,9 +86437,8 @@ glabel string___18_5
 	.4byte 0x3F6470EB
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18_6
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -87514,9 +87322,8 @@ glabel lbl_8016DD94
 	.4byte 0x3F77499D
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18_7
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -87541,9 +87348,8 @@ glabel string___18_7
 	.4byte 0x3F77499D
 	.4byte 0xBE25AFB0
 	.4byte 0x3D6CF41F
-glabel string___18_8
-	.asciz "?|18"
-	.balign 4
+	.4byte 0x3F7C3138
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -87854,9 +87660,8 @@ glabel string___18_8
 	.4byte 0x3EA51C5C
 	.4byte 0x3F6A743A
 	.4byte 0xBEB884E8
-glabel string__5Yq_3
-	.asciz ">5Yq"
-	.balign 4
+	.4byte 0x3E355971
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -88084,9 +87889,8 @@ glabel string__5Yq_3
 	.4byte 0x3FED5FCC
 	.4byte 0
 	.4byte 0x4012999A
-glabel string___X_
-	.asciz "?~X`"
-	.balign 4
+	.4byte 0x3F7E5860
+	.4byte 0x00000000
 	.4byte 0xBDE87D2C
 	.4byte 0x3F7C7304
 	.4byte 0
@@ -88273,9 +88077,8 @@ glabel lbl_8016EBCC
 	.4byte 0x3B2C29BF
 	.4byte 0x3F2287A0
 	.4byte 0xBF416FB9
-glabel string____nF
-	.asciz ">%\nF"
-	.balign 4
+	.4byte 0x3E250A46
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -88601,9 +88404,8 @@ glabel string____nF
 	.4byte 0
 	.4byte 0x0270FFFF
 	.4byte 0xFFFF0000
-glabel string___jM_
-	.asciz "?|jM>"
-	.byte 0x96, 0x78
+	.4byte 0x3F7C6A4D
+	.4byte 0x3E009678
 	.4byte 0x3FE328B7
 	.4byte 0x3F51AF19
 	.4byte 0x3E8C0011
@@ -88735,9 +88537,8 @@ glabel string___jM_
 	.4byte 0x3F6E89FC
 	.4byte 0x358637BD
 	.4byte 0x3FDB02E6
-glabel string__bd_
-	.asciz "?bd,"
-	.balign 4
+	.4byte 0x3F62642C
+	.4byte 0x00000000
 	.4byte 0x3FDB02E6
 	.4byte 0x3F6CB674
 	.4byte 0x3716FEB5
@@ -88823,9 +88624,8 @@ glabel lbl_8016F454
 	.4byte 0xBD65F84D
 	.4byte 0x3F2287A0
 	.4byte 0xBF416FB9
-glabel string____nF_2
-	.asciz ">%\nF"
-	.balign 4
+	.4byte 0x3E250A46
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -89284,9 +89084,8 @@ glabel string____nF_2
 	.4byte 0x3F62641B
 	.4byte 0x358637BD
 	.4byte 0x3FCD3123
-glabel string__bd__2
-	.asciz "?bd,"
-	.balign 4
+	.4byte 0x3F62642C
+	.4byte 0x00000000
 	.4byte 0x3FDB02E6
 	.4byte 0x3F7EB2C0
 	.4byte 0x358637BD
@@ -89502,9 +89301,8 @@ glabel lbl_8016FCDC
 	.4byte 0xBDC1754B
 	.4byte 0x3F2287A0
 	.4byte 0xBF416FB9
-glabel string____nF_3
-	.asciz ">%\nF"
-	.balign 4
+	.4byte 0x3E250A46
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -89997,9 +89795,8 @@ glabel string____nF_3
 	.4byte 0x3DB21A2E
 	.4byte 0x3E9677D5
 	.4byte 0xBF744A1F
-glabel string__akU
-	.asciz "=akU"
-	.balign 4
+	.4byte 0x3D616B55
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -90258,9 +90055,8 @@ glabel string__akU
 	.4byte 0x3F22ED14
 	.4byte 0xBF1DA683
 	.4byte 0x3EB0A937
-glabel string__5T_
-	.asciz "?5T\""
-	.balign 4
+	.4byte 0x3F355422
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -90283,12 +90079,10 @@ glabel string__5T_
 	.4byte 0x3F1D4068
 	.4byte 0x3F00C469
 	.4byte 0x3F1BA66A
-glabel string___cg_
-	.asciz "?-cg?"
-	.byte 0xC4, 0x69
-glabel string___trX
-	.asciz "?\trX"
-	.balign 4
+	.4byte 0x3F2D6367
+	.4byte 0x3F00C469
+	.4byte 0x3F097258
+	.4byte 0x00000000
 	.4byte 0
 	.4byte 0
 	.4byte 0
