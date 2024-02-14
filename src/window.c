@@ -7,7 +7,9 @@
 #include "bitmap.h"
 #include "gxcache.h"
 #include "input.h"
+#include "light.h"
 #include "pool.h"
+#include "sound.h"
 
 u8 lbl_80201928[0x7AC];  FORCE_BSS_ORDER(lbl_80201928)  // 0, size = 0x7A9
 u8 lbl_802020D4[0x7AC];  FORCE_BSS_ORDER(lbl_802020D4)  // 0x7AC, size = 0x7A9
@@ -58,6 +60,8 @@ extern int lbl_802F1E08;  // s32 vs int actually matters here
 extern u32 lbl_802F1EA8;
 
 void func_80030030(int arg0, int arg1, int arg2, int arg3);
+void func_80030310(int arg0, int arg1, s8 arg2, u8 arg3);
+void func_800304E0(float x1, float y1, float x2, float y2);
 
 void func_8002DC54(void)
 {
@@ -120,6 +124,7 @@ void func_8002DD5C(void)
     }
 }
 
+#pragma dont_inline on
 void func_8002DE38(void)
 {
     int r6;
@@ -141,6 +146,7 @@ void func_8002DE38(void)
         lbl_802F1EA8 = 0;
     }
 }
+#pragma dont_inline reset
 
 void func_8002E06C(struct Struct8002EF0C *arg0)
 {
@@ -405,6 +411,80 @@ void draw_window_frame(struct Struct8002EF0C *arg0)
     }
 }
 
+void func_8002F0E4(void)
+{
+    u8 *var_r30_2;
+    struct Struct8002EF0C **var_r30;
+    int var_r31;
+    int var_r29;
+    int var_r27;
+    s8 *var_r26;
+    s8 *var_r25;
+    s8 *var_r24;
+    int temp_r0;
+    int temp_r3;
+    int temp_r5;
+    int temp_r8;
+    int var_r5;
+    int var_r6;
+    int var_r8;
+    int var_r9;
+    struct Struct8002EF0C *temp_r7;
+
+    GXSetZMode_cached(1, GX_LESS, 1);
+    var_r30 = lbl_80205688;
+    for (var_r29 = 0; var_r29 < 16; var_r29++, var_r30++)
+    {
+        temp_r7 = *var_r30;
+        if (temp_r7 != NULL)
+        {
+            temp_r5 = temp_r7->unk0;
+            temp_r8 = temp_r7->unk4;
+            var_r6 = (temp_r5 * 12) + 6;
+            var_r5 = (temp_r8 * 12) + 6;
+            var_r8 = ((temp_r5 + temp_r7->unk8) * 12) - 6;
+            var_r9 = ((temp_r8 + temp_r7->unkC) * 12) - 6;
+            if (var_r29 == lbl_802F1E08 && lbl_802F1EA8 != 0U)
+            {
+                temp_r0 = temp_r7->unk24;
+                temp_r3 = temp_r7->unk28;
+                var_r6 += temp_r0;
+                var_r5 += temp_r3;
+                var_r8 += temp_r0;
+                var_r9 += temp_r3;
+            }
+            func_800304E0(var_r6, var_r5, var_r8, var_r9);
+        }
+    }
+    GXSetZMode_cached(1, GX_ALWAYS, 0);
+    GXLoadTexObj_cached(&u_unkBitmapTPL->texObjs[31], 0);
+    GXInitTexObjLOD(&u_unkBitmapTPL->texObjs[31], GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+
+    var_r26 = (s8 *)lbl_80202880;
+    var_r30_2 = lbl_80203F84;
+    var_r25 = (s8 *)lbl_80203F84_2;
+    var_r24 = (s8 *)lbl_80203F84_3;
+    for (var_r27 = 0; var_r27 < 0x25; var_r27++)
+    {
+        for (var_r31 = 0; var_r31 < 0x35; var_r31++)
+        {
+            if (*var_r26 != 0x20)
+            {
+                func_80030310(
+                    *var_r25 + (var_r31 * 12),
+                    *var_r24 + (var_r27 * 12),
+                    *var_r26,
+                    *var_r30_2);
+            }
+            var_r26++;
+            var_r30_2++;
+            var_r25++;
+            var_r24++;
+        }
+    }
+    GXSetZMode_cached(1, GX_LEQUAL, 1);
+}
+
 void window_init(void)
 {
     s32 i;
@@ -421,9 +501,228 @@ void window_init(void)
     memset(lbl_80203F84, 0, 0x7A9);
 }
 
+extern s8 lbl_802F1C6C[8];
+
+extern struct Light lbl_801F3A08;
+
+extern u32 lbl_802F1E40;
+extern u32 lbl_802F1E44;
+extern u32 lbl_802F1E48;
+extern u32 lbl_802F1E4C;
+extern s8 lbl_802F1E50;
+extern s8 lbl_802F1E51;
+
+extern struct Struct8002EF0C lbl_801B7474;
+
+extern u32 lbl_802F1E30;
+extern u32 lbl_802F1E34;
+extern u32 lbl_802F1E38;
+extern u32 lbl_802F1E3C;
+
+extern s32 lbl_802F1E54;
+extern s32 lbl_802F1E58;
+
+extern struct Color3f lbl_801F39FC;
+
+static void dont_inline_func_8002DD5C(void)
+{
+    func_8002DD5C();
+}
+
 void window_main(void)
 {
+    int spC;
+    int var_r31;
+    int temp_r22;
+    int var_r22;
+    int temp_r4_2;
+    int var_ctr;
+    int var_ctr_3;
+    u32 *var_r3_5;
+    u8 *var_r12;
+    int var_r3_7;
+    u8 *var_r4;
+    struct Struct8002EF0C **var_r4_2;
+    u8 *var_r5;
+    u8 *var_r6;
+    u8 *var_r7;
+    u8 *var_r8;
+    u8 *var_r9;
+    s8 r11;
+    u8 *var_r10;
+    int var_ctr_4;
+    struct Struct8002EF0C *temp_r3;
+    struct Struct8002EF0C *temp_r3_7;
 
+    var_r22 = 1;
+
+    lbl_802F1E40 = ((controllerInfo[0].unk0[4].button & 8) || ((controllerInfo[0].unk0[0].button & 8) && (analogButtonInfo[0][0] & 0x200)));
+    lbl_802F1E44 = ((controllerInfo[0].unk0[4].button & 4) || ((controllerInfo[0].unk0[0].button & 4) && (analogButtonInfo[0][0] & 0x200)));
+    lbl_802F1E48 = ((controllerInfo[0].unk0[4].button & 1) || ((controllerInfo[0].unk0[0].button & 1) && (analogButtonInfo[0][0] & 0x200)));
+    lbl_802F1E4C = ((controllerInfo[0].unk0[4].button & 2) || ((controllerInfo[0].unk0[0].button & 2) && (analogButtonInfo[0][0] & 0x200)));
+
+    var_r3_5 = (u32 *)lbl_80203F84_2;
+    for (var_ctr = 487; var_ctr >= 0; var_ctr--)
+        *var_r3_5++ = 0;
+    var_r3_5 = (u32 *)lbl_80203F84_3;
+    for (var_ctr = 487; var_ctr >= 0; var_ctr--)
+        *var_r3_5++ = 0;
+
+    memcpy(lbl_80202880, lbl_802020D4, 0x7A9);
+    memcpy(lbl_80203F84, lbl_802037D8, 0x7A9);
+
+    var_r12 = lbl_80201928;
+    var_r8 = lbl_80202880;
+    var_r9 = lbl_80201928_1704;
+    var_r10 = lbl_80203F84;
+    for (var_r3_7 = 0; var_r3_7 < 0x25; var_r3_7++)
+    {
+        var_r4 = var_r12;
+        var_r5 = var_r8;
+        var_r6 = var_r9;
+        var_r7 = var_r10;
+        for (var_ctr_3 = 0; var_ctr_3 < 0x35; var_ctr_3++)
+        {
+            r11 = *var_r4;
+            if (r11 != 0x20)
+            {
+                *var_r5 = r11;
+                *var_r7 = *var_r6;
+            }
+            var_r4++;
+            var_r5++;
+            var_r6++;
+            var_r7++;
+        }
+        var_r12 += 0x35;
+        var_r8 += 0x35;
+        var_r9 += 0x35;
+        var_r10 += 0x35;
+    }
+
+    memset(lbl_80201928, 0x20, 0x7A9);
+    memset(lbl_80201928_1704, 0, 0x7A9);
+
+    if (analogButtonInfo[0][0] & 0x100)
+    {
+        if ((dipSwitches & 1) && (controllerInfo[0].unk0[2].button & 0x1000))
+        {
+            func_8002E06C(&lbl_801B7474);
+        }
+        else if (controllerInfo[0].unk0[2].button & 0x800)
+        {
+            if (lbl_802F1EA8 != 0U)
+            {
+                temp_r3 = lbl_80205688[lbl_802F1E08];
+                if (temp_r3 != NULL)
+                {
+                    lbl_802F1EA8 = 1U;
+                    temp_r3->unk20 = 0;
+
+                    var_r4_2 = &lbl_80205688[lbl_802F1E08];
+                    for (var_ctr_4 = lbl_802F1E08; var_ctr_4 < 15; var_ctr_4++, var_r4_2++)
+                        *var_r4_2 = *(var_r4_2 + 1);
+                    *var_r4_2 = NULL;
+
+                    func_8002DE38();
+                }
+            }
+        }
+        else
+        {
+            if (controllerInfo[0].unk0[4].button & 0x100)
+            {
+                func_8002DC54();
+                var_r22 = 0;
+            }
+            else if ((controllerInfo[0].unk0[4].button & 0x200) && ((u32) lbl_802F1EA8 != 0U))
+            {
+                dont_inline_func_8002DD5C();
+            }
+        }
+    }
+    lbl_802F1C90 = u_lightToPrint;
+    lbl_801F3A08 = s_u_lightPool[u_lightToPrint];
+    lbl_802F1E50 = lbl_801F3A08.spotFn;
+    lbl_802F1C74 = lbl_802F1C75;
+    // this doesn't match as a loop
+    lbl_802F1C6C[0] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[0];
+    lbl_802F1C6C[1] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[1];
+    lbl_802F1C6C[2] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[2];
+    lbl_802F1C6C[3] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[3];
+    lbl_802F1C6C[4] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[4];
+    lbl_802F1C6C[5] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[5];
+    lbl_802F1C6C[6] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[6];
+    lbl_802F1C6C[7] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[7];
+    lbl_801F39FC = s_lightGroups[lbl_802F1C75].ambient;
+
+    temp_r22 = lbl_802F1DE8;
+    spC = lbl_802F1DE4;
+    lbl_802F1E51 = lbl_80201500[temp_r22];
+    if (var_r22 != 0 && lbl_802F1EA8 != 0 && lbl_80205688[lbl_802F1E08] != 0)
+        func_8002E284(lbl_80205688[lbl_802F1E08]);
+    lbl_801F3A08.spotFn = lbl_802F1E50;
+
+    s_u_lightPool[lbl_802F1C90] = lbl_801F3A08;
+    // this doesn't match as a loop
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[0] = lbl_802F1C6C[0];
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[1] = lbl_802F1C6C[1];
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[2] = lbl_802F1C6C[2];
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[3] = lbl_802F1C6C[3];
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[4] = lbl_802F1C6C[4];
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[5] = lbl_802F1C6C[5];
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[6] = lbl_802F1C6C[6];
+    s_lightGroups[lbl_802F1C74].lightPoolIdxs[7] = lbl_802F1C6C[7];
+    s_lightGroups[lbl_802F1C74].ambient = lbl_801F39FC;
+
+    lbl_80201500[temp_r22] = lbl_802F1E51;
+
+    if (g_soundDesc[lbl_802F1DE8].unk8 == 1)
+    {
+        if (lbl_802F1DE8 == g_soundGroupDesc[lbl_802F1DE4].unused)
+            lbl_802F1DE8 = g_soundGroupDesc[lbl_802F1DE4+1].unused - 1;
+        else
+            lbl_802F1DE8 = g_soundGroupDesc[lbl_802F1DE4].unused + 1;
+    }
+    if (spC != lbl_802F1DE4)
+        lbl_802F1DE8 = g_soundGroupDesc[lbl_802F1DE4].unused + 1;
+    if (lbl_802F1E54 != 0)
+    {
+        SoundReqDirect(lbl_802F1DE8);
+        lbl_802F1E54 = 0;
+    }
+    if (lbl_802F1E58 != 0)
+    {
+        SoundOff(lbl_802F1DE8);
+        lbl_802F1E58 = 0;
+    }
+    for (var_r31 = 15; var_r31 >= 0; var_r31--)
+    {
+        if (lbl_80205688[var_r31] != NULL)
+        {
+            if (var_r31 == lbl_802F1E08 && lbl_802F1EA8 != 0)
+                func_8002EA40(lbl_80205688[var_r31], 1);
+            else
+                func_8002EA40(lbl_80205688[var_r31], 0);
+        }
+    }
+    u_debug_set_text_color(0);
+    if (lbl_802F1EA8 != 0U)
+    {
+        temp_r3_7 = lbl_80205688[lbl_802F1E08];
+        if (temp_r3_7 != NULL)
+        {
+            lbl_802F1E30 = temp_r3_7->unk0;
+            lbl_802F1E34 = temp_r3_7->unk4;
+            lbl_802F1E38 = temp_r3_7->unk8;
+            lbl_802F1E3C = temp_r3_7->unkC;
+            return;
+        }
+    }
+    lbl_802F1E30 = 0;
+    lbl_802F1E34 = 0;
+    lbl_802F1E38 = 0;
+    lbl_802F1E3C = 0;
 }
 
 extern s32 lbl_802F1E10;

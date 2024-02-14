@@ -4,7 +4,7 @@
 struct SoundGroupDesc
 {
     char *groupName;
-    u32 unused;
+    s32 unused;
     s32 unk8;
     u32 index;
     char *baseName;
@@ -53,8 +53,8 @@ extern u8 lbl_802F1DF5;
 extern u8 lbl_802F1DF4;
 extern u32 g_soundAramTop;
 extern u32 g_soundTotalBytesLoaded;
-extern u32 lbl_802F1DE8;
-extern u32 lbl_802F1DE4;
+extern s32 lbl_802F1DE8;
+extern s32 lbl_802F1DE4;
 extern const char *lbl_802F1DE0;
 extern const char *lbl_802F1DDC;
 extern u8 u_volumeRelated1;
