@@ -4293,8 +4293,8 @@ lbl_00003EC4:
 /* 00003F04 54C007BD */ rlwinm. r0, r6, 0, 0x1e, 0x1e
 /* 00003F08 40820020 */ bne lbl_00003F28
 /* 00003F0C 1C05000A */ mulli r0, r5, 0xa
-/* 00003F10 3C800000 */ lis r4, analogButtonInfo@ha
-/* 00003F14 38840000 */ addi r4, r4, analogButtonInfo@l
+/* 00003F10 3C800000 */ lis r4, analogInputs@ha
+/* 00003F14 38840000 */ addi r4, r4, analogInputs@l
 /* 00003F18 7C840214 */ add r4, r4, r0
 /* 00003F1C A0840008 */ lhz r4, 8(r4)
 /* 00003F20 548007BD */ rlwinm. r0, r4, 0, 0x1e, 0x1e

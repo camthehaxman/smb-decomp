@@ -1156,9 +1156,9 @@ void camera_func_13(struct Camera *camera, struct Ball *ball)
             for (i = 0; i < modeCtrl.playerCount; i++)
             {
                 r10 = playerControllerIDs[i];
-                if (camera->unk80 > -0.3 && (analogButtonInfo[r10][0] & (1 << 7)))
+                if (camera->unk80 > -0.3 && (analogInputs[r10].held & (1 << 7)))
                     camera->unk80 -= 0.01;
-                if (camera->unk80 < 0.2 && (analogButtonInfo[r10][0] & (1 << 6)))
+                if (camera->unk80 < 0.2 && (analogInputs[r10].held & (1 << 6)))
                     camera->unk80 += 0.01;
             }
         }
@@ -1175,9 +1175,9 @@ void camera_func_13(struct Camera *camera, struct Ball *ball)
         for (i = 0; i < modeCtrl.playerCount; i++)
         {
             r10 = playerControllerIDs[i];
-            if (camera->angleYEnd < 256 && (analogButtonInfo[r10][0] & (1 << 5)))
+            if (camera->angleYEnd < 256 && (analogInputs[r10].held & (1 << 5)))
                 camera->angleYEnd += 8;
-            if (camera->angleYEnd > -256 && (analogButtonInfo[r10][0] & (1 << 4)))
+            if (camera->angleYEnd > -256 && (analogInputs[r10].held & (1 << 4)))
                 camera->angleYEnd -= 8;
         }
         if (camera->timerCurr > 0)
@@ -1527,13 +1527,13 @@ void camera_func_test(struct Camera *camera, struct Ball *ball)
     sp1C.z = 0.0f;
 
     sp28.x = f0 * controllerInfo[0].unk0[0].stickX / 74.0;
-    if (analogButtonInfo[0][0] & (1 << 9))
+    if (analogInputs[0].held & (1 << 9))
         sp28.y = f0 * controllerInfo[0].unk0[0].stickY / 74.0;
     else
         sp28.z = -f0 * controllerInfo[0].unk0[0].stickY / 74.0;
 
     sp1C.x = f0 * controllerInfo[0].unk0[0].substickX / 74.0;
-    if (analogButtonInfo[0][0] & (1 << 9))
+    if (analogInputs[0].held & (1 << 9))
         sp1C.y = f0 * controllerInfo[0].unk0[0].substickY / 74.0;
     else
         sp1C.z = -f0 * controllerInfo[0].unk0[0].substickY / 74.0;

@@ -547,8 +547,8 @@ int title_screen_debug_menu(void)
     int chosen = FALSE;
     int i;
 
-    if (!(analogButtonInfo[0][0] & PAD_BUTTON_A)
-     && !(analogButtonInfo[0][0] & PAD_BUTTON_B)
+    if (!(analogInputs[0].held & PAD_BUTTON_A)
+     && !(analogInputs[0].held & PAD_BUTTON_B)
      && lbl_802F1ED8 == 0)
     {
         if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP)
@@ -651,8 +651,8 @@ void u_menu_input_debug(void)
     int bvar = FALSE;
     int i;
 
-    if (!(analogButtonInfo[0][0] & PAD_BUTTON_A)
-     && !(analogButtonInfo[0][0] & PAD_BUTTON_B)
+    if (!(analogInputs[0].held & PAD_BUTTON_A)
+     && !(analogInputs[0].held & PAD_BUTTON_B)
      && lbl_802F1ED8 == 0
      && gameMode != MD_ADV)
     {
@@ -729,8 +729,8 @@ void u_menu_input_debug(void)
     case MD_ADV:
         if (modeCtrl.unk1C == 0 || !title_screen_debug_menu())
         {
-            if ((analogButtonInfo[0][0] & PAD_BUTTON_A)
-             || (analogButtonInfo[0][0] & PAD_BUTTON_B)
+            if ((analogInputs[0].held & PAD_BUTTON_A)
+             || (analogInputs[0].held & PAD_BUTTON_B)
              || lbl_802F1ED8 != 0
              || gameSubmode == SMD_ADV_START_MAIN)
                 break;

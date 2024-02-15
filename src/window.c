@@ -1002,34 +1002,34 @@ static void process_window(struct WindowDesc *window)
     s32 *new_var;
 
     // resize window
-    if ((analogButtonInfo[0][4] & 0x80) || ((analogButtonInfo[0][0] & 0x80) && (analogButtonInfo[0][0] & 0x200)))
+    if ((analogInputs[0].repeat & 0x80) || ((analogInputs[0].held & 0x80) && (analogInputs[0].held & 0x200)))
     {
         window->height--;
         window->height = MAX(window->height, 3);
     }
-    else if ((analogButtonInfo[0][4] & 0x40) || ((analogButtonInfo[0][0] & 0x40) && (analogButtonInfo[0][0] & 0x200)))
+    else if ((analogInputs[0].repeat & 0x40) || ((analogInputs[0].held & 0x40) && (analogInputs[0].held & 0x200)))
     {
         window->height++;
         window->height = MIN(window->height, SCREEN_ROWS - window->y);
     }
-    if ((analogButtonInfo[0][4] & 0x10) || ((analogButtonInfo[0][0] & 0x10) && (analogButtonInfo[0][0] & 0x200)))
+    if ((analogInputs[0].repeat & 0x10) || ((analogInputs[0].held & 0x10) && (analogInputs[0].held & 0x200)))
     {
         window->width--;
         window->width = MAX(window->width, 3);
     }
-    else if ((analogButtonInfo[0][4] & 0x20) || ((analogButtonInfo[0][0] & 0x20) && (analogButtonInfo[0][0] & 0x200)))
+    else if ((analogInputs[0].repeat & 0x20) || ((analogInputs[0].held & 0x20) && (analogInputs[0].held & 0x200)))
     {
         window->width++;
         window->width = MIN(window->width, SCREEN_COLUMNS - window->x);
     }
-    if ((analogButtonInfo[0][4] & 8) || ((analogButtonInfo[0][0] & 8) && (analogButtonInfo[0][0] & 0x200)))
+    if ((analogInputs[0].repeat & 8) || ((analogInputs[0].held & 8) && (analogInputs[0].held & 0x200)))
     {
         temp_r5 = window->y - 1;
         var_r6 = MAX(temp_r5, 0);
         window->unk28 += (window->y - var_r6) * 12;
         window->y = var_r6;
     }
-    else if ((analogButtonInfo[0][4] & 4) || ((analogButtonInfo[0][0] & 4) && (analogButtonInfo[0][0] & 0x200)))
+    else if ((analogInputs[0].repeat & 4) || ((analogInputs[0].held & 4) && (analogInputs[0].held & 0x200)))
     {
         temp_r5_2 = window->y;
         var_r6_2 = temp_r5_2 + 1;
@@ -1038,14 +1038,14 @@ static void process_window(struct WindowDesc *window)
         window->unk28 += (temp_r5_2 - var_r6_2) * 12;
         window->y = var_r6_2;
     }
-    if ((analogButtonInfo[0][4] & 1) || ((analogButtonInfo[0][0] & 1) && (analogButtonInfo[0][0] & 0x200)))
+    if ((analogInputs[0].repeat & 1) || ((analogInputs[0].held & 1) && (analogInputs[0].held & 0x200)))
     {
         temp_r4 = window->x - 1;
         var_r6 = MAX(temp_r4, 0);
         window->unk24 += (window->x - var_r6) * 12;
         window->x = var_r6;
     }
-    else if ((analogButtonInfo[0][4] & 2) || ((analogButtonInfo[0][0] & 2) && (analogButtonInfo[0][0] & 0x200)))
+    else if ((analogInputs[0].repeat & 2) || ((analogInputs[0].held & 2) && (analogInputs[0].held & 0x200)))
     {
         temp_r5_2 = window->x;
         var_r6_2 = temp_r5_2 + 1;
@@ -1119,7 +1119,7 @@ static void process_window(struct WindowDesc *window)
     default:
         if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A)
          || (controllerInfo[0].unk0[4].button & PAD_BUTTON_B)
-         || ((analogButtonInfo[0][0] & 0x200) && ((controllerInfo[0].unk0[0].button & PAD_BUTTON_A) || (controllerInfo[0].unk0[0].button & PAD_BUTTON_B))))
+         || ((analogInputs[0].held & 0x200) && ((controllerInfo[0].unk0[0].button & PAD_BUTTON_A) || (controllerInfo[0].unk0[0].button & PAD_BUTTON_B))))
         {
             if (item->type & 0x200)
                 var_r8 = 0;
@@ -1166,7 +1166,7 @@ static void process_window(struct WindowDesc *window)
                 minInt = someParam->min;
                 maxInt = someParam->max;
                 deltaInt = *(new_var = &someParam->delta);
-                if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A) || ((analogButtonInfo[0][0] & 0x200) && (controllerInfo[0].unk0[0].button & PAD_BUTTON_A)))
+                if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A) || ((analogInputs[0].held & 0x200) && (controllerInfo[0].unk0[0].button & PAD_BUTTON_A)))
                 {
                     if (rangeFlags & RANGE_NOMAX)
                         someintval = someintval + deltaInt;
@@ -1212,7 +1212,7 @@ static void process_window(struct WindowDesc *window)
                 rangeFlags = someParamF->flags;
                 minFloat = someParamF->min;
                 maxFloat = someParamF->max;
-                if ((controllerInfo[0].unk0[4].button & 0x100) || ((analogButtonInfo[0][0] & 0x200) && (controllerInfo[0].unk0[0].button & 0x100)))
+                if ((controllerInfo[0].unk0[4].button & 0x100) || ((analogInputs[0].held & 0x200) && (controllerInfo[0].unk0[0].button & 0x100)))
                 {
                     if (rangeFlags & RANGE_NOMAX)
                         somefloatval = somefloatval + deltaFloat;
@@ -1579,10 +1579,10 @@ void window_main(void)
 
     var_r22 = 1;
 
-    u_selectionRelated1 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_UP) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_UP) && (analogButtonInfo[0][0] & 0x200)));
-    u_selectionRelated2 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_DOWN) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_DOWN) && (analogButtonInfo[0][0] & 0x200)));
-    unused1 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_LEFT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_LEFT) && (analogButtonInfo[0][0] & 0x200)));
-    unused2 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_RIGHT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_RIGHT) && (analogButtonInfo[0][0] & 0x200)));
+    u_selectionRelated1 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_UP) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_UP) && (analogInputs[0].held & 0x200)));
+    u_selectionRelated2 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_DOWN) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_DOWN) && (analogInputs[0].held & 0x200)));
+    unused1 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_LEFT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_LEFT) && (analogInputs[0].held & 0x200)));
+    unused2 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_RIGHT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_RIGHT) && (analogInputs[0].held & 0x200)));
 
     // clear buffers (not using memset for some reason)
     bufPtr = (u32 *)screenBufferXOffset;
@@ -1627,7 +1627,7 @@ void window_main(void)
     memset(screenBufferChar1, ' ', sizeof(screenBufferChar1));
     memset(screenBufferColor1, 0, sizeof(screenBufferColor1));
 
-    if (analogButtonInfo[0][0] & 0x100)
+    if (analogInputs[0].held & 0x100)
     {
         if ((dipSwitches & 1) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
         {

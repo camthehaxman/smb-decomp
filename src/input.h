@@ -20,10 +20,10 @@ struct ControllerInfo
 #define CONTROLLER_SOMETHING(idx, btn) \
 ( \
     (controllerInfo[idx].unk0[4].button & (btn)) \
- || (analogButtonInfo[idx][4] & btn) \
+ || (analogInputs[idx].repeat & btn) \
  || ( \
-        ((controllerInfo[idx].unk0[0].button & (btn)) || (analogButtonInfo[idx][0] & (btn))) \
-     && (analogButtonInfo[idx][0] & PAD_BUTTON_B) \
+        ((controllerInfo[idx].unk0[0].button & (btn)) || (analogInputs[idx].held & (btn))) \
+     && (analogInputs[idx].held & PAD_BUTTON_B) \
     ) \
 )
 
@@ -37,7 +37,28 @@ struct ControllerInfo
 
 extern struct ControllerInfo controllerInfo[4];
 extern struct ControllerInfo lbl_801F3C60[4];
-extern u16 analogButtonInfo[][5];
+
+#define ANALOG_STICK_LEFT (1 << 0)
+#define ANALOG_STICK_RIGHT (1 << 1)
+#define ANALOG_STICK_DOWN (1 << 2)
+#define ANALOG_STICK_UP (1 << 3)
+#define ANALOG_CSTICK_LEFT (1 << 4)
+#define ANALOG_CSTICK_RIGHT (1 << 5)
+#define ANALOG_CSTICK_DOWN (1 << 6)
+#define ANALOG_CSTICK_UP (1 << 7)
+#define ANALOG_TRIGGER_LEFT (1 << 8)
+#define ANALOG_TRIGGER_RIGHT (1 << 9)
+
+struct AnalogButtonInfo
+{
+    u16 held;
+    u16 prevHeld;
+    u16 pressed;
+    u16 released;  // hmm not actually sure about that one?
+    u16 repeat;
+};
+
+extern struct AnalogButtonInfo analogInputs[4];
 //extern struct Struct801F3D88 g_currPlayerButtons;
 extern u16 g_currPlayerButtons[6];
 //extern struct Struct801F3D94 g_currPlayerAnalogButtons;

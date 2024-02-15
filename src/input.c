@@ -15,14 +15,14 @@
 
 struct ControllerInfo controllerInfo[4];
 struct ControllerInfo lbl_801F3C60[4];
-u16 analogButtonInfo[4][5];
+struct AnalogButtonInfo analogInputs[4];
 s32 controllerRepeatCounts[4];
 u16 g_currPlayerButtons[6];
 u16 g_currPlayerAnalogButtons[6];
 
 FORCE_BSS_ORDER(controllerInfo);
 FORCE_BSS_ORDER(lbl_801F3C60);
-FORCE_BSS_ORDER(analogButtonInfo);
+FORCE_BSS_ORDER(analogInputs);
 FORCE_BSS_ORDER(controllerRepeatCounts);
 FORCE_BSS_ORDER(g_currPlayerButtons);
 FORCE_BSS_ORDER(g_currPlayerAnalogButtons);
@@ -346,114 +346,114 @@ void get_analog_presses(void)
 {
     int i;
     int j;
-    u16 *r3 = analogButtonInfo[0];
+    struct AnalogButtonInfo *r3 = &analogInputs[0];
 
     for (i = 0; i < 4; i++)
     {
         int x;
         int y;
-        int var1;
-        struct ControllerInfo *r4 = &controllerInfo[i];
+        int threshold;
+        struct ControllerInfo *cont = &controllerInfo[i];
 
-        r3[1] = r3[0];
-        r3[0] = 0;
+        r3->prevHeld = r3->held;
+        r3->held = 0;
 
-        x = r4->unk0[0].stickX;
-        y = r4->unk0[0].stickY;
+        x = cont->unk0[0].stickX;
+        y = cont->unk0[0].stickY;
 
-        if (r3[1] & (1 << 0))
-            var1 = -15;
+        if (r3->prevHeld & ANALOG_STICK_LEFT)
+            threshold = -15;
         else
-            var1 = -52;
-        if (x < var1)
-            r3[0] |= (1 << 0);
+            threshold = -52;
+        if (x < threshold)
+            r3->held |= ANALOG_STICK_LEFT;
 
-        if (r3[1] & (1 << 1))
-            var1 = 15;
+        if (r3->prevHeld & ANALOG_STICK_RIGHT)
+            threshold = 15;
         else
-            var1 = 52;
-        if (x > var1)
-            r3[0] |= (1 << 1);
+            threshold = 52;
+        if (x > threshold)
+            r3->held |= ANALOG_STICK_RIGHT;
 
-        if (r3[1] & (1 << 2))
-            var1 = -15;
+        if (r3->prevHeld & ANALOG_STICK_DOWN)
+            threshold = -15;
         else
-            var1 = -52;
-        if (y < var1)
-            r3[0] |= (1 << 2);
+            threshold = -52;
+        if (y < threshold)
+            r3->held |= ANALOG_STICK_DOWN;
 
-        if (r3[1] & (1 << 3))
-            var1 = 15;
+        if (r3->prevHeld & ANALOG_STICK_UP)
+            threshold = 15;
         else
-            var1 = 52;
-        if (y > var1)
-            r3[0] |= (1 << 3);
+            threshold = 52;
+        if (y > threshold)
+            r3->held |= ANALOG_STICK_UP;
 
-        x = r4->unk0[0].substickX;
-        y = r4->unk0[0].substickY;
+        x = cont->unk0[0].substickX;
+        y = cont->unk0[0].substickY;
 
-        if (r3[1] & (1 << 4))
-            var1 = -15;
+        if (r3->prevHeld & ANALOG_CSTICK_LEFT)
+            threshold = -15;
         else
-            var1 = -52;
-        if (x < var1)
-            r3[0] |= (1 << 4);
+            threshold = -52;
+        if (x < threshold)
+            r3->held |= ANALOG_CSTICK_LEFT;
 
-        if (r3[1] & (1 << 5))
-            var1 = 15;
+        if (r3->prevHeld & ANALOG_CSTICK_RIGHT)
+            threshold = 15;
         else
-            var1 = 52;
-        if (x > var1)
-            r3[0] |= (1 << 5);
+            threshold = 52;
+        if (x > threshold)
+            r3->held |= ANALOG_CSTICK_RIGHT;
 
-        if (r3[1] & (1 << 6))
-            var1 = -15;
+        if (r3->prevHeld & ANALOG_CSTICK_DOWN)
+            threshold = -15;
         else
-            var1 = -52;
-        if (y < var1)
-            r3[0] |= (1 << 6);
+            threshold = -52;
+        if (y < threshold)
+            r3->held |= ANALOG_CSTICK_DOWN;
 
-        if (r3[1] & (1 << 7))
-            var1 = 15;
+        if (r3->prevHeld & ANALOG_CSTICK_UP)
+            threshold = 15;
         else
-            var1 = 52;
-        if (y > var1)
-            r3[0] |= (1 << 7);
+            threshold = 52;
+        if (y > threshold)
+            r3->held |= ANALOG_CSTICK_UP;
 
-        x = r4->unk0[0].triggerLeft;
-        y = r4->unk0[0].triggerRight;
+        x = cont->unk0[0].triggerLeft;
+        y = cont->unk0[0].triggerRight;
 
-        if (r3[1] & (1 << 8))
-            var1 = 40;
+        if (r3->prevHeld & ANALOG_TRIGGER_LEFT)
+            threshold = 40;
         else
-            var1 = 80;
-        if (x > var1)
-            r3[0] |= (1 << 8);
+            threshold = 80;
+        if (x > threshold)
+            r3->held |= ANALOG_TRIGGER_LEFT;
 
-        if (r3[1] & (1 << 9))
-            var1 = 40;
+        if (r3->prevHeld & ANALOG_TRIGGER_RIGHT)
+            threshold = 40;
         else
-            var1 = 80;
-        if (y > var1)
-            r3[0] |= (1 << 9);
+            threshold = 80;
+        if (y > threshold)
+            r3->held |= ANALOG_TRIGGER_RIGHT;
 
-        r3[2] = r3[0] & ~r3[1];
-        r3[3] = r3[0] & ~r3[1];
+        r3->pressed = r3->held & ~r3->prevHeld;
+        r3->released = r3->held & ~r3->prevHeld;
 
-        r3 += 5;
+        r3++;
     }
 }
 
 void get_key_repeats(void)
 {
     struct ControllerInfo *cont = &controllerInfo[0];
-    u16 *r6 = analogButtonInfo[0];
+    struct AnalogButtonInfo *r6 = &analogInputs[0];
     int i;
 
-    for (i = 0; i < 4; i++, cont++, r6 += 5)
+    for (i = 0; i < 4; i++, cont++, r6++)
     {
         if (cont->unk0[0].button == cont->unk0[1].button
-         && r6[0] == r6[1])
+         && r6->held == r6->prevHeld)
             controllerRepeatCounts[i]++;
         else
             controllerRepeatCounts[i] = 0;
@@ -461,12 +461,12 @@ void get_key_repeats(void)
         if (controllerRepeatCounts[i] >= 20 && (controllerRepeatCounts[i] & 3) == 0)
         {
             cont->unk0[4].button = cont->unk0[0].button;
-            r6[4] = r6[0];
+            r6->repeat = r6->held;
         }
         else
         {
             cont->unk0[4].button = cont->unk0[2].button;
-            r6[4] = r6[2];
+            r6->repeat = r6->pressed;
         }
     }
 }
@@ -496,7 +496,7 @@ void func_80025640(void)
             for (j = 0; j < 5; j++)
             {
                 g_currPlayerButtons[j] |= controllerInfo[i].unk0[j].button;
-                g_currPlayerAnalogButtons[j] |= analogButtonInfo[i][j];
+                g_currPlayerAnalogButtons[j] |= ((u16 *)&analogInputs[i])[j];
             }
         }
         break;
@@ -520,7 +520,7 @@ void func_80025640(void)
             for (j = 0; j < 5; j++)
             {
                 g_currPlayerButtons[j] |= controllerInfo[playerControllerIDs[i]].unk0[j].button;
-                g_currPlayerAnalogButtons[j] |= analogButtonInfo[playerControllerIDs[i]][j];
+                g_currPlayerAnalogButtons[j] |= ((u16 *)&analogInputs[playerControllerIDs[i]])[j];
             }
         }
         break;

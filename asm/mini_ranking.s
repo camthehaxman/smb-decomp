@@ -78,8 +78,8 @@ submode_mini_ranking_main_func:
 /* 800A7640 000A3560  7C 1C 03 78 */	mr r28, r0
 /* 800A7644 000A3564  54 C3 07 FF */	clrlwi. r3, r6, 0x1f
 /* 800A7648 000A3568  40 82 00 44 */	bne lbl_800A768C
-/* 800A764C 000A356C  3C 60 80 1F */	lis r3, analogButtonInfo@ha
-/* 800A7650 000A3570  38 83 3D 50 */	addi r4, r3, analogButtonInfo@l
+/* 800A764C 000A356C  3C 60 80 1F */	lis r3, analogInputs@ha
+/* 800A7650 000A3570  38 83 3D 50 */	addi r4, r3, analogInputs@l
 /* 800A7654 000A3574  A0 64 00 08 */	lhz r3, 8(r4)
 /* 800A7658 000A3578  54 63 07 FF */	clrlwi. r3, r3, 0x1f
 /* 800A765C 000A357C  40 82 00 30 */	bne lbl_800A768C
@@ -90,8 +90,8 @@ submode_mini_ranking_main_func:
 /* 800A7670 000A3590  54 63 07 FF */	clrlwi. r3, r3, 0x1f
 /* 800A7674 000A3594  41 82 00 24 */	beq lbl_800A7698
 lbl_800A7678:
-/* 800A7678 000A3598  3C 60 80 1F */	lis r3, analogButtonInfo@ha
-/* 800A767C 000A359C  38 63 3D 50 */	addi r3, r3, analogButtonInfo@l
+/* 800A7678 000A3598  3C 60 80 1F */	lis r3, analogInputs@ha
+/* 800A767C 000A359C  38 63 3D 50 */	addi r3, r3, analogInputs@l
 /* 800A7680 000A35A0  A0 63 00 00 */	lhz r3, 0(r3)
 /* 800A7684 000A35A4  54 63 05 AD */	rlwinm. r3, r3, 0, 0x16, 0x16
 /* 800A7688 000A35A8  41 82 00 10 */	beq lbl_800A7698
@@ -102,8 +102,8 @@ lbl_800A768C:
 lbl_800A7698:
 /* 800A7698 000A35B8  54 C3 07 BD */	rlwinm. r3, r6, 0, 0x1e, 0x1e
 /* 800A769C 000A35BC  40 82 00 4C */	bne lbl_800A76E8
-/* 800A76A0 000A35C0  3C 60 80 1F */	lis r3, analogButtonInfo@ha
-/* 800A76A4 000A35C4  38 83 3D 50 */	addi r4, r3, analogButtonInfo@l
+/* 800A76A0 000A35C0  3C 60 80 1F */	lis r3, analogInputs@ha
+/* 800A76A4 000A35C4  38 83 3D 50 */	addi r4, r3, analogInputs@l
 /* 800A76A8 000A35C8  A0 64 00 08 */	lhz r3, 8(r4)
 /* 800A76AC 000A35CC  54 63 07 BD */	rlwinm. r3, r3, 0, 0x1e, 0x1e
 /* 800A76B0 000A35D0  40 82 00 38 */	bne lbl_800A76E8
@@ -116,8 +116,8 @@ lbl_800A7698:
 /* 800A76CC 000A35EC  54 63 07 BD */	rlwinm. r3, r3, 0, 0x1e, 0x1e
 /* 800A76D0 000A35F0  41 82 00 28 */	beq lbl_800A76F8
 lbl_800A76D4:
-/* 800A76D4 000A35F4  3C 60 80 1F */	lis r3, analogButtonInfo@ha
-/* 800A76D8 000A35F8  38 63 3D 50 */	addi r3, r3, analogButtonInfo@l
+/* 800A76D4 000A35F4  3C 60 80 1F */	lis r3, analogInputs@ha
+/* 800A76D8 000A35F8  38 63 3D 50 */	addi r3, r3, analogInputs@l
 /* 800A76DC 000A35FC  A0 63 00 00 */	lhz r3, 0(r3)
 /* 800A76E0 000A3600  54 63 05 AD */	rlwinm. r3, r3, 0, 0x16, 0x16
 /* 800A76E4 000A3604  41 82 00 14 */	beq lbl_800A76F8
@@ -145,8 +145,8 @@ lbl_800A7710:
 /* 800A7730 000A3650  7C 84 07 74 */	extsb r4, r4
 /* 800A7734 000A3654  54 E0 07 39 */	rlwinm. r0, r7, 0, 0x1c, 0x1c
 /* 800A7738 000A3658  40 82 00 40 */	bne lbl_800A7778
-/* 800A773C 000A365C  3C A0 80 1F */	lis r5, analogButtonInfo@ha
-/* 800A7740 000A3660  38 A5 3D 50 */	addi r5, r5, analogButtonInfo@l
+/* 800A773C 000A365C  3C A0 80 1F */	lis r5, analogInputs@ha
+/* 800A7740 000A3660  38 A5 3D 50 */	addi r5, r5, analogInputs@l
 /* 800A7744 000A3664  A0 05 00 08 */	lhz r0, 8(r5)
 /* 800A7748 000A3668  54 00 07 39 */	rlwinm. r0, r0, 0, 0x1c, 0x1c
 /* 800A774C 000A366C  40 82 00 2C */	bne lbl_800A7778
@@ -157,8 +157,8 @@ lbl_800A7710:
 /* 800A7760 000A3680  54 00 07 39 */	rlwinm. r0, r0, 0, 0x1c, 0x1c
 /* 800A7764 000A3684  41 82 00 20 */	beq lbl_800A7784
 lbl_800A7768:
-/* 800A7768 000A3688  3C A0 80 1F */	lis r5, analogButtonInfo@ha
-/* 800A776C 000A368C  A0 05 3D 50 */	lhz r0, analogButtonInfo@l(r5)
+/* 800A7768 000A3688  3C A0 80 1F */	lis r5, analogInputs@ha
+/* 800A776C 000A368C  A0 05 3D 50 */	lhz r0, analogInputs@l(r5)
 /* 800A7770 000A3690  54 00 05 AD */	rlwinm. r0, r0, 0, 0x16, 0x16
 /* 800A7774 000A3694  41 82 00 10 */	beq lbl_800A7784
 lbl_800A7778:
@@ -168,8 +168,8 @@ lbl_800A7778:
 lbl_800A7784:
 /* 800A7784 000A36A4  54 E0 07 7B */	rlwinm. r0, r7, 0, 0x1d, 0x1d
 /* 800A7788 000A36A8  40 82 00 44 */	bne lbl_800A77CC
-/* 800A778C 000A36AC  3C A0 80 1F */	lis r5, analogButtonInfo@ha
-/* 800A7790 000A36B0  38 C5 3D 50 */	addi r6, r5, analogButtonInfo@l
+/* 800A778C 000A36AC  3C A0 80 1F */	lis r5, analogInputs@ha
+/* 800A7790 000A36B0  38 C5 3D 50 */	addi r6, r5, analogInputs@l
 /* 800A7794 000A36B4  A0 06 00 08 */	lhz r0, 8(r6)
 /* 800A7798 000A36B8  54 00 07 7B */	rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 800A779C 000A36BC  40 82 00 30 */	bne lbl_800A77CC
@@ -181,8 +181,8 @@ lbl_800A7784:
 /* 800A77B4 000A36D4  54 00 07 7B */	rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 800A77B8 000A36D8  41 82 00 24 */	beq lbl_800A77DC
 lbl_800A77BC:
-/* 800A77BC 000A36DC  3C A0 80 1F */	lis r5, analogButtonInfo@ha
-/* 800A77C0 000A36E0  A0 05 3D 50 */	lhz r0, analogButtonInfo@l(r5)
+/* 800A77BC 000A36DC  3C A0 80 1F */	lis r5, analogInputs@ha
+/* 800A77C0 000A36E0  A0 05 3D 50 */	lhz r0, analogInputs@l(r5)
 /* 800A77C4 000A36E4  54 00 05 AD */	rlwinm. r0, r0, 0, 0x16, 0x16
 /* 800A77C8 000A36E8  41 82 00 14 */	beq lbl_800A77DC
 lbl_800A77CC:
@@ -697,8 +697,8 @@ lbl_800A7EEC:
 /* 800A7F10 000A3E30  7C 19 07 74 */	extsb r25, r0
 /* 800A7F14 000A3E34  40 82 00 20 */	bne lbl_800A7F34
 /* 800A7F18 000A3E38  1C 64 00 0A */	mulli r3, r4, 0xa
-/* 800A7F1C 000A3E3C  3C A0 80 1F */	lis r5, analogButtonInfo@ha
-/* 800A7F20 000A3E40  38 A5 3D 50 */	addi r5, r5, analogButtonInfo@l
+/* 800A7F1C 000A3E3C  3C A0 80 1F */	lis r5, analogInputs@ha
+/* 800A7F20 000A3E40  38 A5 3D 50 */	addi r5, r5, analogInputs@l
 /* 800A7F24 000A3E44  7C 65 1A 14 */	add r3, r5, r3
 /* 800A7F28 000A3E48  A0 63 00 08 */	lhz r3, 8(r3)
 /* 800A7F2C 000A3E4C  54 63 07 FF */	clrlwi. r3, r3, 0x1f
@@ -713,8 +713,8 @@ lbl_800A7F40:
 /* 800A7F48 000A3E68  54 63 07 BD */	rlwinm. r3, r3, 0, 0x1e, 0x1e
 /* 800A7F4C 000A3E6C  40 82 00 20 */	bne lbl_800A7F6C
 /* 800A7F50 000A3E70  1C 64 00 0A */	mulli r3, r4, 0xa
-/* 800A7F54 000A3E74  3C 80 80 1F */	lis r4, analogButtonInfo@ha
-/* 800A7F58 000A3E78  38 84 3D 50 */	addi r4, r4, analogButtonInfo@l
+/* 800A7F54 000A3E74  3C 80 80 1F */	lis r4, analogInputs@ha
+/* 800A7F58 000A3E78  38 84 3D 50 */	addi r4, r4, analogInputs@l
 /* 800A7F5C 000A3E7C  7C 64 1A 14 */	add r3, r4, r3
 /* 800A7F60 000A3E80  A0 63 00 08 */	lhz r3, 8(r3)
 /* 800A7F64 000A3E84  54 63 07 BD */	rlwinm. r3, r3, 0, 0x1e, 0x1e
@@ -749,8 +749,8 @@ lbl_800A7FA4:
 /* 800A7FC8 000A3EE8  7C B9 07 74 */	extsb r25, r5
 /* 800A7FCC 000A3EEC  40 82 00 20 */	bne lbl_800A7FEC
 /* 800A7FD0 000A3EF0  1C 16 00 0A */	mulli r0, r22, 0xa
-/* 800A7FD4 000A3EF4  3C 60 80 1F */	lis r3, analogButtonInfo@ha
-/* 800A7FD8 000A3EF8  38 63 3D 50 */	addi r3, r3, analogButtonInfo@l
+/* 800A7FD4 000A3EF4  3C 60 80 1F */	lis r3, analogInputs@ha
+/* 800A7FD8 000A3EF8  38 63 3D 50 */	addi r3, r3, analogInputs@l
 /* 800A7FDC 000A3EFC  7C 63 02 14 */	add r3, r3, r0
 /* 800A7FE0 000A3F00  A0 03 00 08 */	lhz r0, 8(r3)
 /* 800A7FE4 000A3F04  54 00 07 FF */	clrlwi. r0, r0, 0x1f
@@ -763,8 +763,8 @@ lbl_800A7FF8:
 /* 800A7FF8 000A3F18  54 80 07 BD */	rlwinm. r0, r4, 0, 0x1e, 0x1e
 /* 800A7FFC 000A3F1C  40 82 00 20 */	bne lbl_800A801C
 /* 800A8000 000A3F20  1C 16 00 0A */	mulli r0, r22, 0xa
-/* 800A8004 000A3F24  3C 60 80 1F */	lis r3, analogButtonInfo@ha
-/* 800A8008 000A3F28  38 63 3D 50 */	addi r3, r3, analogButtonInfo@l
+/* 800A8004 000A3F24  3C 60 80 1F */	lis r3, analogInputs@ha
+/* 800A8008 000A3F28  38 63 3D 50 */	addi r3, r3, analogInputs@l
 /* 800A800C 000A3F2C  7C 63 02 14 */	add r3, r3, r0
 /* 800A8010 000A3F30  A0 03 00 08 */	lhz r0, 8(r3)
 /* 800A8014 000A3F34  54 00 07 BD */	rlwinm. r0, r0, 0, 0x1e, 0x1e

@@ -2154,8 +2154,8 @@ lbl_00001FD0:
 /* 0000201C 540007BF */ clrlwi. r0, r0, 0x1e
 /* 00002020 40820020 */ bne lbl_00002040
 /* 00002024 1C04000A */ mulli r0, r4, 0xa
-/* 00002028 3C600000 */ lis r3, analogButtonInfo@ha
-/* 0000202C 38630000 */ addi r3, r3, analogButtonInfo@l
+/* 00002028 3C600000 */ lis r3, analogInputs@ha
+/* 0000202C 38630000 */ addi r3, r3, analogInputs@l
 /* 00002030 7C630214 */ add r3, r3, r0
 /* 00002034 A0030004 */ lhz r0, 4(r3)
 /* 00002038 540007BF */ clrlwi. r0, r0, 0x1e

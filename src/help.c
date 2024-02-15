@@ -590,17 +590,17 @@ static struct SomeHelpThing lbl_801C2318_0xE18[] =
 #define SOME_CONTROLLER_MACRO(btn) \
 ( \
     (controllerInfo[0].unk0[4].button & (btn)) \
- || (analogButtonInfo[0][4] & (btn)) \
- || (((controllerInfo[0].unk0[0].button & (btn)) || (analogButtonInfo[0][0] & (btn))) && (analogButtonInfo[0][0] & PAD_BUTTON_B)) \
+ || (analogInputs[0].repeat & (btn)) \
+ || (((controllerInfo[0].unk0[0].button & (btn)) || (analogInputs[0].held & (btn))) && (analogInputs[0].held & PAD_BUTTON_B)) \
  || (controllerInfo[1].unk0[4].button & (btn)) \
- || (analogButtonInfo[1][4] & (btn)) \
- || (((controllerInfo[1].unk0[0].button & (btn)) || (analogButtonInfo[1][0] & (btn))) && (analogButtonInfo[1][0] & PAD_BUTTON_B)) \
+ || (analogInputs[1].repeat & (btn)) \
+ || (((controllerInfo[1].unk0[0].button & (btn)) || (analogInputs[1].held & (btn))) && (analogInputs[1].held & PAD_BUTTON_B)) \
  || (controllerInfo[2].unk0[4].button & (btn)) \
- || (analogButtonInfo[2][4] & (btn)) \
- || (((controllerInfo[2].unk0[0].button & (btn)) || (analogButtonInfo[2][0] & (btn))) && (analogButtonInfo[2][0] & PAD_BUTTON_B)) \
+ || (analogInputs[2].repeat & (btn)) \
+ || (((controllerInfo[2].unk0[0].button & (btn)) || (analogInputs[2].held & (btn))) && (analogInputs[2].held & PAD_BUTTON_B)) \
  || (controllerInfo[3].unk0[4].button & (btn)) \
- || (analogButtonInfo[3][4] & (btn)) \
- || (((controllerInfo[3].unk0[0].button & (btn)) || (analogButtonInfo[3][0] & (btn))) && (analogButtonInfo[3][0] & PAD_BUTTON_B))\
+ || (analogInputs[3].repeat & (btn)) \
+ || (((controllerInfo[3].unk0[0].button & (btn)) || (analogInputs[3].held & (btn))) && (analogInputs[3].held & PAD_BUTTON_B))\
 )
 
 void help_sprite_main(s8 *status, struct Sprite *sprite)
@@ -632,7 +632,7 @@ void help_sprite_main(s8 *status, struct Sprite *sprite)
     }
     else
     {
-        if (((controllerInfo[pauseMenuState.padId].unk0[4].button & 1) || (analogButtonInfo[pauseMenuState.padId][4] & 1) || (((controllerInfo[pauseMenuState.padId].unk0[0].button & 1) || (analogButtonInfo[pauseMenuState.padId][0] & 1)) && (analogButtonInfo[pauseMenuState.padId][0] & 0x200))) && (lbl_802F2020 == 0))
+        if (((controllerInfo[pauseMenuState.padId].unk0[4].button & 1) || (analogInputs[pauseMenuState.padId].repeat & 1) || (((controllerInfo[pauseMenuState.padId].unk0[0].button & 1) || (analogInputs[pauseMenuState.padId].held & 1)) && (analogInputs[pauseMenuState.padId].held & 0x200))) && (lbl_802F2020 == 0))
         {
             if (--currPage2 < 0)
                 currPage2 = pageCounts[0][modeCtrl.gameType] - 1;
@@ -640,7 +640,7 @@ void help_sprite_main(s8 *status, struct Sprite *sprite)
             lbl_802F2020 = 0xF;
             var_r4 = 1;
         }
-        else if (((controllerInfo[pauseMenuState.padId].unk0[4].button & 2) || (analogButtonInfo[pauseMenuState.padId][4] & 2) || (((controllerInfo[pauseMenuState.padId].unk0[0].button & 2) || (analogButtonInfo[pauseMenuState.padId][0] & 2)) && (analogButtonInfo[pauseMenuState.padId][0] & 0x200))) && ((s8) lbl_802F2020 == 0))
+        else if (((controllerInfo[pauseMenuState.padId].unk0[4].button & 2) || (analogInputs[pauseMenuState.padId].repeat & 2) || (((controllerInfo[pauseMenuState.padId].unk0[0].button & 2) || (analogInputs[pauseMenuState.padId].held & 2)) && (analogInputs[pauseMenuState.padId].held & 0x200))) && ((s8) lbl_802F2020 == 0))
         {
             if (++currPage2 == pageCounts[0][modeCtrl.gameType])
                 currPage2 = 0;

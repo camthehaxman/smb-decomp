@@ -102,8 +102,8 @@ int should_open_pause_menu(void)
         return FALSE;
     if (dipSwitches & DIP_DEBUG)
     {
-        if (!(analogButtonInfo[0][0] & PAD_BUTTON_A)
-         && !(analogButtonInfo[0][0] & PAD_BUTTON_B)
+        if (!(analogInputs[0].held & PAD_BUTTON_A)
+         && !(analogInputs[0].held & PAD_BUTTON_B)
          && lbl_802F1ED8 == 0
          && !(debugFlags & 8)
          && (g_currPlayerButtons[2] & PAD_BUTTON_START))

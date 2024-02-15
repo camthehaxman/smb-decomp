@@ -55,7 +55,7 @@ void ev_mouse_main(void)
         mouse.unk06 = mouse.posVertical;
 
         phi_r8 = 1;
-        if (analogButtonInfo[0][0] & PAD_BUTTON_B) {
+        if (analogInputs[0].held & PAD_BUTTON_B) {
             // if press "B button"
             phi_r8 = 8;
         }
