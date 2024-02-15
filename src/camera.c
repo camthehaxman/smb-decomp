@@ -178,9 +178,9 @@ void ev_camera_main(void)
 
     if (dipSwitches & DIP_DEBUG)
     {
-        if ((dipSwitches & DIP_TEST_CAM) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y))
+        if ((dipSwitches & DIP_TEST_CAM) && (controllerInfo[0].pressed.button & PAD_BUTTON_Y))
             dipSwitches ^= DIP_NO_INTR;
-        if ((controllerInfo[0].unk0[0].button & PAD_BUTTON_B) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y))
+        if ((controllerInfo[0].held.button & PAD_BUTTON_B) && (controllerInfo[0].pressed.button & PAD_BUTTON_Y))
         {
             if (dipSwitches & DIP_TEST_CAM)
                 dipSwitches &= ~DIP_TEST_CAM;
@@ -1517,7 +1517,7 @@ void camera_func_test(struct Camera *camera, struct Ball *ball)
     sp10.z = camera->lookAt.z - camera->eye.z;
 
     f0 = 0.1 * mathutil_sqrt(mathutil_sum_of_sq_3(sp10.x, sp10.y, sp10.z)) / 5.0;
-    f0 *= 1.0 + 9.0 * controllerInfo[0].unk0[0].triggerLeft / 170.0;
+    f0 *= 1.0 + 9.0 * controllerInfo[0].held.triggerLeft / 170.0;
 
     sp28.x = 0.0f;
     sp1C.x = 0.0f;
@@ -1526,17 +1526,17 @@ void camera_func_test(struct Camera *camera, struct Ball *ball)
     sp28.z = 0.0f;
     sp1C.z = 0.0f;
 
-    sp28.x = f0 * controllerInfo[0].unk0[0].stickX / 74.0;
+    sp28.x = f0 * controllerInfo[0].held.stickX / 74.0;
     if (analogInputs[0].held & (1 << 9))
-        sp28.y = f0 * controllerInfo[0].unk0[0].stickY / 74.0;
+        sp28.y = f0 * controllerInfo[0].held.stickY / 74.0;
     else
-        sp28.z = -f0 * controllerInfo[0].unk0[0].stickY / 74.0;
+        sp28.z = -f0 * controllerInfo[0].held.stickY / 74.0;
 
-    sp1C.x = f0 * controllerInfo[0].unk0[0].substickX / 74.0;
+    sp1C.x = f0 * controllerInfo[0].held.substickX / 74.0;
     if (analogInputs[0].held & (1 << 9))
-        sp1C.y = f0 * controllerInfo[0].unk0[0].substickY / 74.0;
+        sp1C.y = f0 * controllerInfo[0].held.substickY / 74.0;
     else
-        sp1C.z = -f0 * controllerInfo[0].unk0[0].substickY / 74.0;
+        sp1C.z = -f0 * controllerInfo[0].held.substickY / 74.0;
 
     mathutil_mtxA_from_translate(&camera->eye);
     mathutil_mtxA_rotate_y(camera->rotY);
@@ -1899,7 +1899,7 @@ void camera_func_16(struct Camera *camera, struct Ball *ball)
     camera->unk26 = 4;
     camera->flags |= 4;
 
-    if ((controllerInfo[playerControllerIDs[ball->playerId]].unk0[0].button & PAD_BUTTON_A)
+    if ((controllerInfo[playerControllerIDs[ball->playerId]].held.button & PAD_BUTTON_A)
      && (g_currPlayerButtons[0] & PAD_BUTTON_A))
     {
         camera->state = 48;
@@ -3673,7 +3673,7 @@ void camera_func_71(struct Camera *camera, struct Ball *ball)
     for (r3 = 0; r3 < g_poolInfo.playerPool.count; r3++, r8++)
     {
         if (*r8 == STAT_NORMAL || *r8 == STAT_FREEZE)
-            r9 |= (controllerInfo[r3].unk0[2].button & PAD_BUTTON_A) != 0;
+            r9 |= (controllerInfo[r3].pressed.button & PAD_BUTTON_A) != 0;
     }
 
     if (r9 && camera->timerCurr > 8 && camera->timerCurr < r31 * 272)

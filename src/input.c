@@ -164,9 +164,9 @@ static inline int clamp(int val, int min, int max)
 // https://decomp.me/scratch/EAwn5
 static inline void test3(struct ControllerInfo *r6, PADStatus *b)
 {
-    r6->unk0[0] = *b;
-    r6->unk0[2].button = b->button & ~r6->unk0[1].button;
-    r6->unk0[3].button = r6->unk0[1].button & ~b->button;
+    r6->held = *b;
+    r6->pressed.button = b->button & ~r6->prevHeld.button;
+    r6->released.button = r6->prevHeld.button & ~b->button;
 }
 
 void input_main(void)
@@ -193,23 +193,23 @@ void input_main(void)
 
     for (i = 0; i < 4; i++)
     {
-        lbl_801F3C60[i].unk0[1].button = lbl_801F3C60[i].unk0[0].button;
+        lbl_801F3C60[i].prevHeld.button = lbl_801F3C60[i].held.button;
         test3(&lbl_801F3C60[i], &sp10[i]);
     }
 
     /*
     for (i = 0; i < 4; i++)
     {
-        lbl_801F3C60[i].unk0[1].button = lbl_801F3C60[i].unk0[0].button;
-        lbl_801F3C60[i].unk0[0] = sp10[i];
-        lbl_801F3C60[i].unk0[2].button = sp10[i].button & ~lbl_801F3C60[i].unk0[1].button;
-        lbl_801F3C60[i].unk0[3].button = lbl_801F3C60[i].unk0[1].button & ~sp10[i].button;
+        lbl_801F3C60[i].prevHeld.button = lbl_801F3C60[i].held.button;
+        lbl_801F3C60[i].held = sp10[i];
+        lbl_801F3C60[i].pressed.button = sp10[i].button & ~lbl_801F3C60[i].prevHeld.button;
+        lbl_801F3C60[i].released.button = lbl_801F3C60[i].prevHeld.button & ~sp10[i].button;
     }
     */
     // r31 = sp10[i]
     for (i = 0; i < 4; i++)
     {
-        controllerInfo[i].unk0[1].button = controllerInfo[i].unk0[0].button;
+        controllerInfo[i].prevHeld.button = controllerInfo[i].held.button;
 
         sp10[i].triggerLeft = clamp(sp10[i].triggerLeft - 16, 0, 0xB4) * 0.77777779102325439f;
         sp10[i].triggerRight = clamp(sp10[i].triggerRight - 16, 0, 0xB4) * 0.77777779102325439f;
@@ -346,7 +346,7 @@ void get_analog_presses(void)
 {
     int i;
     int j;
-    struct AnalogButtonInfo *r3 = &analogInputs[0];
+    struct AnalogButtonInfo *analog = &analogInputs[0];
 
     for (i = 0; i < 4; i++)
     {
@@ -355,118 +355,119 @@ void get_analog_presses(void)
         int threshold;
         struct ControllerInfo *cont = &controllerInfo[i];
 
-        r3->prevHeld = r3->held;
-        r3->held = 0;
+        analog->prevHeld = analog->held;
+        analog->held = 0;
 
-        x = cont->unk0[0].stickX;
-        y = cont->unk0[0].stickY;
+        x = cont->held.stickX;
+        y = cont->held.stickY;
 
-        if (r3->prevHeld & ANALOG_STICK_LEFT)
+        if (analog->prevHeld & ANALOG_STICK_LEFT)
             threshold = -15;
         else
             threshold = -52;
         if (x < threshold)
-            r3->held |= ANALOG_STICK_LEFT;
+            analog->held |= ANALOG_STICK_LEFT;
 
-        if (r3->prevHeld & ANALOG_STICK_RIGHT)
+        if (analog->prevHeld & ANALOG_STICK_RIGHT)
             threshold = 15;
         else
             threshold = 52;
         if (x > threshold)
-            r3->held |= ANALOG_STICK_RIGHT;
+            analog->held |= ANALOG_STICK_RIGHT;
 
-        if (r3->prevHeld & ANALOG_STICK_DOWN)
+        if (analog->prevHeld & ANALOG_STICK_DOWN)
             threshold = -15;
         else
             threshold = -52;
         if (y < threshold)
-            r3->held |= ANALOG_STICK_DOWN;
+            analog->held |= ANALOG_STICK_DOWN;
 
-        if (r3->prevHeld & ANALOG_STICK_UP)
+        if (analog->prevHeld & ANALOG_STICK_UP)
             threshold = 15;
         else
             threshold = 52;
         if (y > threshold)
-            r3->held |= ANALOG_STICK_UP;
+            analog->held |= ANALOG_STICK_UP;
 
-        x = cont->unk0[0].substickX;
-        y = cont->unk0[0].substickY;
+        x = cont->held.substickX;
+        y = cont->held.substickY;
 
-        if (r3->prevHeld & ANALOG_CSTICK_LEFT)
+        if (analog->prevHeld & ANALOG_CSTICK_LEFT)
             threshold = -15;
         else
             threshold = -52;
         if (x < threshold)
-            r3->held |= ANALOG_CSTICK_LEFT;
+            analog->held |= ANALOG_CSTICK_LEFT;
 
-        if (r3->prevHeld & ANALOG_CSTICK_RIGHT)
+        if (analog->prevHeld & ANALOG_CSTICK_RIGHT)
             threshold = 15;
         else
             threshold = 52;
         if (x > threshold)
-            r3->held |= ANALOG_CSTICK_RIGHT;
+            analog->held |= ANALOG_CSTICK_RIGHT;
 
-        if (r3->prevHeld & ANALOG_CSTICK_DOWN)
+        if (analog->prevHeld & ANALOG_CSTICK_DOWN)
             threshold = -15;
         else
             threshold = -52;
         if (y < threshold)
-            r3->held |= ANALOG_CSTICK_DOWN;
+            analog->held |= ANALOG_CSTICK_DOWN;
 
-        if (r3->prevHeld & ANALOG_CSTICK_UP)
+        if (analog->prevHeld & ANALOG_CSTICK_UP)
             threshold = 15;
         else
             threshold = 52;
         if (y > threshold)
-            r3->held |= ANALOG_CSTICK_UP;
+            analog->held |= ANALOG_CSTICK_UP;
 
-        x = cont->unk0[0].triggerLeft;
-        y = cont->unk0[0].triggerRight;
+        x = cont->held.triggerLeft;
+        y = cont->held.triggerRight;
 
-        if (r3->prevHeld & ANALOG_TRIGGER_LEFT)
+        if (analog->prevHeld & ANALOG_TRIGGER_LEFT)
             threshold = 40;
         else
             threshold = 80;
         if (x > threshold)
-            r3->held |= ANALOG_TRIGGER_LEFT;
+            analog->held |= ANALOG_TRIGGER_LEFT;
 
-        if (r3->prevHeld & ANALOG_TRIGGER_RIGHT)
+        if (analog->prevHeld & ANALOG_TRIGGER_RIGHT)
             threshold = 40;
         else
             threshold = 80;
         if (y > threshold)
-            r3->held |= ANALOG_TRIGGER_RIGHT;
+            analog->held |= ANALOG_TRIGGER_RIGHT;
 
-        r3->pressed = r3->held & ~r3->prevHeld;
-        r3->released = r3->held & ~r3->prevHeld;
+        analog->pressed = analog->held & ~analog->prevHeld;
+        // BUG: should be analog->released = ~analog->held & analog->prevHeld
+        analog->released = analog->held & ~analog->prevHeld;
 
-        r3++;
+        analog++;
     }
 }
 
 void get_key_repeats(void)
 {
     struct ControllerInfo *cont = &controllerInfo[0];
-    struct AnalogButtonInfo *r6 = &analogInputs[0];
+    struct AnalogButtonInfo *analog = &analogInputs[0];
     int i;
 
-    for (i = 0; i < 4; i++, cont++, r6++)
+    for (i = 0; i < 4; i++, cont++, analog++)
     {
-        if (cont->unk0[0].button == cont->unk0[1].button
-         && r6->held == r6->prevHeld)
+        if (cont->held.button == cont->prevHeld.button
+         && analog->held == analog->prevHeld)
             controllerRepeatCounts[i]++;
         else
             controllerRepeatCounts[i] = 0;
 
         if (controllerRepeatCounts[i] >= 20 && (controllerRepeatCounts[i] & 3) == 0)
         {
-            cont->unk0[4].button = cont->unk0[0].button;
-            r6->repeat = r6->held;
+            cont->repeat.button = cont->held.button;
+            analog->repeat = analog->held;
         }
         else
         {
-            cont->unk0[4].button = cont->unk0[2].button;
-            r6->repeat = r6->pressed;
+            cont->repeat.button = cont->pressed.button;
+            analog->repeat = analog->pressed;
         }
     }
 }
@@ -483,6 +484,10 @@ void func_80025640(void)
         g_currPlayerButtons[i] = 0;
         g_currPlayerAnalogButtons[i] = 0;
     }
+    
+    // I could only get this function to match with nested loops, which suggests that controllerInfo
+    // and analogInputs should be 2D arrays. However, I find the rest of the code more readable when
+    // they are arrays of structs with properly labeled members.
 
     switch (gameMode)
     {
@@ -491,11 +496,11 @@ void func_80025640(void)
     case 5:
         for (i = 0; i < 4; i++)
         {
-            if (controllerInfo[i].unk0[0].err == -1)
+            if (controllerInfo[i].held.err == -1)
                 continue;
             for (j = 0; j < 5; j++)
             {
-                g_currPlayerButtons[j] |= controllerInfo[i].unk0[j].button;
+                g_currPlayerButtons[j] |= ((PADStatus *)&controllerInfo[i])[j].button;
                 g_currPlayerAnalogButtons[j] |= ((u16 *)&analogInputs[i])[j];
             }
         }
@@ -519,7 +524,7 @@ void func_80025640(void)
 
             for (j = 0; j < 5; j++)
             {
-                g_currPlayerButtons[j] |= controllerInfo[playerControllerIDs[i]].unk0[j].button;
+                g_currPlayerButtons[j] |= ((PADStatus *)&controllerInfo[playerControllerIDs[i]])[j].button;
                 g_currPlayerAnalogButtons[j] |= ((u16 *)&analogInputs[playerControllerIDs[i]])[j];
             }
         }

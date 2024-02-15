@@ -59,7 +59,7 @@ void ev_mouse_main(void)
             // if press "B button"
             phi_r8 = 8;
         }
-        _button = controllerInfo[0].unk0[4].button;
+        _button = controllerInfo[0].repeat.button;
         if ((_button & PAD_BUTTON_UP) != 0) {
             // press D-pad up
             mouse.posVertical -= phi_r8;
@@ -78,8 +78,8 @@ void ev_mouse_main(void)
             mouse.posHorizontal += phi_r8;
         }
         
-        mouse.posHorizontal += (controllerInfo[0].unk0[0].stickX * 0.1);
-        mouse.posVertical += (-controllerInfo[0].unk0[0].stickY * 0.1);
+        mouse.posHorizontal += (controllerInfo[0].held.stickX * 0.1);
+        mouse.posVertical += (-controllerInfo[0].held.stickY * 0.1);
 
         // Horizontal Check
         if (mouse.posHorizontal < HORIZONTAL_MIN) {
@@ -100,7 +100,7 @@ void ev_mouse_main(void)
         mouse.unk08 = mouse.posHorizontal - mouse.unk04;
         mouse.unk0a = mouse.posVertical - mouse.unk06;
 
-        if ( (controllerInfo[0].unk0[2].button & PAD_BUTTON_A) != 0 ) {
+        if ( (controllerInfo[0].pressed.button & PAD_BUTTON_A) != 0 ) {
             // if press "A button"
             
             if ( mouse.spriteIdx >= 0 ) {

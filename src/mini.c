@@ -1549,7 +1549,7 @@ void submode_mini_select_main_func(void)
     }
     lbl_802F2170 = index;
 
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_A)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_A)
     {
         gameSubmodeRequest = s_minigameTestMenu[index].submode;
         modeCtrl.gameType = s_minigameTestMenu[index].gameType;
@@ -1603,31 +1603,31 @@ void submode_mini_ending_main_func(void)
     int var_r31;
 
     var_r31 = 0;
-    if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_LEFT)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_RIGHT)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_UP)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_DOWN))
+    if ((controllerInfo[0].pressed.button & PAD_BUTTON_LEFT)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_RIGHT)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_UP)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_DOWN))
         var_r31 = 1;
 
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_LEFT)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_LEFT)
     {
         modeCtrl.currPlayer--;
         if (modeCtrl.currPlayer < 0)
             modeCtrl.currPlayer += 4;
     }
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_RIGHT)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_RIGHT)
     {
         modeCtrl.currPlayer++;
         if (modeCtrl.currPlayer >= 4)
             modeCtrl.currPlayer -= 4;
     }
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_DOWN)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_DOWN)
     {
         modeCtrl.difficulty--;
         if (modeCtrl.difficulty < 0)
             modeCtrl.difficulty += 3;
     }
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_UP)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_UP)
     {
         modeCtrl.difficulty++;
         if (modeCtrl.difficulty >= 3)

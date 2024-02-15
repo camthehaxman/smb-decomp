@@ -73,13 +73,13 @@ void submode_mini_commend_main_func(void)
     if (debugFlags & 0xA)
 		return;
 	var_r30 = modeCtrl.unk10;
-	if (controllerInfo[0].unk0[2].button & 2)
+	if (controllerInfo[0].pressed.button & 2)
 	{
 		var_r30++;
 		if (var_r30 >= 11)
 			var_r30 = 0;
 	}
-	if (controllerInfo[0].unk0[2].button & 1)
+	if (controllerInfo[0].pressed.button & 1)
 	{
 		var_r30--;
 		if (var_r30 < 0)

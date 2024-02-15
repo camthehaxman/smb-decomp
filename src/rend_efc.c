@@ -630,7 +630,7 @@ void rend_efc_kaleidoscope_main(struct RenderEffect *rendEfc)
 {
     struct RenderEffectKaleidoscope *work = (void *)rendEfc->work;
 
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_A)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_A)
     {
         if (++work->unk0 >= 3)
             work->unk0 = 0;

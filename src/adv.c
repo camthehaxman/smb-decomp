@@ -237,8 +237,8 @@ void submode_adv_logo_main_func(void)
 
     if ((dipSwitches & DIP_DEBUG)
      && modeCtrl.submodeTimer > 30
-     && (controllerInfo[0].unk0[0].button & PAD_BUTTON_X)
-     && (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y))
+     && (controllerInfo[0].held.button & PAD_BUTTON_X)
+     && (controllerInfo[0].pressed.button & PAD_BUTTON_Y))
         modeCtrl.submodeTimer = 30;
 
     update_av_logo();
@@ -1299,8 +1299,8 @@ void submode_adv_title_main_func(void)
     int i;
 
     if ((dipSwitches & DIP_DEBUG)
-     && (controllerInfo[0].unk0[0].button & (1 << 10))
-     && (controllerInfo[0].unk0[2].button & (1 << 11))
+     && (controllerInfo[0].held.button & (1 << 10))
+     && (controllerInfo[0].pressed.button & (1 << 11))
      && modeCtrl.submodeTimer > 30)
         modeCtrl.submodeTimer = 30;
 
@@ -1539,8 +1539,8 @@ void submode_adv_info_main_func(void)
     if (debugFlags & 0xA)
         return;
     if ((dipSwitches & DIP_DEBUG)
-     && (controllerInfo[0].unk0[0].button & PAD_BUTTON_X)
-     && (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y)
+     && (controllerInfo[0].held.button & PAD_BUTTON_X)
+     && (controllerInfo[0].pressed.button & PAD_BUTTON_Y)
      && modeCtrl.submodeTimer > 30)
         modeCtrl.submodeTimer = 30;
 

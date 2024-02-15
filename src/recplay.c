@@ -851,14 +851,14 @@ void func_8004A0C8(void)
         return;
 
     u_clear_buffers_2_and_5();
-    if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_LEFT)
-     || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_LEFT) && (controllerInfo[0].unk0[0].button & PAD_TRIGGER_R)))
+    if ((controllerInfo[0].pressed.button & PAD_BUTTON_LEFT)
+     || ((controllerInfo[0].held.button & PAD_BUTTON_LEFT) && (controllerInfo[0].held.button & PAD_TRIGGER_R)))
     {
         if (lbl_802F1F78.replayId > 0)
             lbl_802F1F78.replayId--;
     }
-    if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_RIGHT)
-     || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_RIGHT) && (controllerInfo[0].unk0[0].button & PAD_TRIGGER_R)))
+    if ((controllerInfo[0].pressed.button & PAD_BUTTON_RIGHT)
+     || ((controllerInfo[0].held.button & PAD_BUTTON_RIGHT) && (controllerInfo[0].held.button & PAD_TRIGGER_R)))
     {
         if (lbl_802F1F78.replayId < 11)
             lbl_802F1F78.replayId++;
@@ -896,7 +896,7 @@ void func_8004A0C8(void)
     {
         window_printf_2("  STAGE: %03d(Lib No.%03d)\n", header.floorNum, header.stageId);
         window_printf_2(" COURSE: %3d\n", header.difficulty);
-        if (controllerInfo[0].unk0[0].button & PAD_BUTTON_Y)
+        if (controllerInfo[0].held.button & PAD_BUTTON_Y)
         {
             window_printf_2("  MONKY: %3d\n", header.character);
             window_printf_2("   NAME: %s\n", header.playerName);
@@ -917,8 +917,8 @@ void func_8004A0C8(void)
     case 0:
         if (func_8004A0C8_sub(lbl_802F1F78.replayId) > 0.0)
         {
-            if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_A)
-             && !(controllerInfo[0].unk0[2].button & PAD_BUTTON_B))
+            if ((controllerInfo[0].pressed.button & PAD_BUTTON_A)
+             && !(controllerInfo[0].pressed.button & PAD_BUTTON_B))
             {
                 float var_f1_4;
                 int temp_r0_7;
@@ -959,8 +959,8 @@ void func_8004A0C8(void)
         }
         if (replay != NULL)
         {
-            if ((controllerInfo[0].unk0[0].button & PAD_BUTTON_A)
-             && (controllerInfo[0].unk0[0].button & PAD_TRIGGER_L))
+            if ((controllerInfo[0].held.button & PAD_BUTTON_A)
+             && (controllerInfo[0].held.button & PAD_TRIGGER_L))
             {
                 BALL_FOREACH( ball->state = 0; )
                 WORLD_FOREACH( world->state = 4; )
@@ -969,8 +969,8 @@ void func_8004A0C8(void)
                 memset(replay, 0, sizeof(*replay));
             }
         }
-        if ((controllerInfo[0].unk0[0].button & PAD_BUTTON_B)
-         && (controllerInfo[0].unk0[0].button & PAD_TRIGGER_L))
+        if ((controllerInfo[0].held.button & PAD_BUTTON_B)
+         && (controllerInfo[0].held.button & PAD_TRIGGER_L))
         {
             lbl_802F1F78.unk4 = 1;
             modeCtrl.submodeTimer = 0;

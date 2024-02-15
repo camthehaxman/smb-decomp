@@ -223,16 +223,16 @@ static void sel_stage_handle_input(void)
         rend_efc_mirror_enable();
     }
 
-    if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_A)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_B)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_X)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y))
+    if ((controllerInfo[0].pressed.button & PAD_BUTTON_A)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_B)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_X)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_Y))
     {
-        if (controllerInfo[0].unk0[0].button & PAD_BUTTON_Y)
+        if (controllerInfo[0].held.button & PAD_BUTTON_Y)
             playerCharacterSelection[0] = 3;
-        else if (controllerInfo[0].unk0[0].button & PAD_BUTTON_X)
+        else if (controllerInfo[0].held.button & PAD_BUTTON_X)
             playerCharacterSelection[0] = 2;
-        else if (controllerInfo[0].unk0[0].button & PAD_BUTTON_B)
+        else if (controllerInfo[0].held.button & PAD_BUTTON_B)
             playerCharacterSelection[0] = 1;
         else
             playerCharacterSelection[0] = 0;

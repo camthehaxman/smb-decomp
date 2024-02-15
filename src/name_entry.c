@@ -420,7 +420,7 @@ void ev_name_entry_main(void)
         s_nameEntry.counter--;
         if (s_nameEntry.counter > 96.0)
         {
-            if (controllerInfo[playerControllerIDs[ball->playerId]].unk0[2].button & 0x100)
+            if (controllerInfo[playerControllerIDs[ball->playerId]].pressed.button & 0x100)
                 s_nameEntry.counter = 0x61;
         }
         else if (s_nameEntry.counter == 96.0)

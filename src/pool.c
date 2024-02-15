@@ -64,12 +64,12 @@ void debug_main(void)
     {
         if (!(debugFlags & 1))
         {
-            if ((analogInputs[0].held & PAD_BUTTON_B) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
+            if ((analogInputs[0].held & PAD_BUTTON_B) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
                 debugFlags |= 3;
         }
-        else if (!(analogInputs[0].held & PAD_BUTTON_A) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
+        else if (!(analogInputs[0].held & PAD_BUTTON_A) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
             debugFlags &= ~3;
-        else if (controllerInfo[0].unk0[2].button & PAD_TRIGGER_Z)
+        else if (controllerInfo[0].pressed.button & PAD_TRIGGER_Z)
             debugFlags &= ~2;
         else
             debugFlags |= 2;
@@ -90,8 +90,8 @@ void debug_main(void)
 
     if (dipSwitches & DIP_DEBUG)
     {
-        if ((controllerInfo[0].unk0[0].button & PAD_BUTTON_B)
-         && (controllerInfo[0].unk0[2].button & PAD_BUTTON_X))
+        if ((controllerInfo[0].held.button & PAD_BUTTON_B)
+         && (controllerInfo[0].pressed.button & PAD_BUTTON_X))
         {
             if (eventInfo[EVENT_MOUSE].state != EV_STATE_RUNNING)
             {

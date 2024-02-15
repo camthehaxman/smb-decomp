@@ -706,27 +706,27 @@ static struct WindowItem inputWindowItems[] =
 {
     {WI_LABEL,      1,  1, "Input Test",         NULL,                                    NULL},
     {WI_EDIT_INDEX, 2,  3, "PAD           [%d]", NULL,                                    &lbl_801B6900},
-    {WI_BIT16,      2, -2, "BUTTON LEFT   %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_LEFT},
-    {WI_BIT16,      2, -1, "BUTTON RIGHT  %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_RIGHT},
-    {WI_BIT16,      2, -1, "BUTTON DOWN   %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_DOWN},
-    {WI_BIT16,      2, -1, "BUTTON UP     %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_UP},
-    {WI_BIT16,      2, -1, "TRIGGER Z     %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_TRIGGER_Z},
-    {WI_BIT16,      2, -1, "TRIGGER R     %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_TRIGGER_R},
-    {WI_BIT16,      2, -1, "TRIGGER L     %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_TRIGGER_L},
-    {WI_BIT16,      2, -1, "BUTTON A      %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_A},
-    {WI_BIT16,      2, -1, "BUTTON B      %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_B},
-    {WI_BIT16,      2, -1, "BUTTON X      %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_X},
-    {WI_BIT16,      2, -1, "BUTTON Y      %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_Y},
-    {WI_BIT16,      2, -1, "BUTTON MENU   %3s",  &controllerInfo[0].unk0[0].button,       (void *)PAD_BUTTON_MENU},
-    {WI_S8,         2, -2, "stickX       %4d",   &controllerInfo[0].unk0[0].stickX,       NULL},
-    {WI_S8,         2, -1, "stickY       %4d",   &controllerInfo[0].unk0[0].stickY,       NULL},
-    {WI_S8,         2, -1, "substickX    %4d",   &controllerInfo[0].unk0[0].substickX,    NULL},
-    {WI_S8,         2, -1, "substickY    %4d",   &controllerInfo[0].unk0[0].substickY,    NULL},
-    {WI_U8,         2, -1, "triggerLeft  %4d",   &controllerInfo[0].unk0[0].triggerLeft,  NULL},
-    {WI_U8,         2, -1, "triggerRight %4d",   &controllerInfo[0].unk0[0].triggerRight, NULL},
-    {WI_U8,         2, -1, "analogA      %4d",   &controllerInfo[0].unk0[0].analogA,      NULL},
-    {WI_U8,         2, -1, "analogB      %4d",   &controllerInfo[0].unk0[0].analogB,      NULL},
-    {WI_U8,         2, -1, "err          %4d",   &controllerInfo[0].unk0[0].err,          NULL},
+    {WI_BIT16,      2, -2, "BUTTON LEFT   %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_LEFT},
+    {WI_BIT16,      2, -1, "BUTTON RIGHT  %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_RIGHT},
+    {WI_BIT16,      2, -1, "BUTTON DOWN   %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_DOWN},
+    {WI_BIT16,      2, -1, "BUTTON UP     %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_UP},
+    {WI_BIT16,      2, -1, "TRIGGER Z     %3s",  &controllerInfo[0].held.button,       (void *)PAD_TRIGGER_Z},
+    {WI_BIT16,      2, -1, "TRIGGER R     %3s",  &controllerInfo[0].held.button,       (void *)PAD_TRIGGER_R},
+    {WI_BIT16,      2, -1, "TRIGGER L     %3s",  &controllerInfo[0].held.button,       (void *)PAD_TRIGGER_L},
+    {WI_BIT16,      2, -1, "BUTTON A      %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_A},
+    {WI_BIT16,      2, -1, "BUTTON B      %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_B},
+    {WI_BIT16,      2, -1, "BUTTON X      %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_X},
+    {WI_BIT16,      2, -1, "BUTTON Y      %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_Y},
+    {WI_BIT16,      2, -1, "BUTTON MENU   %3s",  &controllerInfo[0].held.button,       (void *)PAD_BUTTON_MENU},
+    {WI_S8,         2, -2, "stickX       %4d",   &controllerInfo[0].held.stickX,       NULL},
+    {WI_S8,         2, -1, "stickY       %4d",   &controllerInfo[0].held.stickY,       NULL},
+    {WI_S8,         2, -1, "substickX    %4d",   &controllerInfo[0].held.substickX,    NULL},
+    {WI_S8,         2, -1, "substickY    %4d",   &controllerInfo[0].held.substickY,    NULL},
+    {WI_U8,         2, -1, "triggerLeft  %4d",   &controllerInfo[0].held.triggerLeft,  NULL},
+    {WI_U8,         2, -1, "triggerRight %4d",   &controllerInfo[0].held.triggerRight, NULL},
+    {WI_U8,         2, -1, "analogA      %4d",   &controllerInfo[0].held.analogA,      NULL},
+    {WI_U8,         2, -1, "analogB      %4d",   &controllerInfo[0].held.analogB,      NULL},
+    {WI_U8,         2, -1, "err          %4d",   &controllerInfo[0].held.err,          NULL},
     {WI_END,        0,  0, NULL,                 NULL,                                    NULL},
 };
 
@@ -1095,7 +1095,7 @@ static void process_window(struct WindowDesc *window)
     switch ((s32)item->type)
     {
     case WI_SUBWINDOW:
-        if (controllerInfo[0].unk0[4].button & PAD_BUTTON_A)
+        if (controllerInfo[0].repeat.button & PAD_BUTTON_A)
         {
             subWindow = item->pValue;
             if (subWindow != NULL)
@@ -1113,13 +1113,13 @@ static void process_window(struct WindowDesc *window)
         }
         break;
     case WI_OPENWIN:
-        if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A) && item->pValue != NULL)
+        if ((controllerInfo[0].repeat.button & PAD_BUTTON_A) && item->pValue != NULL)
             window_open(item->pValue);
         break;
     default:
-        if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A)
-         || (controllerInfo[0].unk0[4].button & PAD_BUTTON_B)
-         || ((analogInputs[0].held & 0x200) && ((controllerInfo[0].unk0[0].button & PAD_BUTTON_A) || (controllerInfo[0].unk0[0].button & PAD_BUTTON_B))))
+        if ((controllerInfo[0].repeat.button & PAD_BUTTON_A)
+         || (controllerInfo[0].repeat.button & PAD_BUTTON_B)
+         || ((analogInputs[0].held & 0x200) && ((controllerInfo[0].held.button & PAD_BUTTON_A) || (controllerInfo[0].held.button & PAD_BUTTON_B))))
         {
             if (item->type & 0x200)
                 var_r8 = 0;
@@ -1166,7 +1166,7 @@ static void process_window(struct WindowDesc *window)
                 minInt = someParam->min;
                 maxInt = someParam->max;
                 deltaInt = *(new_var = &someParam->delta);
-                if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A) || ((analogInputs[0].held & 0x200) && (controllerInfo[0].unk0[0].button & PAD_BUTTON_A)))
+                if ((controllerInfo[0].repeat.button & PAD_BUTTON_A) || ((analogInputs[0].held & 0x200) && (controllerInfo[0].held.button & PAD_BUTTON_A)))
                 {
                     if (rangeFlags & RANGE_NOMAX)
                         someintval = someintval + deltaInt;
@@ -1212,7 +1212,7 @@ static void process_window(struct WindowDesc *window)
                 rangeFlags = someParamF->flags;
                 minFloat = someParamF->min;
                 maxFloat = someParamF->max;
-                if ((controllerInfo[0].unk0[4].button & 0x100) || ((analogInputs[0].held & 0x200) && (controllerInfo[0].unk0[0].button & 0x100)))
+                if ((controllerInfo[0].repeat.button & 0x100) || ((analogInputs[0].held & 0x200) && (controllerInfo[0].held.button & 0x100)))
                 {
                     if (rangeFlags & RANGE_NOMAX)
                         somefloatval = somefloatval + deltaFloat;
@@ -1579,10 +1579,10 @@ void window_main(void)
 
     var_r22 = 1;
 
-    u_selectionRelated1 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_UP) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_UP) && (analogInputs[0].held & 0x200)));
-    u_selectionRelated2 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_DOWN) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_DOWN) && (analogInputs[0].held & 0x200)));
-    unused1 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_LEFT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_LEFT) && (analogInputs[0].held & 0x200)));
-    unused2 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_RIGHT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_RIGHT) && (analogInputs[0].held & 0x200)));
+    u_selectionRelated1 = ((controllerInfo[0].repeat.button & PAD_BUTTON_UP) || ((controllerInfo[0].held.button & PAD_BUTTON_UP) && (analogInputs[0].held & 0x200)));
+    u_selectionRelated2 = ((controllerInfo[0].repeat.button & PAD_BUTTON_DOWN) || ((controllerInfo[0].held.button & PAD_BUTTON_DOWN) && (analogInputs[0].held & 0x200)));
+    unused1 = ((controllerInfo[0].repeat.button & PAD_BUTTON_LEFT) || ((controllerInfo[0].held.button & PAD_BUTTON_LEFT) && (analogInputs[0].held & 0x200)));
+    unused2 = ((controllerInfo[0].repeat.button & PAD_BUTTON_RIGHT) || ((controllerInfo[0].held.button & PAD_BUTTON_RIGHT) && (analogInputs[0].held & 0x200)));
 
     // clear buffers (not using memset for some reason)
     bufPtr = (u32 *)screenBufferXOffset;
@@ -1629,11 +1629,11 @@ void window_main(void)
 
     if (analogInputs[0].held & 0x100)
     {
-        if ((dipSwitches & 1) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
+        if ((dipSwitches & 1) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
         {
             window_open(&mainMenuWindow);
         }
-        else if (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y)
+        else if (controllerInfo[0].pressed.button & PAD_BUTTON_Y)
         {
             if (lbl_802F1EA8 != 0U)
             {
@@ -1652,12 +1652,12 @@ void window_main(void)
                 }
             }
         }
-        else if (controllerInfo[0].unk0[4].button & 0x100)
+        else if (controllerInfo[0].repeat.button & 0x100)
         {
             func_8002DC54();
             var_r22 = 0;
         }
-        else if ((controllerInfo[0].unk0[4].button & 0x200) && ((u32) lbl_802F1EA8 != 0U))
+        else if ((controllerInfo[0].repeat.button & 0x200) && ((u32) lbl_802F1EA8 != 0U))
         {
             dont_inline_func_8002DD5C();
         }

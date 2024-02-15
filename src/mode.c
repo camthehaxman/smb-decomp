@@ -571,8 +571,8 @@ int title_screen_debug_menu(void)
 
         for (i = 0; i < 4; i++)
         {
-            if ((controllerInfo[i].unk0[2].button & PAD_BUTTON_START)
-             || (controllerInfo[i].unk0[2].button & PAD_BUTTON_A))
+            if ((controllerInfo[i].pressed.button & PAD_BUTTON_START)
+             || (controllerInfo[i].pressed.button & PAD_BUTTON_A))
                 chosen = TRUE;
         }
 
@@ -658,7 +658,7 @@ void u_menu_input_debug(void)
     {
         for (i = 0; i < 4; i++)
         {
-            if (controllerInfo[i].unk0[2].button & PAD_BUTTON_START)
+            if (controllerInfo[i].pressed.button & PAD_BUTTON_START)
                 bvar = TRUE;
         }
         if ((gameMode == MD_GAME && (modeCtrl.courseFlags & 1))
@@ -736,8 +736,8 @@ void u_menu_input_debug(void)
                 break;
             for (i = 0; i < 4; i++)
             {
-                if ((controllerInfo[i].unk0[2].button & PAD_BUTTON_START)
-                 || (controllerInfo[i].unk0[2].button & PAD_BUTTON_A))
+                if ((controllerInfo[i].pressed.button & PAD_BUTTON_START)
+                 || (controllerInfo[i].pressed.button & PAD_BUTTON_A))
                     modeCtrl.unk1C = 1;
             }
         }

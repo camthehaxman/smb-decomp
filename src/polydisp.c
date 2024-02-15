@@ -433,10 +433,10 @@ void u_draw_tutorial_button_and_joystick(void)
     stickY = 0.0f;
     for (i = 0; i < 4; i++)
     {
-        if (controllerInfo[i].unk0[0].err == 0)
+        if (controllerInfo[i].held.err == 0)
         {
-            stickX = (float)controllerInfo[i].unk0[0].stickX / 60.0;
-            stickY = -(float)controllerInfo[i].unk0[0].stickY / 60.0;
+            stickX = (float)controllerInfo[i].held.stickX / 60.0;
+            stickY = -(float)controllerInfo[i].held.stickY / 60.0;
             break;
         }
     }
