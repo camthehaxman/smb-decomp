@@ -5,9 +5,11 @@
 
 #include "global.h"
 #include "bitmap.h"
+#include "event.h"
 #include "gxcache.h"
 #include "input.h"
 #include "light.h"
+#include "mode.h"
 #include "pool.h"
 #include "sound.h"
 
@@ -43,6 +45,128 @@ struct Struct8002EF0C
     s32 unk20;
     s32 unk24;
     s32 unk28;
+};
+
+// .data
+struct Struct8002EF0C_child lbl_801B3D98[] =
+{
+    {13, 1,  1, "Dip Switch",           NULL,         0},
+    { 8, 2,  3, "                  %s", &dipSwitches, 0x1},
+    { 8, 2,  4, "                  %s", &dipSwitches, 0x2},
+    { 8, 2,  5, "                  %s", &dipSwitches, 0x4},
+    { 8, 2,  6, "                  %s", &dipSwitches, 0x8},
+    { 8, 2,  8, "                  %s", &dipSwitches, 0x10},
+    { 8, 2,  9, "                  %s", &dipSwitches, 0x20},
+    { 8, 2, 10, "                  %s", &dipSwitches, 0x40},
+    { 8, 2, 11, "                  %s", &dipSwitches, 0x80},
+    { 8, 2, 13, "                  %s", &dipSwitches, 0x100},
+    { 8, 2, 14, "                  %s", &dipSwitches, 0x200},
+    { 8, 2, 15, "                  %s", &dipSwitches, 0x400},
+    { 8, 2, 16, "                  %s", &dipSwitches, 0x800},
+    { 8, 2, 18, "                  %s", &dipSwitches, 0x1000},
+    { 8, 2, 19, "                  %s", &dipSwitches, 0x2000},
+    { 8, 2, 20, "                  %s", &dipSwitches, 0x4000},
+    { 8, 2, 21, "                  %s", &dipSwitches, 0x8000},
+    { 8, 2, 23, "                  %s", &dipSwitches, 0x10000},
+    { 8, 2, 24, "                  %s", &dipSwitches, 0x20000},
+    { 8, 2, 25, "                  %s", &dipSwitches, 0x40000},
+    { 8, 2, 26, "                  %s", &dipSwitches, 0x80000},
+    { 8, 2, 28, "                  %s", &dipSwitches, 0x100000},
+    { 8, 2, 29, "                  %s", &dipSwitches, 0x200000},
+    { 8, 2, 30, "                  %s", &dipSwitches, 0x400000},
+    { 8, 2, 31, "                  %s", &dipSwitches, 0x800000},
+    { 8, 2, 33, "                  %s", &dipSwitches, 0x1000000},
+    { 8, 2, 34, "                  %s", &dipSwitches, 0x2000000},
+    { 8, 2, 35, "                  %s", &dipSwitches, 0x4000000},
+    { 8, 2, 36, "                  %s", &dipSwitches, 0x8000000},
+    { 8, 2, 38, "                  %s", &dipSwitches, 0x10000000},
+    { 8, 2, 39, "                  %s", &dipSwitches, 0x20000000},
+    { 8, 2, 40, "                  %s", &dipSwitches, 0x40000000},
+    { 8, 2, 41, "                  %s", &dipSwitches, 0x80000000},
+    {13, 3,  3, "DIP_DEBUG",            NULL,         0},
+    {13, 3,  4, "DIP_DISP",             NULL,         0},
+    {13, 3,  5, "DIP_STCOLI",           NULL,         0},
+    {13, 3,  6, "DIP_TRIANGLE",         NULL,         0},
+    {13, 3,  8, "DIP_BALL_TGT",         NULL,         0},
+    {13, 3,  9, "DIP_JOINT_OFF",        NULL,         0},
+    {13, 3, 10, "DIP_APE_COLOR",        NULL,         0},
+    {13, 3, 11, "DIP_TIME_STOP",        NULL,         0},
+    {13, 3, 13, "DIP_KARAKUCHI",        NULL,         0},
+    {13, 3, 14, "DIP_NAMEENTRY",        NULL,         0},
+    {13, 3, 15, "DIP_SHADOW_TEST",      NULL,         0},
+    {13, 3, 16, "DIP_FALL_DISP",        NULL,         0},
+    {13, 3, 18, "DIP_TEST_CAM",         NULL,         0},
+    {13, 3, 19, "DIP_NO_INTR",          NULL,         0},
+    {13, 3, 20, "DIP_CAPTURE",          NULL,         0},
+    {13, 3, 21, "DIP_OLD_BALL",         NULL,         0},
+    {13, 3, 23, "DIP_NO_KARI",          NULL,         0},
+    {13, 3, 24, "DIP_PLAY_STG_ALL",     NULL,         0},
+    {13, 3, 25, "DIP_PLAY_PNT_x10",     NULL,         0},
+    {13, 3, 26, "DIP_SARU_0",           NULL,         0},
+    {13, 3, 28, "DIP_SWITCH20",         NULL,         0},
+    {13, 3, 29, "DIP_SWITCH21",         NULL,         0},
+    {13, 3, 30, "DIP_SWITCH22",         NULL,         0},
+    {13, 3, 31, "DIP_SWITCH23",         NULL,         0},
+    {13, 3, 33, "DIP_SWITCH24",         NULL,         0},
+    {13, 3, 34, "DIP_SWITCH25",         NULL,         0},
+    {13, 3, 35, "DIP_SWITCH26",         NULL,         0},
+    {13, 3, 36, "DIP_SWITCH27",         NULL,         0},
+    {13, 3, 38, "DIP_SWITCH28",         NULL,         0},
+    {13, 3, 39, "DIP_SWITCH29",         NULL,         0},
+    {13, 3, 40, "DIP_SWITCH30",         NULL,         0},
+    {13, 3, 41, "DIP_SWITCH31",         NULL,         0},
+    {31, 0,  0, NULL,                   NULL,         0},
+};
+
+struct Struct8002EF0C lbl_801B43C8 = { 9, 0, 25, 29, lbl_801B3D98, 0, 0, 0, 0, 0, 0 };
+
+struct Struct8002EF0C_child lbl_801B43F4[] =
+{
+    {13, 1, 1, "Game", NULL, 0},
+    {31, 0, 0, NULL,   NULL, 0},
+};
+
+struct Struct8002EF0C lbl_801B4424 = { 0, 0, 10, 10, lbl_801B43F4, 0, 0, 0, 0, 0, 0 };
+
+struct Struct8002EF0C_child lbl_801B4480[] =
+{
+    {13, 1, 1, "Mode",          NULL,              0},
+    {17, 3, 3, "main_mode: %d", &gameMode,         0},
+    {22, 3, 4, "  %-14s",       &modeStringPtr,    0},
+    {17, 3, 5, " sub_mode: %d", &gameSubmode,      0},
+    {22, 3, 6, "  %-14s",       &submodeStringPtr, 0},
+    {15, 3, 8, "mode.cntr: %d", &modeCtrl,         0},
+    {31, 0, 0, NULL,            NULL,              0},
+};
+
+struct Struct8002EF0C lbl_801B4528 = { 33, 0, 20, 11, lbl_801B4480, 0, 0, 0, 0, 0, 0 };
+
+struct Struct8002EF0C_child lbl_801B4554[] =
+{
+    {13, 1,  1, "Event", NULL,                0},
+    {22, 2,  3, "%10s",  &eventInfo[0].name,  0},
+    {22, 2,  4, "%10s",  &eventInfo[1].name,  0},
+    {22, 2,  5, "%10s",  &eventInfo[2].name,  0},
+    {22, 2,  6, "%10s",  &eventInfo[3].name,  0},
+    {22, 2,  7, "%10s",  &eventInfo[4].name,  0},
+    {22, 2,  8, "%10s",  &eventInfo[5].name,  0},
+    {22, 2,  9, "%10s",  &eventInfo[6].name,  0},
+    {22, 2, 10, "%10s",  &eventInfo[7].name,  0},
+    {22, 2, 11, "%10s",  &eventInfo[8].name,  0},
+    {22, 2, 12, "%10s",  &eventInfo[9].name,  0},
+    {22, 2, 13, "%10s",  &eventInfo[10].name, 0},
+    {22, 2, 14, "%10s",  &eventInfo[11].name, 0},
+    {22, 2, 15, "%10s",  &eventInfo[12].name, 0},
+    {22, 2, 16, "%10s",  &eventInfo[13].name, 0},
+    {22, 2, 17, "%10s",  &eventInfo[14].name, 0},
+    {22, 2, 18, "%10s",  &eventInfo[15].name, 0},
+    {22, 2, 19, "%10s",  &eventInfo[16].name, 0},
+    {22, 2, 20, "%10s",  &eventInfo[17].name, 0},
+    {22, 2, 21, "%10s",  &eventInfo[18].name, 0},
+    {22, 2, 22, "%10s",  &eventInfo[19].name, 0},
+    {22, 2, 23, "%10s",  &eventInfo[20].name, 0},
+
+    {25, 13, 3, "%s",    &eventInfo[0],       (u32)&lbl_801B7948},
 };
 
 struct Struct8002EF0C *lbl_80205688[16];  // 0x3D60
@@ -203,6 +327,290 @@ extern u32 lbl_802F1E1C;
 extern u32 lbl_802F1E20;
 extern u32 lbl_802F1E24;
 extern u32 lbl_802F1E28;
+extern s32 lbl_802F1E40;
+extern s32 lbl_802F1E44;
+
+struct SomeUnkStruct
+{
+    u32 unk0;
+    float unk4;
+    float unk8;
+    float unkC;
+};
+
+struct SomeUnkStruct2
+{
+    u32 unk0;
+    u32 unk4;
+    u32 unk8;
+    u32 *unkC;
+};
+
+void func_8002E284(struct Struct8002EF0C *arg0)
+{
+    void *temp_r4_6;
+    f32 var_f1;
+    f32 temp_f2;
+    f32 temp_f3;
+    f32 temp_f4;
+    s32 var_r8;
+    s32 temp_r5_7;
+    s32 var_r8_2;
+    s32 temp_r7_2;
+    s32 temp_r9;
+    s32 temp_r10;
+    s32 temp_r6_3;
+    s32 var_r7;
+    s32 temp_r3_4;
+    s32 temp_r4;
+    s32 temp_r5;
+    s32 temp_r5_2;
+    s32 temp_r5_4;
+    s32 temp_r5_6;
+    s32 var_r6;
+    s32 var_r6_2;
+    int var_r6_3;
+    struct Struct8002EF0C_child *var_r4;
+    struct SomeUnkStruct *temp_r3_10;
+    struct Struct8002EF0C *temp_r3_8;  // idk?
+    u32 *temp_r5_5;
+    void *new_var;
+
+    if ((analogButtonInfo[0][4] & 0x80) || ((analogButtonInfo[0][0] & 0x80) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        arg0->unkC--;
+        arg0->unkC = MAX(arg0->unkC, 3);
+    }
+    else if ((analogButtonInfo[0][4] & 0x40) || ((analogButtonInfo[0][0] & 0x40) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        arg0->unkC++;
+        arg0->unkC = MIN(arg0->unkC, 0x25 - arg0->unk4);
+    }
+    if ((analogButtonInfo[0][4] & 0x10) || ((analogButtonInfo[0][0] & 0x10) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        arg0->unk8--;
+        arg0->unk8 = MAX(arg0->unk8, 3);
+    }
+    else if ((analogButtonInfo[0][4] & 0x20) || ((analogButtonInfo[0][0] & 0x20) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        arg0->unk8++;
+        arg0->unk8 = MIN(arg0->unk8, 0x35 - arg0->unk0);
+    }
+    if ((analogButtonInfo[0][4] & 8) || ((analogButtonInfo[0][0] & 8) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        temp_r5 = arg0->unk4 - 1;
+        var_r6 = MAX(temp_r5, 0);
+        arg0->unk28 += (arg0->unk4 - var_r6) * 0xC;
+        arg0->unk4 = var_r6;
+    }
+    else if ((analogButtonInfo[0][4] & 4) || ((analogButtonInfo[0][0] & 4) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        temp_r5_2 = arg0->unk4;
+        var_r6_2 = temp_r5_2 + 1;
+        temp_r3_4 = 0x25 - arg0->unkC;
+        var_r6_2 = MIN(var_r6_2, temp_r3_4);
+        arg0->unk28 += (temp_r5_2 - var_r6_2) * 0xC;
+        arg0->unk4 = var_r6_2;
+    }
+    if ((analogButtonInfo[0][4] & 1) || ((analogButtonInfo[0][0] & 1) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        temp_r4 = arg0->unk0 - 1;
+        var_r6 = MAX(temp_r4, 0);
+        arg0->unk24 += (arg0->unk0 - var_r6) * 0xC;
+        arg0->unk0 = var_r6;
+    }
+    else if ((analogButtonInfo[0][4] & 2) || ((analogButtonInfo[0][0] & 2) && (analogButtonInfo[0][0] & 0x200)))
+    {
+        temp_r5_2 = arg0->unk0;
+        var_r6_2 = temp_r5_2 + 1;
+        temp_r3_4 = 0x35 - arg0->unk8;
+        var_r6_2 = MIN(var_r6_2, temp_r3_4);
+        arg0->unk24 += (temp_r5_2 - var_r6_2) * 0xC;
+        arg0->unk0 = var_r6_2;
+    }
+    if (lbl_802F1E40 != 0)
+    {
+        temp_r5_4 = arg0->unk1C;
+        var_r6_3 = temp_r5_4;
+        do
+        {
+            if (--var_r6_3 < 0)
+            {
+                var_r4 = arg0->unk10;
+                while ((u8)var_r4->unk0 != 0x1F)
+                {
+                    var_r6_3++;
+                    var_r4++;
+                }
+            }
+            if (var_r6_3 == 0 || var_r6_3 == temp_r5_4)
+                break;
+        } while ((u8)arg0->unk10[var_r6_3].unk0 > 12);
+        arg0->unk1C = var_r6_3;
+    }
+    else if (lbl_802F1E44 != 0)
+    {
+        var_r7 = temp_r6_3 = arg0->unk1C;
+        do
+        {
+            var_r7++;
+            if ((u8)arg0->unk10[var_r7].unk0 == 0x1F)
+            {
+                var_r7 = 0;
+                break;
+            }
+            if (var_r7 == temp_r6_3)
+                break;
+        } while ((u8)arg0->unk10[var_r7].unk0 > 12);
+        arg0->unk1C = var_r7;
+    }
+    var_r4 = &arg0->unk10[arg0->unk1C];
+    switch ((s32) var_r4->unk0)
+    {
+    case 0:
+        if (controllerInfo[0].unk0[4].button & 0x100)
+        {
+            temp_r3_8 = var_r4->unk10;
+            if (temp_r3_8 != NULL)
+            {
+                lbl_802F1EA8 = 1U;
+                lbl_80205688[lbl_802F1E08]->unk0 = temp_r3_8->unk0;
+                lbl_80205688[lbl_802F1E08]->unk4 = temp_r3_8->unk4;
+                lbl_80205688[lbl_802F1E08]->unk8 = temp_r3_8->unk8;
+                lbl_80205688[lbl_802F1E08]->unkC = temp_r3_8->unkC;
+                lbl_80205688[lbl_802F1E08]->unk10 = temp_r3_8->unk10;
+                lbl_80205688[lbl_802F1E08]->unk14 = temp_r3_8->unk14;
+                lbl_80205688[lbl_802F1E08]->unk18 = temp_r3_8->unk18;
+                lbl_80205688[lbl_802F1E08]->unk1C = temp_r3_8->unk1C;
+            }
+        }
+        break;
+    case 11:
+        if ((controllerInfo[0].unk0[4].button & 0x100) && (var_r4->unk10 != NULL))
+            func_8002E06C(var_r4->unk10);
+        break;
+    default:
+        if ((controllerInfo[0].unk0[4].button & 0x100) || (controllerInfo[0].unk0[4].button & 0x200) || ((analogButtonInfo[0][0] & 0x200) && ((controllerInfo[0].unk0[0].button & 0x100) || (controllerInfo[0].unk0[0].button & 0x200))))
+        {
+            if (var_r4->unk0 & 0x200)
+                var_r8 = 0;
+            else
+                var_r8 = arg0->unk18;
+            temp_r5_5 = var_r4->unk10;
+            temp_r4_6 = (void *)((u8 *)temp_r5_5 + (arg0->unk14 * var_r8));
+            switch ((u8)var_r4->unk0)
+            {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 10:
+                switch ((u8)var_r4->unk0)
+                {
+                case 10:
+                    var_r8_2 = arg0->unk18;
+                    break;
+                case 1:
+                    var_r8_2 = *(u32 *)temp_r4_6;
+                    break;
+                case 2:
+                    var_r8_2 = *(u32 *)temp_r4_6;
+                    break;
+                case 3:
+                    var_r8_2 = *(u16 *)temp_r4_6;
+                    break;
+                case 4:
+                    var_r8_2 = *(s16 *)temp_r4_6;
+                    break;
+                case 5:
+                    var_r8_2 = *(u8 *)temp_r4_6;
+                    break;
+                default:
+                    var_r8_2 = *(s8 *)temp_r4_6;
+                    break;
+                }
+                temp_r3_10 = (void *)var_r4->unk14;
+                temp_r7_2 = *(u32 *)&temp_r3_10->unk0;
+                temp_r9 = *(u32 *)&temp_r3_10->unk4;
+                temp_r10 = *(u32 *)&temp_r3_10->unk8;
+                temp_r5_7 = *(u32 *)(new_var = &temp_r3_10->unkC);
+                if ((controllerInfo[0].unk0[4].button & 0x100) || ((analogButtonInfo[0][0] & 0x200) && (controllerInfo[0].unk0[0].button & 0x100)))
+                {
+                    if (temp_r7_2 & 2)
+                        var_r8_2 = var_r8_2 + temp_r5_7;
+                    else if (temp_r5_7 > 0)
+                        var_r8_2 = MIN(var_r8_2 + temp_r5_7, (s32)temp_r10);
+                    else
+                        var_r8_2 = MIN(var_r8_2 + temp_r5_7, (u32)temp_r10);
+                }
+                else
+                {
+                    if (temp_r7_2 & 1)
+                        var_r8_2 = var_r8_2 - temp_r5_7;
+                    else if (temp_r5_7 > 0)
+                        var_r8_2 = MAX(var_r8_2 - temp_r5_7, (s32)temp_r9);
+                    else
+                        var_r8_2 = MAX(var_r8_2 - temp_r5_7, (u32)temp_r9);
+                }
+                switch ((u8)var_r4->unk0)
+                {
+                case 1:
+                case 2:
+                    *(s32 *)temp_r4_6 = var_r8_2;
+                    break;
+                case 10:
+                    arg0->unk18 = (u32)var_r8_2;
+                    break;
+                case 3:
+                case 4:
+                    *(s16 *)temp_r4_6 = var_r8_2;
+                    break;
+                case 5:
+                case 6:
+                    *(s8 *)temp_r4_6 = var_r8_2;
+                    break;
+                }
+                break;
+            case 7:
+                temp_r3_10 = (void *)var_r4->unk14;
+                var_f1 = *(float *)temp_r4_6;
+                temp_f4 = temp_r3_10->unkC;
+                temp_f4 *= /*1.0f*/ 2.0f;
+                temp_r5_6 = temp_r3_10->unk0;
+                temp_f2 = temp_r3_10->unk4;
+                temp_f3 = temp_r3_10->unk8;
+                if ((controllerInfo[0].unk0[4].button & 0x100) || ((analogButtonInfo[0][0] & 0x200) && (controllerInfo[0].unk0[0].button & 0x100)))
+                {
+                    if (temp_r5_6 & 2)
+                        var_f1 = var_f1 + temp_f4;
+                    else
+                        var_f1 = MIN(var_f1 + temp_f4, temp_f3);
+                }
+                else
+                {
+                    if (temp_r5_6 & 1)
+                        var_f1 = var_f1 - temp_f4;
+                    else
+                        var_f1 = MAX(var_f1 - temp_f4, temp_f2);
+                }
+                *(float *)temp_r4_6 = var_f1;
+                break;
+            case 8:
+                *temp_r5_5 = (s32) (*temp_r5_5 ^ var_r4->unk14);
+                break;
+            case 9:
+                arg0->unk10 = (struct Struct8002EF0C_child *) temp_r5_5;
+                break;
+            }
+        }
+        break;
+    }
+
+    arg0->unk24 = (s32) arg0->unk24 / 2;
+    arg0->unk28 = (s32) arg0->unk28 / 2;
+}
 
 void draw_window_frame(struct Struct8002EF0C *arg0);
 void func_8002FCAC(int arg0, int arg1);
@@ -505,8 +913,6 @@ extern s8 lbl_802F1C6C[8];
 
 extern struct Light lbl_801F3A08;
 
-extern u32 lbl_802F1E40;
-extern u32 lbl_802F1E44;
 extern u32 lbl_802F1E48;
 extern u32 lbl_802F1E4C;
 extern s8 lbl_802F1E50;
