@@ -40,16 +40,9 @@ s32 lbl_802F1C80;
 s32 lightingStageId;
 s32 s_u_lightGroupsInitialized;
 
-u8 lbl_802F1C75;
-u8 lbl_802F1C74;
-u8 lbl_802F1C73;
-u8 lbl_802F1C72;
-u8 lbl_802F1C71;
-u8 lbl_802F1C70;
-u8 lbl_802F1C6F;
-u8 lbl_802F1C6E;
-u8 lbl_802F1C6D;
-u8 lbl_802F1C6C;
+s8 lbl_802F1C75;
+s8 lbl_802F1C74;
+s8 lbl_802F1C6C[8];
 
 s32 lbl_802F1C68;
 s32 lbl_802F1C64;
@@ -224,19 +217,8 @@ void init_light_dir(struct Light *light)
     }
 }
 
-struct LightGroup
-{
-    s16 lightPoolIdxs[8];
-    u8 filler10[4];
-    GXLightObj lightObjs[8];
-    u32 lightMask;
-    struct Color3f ambient;
-    Mtx viewFromWorld;
-    u8 filler254[4];
-};
-
 // Lighting information for current background
-struct BgLightInfo s_bgLightInfo;
+struct BgLightInfo g_bgLightInfo;
 
 struct LightGroup s_lightGroups[22];
 
@@ -344,20 +326,20 @@ void init_bg_lighting(int stageId)
 {
     struct Light light;
 
-    s_bgLightInfo =
+    g_bgLightInfo =
         s_bgLightInfos[(backgroundInfo.bgId < 0 || stageId == 0) ? 0 : backgroundInfo.bgId];
-    if (s_bgLightInfo.infLightColor.r == 0.0 && s_bgLightInfo.infLightColor.g == 0.0 &&
-        s_bgLightInfo.infLightColor.b == 0.0)
+    if (g_bgLightInfo.infLightColor.r == 0.0 && g_bgLightInfo.infLightColor.g == 0.0 &&
+        g_bgLightInfo.infLightColor.b == 0.0)
         return;
 
     if (stageId != 0)
     {
         if (stageId == ST_099_JUNGLE_BG && advDemoInfo.flags & (1 << 8))
-            s_bgLightInfo.infLightRotY = DEGREES_TO_S16(45);
+            g_bgLightInfo.infLightRotY = DEGREES_TO_S16(45);
         if (gameSubmode == SMD_GAME_CONTINUE_INIT || gameSubmode == SMD_GAME_CONTINUE_MAIN)
         {
-            s_bgLightInfo.infLightRotX = 0;
-            s_bgLightInfo.infLightRotY = DEGREES_TO_S16(90);
+            g_bgLightInfo.infLightRotX = 0;
+            g_bgLightInfo.infLightRotY = DEGREES_TO_S16(90);
         }
         if (backgroundInfo.bgId == BG_TYPE_WAT && modeCtrl.unk30 > 1)
             set_bg_ambient(0.4f, 0.6f, 0.9f);
@@ -381,7 +363,7 @@ void init_bg_lighting(int stageId)
             switch (modeCtrl.difficulty)
             {
             case DIFFICULTY_BEGINNER:
-                s_bgLightInfo.infLightRotY += 45056;
+                g_bgLightInfo.infLightRotY += 45056;
                 break;
             }
         }
@@ -390,11 +372,11 @@ void init_bg_lighting(int stageId)
     light.u_id = LIGHT_ID_STAGE;
     light.u_inst = 0;
     light.type = LIGHT_TYPE_INFINITE;
-    light.red = s_bgLightInfo.infLightColor.r;
-    light.green = s_bgLightInfo.infLightColor.g;
-    light.blue = s_bgLightInfo.infLightColor.b;
-    light.rotX = s_bgLightInfo.infLightRotX;
-    light.rotY = s_bgLightInfo.infLightRotY;
+    light.red = g_bgLightInfo.infLightColor.r;
+    light.green = g_bgLightInfo.infLightColor.g;
+    light.blue = g_bgLightInfo.infLightColor.b;
+    light.rotX = g_bgLightInfo.infLightRotX;
+    light.rotY = g_bgLightInfo.infLightRotY;
     add_light_to_pool(&light);
 }
 
@@ -446,9 +428,9 @@ void init_light_groups(void)
         for (lightInGroupIdx = 0; lightInGroupIdx < ARRAY_COUNT(lightGrp->lightPoolIdxs);
              lightInGroupIdx++)
             lightGrp->lightPoolIdxs[lightInGroupIdx] = -1;
-        lightGrp->ambient.r = s_bgLightInfo.ambient.r;
-        lightGrp->ambient.g = s_bgLightInfo.ambient.g;
-        lightGrp->ambient.b = s_bgLightInfo.ambient.b;
+        lightGrp->ambient.r = g_bgLightInfo.ambient.r;
+        lightGrp->ambient.g = g_bgLightInfo.ambient.g;
+        lightGrp->ambient.b = g_bgLightInfo.ambient.b;
     }
 
     // Associate some lights in the pool with this light group. This includes the infinite light
@@ -476,23 +458,23 @@ void init_light_groups(void)
         memcpy(&s_lightGroups[i], &s_lightGroups[lgInfo->u_someLGIdxToCopy],
                sizeof(s_lightGroups[i]));
 
-    if (s_bgLightInfo.bgLightGroups == NULL)
+    if (g_bgLightInfo.bgLightGroups == NULL)
         return;
 
     lightGrp = &s_lightGroups[LIGHT_GROUP_BG_1];
     for (i = LIGHT_GROUP_BG_1; i < ARRAY_COUNT(s_lightGroups); i++, lightGrp++)
     {
         int bgLgIdx = i - 7;
-        if (s_bgLightInfo.bgLightGroups[bgLgIdx] == NULL)
+        if (g_bgLightInfo.bgLightGroups[bgLgIdx] == NULL)
             break;
         for (lightInGroupIdx = 0; lightInGroupIdx < ARRAY_COUNT(lightGrp->lightPoolIdxs);
              lightInGroupIdx++)
         {
-            s8 lightId = s_bgLightInfo.bgLightGroups[bgLgIdx][lightInGroupIdx * 2 + 0];
+            s8 lightId = g_bgLightInfo.bgLightGroups[bgLgIdx][lightInGroupIdx * 2 + 0];
             if (lightId == -1)
                 break;
             lightGrp->lightPoolIdxs[lightInGroupIdx] = alloc_pool_light_idx(
-                TRUE, lightId, s_bgLightInfo.bgLightGroups[bgLgIdx][lightInGroupIdx * 2 + 1]);
+                TRUE, lightId, g_bgLightInfo.bgLightGroups[bgLgIdx][lightInGroupIdx * 2 + 1]);
         }
     }
 }
@@ -581,7 +563,7 @@ void light_main(void)
     struct Light *light;
 
     s_u_lightPerfTimer = 0;
-    fade_color_base_default_set(s_bgLightInfo.unk14, s_bgLightInfo.unk18, s_bgLightInfo.unk1C);
+    fade_color_base_default_set(g_bgLightInfo.unk14, g_bgLightInfo.unk18, g_bgLightInfo.unk1C);
     fade_color_base_default();
     s_lightPoolSize = 0;
 
@@ -768,9 +750,9 @@ void u_set_some_minimap_light_param(float a)
 
 void set_bg_ambient(float r, float g, float b)
 {
-    s_bgLightInfo.ambient.r = r;
-    s_bgLightInfo.ambient.g = g;
-    s_bgLightInfo.ambient.b = b;
+    g_bgLightInfo.ambient.r = r;
+    g_bgLightInfo.ambient.g = g;
+    g_bgLightInfo.ambient.b = b;
 }
 
 void set_render_ambient(float r, float g, float b)
@@ -861,27 +843,27 @@ struct
 void u_smth_with_lights_smd_continue(int stageId)
 {
     init_bg_lighting(stageId);
-    lbl_801F39EC.unk0 = s_bgLightInfo.unk10;
-    lbl_801F39EC.unk4 = s_bgLightInfo.unk14;
-    lbl_801F39EC.unk8 = s_bgLightInfo.unk18;
-    lbl_801F39EC.unkC = s_bgLightInfo.unk1C;
-    s_bgLightInfo.unk10 = 0.0f;
-    s_bgLightInfo.unk14 = 0.7f;
-    s_bgLightInfo.unk18 = 0.7f;
-    s_bgLightInfo.unk1C = 0.7f;
+    lbl_801F39EC.unk0 = g_bgLightInfo.unk10;
+    lbl_801F39EC.unk4 = g_bgLightInfo.unk14;
+    lbl_801F39EC.unk8 = g_bgLightInfo.unk18;
+    lbl_801F39EC.unkC = g_bgLightInfo.unk1C;
+    g_bgLightInfo.unk10 = 0.0f;
+    g_bgLightInfo.unk14 = 0.7f;
+    g_bgLightInfo.unk18 = 0.7f;
+    g_bgLightInfo.unk1C = 0.7f;
 }
 
 void u_smth_with_lights_smd_extra(int stageId)
 {
     init_bg_lighting(stageId);
-    lbl_801F39EC.unk0 = s_bgLightInfo.unk10;
-    lbl_801F39EC.unk4 = s_bgLightInfo.unk14;
-    lbl_801F39EC.unk8 = s_bgLightInfo.unk18;
-    lbl_801F39EC.unkC = s_bgLightInfo.unk1C;
-    s_bgLightInfo.unk10 = 0.0f;
-    s_bgLightInfo.unk14 = 0.5f;
-    s_bgLightInfo.unk18 = 0.5f;
-    s_bgLightInfo.unk1C = 0.5f;
+    lbl_801F39EC.unk0 = g_bgLightInfo.unk10;
+    lbl_801F39EC.unk4 = g_bgLightInfo.unk14;
+    lbl_801F39EC.unk8 = g_bgLightInfo.unk18;
+    lbl_801F39EC.unkC = g_bgLightInfo.unk1C;
+    g_bgLightInfo.unk10 = 0.0f;
+    g_bgLightInfo.unk14 = 0.5f;
+    g_bgLightInfo.unk18 = 0.5f;
+    g_bgLightInfo.unk1C = 0.5f;
 }
 
 s8 s_bilLightGroup_BG_1[10] = {5, 1, 5, 2, 5, 3, 5, 4, -1, -1};

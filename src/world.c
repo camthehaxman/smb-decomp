@@ -15,6 +15,7 @@
 #include "pool.h"
 #include "recplay.h"
 #include "spline.h"
+#include "window.h"
 #include "world.h"
 
 struct World *currentWorld;
@@ -198,13 +199,13 @@ void ev_world_init(void)
 void ev_world_main(void)
 {
     struct World *world = worldInfo;
-    s8 *unk = g_poolInfo.playerPool.statusList;
+    s8 *status = g_poolInfo.playerPool.statusList;
     int i;
     Vec sp8;
 
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, world++, unk++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, world++, status++)
     {
-        if (*unk == 0 || *unk == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
         world->playerId = i;
         switch (world->state)
@@ -246,11 +247,11 @@ void ev_world_main(void)
         sp8.x = 0.0f;
         sp8.y = 0.0f;
         sp8.z = 0.0f;
-        unk = g_poolInfo.playerPool.statusList;
+        status = g_poolInfo.playerPool.statusList;
         world = worldInfo;
-        for (i = g_poolInfo.playerPool.count; i > 0; i--, world++, unk++)
+        for (i = g_poolInfo.playerPool.count; i > 0; i--, world++, status++)
         {
-            if (*unk == 0 || *unk == 4)
+            if (*status == STAT_NULL || *status == STAT_FREEZE)
                 continue;
             sp8.x += world->unk10.x;
             sp8.y += world->unk10.y;
@@ -365,8 +366,8 @@ void world_sub_input_main(struct World *world)
 
             world->xrotPrev = world->xrot;
             world->zrotPrev = world->zrot;
-            stickX = controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickX / 60.0;
-            stickY = -(float)controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickY / 60.0;
+            stickX = controllerInfo[playerControllerIDs[world->playerId]].held.stickX / 60.0;
+            stickY = -(float)controllerInfo[playerControllerIDs[world->playerId]].held.stickY / 60.0;
 
             if (stickX < -1.0)
                 stickX = -1.0f;
@@ -496,7 +497,7 @@ void world_sub_11(struct World *world)
     if (debugFlags & 0xA)
         return;
 
-    f1 = controllerInfo[playerControllerIDs[world->playerId]].unk0[0].stickX / 60.0;
+    f1 = controllerInfo[playerControllerIDs[world->playerId]].held.stickX / 60.0;
     if (f1 < -1.0)
         f1 = -1.0f;
     else if (f1 > 1.0)

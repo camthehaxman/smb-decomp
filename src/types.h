@@ -344,29 +344,20 @@ struct RaycastHit
     Vec normal;
 };
 
-typedef u32 (*Func802F20F0)();
+struct UnkStruct27
+{
+    u8 filler0[4];
+    struct GMAShape *shape;
+    struct GMATevLayer *modelTevs;
+    u8 fillerC[0x38-0xC];
+};
+
+typedef u32 (*Func802F20F0)(struct UnkStruct27 *);
 typedef void (*CameraCallback)(struct Camera *, struct Ball *);
 typedef void (*BallCallback)(struct Ball *);
 
 struct NlModel;
 struct NlObj;
-
-struct Struct80092B98
-{
-    float unk0;
-    float unk4;
-    float unk8;
-    float unkC;
-    Vec unk10;
-    float unk1C;
-    Vec unk20;
-    s16 unk2C;
-    u16 unk2E;
-    float unk30;
-    float unk34;
-    GXColor unk38;
-    void *unk3C;
-};  // size = 0x40
 
 struct PolyShadowUnit
 {
@@ -956,6 +947,58 @@ struct Struct80094870
     u32 unk0;
     u32 unk4;
     u16 unk8;
+};
+
+struct Struct802099E8
+{
+    u32 *unk0;
+    void *unk4;
+    s32 unk8;
+};
+
+struct Struct800993A8_sub
+{
+    s32 unk0;
+    Vec unk4;
+    Vec unk10;
+    struct GMAModel *unk1C;
+    float unk20;
+    float unk24;
+    s16 unk28;
+    s16 unk2A;
+    float unk2C;
+};  // size = 0x30
+
+struct Struct800993A8
+{
+    GXTexObj unk0;
+    u32 unk20;
+    void *unk24;
+    u16 unk28;
+    u16 unk2A;
+    GXTexObj unk2C;
+    void *unk4C;
+    Mtx unk50;
+    u8 filler80[4];
+    u8 unk84;
+    u8 filler85[0x88-0x85];
+    float unk88;
+    s32 unk8C;
+    struct Struct800993A8_sub unk90[256];
+};
+
+struct Struct8008669C_sub
+{
+    Vec unk0;
+    Vec unkC;
+};
+
+struct Struct8008669C
+{
+    Vec unk0;
+    Vec unkC;
+    struct Struct8008669C_sub unk18[3];
+    s16 unk60[4];
 };
 
 struct Effect;

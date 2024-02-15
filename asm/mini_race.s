@@ -2008,7 +2008,7 @@ lbl_00001D38:
 /* 00001D44 801F003C */ lwz r0, 0x3c(r31)
 /* 00001D48 2C000000 */ cmpwi r0, 0
 /* 00001D4C 418100B0 */ bgt lbl_00001DFC
-/* 00001D50 4BFFE42D */ bl func_8009CC34
+/* 00001D50 4BFFE42D */ bl mini_commend_free_data
 /* 00001D54 2C1E0000 */ cmpwi r30, 0
 /* 00001D58 41820020 */ beq lbl_00001D78
 /* 00001D5C A89F0038 */ lha r4, 0x38(r31)

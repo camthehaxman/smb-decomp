@@ -5,6 +5,7 @@
 
 #include "global.h"
 #include "mode.h"
+#include "window.h"
 
 static int counter;
 
@@ -48,6 +49,6 @@ static void increment_counter(void)
 
 static void print_counter(void)
 {
-    u_debug_set_cursor_pos(0, 10);
-    u_debug_printf("SAMPLE: %d\n", counter);
+    window_set_cursor_pos(0, 10);
+    window_printf_2("SAMPLE: %d\n", counter);
 }

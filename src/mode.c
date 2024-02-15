@@ -11,6 +11,7 @@
 #include "mode.h"
 #include "relocation.h"
 #include "sprite.h"
+#include "window.h"
 
 char *gameModeRelNames[] =
 {
@@ -546,23 +547,17 @@ int title_screen_debug_menu(void)
     int chosen = FALSE;
     int i;
 
-    if (!(analogButtonInfo[0][0] & PAD_BUTTON_A)
-     && !(analogButtonInfo[0][0] & PAD_BUTTON_B)
+    if (!(analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+     && !(analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
      && lbl_802F1ED8 == 0)
     {
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP)
-         || CONTROLLER_SOMETHING(1, PAD_BUTTON_UP)
-         || CONTROLLER_SOMETHING(2, PAD_BUTTON_UP)
-         || CONTROLLER_SOMETHING(3, PAD_BUTTON_UP))
+        if (REPEAT_WITH_R_ACCEL_ANY(PAD_BUTTON_UP))
         {
             if (--modeCtrl.menuSel < 0)
                 modeCtrl.menuSel = 4;
         }
 
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_DOWN)
-         || CONTROLLER_SOMETHING(1, PAD_BUTTON_DOWN)
-         || CONTROLLER_SOMETHING(2, PAD_BUTTON_DOWN)
-         || CONTROLLER_SOMETHING(3, PAD_BUTTON_DOWN))
+        if (REPEAT_WITH_R_ACCEL_ANY(PAD_BUTTON_DOWN))
         {
             if (++modeCtrl.menuSel == 5)
                 modeCtrl.menuSel = 0;
@@ -570,8 +565,8 @@ int title_screen_debug_menu(void)
 
         for (i = 0; i < 4; i++)
         {
-            if ((controllerInfo[i].unk0[2].button & PAD_BUTTON_START)
-             || (controllerInfo[i].unk0[2].button & PAD_BUTTON_A))
+            if ((controllerInfo[i].pressed.button & PAD_BUTTON_START)
+             || (controllerInfo[i].pressed.button & PAD_BUTTON_A))
                 chosen = TRUE;
         }
 
@@ -615,29 +610,29 @@ int title_screen_debug_menu(void)
             modeCtrl.unk1C = 0;
     }
 
-    u_debug_set_cursor_pos(15, 15);
+    window_set_cursor_pos(15, 15);
     for (i = 0; i < 5; i++)
     {
         if (i == modeCtrl.menuSel)
-            u_debug_set_text_color(2);
-        u_debug_printf("%s\n", items[i]);
+            window_set_text_color(WINDOW_COLOR_GREEN);
+        window_printf_2("%s\n", items[i]);
         if (i == modeCtrl.menuSel)
-            u_debug_set_text_color(0);
+            window_set_text_color(WINDOW_COLOR_WHITE);
     }
-    u_debug_set_cursor_pos(13, 15 + modeCtrl.menuSel);
+    window_set_cursor_pos(13, 15 + modeCtrl.menuSel);
     u_debug_print("*");
-    u_debug_set_cursor_pos(11, 13);
+    window_set_cursor_pos(11, 13);
     u_debug_print("\x18");
     for (i = 0; i < 16; i++)
         u_debug_print("\x16");
     u_debug_print("\x19");
-    u_debug_set_cursor_pos(11, 14);
+    window_set_cursor_pos(11, 14);
     for (i = 0; i < 7; i++)
         u_debug_print("\x17\n");
-    u_debug_set_cursor_pos(28, 14);
+    window_set_cursor_pos(28, 14);
     for (i = 0; i < 7; i++)
         u_debug_print("\x17\n");
-    u_debug_set_cursor_pos(11, 21);
+    window_set_cursor_pos(11, 21);
     u_debug_print("\x1A");
     for (i = 0; i < 16; i++)
         u_debug_print("\x16");
@@ -650,14 +645,14 @@ void u_menu_input_debug(void)
     int bvar = FALSE;
     int i;
 
-    if (!(analogButtonInfo[0][0] & PAD_BUTTON_A)
-     && !(analogButtonInfo[0][0] & PAD_BUTTON_B)
+    if (!(analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+     && !(analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
      && lbl_802F1ED8 == 0
      && gameMode != MD_ADV)
     {
         for (i = 0; i < 4; i++)
         {
-            if (controllerInfo[i].unk0[2].button & PAD_BUTTON_START)
+            if (controllerInfo[i].pressed.button & PAD_BUTTON_START)
                 bvar = TRUE;
         }
         if ((gameMode == MD_GAME && (modeCtrl.courseFlags & 1))
@@ -728,15 +723,15 @@ void u_menu_input_debug(void)
     case MD_ADV:
         if (modeCtrl.unk1C == 0 || !title_screen_debug_menu())
         {
-            if ((analogButtonInfo[0][0] & PAD_BUTTON_A)
-             || (analogButtonInfo[0][0] & PAD_BUTTON_B)
+            if ((analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+             || (analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
              || lbl_802F1ED8 != 0
              || gameSubmode == SMD_ADV_START_MAIN)
                 break;
             for (i = 0; i < 4; i++)
             {
-                if ((controllerInfo[i].unk0[2].button & PAD_BUTTON_START)
-                 || (controllerInfo[i].unk0[2].button & PAD_BUTTON_A))
+                if ((controllerInfo[i].pressed.button & PAD_BUTTON_START)
+                 || (controllerInfo[i].pressed.button & PAD_BUTTON_A))
                     modeCtrl.unk1C = 1;
             }
         }

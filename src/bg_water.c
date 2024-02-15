@@ -16,6 +16,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "stage.h"
+#include "window.h"
 
 static struct BGModelSearch waterBgModelFind[] =
 {
@@ -63,7 +64,7 @@ void bg_water_init(void)
     backgroundInfo.ballEnvMapFunc = bg_water_envmap_ball;
     if (work->unk0 == 0)
     {
-        u_debug_set_cursor_pos(4, 4);
+        window_set_cursor_pos(4, 4);
         find_background_gma_models(waterBgModelFind, model_find_proc);
         work->unk0 = 1;
     }
@@ -333,7 +334,7 @@ static void bg_water_envmap_ball(struct GCMMatState_Unit *arg0)
     float sp14[2][3];
 
     GXSetBlendMode_cached(1, 1, 1, 0);
-    func_8009AC8C();
+    fog_gx_set();
     GXLoadTexObj_cached(work->lightmapStageTex, sp2C.u_texMapId);
     sp14[0][0] = 0.6f;
     sp14[0][1] = 0.0f;

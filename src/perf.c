@@ -7,6 +7,7 @@
 #include "gxutil.h"
 #include "input.h"
 #include "perf.h"
+#include "window.h"
 
 OSTick perfTimers[8];
 u32 perfEnabled;
@@ -114,7 +115,7 @@ void perf_framestart(void)
     // Show perf info if the Z button is held for 30 frames
     if (dipSwitches & DIP_DEBUG)
     {
-        if (controllerInfo[0].unk0[0].button & PAD_TRIGGER_Z)
+        if (controllerInfo[0].held.button & PAD_TRIGGER_Z)
         {
             if (zTrigTimer < 127)
                 zTrigTimer++;

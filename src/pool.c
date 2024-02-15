@@ -4,6 +4,7 @@
 #include "event.h"
 #include "input.h"
 #include "pool.h"
+#include "window.h"
 
 static void func_800308AC(void);
 static void func_80030914(struct PoolInfo_sub *, int);
@@ -63,12 +64,12 @@ void debug_main(void)
     {
         if (!(debugFlags & 1))
         {
-            if ((analogButtonInfo[0][0] & PAD_BUTTON_B) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
+            if ((analogInputs[0].held & PAD_BUTTON_B) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
                 debugFlags |= 3;
         }
-        else if (!(analogButtonInfo[0][0] & PAD_BUTTON_A) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
+        else if (!(analogInputs[0].held & PAD_BUTTON_A) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
             debugFlags &= ~3;
-        else if (controllerInfo[0].unk0[2].button & PAD_TRIGGER_Z)
+        else if (controllerInfo[0].pressed.button & PAD_TRIGGER_Z)
             debugFlags &= ~2;
         else
             debugFlags |= 2;
@@ -83,14 +84,14 @@ void debug_main(void)
 
     if (debugFlags & 1)
     {
-        u_debug_set_cursor_pos(43, 0);
+        window_set_cursor_pos(43, 0);
         u_debug_print("DEBUG MODE");
     }
 
     if (dipSwitches & DIP_DEBUG)
     {
-        if ((controllerInfo[0].unk0[0].button & PAD_BUTTON_B)
-         && (controllerInfo[0].unk0[2].button & PAD_BUTTON_X))
+        if ((controllerInfo[0].held.button & PAD_BUTTON_B)
+         && (controllerInfo[0].pressed.button & PAD_BUTTON_X))
         {
             if (eventInfo[EVENT_MOUSE].state != EV_STATE_RUNNING)
             {
@@ -105,7 +106,7 @@ void debug_main(void)
         event_finish(EVENT_MOUSE);
 }
 
-char *lbl_801B7948[] =
+char *poolStatusNames[] =
 {
     "STAT_NULL",
     "STAT_INIT",

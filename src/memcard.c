@@ -19,6 +19,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "vibration.h"
+#include "window.h"
 
 struct StringEntry
 {

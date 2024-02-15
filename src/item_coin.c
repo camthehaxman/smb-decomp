@@ -17,6 +17,7 @@
 #include "mode.h"
 #include "sound.h"
 #include "stage.h"
+#include "window.h"
 
 #include "../data/common.gma.h"
 

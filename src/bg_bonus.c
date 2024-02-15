@@ -16,6 +16,7 @@
 #include "gxutil.h"
 #include "mathutil.h"
 #include "stage.h"
+#include "window.h"
 
 static struct BGModelSearch bonusBgModelFind[] =
 {
@@ -242,7 +243,7 @@ static void bg_bonus_envmap_ball(struct GCMMatState_Unit *a)
     struct Struct80061BC4_sub spC = a->unkC;
 
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_ONE, GX_BL_ONE, GX_LO_CLEAR);
-    func_8009AC8C();
+    fog_gx_set();
     GXLoadTexObj_cached(work->lightmapTexObjs, spC.u_texMapId);
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unk7AC);

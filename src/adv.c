@@ -18,6 +18,7 @@
 #include "hud.h"
 #include "info.h"
 #include "input.h"
+#include "light.h"
 #include "load.h"
 #include "mathutil.h"
 #include "minimap.h"
@@ -31,11 +32,11 @@
 #include "spline.h"
 #include "sprite.h"
 #include "stage.h"
+#include "stcoli.h"
 #include "textbox.h"
 #include "thread.h"
+#include "window.h"
 #include "world.h"
-#include "stcoli.h"
-#include "light.h"
 
 u32 introBackdropColor;
 u32 advSubmode;
@@ -53,8 +54,8 @@ void mode_adv_func(void)
 {
     if (!(gameSubmode > SMD_ADV_TOP && gameSubmode < SMD_ADV_BOTTOM))
     {
-        u_debug_set_cursor_pos(10, 10);
-        u_debug_printf("sub_mode: error %d in Adv", gameSubmode);
+        window_set_cursor_pos(10, 10);
+        window_printf_2("sub_mode: error %d in Adv", gameSubmode);
         return;
     }
 
@@ -75,7 +76,7 @@ void mode_adv_func(void)
 void submode_adv_warning_init_func(void)
 {
     introBackdropColor = 0;
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     func_8009F49C(2);
     event_start(EVENT_SPRITE);
 #ifndef TARGET_PC
@@ -126,7 +127,7 @@ void submode_adv_logo_init_func(void)
     prevLogoPos.x = 0.0f;
     prevLogoPos.y = 0.0f;
     prevLogoPos.z = 0.0f;
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     light_init(0);
     playerCharacterSelection[0] = 0;
     event_finish_all();
@@ -238,8 +239,8 @@ void submode_adv_logo_main_func(void)
 
     if ((dipSwitches & DIP_DEBUG)
      && modeCtrl.submodeTimer > 30
-     && (controllerInfo[0].unk0[0].button & PAD_BUTTON_X)
-     && (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y))
+     && (controllerInfo[0].held.button & PAD_BUTTON_X)
+     && (controllerInfo[0].pressed.button & PAD_BUTTON_Y))
         modeCtrl.submodeTimer = 30;
 
     update_av_logo();
@@ -294,11 +295,11 @@ void submode_adv_demo_init_func(void)
     advDemoInfo.flags = 0x108;
     background_set_random_seed(1);
     load_stage(ST_099_JUNGLE_BG);
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     event_finish_all();
     free_all_bitmap_groups_except_com();
     for (i = 0; i < 4; i++)
-        g_poolInfo.playerPool.statusList[i] = 2;
+        g_poolInfo.playerPool.statusList[i] = STAT_NORMAL;
     modeCtrl.playerCount = 1;
     modeCtrl.unk30 = 1;
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;
@@ -1260,7 +1261,7 @@ void submode_adv_title_reinit_func(void)
     modeCtrl.submodeTimer = 1200;
     modeCtrl.courseFlags = 0x2000;
     lbl_802F1BA8 = 0;
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     light_init(0);
     playerCharacterSelection[0] = 0;
     event_finish_all();
@@ -1303,8 +1304,8 @@ void submode_adv_title_main_func(void)
     int i;
 
     if ((dipSwitches & DIP_DEBUG)
-     && (controllerInfo[0].unk0[0].button & (1 << 10))
-     && (controllerInfo[0].unk0[2].button & (1 << 11))
+     && (controllerInfo[0].held.button & PAD_BUTTON_X)
+     && (controllerInfo[0].pressed.button & PAD_BUTTON_Y)
      && modeCtrl.submodeTimer > 30)
         modeCtrl.submodeTimer = 30;
 
@@ -1335,14 +1336,14 @@ void submode_adv_title_main_func(void)
     {
         for (i = 0; i < 4; i++)
         {
-            if (modeCtrl.unk10 != 0 && CONTROLLER_SOMETHING(i, PAD_BUTTON_UP))
+            if (modeCtrl.unk10 != 0 && REPEAT_WITH_R_ACCEL(i, PAD_BUTTON_UP))
             {
                 modeCtrl.unk10 = 0;
                 u_play_sound_1(0x6F);
                 if (modeCtrl.submodeTimer > 30 && modeCtrl.submodeTimer < 300)
                     modeCtrl.submodeTimer = 300;
             }
-            else if (modeCtrl.unk10 != 1 && CONTROLLER_SOMETHING(i, PAD_BUTTON_DOWN))
+            else if (modeCtrl.unk10 != 1 && REPEAT_WITH_R_ACCEL(i, PAD_BUTTON_DOWN))
             {
                 modeCtrl.unk10 = 1;
                 u_play_sound_1(0x6F);
@@ -1380,7 +1381,7 @@ void submode_adv_info_init_func(void)
     modeCtrl.courseFlags &= ~0x2004;
     modeCtrl.playerCount = 1;
     playerCharacterSelection[0] = 0;
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     event_finish_all();
     load_stage(ST_150_TUTORIAL);
     event_start(EVENT_STAGE);
@@ -1543,8 +1544,8 @@ void submode_adv_info_main_func(void)
     if (debugFlags & 0xA)
         return;
     if ((dipSwitches & DIP_DEBUG)
-     && (controllerInfo[0].unk0[0].button & PAD_BUTTON_X)
-     && (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y)
+     && (controllerInfo[0].held.button & PAD_BUTTON_X)
+     && (controllerInfo[0].pressed.button & PAD_BUTTON_Y)
      && modeCtrl.submodeTimer > 30)
         modeCtrl.submodeTimer = 30;
 
@@ -1699,7 +1700,7 @@ void submode_adv_game_ready_init_func(void)
     modeCtrl.unk30 = 1;
     camera_setup_splitscreen_viewports(modeCtrl.playerCount);
     func_80044920();
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     event_start(EVENT_INFO);
     func_80049514(replayInfo.unk0[replayInfo.unk14]);
     infoWork.flags |= INFO_FLAG_REPLAY|INFO_FLAG_11;
@@ -2155,10 +2156,10 @@ void submode_adv_start_main_func(void)
 
 void func_80011D90(void)
 {
-    g_poolInfo.playerPool.statusList[0] = 2;
-    g_poolInfo.playerPool.statusList[1] = 0;
-    g_poolInfo.playerPool.statusList[2] = 0;
-    g_poolInfo.playerPool.statusList[3] = 0;
+    g_poolInfo.playerPool.statusList[0] = STAT_NORMAL;
+    g_poolInfo.playerPool.statusList[1] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[2] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[3] = STAT_NULL;
     modeCtrl.playerCount = 1;
     modeCtrl.unk30 = 1;
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;

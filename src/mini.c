@@ -12,6 +12,7 @@
 #include "relocation.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 #pragma force_active on
 u32 unused_801C7ED8[] =
@@ -1404,8 +1405,8 @@ void mode_mini_func(void)
 {
     if (!(gameSubmode > SMD_MINI_TOP && gameSubmode < SMD_MINI_BOTTOM))
     {
-        u_debug_set_cursor_pos(10, 10);
-        u_debug_printf("sub_mode: error %d in Mini", gameSubmode);
+        window_set_cursor_pos(10, 10);
+        window_printf_2("sub_mode: error %d in Mini", gameSubmode);
         return;
     }
     gameSubmodeFuncs[gameSubmode]();
@@ -1536,34 +1537,34 @@ void submode_mini_select_main_func(void)
     int i;
 
     index = lbl_802F2170;
-    if (CONTROLLER_SOMETHING(0, PAD_BUTTON_DOWN))
+    if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_DOWN))
     {
         if (++index >= (u32)ARRAY_COUNT(s_minigameTestMenu))
             index = 0;
     }
-    if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP))
+    if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_UP))
     {
         if (--index < 0)
             index = ARRAY_COUNT(s_minigameTestMenu) - 1;
     }
     lbl_802F2170 = index;
 
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_A)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_A)
     {
         gameSubmodeRequest = s_minigameTestMenu[index].submode;
         modeCtrl.gameType = s_minigameTestMenu[index].gameType;
     }
-    u_debug_set_cursor_pos(1, 1);
-    u_debug_printf("MINI GAME");
-    u_debug_set_cursor_pos(10, 3);
+    window_set_cursor_pos(1, 1);
+    window_printf_2("MINI GAME");
+    window_set_cursor_pos(10, 3);
     for (i = 0; i < (u32)ARRAY_COUNT(s_minigameTestMenu); i++)
     {
         if (i == lbl_802F2170)
         {
-            func_8002FC90(-2, 0);
+            window_move_cursor(-2, 0);
             u_debug_print("\x1c ");
         }
-        u_debug_printf("%s\n", s_minigameTestMenu[i].name);
+        window_printf_2("%s\n", s_minigameTestMenu[i].name);
     }
 }
 
@@ -1590,7 +1591,7 @@ void submode_mini_ending_init_func(void)
     reset_camera_viewport();
     for (i = 0; i < 4; i++)
     {
-        g_poolInfo.playerPool.statusList[i] = 2;
+        g_poolInfo.playerPool.statusList[i] = STAT_NORMAL;
         playerCharacterSelection[i] = i;
         setup_camera_viewport(i, 0.0f, 0.0f, 1.0f, 1.0f);
     }
@@ -1602,31 +1603,31 @@ void submode_mini_ending_main_func(void)
     int var_r31;
 
     var_r31 = 0;
-    if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_LEFT)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_RIGHT)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_UP)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_DOWN))
+    if ((controllerInfo[0].pressed.button & PAD_BUTTON_LEFT)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_RIGHT)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_UP)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_DOWN))
         var_r31 = 1;
 
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_LEFT)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_LEFT)
     {
         modeCtrl.currPlayer--;
         if (modeCtrl.currPlayer < 0)
             modeCtrl.currPlayer += 4;
     }
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_RIGHT)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_RIGHT)
     {
         modeCtrl.currPlayer++;
         if (modeCtrl.currPlayer >= 4)
             modeCtrl.currPlayer -= 4;
     }
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_DOWN)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_DOWN)
     {
         modeCtrl.difficulty--;
         if (modeCtrl.difficulty < 0)
             modeCtrl.difficulty += 3;
     }
-    if (controllerInfo[0].unk0[2].button & PAD_BUTTON_UP)
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_UP)
     {
         modeCtrl.difficulty++;
         if (modeCtrl.difficulty >= 3)
@@ -1643,10 +1644,10 @@ void submode_mini_ending_main_func(void)
 
 void u_draw_ending_viewer_text(void)
 {
-    u_debug_set_cursor_pos(4, 4);
-    u_debug_printf("ENDING VIEWER\n");
-    u_debug_set_cursor_pos(6, 6);
-    u_debug_printf("COURSE[%d]\n", modeCtrl.difficulty);
-    u_debug_printf("PLAYER[%d]\n", modeCtrl.currPlayer);
+    window_set_cursor_pos(4, 4);
+    window_printf_2("ENDING VIEWER\n");
+    window_set_cursor_pos(6, 6);
+    window_printf_2("COURSE[%d]\n", modeCtrl.difficulty);
+    window_printf_2("PLAYER[%d]\n", modeCtrl.currPlayer);
     u_ending_draw();
 }

@@ -251,7 +251,7 @@ lbl_000003B4:
 /* 00000400 801F0000 */ lwz r0, 0(r31)
 /* 00000404 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 00000408 41820014 */ beq lbl_0000041C
-/* 0000040C 4BFFFD41 */ bl func_8009CC34
+/* 0000040C 4BFFFD41 */ bl mini_commend_free_data
 /* 00000410 801F0000 */ lwz r0, 0(r31)
 /* 00000414 540007B8 */ rlwinm r0, r0, 0, 0x1e, 0x1c
 /* 00000418 901F0000 */ stw r0, 0(r31)
@@ -2154,8 +2154,8 @@ lbl_00001FD0:
 /* 0000201C 540007BF */ clrlwi. r0, r0, 0x1e
 /* 00002020 40820020 */ bne lbl_00002040
 /* 00002024 1C04000A */ mulli r0, r4, 0xa
-/* 00002028 3C600000 */ lis r3, analogButtonInfo@ha
-/* 0000202C 38630000 */ addi r3, r3, analogButtonInfo@l
+/* 00002028 3C600000 */ lis r3, analogInputs@ha
+/* 0000202C 38630000 */ addi r3, r3, analogInputs@l
 /* 00002030 7C630214 */ add r3, r3, r0
 /* 00002034 A0030004 */ lhz r0, 4(r3)
 /* 00002038 540007BF */ clrlwi. r0, r0, 0x1e
@@ -3858,7 +3858,7 @@ lbl_000038D4:
 /* 000038F0 3C600000 */ lis r3, lbl_802F1FD4@ha
 /* 000038F4 38000000 */ li r0, 0
 /* 000038F8 90030000 */ stw r0, lbl_802F1FD4@l(r3)
-/* 000038FC 4BFFC851 */ bl func_8009CC34
+/* 000038FC 4BFFC851 */ bl mini_commend_free_data
 /* 00003900 3C600000 */ lis r3, lbl_802F1FD0@ha
 /* 00003904 3BC30000 */ addi r30, r3, lbl_802F1FD0@l
 /* 00003908 801E0000 */ lwz r0, 0(r30)
@@ -8917,8 +8917,8 @@ lbl_00008348:
 /* 00008350 41820054 */ beq lbl_000083A4
 /* 00008354 38000001 */ li r0, 1
 /* 00008358 98030000 */ stb r0, 0(r3)
-/* 0000835C 3C800000 */ lis r4, lbl_80118938@ha
-/* 00008360 38840000 */ addi r4, r4, lbl_80118938@l
+/* 0000835C 3C800000 */ lis r4, neutralFaceTable@ha
+/* 00008360 38840000 */ addi r4, r4, neutralFaceTable@l
 /* 00008364 C01F0010 */ lfs f0, 0x10(r31)
 /* 00008368 38000000 */ li r0, 0
 /* 0000836C D0030004 */ stfs f0, 4(r3)
@@ -9675,11 +9675,11 @@ lbl_00008EB0:
 /* 00008EB4 3CA00000 */ lis r5, modeCtrl@ha
 /* 00008EB8 3C800000 */ lis r4, playerCharacterSelection@ha
 /* 00008EBC D0010028 */ stfs f0, 0x28(r1)
-/* 00008EC0 3C600000 */ lis r3, lbl_80118938@ha
+/* 00008EC0 3C600000 */ lis r3, neutralFaceTable@ha
 /* 00008EC4 38A50000 */ addi r5, r5, modeCtrl@l
 /* 00008EC8 C01F0138 */ lfs f0, 0x138(r31)
 /* 00008ECC 38840000 */ addi r4, r4, playerCharacterSelection@l
-/* 00008ED0 38030000 */ addi r0, r3, lbl_80118938@l
+/* 00008ED0 38030000 */ addi r0, r3, neutralFaceTable@l
 /* 00008ED4 D001002C */ stfs f0, 0x2c(r1)
 /* 00008ED8 38610018 */ addi r3, r1, 0x18
 /* 00008EDC 80A5002C */ lwz r5, 0x2c(r5)
@@ -11057,11 +11057,11 @@ lbl_0000A36C:
 /* 0000A374 3CA00000 */ lis r5, modeCtrl@ha
 /* 0000A378 3C800000 */ lis r4, playerCharacterSelection@ha
 /* 0000A37C C01C0018 */ lfs f0, 0x18(r28)
-/* 0000A380 3C600000 */ lis r3, lbl_80118938@ha
+/* 0000A380 3C600000 */ lis r3, neutralFaceTable@ha
 /* 0000A384 38A50000 */ addi r5, r5, modeCtrl@l
 /* 0000A388 D0010024 */ stfs f0, 0x24(r1)
 /* 0000A38C 38840000 */ addi r4, r4, playerCharacterSelection@l
-/* 0000A390 38030000 */ addi r0, r3, lbl_80118938@l
+/* 0000A390 38030000 */ addi r0, r3, neutralFaceTable@l
 /* 0000A394 C01C001C */ lfs f0, 0x1c(r28)
 /* 0000A398 38610014 */ addi r3, r1, 0x14
 /* 0000A39C D0010028 */ stfs f0, 0x28(r1)
@@ -11541,7 +11541,7 @@ lbl_0000AA70:
 /* 0000AA9C 3C600000 */ lis r3, playerCharacterSelection@ha
 /* 0000AAA0 3AA30000 */ addi r21, r3, playerCharacterSelection@l
 /* 0000AAA4 3CA00100 */ lis r5, 0x100
-/* 0000AAA8 3C800000 */ lis r4, lbl_80118AC8@ha
+/* 0000AAA8 3C800000 */ lis r4, smileFaceTable@ha
 /* 0000AAAC 3C60005C */ lis r3, 0x5c
 /* 0000AAB0 3CC00000 */ lis r6, g_poolInfo@ha
 /* 0000AAB4 5668103A */ slwi r8, r19, 2
@@ -11550,7 +11550,7 @@ lbl_0000AA70:
 /* 0000AAC0 7E495050 */ subf r18, r9, r10
 /* 0000AAC4 3AC1000C */ addi r22, r1, 0xc
 /* 0000AAC8 3BC5FFFF */ addi r30, r5, -1  ;# fixed addi
-/* 0000AACC 3BE40000 */ addi r31, r4, lbl_80118AC8@l
+/* 0000AACC 3BE40000 */ addi r31, r4, smileFaceTable@l
 /* 0000AAD0 3A233B1B */ addi r17, r3, 0x3b1b
 /* 0000AAD4 3B460000 */ addi r26, r6, g_poolInfo@l
 lbl_0000AAD8:

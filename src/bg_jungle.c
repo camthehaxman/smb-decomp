@@ -12,6 +12,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "stage.h"
+#include "window.h"
 
 static struct BGModelSearch jungleBgObjFind[] =
 {
@@ -30,7 +31,7 @@ void bg_jungle_init(void)
 
     bg_default_init();
     lens_flare_init();
-    lens_flare_set_light_angle(s_bgLightInfo.infLightRotY, 0xC00);
+    lens_flare_set_light_angle(g_bgLightInfo.infLightRotY, 0xC00);
     backgroundInfo.unk8 |= 1;
 
     // find models

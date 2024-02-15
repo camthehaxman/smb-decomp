@@ -171,7 +171,7 @@ void nlSetFogColor(int r, int g, int b);
 void nlObjPut_OpaqueList(struct NlModel *);
 void nlObjPut_TrnslList(struct NlModel *);
 void nlObjPutTrnsl_TrnslList(struct NlModel *);
-void u_nl2ngc_draw_model_with_mesh_func(struct NlModel *a, int (*func)());
+void u_nl2ngc_draw_model_with_mesh_func(struct NlModel *a, int (*func)(struct NlMesh *, int));
 void unk_empty(void);
 
 #endif

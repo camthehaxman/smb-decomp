@@ -44,7 +44,7 @@ void sel_stage_draw(void)
         }
     }
 
-    if (controllerInfo[0].unk0[0].button & PAD_BUTTON_Y)
+    if (controllerInfo[0].held.button & PAD_BUTTON_Y)
         return;
 
     if (eventInfo[EVENT_BACKGROUND].state == EV_STATE_RUNNING)

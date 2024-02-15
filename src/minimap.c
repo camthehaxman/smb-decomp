@@ -2,6 +2,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "ape_icon.h"
 #include "ball.h"
 #include "bitmap.h"
 #include "camera.h"
@@ -19,6 +20,7 @@
 #include "sprite.h"
 #include "stage.h"
 #include "stobj.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/common.nlobj.h"

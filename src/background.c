@@ -9,12 +9,13 @@
 #include "background.h"
 #include "ball.h"
 #include "camera.h"
+#include "light.h"
 #include "load.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "nl2ngc.h"
 #include "stage.h"
-#include "light.h"
+#include "window.h"
 
 #include "../data/bg_nig.gma.h"
 #include "../data/bg_stm.gma.h"
@@ -23,6 +24,7 @@
 
 struct BackgroundInfo backgroundInfo =
 {
+    0,
     0,
     8421504.0,
     0x80,

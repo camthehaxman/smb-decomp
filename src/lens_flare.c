@@ -123,7 +123,7 @@ void lens_flare_main(void)
                 status = g_poolInfo.playerPool.statusList;
                 for (j = g_poolInfo.playerPool.count; j > 0; j--, ball++, status++)
                 {
-                    if (*status != 0 && *status != 4 && !(ball->flags & 0x10))
+                    if (*status != STAT_NULL && *status != STAT_FREEZE && !(ball->flags & 0x10))
                     {
                         mathutil_mtxA_tf_point(&ball->pos, &sp14);
                         if (sp14.z >= 0.0f)

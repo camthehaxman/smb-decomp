@@ -21,6 +21,7 @@
 #include "rend_efc.h"
 #include "sprite.h"
 #include "stage.h"
+#include "window.h"
 
 #ifdef TARGET_PC
 #define _prolog    sel_stage_rel_prolog
@@ -70,13 +71,13 @@ static void sel_stage_init(void)
     modeCtrl.unk30 = 1;
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;
     modeCtrl.unk40 = 0;
-    g_poolInfo.playerPool.statusList[0] = 2;
-    g_poolInfo.playerPool.statusList[1] = 0;
-    g_poolInfo.playerPool.statusList[2] = 0;
-    g_poolInfo.playerPool.statusList[3] = 0;
+    g_poolInfo.playerPool.statusList[0] = STAT_NORMAL;
+    g_poolInfo.playerPool.statusList[1] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[2] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[3] = STAT_NULL;
     modeCtrl.currPlayer = 0;
 
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     event_finish_all();
     free_all_bitmap_groups_except_com();
     background_set_random_seed(loadingStageIdRequest);
@@ -114,12 +115,12 @@ static void sel_stage_handle_input(void)
     if (debugFlags & 0xA)
         return;
 
-    if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP))
+    if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_UP))
     {
         if (--stageSelection.difficulty < 0)
             stageSelection.difficulty = 7;
     }
-    else if (CONTROLLER_SOMETHING(0, PAD_BUTTON_DOWN))
+    else if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_DOWN))
     {
         if (++stageSelection.difficulty >= 8)
            stageSelection.difficulty = 0;
@@ -131,12 +132,12 @@ static void sel_stage_handle_input(void)
         modeCtrl.courseFlags &= ~(1 << 0);
         modeCtrl.courseFlags &= ~COURSE_FLAG_EXTRA;
         modeCtrl.courseFlags &= ~COURSE_FLAG_MASTER;
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_LEFT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_LEFT))
         {
             if (--loadingStageIdRequest < 1)
                 loadingStageIdRequest = 1;
         }
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_RIGHT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_RIGHT))
         {
             if (++loadingStageIdRequest > 200)
                 loadingStageIdRequest = 200;
@@ -187,9 +188,9 @@ static void sel_stage_handle_input(void)
     }
     if (stageSelection.difficulty != 0)
     {
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_LEFT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_LEFT))
             stageSelection.levelNum--;
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_RIGHT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_RIGHT))
             stageSelection.levelNum++;
 
         if (stageSelection.levelNum < 1)
@@ -228,16 +229,16 @@ static void sel_stage_handle_input(void)
         rend_efc_mirror_enable();
     }
 
-    if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_A)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_B)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_X)
-     || (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y))
+    if ((controllerInfo[0].pressed.button & PAD_BUTTON_A)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_B)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_X)
+     || (controllerInfo[0].pressed.button & PAD_BUTTON_Y))
     {
-        if (controllerInfo[0].unk0[0].button & PAD_BUTTON_Y)
+        if (controllerInfo[0].held.button & PAD_BUTTON_Y)
             playerCharacterSelection[0] = 3;
-        else if (controllerInfo[0].unk0[0].button & PAD_BUTTON_X)
+        else if (controllerInfo[0].held.button & PAD_BUTTON_X)
             playerCharacterSelection[0] = 2;
-        else if (controllerInfo[0].unk0[0].button & PAD_BUTTON_B)
+        else if (controllerInfo[0].held.button & PAD_BUTTON_B)
             playerCharacterSelection[0] = 1;
         else
             playerCharacterSelection[0] = 0;

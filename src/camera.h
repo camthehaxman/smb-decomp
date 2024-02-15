@@ -69,18 +69,18 @@ struct Camera
     struct Camera_sub sub28;  // viewport info?
     /*0x50*/ s16 timerCurr;
     /*0x52*/ s16 timerMax;
-    Vec unk54;  // lookAt start for level fly-in?
+    Vec lookAtStart;  // lookAt start for level fly-in?
     float unk60;
     float unk64;
-    s32 unk68;
-    s32 unk6C;
-    s32 unk70;
-    Vec unk74;  // lookAt end for level fly-in?
+    s32 angleXStart;
+    s32 angleYStart;
+    s32 angleZStart;
+    Vec lookAtEnd;  // lookAt end for level fly-in?
     float unk80;
     u8 filler84[0x88-0x84];
-    s32 unk88;
-    s32 unk8C;
-    s32 unk90;
+    s32 angleXEnd;
+    s32 angleYEnd;
+    s32 angleZEnd;
     Vec eyeVel;
     Vec lookAtVel;
     Vec unkAC;
@@ -89,8 +89,8 @@ struct Camera
     Vec unkBC;
     Vec unkC8;
     u8 fillerD4[0xEC-0xD4];
-    u32 unkEC;
-    s32 unkF0;
+    u32 isShaking;
+    s32 shakeTimer;
     Vec unkF4;
     float unk100;
     float unk104;

@@ -204,6 +204,70 @@ enum
     BMP_RNK_rnk_mini_mark_tgt2,
 };
 
+// SEL group (4)
+enum
+{
+    BMP_SEL_sel_kiwaku_be_eex = (BMP_SEL << 8),  // 0x400
+    BMP_SEL_sel_kiwaku_be_jex,
+    BMP_SEL_sel_kiwaku_ad_eex,
+    BMP_SEL_sel_kiwaku_ad_jex,
+    BMP_SEL_sel_bg_sel,
+    BMP_SEL_sel_flower4,
+    BMP_SEL_sel_kiwaku_rac,
+    BMP_SEL_sel_kiwaku_button,
+    BMP_SEL_sel_kiwaku_sel,
+    BMP_SEL_sel_kiwaku_fight,
+    BMP_SEL_sel_chara_bar,
+    BMP_SEL_sel_shine,
+    BMP_SEL_sel_kiwaku_l,
+    BMP_SEL_sel_kiwaku_s,
+    BMP_SEL_sel_plate,
+    BMP_SEL_sel_player,
+    BMP_SEL_sel_player_x,  // 0x410
+    BMP_SEL_sel_playmode,
+    BMP_SEL_sel_chara,
+    BMP_SEL_sel_flower1,
+    BMP_SEL_sel_flower2,
+    BMP_SEL_sel_flower3,
+    BMP_SEL_sel_kiwaku_s2,
+    BMP_SEL_sel_kiwaku_l2,
+    BMP_SEL_sel_kiwaku_be,
+    BMP_SEL_sel_kiwaku_ma,
+    BMP_SEL_asc_sel12x24_num,
+    BMP_SEL_sel_kiwaku_be_e,
+    BMP_SEL_sel_kiwaku_be_j,
+    BMP_SEL_sel_kiwaku_ad_e,
+    BMP_SEL_sel_kiwaku_ad_j,
+    BMP_SEL_sel_kiwaku_ex_e,
+    BMP_SEL_sel_kiwaku_ex_j,  // 0x420
+    BMP_SEL_sel_kiwaku_ma_e,
+    BMP_SEL_sel_kiwaku_ma_j,
+    BMP_SEL_sel_kiwaku_ad,
+    BMP_SEL_sel_kiwaku_ex,
+    BMP_SEL_sel_kiwaku_ex_eex,
+    BMP_SEL_sel_kiwaku_ex_jex,
+    BMP_SEL_sel_kiwaku_noise_l,
+    BMP_SEL_sel_kiwaku_noise_s,
+    BMP_SEL_sel_kiwaku_stage_l,
+    BMP_SEL_sel_kiwaku_stage_s,
+    BMP_SEL_sel_normal_level_ad_e,
+    BMP_SEL_sel_normal_level_be_e,
+    BMP_SEL_sel_normal_level_ex_e,
+    BMP_SEL_sel_stg_comp_num,
+    BMP_SEL_sel_stg_comp_num_ex,
+    BMP_SEL_sel_stg_comp_icon,  // 0x430
+    BMP_SEL_sel_kiwaku_noise_l2,
+    BMP_SEL_sel_stg_comp_sel,
+    BMP_SEL_sel_kiwaku_option,
+    BMP_SEL_sel_kiwaku_rac_ad_e,
+    BMP_SEL_sel_kiwaku_rac_ad_j,
+    BMP_SEL_sel_kiwaku_rac_be_e,
+    BMP_SEL_sel_kiwaku_rac_be_j,
+    BMP_SEL_sel_kiwaku_rac_ex_e,
+    BMP_SEL_sel_kiwaku_rac_ex_j,
+    BMP_SEL_sel_playmode_golf,
+};
+
 // NML group (5)
 enum
 {
@@ -234,6 +298,55 @@ enum
     BMP_NML_icon_bomb_part_h,
     BMP_NML_icon_bomb_part_i,
     BMP_NML_icon_bomb_part_j,
+};
+
+// HOW group (12)
+enum
+{
+    BMP_HOW_how_kiwaku = (BMP_HOW << 8),  // 0xC00
+    BMP_HOW_how_bar,
+    BMP_HOW_how_bar_circle,
+    BMP_HOW_how_item_fgt_big,
+    BMP_HOW_how_item_fgt_box,
+    BMP_HOW_how_item_fgt_lng,
+    BMP_HOW_how_item_fgt_vor,
+    BMP_HOW_how_item_rac_bnn,
+    BMP_HOW_how_item_rac_bom,
+    BMP_HOW_how_item_rac_box,
+    BMP_HOW_how_item_rac_ice,
+    BMP_HOW_how_item_rac_pol,
+    BMP_HOW_how_item_rac_spd,
+    BMP_HOW_how_item_tgt_bom,
+    BMP_HOW_how_item_tgt_bomb,
+    BMP_HOW_how_item_tgt_double,
+    BMP_HOW_how_item_tgt_heavy,  // 0xC10
+    BMP_HOW_how_item_tgt_kum,
+    BMP_HOW_how_item_tgt_kumo,
+    BMP_HOW_how_item_tgt_saf,
+    BMP_HOW_how_item_tgt_stop,
+    BMP_HOW_how_item_tgt_tog,
+    BMP_HOW_how_item_tgt_toge,
+    BMP_HOW_how_item_tgt_triple,
+    BMP_HOW_how_item_tgt_wind,
+    BMP_HOW_how_waku2_g,
+    BMP_HOW_how_waku2_r,
+    BMP_HOW_how_waku3_g,
+    BMP_HOW_how_waku3_m,
+    BMP_HOW_how_waku3_o,
+    BMP_HOW_how_waku3_r,
+    BMP_HOW_how_waku4_b,
+    BMP_HOW_how_waku4_g,  // 0xC20
+    BMP_HOW_how_waku5_b,
+    BMP_HOW_how_waku_b,
+    BMP_HOW_how_waku_g,
+    BMP_HOW_how_waku_m,
+    BMP_HOW_how_waku_o,
+    BMP_HOW_how_waku_r,
+    BMP_HOW_how_arrow,
+    BMP_HOW_how_cont,
+    BMP_HOW_how_waku3_b,
+    BMP_HOW_how_cont_arrow,
+    BMP_HOW_how_cont_bar,
 };
 
 struct Bitmap

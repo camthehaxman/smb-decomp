@@ -13,6 +13,7 @@
 #include "recplay.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 struct PauseMenuState pauseMenuState;
 
@@ -101,8 +102,8 @@ int should_open_pause_menu(void)
         return FALSE;
     if (dipSwitches & DIP_DEBUG)
     {
-        if (!(analogButtonInfo[0][0] & PAD_BUTTON_A)
-         && !(analogButtonInfo[0][0] & PAD_BUTTON_B)
+        if (!(analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+         && !(analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
          && lbl_802F1ED8 == 0
          && !(debugFlags & 8)
          && (g_currPlayerButtons[2] & PAD_BUTTON_START))
@@ -124,8 +125,8 @@ void u_open_pause_menu(struct Sprite *menuSprite)
     pauseMenuState.padId = 0;
     for (i = 0; i < 4; i++)
     {
-        if (controllerInfo[i].unk0[0].err == 0
-         && (controllerInfo[i].unk0[2].button & PAD_BUTTON_START))
+        if (controllerInfo[i].held.err == 0
+         && (controllerInfo[i].pressed.button & PAD_BUTTON_START))
         {
             pauseMenuState.padId = i;
             break;
@@ -214,13 +215,13 @@ void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
 
     if (lbl_802F1BA0 > 0)
         lbl_802F1BA0--;
-    if (CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_UP) && lbl_802F1BA0 == 0)
+    if (REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_UP) && lbl_802F1BA0 == 0)
     {
         if (--pauseMenuState.selection < 0)
             pauseMenuState.selection = pauseMenuState.itemCount - 1;
         lbl_802F1BA0 = 10;
     }
-    else if (CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_DOWN) && lbl_802F1BA0 == 0)
+    else if (REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_DOWN) && lbl_802F1BA0 == 0)
     {
         if (++pauseMenuState.selection > pauseMenuState.itemCount - 1)
             pauseMenuState.selection = 0;
@@ -231,22 +232,22 @@ void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
     if (pauseMenuState.menuType == PAUSEMENU_CONT_GUIDE_HOW_EXIT
      && pauseMenuState.selection == 1)  // "Guide"
     {
-        if (CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_LEFT)
-         || CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_RIGHT))
+        if (REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_LEFT)
+         || REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_RIGHT))
         {
             pauseMenuState.unk4 |= 0x10;
             u_play_sound_1(0x169);
         }
     }
-    if ((controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_A)
-     || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_B)
-     || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_START))
+    if ((controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_A)
+     || (controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_B)
+     || (controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_START))
     {
         pauseMenuState.unk4 |= 1;
         u_play_sound_1(0x6E);
         pauseMenuState.unk0 = 2;
-        if ((controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_B)
-         || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_START))
+        if ((controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_B)
+         || (controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_START))
             pauseMenuState.selection = 0;
         switch (pauseMenuState.menuType)
         {
@@ -459,9 +460,9 @@ void unkFunc8000AECC(struct Sprite *menuSprite)
     switch (lbl_802F1B98)
     {
     case 2:
-        if ((controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_A)
-         || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_B)
-         || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_START))
+        if ((controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_A)
+         || (controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_B)
+         || (controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_START))
         {
             event_finish(EVENT_VIEW);
             u_play_sound_1(0x70);
@@ -482,10 +483,10 @@ void unkFunc8000AECC(struct Sprite *menuSprite)
     case 4:
         sprite = find_sprite_with_tag(10);
         if (sprite != NULL)
-            func_80082024(0, sprite);
-        if ((controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_A)
-         || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_B)
-         || (controllerInfo[pauseMenuState.padId].unk0[2].button & PAD_BUTTON_START))
+            help_sprite_main(0, sprite);
+        if ((controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_A)
+         || (controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_B)
+         || (controllerInfo[pauseMenuState.padId].pressed.button & PAD_BUTTON_START))
         {
             u_play_sound_1(0x70);
             pauseMenuState.unk4 &= ~1;

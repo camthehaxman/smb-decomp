@@ -426,7 +426,7 @@ void func_80097E80(int unused, struct RenderEffect *rendEfc)
     GXSetNumIndStages(0U);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
-    func_8009AC8C();
+    fog_gx_set();
     r28 = u_avdisp_set_some_func_2(lbl_8009825C);
 
     var_r31 = animGroups;
@@ -824,7 +824,7 @@ void func_80098EB4(int arg0, struct RenderEffect *rendEfc)
     GXSetNumIndStages(1U);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
-    func_8009AC8C();
+    fog_gx_set();
     if (dynamicStageParts != NULL)
     {
         struct DynamicStagePart *dynpart;

@@ -1517,7 +1517,7 @@ lbl_000015FC:
 /* 00001624 88030004 */ lbz r0, 4(r3)
 /* 00001628 7C000775 */ extsb. r0, r0
 /* 0000162C 40820050 */ bne lbl_0000167C
-/* 00001630 4BFFEBA1 */ bl func_8009CC34
+/* 00001630 4BFFEBA1 */ bl mini_commend_free_data
 /* 00001634 4BFFEB9D */ bl event_finish_all
 /* 00001638 4BFFEB99 */ bl free_all_bitmap_groups_except_com
 /* 0000163C 4BFFEB95 */ bl u_free_minigame_graphics
@@ -1537,7 +1537,7 @@ lbl_000015FC:
 /* 00001674 4BFFEB5D */ bl start_screen_fade
 /* 00001678 48004034 */ b lbl_000056AC
 lbl_0000167C:
-/* 0000167C 4BFFEB55 */ bl func_8009CC34
+/* 0000167C 4BFFEB55 */ bl mini_commend_free_data
 /* 00001680 3C600000 */ lis r3, modeCtrl@ha
 /* 00001684 38630000 */ addi r3, r3, modeCtrl@l
 /* 00001688 80630028 */ lwz r3, 0x28(r3)
@@ -5887,20 +5887,20 @@ lbl_000056C4:
 /* 0000570C 4182001C */ beq lbl_00005728
 /* 00005710 38600001 */ li r3, 1
 /* 00005714 38800023 */ li r4, 0x23
-/* 00005718 4BFFAAB9 */ bl u_debug_set_cursor_pos
+/* 00005718 4BFFAAB9 */ bl window_set_cursor_pos
 /* 0000571C 387F01D0 */ addi r3, r31, 0x1d0
 /* 00005720 4CC63182 */ crclr 6
-/* 00005724 4BFFAAAD */ bl u_debug_printf
+/* 00005724 4BFFAAAD */ bl window_printf_2
 lbl_00005728:
 /* 00005728 881D00F3 */ lbz r0, 0xf3(r29)
 /* 0000572C 28000000 */ cmplwi r0, 0
 /* 00005730 4182001C */ beq lbl_0000574C
 /* 00005734 38600001 */ li r3, 1
 /* 00005738 38800023 */ li r4, 0x23
-/* 0000573C 4BFFAA95 */ bl u_debug_set_cursor_pos
+/* 0000573C 4BFFAA95 */ bl window_set_cursor_pos
 /* 00005740 387F01D8 */ addi r3, r31, 0x1d8
 /* 00005744 4CC63182 */ crclr 6
-/* 00005748 4BFFAA89 */ bl u_debug_printf
+/* 00005748 4BFFAA89 */ bl window_printf_2
 lbl_0000574C:
 /* 0000574C 807D0000 */ lwz r3, 0(r29)
 /* 00005750 28032000 */ cmplwi r3, 0x2000
@@ -12292,8 +12292,8 @@ lbl_0000B498:
 /* 0000B4AC 48000288 */ b lbl_0000B734
 lbl_0000B4B0:
 /* 0000B4B0 C01E0000 */ lfs f0, 0(r30)
-/* 0000B4B4 3C600000 */ lis r3, s_bgLightInfo@ha
-/* 0000B4B8 38630000 */ addi r3, r3, s_bgLightInfo@l
+/* 0000B4B4 3C600000 */ lis r3, g_bgLightInfo@ha
+/* 0000B4B8 38630000 */ addi r3, r3, g_bgLightInfo@l
 /* 0000B4BC D01F0020 */ stfs f0, 0x20(r31)
 /* 0000B4C0 38800C00 */ li r4, 0xc00
 /* 0000B4C4 A8630042 */ lha r3, 0x42(r3)
@@ -12423,8 +12423,8 @@ lbl_0000B680:
 lbl_0000B690:
 /* 0000B690 3C600000 */ lis r3, globalAnimTimer@ha
 /* 0000B694 80830000 */ lwz r4, globalAnimTimer@l(r3)
-/* 0000B698 3C600000 */ lis r3, s_bgLightInfo@ha
-/* 0000B69C 38630000 */ addi r3, r3, s_bgLightInfo@l
+/* 0000B698 3C600000 */ lis r3, g_bgLightInfo@ha
+/* 0000B69C 38630000 */ addi r3, r3, g_bgLightInfo@l
 /* 0000B6A0 3804FFFF */ addi r0, r4, -1  ;# fixed addi
 /* 0000B6A4 901F0034 */ stw r0, 0x34(r31)
 /* 0000B6A8 38800C00 */ li r4, 0xc00
@@ -17205,7 +17205,7 @@ lbl_0000FE50:
 /* 0000FEA8 FC00001E */ fctiwz f0, f0
 /* 0000FEAC D8010068 */ stfd f0, 0x68(r1)
 /* 0000FEB0 8381006C */ lwz r28, 0x6c(r1)
-/* 0000FEB4 4BFF031D */ bl u_debug_set_cursor_pos
+/* 0000FEB4 4BFF031D */ bl window_set_cursor_pos
 /* 0000FEB8 801F0010 */ lwz r0, 0x10(r31)
 /* 0000FEBC 2C003000 */ cmpwi r0, 0x3000
 /* 0000FEC0 4081000C */ ble lbl_0000FECC

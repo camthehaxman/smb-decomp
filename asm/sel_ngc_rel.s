@@ -216,7 +216,7 @@ lbl_0000033C:
 /* 00000364 3BE30000 */ addi r31, r3, lbl_10000000@l
 /* 00000368 7000000A */ andi. r0, r0, 0xa
 /* 0000036C 40820248 */ bne lbl_000005B4
-/* 00000370 4BFFFE19 */ bl func_8002FFEC
+/* 00000370 4BFFFE19 */ bl u_clear_buffers_2_and_5
 /* 00000374 38600001 */ li r3, 1
 /* 00000378 4BFFFE11 */ bl event_start
 /* 0000037C 38600004 */ li r3, 4
@@ -437,8 +437,8 @@ lbl_0000067C:
 lbl_0000069C:
 /* 0000069C 2C0B0000 */ cmpwi r11, 0
 /* 000006A0 4082001C */ bne lbl_000006BC
-/* 000006A4 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 000006A8 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 000006A4 3CE00000 */ lis r7, analogInputs@ha
+/* 000006A8 38E70000 */ addi r7, r7, analogInputs@l
 /* 000006AC A0E70008 */ lhz r7, 8(r7)
 /* 000006B0 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 000006B4 40820008 */ bne lbl_000006BC
@@ -446,8 +446,8 @@ lbl_0000069C:
 lbl_000006BC:
 /* 000006BC 2C0A0000 */ cmpwi r10, 0
 /* 000006C0 4082001C */ bne lbl_000006DC
-/* 000006C4 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 000006C8 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 000006C4 3CE00000 */ lis r7, analogInputs@ha
+/* 000006C8 38E70000 */ addi r7, r7, analogInputs@l
 /* 000006CC A0E70012 */ lhz r7, 0x12(r7)
 /* 000006D0 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 000006D4 40820008 */ bne lbl_000006DC
@@ -455,8 +455,8 @@ lbl_000006BC:
 lbl_000006DC:
 /* 000006DC 2C090000 */ cmpwi r9, 0
 /* 000006E0 4082001C */ bne lbl_000006FC
-/* 000006E4 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 000006E8 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 000006E4 3CE00000 */ lis r7, analogInputs@ha
+/* 000006E8 38E70000 */ addi r7, r7, analogInputs@l
 /* 000006EC A0E7001C */ lhz r7, 0x1c(r7)
 /* 000006F0 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 000006F4 40820008 */ bne lbl_000006FC
@@ -464,8 +464,8 @@ lbl_000006DC:
 lbl_000006FC:
 /* 000006FC 2C050000 */ cmpwi r5, 0
 /* 00000700 4082001C */ bne lbl_0000071C
-/* 00000704 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 00000708 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 00000704 3CA00000 */ lis r5, analogInputs@ha
+/* 00000708 38A50000 */ addi r5, r5, analogInputs@l
 /* 0000070C A0A50026 */ lhz r5, 0x26(r5)
 /* 00000710 54A507FF */ clrlwi. r5, r5, 0x1f
 /* 00000714 40820008 */ bne lbl_0000071C
@@ -492,8 +492,8 @@ lbl_00000728:
 /* 00000760 39440000 */ addi r10, r4, 0
 /* 00000764 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 00000768 4082001C */ bne lbl_00000784
-/* 0000076C 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000770 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 0000076C 3CE00000 */ lis r7, analogInputs@ha
+/* 00000770 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000774 A0E70008 */ lhz r7, 8(r7)
 /* 00000778 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 0000077C 40820008 */ bne lbl_00000784
@@ -514,8 +514,8 @@ lbl_00000790:
 /* 000007B0 39400001 */ li r10, 1
 /* 000007B4 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 000007B8 4082001C */ bne lbl_000007D4
-/* 000007BC 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 000007C0 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 000007BC 3CE00000 */ lis r7, analogInputs@ha
+/* 000007C0 38E70000 */ addi r7, r7, analogInputs@l
 /* 000007C4 A0E70012 */ lhz r7, 0x12(r7)
 /* 000007C8 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 000007CC 40820008 */ bne lbl_000007D4
@@ -540,8 +540,8 @@ lbl_000007EC:
 /* 0000080C 39200001 */ li r9, 1
 /* 00000810 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 00000814 4082001C */ bne lbl_00000830
-/* 00000818 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 0000081C 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000818 3CE00000 */ lis r7, analogInputs@ha
+/* 0000081C 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000820 A0E7001C */ lhz r7, 0x1c(r7)
 /* 00000824 54E707FF */ clrlwi. r7, r7, 0x1f
 /* 00000828 40820008 */ bne lbl_00000830
@@ -566,8 +566,8 @@ lbl_00000848:
 /* 00000868 38E00001 */ li r7, 1
 /* 0000086C 54A507FF */ clrlwi. r5, r5, 0x1f
 /* 00000870 4082001C */ bne lbl_0000088C
-/* 00000874 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 00000878 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 00000874 3CA00000 */ lis r5, analogInputs@ha
+/* 00000878 38A50000 */ addi r5, r5, analogInputs@l
 /* 0000087C A0A50026 */ lhz r5, 0x26(r5)
 /* 00000880 54A507FF */ clrlwi. r5, r5, 0x1f
 /* 00000884 40820008 */ bne lbl_0000088C
@@ -634,8 +634,8 @@ lbl_00000938:
 lbl_00000958:
 /* 00000958 2C0B0000 */ cmpwi r11, 0
 /* 0000095C 4082001C */ bne lbl_00000978
-/* 00000960 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000964 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000960 3CE00000 */ lis r7, analogInputs@ha
+/* 00000964 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000968 A0E70008 */ lhz r7, 8(r7)
 /* 0000096C 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000970 40820008 */ bne lbl_00000978
@@ -643,8 +643,8 @@ lbl_00000958:
 lbl_00000978:
 /* 00000978 2C0A0000 */ cmpwi r10, 0
 /* 0000097C 4082001C */ bne lbl_00000998
-/* 00000980 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000984 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000980 3CE00000 */ lis r7, analogInputs@ha
+/* 00000984 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000988 A0E70012 */ lhz r7, 0x12(r7)
 /* 0000098C 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000990 40820008 */ bne lbl_00000998
@@ -652,8 +652,8 @@ lbl_00000978:
 lbl_00000998:
 /* 00000998 2C090000 */ cmpwi r9, 0
 /* 0000099C 4082001C */ bne lbl_000009B8
-/* 000009A0 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 000009A4 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 000009A0 3CE00000 */ lis r7, analogInputs@ha
+/* 000009A4 38E70000 */ addi r7, r7, analogInputs@l
 /* 000009A8 A0E7001C */ lhz r7, 0x1c(r7)
 /* 000009AC 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 000009B0 40820008 */ bne lbl_000009B8
@@ -661,8 +661,8 @@ lbl_00000998:
 lbl_000009B8:
 /* 000009B8 2C050000 */ cmpwi r5, 0
 /* 000009BC 4082001C */ bne lbl_000009D8
-/* 000009C0 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 000009C4 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 000009C0 3CA00000 */ lis r5, analogInputs@ha
+/* 000009C4 38A50000 */ addi r5, r5, analogInputs@l
 /* 000009C8 A0A50026 */ lhz r5, 0x26(r5)
 /* 000009CC 54A507BD */ rlwinm. r5, r5, 0, 0x1e, 0x1e
 /* 000009D0 40820008 */ bne lbl_000009D8
@@ -689,8 +689,8 @@ lbl_000009E4:
 /* 00000A1C 39440000 */ addi r10, r4, 0
 /* 00000A20 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000A24 4082001C */ bne lbl_00000A40
-/* 00000A28 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000A2C 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000A28 3CE00000 */ lis r7, analogInputs@ha
+/* 00000A2C 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000A30 A0E70008 */ lhz r7, 8(r7)
 /* 00000A34 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000A38 40820008 */ bne lbl_00000A40
@@ -711,8 +711,8 @@ lbl_00000A4C:
 /* 00000A6C 39400001 */ li r10, 1
 /* 00000A70 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000A74 4082001C */ bne lbl_00000A90
-/* 00000A78 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000A7C 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000A78 3CE00000 */ lis r7, analogInputs@ha
+/* 00000A7C 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000A80 A0E70012 */ lhz r7, 0x12(r7)
 /* 00000A84 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000A88 40820008 */ bne lbl_00000A90
@@ -737,8 +737,8 @@ lbl_00000AA8:
 /* 00000AC8 39200001 */ li r9, 1
 /* 00000ACC 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000AD0 4082001C */ bne lbl_00000AEC
-/* 00000AD4 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000AD8 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000AD4 3CE00000 */ lis r7, analogInputs@ha
+/* 00000AD8 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000ADC A0E7001C */ lhz r7, 0x1c(r7)
 /* 00000AE0 54E707BD */ rlwinm. r7, r7, 0, 0x1e, 0x1e
 /* 00000AE4 40820008 */ bne lbl_00000AEC
@@ -763,8 +763,8 @@ lbl_00000B04:
 /* 00000B24 38E00001 */ li r7, 1
 /* 00000B28 54A507BD */ rlwinm. r5, r5, 0, 0x1e, 0x1e
 /* 00000B2C 4082001C */ bne lbl_00000B48
-/* 00000B30 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 00000B34 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 00000B30 3CA00000 */ lis r5, analogInputs@ha
+/* 00000B34 38A50000 */ addi r5, r5, analogInputs@l
 /* 00000B38 A0A50026 */ lhz r5, 0x26(r5)
 /* 00000B3C 54A507BD */ rlwinm. r5, r5, 0, 0x1e, 0x1e
 /* 00000B40 40820008 */ bne lbl_00000B48
@@ -831,8 +831,8 @@ lbl_00000BF4:
 lbl_00000C14:
 /* 00000C14 2C0B0000 */ cmpwi r11, 0
 /* 00000C18 4082001C */ bne lbl_00000C34
-/* 00000C1C 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000C20 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000C1C 3CE00000 */ lis r7, analogInputs@ha
+/* 00000C20 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000C24 A0E70008 */ lhz r7, 8(r7)
 /* 00000C28 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000C2C 40820008 */ bne lbl_00000C34
@@ -840,8 +840,8 @@ lbl_00000C14:
 lbl_00000C34:
 /* 00000C34 2C0A0000 */ cmpwi r10, 0
 /* 00000C38 4082001C */ bne lbl_00000C54
-/* 00000C3C 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000C40 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000C3C 3CE00000 */ lis r7, analogInputs@ha
+/* 00000C40 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000C44 A0E70012 */ lhz r7, 0x12(r7)
 /* 00000C48 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000C4C 40820008 */ bne lbl_00000C54
@@ -849,8 +849,8 @@ lbl_00000C34:
 lbl_00000C54:
 /* 00000C54 2C090000 */ cmpwi r9, 0
 /* 00000C58 4082001C */ bne lbl_00000C74
-/* 00000C5C 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000C60 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000C5C 3CE00000 */ lis r7, analogInputs@ha
+/* 00000C60 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000C64 A0E7001C */ lhz r7, 0x1c(r7)
 /* 00000C68 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000C6C 40820008 */ bne lbl_00000C74
@@ -858,8 +858,8 @@ lbl_00000C54:
 lbl_00000C74:
 /* 00000C74 2C050000 */ cmpwi r5, 0
 /* 00000C78 4082001C */ bne lbl_00000C94
-/* 00000C7C 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 00000C80 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 00000C7C 3CA00000 */ lis r5, analogInputs@ha
+/* 00000C80 38A50000 */ addi r5, r5, analogInputs@l
 /* 00000C84 A0A50026 */ lhz r5, 0x26(r5)
 /* 00000C88 54A50739 */ rlwinm. r5, r5, 0, 0x1c, 0x1c
 /* 00000C8C 40820008 */ bne lbl_00000C94
@@ -886,8 +886,8 @@ lbl_00000CA0:
 /* 00000CD8 39440000 */ addi r10, r4, 0
 /* 00000CDC 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000CE0 4082001C */ bne lbl_00000CFC
-/* 00000CE4 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000CE8 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000CE4 3CE00000 */ lis r7, analogInputs@ha
+/* 00000CE8 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000CEC A0E70008 */ lhz r7, 8(r7)
 /* 00000CF0 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000CF4 40820008 */ bne lbl_00000CFC
@@ -908,8 +908,8 @@ lbl_00000D08:
 /* 00000D28 39400001 */ li r10, 1
 /* 00000D2C 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000D30 4082001C */ bne lbl_00000D4C
-/* 00000D34 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000D38 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000D34 3CE00000 */ lis r7, analogInputs@ha
+/* 00000D38 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000D3C A0E70012 */ lhz r7, 0x12(r7)
 /* 00000D40 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000D44 40820008 */ bne lbl_00000D4C
@@ -934,8 +934,8 @@ lbl_00000D64:
 /* 00000D84 39200001 */ li r9, 1
 /* 00000D88 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000D8C 4082001C */ bne lbl_00000DA8
-/* 00000D90 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000D94 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000D90 3CE00000 */ lis r7, analogInputs@ha
+/* 00000D94 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000D98 A0E7001C */ lhz r7, 0x1c(r7)
 /* 00000D9C 54E70739 */ rlwinm. r7, r7, 0, 0x1c, 0x1c
 /* 00000DA0 40820008 */ bne lbl_00000DA8
@@ -960,8 +960,8 @@ lbl_00000DC0:
 /* 00000DE0 38E00001 */ li r7, 1
 /* 00000DE4 54A50739 */ rlwinm. r5, r5, 0, 0x1c, 0x1c
 /* 00000DE8 4082001C */ bne lbl_00000E04
-/* 00000DEC 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 00000DF0 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 00000DEC 3CA00000 */ lis r5, analogInputs@ha
+/* 00000DF0 38A50000 */ addi r5, r5, analogInputs@l
 /* 00000DF4 A0A50026 */ lhz r5, 0x26(r5)
 /* 00000DF8 54A50739 */ rlwinm. r5, r5, 0, 0x1c, 0x1c
 /* 00000DFC 40820008 */ bne lbl_00000E04
@@ -1028,8 +1028,8 @@ lbl_00000EB0:
 lbl_00000ED0:
 /* 00000ED0 2C0B0000 */ cmpwi r11, 0
 /* 00000ED4 4082001C */ bne lbl_00000EF0
-/* 00000ED8 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000EDC 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000ED8 3CE00000 */ lis r7, analogInputs@ha
+/* 00000EDC 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000EE0 A0E70008 */ lhz r7, 8(r7)
 /* 00000EE4 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00000EE8 40820008 */ bne lbl_00000EF0
@@ -1037,8 +1037,8 @@ lbl_00000ED0:
 lbl_00000EF0:
 /* 00000EF0 2C0A0000 */ cmpwi r10, 0
 /* 00000EF4 4082001C */ bne lbl_00000F10
-/* 00000EF8 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000EFC 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000EF8 3CE00000 */ lis r7, analogInputs@ha
+/* 00000EFC 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000F00 A0E70012 */ lhz r7, 0x12(r7)
 /* 00000F04 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00000F08 40820008 */ bne lbl_00000F10
@@ -1046,8 +1046,8 @@ lbl_00000EF0:
 lbl_00000F10:
 /* 00000F10 2C090000 */ cmpwi r9, 0
 /* 00000F14 4082001C */ bne lbl_00000F30
-/* 00000F18 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000F1C 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000F18 3CE00000 */ lis r7, analogInputs@ha
+/* 00000F1C 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000F20 A0E7001C */ lhz r7, 0x1c(r7)
 /* 00000F24 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00000F28 40820008 */ bne lbl_00000F30
@@ -1055,8 +1055,8 @@ lbl_00000F10:
 lbl_00000F30:
 /* 00000F30 2C050000 */ cmpwi r5, 0
 /* 00000F34 4082001C */ bne lbl_00000F50
-/* 00000F38 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 00000F3C 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 00000F38 3CA00000 */ lis r5, analogInputs@ha
+/* 00000F3C 38A50000 */ addi r5, r5, analogInputs@l
 /* 00000F40 A0A50026 */ lhz r5, 0x26(r5)
 /* 00000F44 54A5077B */ rlwinm. r5, r5, 0, 0x1d, 0x1d
 /* 00000F48 40820008 */ bne lbl_00000F50
@@ -1083,8 +1083,8 @@ lbl_00000F5C:
 /* 00000F94 39440000 */ addi r10, r4, 0
 /* 00000F98 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00000F9C 4082001C */ bne lbl_00000FB8
-/* 00000FA0 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000FA4 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000FA0 3CE00000 */ lis r7, analogInputs@ha
+/* 00000FA4 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000FA8 A0E70008 */ lhz r7, 8(r7)
 /* 00000FAC 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00000FB0 40820008 */ bne lbl_00000FB8
@@ -1105,8 +1105,8 @@ lbl_00000FC4:
 /* 00000FE4 39400001 */ li r10, 1
 /* 00000FE8 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00000FEC 4082001C */ bne lbl_00001008
-/* 00000FF0 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00000FF4 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 00000FF0 3CE00000 */ lis r7, analogInputs@ha
+/* 00000FF4 38E70000 */ addi r7, r7, analogInputs@l
 /* 00000FF8 A0E70012 */ lhz r7, 0x12(r7)
 /* 00000FFC 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00001000 40820008 */ bne lbl_00001008
@@ -1131,8 +1131,8 @@ lbl_00001020:
 /* 00001040 39200001 */ li r9, 1
 /* 00001044 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 00001048 4082001C */ bne lbl_00001064
-/* 0000104C 3CE00000 */ lis r7, analogButtonInfo@ha
-/* 00001050 38E70000 */ addi r7, r7, analogButtonInfo@l
+/* 0000104C 3CE00000 */ lis r7, analogInputs@ha
+/* 00001050 38E70000 */ addi r7, r7, analogInputs@l
 /* 00001054 A0E7001C */ lhz r7, 0x1c(r7)
 /* 00001058 54E7077B */ rlwinm. r7, r7, 0, 0x1d, 0x1d
 /* 0000105C 40820008 */ bne lbl_00001064
@@ -1157,8 +1157,8 @@ lbl_0000107C:
 /* 0000109C 38E00001 */ li r7, 1
 /* 000010A0 54A5077B */ rlwinm. r5, r5, 0, 0x1d, 0x1d
 /* 000010A4 4082001C */ bne lbl_000010C0
-/* 000010A8 3CA00000 */ lis r5, analogButtonInfo@ha
-/* 000010AC 38A50000 */ addi r5, r5, analogButtonInfo@l
+/* 000010A8 3CA00000 */ lis r5, analogInputs@ha
+/* 000010AC 38A50000 */ addi r5, r5, analogInputs@l
 /* 000010B0 A0A50026 */ lhz r5, 0x26(r5)
 /* 000010B4 54A5077B */ rlwinm. r5, r5, 0, 0x1d, 0x1d
 /* 000010B8 40820008 */ bne lbl_000010C0
@@ -5261,12 +5261,12 @@ lbl_00004A34:
 /* 00004A3C 3AC00000 */ li r22, 0
 /* 00004A40 3C800000 */ lis r4, lbl_802F1BF4@ha
 /* 00004A44 3C600000 */ lis r3, modeCtrl@ha
-/* 00004A48 3CA00000 */ lis r5, analogButtonInfo@ha
+/* 00004A48 3CA00000 */ lis r5, analogInputs@ha
 /* 00004A4C 3AB60000 */ addi r21, r22, 0
 /* 00004A50 3BBC0000 */ addi r29, r28, 0
 /* 00004A54 3A640000 */ addi r19, r4, lbl_802F1BF4@l
 /* 00004A58 3A830000 */ addi r20, r3, modeCtrl@l
-/* 00004A5C 3A450000 */ addi r18, r5, analogButtonInfo@l
+/* 00004A5C 3A450000 */ addi r18, r5, analogInputs@l
 /* 00004A60 480001C4 */ b lbl_00004C24
 lbl_00004A64:
 /* 00004A64 801D0048 */ lwz r0, 0x48(r29)
@@ -5661,11 +5661,11 @@ lbl_00004FC8:
 /* 00004FC8 2C0F0000 */ cmpwi r15, 0
 /* 00004FCC 40824888 */ bne lbl_00009854
 /* 00004FD0 3C600000 */ lis r3, playerCharacterSelection@ha
-/* 00004FD4 3C800000 */ lis r4, analogButtonInfo@ha
+/* 00004FD4 3C800000 */ lis r4, analogInputs@ha
 /* 00004FD8 3A430000 */ addi r18, r3, playerCharacterSelection@l
 /* 00004FDC 3A600000 */ li r19, 0
 /* 00004FE0 3C600000 */ lis r3, modeCtrl@ha
-/* 00004FE4 3A040000 */ addi r16, r4, analogButtonInfo@l
+/* 00004FE4 3A040000 */ addi r16, r4, analogInputs@l
 /* 00004FE8 39F30000 */ addi r15, r19, 0
 /* 00004FEC 3A3C0000 */ addi r17, r28, 0
 /* 00004FF0 3A830000 */ addi r20, r3, modeCtrl@l

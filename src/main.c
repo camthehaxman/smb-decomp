@@ -25,9 +25,11 @@
 #include "perf.h"
 #include "pool.h"
 #include "recplay.h"
+#include "shadow.h"
 #include "sound.h"
 #include "stage.h"
 #include "thread.h"
+#include "window.h"
 #include "world.h"
 
 struct Thread lbl_801ED920[146];
@@ -119,7 +121,7 @@ void main(void)
                                                         .logCallback = &aurora_log_callback,
                                                     });
 #endif
-    // dipSwitches = DIP_DEBUG|DIP_STCOLI;
+    //dipSwitches |= DIP_DEBUG | DIP_PLAY_STG_ALL;
     powerOnTimer = 0;
     initialize();
     gm_init();

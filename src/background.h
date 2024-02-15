@@ -49,21 +49,22 @@ enum
 struct BackgroundInfo  // size = 0xA8
 {
     s16 bgId;
+    s16 unk2;
     float animTimer; // Current animation time in frames
     u32 unk8;
     GXColor backdropColor;
-    u8 filler10[0x14-0x10];
+    s32 unk10;
     Vec unk14;
     Vec unk20;
     Vec unk2C;
     Vec unk38;
-    u8 filler44[4];
+    float unk44;
     Mtx unk48;
     int (*unk78)();
     int (*unk7C)();
     struct NlModel *unk80;
     float unk84;
-    u8 filler88[4];
+    float unk88;
     /*0x9C*/ EnvMapFunc stageEnvMapFunc;
     /*0x90*/ EnvMapFunc bgEnvMapFunc;
     /*0x94*/ EnvMapFunc ballEnvMapFunc;
@@ -360,6 +361,39 @@ struct BGMasterWork
     Vec unkB48;
     Vec unkB54;
     Mtx unkB60;
+};
+
+/* Pilot Background */
+
+struct BGPilotWork_sub
+{
+    Vec unk0;
+    Vec unkC;
+    Vec unk18;
+    s16 unk24;
+    Mtx unk28;
+};
+
+struct BGPilotWork
+{
+    s32 unk0;
+    struct GMAModel *unk4;
+    struct GMAModel *unk8;
+    struct GMAModel *unkC;
+    struct GMAModel *unk10;
+    struct StageBgObject *unk14;
+    struct GMAModel *unk18;
+    GXTexObj *unk1C;
+    GXTexObj *unk20;
+    struct GMAModel *unk24;
+    struct GMAModel *unk28;
+    s32 unk2C;
+    struct GMAModel *unk30[8];
+    Mtx unk50;
+    Mtx unk80;
+    Mtx unkB0;
+    struct Struct800993A8 *unkE0;
+    struct BGPilotWork_sub unkE4[3];
 };
 
 typedef int (*BgModelFindProc)(int, struct GMAModelEntry *);

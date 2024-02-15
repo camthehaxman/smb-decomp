@@ -169,7 +169,7 @@ void u_gxutil_fog_something_2(void)
     nlSetFog(fogInfo.enabled);
 }
 
-void func_8009AC8C(void)
+void fog_gx_set(void)
 {
     GXColor sp10;
 

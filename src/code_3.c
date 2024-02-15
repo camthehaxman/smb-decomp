@@ -9,8 +9,9 @@
 #include "mathutil.h"
 #include "mot_ape.h"
 #include "nl2ngc.h"
+#include "window.h"
 
-extern s8 lbl_802F2060;
+static s8 lbl_802F2060;
 
 u8 lbl_802B2E70[0x900];
 FORCE_BSS_ORDER(lbl_802B2E70)
@@ -584,38 +585,38 @@ static u32 lbl_801C693C[] =
     0x23,
 };
 
-extern u8 lbl_80130AEC[];
-extern u8 lbl_8013FBD4[];
-extern u8 lbl_8015D1DC[];
-extern u8 lbl_80153A54[];
-extern u8 lbl_80162D44[];
-extern u8 lbl_80169884[];
-extern u8 lbl_8016FCDC[];
-extern u8 lbl_8016DD94[];
-extern u8 lbl_8012C234[];
-extern u8 lbl_8013EB94[];
-extern u8 lbl_8014D184[];
-extern u8 lbl_80161684[];
-extern u8 lbl_80168C54[];
-extern u8 lbl_8016CEF4[];
-extern u8 lbl_8012346C[];
-extern u8 lbl_8013B65C[];
-extern u8 lbl_8015A11C[];
-extern u8 lbl_80146F9C[];
-extern u8 lbl_801649B4[];
-extern u8 lbl_801683CC[];
-extern u8 lbl_8016F454[];
-extern u8 lbl_8016BF84[];
-extern u8 lbl_80118D0C[];
-extern u8 lbl_80137A3C[];
-extern u8 lbl_80157BBC[];
-extern u8 lbl_80142D64[];
-extern u8 lbl_8015F80C[];
-extern u8 lbl_8016682C[];
-extern u8 lbl_8016EBCC[];
-extern u8 lbl_8016AEDC[];
+extern const struct Struct8008669C lbl_80130AEC[];
+extern const struct Struct8008669C lbl_8013FBD4[];
+extern const struct Struct8008669C lbl_8015D1DC[];
+extern const struct Struct8008669C lbl_80153A54[];
+extern const struct Struct8008669C lbl_80162D44[];
+extern const struct Struct8008669C lbl_80169884[];
+extern const struct Struct8008669C lbl_8016FCDC[];
+extern const struct Struct8008669C lbl_8016DD94[];
+extern const struct Struct8008669C lbl_8012C234[];
+extern const struct Struct8008669C lbl_8013EB94[];
+extern const struct Struct8008669C lbl_8014D184[];
+extern const struct Struct8008669C lbl_80161684[];
+extern const struct Struct8008669C lbl_80168C54[];
+extern const struct Struct8008669C lbl_8016CEF4[];
+extern const struct Struct8008669C lbl_8012346C[];
+extern const struct Struct8008669C lbl_8013B65C[];
+extern const struct Struct8008669C lbl_8015A11C[];
+extern const struct Struct8008669C lbl_80146F9C[];
+extern const struct Struct8008669C lbl_801649B4[];
+extern const struct Struct8008669C lbl_801683CC[];
+extern const struct Struct8008669C lbl_8016F454[];
+extern const struct Struct8008669C lbl_8016BF84[];
+extern const struct Struct8008669C lbl_80118D0C[];
+extern const struct Struct8008669C lbl_80137A3C[];
+extern const struct Struct8008669C lbl_80157BBC[];
+extern const struct Struct8008669C lbl_80142D64[];
+extern const struct Struct8008669C lbl_8015F80C[];
+extern const struct Struct8008669C lbl_8016682C[];
+extern const struct Struct8008669C lbl_8016EBCC[];
+extern const struct Struct8008669C lbl_8016AEDC[];
 
-static void *lbl_801C695C[] =
+static const struct Struct8008669C *lbl_801C695C[] =
 {
     lbl_80130AEC,
     lbl_8013FBD4,
@@ -651,7 +652,7 @@ static u32 lbl_801C699C[] =
     0x00000024,
 };
 
-static void *lbl_801C69BC[] =
+static const struct Struct8008669C *lbl_801C69BC[] =
 {
     lbl_8012C234,
     lbl_8013EB94,
@@ -675,7 +676,7 @@ static u32 lbl_801C69DC[] =
     0x00000015,
 };
 
-u32 lbl_801C69FC[] =
+static u32 lbl_801C69FC[] =
 {
     0x0000015D,
     0x00000083,
@@ -687,7 +688,7 @@ u32 lbl_801C69FC[] =
     0x00000026,
 };
 
-void *lbl_801C6A1C[] =
+static const struct Struct8008669C *lbl_801C6A1C[] =
 {
     lbl_8012346C,
     lbl_8013B65C,
@@ -699,7 +700,7 @@ void *lbl_801C6A1C[] =
     lbl_8016BF84,
 };
 
-u32 lbl_801C6A3C[] =
+static u32 lbl_801C6A3C[] =
 {
     0x00000008,
     0x0000000A,
@@ -711,7 +712,7 @@ u32 lbl_801C6A3C[] =
     0x00000014,
 };
 
-u32 lbl_801C6A5C[] =
+static u32 lbl_801C6A5C[] =
 {
     0x0000019C,
     0x00000094,
@@ -723,7 +724,7 @@ u32 lbl_801C6A5C[] =
     0x00000029,
 };
 
-void *lbl_801C6A7C[] =
+static const struct Struct8008669C *lbl_801C6A7C[] =
 {
     lbl_80118D0C,
     lbl_80137A3C,
@@ -735,7 +736,7 @@ void *lbl_801C6A7C[] =
     lbl_8016AEDC,
 };
 
-u32 lbl_801C6A9C[] =
+static u32 lbl_801C6A9C[] =
 {
     0x00000007,
     0x00000009,
@@ -747,7 +748,7 @@ u32 lbl_801C6A9C[] =
     0x00000012,
 };
 
-u32 lbl_801C6ABC[] =
+static u32 lbl_801C6ABC[] =
 {
     14,
     6,
@@ -767,7 +768,7 @@ u32 lbl_801C6ABC[] =
     7,
 };
 
-u32 lbl_801C6AFC[] =
+static u32 lbl_801C6AFC[] =
 {
     6,
     6,
@@ -787,7 +788,7 @@ u32 lbl_801C6AFC[] =
     14,
 };
 
-u32 lbl_801C6B3C[] =
+static u32 lbl_801C6B3C[] =
 {
     2,
     10,
@@ -807,7 +808,7 @@ u32 lbl_801C6B3C[] =
     19,
 };
 
-u32 *lbl_801C6B7C[] =
+static u32 *lbl_801C6B7C[] =
 {
     NULL,
     lbl_801C6AFC,
@@ -815,7 +816,7 @@ u32 *lbl_801C6B7C[] =
     lbl_801C6B3C,
 };
 
-struct ApeFacePart lbl_801C6BA4[] =
+static struct ApeFacePart lbl_801C6BA4[] =
 {
     {
         60,
@@ -868,7 +869,7 @@ struct ApeFacePart lbl_801C6BA4[] =
     },
 };
 
-struct ApeFacePart lbl_801C6C9C[] =
+static struct ApeFacePart lbl_801C6C9C[] =
 {
     {
         60,
@@ -921,7 +922,7 @@ struct ApeFacePart lbl_801C6C9C[] =
     },
 };
 
-struct ApeFacePart lbl_801C6D88[] =
+static struct ApeFacePart lbl_801C6D88[] =
 {
     {
         19,
@@ -967,7 +968,7 @@ struct ApeFacePart lbl_801C6D88[] =
     },
 };
 
-struct ApeFacePart lbl_801C6E48[] =
+static struct ApeFacePart lbl_801C6E48[] =
 {
     {
         7,
@@ -1006,7 +1007,7 @@ struct ApeFacePart lbl_801C6E48[] =
     },
 };
 
-struct ApeFacePart lbl_801C6EF4[] =
+static struct ApeFacePart lbl_801C6EF4[] =
 {
     {
         15,
@@ -1052,7 +1053,7 @@ struct ApeFacePart lbl_801C6EF4[] =
     },
 };
 
-struct ApeFacePart lbl_801C6FC0[] =
+static struct ApeFacePart lbl_801C6FC0[] =
 {
     {
         15,
@@ -1144,7 +1145,7 @@ struct ApeFacePart lbl_801C708C[] =
     },
 };
 
-struct ApeFacePart lbl_801C714C[] =
+static struct ApeFacePart lbl_801C714C[] =
 {
     {
         7,
@@ -1183,7 +1184,7 @@ struct ApeFacePart lbl_801C714C[] =
     },
 };
 
-struct ApeFacePart lbl_801C71F8[] =
+static struct ApeFacePart lbl_801C71F8[] =
 {
     {
         15,
@@ -1229,7 +1230,7 @@ struct ApeFacePart lbl_801C71F8[] =
     },
 };
 
-struct ApeFacePart lbl_801C72C4[] =
+static struct ApeFacePart lbl_801C72C4[] =
 {
     {
         15,
@@ -1275,7 +1276,7 @@ struct ApeFacePart lbl_801C72C4[] =
     },
 };
 
-struct ApeFacePart lbl_801C73A0[] =
+static struct ApeFacePart lbl_801C73A0[] =
 {
     {
         19,
@@ -1328,7 +1329,7 @@ struct ApeFacePart lbl_801C73A0[] =
     },
 };
 
-struct ApeFacePart lbl_801C7480[] =
+static struct ApeFacePart lbl_801C7480[] =
 {
     {
         11,
@@ -1367,7 +1368,7 @@ struct ApeFacePart lbl_801C7480[] =
     },
 };
 
-struct ApeFacePart lbl_801C752C[] =
+static struct ApeFacePart lbl_801C752C[] =
 {
     {
         5,
@@ -1413,7 +1414,7 @@ struct ApeFacePart lbl_801C752C[] =
     },
 };
 
-struct ApeFacePart lbl_801C75F8[] =
+static struct ApeFacePart lbl_801C75F8[] =
 {
     {
         5,
@@ -1459,7 +1460,7 @@ struct ApeFacePart lbl_801C75F8[] =
     },
 };
 
-struct ApeFacePart lbl_801C76C4[] =
+static struct ApeFacePart lbl_801C76C4[] =
 {
     {
         4,
@@ -1505,7 +1506,7 @@ struct ApeFacePart lbl_801C76C4[] =
     },
 };
 
-struct ApeFacePart lbl_801C7784[] =
+static struct ApeFacePart lbl_801C7784[] =
 {
     {
         17,
@@ -1979,21 +1980,7 @@ static void draw_baby_head(struct Ape *ape, struct ApeFacePart *arg1, struct Str
         apply_curr_light_group_ambient();
 }
 
-struct Struct8008669C_sub
-{
-    Vec unk0;
-    Vec unkC;
-};
-
-struct Struct8008669C
-{
-    Vec unk0;
-    Vec unkC;
-    struct Struct8008669C_sub unk18[3];
-    s16 unk60[4];
-};
-
-static void func_8008669C(u32 *arg0, struct Struct8008669C *arg1, int arg2, float arg8)
+static void func_8008669C(u32 *arg0, const struct Struct8008669C *arg1, int arg2, float arg8)
 {
     int i;
     int j;
@@ -2063,7 +2050,7 @@ static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct80
     int var_r28;
     int temp_r27_3;
     int temp_r0;
-    void *r4;
+    const struct Struct8008669C *r4;
     int r5;
     float one = 1.0f;
     float f0;
@@ -2197,7 +2184,7 @@ void func_80086D20(struct Ape *ape, int arg1, int arg2)
     int temp_r0;
     int temp_r29;
     struct NlModel *nlModel;
-    void *r4;
+    const struct Struct8008669C *r4;
     int r5;
 
     temp_r29 = ape->charaId;

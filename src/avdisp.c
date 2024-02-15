@@ -1323,15 +1323,6 @@ void u_set_transform_matrices(u8 *mtxIndexes)
     }
 }
 
-
-struct UnkStruct27
-{
-    u8 filler0[4];
-    struct GMAShape *shape;
-    struct GMATevLayer *modelTevs;
-    u8 fillerC[0x38-0xC];
-};
-
 // Returns pointer to shape that follows this one
 struct GMAShape *draw_shape(struct GMAModel *model, struct GMAShape *shape, struct GMATevLayer *modelTevs)
 {

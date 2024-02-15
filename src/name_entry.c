@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "global.h"
+#include "ape_icon.h"
 #include "ball.h"
 #include "bitmap.h"
 #include "camera.h"
@@ -23,6 +24,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "window.h"
 
 #include "../data/common.gma.h"
 
@@ -262,7 +264,7 @@ void ev_name_entry_main(void)
     case 3:
         s_nameEntry.counter++;
         if (s_nameEntry.counter == 15.0)
-            ball->flags |= BALL_FLAG_10;
+            ball->flags |= BALL_FLAG_IGNORE_GRAVITY;
         if (s_nameEntry.counter == 60.0)
         {
             func_800AE8D0();
@@ -287,7 +289,7 @@ void ev_name_entry_main(void)
         break;
     case 4:
         s_nameEntry.state = 5;
-        ball->flags &= ~BALL_FLAG_10;
+        ball->flags &= ~BALL_FLAG_IGNORE_GRAVITY;
         s_nameEntry.unk14 = 1;
         s_nameEntry.unk20 = 0.0f;
         s_nameEntry.unk24 = 60.0f;
@@ -418,7 +420,7 @@ void ev_name_entry_main(void)
         s_nameEntry.counter--;
         if (s_nameEntry.counter > 96.0)
         {
-            if (controllerInfo[playerControllerIDs[ball->playerId]].unk0[2].button & 0x100)
+            if (controllerInfo[playerControllerIDs[ball->playerId]].pressed.button & PAD_BUTTON_A)
                 s_nameEntry.counter = 0x61;
         }
         else if (s_nameEntry.counter == 96.0)
@@ -968,7 +970,7 @@ void effect_nameent_code_main(struct Effect *effect)
         effect->scale.y += 0.2 * (4.0 - effect->scale.y);
         effect->scale.x -= 0.06666666666666667;
         if (effect->scale.x < 0.0)
-            g_poolInfo.effectPool.statusList[effect->poolIndex] = 3;
+            g_poolInfo.effectPool.statusList[effect->poolIndex] = STAT_DEST;
         break;
     }
 }
@@ -1050,7 +1052,7 @@ void effect_get_nameent_code_main(struct Effect *effect)
     case 1:
         var_f4 = 2.0f;
         if (effect->scale.x < 0.0)
-            g_poolInfo.effectPool.statusList[effect->poolIndex] = 3;
+            g_poolInfo.effectPool.statusList[effect->poolIndex] = STAT_DEST;
         break;
     }
     effect->unk88.x *= 0.8;

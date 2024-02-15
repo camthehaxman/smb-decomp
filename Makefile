@@ -44,7 +44,7 @@ SYSTEM_INCLUDE_DIRS := include libc
 ASFLAGS     := -mgekko -I asm
 
 # Metrowerks compiler flags
-MWCC_CFLAGS      := -O4,p -inline auto -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off'
+MWCC_CFLAGS      := -sym on -O4,p -inline auto -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off'
 #MWCC_CFLAGS      := -opt level=0 -nodefaults -proc gekko -fp hard -Cpp_exceptions off -enum int -warn pragmas -pragma 'cats off' -DDEBUG
 MWCC_CPPFLAGS     = $(addprefix -i ,$(INCLUDE_DIRS) $(dir $^)) -I- $(addprefix -i ,$(SYSTEM_INCLUDE_DIRS))
 # GNU compiler flags
@@ -126,7 +126,7 @@ SOURCES := \
 	src/trig_tables.c \
 	src/perf.c \
 	src/sound.c \
-	asm/window.s \
+	src/window.c \
 	src/pool.c \
 	src/nl2ngc.c \
 	src/motload.c \
@@ -144,17 +144,17 @@ SOURCES := \
 	src/recplay_2.c \
 	src/effect.c \
 	src/background.c \
-	asm/bg_old_bluesky.s \
+	src/bg_old_bluesky.c \
 	src/bg_old_cave.c \
-	asm/bg_old_extramaster.s \
+	src/bg_old_extramaster.c \
 	src/bg_old_night.c \
 	src/bg_old_space.c \
 	src/bg_old_sunset.c \
 	src/bg_old_bonus.c \
-	asm/bg_old_ice.s \
+	src/bg_old_ice.c \
 	src/bg_old_sand.c \
 	src/bg_old_storm.c \
-	asm/bg_old_water.s \
+	src/bg_old_water.c \
 	src/bg_jungle.c \
 	src/bg_sand.c \
 	src/bg_water.c \
@@ -163,7 +163,7 @@ SOURCES := \
 	src/bg_bonus.c \
 	src/bg_storm.c \
 	src/bg_master.c \
-	asm/bg_pilot.s \
+	src/bg_pilot.c \
 	src/bg_end.c \
 	src/course.c \
 	src/item.c \
@@ -175,7 +175,9 @@ SOURCES := \
 	src/sprite.c \
 	src/textbox.c \
 	src/hud.c \
-	asm/code_5.s \
+	src/ape_icon.c \
+	src/help.c \
+	src/unk_anim_data.c \
 	src/minimap.c \
 	src/ord_tbl.c \
 	src/code_3.c \
@@ -187,7 +189,7 @@ SOURCES := \
 	src/lzs_decompress.c \
 	src/avdisp.c \
 	src/load.c \
-	asm/shadow.s \
+	src/shadow.c \
 	src/mini.c \
 	src/lens_flare.c \
 	src/code_9.c \
@@ -198,7 +200,7 @@ SOURCES := \
 	src/rend_efc_3.c \
 	src/relocation.c \
 	src/gxutil.c \
-	asm/mini_commend.s \
+	src/mini_commend.c \
 	src/gxcache.c \
 	src/memcard.c \
 	src/DEMOPuts.c \
@@ -557,6 +559,11 @@ $(MWCC_ONLY_OBJECTS): CPPFLAGS  = $(MWCC_CPPFLAGS)
 	$(COMPILE)
 %.cp.o: %.cp
 	$(COMPILE)
+
+# remove 8-byte alignment for this file
+src/unk_anim_data.c.o: src/unk_anim_data.c
+	$(COMPILE)
+	$(OBJCOPY) -j .rodata --set-section-alignment=.rodata=1 $@ $@
 
 %.s.o: %.s
 	@echo Assembling $<

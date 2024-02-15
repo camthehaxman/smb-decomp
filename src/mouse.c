@@ -7,6 +7,7 @@
 #include "mouse.h"
 #include "pool.h"
 #include "sprite.h"
+#include "window.h"
 
 struct Mouse {
     s16 posHorizontal;
@@ -20,7 +21,6 @@ struct Mouse {
 };
 
 struct Mouse mouse;
-extern s32 lbl_802F1EA8;
 
 #define INVALID_SPRITE_INDEX -1;
 
@@ -43,7 +43,7 @@ void ev_mouse_main(void)
 {
     struct Sprite *_spriteInfo;
     int phi_r8;
-    s8 *_statusList;
+    s8 *status;
     u16 _button;
     int i;
     
@@ -55,11 +55,10 @@ void ev_mouse_main(void)
         mouse.unk06 = mouse.posVertical;
 
         phi_r8 = 1;
-        if (analogButtonInfo[0][0] & PAD_BUTTON_B) {
-            // if press "B button"
+        if (analogInputs[0].held & ANALOG_TRIGGER_RIGHT) {
             phi_r8 = 8;
         }
-        _button = controllerInfo[0].unk0[4].button;
+        _button = controllerInfo[0].repeat.button;
         if ((_button & PAD_BUTTON_UP) != 0) {
             // press D-pad up
             mouse.posVertical -= phi_r8;
@@ -78,8 +77,8 @@ void ev_mouse_main(void)
             mouse.posHorizontal += phi_r8;
         }
         
-        mouse.posHorizontal += (controllerInfo[0].unk0[0].stickX * 0.1);
-        mouse.posVertical += (-controllerInfo[0].unk0[0].stickY * 0.1);
+        mouse.posHorizontal += (controllerInfo[0].held.stickX * 0.1);
+        mouse.posVertical += (-controllerInfo[0].held.stickY * 0.1);
 
         // Horizontal Check
         if (mouse.posHorizontal < HORIZONTAL_MIN) {
@@ -100,7 +99,7 @@ void ev_mouse_main(void)
         mouse.unk08 = mouse.posHorizontal - mouse.unk04;
         mouse.unk0a = mouse.posVertical - mouse.unk06;
 
-        if ( (controllerInfo[0].unk0[2].button & PAD_BUTTON_A) != 0 ) {
+        if ( (controllerInfo[0].pressed.button & PAD_BUTTON_A) != 0 ) {
             // if press "A button"
             
             if ( mouse.spriteIdx >= 0 ) {
@@ -108,14 +107,14 @@ void ev_mouse_main(void)
             } else {
                 mouse.spriteIdx = INVALID_SPRITE_INDEX;
                 _spriteInfo = &spriteWork[0];
-                _statusList = g_poolInfo.spritePool.statusList;
+                status = g_poolInfo.spritePool.statusList;
                 for (
                     i = 0;
                     i < g_poolInfo.spritePool.count;
-                    i++, _spriteInfo++, _statusList++
+                    i++, _spriteInfo++, status++
                     ) {
                     if (
-                        *_statusList != 0
+                        *status != STAT_NULL
                         && mouse.posHorizontal >= _spriteInfo->left
                         && mouse.posHorizontal <= _spriteInfo->right
                         && mouse.posVertical >= _spriteInfo->top

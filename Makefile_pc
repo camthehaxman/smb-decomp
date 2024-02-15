@@ -59,6 +59,7 @@ SOURCES := \
 	src/trig_tables.c \
 	src/perf.c \
 	src/sound.c \
+	src/window.c \
 	src/pool.c \
 	src/nl2ngc.c \
 	src/motload.c \
@@ -76,13 +77,17 @@ SOURCES := \
 	src/recplay_2.c \
 	src/effect.c \
 	src/background.c \
+	src/bg_old_bluesky.c \
 	src/bg_old_cave.c \
+	src/bg_old_extramaster.c \
 	src/bg_old_night.c \
 	src/bg_old_space.c \
 	src/bg_old_sunset.c \
 	src/bg_old_bonus.c \
+	src/bg_old_ice.c \
 	src/bg_old_sand.c \
 	src/bg_old_storm.c \
+	src/bg_old_water.c \
 	src/bg_jungle.c \
 	src/bg_sand.c \
 	src/bg_water.c \
@@ -91,6 +96,7 @@ SOURCES := \
 	src/bg_bonus.c \
 	src/bg_storm.c \
 	src/bg_master.c \
+	src/bg_pilot.c \
 	src/bg_end.c \
 	src/course.c \
 	src/item.c \
@@ -102,6 +108,9 @@ SOURCES := \
 	src/sprite.c \
 	src/textbox.c \
 	src/hud.c \
+	src/ape_icon.c \
+	src/help.c \
+	src/unk_anim_data.c \
 	src/minimap.c \
 	src/ord_tbl.c \
 	src/code_3.c \
@@ -113,6 +122,7 @@ SOURCES := \
 	src/lzs_decompress.c \
 	src/avdisp.c \
 	src/load.c \
+	src/shadow.c \
 	src/mini.c \
 	src/lens_flare.c \
 	src/code_9.c \
@@ -123,6 +133,7 @@ SOURCES := \
 	src/rend_efc_3.c \
 	src/relocation.c \
 	src/gxutil.c \
+	src/mini_commend.c \
 	src/gxcache.c \
 	src/memcard.c \
 	src/DEMOPuts.c \

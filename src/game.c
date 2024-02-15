@@ -21,6 +21,7 @@
 #include "info.h"
 #include "input.h"
 #include "item.h"
+#include "light.h"
 #include "load.h"
 #include "mathutil.h"
 #include "minimap.h"
@@ -34,8 +35,8 @@
 #include "stage.h"
 #include "stobj.h"
 #include "textbox.h"
+#include "window.h"
 #include "world.h"
-#include "light.h"
 
 s8 lbl_802F1C25;
 s8 lbl_802F1C24;
@@ -47,8 +48,8 @@ void mode_game_func(void)
 {
     if (!(gameSubmode > SMD_GAME_TOP && gameSubmode < SMD_GAME_BOTTOM))
     {
-        u_debug_set_cursor_pos(10, 10);
-        u_debug_printf("sub_mode: error %d in Game", gameSubmode);
+        window_set_cursor_pos(10, 10);
+        window_printf_2("sub_mode: error %d in Game", gameSubmode);
         return;
     }
 
@@ -174,7 +175,7 @@ void submode_game_ready_init_func(void)
         return;
 
     modeCtrl.submodeTimer = 120;
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     event_finish_all();
     switch (modeCtrl.gameType)
     {
@@ -445,7 +446,7 @@ void submode_game_goal_main_func(void)
     if (!r31)
     {
         BALL_FOREACH(
-            if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & (1 << 14)))
+            if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & (1 << 14)))
             {
                 modeCtrl.courseFlags |= 0x400;
                 u_play_sound_0(0x126);
@@ -478,7 +479,7 @@ void submode_game_goal_replay_init_func(void)
         modeCtrl.submodeTimer = 300;
     modeCtrl.courseFlags &= ~(1 << 10);
     modeCtrl.unk18 = 30;
-    BALL_FOREACH( ball->flags &= ~BALL_FLAG_09; )
+    BALL_FOREACH( ball->flags &= ~BALL_FLAG_REVERSE_GRAVITY; )
     BALL_FOREACH( ball->state = 9; )
     WORLD_FOREACH( world->state = 6; )
     camera_set_state(16);
@@ -510,10 +511,10 @@ void submode_game_goal_replay_main_func(void)
         infoWork.flags &= ~INFO_FLAG_REPLAY;
 
     BALL_FOREACH(
-        if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & (1 << 14)))
+        if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & (1 << 14)))
         {
-            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_10);
-            ball->flags |= BALL_FLAG_09;
+            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+            ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
             modeCtrl.courseFlags |= 0x400;
             u_play_sound_0(0x126);
         }
@@ -936,7 +937,7 @@ void submode_game_bonus_clear_init_func(void)
     event_finish(EVENT_VIBRATION);
     minimap_set_state(MINIMAP_STATE_CLOSE);
     BALL_FOREACH( ball->state = 5; )
-    BALL_FOREACH( ball->flags |= BALL_FLAG_08|BALL_FLAG_10; )
+    BALL_FOREACH( ball->flags |= BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY; )
     camera_set_state(14);
     if (infoWork.flags & INFO_FLAG_10)
         hud_show_time_over_banner(modeCtrl.submodeTimer);
@@ -957,10 +958,10 @@ void submode_game_bonus_clear_main_func(void)
         stop_recplay();
 
     BALL_FOREACH(
-        if (!(ball->flags & BALL_FLAG_09) && (ball->ape->flags & BALL_FLAG_14))
+        if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & BALL_FLAG_14))
         {
-            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_10);
-            ball->flags |= BALL_FLAG_09;
+            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+            ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
             modeCtrl.courseFlags |= (1 << 10);
             u_play_sound_0(0x126);
         }
@@ -976,7 +977,7 @@ void submode_game_bonus_clear_main_func(void)
     }
     if (--modeCtrl.submodeTimer > 0)
         return;
-    BALL_FOREACH( ball->flags &= ~BALL_FLAG_09; )
+    BALL_FOREACH( ball->flags &= ~BALL_FLAG_REVERSE_GRAVITY; )
     if (loadingStageId < 0 && modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         gameSubmodeRequest = SMD_GAME_RESULT_INIT;
     else
@@ -1090,10 +1091,10 @@ void submode_game_over_dest_func(void)
     switch (modeCtrl.gameType)
     {
     case GAMETYPE_MAIN_COMPETITION:
-        g_poolInfo.playerPool.statusList[0] = 0;
-        g_poolInfo.playerPool.statusList[1] = 0;
-        g_poolInfo.playerPool.statusList[2] = 0;
-        g_poolInfo.playerPool.statusList[3] = 0;
+        g_poolInfo.playerPool.statusList[0] = STAT_NULL;
+        g_poolInfo.playerPool.statusList[1] = STAT_NULL;
+        g_poolInfo.playerPool.statusList[2] = STAT_NULL;
+        g_poolInfo.playerPool.statusList[3] = STAT_NULL;
         modeCtrl.currPlayer = 0;
         currentBall = &ballInfo[modeCtrl.currPlayer];
         SoundGroupFree();
@@ -1947,7 +1948,7 @@ int get_next_player(void)
     for (i = 0; i < 4; i++)
     {
         nextPlayer = (modeCtrl.currPlayer + i + 1) & 3;
-        if (g_poolInfo.playerPool.statusList[nextPlayer] == 4)
+        if (g_poolInfo.playerPool.statusList[nextPlayer] == STAT_FREEZE)
             break;
     }
     return nextPlayer;
@@ -1959,14 +1960,14 @@ void u_init_player_data_1(void)
 
     for (i = 0; i < 4; i++)
     {
-        if (g_poolInfo.playerPool.statusList[i] != 0)
+        if (g_poolInfo.playerPool.statusList[i] != STAT_NULL)
             break;
     }
     modeCtrl.currPlayer = i;
     for (i = i + 1; i < 4; i++)
     {
-        if (g_poolInfo.playerPool.statusList[i] == 2)
-            g_poolInfo.playerPool.statusList[i] = 4;
+        if (g_poolInfo.playerPool.statusList[i] == STAT_NORMAL)
+            g_poolInfo.playerPool.statusList[i] = STAT_FREEZE;
     }
     modeCtrl.courseFlags |= (1 << 8);
     for (i = 0; i < 4; i++)
@@ -1978,17 +1979,17 @@ void u_init_player_data_1(void)
 
 void u_init_player_data_2(void)
 {
-    u32 r0;
+    u32 nextPlayer;
 
-    if (g_poolInfo.playerPool.statusList[modeCtrl.currPlayer] == 2)
-        g_poolInfo.playerPool.statusList[modeCtrl.currPlayer] = 4;
+    if (g_poolInfo.playerPool.statusList[modeCtrl.currPlayer] == STAT_NORMAL)
+        g_poolInfo.playerPool.statusList[modeCtrl.currPlayer] = STAT_FREEZE;
     playerInfos[modeCtrl.currPlayer] = infoWork;
     lbl_801F3A8C[modeCtrl.currPlayer] = modeCtrl.courseFlags;
-    r0 = get_next_player();
-    g_poolInfo.playerPool.statusList[r0] = 2;
-    if (modeCtrl.currPlayer != r0)
+    nextPlayer = get_next_player();
+    g_poolInfo.playerPool.statusList[nextPlayer] = STAT_NORMAL;
+    if (modeCtrl.currPlayer != nextPlayer)
     {
-        modeCtrl.currPlayer = r0;
+        modeCtrl.currPlayer = nextPlayer;
         infoWork = playerInfos[modeCtrl.currPlayer];
         modeCtrl.courseFlags = lbl_801F3A8C[modeCtrl.currPlayer];
         loadingStageId = u_get_next_stage_id();
@@ -1998,7 +1999,7 @@ void u_init_player_data_2(void)
 // Marks a player as having reached Game Over
 void mark_player_finished(int playerId)
 {
-    g_poolInfo.playerPool.statusList[playerId] = 0;
+    g_poolInfo.playerPool.statusList[playerId] = STAT_NULL;
 }
 
 // Returns true if all players have reached Game Over
@@ -2009,7 +2010,7 @@ BOOL are_all_players_finished(void)
 
     for (i = 0; i < 4; i++)
     {
-        if (g_poolInfo.playerPool.statusList[i] != 0)
+        if (g_poolInfo.playerPool.statusList[i] != STAT_NULL)
         {
             ret = FALSE;
             break;

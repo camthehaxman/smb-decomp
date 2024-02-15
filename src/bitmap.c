@@ -12,8 +12,9 @@
 #include "gxutil.h"
 #include "load.h"
 #include "mathutil.h"
-#include "sprite.h"
 #include "mouse.h"
+#include "sprite.h"
+#include "window.h"
 
 struct TPL *u_unkBitmapTPL;
 s32 spriteParamsBufState;
@@ -400,7 +401,7 @@ void bitmap_main(void)
     GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 
     u_unkBitmapTPL = bitmapGroups[BMP_COM].tpl;
-    func_8002F0E4();
+    window_draw();
     m[0][0] = projParams[1];
     m[0][3] = projParams[2];
     m[1][1] = projParams[3];

@@ -15,8 +15,8 @@ enum
     BALL_FLAG_06 = 1 << 6,
     BALL_FLAG_07 = 1 << 7,
     BALL_FLAG_08 = 1 << 8,
-    BALL_FLAG_09 = 1 << 9,
-    BALL_FLAG_10 = 1 << 10,
+    BALL_FLAG_REVERSE_GRAVITY = 1 << 9,
+    BALL_FLAG_IGNORE_GRAVITY = 1 << 10,
     BALL_FLAG_11 = 1 << 11,
     BALL_FLAG_GOAL = 1 << 12,  // monkey dances and cannot move horizontally
     BALL_FLAG_13 = 1 << 13,
@@ -89,7 +89,7 @@ struct Ball
     Vec unkB8;
     float unkC4;
     Mtx unkC8;
-    float unkF8;
+    float speed;
     /*0xFC*/ struct Ape *ape;
     u32 unk100;
     Vec unk104;
@@ -123,14 +123,14 @@ struct Ball
     { \
         struct Ball *ball; \
         struct Ball *ballBackup_; \
-        s8 *unk_; \
+        s8 *status; \
         int i_; \
         ballBackup_ = currentBall; \
         ball = ballInfo; \
-        unk_ = g_poolInfo.playerPool.statusList; \
-        for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, ball++, unk_++) \
+        status = g_poolInfo.playerPool.statusList; \
+        for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, ball++, status++) \
         { \
-            if (*unk_ == 2) \
+            if (*status == STAT_NORMAL) \
             { \
                 currentBall = ball; \
                 { code } \

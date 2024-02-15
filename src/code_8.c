@@ -17,7 +17,7 @@ struct Struct80048084
     GXTexObj *unk24;
 };
 
-void func_80048084(struct NlModel *arg0, struct Struct80048084 *arg1, float *arg2)
+void func_80048084(struct NlModel *arg0, struct NlModel *arg1, float *arg2)
 {
     struct NlMesh *mesh;
     struct NlMesh *next;
@@ -28,8 +28,8 @@ void func_80048084(struct NlModel *arg0, struct Struct80048084 *arg1, float *arg
         return;
     arg0->flags &= 0xFFFFFFF9;
     memcpy(&lbl_802F1F60, arg2, 4);
-    r30 = arg1->unk20;
-    r29 = arg1->unk24;
+    r30 = ((struct NlMesh *)arg1->meshStart)->texFlags;
+    r29 = ((struct NlMesh *)arg1->meshStart)->texObj;
     mesh = (struct NlMesh *)arg0->meshStart;
     while (mesh->flags != 0)
     {
@@ -124,7 +124,7 @@ static void lbl_800482A4(struct NlVtxTypeA *arg0)
 static void lbl_8004853C(struct NlVtxTypeB *);
 static void lbl_8004863C(struct NlVtxTypeA *);
 
-void func_80048420(struct NlModel *arg0, struct Struct80048084 *arg1, float *arg2)
+void func_80048420(struct NlModel *arg0, struct NlModel *arg1, float *arg2)
 {
     struct NlMesh *mesh;
     struct NlMesh *next;
@@ -135,8 +135,8 @@ void func_80048420(struct NlModel *arg0, struct Struct80048084 *arg1, float *arg
         return;
     arg0->flags &= 0xFFFFFFF9;
     memcpy(&lbl_802F1F60, arg2, 4);
-    r30 = arg1->unk20;
-    r29 = arg1->unk24;
+    r30 = ((struct NlMesh *)arg1->meshStart)->texFlags;
+    r29 = ((struct NlMesh *)arg1->meshStart)->texObj;
     mesh = (struct NlMesh *)arg0->meshStart;
     while (mesh->flags != 0)
     {

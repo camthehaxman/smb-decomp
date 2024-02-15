@@ -29,10 +29,12 @@
 #include "ord_tbl.h"
 #include "pool.h"
 #include "rend_efc.h"
+#include "shadow.h"
 #include "sprite.h"
 #include "stage.h"
 #include "stobj.h"
 #include "thread.h"
+#include "window.h"
 #include "world.h"
 
 #define SCREEN_ASPECT (640.0f / 480.0f)
@@ -57,12 +59,12 @@ static inline void show_loading_msg(void)
     int chr;
     int asterisks;
 
-    u_debug_set_cursor_pos(14, 15);
+    window_set_cursor_pos(14, 15);
     chr = throbber[(globalAnimTimer/2) % 4];
-    u_debug_printf("%c", chr);
+    window_printf_2("%c", chr);
     u_debug_print("NOW LOADING");
-    u_debug_printf("%c", chr);
-    u_debug_set_cursor_pos(15, 16);
+    window_printf_2("%c", chr);
+    window_set_cursor_pos(15, 16);
     u_debug_print("LEFT: ");
     asterisks = get_load_queue_count();
     while (asterisks > 0)
@@ -431,10 +433,10 @@ void u_draw_tutorial_button_and_joystick(void)
     stickY = 0.0f;
     for (i = 0; i < 4; i++)
     {
-        if (controllerInfo[i].unk0[0].err == 0)
+        if (controllerInfo[i].held.err == 0)
         {
-            stickX = (float)controllerInfo[i].unk0[0].stickX / 60.0;
-            stickY = -(float)controllerInfo[i].unk0[0].stickY / 60.0;
+            stickX = (float)controllerInfo[i].held.stickX / 60.0;
+            stickY = -(float)controllerInfo[i].held.stickY / 60.0;
             break;
         }
     }
@@ -572,8 +574,8 @@ void draw_normal_game_scene(void)
     {
         if (cameraInfo[i].sub28.vp.width > 0.0f && cameraInfo[i].sub28.vp.height > 0.0f)
         {
-            if (g_poolInfo.playerPool.statusList[i] == 0
-             || g_poolInfo.playerPool.statusList[i] == 4
+            if (g_poolInfo.playerPool.statusList[i] == STAT_NULL
+             || g_poolInfo.playerPool.statusList[i] == STAT_FREEZE
              || (cameraInfo[i].flags & (1 << 6)))
             {
                 if (!(cameraInfo[i].flags & (1 << 7)))
@@ -666,15 +668,15 @@ u16 arrowModelIDs[4] = { ARROW_1P, ARROW_2P, ARROW_3P, ARROW_4P };
 void draw_live_arrow(void)
 {
     struct Ball *ball;
-    s8 *r25 = g_poolInfo.playerPool.statusList;
+    s8 *status = g_poolInfo.playerPool.statusList;
     int i;
     Vec sp8;
     float f27;
 
     ball = ballInfo;
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r25++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
-        if (*r25 == 0 || *r25 == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
         if (ball->flags & BALL_FLAG_INVISIBLE)
             continue;
@@ -851,13 +853,13 @@ void draw_extra_scene(void)
 void draw_results_scene(void)
 {
     int i;
-    struct Ball *r23 = currentBall;
+    struct Ball *ball = currentBall;
 
     for (i = 0; i < 4; i++)
     {
         if (cameraInfo[i].sub28.vp.width > 0.0f && cameraInfo[i].sub28.vp.height > 0.0f)
         {
-            if ((g_poolInfo.playerPool.statusList[i] == 0 || g_poolInfo.playerPool.statusList[i] == 4)
+            if ((g_poolInfo.playerPool.statusList[i] == STAT_NULL || g_poolInfo.playerPool.statusList[i] == STAT_FREEZE)
              && !(cameraInfo[i].flags & (1 << 6)))
                 continue;
 
@@ -903,7 +905,7 @@ void draw_results_scene(void)
                 polyDisp.unk0 &= ~(1 << 3);
         }
     }
-    currentBall = r23;
+    currentBall = ball;
     default_camera_env();
 }
 

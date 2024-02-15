@@ -17,6 +17,7 @@
 #include "gma.h"
 #include "gxutil.h"
 #include "info.h"
+#include "light.h"
 #include "load.h"
 #include "mathutil.h"
 #include "minimap.h"
@@ -24,9 +25,10 @@
 #include "nl2ngc.h"
 #include "preview.h"
 #include "recplay.h"
+#include "shadow.h"
 #include "stage.h"
 #include "stcoli.h"
-#include "light.h"
+#include "window.h"
 
 #include "../data/common.nlobj.h"
 
@@ -34,8 +36,8 @@
 s16 currStageId;
 s16 loadingStageId;
 s16 loadingStageIdRequest;
-u32 lbl_802F1F50;
-u32 lbl_802F1F4C;
+s32 lbl_802F1F50;
+s32 lbl_802F1F4C;
 s32 animGroupCount;
 struct DynamicStagePart *dynamicStageParts;
 u16 lbl_802F1F40;
@@ -698,13 +700,6 @@ void load_stage_files(int stageId)
         DVDChangeDir("/test");
     }
 }
-
-struct Struct802099E8
-{
-    u32 *unk0;
-    void *unk4;
-    s32 unk8;
-};
 
 struct Struct80209D48 // maybe AnimGroupModel?
 {
@@ -2002,13 +1997,6 @@ Struct80206DEC_Func func_80047518(Struct80206DEC_Func func)
 }
 #pragma force_active reset
 
-struct Struct80092F90
-{
-    u16 unk0;
-    u16 unk2;
-    void *unk4;
-};
-
 #define lbl_802F3768 1.0f
 
 void stage_draw(void)
@@ -2072,14 +2060,14 @@ void stage_draw(void)
                     GXLoadNrmMtxImm(mathutilData->mtxA, 0);
                     avdisp_draw_model_culled_sort_translucent(model);
                     sp7C.unk2 = 4;
-                    sp7C.unk4 = model;
+                    sp7C.model.gma = model;
                 }
                 else
                 {
                     nl2ngc_draw_model_sort_translucent_alt2(
                         NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_GOAL_01));
                     sp7C.unk2 = 0;
-                    sp7C.unk4 = NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_GOAL_01);
+                    sp7C.model.naomi = NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_GOAL_01);
                 }
                 if (r31 != 0)
                     func_80092F90(&sp7C);
@@ -2139,7 +2127,7 @@ void stage_draw(void)
                                 avdisp_draw_model_culled_sort_none(model);
                                 if (r31 != 0)
                                 {
-                                    sp7C.unk4 = model;
+                                    sp7C.model.gma = model;
                                     func_80092F90(&sp7C);
                                 }
                             }
@@ -2229,7 +2217,7 @@ void stage_draw(void)
                                 if (r31 != 0)
                                 {
                                     sp7C.unk2 = 0;
-                                    sp7C.unk4 = model;
+                                    sp7C.model.naomi = model;
                                     func_80092F90(&sp7C);
                                 }
                                 if (r25 != NULL)
@@ -2263,7 +2251,7 @@ void stage_draw(void)
                 if (r31 != 0)
                 {
                     sp7C.unk2 = 0;
-                    sp7C.unk4 = dyn->tempModel;
+                    sp7C.model.naomi = dyn->tempModel;
                     func_80092F90(&sp7C);
                 }
                 dyn++;

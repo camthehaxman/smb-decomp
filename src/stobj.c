@@ -17,6 +17,7 @@
 #include "stcoli.h"
 #include "stobj.h"
 #include "vibration.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/bg_jun.gma.h"
@@ -224,21 +225,21 @@ void ev_stobj_main(void)
 {
     int i;
     struct Stobj *stobj;
-    s8 *phi_r27;
+    s8 *status;
 
     if (debugFlags & 0xA)
         return;
 
-    phi_r27 = g_poolInfo.stobjPool.statusList;
+    status = g_poolInfo.stobjPool.statusList;
     stobj = stobjInfo;
-    for (i = g_poolInfo.stobjPool.count; i > 0; i--, phi_r27++, stobj++)
+    for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
-        if (*phi_r27 != 0)
+        if (*status != STAT_NULL)
         {
-            if (*phi_r27 == 3)
+            if (*status == STAT_DEST)
             {
                 stobjDestroyFuncs[stobj->type](stobj);
-                *phi_r27 = 0;
+                *status = STAT_NULL;
             }
             else
             {
@@ -284,16 +285,16 @@ void ev_stobj_dest(void)
 {
     int i;
     struct Stobj *stobj;
-    s8 *phi_r27;
+    s8 *status;
 
-    phi_r27 = g_poolInfo.stobjPool.statusList;
+    status = g_poolInfo.stobjPool.statusList;
     stobj = stobjInfo;
-    for (i = g_poolInfo.stobjPool.count; i > 0; i--, phi_r27++, stobj++)
+    for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
-        if (*phi_r27 != 0)
+        if (*status != STAT_NULL)
         {
             stobjDestroyFuncs[stobj->type](stobj);
-            *phi_r27 = 0;
+            *status = STAT_NULL;
         }
     }
 }
@@ -302,22 +303,22 @@ void stobj_draw(void)
 {
     s32 i;
     struct Stobj *stobj;
-    s8 *phi_r29;
+    s8 *status;
     EnvMapFunc func;
     int phi_r25;
     Mtx mtx;
 
     func = backgroundInfo.stageEnvMapFunc;
-    if (func != 0)
+    if (func != NULL)
         u_avdisp_set_some_func_1(func);
     mathutil_mtx_copy(mathutilData->mtxB, mtx);
 
-    phi_r29 = g_poolInfo.stobjPool.statusList;
+    status = g_poolInfo.stobjPool.statusList;
     phi_r25 = 0;
     stobj = stobjInfo;
-    for (i = g_poolInfo.stobjPool.count; i > 0; i--, phi_r29++, stobj++)
+    for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
-        if (*phi_r29 != 0)
+        if (*status != STAT_NULL)
         {
             if (phi_r25 != stobj->animGroupId)
             {
@@ -1014,11 +1015,11 @@ static void stobj_jamabar_debug(struct Stobj *stobj)
     window_printf(2, "OFS: X,%7.3f\n", stobj->u_local_pos.x);
     window_printf(2, string______Y__7_3f_n_2, stobj->u_local_pos.y);
     window_printf(2, string______Z__7_3f_n_2, stobj->u_local_pos.z);
-    func_8002FD68(2, lbl_802F0B40);
+    u_set_window_text(2, lbl_802F0B40);
     window_printf(2, "OFS SPD: X,%7.3f\n", stobj->u_local_vel.x);
     window_printf(2, "         Y,%7.3f\n", stobj->u_local_vel.y);
     window_printf(2, "         Z,%7.3f\n", stobj->u_local_vel.z);
-    func_8002FD68(2, lbl_802F0B40);
+    u_set_window_text(2, lbl_802F0B40);
 }
 
 static void stobj_dummy_init(struct Stobj *stobj) {}
