@@ -102,8 +102,8 @@ int should_open_pause_menu(void)
         return FALSE;
     if (dipSwitches & DIP_DEBUG)
     {
-        if (!(analogInputs[0].held & PAD_BUTTON_A)
-         && !(analogInputs[0].held & PAD_BUTTON_B)
+        if (!(analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+         && !(analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
          && lbl_802F1ED8 == 0
          && !(debugFlags & 8)
          && (g_currPlayerButtons[2] & PAD_BUTTON_START))
@@ -215,13 +215,13 @@ void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
 
     if (lbl_802F1BA0 > 0)
         lbl_802F1BA0--;
-    if (CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_UP) && lbl_802F1BA0 == 0)
+    if (REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_UP) && lbl_802F1BA0 == 0)
     {
         if (--pauseMenuState.selection < 0)
             pauseMenuState.selection = pauseMenuState.itemCount - 1;
         lbl_802F1BA0 = 10;
     }
-    else if (CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_DOWN) && lbl_802F1BA0 == 0)
+    else if (REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_DOWN) && lbl_802F1BA0 == 0)
     {
         if (++pauseMenuState.selection > pauseMenuState.itemCount - 1)
             pauseMenuState.selection = 0;
@@ -232,8 +232,8 @@ void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
     if (pauseMenuState.menuType == PAUSEMENU_CONT_GUIDE_HOW_EXIT
      && pauseMenuState.selection == 1)  // "Guide"
     {
-        if (CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_LEFT)
-         || CONTROLLER_SOMETHING(pauseMenuState.padId, PAD_BUTTON_RIGHT))
+        if (REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_LEFT)
+         || REPEAT_WITH_R_ACCEL(pauseMenuState.padId, PAD_BUTTON_RIGHT))
         {
             pauseMenuState.unk4 |= 0x10;
             u_play_sound_1(0x169);

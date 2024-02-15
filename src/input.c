@@ -15,7 +15,7 @@
 
 struct ControllerInfo controllerInfo[4];
 struct ControllerInfo lbl_801F3C60[4];
-struct AnalogButtonInfo analogInputs[4];
+struct AnalogInput analogInputs[4];
 s32 controllerRepeatCounts[4];
 u16 g_currPlayerButtons[6];
 u16 g_currPlayerAnalogButtons[6];
@@ -282,7 +282,7 @@ void input_main(void)
         */
         test3(&controllerInfo[i], &sp10[i]);
     }
-    get_analog_presses();
+    handle_analog_inputs();
     get_key_repeats();
     func_80025640();
 }
@@ -342,11 +342,14 @@ void func_80025158(PADStatus *pads)
     }
 }
 
-void get_analog_presses(void)
+// Updates the state of analog inputs for each controller.
+// This function detects when sticks or triggers have moved enough to be considered a button press.
+// The threshold for an input to be detected as pressed is much greater than the threshold for being
+// released. This makes it less sensitive to rapid fluctuations.
+void handle_analog_inputs(void)
 {
     int i;
-    int j;
-    struct AnalogButtonInfo *analog = &analogInputs[0];
+    struct AnalogInput *analog = &analogInputs[0];
 
     for (i = 0; i < 4; i++)
     {
@@ -361,79 +364,49 @@ void get_analog_presses(void)
         x = cont->held.stickX;
         y = cont->held.stickY;
 
-        if (analog->prevHeld & ANALOG_STICK_LEFT)
-            threshold = -15;
-        else
-            threshold = -52;
+        threshold = (analog->prevHeld & ANALOG_STICK_LEFT) ? -15 : -52;
         if (x < threshold)
             analog->held |= ANALOG_STICK_LEFT;
 
-        if (analog->prevHeld & ANALOG_STICK_RIGHT)
-            threshold = 15;
-        else
-            threshold = 52;
+        threshold = (analog->prevHeld & ANALOG_STICK_RIGHT) ? 15 : 52;
         if (x > threshold)
             analog->held |= ANALOG_STICK_RIGHT;
 
-        if (analog->prevHeld & ANALOG_STICK_DOWN)
-            threshold = -15;
-        else
-            threshold = -52;
+        threshold = (analog->prevHeld & ANALOG_STICK_DOWN) ? -15 : -52;
         if (y < threshold)
             analog->held |= ANALOG_STICK_DOWN;
 
-        if (analog->prevHeld & ANALOG_STICK_UP)
-            threshold = 15;
-        else
-            threshold = 52;
+        threshold = (analog->prevHeld & ANALOG_STICK_UP) ? 15 : 52;
         if (y > threshold)
             analog->held |= ANALOG_STICK_UP;
 
         x = cont->held.substickX;
         y = cont->held.substickY;
 
-        if (analog->prevHeld & ANALOG_CSTICK_LEFT)
-            threshold = -15;
-        else
-            threshold = -52;
+        threshold = (analog->prevHeld & ANALOG_CSTICK_LEFT) ? -15 : -52;
         if (x < threshold)
             analog->held |= ANALOG_CSTICK_LEFT;
 
-        if (analog->prevHeld & ANALOG_CSTICK_RIGHT)
-            threshold = 15;
-        else
-            threshold = 52;
+        threshold = (analog->prevHeld & ANALOG_CSTICK_RIGHT) ? 15 : 52;
         if (x > threshold)
             analog->held |= ANALOG_CSTICK_RIGHT;
 
-        if (analog->prevHeld & ANALOG_CSTICK_DOWN)
-            threshold = -15;
-        else
-            threshold = -52;
+        threshold = (analog->prevHeld & ANALOG_CSTICK_DOWN) ? -15 : -52;
         if (y < threshold)
             analog->held |= ANALOG_CSTICK_DOWN;
 
-        if (analog->prevHeld & ANALOG_CSTICK_UP)
-            threshold = 15;
-        else
-            threshold = 52;
+        threshold = (analog->prevHeld & ANALOG_CSTICK_UP) ? 15 : 52;
         if (y > threshold)
             analog->held |= ANALOG_CSTICK_UP;
 
         x = cont->held.triggerLeft;
         y = cont->held.triggerRight;
 
-        if (analog->prevHeld & ANALOG_TRIGGER_LEFT)
-            threshold = 40;
-        else
-            threshold = 80;
+        threshold = (analog->prevHeld & ANALOG_TRIGGER_LEFT) ? 40 : 80;
         if (x > threshold)
             analog->held |= ANALOG_TRIGGER_LEFT;
 
-        if (analog->prevHeld & ANALOG_TRIGGER_RIGHT)
-            threshold = 40;
-        else
-            threshold = 80;
+        threshold = (analog->prevHeld & ANALOG_TRIGGER_RIGHT) ? 40 : 80;
         if (y > threshold)
             analog->held |= ANALOG_TRIGGER_RIGHT;
 
@@ -448,7 +421,7 @@ void get_analog_presses(void)
 void get_key_repeats(void)
 {
     struct ControllerInfo *cont = &controllerInfo[0];
-    struct AnalogButtonInfo *analog = &analogInputs[0];
+    struct AnalogInput *analog = &analogInputs[0];
     int i;
 
     for (i = 0; i < 4; i++, cont++, analog++)
@@ -459,6 +432,7 @@ void get_key_repeats(void)
         else
             controllerRepeatCounts[i] = 0;
 
+        // After being held for 20 frames, repeat the input every 4th frame
         if (controllerRepeatCounts[i] >= 20 && (controllerRepeatCounts[i] & 3) == 0)
         {
             cont->repeat.button = cont->held.button;
@@ -484,16 +458,16 @@ void func_80025640(void)
         g_currPlayerButtons[i] = 0;
         g_currPlayerAnalogButtons[i] = 0;
     }
-    
+
     // I could only get this function to match with nested loops, which suggests that controllerInfo
     // and analogInputs should be 2D arrays. However, I find the rest of the code more readable when
     // they are arrays of structs with properly labeled members.
 
     switch (gameMode)
     {
-    case 0:
-    case 3:
-    case 5:
+    case MD_ADV:
+    case MD_TEST:
+    case MD_OPTION:
         for (i = 0; i < 4; i++)
         {
             if (controllerInfo[i].held.err == -1)

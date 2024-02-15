@@ -109,12 +109,12 @@ static void sel_stage_handle_input(void)
     if (debugFlags & 0xA)
         return;
 
-    if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP))
+    if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_UP))
     {
         if (--stageSelection.difficulty < 0)
             stageSelection.difficulty = 7;
     }
-    else if (CONTROLLER_SOMETHING(0, PAD_BUTTON_DOWN))
+    else if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_DOWN))
     {
         if (++stageSelection.difficulty >= 8)
            stageSelection.difficulty = 0;
@@ -126,12 +126,12 @@ static void sel_stage_handle_input(void)
         modeCtrl.courseFlags &= ~(1 << 0);
         modeCtrl.courseFlags &= ~COURSE_FLAG_EXTRA;
         modeCtrl.courseFlags &= ~COURSE_FLAG_MASTER;
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_LEFT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_LEFT))
         {
             if (--loadingStageIdRequest < 1)
                 loadingStageIdRequest = 1;
         }
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_RIGHT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_RIGHT))
         {
             if (++loadingStageIdRequest > 200)
                 loadingStageIdRequest = 200;
@@ -182,9 +182,9 @@ static void sel_stage_handle_input(void)
     }
     if (stageSelection.difficulty != 0)
     {
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_LEFT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_LEFT))
             stageSelection.levelNum--;
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_RIGHT))
+        if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_RIGHT))
             stageSelection.levelNum++;
 
         if (stageSelection.levelNum < 1)

@@ -1299,8 +1299,8 @@ void submode_adv_title_main_func(void)
     int i;
 
     if ((dipSwitches & DIP_DEBUG)
-     && (controllerInfo[0].held.button & (1 << 10))
-     && (controllerInfo[0].pressed.button & (1 << 11))
+     && (controllerInfo[0].held.button & PAD_BUTTON_X)
+     && (controllerInfo[0].pressed.button & PAD_BUTTON_Y)
      && modeCtrl.submodeTimer > 30)
         modeCtrl.submodeTimer = 30;
 
@@ -1331,14 +1331,14 @@ void submode_adv_title_main_func(void)
     {
         for (i = 0; i < 4; i++)
         {
-            if (modeCtrl.unk10 != 0 && CONTROLLER_SOMETHING(i, PAD_BUTTON_UP))
+            if (modeCtrl.unk10 != 0 && REPEAT_WITH_R_ACCEL(i, PAD_BUTTON_UP))
             {
                 modeCtrl.unk10 = 0;
                 u_play_sound_1(0x6F);
                 if (modeCtrl.submodeTimer > 30 && modeCtrl.submodeTimer < 300)
                     modeCtrl.submodeTimer = 300;
             }
-            else if (modeCtrl.unk10 != 1 && CONTROLLER_SOMETHING(i, PAD_BUTTON_DOWN))
+            else if (modeCtrl.unk10 != 1 && REPEAT_WITH_R_ACCEL(i, PAD_BUTTON_DOWN))
             {
                 modeCtrl.unk10 = 1;
                 u_play_sound_1(0x6F);

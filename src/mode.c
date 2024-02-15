@@ -547,23 +547,17 @@ int title_screen_debug_menu(void)
     int chosen = FALSE;
     int i;
 
-    if (!(analogInputs[0].held & PAD_BUTTON_A)
-     && !(analogInputs[0].held & PAD_BUTTON_B)
+    if (!(analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+     && !(analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
      && lbl_802F1ED8 == 0)
     {
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP)
-         || CONTROLLER_SOMETHING(1, PAD_BUTTON_UP)
-         || CONTROLLER_SOMETHING(2, PAD_BUTTON_UP)
-         || CONTROLLER_SOMETHING(3, PAD_BUTTON_UP))
+        if (REPEAT_WITH_R_ACCEL_ANY(PAD_BUTTON_UP))
         {
             if (--modeCtrl.menuSel < 0)
                 modeCtrl.menuSel = 4;
         }
 
-        if (CONTROLLER_SOMETHING(0, PAD_BUTTON_DOWN)
-         || CONTROLLER_SOMETHING(1, PAD_BUTTON_DOWN)
-         || CONTROLLER_SOMETHING(2, PAD_BUTTON_DOWN)
-         || CONTROLLER_SOMETHING(3, PAD_BUTTON_DOWN))
+        if (REPEAT_WITH_R_ACCEL_ANY(PAD_BUTTON_DOWN))
         {
             if (++modeCtrl.menuSel == 5)
                 modeCtrl.menuSel = 0;
@@ -651,8 +645,8 @@ void u_menu_input_debug(void)
     int bvar = FALSE;
     int i;
 
-    if (!(analogInputs[0].held & PAD_BUTTON_A)
-     && !(analogInputs[0].held & PAD_BUTTON_B)
+    if (!(analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+     && !(analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
      && lbl_802F1ED8 == 0
      && gameMode != MD_ADV)
     {
@@ -729,8 +723,8 @@ void u_menu_input_debug(void)
     case MD_ADV:
         if (modeCtrl.unk1C == 0 || !title_screen_debug_menu())
         {
-            if ((analogInputs[0].held & PAD_BUTTON_A)
-             || (analogInputs[0].held & PAD_BUTTON_B)
+            if ((analogInputs[0].held & ANALOG_TRIGGER_LEFT)
+             || (analogInputs[0].held & ANALOG_TRIGGER_RIGHT)
              || lbl_802F1ED8 != 0
              || gameSubmode == SMD_ADV_START_MAIN)
                 break;

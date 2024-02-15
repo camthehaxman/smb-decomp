@@ -32,8 +32,8 @@ static void func_8009DB40(Mtx arg0);
 
 void submode_mini_commend_init_func(void)
 {
-	s8 spC[4];
-	s8 sp8[4];
+    s8 spC[4];
+    s8 sp8[4];
 
     event_start(0xF);
     event_start(0x10);
@@ -71,164 +71,164 @@ void submode_mini_commend_main_func(void)
     s32 var_r30;
 
     if (debugFlags & 0xA)
-		return;
-	var_r30 = modeCtrl.unk10;
-	if (controllerInfo[0].pressed.button & 2)
-	{
-		var_r30++;
-		if (var_r30 >= 11)
-			var_r30 = 0;
-	}
-	if (controllerInfo[0].pressed.button & 1)
-	{
-		var_r30--;
-		if (var_r30 < 0)
-			var_r30 = 10;
-	}
-	if (var_r30 != modeCtrl.unk10)
-	{
-		switch (var_r30)
-		{
-		case 0:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 0;
-			sp1C[1] = 1;
-			sp18[1] = 1;
-			sp1C[2] = 2;
-			sp18[2] = 2;
-			sp1C[3] = 3;
-			sp18[3] = 3;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 1:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 3;
-			sp1C[1] = 1;
-			sp18[1] = 0;
-			sp1C[2] = 2;
-			sp18[2] = 1;
-			sp1C[3] = 3;
-			sp18[3] = 2;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 2:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 2;
-			sp1C[1] = 1;
-			sp18[1] = 3;
-			sp1C[2] = 2;
-			sp18[2] = 0;
-			sp1C[3] = 3;
-			sp18[3] = 1;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 3:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 1;
-			sp1C[1] = 1;
-			sp18[1] = 2;
-			sp1C[2] = 2;
-			sp18[2] = 3;
-			sp1C[3] = 3;
-			sp18[3] = 0;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 4:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 3;
-			sp1C[1] = 0x41;
-			sp18[1] = 0;
-			sp1C[2] = 0x42;
-			sp18[2] = 1;
-			sp1C[3] = 0x43;
-			sp18[3] = 2;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 5:
-			mini_commend_free_data();
-			sp1C[0] = 0x40;
-			sp18[0] = 0;
-			sp1C[1] = 1;
-			sp18[1] = 1;
-			sp1C[2] = 2;
-			sp18[2] = 2;
-			sp1C[3] = 3;
-			sp18[3] = 3;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 6:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 0;
-			sp1C[1] = 0x41;
-			sp18[1] = 1;
-			sp1C[2] = 0x42;
-			sp18[2] = 2;
-			sp1C[3] = 0x43;
-			sp18[3] = 3;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 7:
-			mini_commend_free_data();
-			sp18[0] = 0;
-			sp1C[0] = 0;
-			sp1C[1] = 1;
-			sp18[1] = 0;
-			sp1C[2] = 2;
-			sp18[2] = 0;
-			sp1C[3] = 3;
-			sp18[3] = 0;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 8:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 3;
-			sp1C[1] = 1;
-			sp18[1] = 3;
-			sp1C[2] = 2;
-			sp18[2] = 3;
-			sp1C[3] = 3;
-			sp18[3] = 3;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 9:
-			mini_commend_free_data();
-			sp1C[0] = 0;
-			sp18[0] = 2;
-			sp1C[1] = -1;
-			sp1C[2] = -1;
-			sp1C[3] = -1;
-			func_8009C5E4(sp1C, sp18);
-			break;
-		case 10:
-			mini_commend_free_data();
-			sp10[0] = 0x40;
-			sp8[0] = 3;
-			sp10[1] = 0x41;
-			sp8[1] = 3;
-			sp10[2] = 0x42;
-			sp8[2] = 3;
-			sp10[3] = 0x43;
-			sp8[3] = 3;
-			sp10[4] = 2;
-			sp8[4] = 0;
-			func_8009CAE0(sp10, sp8, 0);
-			break;
-		}
-		camera_set_state(0x46);
-		modeCtrl.unk10 = var_r30;
-	}
-	mathutil_mtxA_from_translate_xyz(lbl_802F1ECC, lbl_802F1EC8, lbl_802F1EC4);
-	mathutil_mtxA_rotate_y(lbl_802F1ED2);
-	mathutil_mtxA_rotate_x(lbl_802F1ED4);
-	mathutil_mtxA_rotate_z(lbl_802F1ED0);
-	func_8009DB40(mathutilData->mtxA);
+        return;
+    var_r30 = modeCtrl.unk10;
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_RIGHT)
+    {
+        var_r30++;
+        if (var_r30 >= 11)
+            var_r30 = 0;
+    }
+    if (controllerInfo[0].pressed.button & PAD_BUTTON_LEFT)
+    {
+        var_r30--;
+        if (var_r30 < 0)
+            var_r30 = 10;
+    }
+    if (var_r30 != modeCtrl.unk10)
+    {
+        switch (var_r30)
+        {
+        case 0:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 0;
+            sp1C[1] = 1;
+            sp18[1] = 1;
+            sp1C[2] = 2;
+            sp18[2] = 2;
+            sp1C[3] = 3;
+            sp18[3] = 3;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 1:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 3;
+            sp1C[1] = 1;
+            sp18[1] = 0;
+            sp1C[2] = 2;
+            sp18[2] = 1;
+            sp1C[3] = 3;
+            sp18[3] = 2;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 2:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 2;
+            sp1C[1] = 1;
+            sp18[1] = 3;
+            sp1C[2] = 2;
+            sp18[2] = 0;
+            sp1C[3] = 3;
+            sp18[3] = 1;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 3:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 1;
+            sp1C[1] = 1;
+            sp18[1] = 2;
+            sp1C[2] = 2;
+            sp18[2] = 3;
+            sp1C[3] = 3;
+            sp18[3] = 0;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 4:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 3;
+            sp1C[1] = 0x41;
+            sp18[1] = 0;
+            sp1C[2] = 0x42;
+            sp18[2] = 1;
+            sp1C[3] = 0x43;
+            sp18[3] = 2;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 5:
+            mini_commend_free_data();
+            sp1C[0] = 0x40;
+            sp18[0] = 0;
+            sp1C[1] = 1;
+            sp18[1] = 1;
+            sp1C[2] = 2;
+            sp18[2] = 2;
+            sp1C[3] = 3;
+            sp18[3] = 3;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 6:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 0;
+            sp1C[1] = 0x41;
+            sp18[1] = 1;
+            sp1C[2] = 0x42;
+            sp18[2] = 2;
+            sp1C[3] = 0x43;
+            sp18[3] = 3;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 7:
+            mini_commend_free_data();
+            sp18[0] = 0;
+            sp1C[0] = 0;
+            sp1C[1] = 1;
+            sp18[1] = 0;
+            sp1C[2] = 2;
+            sp18[2] = 0;
+            sp1C[3] = 3;
+            sp18[3] = 0;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 8:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 3;
+            sp1C[1] = 1;
+            sp18[1] = 3;
+            sp1C[2] = 2;
+            sp18[2] = 3;
+            sp1C[3] = 3;
+            sp18[3] = 3;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 9:
+            mini_commend_free_data();
+            sp1C[0] = 0;
+            sp18[0] = 2;
+            sp1C[1] = -1;
+            sp1C[2] = -1;
+            sp1C[3] = -1;
+            func_8009C5E4(sp1C, sp18);
+            break;
+        case 10:
+            mini_commend_free_data();
+            sp10[0] = 0x40;
+            sp8[0] = 3;
+            sp10[1] = 0x41;
+            sp8[1] = 3;
+            sp10[2] = 0x42;
+            sp8[2] = 3;
+            sp10[3] = 0x43;
+            sp8[3] = 3;
+            sp10[4] = 2;
+            sp8[4] = 0;
+            func_8009CAE0(sp10, sp8, 0);
+            break;
+        }
+        camera_set_state(0x46);
+        modeCtrl.unk10 = var_r30;
+    }
+    mathutil_mtxA_from_translate_xyz(lbl_802F1ECC, lbl_802F1EC8, lbl_802F1EC4);
+    mathutil_mtxA_rotate_y(lbl_802F1ED2);
+    mathutil_mtxA_rotate_x(lbl_802F1ED4);
+    mathutil_mtxA_rotate_z(lbl_802F1ED0);
+    func_8009DB40(mathutilData->mtxA);
 }
 
 static void mini_commend_finish(void)
@@ -258,84 +258,84 @@ static s8 lbl_801D3F5C[] =
     0x26, 0x12, 0x27, 0x28,
     0x13, 0x1D, 0x14, 0x15,
     0x1F, 0x2A, 0x16, 0x17,
-	0x18, 0x19, 0x2D, 0x1A,
-	0x2E, 0x22, 0x2F, 0x00,
+    0x18, 0x19, 0x2D, 0x1A,
+    0x2E, 0x22, 0x2F, 0x00,
 };
 
 struct Struct801D404C_child
 {
-	s32 unk0;
-	u32 unk4;
+    s32 unk0;
+    u32 unk4;
 };
 
 struct Struct801D404C
 {
-	char *unk0;
-	float unk4;
-	float unk8;
-	u32 unkC;
-	struct Struct801D404C_child *unk10;
-	s32 unk14;
+    char *unk0;
+    float unk4;
+    float unk8;
+    u32 unkC;
+    struct Struct801D404C_child *unk10;
+    s32 unk14;
 };
 
 static struct Struct801D404C_child lbl_802F1368[] =
 {
-	{ -1, 0x1E9 },
+    { -1, 0x1E9 },
 };
 
 static struct Struct801D404C_child lbl_802F1370[] =
 {
-	{  0, 0x1E9 },
+    {  0, 0x1E9 },
 };
 
 static struct Struct801D404C_child lbl_802F1378[] =
 {
-	{  0, 0x1F0 },
+    {  0, 0x1F0 },
 };
 
 static struct Struct801D404C_child lbl_802F1380[] =
 {
-	{  0, 0x1DB },
+    {  0, 0x1DB },
 };
 
 static struct Struct801D404C_child lbl_801D3F88[] =
 {
-	{ 0, 0x1E9 },
-	{ 0x82, 0x1F1 },
+    { 0, 0x1E9 },
+    { 0x82, 0x1F1 },
 };
 
 static struct Struct801D404C_child lbl_801D3F98[] =
 {
-	{ 0, 0x1E9 },
-	{ 0x82, 0x1EA },
-	{ 0xBE, 0x1EF },
+    { 0, 0x1E9 },
+    { 0x82, 0x1EA },
+    { 0xBE, 0x1EF },
 };
 
 static struct Struct801D404C_child lbl_801D3FB0[] =
 {
-	{ 0, 0x1E9 },
-	{ 0x82, 0x1EB },
-	{ 0xBE, 0x1EF },
+    { 0, 0x1E9 },
+    { 0x82, 0x1EB },
+    { 0xBE, 0x1EF },
 };
 
 static struct Struct801D404C_child lbl_801D3FC8[] =
 {
-	{ 0, 0x1E9 },
-	{ 0x82, 0x1EC },
-	{ 0xBE, 0x1EF },
+    { 0, 0x1E9 },
+    { 0x82, 0x1EC },
+    { 0xBE, 0x1EF },
 };
 
 static struct Struct801D404C_child lbl_801D3FE0[] =
 {
-	{ 0, 0x1E9 },
-	{ 0x82, 0x1ED },
-	{ 0xBE, 0x1EF },
+    { 0, 0x1E9 },
+    { 0x82, 0x1ED },
+    { 0xBE, 0x1EF },
 };
 
 static struct Struct801D404C_child lbl_801D3FF8[] =
 {
-	{ 0, 0x1E9 },
-	{ 0x82, 0x1EE },
+    { 0, 0x1E9 },
+    { 0x82, 0x1EE },
 };
 
 static struct Struct801D404C lbl_801D404C[] =
@@ -401,21 +401,21 @@ u32 mini_commend_unused[] =
 
 struct
 {
-	u32 unk0;
-	struct Ape *apePtrs[4];
-	int apeThreads[4];
-	s8 unk24;
-	s8 unk25[4];
-	s8 unk29[4];
-	s8 unk2D[4];
-	struct TPL *tpl;
-	struct GMA *gma;
-	Mtx unk3C;
-	struct Ape *unk6C;
-	s32 unk70;
-	u8 unk74;
-	s8 unk75;
-	s32 unk78;
+    u32 unk0;
+    struct Ape *apePtrs[4];
+    int apeThreads[4];
+    s8 unk24;
+    s8 unk25[4];
+    s8 unk29[4];
+    s8 unk2D[4];
+    struct TPL *tpl;
+    struct GMA *gma;
+    Mtx unk3C;
+    struct Ape *unk6C;
+    s32 unk70;
+    u8 unk74;
+    s8 unk75;
+    s32 unk78;
     u8 unused[0x10];
 } miniCommendInfo;
 
@@ -424,7 +424,7 @@ static const s8 lbl_802F59D8[] = { 0, 1, 2, 9, 10 };
 
 static void func_8009BF74(int arg0)
 {
-	Mtx sp24;
+    Mtx sp24;
     Vec sp18;
     Vec spC;
     s8 length;
@@ -477,28 +477,28 @@ static void func_8009BF74(int arg0)
 
 static void func_8009C178(s8 *arg0, s8 *arg1, s8 *arg2, int arg3)
 {
-	int var_r8 = 0;
-	int var_r9 = 0;
-	int var_r10 = 0;
+    int var_r8 = 0;
+    int var_r9 = 0;
+    int var_r10 = 0;
     int var_r11 = -1;
     int i;
     int var_r0;
 
     for (i = 0; i < arg3; i++)
     {
-		int temp_r7 = arg2[i];
+        int temp_r7 = arg2[i];
 
-		if (!(arg0[temp_r7] & 0x40))
-		{
-			var_r8++;
-			if (var_r11 < 0)
-				var_r11 = temp_r7;
-			if (arg1[temp_r7] == 0)
-				var_r9++;
-		}
-		if (var_r10 < arg1[temp_r7])
-			var_r10 = arg1[temp_r7];
-	}
+        if (!(arg0[temp_r7] & 0x40))
+        {
+            var_r8++;
+            if (var_r11 < 0)
+                var_r11 = temp_r7;
+            if (arg1[temp_r7] == 0)
+                var_r9++;
+        }
+        if (var_r10 < arg1[temp_r7])
+            var_r10 = arg1[temp_r7];
+    }
 
     if (miniCommendInfo.unk0 & 0x20)
         var_r0 = 10;
@@ -563,67 +563,67 @@ static void func_8009C2A4(s8 *status, struct Sprite *sprite)
         }
         else
         {
-			var_r27_2 = 0;
-			for (var_r28_2 = 0; var_r28_2 < miniCommendInfo.unk24; var_r28_2++)
-			{
-				if (miniCommendInfo.unk25[var_r28_2] == 0)
-				{
-					func_8009D7FC(var_r28_2, &sp28);
-					if (var_r27_2 <= 0)
-					{
-						vec1.x = sp28.x;
-						vec1.z = sp28.z;
-						vec2.x = vec1.x;
-						vec2.z = vec1.z;
-					}
-					else
-					{
-						if (sp28.x > vec1.x)
-							vec1.x = sp28.x;
-						if (sp28.z > vec1.z)
-							vec1.z = sp28.z;
-						if (sp28.x < vec2.x)
-							vec2.x = sp28.x;
-						if (sp28.z < vec2.z)
-							vec2.z = sp28.z;
-					}
-					var_r27_2++;
-				}
-			}
-			if (var_r27_2 <= 0)
-				return;
-			sp28.x = 0.5 * (vec1.x + vec2.x);
-			sp28.y = 0.5 * (vec1.z + vec2.z);
-			mathutil_mtxA_from_translate_xyz(sp28.x, 3.8 + lbl_802F1EC8, sp28.z);
-			var_f27 = 0.4 + (vec1.x - vec2.x);
-		}
-		temp_r28 = 1 << currentBall->playerId;
-		memset(&effect, 0, sizeof(effect));
-		effect.type = ET_COMMENDFRAG;
-		effect.vel.x = 0.0f;
-		effect.vel.y = 0.0f;
-		effect.vel.z = 0.0f;
-		var_r29 = 2;
-		if (miniCommendInfo.unk0 & 0x80)
-			var_r29 = 1;
-		sp34.x = 0.0f;
-		sp34.y = 0.0f;
-		while (var_r29 > 0)
-		{
-			sp34.z = 0.5 * (var_f27 * (1.0 + RAND_FLOAT()));
-			mathutil_mtxA_rotate_y(rand() & 0x7FFF);
-			mathutil_mtxA_rotate_x(rand() & 0x7FFF);
-			mathutil_mtxA_tf_point(&sp34, &effect.pos);
-			effect.rotX = rand() & 0x7FFF;
-			effect.rotY = rand() & 0x7FFF;
-			effect.rotZ = rand() & 0x7FFF;
-			if (var_r29 & 1)
-				effect.cameras = temp_r28;
-			else
-				effect.cameras = 0;
-			spawn_effect(&effect);
-			var_r29--;
-		}
+            var_r27_2 = 0;
+            for (var_r28_2 = 0; var_r28_2 < miniCommendInfo.unk24; var_r28_2++)
+            {
+                if (miniCommendInfo.unk25[var_r28_2] == 0)
+                {
+                    func_8009D7FC(var_r28_2, &sp28);
+                    if (var_r27_2 <= 0)
+                    {
+                        vec1.x = sp28.x;
+                        vec1.z = sp28.z;
+                        vec2.x = vec1.x;
+                        vec2.z = vec1.z;
+                    }
+                    else
+                    {
+                        if (sp28.x > vec1.x)
+                            vec1.x = sp28.x;
+                        if (sp28.z > vec1.z)
+                            vec1.z = sp28.z;
+                        if (sp28.x < vec2.x)
+                            vec2.x = sp28.x;
+                        if (sp28.z < vec2.z)
+                            vec2.z = sp28.z;
+                    }
+                    var_r27_2++;
+                }
+            }
+            if (var_r27_2 <= 0)
+                return;
+            sp28.x = 0.5 * (vec1.x + vec2.x);
+            sp28.y = 0.5 * (vec1.z + vec2.z);
+            mathutil_mtxA_from_translate_xyz(sp28.x, 3.8 + lbl_802F1EC8, sp28.z);
+            var_f27 = 0.4 + (vec1.x - vec2.x);
+        }
+        temp_r28 = 1 << currentBall->playerId;
+        memset(&effect, 0, sizeof(effect));
+        effect.type = ET_COMMENDFRAG;
+        effect.vel.x = 0.0f;
+        effect.vel.y = 0.0f;
+        effect.vel.z = 0.0f;
+        var_r29 = 2;
+        if (miniCommendInfo.unk0 & 0x80)
+            var_r29 = 1;
+        sp34.x = 0.0f;
+        sp34.y = 0.0f;
+        while (var_r29 > 0)
+        {
+            sp34.z = 0.5 * (var_f27 * (1.0 + RAND_FLOAT()));
+            mathutil_mtxA_rotate_y(rand() & 0x7FFF);
+            mathutil_mtxA_rotate_x(rand() & 0x7FFF);
+            mathutil_mtxA_tf_point(&sp34, &effect.pos);
+            effect.rotX = rand() & 0x7FFF;
+            effect.rotY = rand() & 0x7FFF;
+            effect.rotZ = rand() & 0x7FFF;
+            if (var_r29 & 1)
+                effect.cameras = temp_r28;
+            else
+                effect.cameras = 0;
+            spawn_effect(&effect);
+            var_r29--;
+        }
     }
 }
 
@@ -643,9 +643,9 @@ static void lbl_8009C5E0(struct Sprite *sprite) {}
 
 static void func_8009C5E4(s8 *arg0, s8 *arg1)
 {
-	s8 sp1C[4];
+    s8 sp1C[4];
     int var_r22;
-	int temp_r20;
+    int temp_r20;
     int var_ctr;
     int var_r4_2;
     int var_r9;
@@ -678,12 +678,12 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
     var_r22 = 0;
     for (i = 0; i < 4; i++)
     {
-		if (arg0[i] >= 0)
-		{
-			sp1C[var_r22] = i;
-			var_r22++;
-		}
-	}
+        if (arg0[i] >= 0)
+        {
+            sp1C[var_r22] = i;
+            var_r22++;
+        }
+    }
 
     for (var_r9 = 0; var_r9 < var_r22 - 1; var_r9++)
     {
@@ -702,31 +702,31 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
         miniCommendInfo.unk0 |= 0x20;
     if (var_r22 > 1)
     {
-		var_r4_2 = 1;
-		for (var_ctr_2 = 0; var_ctr_2 < var_r22; var_ctr_2++)
-		{
-			if (arg1[sp1C[var_ctr_2]] != 0)
-			{
-				var_r4_2 = 0;
-				break;
-			}
-		}
-		if (var_r4_2 != 0)
+        var_r4_2 = 1;
+        for (var_ctr_2 = 0; var_ctr_2 < var_r22; var_ctr_2++)
+        {
+            if (arg1[sp1C[var_ctr_2]] != 0)
+            {
+                var_r4_2 = 0;
+                break;
+            }
+        }
+        if (var_r4_2 != 0)
             miniCommendInfo.unk0 |= 2;
-	}
+    }
 
     if (!(miniCommendInfo.unk0 & 2) && (var_r22 > 1))
     {
-		var_r4_2 = 1;
-		for (var_ctr_2 = 0; var_ctr_2 < var_r22; var_ctr_2++)
-		{
-			if (arg1[sp1C[var_ctr_2]] != 3)
-			{
-				var_r4_2 = 0;
-				break;
-			}
-		}
-		if (var_r4_2 != 0)
+        var_r4_2 = 1;
+        for (var_ctr_2 = 0; var_ctr_2 < var_r22; var_ctr_2++)
+        {
+            if (arg1[sp1C[var_ctr_2]] != 3)
+            {
+                var_r4_2 = 0;
+                break;
+            }
+        }
+        if (var_r4_2 != 0)
             miniCommendInfo.unk0 |= 4;
     }
     if (var_r22 == 2)

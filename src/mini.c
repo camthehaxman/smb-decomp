@@ -1537,12 +1537,12 @@ void submode_mini_select_main_func(void)
     int i;
 
     index = lbl_802F2170;
-    if (CONTROLLER_SOMETHING(0, PAD_BUTTON_DOWN))
+    if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_DOWN))
     {
         if (++index >= (u32)ARRAY_COUNT(s_minigameTestMenu))
             index = 0;
     }
-    if (CONTROLLER_SOMETHING(0, PAD_BUTTON_UP))
+    if (REPEAT_WITH_R_ACCEL(0, PAD_BUTTON_UP))
     {
         if (--index < 0)
             index = ARRAY_COUNT(s_minigameTestMenu) - 1;
