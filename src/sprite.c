@@ -57,7 +57,7 @@ void ev_sprite_init(void)
     int i;
 
     for (i = 0; i < g_poolInfo.spritePool.count; i++, status++)
-        *status = 0;
+        *status = STAT_NULL;
 
     textDrawInfo.startX = 0.0f;
     textDrawInfo.x = 0.0f;
@@ -86,7 +86,7 @@ void ev_sprite_main(void)
     sprite = spriteWork;
     for (i = 0; i < g_poolInfo.spritePool.count; i++, sprite++, status++)
     {
-        if (*status != 0)
+        if (*status != STAT_NULL)
         {
             spriteClassMask |= 1 << sprite->tag;
             if (sprite->mainFunc != NULL)
@@ -106,11 +106,11 @@ void ev_sprite_dest(void)
     status = g_poolInfo.spritePool.statusList;
     for (i = 0; i < MAX_SPRITES; i++, sprite++, status++)
     {
-        if (*status != 0)
+        if (*status != STAT_NULL)
         {
             if (sprite->destFunc != NULL)
                 sprite->destFunc(sprite);
-            *status = 0;
+            *status = STAT_NULL;
         }
     }
 
@@ -125,7 +125,7 @@ void func_800700D8(int a)
     struct Struct8028FE58 *r30;
     struct Struct8028FE58 *r10;
     struct Struct8028FE58 *r9;
-    s8 *r11;
+    s8 *status;
     int r12;
     struct Struct8028FE58 *r5;
     int i;
@@ -141,12 +141,12 @@ void func_800700D8(int a)
     r9->unk4 = r5;
     r9->unk8 = NULL;
 
-    r11 = g_poolInfo.spritePool.statusList;
-    for (i = 0; i < g_poolInfo.spritePool.count; i++, r11++)
+    status = g_poolInfo.spritePool.statusList;
+    for (i = 0; i < g_poolInfo.spritePool.count; i++, status++)
     {
         struct Sprite *r8;
 
-        if (*r11 == 0)
+        if (*status == STAT_NULL)
             continue;
         if (viewStage && spriteWork[i].tag != 100)
             continue;
@@ -214,7 +214,7 @@ void func_800700D8(int a)
 //arcade: FUN_0c048ea0
 void func_800702C8(struct Sprite *sprite)
 {
-    if (g_poolInfo.spritePool.statusList[sprite->unk2] != 0 && sprite->unk50 == NULL)
+    if (g_poolInfo.spritePool.statusList[sprite->unk2] != STAT_NULL && sprite->unk50 == NULL)
     {
         u_something_with_sprites(sprite);
         while (sprite->next != NULL)
@@ -971,11 +971,11 @@ void destroy_sprite_with_tag(int tag)
 
     for (i = 0; i < MAX_SPRITES; i++)
     {
-        if (*status != 0 && sprite->tag == tag)
+        if (*status != STAT_NULL && sprite->tag == tag)
         {
             if (sprite->destFunc != NULL)
                 sprite->destFunc(sprite);
-            *status = 0;
+            *status = STAT_NULL;
         }
         sprite++;
         status++;
@@ -991,11 +991,11 @@ void destroy_all_sprites(void)
 
     for (i = 0; i < MAX_SPRITES; i++)
     {
-        if (*status != 0)
+        if (*status != STAT_NULL)
         {
             if (sprite->destFunc != NULL)
                 sprite->destFunc(sprite);
-            *status = 0;
+            *status = STAT_NULL;
         }
         sprite++;
         status++;
@@ -1011,7 +1011,7 @@ struct Sprite *find_sprite_with_tag(int tag)
 
     for (i = 0; i < MAX_SPRITES; i++, sprite++, status++)
     {
-        if (*status != 0 && sprite->tag == tag)
+        if (*status != STAT_NULL && sprite->tag == tag)
             return sprite;
     }
     return NULL;

@@ -881,16 +881,16 @@ void func_8004A0C8(void)
         window_printf_2("     ID: %03d\n", lbl_802F1F78.replayId);
     else
     {
-        window_set_text_color(1);
+        window_set_text_color(WINDOW_COLOR_RED);
         window_printf_2("     Record for Save\n");
-        window_set_text_color(0);
+        window_set_text_color(WINDOW_COLOR_WHITE);
     }
 
     if (func_8004A0C8_sub(lbl_802F1F78.replayId) == 0.0f)
     {
-        window_set_text_color(1);
+        window_set_text_color(WINDOW_COLOR_RED);
         window_printf_2("       :NO DATA\n");
-        window_set_text_color(0);
+        window_set_text_color(WINDOW_COLOR_WHITE);
     }
     else
     {

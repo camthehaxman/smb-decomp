@@ -199,13 +199,13 @@ void ev_world_init(void)
 void ev_world_main(void)
 {
     struct World *world = worldInfo;
-    s8 *unk = g_poolInfo.playerPool.statusList;
+    s8 *status = g_poolInfo.playerPool.statusList;
     int i;
     Vec sp8;
 
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, world++, unk++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, world++, status++)
     {
-        if (*unk == 0 || *unk == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
         world->playerId = i;
         switch (world->state)
@@ -247,11 +247,11 @@ void ev_world_main(void)
         sp8.x = 0.0f;
         sp8.y = 0.0f;
         sp8.z = 0.0f;
-        unk = g_poolInfo.playerPool.statusList;
+        status = g_poolInfo.playerPool.statusList;
         world = worldInfo;
-        for (i = g_poolInfo.playerPool.count; i > 0; i--, world++, unk++)
+        for (i = g_poolInfo.playerPool.count; i > 0; i--, world++, status++)
         {
-            if (*unk == 0 || *unk == 4)
+            if (*status == STAT_NULL || *status == STAT_FREEZE)
                 continue;
             sp8.x += world->unk10.x;
             sp8.y += world->unk10.y;

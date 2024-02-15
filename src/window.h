@@ -1,6 +1,18 @@
 #ifndef _SRC_WINDOW_H_
 #define _SRC_WINDOW_H_
 
+enum
+{
+	WINDOW_COLOR_WHITE,
+	WINDOW_COLOR_RED,
+	WINDOW_COLOR_GREEN,
+	WINDOW_COLOR_BLUE,
+	WINDOW_COLOR_YELLOW,
+	WINDOW_COLOR_MAGENTA,
+	WINDOW_COLOR_CYAN,
+	WINDOW_COLOR_BLACK,
+};
+
 extern u32 debugFlags;
 extern u32 dipSwitches;
 extern u32 lbl_802F1ED8;
@@ -45,7 +57,7 @@ void window_init(void);
 void window_main(void);
 void window_set_cursor_pos(int, int);
 void window_move_cursor(int, int);
-// ? func_8002FCAC();
+// ? window_set_text_offset();
 int window_printf(int, char *, ...);
 void window_set_text_color(int);
 void u_set_window_text(int, const char *);

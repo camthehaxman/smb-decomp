@@ -188,7 +188,7 @@ void ev_item_init(void)
 
 void ev_item_main(void)
 {
-    int r31;
+    int i;
     struct Item *item;
     s8 *status;
 
@@ -196,17 +196,17 @@ void ev_item_main(void)
         return;
     status = g_poolInfo.itemPool.statusList;
     item = itemPool;
-    for (r31 = g_poolInfo.itemPool.count; r31 > 0; r31--, status++, item++)
+    for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
-        if (*status != 0)
+        if (*status != STAT_NULL)
         {
             if (item->unkC != 0)
                 item->unkC--;
             item->unk12--;
-            if (item->unk12 == 0 || *status == 3)
+            if (item->unk12 == 0 || *status == STAT_DEST)
             {
                 itemDestroyFuncs[item->type](item);
-                *status = 0;
+                *status = STAT_NULL;
             }
             else
                 itemMainFuncs[item->type](item);
@@ -216,18 +216,18 @@ void ev_item_main(void)
 
 void ev_item_dest(void)
 {
-    int r29;
+    int i;
     struct Item *item;
-    s8 *r27;
+    s8 *status;
 
-    r27 = g_poolInfo.itemPool.statusList;
+    status = g_poolInfo.itemPool.statusList;
     item = itemPool;
-    for (r29 = g_poolInfo.itemPool.count; r29 > 0; r29--, r27++, item++)
+    for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
-        if (*r27 != 0)
+        if (*status != STAT_NULL)
         {
             itemDestroyFuncs[item->type](item);
-            *r27 = 0;
+            *status = STAT_NULL;
         }
     }
 }
@@ -245,7 +245,7 @@ void item_draw(void)
     item = itemPool;
     for (itemCtr = g_poolInfo.itemPool.count; itemCtr > 0; itemCtr--, status++, item++)
     {
-        if (*status != 0 && !(item->flags & ITEM_FLAG_INVISIBLE))
+        if (*status != STAT_NULL && !(item->flags & ITEM_FLAG_INVISIBLE))
         {
             if (animGrpId != item->animGroupId)
             {
@@ -291,9 +291,9 @@ int item_create(struct Item *a)
 
 void item_draw_shadows(void)
 {
-    int r28;
+    int i;
     struct Item *item;
-    s8 *r26;
+    s8 *status;
     int animGrpId = 0;
     int onStage;
     float f2;
@@ -303,11 +303,11 @@ void item_draw_shadows(void)
     Vec pos;
     struct PolyShadowUnit sp8;
 
-    r26 = g_poolInfo.itemPool.statusList;
+    status = g_poolInfo.itemPool.statusList;
     item = itemPool;
-    for (r28 = g_poolInfo.itemPool.count; r28 > 0; r28--, r26++, item++)
+    for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
-        if (*r26 == 0
+        if (*status == STAT_NULL
          || !(item->flags & (1 << 5))
          || (item->flags & ITEM_FLAG_INVISIBLE))
             continue;
@@ -391,23 +391,23 @@ void item_draw_shadows(void)
 
 void release_captured_item(int a)
 {
-    int r29;
-    int r28;
+    int i;
+    int id;
     struct Item *item;
-    s8 *r26;
+    s8 *status;
 
     if (debugFlags & 0xA)
         return;
 
-    r26 = g_poolInfo.itemPool.statusList;
+    status = g_poolInfo.itemPool.statusList;
     item = itemPool;
-    for (r29 = g_poolInfo.itemPool.count; r29 > 0; r29--, r26++, item++)
+    for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
-        if (*r26 != 0 && item->unk5E >= 0 && item->unk5E <= a)
+        if (*status != STAT_NULL && item->unk5E >= 0 && item->unk5E <= a)
         {
-            r28 = item->id;
+            id = item->id;
             itemReleaseFuncs[item->type](item);
-            item->id = r28;
+            item->id = id;
         }
     }
 }

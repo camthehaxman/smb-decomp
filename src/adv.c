@@ -297,7 +297,7 @@ void submode_adv_demo_init_func(void)
     event_finish_all();
     free_all_bitmap_groups_except_com();
     for (i = 0; i < 4; i++)
-        g_poolInfo.playerPool.statusList[i] = 2;
+        g_poolInfo.playerPool.statusList[i] = STAT_NORMAL;
     modeCtrl.playerCount = 1;
     modeCtrl.unk30 = 1;
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;
@@ -2147,10 +2147,10 @@ void submode_adv_start_main_func(void)
 
 void func_80011D90(void)
 {
-    g_poolInfo.playerPool.statusList[0] = 2;
-    g_poolInfo.playerPool.statusList[1] = 0;
-    g_poolInfo.playerPool.statusList[2] = 0;
-    g_poolInfo.playerPool.statusList[3] = 0;
+    g_poolInfo.playerPool.statusList[0] = STAT_NORMAL;
+    g_poolInfo.playerPool.statusList[1] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[2] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[3] = STAT_NULL;
     modeCtrl.playerCount = 1;
     modeCtrl.unk30 = 1;
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;

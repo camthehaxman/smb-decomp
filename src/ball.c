@@ -503,12 +503,12 @@ void func_80037B20(void)
 {
     struct Ball *ball = &ballInfo[0];
     struct Ball *ballBackup = currentBall;
-    s8 *r7 = g_poolInfo.playerPool.statusList;
+    s8 *status = g_poolInfo.playerPool.statusList;
     int i;
 
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r7++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
-        if (*r7 == 2)
+        if (*status == STAT_NORMAL)
         {
             currentBall = ball;
             ball->ape->flags &= ~(1 << 14);
@@ -521,7 +521,7 @@ void ev_ball_init(void)
 {
     int sp18[4];
     struct Ball *ball;
-    s8 *r21;
+    s8 *status;
     struct Ape *ape;
     s32 j;
     int i;
@@ -530,7 +530,7 @@ void ev_ball_init(void)
         apeThreadNo[j] = -1;
 
     ball = &ballInfo[0];
-    r21 = g_poolInfo.playerPool.statusList;
+    status = g_poolInfo.playerPool.statusList;
 
     lbl_802F1F0C = 0;
     u_mot_ape_set_some_var(1.0f);
@@ -552,9 +552,9 @@ void ev_ball_init(void)
     for (i = 0; i < 4; i++)
         sp18[i] = 0;
 
-    for (i = 0; i < 4; i++,  ball++, r21++)
+    for (i = 0; i < 4; i++,  ball++, status++)
     {
-        if (*r21 == 0 || (modeCtrl.gameType != GAMETYPE_MINI_GOLF && *r21 == 4))
+        if (*status == STAT_NULL || (modeCtrl.gameType != GAMETYPE_MINI_GOLF && *status == STAT_FREEZE))
         {
             ball->unk0 = 0;
             ball->unk144 = NULL;
@@ -863,17 +863,16 @@ void ev_ball_main(void)
 {
     Vec sp8;
     struct Ball *ball;
-    s8 *r28;
-    s8 *r3;
+    s8 *status;
     int i;
 
     if (debugFlags & 0xA)
         return;
-    r28 = g_poolInfo.playerPool.statusList;
+    status = g_poolInfo.playerPool.statusList;
     ball = &ballInfo[0];
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r28++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
-        if (*r28 == 0 || *r28 == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
 
         currentBall = ball;
@@ -887,25 +886,25 @@ void ev_ball_main(void)
             func_80038528(ball);
     }
 
-    r3 = g_poolInfo.playerPool.statusList;
+    status = g_poolInfo.playerPool.statusList;
     ball = &ballInfo[0];
     for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++)
     {
-        if (r3[i] == 0 || r3[i] == 4)
+        if (status[i] == STAT_NULL || status[i] == STAT_FREEZE)
             continue;
         ball->unk15C[0] = ball->unk15C[1] = ball->unk15C[2] = ball->unk15C[3] = 1.0f;
     }
 
     if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
     {
-        r28 = g_poolInfo.playerPool.statusList;
+        status = g_poolInfo.playerPool.statusList;
         ball = &ballInfo[0];
         for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++)
         {
             struct Ball *nextBall;
             int j;
 
-            if (r28[i] == 0 || r28[i] == 4)
+            if (status[i] == STAT_NULL || status[i] == STAT_FREEZE)
                 continue;
             nextBall = ball + 1;
             for (j = i + 1; j < g_poolInfo.playerPool.count; j++, nextBall++)
@@ -914,7 +913,7 @@ void ev_ball_main(void)
                 float f2;
                 float f1;
 
-                if (r28[j] == 0 || r28[j] == 4)
+                if (status[j] == STAT_NULL || status[j] == STAT_FREEZE)
                     continue;
                 sp8.x = ball->pos.x - nextBall->pos.x;
                 sp8.y = ball->pos.y - nextBall->pos.y;
@@ -955,11 +954,11 @@ void ev_ball_main(void)
 
     if (modeCtrl.gameType == GAMETYPE_MINI_RACE)
     {
-        r28 = g_poolInfo.playerPool.statusList;
+        status = g_poolInfo.playerPool.statusList;
         ball = &ballInfo[0];
-        for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r28++)
+        for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
         {
-            if (*r28 == 0 || *r28 == 4)
+            if (*status == STAT_NULL || *status == STAT_FREEZE)
                 continue;
             currentBall = ball;
             func_80038528(ball);
@@ -1080,7 +1079,7 @@ void ball_draw_callback(struct BallDrawNode *);
 void ball_draw(void)
 {
     struct Ball *ball;
-    s8 *r27;
+    s8 *status;
     int i;
     int (*func)();
     EnvMapFunc envFunc;
@@ -1093,11 +1092,11 @@ void ball_draw(void)
             func = NULL;
     }
 
-    r27 = g_poolInfo.playerPool.statusList;
+    status = g_poolInfo.playerPool.statusList;
     ball = &ballInfo[0];
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r27++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
-        if (*r27 == 0 || *r27 == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
         if (ball->flags & BALL_FLAG_INVISIBLE)
             continue;
@@ -1184,7 +1183,7 @@ void u_ball_shadow_something_1(void)
     GXTexObj *tex1;
     int r29;
     struct Ball *ball;
-    s8 *r26;
+    s8 *status;
     int i;
 
     r29 = advDemoInfo.flags & (1 << 8);
@@ -1256,11 +1255,11 @@ void u_ball_shadow_something_1(void)
 
     sp18.unk3C = (void *)&lbl_801B7EC0;
 
-    r26 = g_poolInfo.playerPool.statusList;
+    status = g_poolInfo.playerPool.statusList;
     ball = &ballInfo[0];
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r26++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
-        if (*r26 == 0 || *r26 == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
         if (ball->flags & BALL_FLAG_INVISIBLE)
             continue;
@@ -1296,7 +1295,7 @@ void u_ball_shadow_something_2(void)
     struct RaycastHit hit;
     Vec sp8;
     struct Ball *ball;
-    s8 *r25;
+    s8 *status;
     int i;
 
     sp30.unk20 = 0.025f;
@@ -1304,12 +1303,12 @@ void u_ball_shadow_something_2(void)
     sp30.unk28 = commonGma->modelEntries[polyshadow01].model;
 
     ball = &ballInfo[0];
-    r25 = g_poolInfo.playerPool.statusList;
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r25++)
+    status = g_poolInfo.playerPool.statusList;
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
         float f2;
 
-        if (*r25 == 0 || *r25 == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
         if (ball->flags & BALL_FLAG_INVISIBLE)
             continue;
@@ -1370,19 +1369,19 @@ void set_ball_target(int a, Vec *sphereCenter, float c)
     Mtx sp14;
     int i;
     struct Ball *ball;
-    s8 *r29;
+    s8 *status;
     int r28;
 
     ball = &ballInfo[0];
     r28 = currentBall->playerId;
-    r29 = g_poolInfo.playerPool.statusList;
+    status = g_poolInfo.playerPool.statusList;
     lbl_802F1F0C = 0;
 
-    for (i = 0; i < 4; i++, ball++, r29++)
+    for (i = 0; i < 4; i++, ball++, status++)
     {
         float f1;
 
-        if (*r29 == 0)
+        if (*status == STAT_NULL)
             continue;
         if (a == 4 && r28 == i)
             continue;

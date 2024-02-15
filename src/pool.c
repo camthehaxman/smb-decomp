@@ -106,7 +106,7 @@ void debug_main(void)
         event_finish(EVENT_MOUSE);
 }
 
-char *u_stateNames[] =
+char *poolStatusNames[] =
 {
     "STAT_NULL",
     "STAT_INIT",

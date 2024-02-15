@@ -476,7 +476,7 @@ void func_80025640(void)
 {
     int i;
     int j;
-    s8 *r27;
+    s8 *status;
 
     for (i = 0; i < 5; i++)
     {
@@ -501,10 +501,10 @@ void func_80025640(void)
         }
         break;
     default:
-        r27 = g_poolInfo.playerPool.statusList;
-        if (r27 == NULL)
+        status = g_poolInfo.playerPool.statusList;
+        if (status == NULL)
             break;
-        for (i = 0; i < 4; i++, r27++)
+        for (i = 0; i < 4; i++, status++)
         {
             switch (modeCtrl.gameType)
             {
@@ -513,7 +513,7 @@ void func_80025640(void)
                     continue;
                 break;
             default:
-                if (*r27 != 2)
+                if (*status != STAT_NORMAL)
                     continue;
             }
 

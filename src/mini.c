@@ -1591,7 +1591,7 @@ void submode_mini_ending_init_func(void)
     reset_camera_viewport();
     for (i = 0; i < 4; i++)
     {
-        g_poolInfo.playerPool.statusList[i] = 2;
+        g_poolInfo.playerPool.statusList[i] = STAT_NORMAL;
         playerCharacterSelection[i] = i;
         setup_camera_viewport(i, 0.0f, 0.0f, 1.0f, 1.0f);
     }

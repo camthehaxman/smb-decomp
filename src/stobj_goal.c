@@ -514,7 +514,7 @@ void stobj_goaltape_draw(struct Stobj *stobj)
     apply_curr_light_group_ambient();
     nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
     temp_r5 = replayInfo.unk14;
-    if (g_poolInfo.playerPool.statusList[temp_r5] == 2 && (ballInfo[temp_r5].flags & 0x01000000))
+    if (g_poolInfo.playerPool.statusList[temp_r5] == STAT_NORMAL && (ballInfo[temp_r5].flags & 0x01000000))
         time = (100.0 * func_80049E7C(replayInfo.unk0[temp_r5], replayInfo.unk10)) / 60.0;
     else
     {

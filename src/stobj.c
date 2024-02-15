@@ -225,21 +225,21 @@ void ev_stobj_main(void)
 {
     int i;
     struct Stobj *stobj;
-    s8 *phi_r27;
+    s8 *status;
 
     if (debugFlags & 0xA)
         return;
 
-    phi_r27 = g_poolInfo.stobjPool.statusList;
+    status = g_poolInfo.stobjPool.statusList;
     stobj = stobjInfo;
-    for (i = g_poolInfo.stobjPool.count; i > 0; i--, phi_r27++, stobj++)
+    for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
-        if (*phi_r27 != 0)
+        if (*status != STAT_NULL)
         {
-            if (*phi_r27 == 3)
+            if (*status == STAT_DEST)
             {
                 stobjDestroyFuncs[stobj->type](stobj);
-                *phi_r27 = 0;
+                *status = STAT_NULL;
             }
             else
             {
@@ -285,16 +285,16 @@ void ev_stobj_dest(void)
 {
     int i;
     struct Stobj *stobj;
-    s8 *phi_r27;
+    s8 *status;
 
-    phi_r27 = g_poolInfo.stobjPool.statusList;
+    status = g_poolInfo.stobjPool.statusList;
     stobj = stobjInfo;
-    for (i = g_poolInfo.stobjPool.count; i > 0; i--, phi_r27++, stobj++)
+    for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
-        if (*phi_r27 != 0)
+        if (*status != STAT_NULL)
         {
             stobjDestroyFuncs[stobj->type](stobj);
-            *phi_r27 = 0;
+            *status = STAT_NULL;
         }
     }
 }
@@ -303,22 +303,22 @@ void stobj_draw(void)
 {
     s32 i;
     struct Stobj *stobj;
-    s8 *phi_r29;
+    s8 *status;
     EnvMapFunc func;
     int phi_r25;
     Mtx mtx;
 
     func = backgroundInfo.stageEnvMapFunc;
-    if (func != 0)
+    if (func != NULL)
         u_avdisp_set_some_func_1(func);
     mathutil_mtx_copy(mathutilData->mtxB, mtx);
 
-    phi_r29 = g_poolInfo.stobjPool.statusList;
+    status = g_poolInfo.stobjPool.statusList;
     phi_r25 = 0;
     stobj = stobjInfo;
-    for (i = g_poolInfo.stobjPool.count; i > 0; i--, phi_r29++, stobj++)
+    for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
-        if (*phi_r29 != 0)
+        if (*status != STAT_NULL)
         {
             if (phi_r25 != stobj->animGroupId)
             {

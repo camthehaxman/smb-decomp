@@ -65,10 +65,10 @@ static void sel_stage_init(void)
     modeCtrl.unk30 = 1;
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;
     modeCtrl.unk40 = 0;
-    g_poolInfo.playerPool.statusList[0] = 2;
-    g_poolInfo.playerPool.statusList[1] = 0;
-    g_poolInfo.playerPool.statusList[2] = 0;
-    g_poolInfo.playerPool.statusList[3] = 0;
+    g_poolInfo.playerPool.statusList[0] = STAT_NORMAL;
+    g_poolInfo.playerPool.statusList[1] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[2] = STAT_NULL;
+    g_poolInfo.playerPool.statusList[3] = STAT_NULL;
     modeCtrl.currPlayer = 0;
 
     u_clear_buffers_2_and_5();

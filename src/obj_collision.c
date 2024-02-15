@@ -32,14 +32,14 @@ static void do_object_collision(void)
     struct Ball *ballBackup = currentBall;
     int i;
     struct Ball *ball;
-    s8 *phi_r19;
+    s8 *status;
 
     ball = ballInfo;
-    phi_r19 = g_poolInfo.playerPool.statusList;
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, phi_r19++)
+    status = g_poolInfo.playerPool.statusList;
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
         currentBall = ball;
-        if (*phi_r19 != 0 && *phi_r19 != 4)
+        if (*status != STAT_NULL && *status != STAT_FREEZE)
         {
             struct PhysicsBall physBall;
 
@@ -52,7 +52,7 @@ static void do_object_collision(void)
 
                 for (j = g_poolInfo.stobjPool.count; j > 0; j--, stobj++, phi_r30++)
                 {
-                    if (*phi_r30 && (stobj->unk8 & 2))
+                    if (*phi_r30 != STAT_NULL && (stobj->unk8 & 2))
                     {
                         s8 temp_r4 = stobj->animGroupId;
                         if (physBall.animGroupId != temp_r4)
@@ -70,7 +70,7 @@ static void do_object_collision(void)
 
                 for (j = g_poolInfo.itemPool.count; j > 0; j--, item++, phi_r29_2++)
                 {
-                    if (*phi_r29_2 != 0
+                    if (*phi_r29_2 != STAT_NULL
                      && (item->flags & 2)
                      && item->unkC == 0
                      && (modeCtrl.gameType != GAMETYPE_MINI_TARGET

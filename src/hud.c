@@ -2141,7 +2141,7 @@ void hud_show_competition_mode_info(void)
     phi_r28 = g_poolInfo.playerPool.statusList;
     for (i = 0; i < g_poolInfo.playerPool.count; i++, phi_r28++)
     {
-        if (*phi_r28 != 0)
+        if (*phi_r28 != STAT_NULL)
             show_competition_player_hud(i);
     }
 

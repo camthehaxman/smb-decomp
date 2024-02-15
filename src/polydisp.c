@@ -574,8 +574,8 @@ void draw_normal_game_scene(void)
     {
         if (cameraInfo[i].sub28.vp.width > 0.0f && cameraInfo[i].sub28.vp.height > 0.0f)
         {
-            if (g_poolInfo.playerPool.statusList[i] == 0
-             || g_poolInfo.playerPool.statusList[i] == 4
+            if (g_poolInfo.playerPool.statusList[i] == STAT_NULL
+             || g_poolInfo.playerPool.statusList[i] == STAT_FREEZE
              || (cameraInfo[i].flags & (1 << 6)))
             {
                 if (!(cameraInfo[i].flags & (1 << 7)))
@@ -668,15 +668,15 @@ u16 arrowModelIDs[4] = { ARROW_1P, ARROW_2P, ARROW_3P, ARROW_4P };
 void draw_live_arrow(void)
 {
     struct Ball *ball;
-    s8 *r25 = g_poolInfo.playerPool.statusList;
+    s8 *status = g_poolInfo.playerPool.statusList;
     int i;
     Vec sp8;
     float f27;
 
     ball = ballInfo;
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r25++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
-        if (*r25 == 0 || *r25 == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
         if (ball->flags & BALL_FLAG_INVISIBLE)
             continue;
@@ -853,13 +853,13 @@ void draw_extra_scene(void)
 void draw_results_scene(void)
 {
     int i;
-    struct Ball *r23 = currentBall;
+    struct Ball *ball = currentBall;
 
     for (i = 0; i < 4; i++)
     {
         if (cameraInfo[i].sub28.vp.width > 0.0f && cameraInfo[i].sub28.vp.height > 0.0f)
         {
-            if ((g_poolInfo.playerPool.statusList[i] == 0 || g_poolInfo.playerPool.statusList[i] == 4)
+            if ((g_poolInfo.playerPool.statusList[i] == STAT_NULL || g_poolInfo.playerPool.statusList[i] == STAT_FREEZE)
              && !(cameraInfo[i].flags & (1 << 6)))
                 continue;
 
@@ -905,7 +905,7 @@ void draw_results_scene(void)
                 polyDisp.unk0 &= ~(1 << 3);
         }
     }
-    currentBall = r23;
+    currentBall = ball;
     default_camera_env();
 }
 

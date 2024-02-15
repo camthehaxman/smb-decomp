@@ -620,10 +620,10 @@ int title_screen_debug_menu(void)
     for (i = 0; i < 5; i++)
     {
         if (i == modeCtrl.menuSel)
-            window_set_text_color(2);
+            window_set_text_color(WINDOW_COLOR_GREEN);
         window_printf_2("%s\n", items[i]);
         if (i == modeCtrl.menuSel)
-            window_set_text_color(0);
+            window_set_text_color(WINDOW_COLOR_WHITE);
     }
     window_set_cursor_pos(13, 15 + modeCtrl.menuSel);
     u_debug_print("*");

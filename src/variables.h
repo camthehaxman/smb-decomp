@@ -194,7 +194,7 @@ extern float unknownTrigTable[];
 // extern ? lbl_801B757C;
 // extern ? lbl_801B75F8;
 // extern ? lbl_801B7884;
-// extern ? u_stateNames;
+// extern ? poolStatusNames;
 // extern ? lbl_801B7978;
 // extern ? lbl_801B7998;
 // extern ? lbl_801B79A4;
