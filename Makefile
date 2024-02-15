@@ -126,7 +126,7 @@ SOURCES := \
 	src/trig_tables.c \
 	src/perf.c \
 	src/sound.c \
-	asm/window.s \
+	src/window.c \
 	src/pool.c \
 	src/nl2ngc.c \
 	src/motload.c \

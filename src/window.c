@@ -24,61 +24,73 @@
 #define SCREEN_ROWS (448/12)
 #define SCREEN_COLUMNS (640/12)
 
-extern struct Light lbl_801F3A08;
 
-extern u32 lbl_802F1E48;
-extern u32 lbl_802F1E4C;
-extern s8 lbl_802F1E50;
-extern s8 lbl_802F1E51;
+// .sbss
 
-extern s8 lbl_802F1C6C[8];
+// static
+static int currWindowIndex;
+static s32 lbl_802F1E0C;
+static s32 windowCursorX;
+static s32 windowCursorY;
+static s8 lbl_802F1E18;
+static s8 lbl_802F1E19;
+static u32 lbl_802F1E1C;
+static u32 lbl_802F1E20;
+static u32 lbl_802F1E24;
+static u32 lbl_802F1E28;
+static u8 windowColorId;
+static u32 unusedWindowX;
+static u32 unusedWindowY;
+static u32 unusedWindowWidth;
+static u32 unusedWindowHeight;
+static s32 lbl_802F1E40;
+static s32 lbl_802F1E44;
+static u32 lbl_802F1E48;
+static u32 lbl_802F1E4C;
+static s8 lbl_802F1E50;
+static s8 lbl_802F1E51;
+static s32 lbl_802F1E54;
+static s32 lbl_802F1E58;
 
-extern struct WindowDesc mainMenuWindow;
-
-extern u32 unusedWindowX;
-extern u32 unusedWindowY;
-extern u32 unusedWindowWidth;
-extern u32 unusedWindowHeight;
-
-extern s32 lbl_802F1E54;
-extern s32 lbl_802F1E58;
-extern float lbl_802F1EC0;
-extern float lbl_802F1EBC;
-extern float lbl_802F1EB8;
-extern u32 lbl_802F1EAC;
-extern char *lbl_802F1EA4;
-extern u16 lbl_802F1EA2;
-extern u16 lbl_802F1EA0;
-extern u32 lbl_802F1E9C;
-extern u32 lbl_802F1E98;
-extern u32 lbl_802F1E94;
-extern u32 lbl_802F1E90;
-extern u32 lbl_802F1E8C;
-extern u32 lbl_802F1E88;
-extern u32 lbl_802F1E84;
-extern u32 lbl_802F1E80;
-extern u32 lbl_802F1E7C;
-extern float lbl_802F1E78;
-extern float lbl_802F1E74;
-extern float lbl_802F1E70;
-extern float lbl_802F1E6C;
-extern u16 lbl_802F1E6A;
-extern u16 lbl_802F1E68;
-extern u16 lbl_802F1E66;
-extern u16 lbl_802F1E64;
-extern float lbl_802F1E60;
-extern float lbl_802F1E5C;
-
-extern struct Color3f lbl_801F39FC;
-
-static u8 screenBuffer1[SCREEN_ROWS * SCREEN_COLUMNS];
-static u8 screenBuffer2[SCREEN_ROWS * SCREEN_COLUMNS];
-static u8 screenBuffer3[SCREEN_ROWS * SCREEN_COLUMNS];
-static u8 screenBuffer4[SCREEN_ROWS * SCREEN_COLUMNS];
-static u8 screenBuffer5[SCREEN_ROWS * SCREEN_COLUMNS];
-static u8 screenBuffer6[SCREEN_ROWS * SCREEN_COLUMNS];
-static u8 screenBuffer7[SCREEN_ROWS * SCREEN_COLUMNS];
-static u8 screenBuffer8[SCREEN_ROWS * SCREEN_COLUMNS];
+// non-static
+u32 debugFlags;
+u32 dipSwitches;
+u32 lbl_802F1ED8;
+u16 lbl_802F1ED4;
+u16 lbl_802F1ED2;
+u16 lbl_802F1ED0;
+float lbl_802F1ECC;
+float lbl_802F1EC8;
+float lbl_802F1EC4;
+float lbl_802F1EC0;
+float lbl_802F1EBC;
+float lbl_802F1EB8;
+s32 lbl_802F1EB4;
+s32 lbl_802F1EB0;
+u32 lbl_802F1EAC;
+u32 lbl_802F1EA8;
+char *lbl_802F1EA4;
+u16 lbl_802F1EA2;
+u16 lbl_802F1EA0;
+u32 lbl_802F1E9C;
+u32 lbl_802F1E98;
+u32 lbl_802F1E94;
+u32 lbl_802F1E90;
+u32 lbl_802F1E8C;
+u32 lbl_802F1E88;
+u32 lbl_802F1E84;
+u32 lbl_802F1E80;
+u32 lbl_802F1E7C;
+float lbl_802F1E78;
+float lbl_802F1E74;
+float lbl_802F1E70;
+float lbl_802F1E6C;
+u16 lbl_802F1E6A;
+u16 lbl_802F1E68;
+u16 lbl_802F1E66;
+u16 lbl_802F1E64;
+float lbl_802F1E60;
+float lbl_802F1E5C;
 
 struct RangeFloat
 {
@@ -383,9 +395,9 @@ struct WindowItem lbl_801B5170[] =
     { 6,  2, -1, "type : ",      &lbl_801F3A08.type,       &lbl_801B5078},
     {25,  9,  0, "%s",           &lbl_801F3A08.type,       &lightTypeNames},
     {ITEM_NONE,  2, -2, "RGB",          NULL,                     NULL},
-    { 7,  3, -1, "%4.2f",        &lbl_801F3A08.red,        NULL},
-    { 7,  8,  0, "%4.2f",        &lbl_801F3A08.green,      NULL},
-    { 7, 13,  0, "%4.2f",        &lbl_801F3A08.blue,       NULL},
+    { 7,  3, -1, "%4.2f",        &lbl_801F3A08.red,        &lbl_801B5088},
+    { 7,  8,  0, "%4.2f",        &lbl_801F3A08.green,      &lbl_801B5088},
+    { 7, 13,  0, "%4.2f",        &lbl_801F3A08.blue,       &lbl_801B5088},
     { 7,  2, -2, "px:%f",        &lbl_801F3A08.pos.x,      &posScaleRange},
     { 7,  2, -1, "py:%f",        &lbl_801F3A08.pos.y,      &posScaleRange},
     { 7,  2, -1, "pz:%f",        &lbl_801F3A08.pos.z,      &posScaleRange},
@@ -745,14 +757,22 @@ struct WindowItem lbl_801B727C[] =
 
 struct WindowDesc mainMenuWindow = { 4, 2, 20, 30, lbl_801B727C, 0, 0, 0, 0, 0, 0 };
 
+// bss
+
+static u8 screenBuffer1[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer2[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer3[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer4[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer5[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer6[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer7[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer8[SCREEN_ROWS * SCREEN_COLUMNS];
+
 struct WindowDesc *windowList[16];  // 0x3D60
 FORCE_BSS_ORDER(windowList)
 
 struct WindowDesc windowWork[16];  // 0x3DA0
 FORCE_BSS_ORDER(windowWork)
-
-extern int currWindowIndex;  // s32 vs int actually matters here
-extern u32 lbl_802F1EA8;
 
 void clear_buffer_region(int arg0, int arg1, int arg2, int arg3);
 void draw_char(int x, int y, s8 arg2, u8 colorId);
@@ -823,7 +843,7 @@ void func_8002DD5C(void)
 void cycle_window(void)
 {
     int r6;
-    int i;  // r7
+    int i;
 
     for (i = 0; i < 16; i++)
     {
@@ -845,29 +865,23 @@ void cycle_window(void)
 
 void window_open(struct WindowDesc *arg0)
 {
-
-    //struct WindowDesc *var_r4;
-    //int var_r6;
     int i;
-    #define var_r6 i
-    void **r6;
+    struct WindowDesc **r6;
     struct WindowDesc *var_r7;
+    struct WindowDesc *new_var;
 
     lbl_802F1EA8 = 1;
     if (windowList[15] == NULL)
     {
-        //var_r4 = windowList.unk40;
-        for (var_r6 = 0; var_r6 < 16; var_r6++)
+        for (i = 0; i < 16; i++)
         {
-            if (windowWork[var_r6].isActive == 0)
+            if (!windowWork[i].isActive)
                 break;
         }
-        if (var_r6 < 16)
+        if (i < 16)
         {
-            var_r7 = &windowWork[var_r6];
-            //var_r7 = var_r7;
-            //someinline(var_r7, arg0);
-            //*var_r7 = *arg0;
+            new_var = &windowWork[i];
+            var_r7 = new_var;
             var_r7->x = arg0->x;
             var_r7->y = arg0->y;
             var_r7->width = arg0->width;
@@ -891,15 +905,7 @@ void window_open(struct WindowDesc *arg0)
             currWindowIndex = 0;
         }
     }
-    #undef var_r6
 }
-
-extern u32 lbl_802F1E1C;
-extern u32 lbl_802F1E20;
-extern u32 lbl_802F1E24;
-extern u32 lbl_802F1E28;
-extern s32 lbl_802F1E40;
-extern s32 lbl_802F1E44;
 
 void process_window(struct WindowDesc *window)
 {
@@ -1678,13 +1684,6 @@ void window_main(void)
     unusedWindowHeight = 0;
 }
 
-extern s32 windowCursorX;
-extern s32 lbl_802F1E0C;
-extern s32 windowCursorY;
-extern s8 lbl_802F1E18;
-extern s8 lbl_802F1E19;
-extern u8 windowColorId;
-
 void window_set_cursor_pos(int x, int y)
 {
     windowCursorX = x;
@@ -1844,6 +1843,7 @@ void clear_buffer_region(int arg0, int arg1, int arg2, int arg3)
     }
 }
 
+#pragma force_active on
 int window_printf_1(const char *fmt, ...)
 {
     va_list args;
@@ -1855,6 +1855,7 @@ int window_printf_1(const char *fmt, ...)
     va_end(args);
     return 0;
 }
+#pragma force_active reset
 
 int window_printf_2(const char *fmt, ...)
 {
@@ -1956,4 +1957,6 @@ void draw_some_window_quad_2(float x1, float y1, float x2, float y2)
     GXEnd();
 }
 
+#pragma force_active on
 u32 lbl_802F0980 = 32;
+#pragma force_active reset

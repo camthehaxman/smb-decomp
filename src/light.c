@@ -42,14 +42,7 @@ s32 s_u_lightGroupsInitialized;
 
 s8 lbl_802F1C75;
 s8 lbl_802F1C74;
-u8 lbl_802F1C73;
-u8 lbl_802F1C72;
-u8 lbl_802F1C71;
-u8 lbl_802F1C70;
-u8 lbl_802F1C6F;
-u8 lbl_802F1C6E;
-u8 lbl_802F1C6D;
-u8 lbl_802F1C6C;
+s8 lbl_802F1C6C[8];
 
 s32 lbl_802F1C68;
 s32 lbl_802F1C64;
