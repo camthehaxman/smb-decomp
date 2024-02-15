@@ -6729,7 +6729,8 @@ glabel string_name___
 glabel string_type___
 	.asciz "type : "
 glabel lbl_802F089C
-	.4byte 0x52474200
+	.asciz "RGB"
+	.balign 4
 glabel string__4_2f
 	.asciz "%4.2f"
 	.balign 4

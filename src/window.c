@@ -5,6 +5,7 @@
 
 #include "global.h"
 #include "bitmap.h"
+#include "camera.h"
 #include "event.h"
 #include "gxcache.h"
 #include "input.h"
@@ -12,6 +13,14 @@
 #include "mode.h"
 #include "pool.h"
 #include "sound.h"
+#include "sprite.h"
+
+extern struct Light lbl_801F3A08;
+
+extern u32 lbl_802F1E48;
+extern u32 lbl_802F1E4C;
+extern s8 lbl_802F1E50;
+extern s8 lbl_802F1E51;
 
 u8 lbl_80201928[0x7AC];  FORCE_BSS_ORDER(lbl_80201928)  // 0, size = 0x7A9
 u8 lbl_802020D4[0x7AC];  FORCE_BSS_ORDER(lbl_802020D4)  // 0x7AC, size = 0x7A9
@@ -22,23 +31,23 @@ u8 lbl_80203F84[0x7AC];  FORCE_BSS_ORDER(lbl_80203F84)  // 0x265C, size = 0x7A9
 u8 lbl_80203F84_2[0x7AC];  FORCE_BSS_ORDER(lbl_80203F84_2)  // 0x2E08
 u8 lbl_80203F84_3[0x7AC];  FORCE_BSS_ORDER(lbl_80203F84_3)  // 0x35B4
 
-struct Struct8002EF0C_child
+struct WindowItem
 {
     u32 unk0;
     s32 unk4;
     s32 unk8;
     char *unkC;
     void *unk10;
-    u32 unk14;
+    u32 unk14;  // sometimes also a pointer
 };  // size = 0x18
 
-struct Struct8002EF0C
+struct WindowDesc
 {
     s32 unk0;
     s32 unk4;
     s32 unk8;
     s32 unkC;
-    struct Struct8002EF0C_child *unk10;
+    struct WindowItem *unk10;
     u32 unk14;
     u32 unk18;
     s32 unk1C;
@@ -47,8 +56,43 @@ struct Struct8002EF0C
     s32 unk28;
 };
 
+static char *lbl_802F0828[] = { "OFF", "ON" };
+
 // .data
-struct Struct8002EF0C_child lbl_801B3D98[] =
+
+u32 lbl_801B3B18[] =
+{
+    0x00000003,
+    0,
+    0x00000064,
+    0x00000001,
+};
+
+u32 lbl_801B3B28[] =
+{
+    0x00000003,
+    0xC1200000,
+    0x41200000,
+    0x3DCCCCCD,
+};
+
+u32 lbl_801B3B68[] =
+{
+    0x00000003,
+    0,
+    0,
+    0x00000080,
+};
+
+u32 lbl_801B3B78[] =
+{
+    0,
+    0,
+    0x00000001,
+    0x00000001,
+};
+
+struct WindowItem lbl_801B3D98[] =
 {
     {13, 1,  1, "Dip Switch",           NULL,         0},
     { 8, 2,  3, "                  %s", &dipSwitches, 0x1},
@@ -118,17 +162,17 @@ struct Struct8002EF0C_child lbl_801B3D98[] =
     {31, 0,  0, NULL,                   NULL,         0},
 };
 
-struct Struct8002EF0C lbl_801B43C8 = { 9, 0, 25, 29, lbl_801B3D98, 0, 0, 0, 0, 0, 0 };
+struct WindowDesc lbl_801B43C8 = { 9, 0, 25, 29, lbl_801B3D98, 0, 0, 0, 0, 0, 0 };
 
-struct Struct8002EF0C_child lbl_801B43F4[] =
+struct WindowItem lbl_801B43F4[] =
 {
     {13, 1, 1, "Game", NULL, 0},
     {31, 0, 0, NULL,   NULL, 0},
 };
 
-struct Struct8002EF0C lbl_801B4424 = { 0, 0, 10, 10, lbl_801B43F4, 0, 0, 0, 0, 0, 0 };
+struct WindowDesc lbl_801B4424 = { 0, 0, 10, 10, lbl_801B43F4, 0, 0, 0, 0, 0, 0 };
 
-struct Struct8002EF0C_child lbl_801B4480[] =
+struct WindowItem lbl_801B4480[] =
 {
     {13, 1, 1, "Mode",          NULL,              0},
     {17, 3, 3, "main_mode: %d", &gameMode,         0},
@@ -139,43 +183,307 @@ struct Struct8002EF0C_child lbl_801B4480[] =
     {31, 0, 0, NULL,            NULL,              0},
 };
 
-struct Struct8002EF0C lbl_801B4528 = { 33, 0, 20, 11, lbl_801B4480, 0, 0, 0, 0, 0, 0 };
+struct WindowDesc lbl_801B4528 = { 33, 0, 20, 11, lbl_801B4480, 0, 0, 0, 0, 0, 0 };
 
-struct Struct8002EF0C_child lbl_801B4554[] =
+struct WindowItem lbl_801B4554[] =
 {
-    {13, 1,  1, "Event", NULL,                0},
-    {22, 2,  3, "%10s",  &eventInfo[0].name,  0},
-    {22, 2,  4, "%10s",  &eventInfo[1].name,  0},
-    {22, 2,  5, "%10s",  &eventInfo[2].name,  0},
-    {22, 2,  6, "%10s",  &eventInfo[3].name,  0},
-    {22, 2,  7, "%10s",  &eventInfo[4].name,  0},
-    {22, 2,  8, "%10s",  &eventInfo[5].name,  0},
-    {22, 2,  9, "%10s",  &eventInfo[6].name,  0},
-    {22, 2, 10, "%10s",  &eventInfo[7].name,  0},
-    {22, 2, 11, "%10s",  &eventInfo[8].name,  0},
-    {22, 2, 12, "%10s",  &eventInfo[9].name,  0},
-    {22, 2, 13, "%10s",  &eventInfo[10].name, 0},
-    {22, 2, 14, "%10s",  &eventInfo[11].name, 0},
-    {22, 2, 15, "%10s",  &eventInfo[12].name, 0},
-    {22, 2, 16, "%10s",  &eventInfo[13].name, 0},
-    {22, 2, 17, "%10s",  &eventInfo[14].name, 0},
-    {22, 2, 18, "%10s",  &eventInfo[15].name, 0},
-    {22, 2, 19, "%10s",  &eventInfo[16].name, 0},
-    {22, 2, 20, "%10s",  &eventInfo[17].name, 0},
-    {22, 2, 21, "%10s",  &eventInfo[18].name, 0},
-    {22, 2, 22, "%10s",  &eventInfo[19].name, 0},
-    {22, 2, 23, "%10s",  &eventInfo[20].name, 0},
-
-    {25, 13, 3, "%s",    &eventInfo[0],       (u32)&lbl_801B7948},
+    {13,  1,  1, "Event", NULL,                0},
+    {22,  2,  3, "%10s",  &eventInfo[0].name,  0},
+    {22,  2,  4, "%10s",  &eventInfo[1].name,  0},
+    {22,  2,  5, "%10s",  &eventInfo[2].name,  0},
+    {22,  2,  6, "%10s",  &eventInfo[3].name,  0},
+    {22,  2,  7, "%10s",  &eventInfo[4].name,  0},
+    {22,  2,  8, "%10s",  &eventInfo[5].name,  0},
+    {22,  2,  9, "%10s",  &eventInfo[6].name,  0},
+    {22,  2, 10, "%10s",  &eventInfo[7].name,  0},
+    {22,  2, 11, "%10s",  &eventInfo[8].name,  0},
+    {22,  2, 12, "%10s",  &eventInfo[9].name,  0},
+    {22,  2, 13, "%10s",  &eventInfo[10].name, 0},
+    {22,  2, 14, "%10s",  &eventInfo[11].name, 0},
+    {22,  2, 15, "%10s",  &eventInfo[12].name, 0},
+    {22,  2, 16, "%10s",  &eventInfo[13].name, 0},
+    {22,  2, 17, "%10s",  &eventInfo[14].name, 0},
+    {22,  2, 18, "%10s",  &eventInfo[15].name, 0},
+    {22,  2, 19, "%10s",  &eventInfo[16].name, 0},
+    {22,  2, 20, "%10s",  &eventInfo[17].name, 0},
+    {22,  2, 21, "%10s",  &eventInfo[18].name, 0},
+    {22,  2, 22, "%10s",  &eventInfo[19].name, 0},
+    {22,  2, 23, "%10s",  &eventInfo[20].name, 0},
+    {25, 13,  3, "%s",    &eventInfo[0],       (u32)&lbl_801B7948},
+    {25, 13,  4, "%s",    &eventInfo[1],       (u32)&lbl_801B7948},
+    {25, 13,  5, "%s",    &eventInfo[2],       (u32)&lbl_801B7948},
+    {25, 13,  6, "%s",    &eventInfo[3],       (u32)&lbl_801B7948},
+    {25, 13,  7, "%s",    &eventInfo[4],       (u32)&lbl_801B7948},
+    {25, 13,  8, "%s",    &eventInfo[5],       (u32)&lbl_801B7948},
+    {25, 13,  9, "%s",    &eventInfo[6],       (u32)&lbl_801B7948},
+    {25, 13, 10, "%s",    &eventInfo[7],       (u32)&lbl_801B7948},
+    {25, 13, 11, "%s",    &eventInfo[8],       (u32)&lbl_801B7948},
+    {25, 13, 12, "%s",    &eventInfo[9],       (u32)&lbl_801B7948},
+    {25, 13, 13, "%s",    &eventInfo[10],      (u32)&lbl_801B7948},
+    {25, 13, 14, "%s",    &eventInfo[11],      (u32)&lbl_801B7948},
+    {25, 13, 15, "%s",    &eventInfo[12],      (u32)&lbl_801B7948},
+    {25, 13, 16, "%s",    &eventInfo[13],      (u32)&lbl_801B7948},
+    {25, 13, 17, "%s",    &eventInfo[14],      (u32)&lbl_801B7948},
+    {25, 13, 18, "%s",    &eventInfo[15],      (u32)&lbl_801B7948},
+    {25, 13, 19, "%s",    &eventInfo[16],      (u32)&lbl_801B7948},
+    {25, 13, 20, "%s",    &eventInfo[17],      (u32)&lbl_801B7948},
+    {25, 13, 21, "%s",    &eventInfo[18],      (u32)&lbl_801B7948},
+    {25, 13, 22, "%s",    &eventInfo[19],      (u32)&lbl_801B7948},
+    {25, 13, 23, "%s",    &eventInfo[20],      (u32)&lbl_801B7948},
+    {31,  0,  0, NULL,    NULL,                0},
 };
 
-struct Struct8002EF0C *lbl_80205688[16];  // 0x3D60
+struct WindowDesc lbl_801B4974 = {0, 11, 27, 26, lbl_801B4554, 0, 0, 0, 0, 0, 0};
+
+u32 lbl_801B49A0[] = {0, 0, 3, 1};
+
+struct WindowItem lbl_801B4A38[] =
+{
+    {13, 1,  1, "Camera",         NULL,                    0},
+    {10, 2,  3, "id:       [%d]", NULL,                    (u32)&lbl_801B49A0},
+    {20, 2, -1, "camx:%8.3f",     &cameraInfo[0].eye.x,    0},
+    {20, 2, -1, "camy:%8.3f",     &cameraInfo[0].eye.y,    0},
+    {20, 2, -1, "camz:%8.3f",     &cameraInfo[0].eye.z,    0},
+    {20, 2, -1, "intx:%8.3f",     &cameraInfo[0].lookAt.x, 0},
+    {20, 2, -1, "inty:%8.3f",     &cameraInfo[0].lookAt.y, 0},
+    {20, 2, -1, "intz:%8.3f",     &cameraInfo[0].lookAt.z, 0},
+    {16, 2, -1, "angx:    %04hX", &cameraInfo[0].rotX,     0},
+    {16, 2, -1, "angy:    %04hX", &cameraInfo[0].rotY,     0},
+    {16, 2, -1, "angz:    %04hX", &cameraInfo[0].rotZ,     0},
+    {31, 0,  0, NULL,             NULL,                    0},
+};
+
+struct WindowDesc lbl_801B4B58 = {36, 22, 17, 15, lbl_801B4A38, sizeof(struct Camera), 0, 0, 0, 0, 0};
+
+struct WindowItem lbl_801B4B84[] =
+{
+    {13, 1, 1, "Effect", NULL, 0},
+    {31, 0, 0, NULL,     NULL, 0},
+};
+
+struct WindowDesc lbl_801B4BB4 = {0, 0, 10, 10, lbl_801B4B84, 0, 0, 0, 0, 0, 0};
+
+u32 lbl_801B4BE0[] =
+{
+    0x00000003,
+    0,
+    0x44200000,
+    0x3F800000,
+};
+
+u32 lbl_801B4BF0[] =
+{
+    0,
+    0,
+    0x0000003F,
+    0x00000001,
+};
+
+u32 lbl_801B4C00[] =
+{
+    0,
+    0,
+    0x000000B2,
+    0x00000001,
+};
+
+u32 lbl_801B4C10[] =
+{
+    0,
+    0,
+    0x00000008,
+    0x00000001,
+};
+
+u32 lbl_801B4C20[] =
+{
+    0,
+    0,
+    0x000000FF,
+    0x00000001,
+};
+
+u32 lbl_801B4C30[] =
+{
+    0,
+    0,
+    0x3F800000,
+    0x3C23D70A,
+};
+
+struct WindowItem lbl_801B4D94[] =
+{
+    {13, 1,  1, "Sprite",            NULL,                     0},
+    {10, 3,  3, "Sprite ID : %3d",   NULL,                     (u32)lbl_801B4BF0},
+    {30, 3, -1, "%15s",              &g_poolInfo.spriteBuf,    0},
+    {21, 3, -2, "%s",                &spriteWork[0].text,      0},
+    { 7, 3, -1, "locate_dx : %4.1f", &spriteWork[0].x,         (u32)lbl_801B4BE0},
+    { 7, 3, -1, "locate_dy : %4.1f", &spriteWork[0].y,         (u32)lbl_801B4BE0},
+    { 7, 3, -1, "    depth : %4.1f", &spriteWork[0].unk4C,     (u32)lbl_801B3B28},
+    { 5, 3, -1, "     font : %3d",   &spriteWork[0].fontId,    (u32)lbl_801B4C00},
+    {25, 3, -1, "  %s",              &spriteWork[0].fontId,    (u32)fontStrArray},
+    { 6, 3, -1, "    align : %3d",   &spriteWork[0].textAlign, (u32)lbl_801B4C10},
+    { 5, 3, -1, "      red :  %02X", &spriteWork[0].mulR,      (u32)lbl_801B4C20},
+    { 5, 3, -1, "    green :  %02X", &spriteWork[0].mulG,      (u32)lbl_801B4C20},
+    { 5, 3, -1, "     bule :  %02X", &spriteWork[0].mulB,      (u32)lbl_801B4C20},
+    { 5, 3, -1, "ofs   red :  %02X", &spriteWork[0].addR,      (u32)lbl_801B4C20},
+    { 5, 3, -1, "ofs green :  %02X", &spriteWork[0].addG,      (u32)lbl_801B4C20},
+    { 5, 3, -1, "ofs  bule :  %02X", &spriteWork[0].addB,      (u32)lbl_801B4C20},
+    { 4, 3, -1, "     zang : %04hX", &spriteWork[0].rotation,  (u32)lbl_801B3B68},
+    { 7, 3, -1, "     zm_x : %4.1f", &spriteWork[0].scaleX,    (u32)lbl_801B3B28},
+    { 7, 3, -1, "     zm_y : %4.1f", &spriteWork[0].scaleY,    (u32)lbl_801B3B28},
+    { 7, 3, -1, "    trnsl : %4.2f", &spriteWork[0].opacity,   (u32)lbl_801B4C30},
+    {17, 3, -2, "    timer : %5d",   &spriteWork[0].counter,   0},
+    {15, 3, -1, "    para1 : %5d",   &spriteWork[0].userVar,   0},
+    {31, 0,  0, NULL,                NULL,                     0},
+};
+
+struct WindowDesc lbl_801B4FBC = {0, 0, 24, 30, lbl_801B4D94, sizeof(struct Sprite), 0, 0, 0, 0, 0};
+
+char *lbl_801B503C[] =
+{
+    "GX_SP_OFF",
+    "GX_SP_FLAT",
+    "GX_SP_COS",
+    "GX_SP_COS2",
+    "GX_SP_SHARP",
+    "GX_SP_RING1",
+    "GX_SP_RING2",
+};
+
+u32 lbl_801B5058[] =
+{
+    0,
+    0,
+    0x0000001F,
+    0x00000001,
+};
+
+u32 lbl_801B5068[] =
+{
+    0,
+    0,
+    0x00000007,
+    0x00000001,
+};
+
+u32 lbl_801B5078[] =
+{
+    0,
+    0,
+    0x00000008,
+    0x00000001,
+};
+
+u32 lbl_801B5088[] =
+{
+    0,
+    0,
+    0x3F800000,
+    0x3C23D70A,
+};
+
+u32 lbl_801B5098[] =
+{
+    0x00000002,
+    0x3DCCCCCD,
+    0x3F800000,
+    0x3DCCCCCD,
+};
+
+u32 lbl_801B50A8[] =
+{
+    0x00000003,
+    0,
+    0x3F800000,
+    0x3DCCCCCD,
+};
+
+u32 lbl_801B50B8[] =
+{
+    0x00000003,
+    0,
+    0x3F800000,
+    0x3C23D70A,
+};
+
+u32 lbl_801B50C8[] =
+{
+    0x00000003,
+    0,
+    0x3F800000,
+    0x3C23D70A,
+};
+
+u32 lbl_801B50D8[] =
+{
+    0,
+    0,
+    0x00000006,
+    0x00000001,
+};
+
+u32 lbl_801B50E8[] =
+{
+    0,
+    0,
+    0x42B40000,
+    0x3DCCCCCD,
+};
+
+u32 lbl_801B50F8[] =
+{
+    0,
+    0x00000001,
+    0x000000C7,
+    0x00000001,
+};
+
+struct WindowItem lbl_801B5170[] =
+{
+    {13,  1,  1, "Light Param",  NULL,                     0},
+    { 2,  2,  3, "data ID : %d", &u_lightToPrint,          (u32)lbl_801B5058},
+    { 6,  2, -2, "stat : ",      &lbl_801F3A08,            (u32)lbl_801B3B78},
+    {25,  9,  0, "%s",           &lbl_801F3A08,            (u32)lbl_802F0828},
+    { 6,  2, -1, "name : ",      &lbl_801F3A08.u_id,       (u32)lbl_801B5068},
+    {25,  9,  0, "%s",           &lbl_801F3A08.u_id,       (u32)s_lightIdNames},
+    { 4,  2, -1, "sub  : %d",    &lbl_801F3A08.u_inst,     (u32)lbl_801B3B18},
+    { 6,  2, -1, "type : ",      &lbl_801F3A08.type,       (u32)lbl_801B5078},
+    {25,  9,  0, "%s",           &lbl_801F3A08.type,       (u32)lightTypeNames},
+    {13,  2, -2, "RGB",          NULL,                     0},
+    { 7,  3, -1, "%4.2f",        &lbl_801F3A08.red,        0},
+    { 7,  8,  0, "%4.2f",        &lbl_801F3A08.green,      0},
+    { 7, 13,  0, "%4.2f",        &lbl_801F3A08.blue,       0},
+    { 7,  2, -2, "px:%f",        &lbl_801F3A08.pos.x,      (u32)lbl_801B3B28},
+    { 7,  2, -1, "py:%f",        &lbl_801F3A08.pos.y,      (u32)lbl_801B3B28},
+    { 7,  2, -1, "pz:%f",        &lbl_801F3A08.pos.z,      (u32)lbl_801B3B28},
+    { 4,  2, -2, "xa:%04X",      &lbl_801F3A08.rotX,       (u32)lbl_801B3B68},
+    { 4,  2, -1, "xa:%04X",      &lbl_801F3A08.rotY,       (u32)lbl_801B3B68},
+    { 7,  2, -2, "leng:%5.1f",   &lbl_801F3A08.refDist,    (u32)lbl_801B5098},
+    { 7,  2, -1, "att0:%5.2f",   &lbl_801F3A08.k0,         (u32)lbl_801B50A8},
+    { 7,  2, -1, "att1:%5.2f",   &lbl_801F3A08.k1,         (u32)lbl_801B50B8},
+    { 7,  2, -1, "att2:%5.2f",   &lbl_801F3A08.k2,         (u32)lbl_801B50C8},
+    { 6,  2, -2, "cone  :",      &lbl_802F1E50,            (u32)lbl_801B50D8},
+    {25,  9,  0, "%s",           &lbl_802F1E50,            (u32)lbl_801B503C},
+    { 7,  2, -1, "cutoff:%4.1f", &lbl_801F3A08.spotCutoff, (u32)lbl_801B50E8},
+    { 6,  2, -2, "DISP:",        &lbl_802F1C8C,            (u32)lbl_801B3B78},
+    {25,  7,  0, "%s",           &lbl_802F1C8C,            (u32)lbl_802F0828},
+    { 6,  2, -1, "\"SAVE\"",     &u_printLight,            (u32)lbl_801B3B78},
+    { 6,  2, -1, "\"COPY\"",     &lbl_802F1C84,            (u32)lbl_801B3B78},
+    { 2,  9,  0, "%2d / ",       &lbl_802F1C80,            (u32)lbl_801B5058},
+    { 2, 14,  0, "st%03d",       &lightingStageId,         (u32)lbl_801B50F8},
+    {31,  0,  0, NULL,           NULL,                     0},
+};
+
+struct WindowDesc lbl_801B5470 = {0, 0, 21, 33, lbl_801B5170, 0, 0, 0, 0, 0, 0};
+
+struct WindowDesc *lbl_80205688[16];  // 0x3D60
 FORCE_BSS_ORDER(lbl_80205688)
 
 struct
 {
     //void *unk0[0x20/4];
-    struct Struct8002EF0C unk60[1];  // 0x3DC0
+    struct WindowDesc unk60[1];  // 0x3DC0
     u8 filler6C[0x300-0x6C];
 } lbl_80205688_2;  // 0x3DA0
 FORCE_BSS_ORDER(lbl_80205688_2)
@@ -189,7 +497,7 @@ void func_800304E0(float x1, float y1, float x2, float y2);
 
 void func_8002DC54(void)
 {
-    struct Struct8002EF0C **var_r3;
+    struct WindowDesc **var_r3;
     int var_r4;
 
     if (lbl_802F1EA8 == 0)
@@ -219,7 +527,7 @@ void func_8002DC54(void)
 
 static void func_8002DD5C_inline(void)
 {
-    struct Struct8002EF0C **r6 = &lbl_80205688[lbl_802F1E08];
+    struct WindowDesc **r6 = &lbl_80205688[lbl_802F1E08];
     void *r4 = *r6;
     int i;
 
@@ -233,8 +541,8 @@ void func_8002DD5C(void)
 {
     if (lbl_802F1E08 == 0)
     {
-        struct Struct8002EF0C **r3 = lbl_80205688;
-        struct Struct8002EF0C *r4 = *r3;
+        struct WindowDesc **r3 = lbl_80205688;
+        struct WindowDesc *r4 = *r3;
         int i;
 
         for (i = 0; i < 15 && *(r3 + 1) != 0; i++, r3++)
@@ -272,15 +580,15 @@ void func_8002DE38(void)
 }
 #pragma dont_inline reset
 
-void func_8002E06C(struct Struct8002EF0C *arg0)
+void func_8002E06C(struct WindowDesc *arg0)
 {
 
-    struct Struct8002EF0C *var_r4;
+    struct WindowDesc *var_r4;
     //int var_r6;
     int i;
     #define var_r6 i
     void **r6;
-    struct Struct8002EF0C *var_r7;
+    struct WindowDesc *var_r7;
 
     lbl_802F1EA8 = 1;
     if (lbl_80205688[15] == NULL)
@@ -346,7 +654,7 @@ struct SomeUnkStruct2
     u32 *unkC;
 };
 
-void func_8002E284(struct Struct8002EF0C *arg0)
+void func_8002E284(struct WindowDesc *arg0)
 {
     void *temp_r4_6;
     f32 var_f1;
@@ -370,9 +678,9 @@ void func_8002E284(struct Struct8002EF0C *arg0)
     s32 var_r6;
     s32 var_r6_2;
     int var_r6_3;
-    struct Struct8002EF0C_child *var_r4;
+    struct WindowItem *var_r4;
     struct SomeUnkStruct *temp_r3_10;
-    struct Struct8002EF0C *temp_r3_8;  // idk?
+    struct WindowDesc *temp_r3_8;  // idk?
     u32 *temp_r5_5;
     void *new_var;
 
@@ -601,7 +909,7 @@ void func_8002E284(struct Struct8002EF0C *arg0)
                 *temp_r5_5 = (s32) (*temp_r5_5 ^ var_r4->unk14);
                 break;
             case 9:
-                arg0->unk10 = (struct Struct8002EF0C_child *) temp_r5_5;
+                arg0->unk10 = (struct WindowItem *) temp_r5_5;
                 break;
             }
         }
@@ -612,7 +920,7 @@ void func_8002E284(struct Struct8002EF0C *arg0)
     arg0->unk28 = (s32) arg0->unk28 / 2;
 }
 
-void draw_window_frame(struct Struct8002EF0C *arg0);
+void draw_window_frame(struct WindowDesc *arg0);
 void func_8002FCAC(int arg0, int arg1);
 
 static void set_some_params(int a, int b, int c, int d)
@@ -625,9 +933,9 @@ static void set_some_params(int a, int b, int c, int d)
 
 u8 datafiller[0x39B4] = {0};
 
-void func_8002EA40(struct Struct8002EF0C *arg0, u32 arg1)
+void func_8002EA40(struct WindowDesc *arg0, u32 arg1)
 {
-    struct Struct8002EF0C_child *var_r28;
+    struct WindowItem *var_r28;
     int var_r27;
     int var_r26;
     int var_r25;
@@ -780,7 +1088,7 @@ void func_8002EA40(struct Struct8002EF0C *arg0, u32 arg1)
     func_8002FCAC(0, 0);
 }
 
-void draw_window_frame(struct Struct8002EF0C *arg0)
+void draw_window_frame(struct WindowDesc *arg0)
 {
     int i;
 
@@ -822,7 +1130,7 @@ void draw_window_frame(struct Struct8002EF0C *arg0)
 void func_8002F0E4(void)
 {
     u8 *var_r30_2;
-    struct Struct8002EF0C **var_r30;
+    struct WindowDesc **var_r30;
     int var_r31;
     int var_r29;
     int var_r27;
@@ -837,7 +1145,7 @@ void func_8002F0E4(void)
     int var_r6;
     int var_r8;
     int var_r9;
-    struct Struct8002EF0C *temp_r7;
+    struct WindowDesc *temp_r7;
 
     GXSetZMode_cached(1, GX_LESS, 1);
     var_r30 = lbl_80205688;
@@ -911,14 +1219,7 @@ void window_init(void)
 
 extern s8 lbl_802F1C6C[8];
 
-extern struct Light lbl_801F3A08;
-
-extern u32 lbl_802F1E48;
-extern u32 lbl_802F1E4C;
-extern s8 lbl_802F1E50;
-extern s8 lbl_802F1E51;
-
-extern struct Struct8002EF0C lbl_801B7474;
+extern struct WindowDesc lbl_801B7474;
 
 extern u32 lbl_802F1E30;
 extern u32 lbl_802F1E34;
@@ -948,7 +1249,7 @@ void window_main(void)
     u8 *var_r12;
     int var_r3_7;
     u8 *var_r4;
-    struct Struct8002EF0C **var_r4_2;
+    struct WindowDesc **var_r4_2;
     u8 *var_r5;
     u8 *var_r6;
     u8 *var_r7;
@@ -957,8 +1258,8 @@ void window_main(void)
     s8 r11;
     u8 *var_r10;
     int var_ctr_4;
-    struct Struct8002EF0C *temp_r3;
-    struct Struct8002EF0C *temp_r3_7;
+    struct WindowDesc *temp_r3;
+    struct WindowDesc *temp_r3_7;
 
     var_r22 = 1;
 

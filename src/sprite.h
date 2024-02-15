@@ -290,6 +290,7 @@ struct ScreenFadeInfo
 extern struct Sprite spriteWork[64];
 extern struct ScreenFadeInfo screenFadeInfo;
 extern struct FontParams fontInfo[];
+extern char *fontStrArray[];
 
 void ev_sprite_init(void);
 void ev_sprite_main(void);

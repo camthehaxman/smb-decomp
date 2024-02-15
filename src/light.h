@@ -90,9 +90,10 @@ extern s32 u_printLight;
 extern s32 lbl_802F1C8C;
 extern s32 u_lightToPrint;
 extern u32 lbl_802F1C90;
-
 extern s8 lbl_802F1C74;
 extern s8 lbl_802F1C75;
+extern char *lightTypeNames[];
+extern char *s_lightIdNames[];
 
 void light_init();
 void light_main();
