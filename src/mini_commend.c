@@ -17,6 +17,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "thread.h"
+#include "window.h"
 
 static void mini_commend_finish(void);
 static void lbl_8009C5E0(struct Sprite *);
@@ -237,10 +238,10 @@ static void mini_commend_finish(void)
 
 void func_8009BEF8(void)
 {
-    u_debug_set_cursor_pos(1, 1);
+    window_set_cursor_pos(1, 1);
     u_debug_print("MINI COMMEND");
-    u_debug_set_cursor_pos(3, 3);
-    u_debug_printf("\x1C [ %d / %d ]", modeCtrl.unk10, 11);
+    window_set_cursor_pos(3, 3);
+    window_printf_2("\x1C [ %d / %d ]", modeCtrl.unk10, 11);
     func_8009CD5C();
     if (eventInfo[EVENT_EFFECT].state == EV_STATE_RUNNING)
         effect_draw();

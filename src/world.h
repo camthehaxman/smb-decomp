@@ -33,11 +33,11 @@ extern Vec lbl_80206CF0;
 #define WORLD_FOREACH(code) \
     { \
         struct World *world = worldInfo; \
-        s8 *unk_ = g_poolInfo.playerPool.statusList; \
+        s8 *status = g_poolInfo.playerPool.statusList; \
         int i_; \
-        for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, world++, unk_++) \
+        for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, world++, status++) \
         { \
-            if (*unk_ == 2) \
+            if (*status == STAT_NORMAL) \
                 { code } \
         } \
     }

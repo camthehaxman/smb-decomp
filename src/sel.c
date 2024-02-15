@@ -10,6 +10,7 @@
 #include "relocation.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 extern struct StageSelection stageSelection;
 extern struct RelModule lbl_802F1BD8;
@@ -22,8 +23,8 @@ void mode_sel_func(void)
 {
     if (!(gameSubmode > SMD_SEL_TOP && gameSubmode < SMD_SEL_BOTTOM))
     {
-        u_debug_set_cursor_pos(10, 10);
-        u_debug_printf("sub_mode: error %d in Sel", gameSubmode);
+        window_set_cursor_pos(10, 10);
+        window_printf_2("sub_mode: error %d in Sel", gameSubmode);
         return;
     }
     

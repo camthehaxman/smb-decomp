@@ -4,6 +4,7 @@
 #include "event.h"
 #include "input.h"
 #include "pool.h"
+#include "window.h"
 
 static void func_800308AC(void);
 static void func_80030914(struct PoolInfo_sub *, int);
@@ -83,7 +84,7 @@ void debug_main(void)
 
     if (debugFlags & 1)
     {
-        u_debug_set_cursor_pos(43, 0);
+        window_set_cursor_pos(43, 0);
         u_debug_print("DEBUG MODE");
     }
 
@@ -105,7 +106,7 @@ void debug_main(void)
         event_finish(EVENT_MOUSE);
 }
 
-char *lbl_801B7948[] =
+char *poolStatusNames[] =
 {
     "STAT_NULL",
     "STAT_INIT",

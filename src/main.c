@@ -22,6 +22,7 @@
 #include "sound.h"
 #include "stage.h"
 #include "thread.h"
+#include "window.h"
 #include "world.h"
 
 struct Thread lbl_801ED920[146];

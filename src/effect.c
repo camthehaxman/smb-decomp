@@ -21,6 +21,7 @@
 #include "pool.h"
 #include "stage.h"
 #include "stcoli.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/common.gma.h"
@@ -486,7 +487,7 @@ void u_give_points(int arg0, int arg1)
             poolStatus = g_poolInfo.playerPool.statusList;
             for (i2 = 0; i2 < g_poolInfo.playerPool.count; i2++, ball++, poolStatus++)
             {
-                if (*poolStatus != 0)
+                if (*poolStatus != STAT_NULL)
                 {
                     switch (ball->rank)
                     {
@@ -568,13 +569,13 @@ void ev_effect_main(void)
     effect = g_effects;
     for (i = g_poolInfo.effectPool.count; i > 0; i--, poolStatus++, effect++)
     {
-        if (*poolStatus != 0)
+        if (*poolStatus != STAT_NULL)
         {
             effect->timer--;
-            if (effect->timer == 0 || *poolStatus == 3)
+            if (effect->timer == 0 || *poolStatus == STAT_DEST)
             {
                 s_effectDestroyFuncs[effect->type](effect);
-                *poolStatus = 0;
+                *poolStatus = STAT_NULL;
             }
             else
             {
@@ -595,10 +596,10 @@ void ev_effect_dest(void)
     effect = g_effects;
     for (i = g_poolInfo.effectPool.count; i > 0; i--, poolStatus++, effect++)
     {
-        if (*poolStatus != 0)
+        if (*poolStatus != STAT_NULL)
         {
             s_effectDestroyFuncs[effect->type](effect);
-            *poolStatus = 0;
+            *poolStatus = STAT_NULL;
         }
     }
 }
@@ -627,7 +628,7 @@ void effect_draw(void)
     {
         for (i = g_poolInfo.effectPool.count; i > 0; i--, poolStatus++, effect++)
         {
-            if (*poolStatus != 0 && (effect->cameras & cameras) && !(effect->flags & 1))
+            if (*poolStatus != STAT_NULL && (effect->cameras & cameras) && !(effect->flags & 1))
                 s_effectDrawFuncs[effect->type](effect);
         }
     }
@@ -635,12 +636,12 @@ void effect_draw(void)
     {
         for (i = g_poolInfo.effectPool.count; i > 0; i--, poolStatus++, effect++)
         {
-            if (*poolStatus != 0 && (effect->cameras & cameras) && !(effect->flags & 1))
+            if (*poolStatus != STAT_NULL && (effect->cameras & cameras) && !(effect->flags & 1))
             {
                 if (effect->flags & 0x10)
                 {
                     s_effectDestroyFuncs[effect->type](effect);
-                    *poolStatus = 0;
+                    *poolStatus = STAT_NULL;
                 }
                 else
                 {
@@ -685,9 +686,9 @@ void erase_effect(int type)
     effect = g_effects;
     for (i = g_poolInfo.effectPool.count; i > 0; i--, poolStatus++, effect++)
     {
-        if (*poolStatus != 0 && effect->type == type)
+        if (*poolStatus != STAT_NULL && effect->type == type)
         {
-            *poolStatus = 3;
+            *poolStatus = STAT_DEST;
             effect->flags |= 1;
         }
     }
@@ -703,7 +704,7 @@ struct Effect *find_effect_by_uid(int uid)
     effect = g_effects;
     for (i = g_poolInfo.effectPool.count; i > 0; i--, poolStatus++, effect++)
     {
-        if (*poolStatus != 0 && effect->uid == uid)
+        if (*poolStatus != STAT_NULL && effect->uid == uid)
             break;
     }
     if (i == 0)
@@ -1266,7 +1267,7 @@ static void effect_raindrop_main(struct Effect *effect)
         if (effect->colorFactor < 0.0)
         {
             effect->colorFactor = 0.0f;
-            g_poolInfo.effectPool.statusList[effect->poolIndex] = 3;
+            g_poolInfo.effectPool.statusList[effect->poolIndex] = STAT_DEST;
         }
         break;
     }
@@ -1461,7 +1462,7 @@ static void effect_levitate_main(struct Effect *effect)
         if (effect->scale.x > 0.05)
             effect->scale.x -= 0.05;
         else
-            g_poolInfo.effectPool.statusList[effect->poolIndex] = 3;
+            g_poolInfo.effectPool.statusList[effect->poolIndex] = STAT_DEST;
     }
 }
 
@@ -2406,7 +2407,7 @@ static void effect_meteo_main(struct Effect *effect)
         if (effect->colorFactor < 0.0f)
         {
             effect->colorFactor = 0.0f;
-            g_poolInfo.effectPool.statusList[effect->poolIndex] = 3;
+            g_poolInfo.effectPool.statusList[effect->poolIndex] = STAT_DEST;
         }
         break;
     }

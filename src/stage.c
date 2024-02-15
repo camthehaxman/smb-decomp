@@ -13,6 +13,7 @@
 #include "gma.h"
 #include "gxutil.h"
 #include "info.h"
+#include "light.h"
 #include "load.h"
 #include "mathutil.h"
 #include "minimap.h"
@@ -23,7 +24,7 @@
 #include "shadow.h"
 #include "stage.h"
 #include "stcoli.h"
-#include "light.h"
+#include "window.h"
 
 #include "../data/common.nlobj.h"
 
@@ -31,8 +32,8 @@
 s16 currStageId;
 s16 loadingStageId;
 s16 loadingStageIdRequest;
-u32 lbl_802F1F50;
-u32 lbl_802F1F4C;
+s32 lbl_802F1F50;
+s32 lbl_802F1F4C;
 s32 animGroupCount;
 struct DynamicStagePart *dynamicStageParts;
 u16 lbl_802F1F40;

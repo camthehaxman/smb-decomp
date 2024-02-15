@@ -13,6 +13,7 @@
 #include "mode.h"
 #include "nl2ngc.h"
 #include "stcoli.h"
+#include "window.h"
 
 void bg_old_storm_init(void)
 {

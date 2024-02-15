@@ -28,6 +28,7 @@
 #include "stcoli.h"
 #include "textbox.h"
 #include "thread.h"
+#include "window.h"
 
 #include "../data/common.nlobj.h"
 #include "../data/common.gma.h"

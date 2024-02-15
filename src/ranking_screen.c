@@ -12,6 +12,7 @@
 #include "ranking_screen.h"
 #include "recplay.h"
 #include "sprite.h"
+#include "window.h"
 
 static void ranking_screen_sprite_main(s8 *, struct Sprite *);
 static void ranking_screen_sprite_draw(struct Sprite *);

@@ -23,6 +23,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "window.h"
 
 s8 lbl_802F1CB0[8];
 s32 practiceBestScore;
@@ -71,7 +72,7 @@ void ev_info_init(void)
 
 void ev_info_main(void)
 {
-    s8 *r23;
+    s8 *status;
     int i;
     struct Ball *ballBackup;
     int r20;
@@ -85,14 +86,14 @@ void ev_info_main(void)
     // handle goal
     ballBackup = currentBall;
     ball = ballInfo;
-    r23 = g_poolInfo.playerPool.statusList;
+    status = g_poolInfo.playerPool.statusList;
     r20 = 0;
-    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r23++)
+    for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
     {
         u32 goalId;
         s32 sp64;
 
-        if (*r23 == 0 || *r23 == 4)
+        if (*status == STAT_NULL || *status == STAT_FREEZE)
             continue;
 
         currentBall = ball;
@@ -201,11 +202,11 @@ void ev_info_main(void)
 
     {
         struct Item *item = itemPool;
-        s8 *r7 = g_poolInfo.itemPool.statusList;
+        s8 *status = g_poolInfo.itemPool.statusList;
 
-        for (i = 0; i < g_poolInfo.itemPool.count; item++, i++, r7++)
+        for (i = 0; i < g_poolInfo.itemPool.count; item++, i++, status++)
         {
-            if (*r7 != 0 && *r7 != 3 && item->type == 0 && (item->flags & (1 << 1)))
+            if (*status != STAT_NULL && *status != STAT_DEST && item->type == 0 && (item->flags & (1 << 1)))
                 infoWork.bananasLeft++;
         }
     }
@@ -305,11 +306,11 @@ void ev_info_main(void)
 
     if (!(infoWork.flags & INFO_FLAG_05) && !(advDemoInfo.flags & (1 << 8)))
     {
-        r23 = g_poolInfo.playerPool.statusList;
+        status = g_poolInfo.playerPool.statusList;
         ball = ballInfo;
-        for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, r23++)
+        for (i = 0; i < g_poolInfo.playerPool.count; i++, ball++, status++)
         {
-            if (*r23 == 0 || *r23 == 4)
+            if (*status == STAT_NULL || *status == STAT_FREEZE)
                 continue;
             if (ball->flags & BALL_FLAG_11)
                 continue;

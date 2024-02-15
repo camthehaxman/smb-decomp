@@ -15,6 +15,7 @@
 #include "pool.h"
 #include "recplay.h"
 #include "stage.h"
+#include "window.h"
 #include "world.h"
 
 struct BuiltinReplay
@@ -800,7 +801,7 @@ void func_80049FF0(void)
     if (debugFlags & 0xA)
         return;
 
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     gameSubmodeRequest = SMD_TEST_REPLAY_MAIN;
     event_finish_all();
     func_80044920();
@@ -849,7 +850,7 @@ void func_8004A0C8(void)
     if (debugFlags & 0xA)
         return;
 
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_LEFT)
      || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_LEFT) && (controllerInfo[0].unk0[0].button & PAD_TRIGGER_R)))
     {
@@ -874,37 +875,37 @@ void func_8004A0C8(void)
     else
         header = s_builtinReplays[temp_r0_2].header;
 
-    u_debug_set_cursor_pos(8, 8);
-    u_debug_printf(" REPLAY TEST\n\n");
+    window_set_cursor_pos(8, 8);
+    window_printf_2(" REPLAY TEST\n\n");
     if (lbl_802F1F78.replayId != 11)
-        u_debug_printf("     ID: %03d\n", lbl_802F1F78.replayId);
+        window_printf_2("     ID: %03d\n", lbl_802F1F78.replayId);
     else
     {
-        u_debug_set_text_color(1);
-        u_debug_printf("     Record for Save\n");
-        u_debug_set_text_color(0);
+        window_set_text_color(WINDOW_COLOR_RED);
+        window_printf_2("     Record for Save\n");
+        window_set_text_color(WINDOW_COLOR_WHITE);
     }
 
     if (func_8004A0C8_sub(lbl_802F1F78.replayId) == 0.0f)
     {
-        u_debug_set_text_color(1);
-        u_debug_printf("       :NO DATA\n");
-        u_debug_set_text_color(0);
+        window_set_text_color(WINDOW_COLOR_RED);
+        window_printf_2("       :NO DATA\n");
+        window_set_text_color(WINDOW_COLOR_WHITE);
     }
     else
     {
-        u_debug_printf("  STAGE: %03d(Lib No.%03d)\n", header.floorNum, header.stageId);
-        u_debug_printf(" COURSE: %3d\n", header.difficulty);
+        window_printf_2("  STAGE: %03d(Lib No.%03d)\n", header.floorNum, header.stageId);
+        window_printf_2(" COURSE: %3d\n", header.difficulty);
         if (controllerInfo[0].unk0[0].button & PAD_BUTTON_Y)
         {
-            u_debug_printf("  MONKY: %3d\n", header.character);
-            u_debug_printf("   NAME: %s\n", header.playerName);
-            u_debug_printf("  GRADE: %f\n", header.unkC);
+            window_printf_2("  MONKY: %3d\n", header.character);
+            window_printf_2("   NAME: %s\n", header.playerName);
+            window_printf_2("  GRADE: %f\n", header.unkC);
             if (replay != NULL)
             {
-                u_debug_printf("\n");
-                u_debug_printf("Same Kind Data Count : %d\n", func_8004AD78(replay));
-                u_debug_printf("Adjust Coeff : %f\n", func_8004ADC0(replay));
+                window_printf_2("\n");
+                window_printf_2("Same Kind Data Count : %d\n", func_8004AD78(replay));
+                window_printf_2("Adjust Coeff : %f\n", func_8004ADC0(replay));
             }
         }
     }
@@ -977,17 +978,17 @@ void func_8004A0C8(void)
         }
         break;
     case 1:
-        u_debug_set_cursor_pos(32, 30);
+        window_set_cursor_pos(32, 30);
         switch (modeCtrl.submodeTimer)
         {
         case 0:
         case 1:
-            u_debug_printf("Converting to C Source format.");
+            window_printf_2("Converting to C Source format.");
             break;
         case 3:
         case 4:
-            u_debug_printf("Please Type [save_recplay] in DDD\n");
-            u_debug_printf(" to Make File recplay_data.h.\n");
+            window_printf_2("Please Type [save_recplay] in DDD\n");
+            window_printf_2(" to Make File recplay_data.h.\n");
             break;
         case 5:
             lbl_802F1F78.unk4 = 0;

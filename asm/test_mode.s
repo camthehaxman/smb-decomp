@@ -423,10 +423,10 @@ lbl_00000630:
 /* 00000644 BF410008 */ stmw r26, 8(r1)
 /* 00000648 3B830000 */ addi r28, r3, lbl_000102B0@l
 /* 0000064C 38600001 */ li r3, 1
-/* 00000650 4BFFFB0D */ bl u_debug_set_cursor_pos
+/* 00000650 4BFFFB0D */ bl window_set_cursor_pos
 /* 00000654 387C03C0 */ addi r3, r28, 0x3c0
 /* 00000658 4CC63182 */ crclr 6
-/* 0000065C 4BFFFB01 */ bl u_debug_printf
+/* 0000065C 4BFFFB01 */ bl window_printf_2
 /* 00000660 3C800000 */ lis r4, lbl_802F1F40@ha
 /* 00000664 3C600000 */ lis r3, bgTypeNames@ha
 /* 00000668 3CA00000 */ lis r5, loadingStageIdRequest@ha
@@ -438,7 +438,7 @@ lbl_00000630:
 lbl_00000680:
 /* 00000680 3860000E */ li r3, 0xe
 /* 00000684 389A0003 */ addi r4, r26, 3
-/* 00000688 4BFFFAD5 */ bl u_debug_set_cursor_pos
+/* 00000688 4BFFFAD5 */ bl window_set_cursor_pos
 /* 0000068C 801B0000 */ lwz r0, 0(r27)
 /* 00000690 2C000002 */ cmpwi r0, 2
 /* 00000694 41820078 */ beq lbl_0000070C
@@ -451,28 +451,28 @@ lbl_000006AC:
 /* 000006AC 2C000004 */ cmpwi r0, 4
 /* 000006B0 40800078 */ bge lbl_00000728
 /* 000006B4 38600002 */ li r3, 2
-/* 000006B8 4BFFFAA5 */ bl u_debug_set_text_color
+/* 000006B8 4BFFFAA5 */ bl window_set_text_color
 /* 000006BC 3860FFF8 */ li r3, -8
 /* 000006C0 38800001 */ li r4, 1
-/* 000006C4 4BFFFA99 */ bl func_8002FC90
+/* 000006C4 4BFFFA99 */ bl window_move_cursor
 /* 000006C8 809B0004 */ lwz r4, 4(r27)
 /* 000006CC 387C03CC */ addi r3, r28, 0x3cc
 /* 000006D0 4CC63182 */ crclr 6
-/* 000006D4 4BFFFA89 */ bl u_debug_printf
+/* 000006D4 4BFFFA89 */ bl window_printf_2
 /* 000006D8 38600000 */ li r3, 0
-/* 000006DC 4BFFFA81 */ bl u_debug_set_text_color
+/* 000006DC 4BFFFA81 */ bl window_set_text_color
 /* 000006E0 48000048 */ b lbl_00000728
 lbl_000006E4:
 /* 000006E4 809B0004 */ lwz r4, 4(r27)
 /* 000006E8 387C03CC */ addi r3, r28, 0x3cc
 /* 000006EC 4CC63182 */ crclr 6
-/* 000006F0 4BFFFA6D */ bl u_debug_printf
+/* 000006F0 4BFFFA6D */ bl window_printf_2
 /* 000006F4 48000034 */ b lbl_00000728
 lbl_000006F8:
 /* 000006F8 A89D0000 */ lha r4, 0(r29)
 /* 000006FC 387C03D0 */ addi r3, r28, 0x3d0
 /* 00000700 4CC63182 */ crclr 6
-/* 00000704 4BFFFA59 */ bl u_debug_printf
+/* 00000704 4BFFFA59 */ bl window_printf_2
 /* 00000708 48000020 */ b lbl_00000728
 lbl_0000070C:
 /* 0000070C A89E0000 */ lha r4, 0(r30)
@@ -481,7 +481,7 @@ lbl_0000070C:
 /* 00000718 5480103A */ slwi r0, r4, 2
 /* 0000071C 7CBF0214 */ add r5, r31, r0
 /* 00000720 80A50000 */ lwz r5, 0(r5)
-/* 00000724 4BFFFA39 */ bl u_debug_printf
+/* 00000724 4BFFFA39 */ bl window_printf_2
 lbl_00000728:
 /* 00000728 3B5A0001 */ addi r26, r26, 1
 /* 0000072C 281A001B */ cmplwi r26, 0x1b
@@ -492,14 +492,14 @@ lbl_00000728:
 /* 00000740 3860000C */ li r3, 0xc
 /* 00000744 38840003 */ addi r4, r4, 3
 /* 00000748 5484043E */ clrlwi r4, r4, 0x10
-/* 0000074C 4BFFFA11 */ bl u_debug_set_cursor_pos
+/* 0000074C 4BFFFA11 */ bl window_set_cursor_pos
 /* 00000750 38600001 */ li r3, 1
-/* 00000754 4BFFFA09 */ bl u_debug_set_text_color
+/* 00000754 4BFFFA09 */ bl window_set_text_color
 /* 00000758 387C0400 */ addi r3, r28, 0x400
 /* 0000075C 4CC63182 */ crclr 6
-/* 00000760 4BFFF9FD */ bl u_debug_printf
+/* 00000760 4BFFF9FD */ bl window_printf_2
 /* 00000764 38600000 */ li r3, 0
-/* 00000768 4BFFF9F5 */ bl u_debug_set_text_color
+/* 00000768 4BFFF9F5 */ bl window_set_text_color
 /* 0000076C BB410008 */ lmw r26, 8(r1)
 /* 00000770 80010024 */ lwz r0, 0x24(r1)
 /* 00000774 38210020 */ addi r1, r1, 0x20
@@ -525,7 +525,7 @@ lbl_000007AC:
 /* 000007BC 80030000 */ lwz r0, debugFlags@l(r3)
 /* 000007C0 7000000A */ andi. r0, r0, 0xa
 /* 000007C4 40820030 */ bne lbl_000007F4
-/* 000007C8 4BFFF995 */ bl func_8002FFEC
+/* 000007C8 4BFFF995 */ bl u_clear_buffers_2_and_5
 /* 000007CC 3C600000 */ lis r3, lbl_10000004@ha
 /* 000007D0 38000000 */ li r0, 0
 /* 000007D4 90030000 */ stw r0, lbl_10000004@l(r3)
@@ -635,10 +635,10 @@ lbl_00000934:
 /* 00000950 3BE30000 */ addi r31, r3, lbl_000102B0@l
 /* 00000954 38600001 */ li r3, 1
 /* 00000958 38800001 */ li r4, 1
-/* 0000095C 4BFFF801 */ bl u_debug_set_cursor_pos
+/* 0000095C 4BFFF801 */ bl window_set_cursor_pos
 /* 00000960 387F0270 */ addi r3, r31, 0x270
 /* 00000964 4CC63182 */ crclr 6
-/* 00000968 4BFFF7F5 */ bl u_debug_printf
+/* 00000968 4BFFF7F5 */ bl window_printf_2
 /* 0000096C 807E0004 */ lwz r3, 4(r30)
 /* 00000970 3403FFF6 */ addic. r0, r3, -10  ;# fixed addi
 /* 00000974 4080000C */ bge lbl_00000980
@@ -669,12 +669,12 @@ lbl_000009C0:
 /* 000009C8 7C9B0214 */ add r4, r27, r0
 /* 000009CC 7C9C2214 */ add r4, r28, r4
 /* 000009D0 3860000C */ li r3, 0xc
-/* 000009D4 4BFFF789 */ bl u_debug_set_cursor_pos
+/* 000009D4 4BFFF789 */ bl window_set_cursor_pos
 /* 000009D8 801E0004 */ lwz r0, 4(r30)
 /* 000009DC 7C1B0000 */ cmpw r27, r0
 /* 000009E0 4082000C */ bne lbl_000009EC
 /* 000009E4 38600002 */ li r3, 2
-/* 000009E8 4BFFF775 */ bl u_debug_set_text_color
+/* 000009E8 4BFFF775 */ bl window_set_text_color
 lbl_000009EC:
 /* 000009EC 38000001 */ li r0, 1
 /* 000009F0 80790000 */ lwz r3, 0(r25)
@@ -689,12 +689,12 @@ lbl_00000A0C:
 /* 00000A0C 809D0000 */ lwz r4, 0(r29)
 /* 00000A10 387F0418 */ addi r3, r31, 0x418
 /* 00000A14 4CC63182 */ crclr 6
-/* 00000A18 4BFFF745 */ bl u_debug_printf
+/* 00000A18 4BFFF745 */ bl window_printf_2
 /* 00000A1C 801E0004 */ lwz r0, 4(r30)
 /* 00000A20 7C1B0000 */ cmpw r27, r0
 /* 00000A24 4082000C */ bne lbl_00000A30
 /* 00000A28 38600000 */ li r3, 0
-/* 00000A2C 4BFFF731 */ bl u_debug_set_text_color
+/* 00000A2C 4BFFF731 */ bl window_set_text_color
 lbl_00000A30:
 /* 00000A30 3BBD0004 */ addi r29, r29, 4
 /* 00000A34 3B7B0001 */ addi r27, r27, 1
@@ -708,13 +708,13 @@ lbl_00000A38:
 /* 00000A50 7C000194 */ addze r0, r0
 /* 00000A54 7C840214 */ add r4, r4, r0
 /* 00000A58 7C9C2214 */ add r4, r28, r4
-/* 00000A5C 4BFFF701 */ bl u_debug_set_cursor_pos
+/* 00000A5C 4BFFF701 */ bl window_set_cursor_pos
 /* 00000A60 38600001 */ li r3, 1
-/* 00000A64 4BFFF6F9 */ bl u_debug_set_text_color
+/* 00000A64 4BFFF6F9 */ bl window_set_text_color
 /* 00000A68 387F0400 */ addi r3, r31, 0x400
 /* 00000A6C 4BFFF6F1 */ bl u_debug_print
 /* 00000A70 38600000 */ li r3, 0
-/* 00000A74 4BFFF6E9 */ bl u_debug_set_text_color
+/* 00000A74 4BFFF6E9 */ bl window_set_text_color
 /* 00000A78 BB21000C */ lmw r25, 0xc(r1)
 /* 00000A7C 8001002C */ lwz r0, 0x2c(r1)
 /* 00000A80 38210028 */ addi r1, r1, 0x28
@@ -763,24 +763,24 @@ lbl_00000B18:
 /* 00000B1C 93830000 */ stw r28, lbl_10000008@l(r3)
 /* 00000B20 38600001 */ li r3, 1
 /* 00000B24 38800001 */ li r4, 1
-/* 00000B28 4BFFF635 */ bl u_debug_set_cursor_pos
+/* 00000B28 4BFFF635 */ bl window_set_cursor_pos
 /* 00000B2C 387F0424 */ addi r3, r31, 0x424
 /* 00000B30 4CC63182 */ crclr 6
-/* 00000B34 4BFFF629 */ bl u_debug_printf
+/* 00000B34 4BFFF629 */ bl window_printf_2
 /* 00000B38 38600003 */ li r3, 3
 /* 00000B3C 38800003 */ li r4, 3
-/* 00000B40 4BFFF61D */ bl u_debug_set_cursor_pos
+/* 00000B40 4BFFF61D */ bl window_set_cursor_pos
 /* 00000B44 38600002 */ li r3, 2
-/* 00000B48 4BFFF615 */ bl u_debug_set_text_color
+/* 00000B48 4BFFF615 */ bl window_set_text_color
 /* 00000B4C 389C0000 */ addi r4, r28, 0
 /* 00000B50 4CC63182 */ crclr 6
 /* 00000B54 387F0430 */ addi r3, r31, 0x430
-/* 00000B58 4BFFF605 */ bl u_debug_printf
+/* 00000B58 4BFFF605 */ bl window_printf_2
 /* 00000B5C 38600000 */ li r3, 0
-/* 00000B60 4BFFF5FD */ bl u_debug_set_text_color
+/* 00000B60 4BFFF5FD */ bl window_set_text_color
 /* 00000B64 387F0140 */ addi r3, r31, 0x140
 /* 00000B68 4CC63182 */ crclr 6
-/* 00000B6C 4BFFF5F1 */ bl u_debug_printf
+/* 00000B6C 4BFFF5F1 */ bl window_printf_2
 /* 00000B70 1FBC003C */ mulli r29, r28, 0x3c
 /* 00000B74 3C600000 */ lis r3, controllerInfo@ha
 /* 00000B78 38030000 */ addi r0, r3, controllerInfo@l
@@ -795,7 +795,7 @@ lbl_00000B94:
 lbl_00000B98:
 /* 00000B98 4CC63182 */ crclr 6
 /* 00000B9C 387F0448 */ addi r3, r31, 0x448
-/* 00000BA0 4BFFF5BD */ bl u_debug_printf
+/* 00000BA0 4BFFF5BD */ bl window_printf_2
 /* 00000BA4 A01E0000 */ lhz r0, 0(r30)
 /* 00000BA8 540007BD */ rlwinm. r0, r0, 0, 0x1e, 0x1e
 /* 00000BAC 4182000C */ beq lbl_00000BB8
@@ -806,7 +806,7 @@ lbl_00000BB8:
 lbl_00000BBC:
 /* 00000BBC 4CC63182 */ crclr 6
 /* 00000BC0 387F045C */ addi r3, r31, 0x45c
-/* 00000BC4 4BFFF599 */ bl u_debug_printf
+/* 00000BC4 4BFFF599 */ bl window_printf_2
 /* 00000BC8 A01E0000 */ lhz r0, 0(r30)
 /* 00000BCC 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 00000BD0 4182000C */ beq lbl_00000BDC
@@ -817,7 +817,7 @@ lbl_00000BDC:
 lbl_00000BE0:
 /* 00000BE0 4CC63182 */ crclr 6
 /* 00000BE4 387F0470 */ addi r3, r31, 0x470
-/* 00000BE8 4BFFF575 */ bl u_debug_printf
+/* 00000BE8 4BFFF575 */ bl window_printf_2
 /* 00000BEC A01E0000 */ lhz r0, 0(r30)
 /* 00000BF0 54000739 */ rlwinm. r0, r0, 0, 0x1c, 0x1c
 /* 00000BF4 4182000C */ beq lbl_00000C00
@@ -828,7 +828,7 @@ lbl_00000C00:
 lbl_00000C04:
 /* 00000C04 4CC63182 */ crclr 6
 /* 00000C08 387F0484 */ addi r3, r31, 0x484
-/* 00000C0C 4BFFF551 */ bl u_debug_printf
+/* 00000C0C 4BFFF551 */ bl window_printf_2
 /* 00000C10 A01E0000 */ lhz r0, 0(r30)
 /* 00000C14 540006F7 */ rlwinm. r0, r0, 0, 0x1b, 0x1b
 /* 00000C18 4182000C */ beq lbl_00000C24
@@ -839,7 +839,7 @@ lbl_00000C24:
 lbl_00000C28:
 /* 00000C28 4CC63182 */ crclr 6
 /* 00000C2C 387F0498 */ addi r3, r31, 0x498
-/* 00000C30 4BFFF52D */ bl u_debug_printf
+/* 00000C30 4BFFF52D */ bl window_printf_2
 /* 00000C34 A01E0000 */ lhz r0, 0(r30)
 /* 00000C38 54000673 */ rlwinm. r0, r0, 0, 0x19, 0x19
 /* 00000C3C 4182000C */ beq lbl_00000C48
@@ -850,7 +850,7 @@ lbl_00000C48:
 lbl_00000C4C:
 /* 00000C4C 4CC63182 */ crclr 6
 /* 00000C50 387F04AC */ addi r3, r31, 0x4ac
-/* 00000C54 4BFFF509 */ bl u_debug_printf
+/* 00000C54 4BFFF509 */ bl window_printf_2
 /* 00000C58 A01E0000 */ lhz r0, 0(r30)
 /* 00000C5C 540006B5 */ rlwinm. r0, r0, 0, 0x1a, 0x1a
 /* 00000C60 4182000C */ beq lbl_00000C6C
@@ -861,7 +861,7 @@ lbl_00000C6C:
 lbl_00000C70:
 /* 00000C70 4CC63182 */ crclr 6
 /* 00000C74 387F04C0 */ addi r3, r31, 0x4c0
-/* 00000C78 4BFFF4E5 */ bl u_debug_printf
+/* 00000C78 4BFFF4E5 */ bl window_printf_2
 /* 00000C7C A01E0000 */ lhz r0, 0(r30)
 /* 00000C80 540005EF */ rlwinm. r0, r0, 0, 0x17, 0x17
 /* 00000C84 4182000C */ beq lbl_00000C90
@@ -872,7 +872,7 @@ lbl_00000C90:
 lbl_00000C94:
 /* 00000C94 4CC63182 */ crclr 6
 /* 00000C98 387F04D4 */ addi r3, r31, 0x4d4
-/* 00000C9C 4BFFF4C1 */ bl u_debug_printf
+/* 00000C9C 4BFFF4C1 */ bl window_printf_2
 /* 00000CA0 A01E0000 */ lhz r0, 0(r30)
 /* 00000CA4 540005AD */ rlwinm. r0, r0, 0, 0x16, 0x16
 /* 00000CA8 4182000C */ beq lbl_00000CB4
@@ -883,7 +883,7 @@ lbl_00000CB4:
 lbl_00000CB8:
 /* 00000CB8 4CC63182 */ crclr 6
 /* 00000CBC 387F04E8 */ addi r3, r31, 0x4e8
-/* 00000CC0 4BFFF49D */ bl u_debug_printf
+/* 00000CC0 4BFFF49D */ bl window_printf_2
 /* 00000CC4 A01E0000 */ lhz r0, 0(r30)
 /* 00000CC8 5400056B */ rlwinm. r0, r0, 0, 0x15, 0x15
 /* 00000CCC 4182000C */ beq lbl_00000CD8
@@ -894,7 +894,7 @@ lbl_00000CD8:
 lbl_00000CDC:
 /* 00000CDC 4CC63182 */ crclr 6
 /* 00000CE0 387F04FC */ addi r3, r31, 0x4fc
-/* 00000CE4 4BFFF479 */ bl u_debug_printf
+/* 00000CE4 4BFFF479 */ bl window_printf_2
 /* 00000CE8 A01E0000 */ lhz r0, 0(r30)
 /* 00000CEC 54000529 */ rlwinm. r0, r0, 0, 0x14, 0x14
 /* 00000CF0 4182000C */ beq lbl_00000CFC
@@ -905,7 +905,7 @@ lbl_00000CFC:
 lbl_00000D00:
 /* 00000D00 4CC63182 */ crclr 6
 /* 00000D04 387F0510 */ addi r3, r31, 0x510
-/* 00000D08 4BFFF455 */ bl u_debug_printf
+/* 00000D08 4BFFF455 */ bl window_printf_2
 /* 00000D0C A01E0000 */ lhz r0, 0(r30)
 /* 00000D10 540004E7 */ rlwinm. r0, r0, 0, 0x13, 0x13
 /* 00000D14 4182000C */ beq lbl_00000D20
@@ -916,10 +916,10 @@ lbl_00000D20:
 lbl_00000D24:
 /* 00000D24 4CC63182 */ crclr 6
 /* 00000D28 387F0524 */ addi r3, r31, 0x524
-/* 00000D2C 4BFFF431 */ bl u_debug_printf
+/* 00000D2C 4BFFF431 */ bl window_printf_2
 /* 00000D30 387F0140 */ addi r3, r31, 0x140
 /* 00000D34 4CC63182 */ crclr 6
-/* 00000D38 4BFFF425 */ bl u_debug_printf
+/* 00000D38 4BFFF425 */ bl window_printf_2
 /* 00000D3C 3C600000 */ lis r3, controllerInfo@ha
 /* 00000D40 4CC63182 */ crclr 6
 /* 00000D44 38030000 */ addi r0, r3, controllerInfo@l
@@ -927,52 +927,52 @@ lbl_00000D24:
 /* 00000D4C 889D0002 */ lbz r4, 2(r29)
 /* 00000D50 387F0538 */ addi r3, r31, 0x538
 /* 00000D54 7C840774 */ extsb r4, r4
-/* 00000D58 4BFFF405 */ bl u_debug_printf
+/* 00000D58 4BFFF405 */ bl window_printf_2
 /* 00000D5C 889D0003 */ lbz r4, 3(r29)
 /* 00000D60 387F054C */ addi r3, r31, 0x54c
 /* 00000D64 4CC63182 */ crclr 6
 /* 00000D68 7C840774 */ extsb r4, r4
-/* 00000D6C 4BFFF3F1 */ bl u_debug_printf
+/* 00000D6C 4BFFF3F1 */ bl window_printf_2
 /* 00000D70 889D0004 */ lbz r4, 4(r29)
 /* 00000D74 387F0560 */ addi r3, r31, 0x560
 /* 00000D78 4CC63182 */ crclr 6
 /* 00000D7C 7C840774 */ extsb r4, r4
-/* 00000D80 4BFFF3DD */ bl u_debug_printf
+/* 00000D80 4BFFF3DD */ bl window_printf_2
 /* 00000D84 889D0005 */ lbz r4, 5(r29)
 /* 00000D88 387F0574 */ addi r3, r31, 0x574
 /* 00000D8C 4CC63182 */ crclr 6
 /* 00000D90 7C840774 */ extsb r4, r4
-/* 00000D94 4BFFF3C9 */ bl u_debug_printf
+/* 00000D94 4BFFF3C9 */ bl window_printf_2
 /* 00000D98 889D0006 */ lbz r4, 6(r29)
 /* 00000D9C 387F0588 */ addi r3, r31, 0x588
 /* 00000DA0 4CC63182 */ crclr 6
-/* 00000DA4 4BFFF3B9 */ bl u_debug_printf
+/* 00000DA4 4BFFF3B9 */ bl window_printf_2
 /* 00000DA8 889D0007 */ lbz r4, 7(r29)
 /* 00000DAC 387F059C */ addi r3, r31, 0x59c
 /* 00000DB0 4CC63182 */ crclr 6
-/* 00000DB4 4BFFF3A9 */ bl u_debug_printf
+/* 00000DB4 4BFFF3A9 */ bl window_printf_2
 /* 00000DB8 889D0008 */ lbz r4, 8(r29)
 /* 00000DBC 387F05B0 */ addi r3, r31, 0x5b0
 /* 00000DC0 4CC63182 */ crclr 6
-/* 00000DC4 4BFFF399 */ bl u_debug_printf
+/* 00000DC4 4BFFF399 */ bl window_printf_2
 /* 00000DC8 889D0009 */ lbz r4, 9(r29)
 /* 00000DCC 387F05C4 */ addi r3, r31, 0x5c4
 /* 00000DD0 4CC63182 */ crclr 6
-/* 00000DD4 4BFFF389 */ bl u_debug_printf
+/* 00000DD4 4BFFF389 */ bl window_printf_2
 /* 00000DD8 889D000A */ lbz r4, 0xa(r29)
 /* 00000DDC 387F05D8 */ addi r3, r31, 0x5d8
 /* 00000DE0 4CC63182 */ crclr 6
 /* 00000DE4 7C840774 */ extsb r4, r4
-/* 00000DE8 4BFFF375 */ bl u_debug_printf
+/* 00000DE8 4BFFF375 */ bl window_printf_2
 /* 00000DEC 38600017 */ li r3, 0x17
 /* 00000DF0 38800003 */ li r4, 3
-/* 00000DF4 4BFFF369 */ bl u_debug_set_cursor_pos
+/* 00000DF4 4BFFF369 */ bl window_set_cursor_pos
 /* 00000DF8 387F05EC */ addi r3, r31, 0x5ec
 /* 00000DFC 4CC63182 */ crclr 6
-/* 00000E00 4BFFF35D */ bl u_debug_printf
+/* 00000E00 4BFFF35D */ bl window_printf_2
 /* 00000E04 387F0140 */ addi r3, r31, 0x140
 /* 00000E08 4CC63182 */ crclr 6
-/* 00000E0C 4BFFF351 */ bl u_debug_printf
+/* 00000E0C 4BFFF351 */ bl window_printf_2
 /* 00000E10 1C9C000A */ mulli r4, r28, 0xa
 /* 00000E14 3C600000 */ lis r3, analogButtonInfo@ha
 /* 00000E18 38030000 */ addi r0, r3, analogButtonInfo@l
@@ -987,7 +987,7 @@ lbl_00000E34:
 lbl_00000E38:
 /* 00000E38 4CC63182 */ crclr 6
 /* 00000E3C 387F05F8 */ addi r3, r31, 0x5f8
-/* 00000E40 4BFFF31D */ bl u_debug_printf
+/* 00000E40 4BFFF31D */ bl window_printf_2
 /* 00000E44 A01D0000 */ lhz r0, 0(r29)
 /* 00000E48 540007BD */ rlwinm. r0, r0, 0, 0x1e, 0x1e
 /* 00000E4C 4182000C */ beq lbl_00000E58
@@ -998,7 +998,7 @@ lbl_00000E58:
 lbl_00000E5C:
 /* 00000E5C 4CC63182 */ crclr 6
 /* 00000E60 387F060C */ addi r3, r31, 0x60c
-/* 00000E64 4BFFF2F9 */ bl u_debug_printf
+/* 00000E64 4BFFF2F9 */ bl window_printf_2
 /* 00000E68 A01D0000 */ lhz r0, 0(r29)
 /* 00000E6C 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 00000E70 4182000C */ beq lbl_00000E7C
@@ -1009,7 +1009,7 @@ lbl_00000E7C:
 lbl_00000E80:
 /* 00000E80 4CC63182 */ crclr 6
 /* 00000E84 387F0620 */ addi r3, r31, 0x620
-/* 00000E88 4BFFF2D5 */ bl u_debug_printf
+/* 00000E88 4BFFF2D5 */ bl window_printf_2
 /* 00000E8C A01D0000 */ lhz r0, 0(r29)
 /* 00000E90 54000739 */ rlwinm. r0, r0, 0, 0x1c, 0x1c
 /* 00000E94 4182000C */ beq lbl_00000EA0
@@ -1020,7 +1020,7 @@ lbl_00000EA0:
 lbl_00000EA4:
 /* 00000EA4 4CC63182 */ crclr 6
 /* 00000EA8 387F0634 */ addi r3, r31, 0x634
-/* 00000EAC 4BFFF2B1 */ bl u_debug_printf
+/* 00000EAC 4BFFF2B1 */ bl window_printf_2
 /* 00000EB0 A01D0000 */ lhz r0, 0(r29)
 /* 00000EB4 540006F7 */ rlwinm. r0, r0, 0, 0x1b, 0x1b
 /* 00000EB8 4182000C */ beq lbl_00000EC4
@@ -1031,7 +1031,7 @@ lbl_00000EC4:
 lbl_00000EC8:
 /* 00000EC8 4CC63182 */ crclr 6
 /* 00000ECC 387F0648 */ addi r3, r31, 0x648
-/* 00000ED0 4BFFF28D */ bl u_debug_printf
+/* 00000ED0 4BFFF28D */ bl window_printf_2
 /* 00000ED4 A01D0000 */ lhz r0, 0(r29)
 /* 00000ED8 540006B5 */ rlwinm. r0, r0, 0, 0x1a, 0x1a
 /* 00000EDC 4182000C */ beq lbl_00000EE8
@@ -1042,7 +1042,7 @@ lbl_00000EE8:
 lbl_00000EEC:
 /* 00000EEC 4CC63182 */ crclr 6
 /* 00000EF0 387F065C */ addi r3, r31, 0x65c
-/* 00000EF4 4BFFF269 */ bl u_debug_printf
+/* 00000EF4 4BFFF269 */ bl window_printf_2
 /* 00000EF8 A01D0000 */ lhz r0, 0(r29)
 /* 00000EFC 54000673 */ rlwinm. r0, r0, 0, 0x19, 0x19
 /* 00000F00 4182000C */ beq lbl_00000F0C
@@ -1053,7 +1053,7 @@ lbl_00000F0C:
 lbl_00000F10:
 /* 00000F10 4CC63182 */ crclr 6
 /* 00000F14 387F0670 */ addi r3, r31, 0x670
-/* 00000F18 4BFFF245 */ bl u_debug_printf
+/* 00000F18 4BFFF245 */ bl window_printf_2
 /* 00000F1C A01D0000 */ lhz r0, 0(r29)
 /* 00000F20 54000631 */ rlwinm. r0, r0, 0, 0x18, 0x18
 /* 00000F24 4182000C */ beq lbl_00000F30
@@ -1064,7 +1064,7 @@ lbl_00000F30:
 lbl_00000F34:
 /* 00000F34 4CC63182 */ crclr 6
 /* 00000F38 387F0684 */ addi r3, r31, 0x684
-/* 00000F3C 4BFFF221 */ bl u_debug_printf
+/* 00000F3C 4BFFF221 */ bl window_printf_2
 /* 00000F40 A01D0000 */ lhz r0, 0(r29)
 /* 00000F44 540005EF */ rlwinm. r0, r0, 0, 0x17, 0x17
 /* 00000F48 4182000C */ beq lbl_00000F54
@@ -1075,7 +1075,7 @@ lbl_00000F54:
 lbl_00000F58:
 /* 00000F58 4CC63182 */ crclr 6
 /* 00000F5C 387F04AC */ addi r3, r31, 0x4ac
-/* 00000F60 4BFFF1FD */ bl u_debug_printf
+/* 00000F60 4BFFF1FD */ bl window_printf_2
 /* 00000F64 A01D0000 */ lhz r0, 0(r29)
 /* 00000F68 540005AD */ rlwinm. r0, r0, 0, 0x16, 0x16
 /* 00000F6C 4182000C */ beq lbl_00000F78
@@ -1086,31 +1086,31 @@ lbl_00000F78:
 lbl_00000F7C:
 /* 00000F7C 4CC63182 */ crclr 6
 /* 00000F80 387F04C0 */ addi r3, r31, 0x4c0
-/* 00000F84 4BFFF1D9 */ bl u_debug_printf
+/* 00000F84 4BFFF1D9 */ bl window_printf_2
 /* 00000F88 38600016 */ li r3, 0x16
 /* 00000F8C 38800012 */ li r4, 0x12
-/* 00000F90 4BFFF1CD */ bl u_debug_set_cursor_pos
+/* 00000F90 4BFFF1CD */ bl window_set_cursor_pos
 /* 00000F94 387F0698 */ addi r3, r31, 0x698
 /* 00000F98 4CC63182 */ crclr 6
-/* 00000F9C 4BFFF1C1 */ bl u_debug_printf
+/* 00000F9C 4BFFF1C1 */ bl window_printf_2
 /* 00000FA0 387F0140 */ addi r3, r31, 0x140
 /* 00000FA4 4CC63182 */ crclr 6
-/* 00000FA8 4BFFF1B5 */ bl u_debug_printf
+/* 00000FA8 4BFFF1B5 */ bl window_printf_2
 /* 00000FAC 387F06A8 */ addi r3, r31, 0x6a8
 /* 00000FB0 4CC63182 */ crclr 6
-/* 00000FB4 4BFFF1A9 */ bl u_debug_printf
+/* 00000FB4 4BFFF1A9 */ bl window_printf_2
 /* 00000FB8 387F06B8 */ addi r3, r31, 0x6b8
 /* 00000FBC 4CC63182 */ crclr 6
-/* 00000FC0 4BFFF19D */ bl u_debug_printf
+/* 00000FC0 4BFFF19D */ bl window_printf_2
 /* 00000FC4 387F06C4 */ addi r3, r31, 0x6c4
 /* 00000FC8 4CC63182 */ crclr 6
-/* 00000FCC 4BFFF191 */ bl u_debug_printf
+/* 00000FCC 4BFFF191 */ bl window_printf_2
 /* 00000FD0 387F06D8 */ addi r3, r31, 0x6d8
 /* 00000FD4 4CC63182 */ crclr 6
-/* 00000FD8 4BFFF185 */ bl u_debug_printf
+/* 00000FD8 4BFFF185 */ bl window_printf_2
 /* 00000FDC 387F06E4 */ addi r3, r31, 0x6e4
 /* 00000FE0 4CC63182 */ crclr 6
-/* 00000FE4 4BFFF179 */ bl u_debug_printf
+/* 00000FE4 4BFFF179 */ bl window_printf_2
 /* 00000FE8 8001001C */ lwz r0, 0x1c(r1)
 /* 00000FEC 83E10014 */ lwz r31, 0x14(r1)
 /* 00000FF0 83C10010 */ lwz r30, 0x10(r1)
@@ -1930,16 +1930,16 @@ lbl_00001B78:
 /* 00001BA0 38800003 */ li r4, 3
 /* 00001BA4 93A1000C */ stw r29, 0xc(r1)
 /* 00001BA8 93810008 */ stw r28, 8(r1)
-/* 00001BAC 4BFFE5B1 */ bl u_debug_set_cursor_pos
+/* 00001BAC 4BFFE5B1 */ bl window_set_cursor_pos
 /* 00001BB0 387F0218 */ addi r3, r31, 0x218
 /* 00001BB4 4CC63182 */ crclr 6
-/* 00001BB8 4BFFE5A5 */ bl u_debug_printf
+/* 00001BB8 4BFFE5A5 */ bl window_printf_2
 /* 00001BBC 38600003 */ li r3, 3
 /* 00001BC0 38800005 */ li r4, 5
-/* 00001BC4 4BFFE599 */ bl u_debug_set_cursor_pos
+/* 00001BC4 4BFFE599 */ bl window_set_cursor_pos
 /* 00001BC8 387F0760 */ addi r3, r31, 0x760
 /* 00001BCC 4CC63182 */ crclr 6
-/* 00001BD0 4BFFE58D */ bl u_debug_printf
+/* 00001BD0 4BFFE58D */ bl window_printf_2
 /* 00001BD4 3B800000 */ li r28, 0
 /* 00001BD8 3C600000 */ lis r3, u_isSoundGroupDataLoaded@ha
 /* 00001BDC 5784103A */ slwi r4, r28, 2
@@ -1949,19 +1949,19 @@ lbl_00001BE8:
 /* 00001BE8 809D0000 */ lwz r4, 0(r29)
 /* 00001BEC 387F076C */ addi r3, r31, 0x76c
 /* 00001BF0 4CC63182 */ crclr 6
-/* 00001BF4 4BFFE569 */ bl u_debug_printf
+/* 00001BF4 4BFFE569 */ bl window_printf_2
 /* 00001BF8 3B9C0001 */ addi r28, r28, 1
 /* 00001BFC 2C1C0009 */ cmpwi r28, 9
 /* 00001C00 3BBD0004 */ addi r29, r29, 4
 /* 00001C04 4180FFE4 */ blt lbl_00001BE8
 /* 00001C08 387F0770 */ addi r3, r31, 0x770
 /* 00001C0C 4CC63182 */ crclr 6
-/* 00001C10 4BFFE54D */ bl u_debug_printf
+/* 00001C10 4BFFE54D */ bl window_printf_2
 /* 00001C14 3C600000 */ lis r3, g_loadedSoundGroupsCount@ha
 /* 00001C18 4CC63182 */ crclr 6
 /* 00001C1C 80830000 */ lwz r4, g_loadedSoundGroupsCount@l(r3)
 /* 00001C20 387F0774 */ addi r3, r31, 0x774
-/* 00001C24 4BFFE539 */ bl u_debug_printf
+/* 00001C24 4BFFE539 */ bl window_printf_2
 /* 00001C28 3B800000 */ li r28, 0
 /* 00001C2C 3C600000 */ lis r3, s_loadedSoundGroupIDs@ha
 /* 00001C30 5784103A */ slwi r4, r28, 2
@@ -1971,31 +1971,31 @@ lbl_00001C3C:
 /* 00001C3C 809D0000 */ lwz r4, 0(r29)
 /* 00001C40 387F0780 */ addi r3, r31, 0x780
 /* 00001C44 4CC63182 */ crclr 6
-/* 00001C48 4BFFE515 */ bl u_debug_printf
+/* 00001C48 4BFFE515 */ bl window_printf_2
 /* 00001C4C 3B9C0001 */ addi r28, r28, 1
 /* 00001C50 2C1C0008 */ cmpwi r28, 8
 /* 00001C54 3BBD0004 */ addi r29, r29, 4
 /* 00001C58 4180FFE4 */ blt lbl_00001C3C
 /* 00001C5C 387F0788 */ addi r3, r31, 0x788
 /* 00001C60 4CC63182 */ crclr 6
-/* 00001C64 4BFFE4F9 */ bl u_debug_printf
+/* 00001C64 4BFFE4F9 */ bl window_printf_2
 /* 00001C68 38600003 */ li r3, 3
 /* 00001C6C 38800007 */ li r4, 7
-/* 00001C70 4BFFE4ED */ bl u_debug_set_cursor_pos
+/* 00001C70 4BFFE4ED */ bl window_set_cursor_pos
 /* 00001C74 3C600000 */ lis r3, g_soundTotalBytesLoaded@ha
 /* 00001C78 4CC63182 */ crclr 6
 /* 00001C7C 80830000 */ lwz r4, g_soundTotalBytesLoaded@l(r3)
 /* 00001C80 387F078C */ addi r3, r31, 0x78c
-/* 00001C84 4BFFE4D9 */ bl u_debug_printf
+/* 00001C84 4BFFE4D9 */ bl window_printf_2
 /* 00001C88 3C600000 */ lis r3, g_soundAramTop@ha
 /* 00001C8C 4CC63182 */ crclr 6
 /* 00001C90 80830000 */ lwz r4, g_soundAramTop@l(r3)
 /* 00001C94 387F079C */ addi r3, r31, 0x79c
 /* 00001C98 3CA00070 */ lis r5, 0x70
-/* 00001C9C 4BFFE4C1 */ bl u_debug_printf
+/* 00001C9C 4BFFE4C1 */ bl window_printf_2
 /* 00001CA0 38600003 */ li r3, 3
 /* 00001CA4 3880000A */ li r4, 0xa
-/* 00001CA8 4BFFE4B5 */ bl u_debug_set_cursor_pos
+/* 00001CA8 4BFFE4B5 */ bl window_set_cursor_pos
 /* 00001CAC 809E0010 */ lwz r4, 0x10(r30)
 /* 00001CB0 3C600000 */ lis r3, g_soundGroupDesc@ha
 /* 00001CB4 38030000 */ addi r0, r3, g_soundGroupDesc@l
@@ -2004,7 +2004,7 @@ lbl_00001C3C:
 /* 00001CC0 7C601A14 */ add r3, r0, r3
 /* 00001CC4 80A30000 */ lwz r5, 0(r3)
 /* 00001CC8 387F07B4 */ addi r3, r31, 0x7b4
-/* 00001CCC 4BFFE491 */ bl u_debug_printf
+/* 00001CCC 4BFFE491 */ bl window_printf_2
 /* 00001CD0 809E0014 */ lwz r4, 0x14(r30)
 /* 00001CD4 3C600000 */ lis r3, g_soundDesc@ha
 /* 00001CD8 3BA30000 */ addi r29, r3, g_soundDesc@l
@@ -2013,31 +2013,31 @@ lbl_00001C3C:
 /* 00001CE4 7C7D0214 */ add r3, r29, r0
 /* 00001CE8 80A30004 */ lwz r5, 4(r3)
 /* 00001CEC 387F07C4 */ addi r3, r31, 0x7c4
-/* 00001CF0 4BFFE46D */ bl u_debug_printf
+/* 00001CF0 4BFFE46D */ bl window_printf_2
 /* 00001CF4 809E0024 */ lwz r4, 0x24(r30)
 /* 00001CF8 387F07D4 */ addi r3, r31, 0x7d4
 /* 00001CFC 4CC63182 */ crclr 6
-/* 00001D00 4BFFE45D */ bl u_debug_printf
+/* 00001D00 4BFFE45D */ bl window_printf_2
 /* 00001D04 809E002C */ lwz r4, 0x2c(r30)
 /* 00001D08 387F07E0 */ addi r3, r31, 0x7e0
 /* 00001D0C 4CC63182 */ crclr 6
-/* 00001D10 4BFFE44D */ bl u_debug_printf
+/* 00001D10 4BFFE44D */ bl window_printf_2
 /* 00001D14 809E0034 */ lwz r4, 0x34(r30)
 /* 00001D18 387F07EC */ addi r3, r31, 0x7ec
 /* 00001D1C 4CC63182 */ crclr 6
 /* 00001D20 54802036 */ slwi r0, r4, 4
 /* 00001D24 7CBD0214 */ add r5, r29, r0
 /* 00001D28 80A53DA4 */ lwz r5, 0x3da4(r5)
-/* 00001D2C 4BFFE431 */ bl u_debug_printf
+/* 00001D2C 4BFFE431 */ bl window_printf_2
 /* 00001D30 387F07FC */ addi r3, r31, 0x7fc
 /* 00001D34 4CC63182 */ crclr 6
-/* 00001D38 4BFFE425 */ bl u_debug_printf
+/* 00001D38 4BFFE425 */ bl window_printf_2
 /* 00001D3C 387F0804 */ addi r3, r31, 0x804
 /* 00001D40 4CC63182 */ crclr 6
-/* 00001D44 4BFFE419 */ bl u_debug_printf
+/* 00001D44 4BFFE419 */ bl window_printf_2
 /* 00001D48 38600005 */ li r3, 5
 /* 00001D4C 38800012 */ li r4, 0x12
-/* 00001D50 4BFFE40D */ bl u_debug_set_cursor_pos
+/* 00001D50 4BFFE40D */ bl window_set_cursor_pos
 /* 00001D54 801E000C */ lwz r0, 0xc(r30)
 /* 00001D58 2C000004 */ cmpwi r0, 4
 /* 00001D5C 41820118 */ beq lbl_00001E74
@@ -2057,22 +2057,22 @@ lbl_00001D88:
 /* 00001D8C 387F0810 */ addi r3, r31, 0x810
 /* 00001D90 4CC63182 */ crclr 6
 /* 00001D94 7C840774 */ extsb r4, r4
-/* 00001D98 4BFFE3C5 */ bl u_debug_printf
+/* 00001D98 4BFFE3C5 */ bl window_printf_2
 /* 00001D9C 889E0019 */ lbz r4, 0x19(r30)
 /* 00001DA0 387F081C */ addi r3, r31, 0x81c
 /* 00001DA4 88BE001A */ lbz r5, 0x1a(r30)
 /* 00001DA8 4CC63182 */ crclr 6
 /* 00001DAC 7C840774 */ extsb r4, r4
 /* 00001DB0 7CA50774 */ extsb r5, r5
-/* 00001DB4 4BFFE3A9 */ bl u_debug_printf
+/* 00001DB4 4BFFE3A9 */ bl window_printf_2
 /* 00001DB8 A09E001C */ lhz r4, 0x1c(r30)
 /* 00001DBC 387F082C */ addi r3, r31, 0x82c
 /* 00001DC0 4CC63182 */ crclr 6
-/* 00001DC4 4BFFE399 */ bl u_debug_printf
+/* 00001DC4 4BFFE399 */ bl window_printf_2
 /* 00001DC8 A09E001E */ lhz r4, 0x1e(r30)
 /* 00001DCC 387F0838 */ addi r3, r31, 0x838
 /* 00001DD0 4CC63182 */ crclr 6
-/* 00001DD4 4BFFE389 */ bl u_debug_printf
+/* 00001DD4 4BFFE389 */ bl window_printf_2
 /* 00001DD8 3C600000 */ lis r3, controllerInfo@ha
 /* 00001DDC A0030000 */ lhz r0, controllerInfo@l(r3)
 /* 00001DE0 5400056B */ rlwinm. r0, r0, 0, 0x15, 0x15
@@ -2080,13 +2080,13 @@ lbl_00001D88:
 /* 00001DE8 889E0022 */ lbz r4, 0x22(r30)
 /* 00001DEC 387F0844 */ addi r3, r31, 0x844
 /* 00001DF0 4CC63182 */ crclr 6
-/* 00001DF4 4BFFE369 */ bl u_debug_printf
+/* 00001DF4 4BFFE369 */ bl window_printf_2
 /* 00001DF8 48000014 */ b lbl_00001E0C
 lbl_00001DFC:
 /* 00001DFC 889E0023 */ lbz r4, 0x23(r30)
 /* 00001E00 387F0850 */ addi r3, r31, 0x850
 /* 00001E04 4CC63182 */ crclr 6
-/* 00001E08 4BFFE355 */ bl u_debug_printf
+/* 00001E08 4BFFE355 */ bl window_printf_2
 lbl_00001E0C:
 /* 00001E0C 387F085C */ addi r3, r31, 0x85c
 /* 00001E10 4BFFE34D */ bl u_debug_print
@@ -2096,25 +2096,25 @@ lbl_00001E18:
 /* 00001E1C 387F0880 */ addi r3, r31, 0x880
 /* 00001E20 4CC63182 */ crclr 6
 /* 00001E24 7C840774 */ extsb r4, r4
-/* 00001E28 4BFFE335 */ bl u_debug_printf
+/* 00001E28 4BFFE335 */ bl window_printf_2
 /* 00001E2C 889E0018 */ lbz r4, 0x18(r30)
 /* 00001E30 387F0810 */ addi r3, r31, 0x810
 /* 00001E34 4CC63182 */ crclr 6
 /* 00001E38 7C840774 */ extsb r4, r4
-/* 00001E3C 4BFFE321 */ bl u_debug_printf
+/* 00001E3C 4BFFE321 */ bl window_printf_2
 /* 00001E40 889E0019 */ lbz r4, 0x19(r30)
 /* 00001E44 387F081C */ addi r3, r31, 0x81c
 /* 00001E48 88BE001A */ lbz r5, 0x1a(r30)
 /* 00001E4C 4CC63182 */ crclr 6
 /* 00001E50 7C840774 */ extsb r4, r4
 /* 00001E54 7CA50774 */ extsb r5, r5
-/* 00001E58 4BFFE305 */ bl u_debug_printf
+/* 00001E58 4BFFE305 */ bl window_printf_2
 /* 00001E5C 480000A8 */ b lbl_00001F04
 lbl_00001E60:
 /* 00001E60 A09E0030 */ lhz r4, 0x30(r30)
 /* 00001E64 387F088C */ addi r3, r31, 0x88c
 /* 00001E68 4CC63182 */ crclr 6
-/* 00001E6C 4BFFE2F1 */ bl u_debug_printf
+/* 00001E6C 4BFFE2F1 */ bl window_printf_2
 /* 00001E70 48000094 */ b lbl_00001F04
 lbl_00001E74:
 /* 00001E74 3C600000 */ lis r3, g_soundMuted@ha
@@ -2128,7 +2128,7 @@ lbl_00001E8C:
 lbl_00001E90:
 /* 00001E90 4CC63182 */ crclr 6
 /* 00001E94 387F08A8 */ addi r3, r31, 0x8a8
-/* 00001E98 4BFFE2C5 */ bl u_debug_printf
+/* 00001E98 4BFFE2C5 */ bl window_printf_2
 /* 00001E9C 48000068 */ b lbl_00001F04
 lbl_00001EA0:
 /* 00001EA0 4BFFE2BD */ bl OSGetSoundMode
@@ -2137,38 +2137,38 @@ lbl_00001EA0:
 /* 00001EAC 7C7F0214 */ add r3, r31, r0
 /* 00001EB0 8083072C */ lwz r4, 0x72c(r3)
 /* 00001EB4 387F08B4 */ addi r3, r31, 0x8b4
-/* 00001EB8 4BFFE2A5 */ bl u_debug_printf
+/* 00001EB8 4BFFE2A5 */ bl window_printf_2
 /* 00001EBC 3C600000 */ lis r3, lbl_802F1DF5@ha
 /* 00001EC0 4CC63182 */ crclr 6
 /* 00001EC4 88830000 */ lbz r4, lbl_802F1DF5@l(r3)
 /* 00001EC8 387F08C0 */ addi r3, r31, 0x8c0
-/* 00001ECC 4BFFE291 */ bl u_debug_printf
+/* 00001ECC 4BFFE291 */ bl window_printf_2
 /* 00001ED0 3C600000 */ lis r3, u_volumeRelated1@ha
 /* 00001ED4 4CC63182 */ crclr 6
 /* 00001ED8 88830000 */ lbz r4, u_volumeRelated1@l(r3)
 /* 00001EDC 387F08D0 */ addi r3, r31, 0x8d0
-/* 00001EE0 4BFFE27D */ bl u_debug_printf
+/* 00001EE0 4BFFE27D */ bl window_printf_2
 /* 00001EE4 809E003C */ lwz r4, 0x3c(r30)
 /* 00001EE8 38600003 */ li r3, 3
 /* 00001EEC 38840012 */ addi r4, r4, 0x12
 /* 00001EF0 5484043E */ clrlwi r4, r4, 0x10
-/* 00001EF4 4BFFE269 */ bl u_debug_set_cursor_pos
+/* 00001EF4 4BFFE269 */ bl window_set_cursor_pos
 /* 00001EF8 387F0400 */ addi r3, r31, 0x400
 /* 00001EFC 4CC63182 */ crclr 6
-/* 00001F00 4BFFE25D */ bl u_debug_printf
+/* 00001F00 4BFFE25D */ bl window_printf_2
 lbl_00001F04:
 /* 00001F04 809E000C */ lwz r4, 0xc(r30)
 /* 00001F08 38600001 */ li r3, 1
 /* 00001F0C 3884000A */ addi r4, r4, 0xa
 /* 00001F10 5484043E */ clrlwi r4, r4, 0x10
-/* 00001F14 4BFFE249 */ bl u_debug_set_cursor_pos
+/* 00001F14 4BFFE249 */ bl window_set_cursor_pos
 /* 00001F18 38600001 */ li r3, 1
-/* 00001F1C 4BFFE241 */ bl u_debug_set_text_color
+/* 00001F1C 4BFFE241 */ bl window_set_text_color
 /* 00001F20 387F0400 */ addi r3, r31, 0x400
 /* 00001F24 4CC63182 */ crclr 6
-/* 00001F28 4BFFE235 */ bl u_debug_printf
+/* 00001F28 4BFFE235 */ bl window_printf_2
 /* 00001F2C 38600000 */ li r3, 0
-/* 00001F30 4BFFE22D */ bl u_debug_set_text_color
+/* 00001F30 4BFFE22D */ bl window_set_text_color
 /* 00001F34 8001001C */ lwz r0, 0x1c(r1)
 /* 00001F38 83E10014 */ lwz r31, 0x14(r1)
 /* 00001F3C 83C10010 */ lwz r30, 0x10(r1)
@@ -3491,7 +3491,7 @@ lbl_000031B8:
 /* 0000321C 40820134 */ bne lbl_00003350
 /* 00003220 38600003 */ li r3, 3
 /* 00003224 38800005 */ li r4, 5
-/* 00003228 4BFFCF35 */ bl u_debug_set_cursor_pos
+/* 00003228 4BFFCF35 */ bl window_set_cursor_pos
 /* 0000322C 3C600000 */ lis r3, bitmapNames@ha
 /* 00003230 3B1D2894 */ addi r24, r29, 0x2894
 /* 00003234 3BC30000 */ addi r30, r3, bitmapNames@l
@@ -3503,13 +3503,13 @@ lbl_00003240:
 /* 00003248 40820028 */ bne lbl_00003270
 /* 0000324C 3860FFFE */ li r3, -2
 /* 00003250 38800000 */ li r4, 0
-/* 00003254 4BFFCF09 */ bl func_8002FC90
+/* 00003254 4BFFCF09 */ bl window_move_cursor
 /* 00003258 38600001 */ li r3, 1
-/* 0000325C 4BFFCF01 */ bl u_debug_set_text_color
+/* 0000325C 4BFFCF01 */ bl window_set_text_color
 /* 00003260 387D2988 */ addi r3, r29, 0x2988
 /* 00003264 4BFFCEF9 */ bl u_debug_print
 /* 00003268 38600000 */ li r3, 0
-/* 0000326C 4BFFCEF1 */ bl u_debug_set_text_color
+/* 0000326C 4BFFCEF1 */ bl window_set_text_color
 lbl_00003270:
 /* 00003270 80180000 */ lwz r0, 0(r24)
 /* 00003274 2C000004 */ cmpwi r0, 4
@@ -3531,7 +3531,7 @@ lbl_000032AC:
 /* 000032AC 80780004 */ lwz r3, 4(r24)
 /* 000032B0 4CC63182 */ crclr 6
 /* 000032B4 809A0008 */ lwz r4, 8(r26)
-/* 000032B8 4BFFCEA5 */ bl u_debug_printf
+/* 000032B8 4BFFCEA5 */ bl window_printf_2
 /* 000032BC 48000080 */ b lbl_0000333C
 lbl_000032C0:
 /* 000032C0 801C007C */ lwz r0, 0x7c(r28)
@@ -3546,28 +3546,28 @@ lbl_000032C0:
 /* 000032E4 A0DF0008 */ lhz r6, 8(r31)
 /* 000032E8 7CA5002E */ lwzx r5, r5, r0
 /* 000032EC A0FF000A */ lhz r7, 0xa(r31)
-/* 000032F0 4BFFCE6D */ bl u_debug_printf
+/* 000032F0 4BFFCE6D */ bl window_printf_2
 /* 000032F4 48000048 */ b lbl_0000333C
 lbl_000032F8:
 /* 000032F8 80980008 */ lwz r4, 8(r24)
 /* 000032FC 4CC63182 */ crclr 6
 /* 00003300 80780004 */ lwz r3, 4(r24)
 /* 00003304 88840000 */ lbz r4, 0(r4)
-/* 00003308 4BFFCE55 */ bl u_debug_printf
+/* 00003308 4BFFCE55 */ bl window_printf_2
 /* 0000330C 48000030 */ b lbl_0000333C
 lbl_00003310:
 /* 00003310 80980008 */ lwz r4, 8(r24)
 /* 00003314 4CC63182 */ crclr 6
 /* 00003318 80780004 */ lwz r3, 4(r24)
 /* 0000331C A8840000 */ lha r4, 0(r4)
-/* 00003320 4BFFCE3D */ bl u_debug_printf
+/* 00003320 4BFFCE3D */ bl window_printf_2
 /* 00003324 48000018 */ b lbl_0000333C
 lbl_00003328:
 /* 00003328 80980008 */ lwz r4, 8(r24)
 /* 0000332C 4CC63242 */ crset 6
 /* 00003330 80780004 */ lwz r3, 4(r24)
 /* 00003334 C0240000 */ lfs f1, 0(r4)
-/* 00003338 4BFFCE25 */ bl u_debug_printf
+/* 00003338 4BFFCE25 */ bl window_printf_2
 lbl_0000333C:
 /* 0000333C 3AF70001 */ addi r23, r23, 1
 /* 00003340 3B18000C */ addi r24, r24, 0xc
@@ -4068,7 +4068,7 @@ lbl_00003A4C:
 /* 00003A70 3BA50000 */ addi r29, r5, lbl_0000FE78@l
 /* 00003A74 38600002 */ li r3, 2
 /* 00003A78 38800002 */ li r4, 2
-/* 00003A7C 4BFFC6E1 */ bl u_debug_set_cursor_pos
+/* 00003A7C 4BFFC6E1 */ bl window_set_cursor_pos
 /* 00003A80 801E00B8 */ lwz r0, 0xb8(r30)
 /* 00003A84 1C00000C */ mulli r0, r0, 0xc
 /* 00003A88 7C7F0214 */ add r3, r31, r0
@@ -4088,31 +4088,31 @@ lbl_00003AB8:
 /* 00003ABC 7C1A0000 */ cmpw r26, r0
 /* 00003AC0 40820040 */ bne lbl_00003B00
 /* 00003AC4 38600002 */ li r3, 2
-/* 00003AC8 4BFFC695 */ bl u_debug_set_text_color
+/* 00003AC8 4BFFC695 */ bl window_set_text_color
 /* 00003ACC 38600001 */ li r3, 1
 /* 00003AD0 389A0004 */ addi r4, r26, 4
-/* 00003AD4 4BFFC689 */ bl u_debug_set_cursor_pos
+/* 00003AD4 4BFFC689 */ bl window_set_cursor_pos
 /* 00003AD8 801B0000 */ lwz r0, 0(r27)
 /* 00003ADC 387F2CBC */ addi r3, r31, 0x2cbc
 /* 00003AE0 4CC63182 */ crclr 6
 /* 00003AE4 5400103A */ slwi r0, r0, 2
 /* 00003AE8 7C9C0214 */ add r4, r28, r0
 /* 00003AEC 80840000 */ lwz r4, 0(r4)
-/* 00003AF0 4BFFC66D */ bl u_debug_printf
+/* 00003AF0 4BFFC66D */ bl window_printf_2
 /* 00003AF4 38600000 */ li r3, 0
-/* 00003AF8 4BFFC665 */ bl u_debug_set_text_color
+/* 00003AF8 4BFFC665 */ bl window_set_text_color
 /* 00003AFC 4800002C */ b lbl_00003B28
 lbl_00003B00:
 /* 00003B00 38600001 */ li r3, 1
 /* 00003B04 389A0004 */ addi r4, r26, 4
-/* 00003B08 4BFFC655 */ bl u_debug_set_cursor_pos
+/* 00003B08 4BFFC655 */ bl window_set_cursor_pos
 /* 00003B0C 801B0000 */ lwz r0, 0(r27)
 /* 00003B10 387F2CC4 */ addi r3, r31, 0x2cc4
 /* 00003B14 4CC63182 */ crclr 6
 /* 00003B18 5400103A */ slwi r0, r0, 2
 /* 00003B1C 7C9C0214 */ add r4, r28, r0
 /* 00003B20 80840000 */ lwz r4, 0(r4)
-/* 00003B24 4BFFC639 */ bl u_debug_printf
+/* 00003B24 4BFFC639 */ bl window_printf_2
 lbl_00003B28:
 /* 00003B28 3B7B0008 */ addi r27, r27, 8
 /* 00003B2C 3B5A0001 */ addi r26, r26, 1
@@ -4577,7 +4577,7 @@ lbl_000041C4:
 /* 00004200 2C030000 */ cmpwi r3, 0
 /* 00004204 907F0150 */ stw r3, 0x150(r31)
 /* 00004208 40820DF0 */ bne lbl_00004FF8
-/* 0000420C 4BFFBF51 */ bl func_8002FFEC
+/* 0000420C 4BFFBF51 */ bl u_clear_buffers_2_and_5
 /* 00004210 38600003 */ li r3, 3
 /* 00004214 4BFFBF49 */ bl camera_set_state
 /* 00004218 3C600000 */ lis r3, currentCamera@ha
@@ -4652,7 +4652,7 @@ lbl_000042F4:
 lbl_0000431C:
 /* 0000431C 38600002 */ li r3, 2
 /* 00004320 38800001 */ li r4, 1
-/* 00004324 4BFFBE39 */ bl u_debug_set_cursor_pos
+/* 00004324 4BFFBE39 */ bl window_set_cursor_pos
 /* 00004328 3C800000 */ lis r4, u_motAnimCount@ha
 /* 0000432C 3C600000 */ lis r3, motLabel@ha
 /* 00004330 3CA00000 */ lis r5, motSkeleton@ha
@@ -4680,16 +4680,16 @@ lbl_00004360:
 /* 00004384 7C160000 */ cmpw r22, r0
 /* 00004388 40820024 */ bne lbl_000043AC
 /* 0000438C 38600002 */ li r3, 2
-/* 00004390 4BFFBDCD */ bl u_debug_set_text_color
+/* 00004390 4BFFBDCD */ bl window_set_text_color
 /* 00004394 3860FFFF */ li r3, -1
 /* 00004398 38800000 */ li r4, 0
-/* 0000439C 4BFFBDC1 */ bl func_8002FC90
+/* 0000439C 4BFFBDC1 */ bl window_move_cursor
 /* 000043A0 38782E1C */ addi r3, r24, 0x2e1c
 /* 000043A4 4BFFBDB9 */ bl u_debug_print
 /* 000043A8 4800000C */ b lbl_000043B4
 lbl_000043AC:
 /* 000043AC 38600000 */ li r3, 0
-/* 000043B0 4BFFBDAD */ bl u_debug_set_text_color
+/* 000043B0 4BFFBDAD */ bl window_set_text_color
 lbl_000043B4:
 /* 000043B4 28160007 */ cmplwi r22, 7
 /* 000043B8 41810184 */ bgt lbl_0000453C
@@ -4707,7 +4707,7 @@ lbl_000043C8:
 /* 000043E4 80BA0000 */ lwz r5, 0(r26)
 /* 000043E8 A108003A */ lhz r8, 0x3a(r8)
 /* 000043EC 7CC6002E */ lwzx r6, r6, r0
-/* 000043F0 4BFFBD6D */ bl u_debug_printf
+/* 000043F0 4BFFBD6D */ bl window_printf_2
 /* 000043F4 48000148 */ b lbl_0000453C
 lbl_000043F8:
 /* 000043F8 809F0154 */ lwz r4, 0x154(r31)
@@ -4719,7 +4719,7 @@ lbl_000043F8:
 /* 00004410 80A50004 */ lwz r5, 4(r5)
 /* 00004414 38060014 */ addi r0, r6, 0x14
 /* 00004418 7CC7002E */ lwzx r6, r7, r0
-/* 0000441C 4BFFBD41 */ bl u_debug_printf
+/* 0000441C 4BFFBD41 */ bl window_printf_2
 /* 00004420 4800011C */ b lbl_0000453C
 lbl_00004424:
 /* 00004424 809F0158 */ lwz r4, 0x158(r31)
@@ -4730,7 +4730,7 @@ lbl_00004424:
 /* 00004438 80C50008 */ lwz r6, 8(r5)
 /* 0000443C 80A5000C */ lwz r5, 0xc(r5)
 /* 00004440 7CC6002E */ lwzx r6, r6, r0
-/* 00004444 4BFFBD19 */ bl u_debug_printf
+/* 00004444 4BFFBD19 */ bl window_printf_2
 /* 00004448 480000F4 */ b lbl_0000453C
 lbl_0000444C:
 /* 0000444C 809E00B4 */ lwz r4, 0xb4(r30)
@@ -4738,7 +4738,7 @@ lbl_0000444C:
 /* 00004454 4CC63182 */ crclr 6
 /* 00004458 5480103A */ slwi r0, r4, 2
 /* 0000445C 7CB2002E */ lwzx r5, r18, r0
-/* 00004460 4BFFBCFD */ bl u_debug_printf
+/* 00004460 4BFFBCFD */ bl window_printf_2
 /* 00004464 480000D8 */ b lbl_0000453C
 lbl_00004468:
 /* 00004468 809E0090 */ lwz r4, 0x90(r30)
@@ -4748,13 +4748,13 @@ lbl_00004468:
 /* 00004478 5480103A */ slwi r0, r4, 2
 /* 0000447C 7CD80214 */ add r6, r24, r0
 /* 00004480 80C62DC4 */ lwz r6, 0x2dc4(r6)
-/* 00004484 4BFFBCD9 */ bl u_debug_printf
+/* 00004484 4BFFBCD9 */ bl window_printf_2
 /* 00004488 480000B4 */ b lbl_0000453C
 lbl_0000448C:
 /* 0000448C C03F0140 */ lfs f1, 0x140(r31)
 /* 00004490 38782E70 */ addi r3, r24, 0x2e70
 /* 00004494 4CC63242 */ crset 6
-/* 00004498 4BFFBCC5 */ bl u_debug_printf
+/* 00004498 4BFFBCC5 */ bl window_printf_2
 /* 0000449C 480000A0 */ b lbl_0000453C
 lbl_000044A0:
 /* 000044A0 80FE0000 */ lwz r7, 0(r30)
@@ -4775,7 +4775,7 @@ lbl_000044A0:
 /* 000044DC 7CC6002E */ lwzx r6, r6, r0
 /* 000044E0 C04700A0 */ lfs f2, 0xa0(r7)
 /* 000044E4 EC21002A */ fadds f1, f1, f0
-/* 000044E8 4BFFBC75 */ bl u_debug_printf
+/* 000044E8 4BFFBC75 */ bl window_printf_2
 /* 000044EC 48000050 */ b lbl_0000453C
 lbl_000044F0:
 /* 000044F0 80FE0000 */ lwz r7, 0(r30)
@@ -4796,14 +4796,14 @@ lbl_000044F0:
 /* 0000452C 7CC6002E */ lwzx r6, r6, r0
 /* 00004530 C0474130 */ lfs f2, 0x4130(r7)
 /* 00004534 EC21002A */ fadds f1, f1, f0
-/* 00004538 4BFFBC25 */ bl u_debug_printf
+/* 00004538 4BFFBC25 */ bl window_printf_2
 lbl_0000453C:
 /* 0000453C 3AD60001 */ addi r22, r22, 1
 /* 00004540 2C160008 */ cmpwi r22, 8
 /* 00004544 3BBD0004 */ addi r29, r29, 4
 /* 00004548 4180FE18 */ blt lbl_00004360
 /* 0000454C 38600000 */ li r3, 0
-/* 00004550 4BFFBC0D */ bl u_debug_set_text_color
+/* 00004550 4BFFBC0D */ bl window_set_text_color
 /* 00004554 3C600000 */ lis r3, debugFlags@ha
 /* 00004558 80030000 */ lwz r0, debugFlags@l(r3)
 /* 0000455C 7000000A */ andi. r0, r0, 0xa
@@ -5692,13 +5692,13 @@ lbl_000051C4:
 /* 000051E0 3BE30000 */ addi r31, r3, lbl_000102B0@l
 /* 000051E4 38600002 */ li r3, 2
 /* 000051E8 38800002 */ li r4, 2
-/* 000051EC 4BFFAF71 */ bl u_debug_set_cursor_pos
+/* 000051EC 4BFFAF71 */ bl window_set_cursor_pos
 /* 000051F0 387F2FA8 */ addi r3, r31, 0x2fa8
 /* 000051F4 4CC63182 */ crclr 6
-/* 000051F8 4BFFAF65 */ bl u_debug_printf
+/* 000051F8 4BFFAF65 */ bl window_printf_2
 /* 000051FC 38600004 */ li r3, 4
 /* 00005200 38800005 */ li r4, 5
-/* 00005204 4BFFAF59 */ bl u_debug_set_cursor_pos
+/* 00005204 4BFFAF59 */ bl window_set_cursor_pos
 /* 00005208 3C600000 */ lis r3, controllerInfo@ha
 /* 0000520C 38630000 */ addi r3, r3, controllerInfo@l
 /* 00005210 A0830030 */ lhz r4, 0x30(r3)
@@ -5777,13 +5777,13 @@ lbl_0000530C:
 /* 00005310 7C1B0000 */ cmpw r27, r0
 /* 00005314 40820018 */ bne lbl_0000532C
 /* 00005318 38600002 */ li r3, 2
-/* 0000531C 4BFFAE41 */ bl u_debug_set_text_color
+/* 0000531C 4BFFAE41 */ bl window_set_text_color
 /* 00005320 387F2FC0 */ addi r3, r31, 0x2fc0
 /* 00005324 4BFFAE39 */ bl u_debug_print
 /* 00005328 48000014 */ b lbl_0000533C
 lbl_0000532C:
 /* 0000532C 38600000 */ li r3, 0
-/* 00005330 4BFFAE2D */ bl u_debug_set_text_color
+/* 00005330 4BFFAE2D */ bl window_set_text_color
 /* 00005334 387F2FC4 */ addi r3, r31, 0x2fc4
 /* 00005338 4BFFAE25 */ bl u_debug_print
 lbl_0000533C:
@@ -6303,90 +6303,90 @@ lbl_00005A94:
 lbl_00005AB4:
 /* 00005AB4 38600001 */ li r3, 1
 /* 00005AB8 38800001 */ li r4, 1
-/* 00005ABC 4BFFA6A1 */ bl u_debug_set_cursor_pos
+/* 00005ABC 4BFFA6A1 */ bl window_set_cursor_pos
 /* 00005AC0 38600004 */ li r3, 4
-/* 00005AC4 4BFFA699 */ bl u_debug_set_text_color
+/* 00005AC4 4BFFA699 */ bl window_set_text_color
 /* 00005AC8 387F427C */ addi r3, r31, 0x427c
 /* 00005ACC 4CC63182 */ crclr 6
-/* 00005AD0 4BFFA68D */ bl u_debug_printf
+/* 00005AD0 4BFFA68D */ bl window_printf_2
 /* 00005AD4 38600000 */ li r3, 0
-/* 00005AD8 4BFFA685 */ bl u_debug_set_text_color
+/* 00005AD8 4BFFA685 */ bl window_set_text_color
 /* 00005ADC A81E0D44 */ lha r0, 0xd44(r30)
 /* 00005AE0 2C000002 */ cmpwi r0, 2
 /* 00005AE4 40800038 */ bge lbl_00005B1C
 /* 00005AE8 38600001 */ li r3, 1
 /* 00005AEC 38800022 */ li r4, 0x22
-/* 00005AF0 4BFFA66D */ bl u_debug_set_cursor_pos
+/* 00005AF0 4BFFA66D */ bl window_set_cursor_pos
 /* 00005AF4 387F428C */ addi r3, r31, 0x428c
 /* 00005AF8 4CC63182 */ crclr 6
-/* 00005AFC 4BFFA661 */ bl u_debug_printf
+/* 00005AFC 4BFFA661 */ bl window_printf_2
 /* 00005B00 387F429C */ addi r3, r31, 0x429c
 /* 00005B04 4CC63182 */ crclr 6
-/* 00005B08 4BFFA655 */ bl u_debug_printf
+/* 00005B08 4BFFA655 */ bl window_printf_2
 /* 00005B0C 387F42AC */ addi r3, r31, 0x42ac
 /* 00005B10 4CC63182 */ crclr 6
-/* 00005B14 4BFFA649 */ bl u_debug_printf
+/* 00005B14 4BFFA649 */ bl window_printf_2
 /* 00005B18 48000028 */ b lbl_00005B40
 lbl_00005B1C:
 /* 00005B1C 38600001 */ li r3, 1
 /* 00005B20 38800022 */ li r4, 0x22
-/* 00005B24 4BFFA639 */ bl u_debug_set_cursor_pos
+/* 00005B24 4BFFA639 */ bl window_set_cursor_pos
 /* 00005B28 387F42C4 */ addi r3, r31, 0x42c4
 /* 00005B2C 4CC63182 */ crclr 6
-/* 00005B30 4BFFA62D */ bl u_debug_printf
+/* 00005B30 4BFFA62D */ bl window_printf_2
 /* 00005B34 387F42DC */ addi r3, r31, 0x42dc
 /* 00005B38 4CC63182 */ crclr 6
-/* 00005B3C 4BFFA621 */ bl u_debug_printf
+/* 00005B3C 4BFFA621 */ bl window_printf_2
 lbl_00005B40:
 /* 00005B40 881E0D4E */ lbz r0, 0xd4e(r30)
 /* 00005B44 28000000 */ cmplwi r0, 0
 /* 00005B48 4182003C */ beq lbl_00005B84
 /* 00005B4C 38600022 */ li r3, 0x22
 /* 00005B50 38800022 */ li r4, 0x22
-/* 00005B54 4BFFA609 */ bl u_debug_set_cursor_pos
+/* 00005B54 4BFFA609 */ bl window_set_cursor_pos
 /* 00005B58 387F42F0 */ addi r3, r31, 0x42f0
 /* 00005B5C 4CC63182 */ crclr 6
-/* 00005B60 4BFFA5FD */ bl u_debug_printf
+/* 00005B60 4BFFA5FD */ bl window_printf_2
 /* 00005B64 38600002 */ li r3, 2
-/* 00005B68 4BFFA5F5 */ bl u_debug_set_text_color
+/* 00005B68 4BFFA5F5 */ bl window_set_text_color
 /* 00005B6C 387F42F8 */ addi r3, r31, 0x42f8
 /* 00005B70 4CC63182 */ crclr 6
-/* 00005B74 4BFFA5E9 */ bl u_debug_printf
+/* 00005B74 4BFFA5E9 */ bl window_printf_2
 /* 00005B78 38600000 */ li r3, 0
-/* 00005B7C 4BFFA5E1 */ bl u_debug_set_text_color
+/* 00005B7C 4BFFA5E1 */ bl window_set_text_color
 /* 00005B80 4800001C */ b lbl_00005B9C
 lbl_00005B84:
 /* 00005B84 38600022 */ li r3, 0x22
 /* 00005B88 38800022 */ li r4, 0x22
-/* 00005B8C 4BFFA5D1 */ bl u_debug_set_cursor_pos
+/* 00005B8C 4BFFA5D1 */ bl window_set_cursor_pos
 /* 00005B90 387F4304 */ addi r3, r31, 0x4304
 /* 00005B94 4CC63182 */ crclr 6
-/* 00005B98 4BFFA5C5 */ bl u_debug_printf
+/* 00005B98 4BFFA5C5 */ bl window_printf_2
 lbl_00005B9C:
 /* 00005B9C 801E05AC */ lwz r0, 0x5ac(r30)
 /* 00005BA0 2C000000 */ cmpwi r0, 0
 /* 00005BA4 4182003C */ beq lbl_00005BE0
 /* 00005BA8 38600022 */ li r3, 0x22
 /* 00005BAC 38800023 */ li r4, 0x23
-/* 00005BB0 4BFFA5AD */ bl u_debug_set_cursor_pos
+/* 00005BB0 4BFFA5AD */ bl window_set_cursor_pos
 /* 00005BB4 38600002 */ li r3, 2
-/* 00005BB8 4BFFA5A5 */ bl u_debug_set_text_color
+/* 00005BB8 4BFFA5A5 */ bl window_set_text_color
 /* 00005BBC 387F4318 */ addi r3, r31, 0x4318
 /* 00005BC0 4CC63182 */ crclr 6
-/* 00005BC4 4BFFA599 */ bl u_debug_printf
+/* 00005BC4 4BFFA599 */ bl window_printf_2
 /* 00005BC8 38600000 */ li r3, 0
-/* 00005BCC 4BFFA591 */ bl u_debug_set_text_color
+/* 00005BCC 4BFFA591 */ bl window_set_text_color
 /* 00005BD0 387F432C */ addi r3, r31, 0x432c
 /* 00005BD4 4CC63182 */ crclr 6
-/* 00005BD8 4BFFA585 */ bl u_debug_printf
+/* 00005BD8 4BFFA585 */ bl window_printf_2
 /* 00005BDC 4800001C */ b lbl_00005BF8
 lbl_00005BE0:
 /* 00005BE0 38600022 */ li r3, 0x22
 /* 00005BE4 38800024 */ li r4, 0x24
-/* 00005BE8 4BFFA575 */ bl u_debug_set_cursor_pos
+/* 00005BE8 4BFFA575 */ bl window_set_cursor_pos
 /* 00005BEC 387F4340 */ addi r3, r31, 0x4340
 /* 00005BF0 4CC63182 */ crclr 6
-/* 00005BF4 4BFFA569 */ bl u_debug_printf
+/* 00005BF4 4BFFA569 */ bl window_printf_2
 lbl_00005BF8:
 /* 00005BF8 A81E0D44 */ lha r0, 0xd44(r30)
 /* 00005BFC 2C000000 */ cmpwi r0, 0
@@ -6407,7 +6407,7 @@ lbl_00005C1C:
 /* 00005C34 1C000006 */ mulli r0, r0, 6
 /* 00005C38 7C802050 */ subf r4, r0, r4
 /* 00005C3C 38840003 */ addi r4, r4, 3
-/* 00005C40 4BFFA51D */ bl u_debug_set_cursor_pos
+/* 00005C40 4BFFA51D */ bl window_set_cursor_pos
 /* 00005C44 A81E0D48 */ lha r0, 0xd48(r30)
 /* 00005C48 7C1D0000 */ cmpw r29, r0
 /* 00005C4C 40820038 */ bne lbl_00005C84
@@ -6415,16 +6415,16 @@ lbl_00005C1C:
 /* 00005C54 2C000000 */ cmpwi r0, 0
 /* 00005C58 40820010 */ bne lbl_00005C68
 /* 00005C5C 38600002 */ li r3, 2
-/* 00005C60 4BFFA4FD */ bl u_debug_set_text_color
+/* 00005C60 4BFFA4FD */ bl window_set_text_color
 /* 00005C64 4800000C */ b lbl_00005C70
 lbl_00005C68:
 /* 00005C68 38600000 */ li r3, 0
-/* 00005C6C 4BFFA4F1 */ bl u_debug_set_text_color
+/* 00005C6C 4BFFA4F1 */ bl window_set_text_color
 lbl_00005C70:
 /* 00005C70 809C0000 */ lwz r4, 0(r28)
 /* 00005C74 387F4354 */ addi r3, r31, 0x4354
 /* 00005C78 4CC63182 */ crclr 6
-/* 00005C7C 4BFFA4E1 */ bl u_debug_printf
+/* 00005C7C 4BFFA4E1 */ bl window_printf_2
 /* 00005C80 48000020 */ b lbl_00005CA0
 lbl_00005C84:
 /* 00005C84 A81E0D44 */ lha r0, 0xd44(r30)
@@ -6433,10 +6433,10 @@ lbl_00005C84:
 /* 00005C90 809C0000 */ lwz r4, 0(r28)
 /* 00005C94 387F435C */ addi r3, r31, 0x435c
 /* 00005C98 4CC63182 */ crclr 6
-/* 00005C9C 4BFFA4C1 */ bl u_debug_printf
+/* 00005C9C 4BFFA4C1 */ bl window_printf_2
 lbl_00005CA0:
 /* 00005CA0 38600000 */ li r3, 0
-/* 00005CA4 4BFFA4B9 */ bl u_debug_set_text_color
+/* 00005CA4 4BFFA4B9 */ bl window_set_text_color
 /* 00005CA8 3BBD0001 */ addi r29, r29, 1
 /* 00005CAC 281D0006 */ cmplwi r29, 6
 /* 00005CB0 3B9C0004 */ addi r28, r28, 4
@@ -6555,7 +6555,7 @@ lbl_00005E10:
 /* 00005E30 7C0029D6 */ mullw r0, r0, r5
 /* 00005E34 7C802050 */ subf r4, r0, r4
 /* 00005E38 38840003 */ addi r4, r4, 3
-/* 00005E3C 4BFFA321 */ bl u_debug_set_cursor_pos
+/* 00005E3C 4BFFA321 */ bl window_set_cursor_pos
 /* 00005E40 A81C0000 */ lha r0, 0(r28)
 /* 00005E44 7C1B0000 */ cmpw r27, r0
 /* 00005E48 40820118 */ bne lbl_00005F60
@@ -6563,11 +6563,11 @@ lbl_00005E10:
 /* 00005E50 2C000001 */ cmpwi r0, 1
 /* 00005E54 40820010 */ bne lbl_00005E64
 /* 00005E58 38600002 */ li r3, 2
-/* 00005E5C 4BFFA301 */ bl u_debug_set_text_color
+/* 00005E5C 4BFFA301 */ bl window_set_text_color
 /* 00005E60 4800000C */ b lbl_00005E6C
 lbl_00005E64:
 /* 00005E64 38600000 */ li r3, 0
-/* 00005E68 4BFFA2F5 */ bl u_debug_set_text_color
+/* 00005E68 4BFFA2F5 */ bl window_set_text_color
 lbl_00005E6C:
 /* 00005E6C 3800003B */ li r0, 0x3b
 /* 00005E70 A8DE0D48 */ lha r6, 0xd48(r30)
@@ -6638,7 +6638,7 @@ lbl_00005F40:
 lbl_00005F50:
 /* 00005F50 4CC63182 */ crclr 6
 /* 00005F54 387F4354 */ addi r3, r31, 0x4354
-/* 00005F58 4BFFA205 */ bl u_debug_printf
+/* 00005F58 4BFFA205 */ bl window_printf_2
 /* 00005F5C 48000100 */ b lbl_0000605C
 lbl_00005F60:
 /* 00005F60 A81E0D44 */ lha r0, 0xd44(r30)
@@ -6713,10 +6713,10 @@ lbl_00006040:
 lbl_00006050:
 /* 00006050 4CC63182 */ crclr 6
 /* 00006054 387F435C */ addi r3, r31, 0x435c
-/* 00006058 4BFFA105 */ bl u_debug_printf
+/* 00006058 4BFFA105 */ bl window_printf_2
 lbl_0000605C:
 /* 0000605C 38600000 */ li r3, 0
-/* 00006060 4BFFA0FD */ bl u_debug_set_text_color
+/* 00006060 4BFFA0FD */ bl window_set_text_color
 /* 00006064 3B7B0001 */ addi r27, r27, 1
 lbl_00006068:
 /* 00006068 3800003B */ li r0, 0x3b
@@ -6899,12 +6899,12 @@ lbl_000062A8:
 /* 000062C0 7C601850 */ subf r3, r0, r3
 /* 000062C4 38830003 */ addi r4, r3, 3
 /* 000062C8 3860000A */ li r3, 0xa
-/* 000062CC 4BFF9E91 */ bl u_debug_set_cursor_pos
+/* 000062CC 4BFF9E91 */ bl window_set_cursor_pos
 /* 000062D0 A81C0000 */ lha r0, 0(r28)
 /* 000062D4 7C1B0000 */ cmpw r27, r0
 /* 000062D8 40820100 */ bne lbl_000063D8
 /* 000062DC 38600002 */ li r3, 2
-/* 000062E0 4BFF9E7D */ bl u_debug_set_text_color
+/* 000062E0 4BFF9E7D */ bl window_set_text_color
 /* 000062E4 3800003B */ li r0, 0x3b
 /* 000062E8 A8DE0D48 */ lha r6, 0xd48(r30)
 /* 000062EC 38800000 */ li r4, 0
@@ -6974,7 +6974,7 @@ lbl_000063B8:
 lbl_000063C8:
 /* 000063C8 4CC63182 */ crclr 6
 /* 000063CC 387F4354 */ addi r3, r31, 0x4354
-/* 000063D0 4BFF9D8D */ bl u_debug_printf
+/* 000063D0 4BFF9D8D */ bl window_printf_2
 /* 000063D4 48000130 */ b lbl_00006504
 lbl_000063D8:
 /* 000063D8 A81E0D44 */ lha r0, 0xd44(r30)
@@ -7049,22 +7049,22 @@ lbl_000064B8:
 lbl_000064C8:
 /* 000064C8 4CC63182 */ crclr 6
 /* 000064CC 387F435C */ addi r3, r31, 0x435c
-/* 000064D0 4BFF9C8D */ bl u_debug_printf
+/* 000064D0 4BFF9C8D */ bl window_printf_2
 /* 000064D4 3860000D */ li r3, 0xd
 /* 000064D8 38800002 */ li r4, 2
-/* 000064DC 4BFF9C81 */ bl u_debug_set_cursor_pos
+/* 000064DC 4BFF9C81 */ bl window_set_cursor_pos
 /* 000064E0 387F4364 */ addi r3, r31, 0x4364
 /* 000064E4 4CC63182 */ crclr 6
-/* 000064E8 4BFF9C75 */ bl u_debug_printf
+/* 000064E8 4BFF9C75 */ bl window_printf_2
 /* 000064EC 3860000D */ li r3, 0xd
 /* 000064F0 38800017 */ li r4, 0x17
-/* 000064F4 4BFF9C69 */ bl u_debug_set_cursor_pos
+/* 000064F4 4BFF9C69 */ bl window_set_cursor_pos
 /* 000064F8 387F4368 */ addi r3, r31, 0x4368
 /* 000064FC 4CC63182 */ crclr 6
-/* 00006500 4BFF9C5D */ bl u_debug_printf
+/* 00006500 4BFF9C5D */ bl window_printf_2
 lbl_00006504:
 /* 00006504 38600000 */ li r3, 0
-/* 00006508 4BFF9C55 */ bl u_debug_set_text_color
+/* 00006508 4BFF9C55 */ bl window_set_text_color
 lbl_0000650C:
 /* 0000650C 3B7B0001 */ addi r27, r27, 1
 lbl_00006510:
@@ -7108,13 +7108,13 @@ lbl_00006584:
 /* 0000658C 41800050 */ blt lbl_000065DC
 /* 00006590 38600013 */ li r3, 0x13
 /* 00006594 38800003 */ li r4, 3
-/* 00006598 4BFF9BC5 */ bl u_debug_set_cursor_pos
+/* 00006598 4BFF9BC5 */ bl window_set_cursor_pos
 /* 0000659C 80FE0190 */ lwz r7, 0x190(r30)
 /* 000065A0 28070000 */ cmplwi r7, 0
 /* 000065A4 40820014 */ bne lbl_000065B8
 /* 000065A8 387F436C */ addi r3, r31, 0x436c
 /* 000065AC 4CC63182 */ crclr 6
-/* 000065B0 4BFF9BAD */ bl u_debug_printf
+/* 000065B0 4BFF9BAD */ bl window_printf_2
 /* 000065B4 48000028 */ b lbl_000065DC
 lbl_000065B8:
 /* 000065B8 809E05A8 */ lwz r4, 0x5a8(r30)
@@ -7125,7 +7125,7 @@ lbl_000065B8:
 /* 000065CC 7CC50214 */ add r6, r5, r0
 /* 000065D0 80A70000 */ lwz r5, 0(r7)
 /* 000065D4 80C60004 */ lwz r6, 4(r6)
-/* 000065D8 4BFF9B85 */ bl u_debug_printf
+/* 000065D8 4BFF9B85 */ bl window_printf_2
 lbl_000065DC:
 /* 000065DC BB61002C */ lmw r27, 0x2c(r1)
 /* 000065E0 80010044 */ lwz r0, 0x44(r1)
@@ -8181,7 +8181,7 @@ lbl_00007488:
 lbl_0000752C:
 /* 0000752C 38600001 */ li r3, 1
 /* 00007530 38800023 */ li r4, 0x23
-/* 00007534 4BFF8C29 */ bl u_debug_set_cursor_pos
+/* 00007534 4BFF8C29 */ bl window_set_cursor_pos
 /* 00007538 A87F0D42 */ lha r3, 0xd42(r31)
 /* 0000753C A81F0D40 */ lha r0, 0xd40(r31)
 /* 00007540 7C030000 */ cmpw r3, r0
@@ -8250,23 +8250,23 @@ lbl_00007620:
 /* 00007624 4BFF8B39 */ bl avdisp_draw_model_culled_sort_none
 /* 00007628 38600014 */ li r3, 0x14
 /* 0000762C 38800001 */ li r4, 1
-/* 00007630 4BFF8B2D */ bl u_debug_set_cursor_pos
+/* 00007630 4BFF8B2D */ bl window_set_cursor_pos
 /* 00007634 3C600000 */ lis r3, lbl_00014638@ha
 /* 00007638 C03B0014 */ lfs f1, 0x14(r27)
 /* 0000763C 38630000 */ addi r3, r3, lbl_00014638@l
 /* 00007640 4CC63242 */ crset 6
-/* 00007644 4BFF8B19 */ bl u_debug_printf
+/* 00007644 4BFF8B19 */ bl window_printf_2
 lbl_00007648:
 /* 00007648 38600028 */ li r3, 0x28
 /* 0000764C 38800001 */ li r4, 1
-/* 00007650 4BFF8B0D */ bl u_debug_set_cursor_pos
+/* 00007650 4BFF8B0D */ bl window_set_cursor_pos
 /* 00007654 38600000 */ li r3, 0
 /* 00007658 4BFF8B05 */ bl perf_stop_timer
 /* 0000765C 3CA00000 */ lis r5, lbl_00013920@ha
 /* 00007660 4CC63182 */ crclr 6
 /* 00007664 38830000 */ addi r4, r3, 0
 /* 00007668 38650000 */ addi r3, r5, lbl_00013920@l
-/* 0000766C 4BFF8AF1 */ bl u_debug_printf
+/* 0000766C 4BFF8AF1 */ bl window_printf_2
 /* 00007670 881F0D5B */ lbz r0, 0xd5b(r31)
 /* 00007674 28000000 */ cmplwi r0, 0
 /* 00007678 41820080 */ beq lbl_000076F8
@@ -8748,27 +8748,27 @@ lbl_00007D20:
 /* 00007D48 38600001 */ li r3, 1
 /* 00007D4C 93A10014 */ stw r29, 0x14(r1)
 /* 00007D50 93810010 */ stw r28, 0x10(r1)
-/* 00007D54 4BFF8409 */ bl u_debug_set_cursor_pos
+/* 00007D54 4BFF8409 */ bl window_set_cursor_pos
 /* 00007D58 387E0194 */ addi r3, r30, 0x194
 /* 00007D5C 4CC63182 */ crclr 6
-/* 00007D60 4BFF83FD */ bl u_debug_printf
+/* 00007D60 4BFF83FD */ bl window_printf_2
 /* 00007D64 38600003 */ li r3, 3
 /* 00007D68 38800003 */ li r4, 3
-/* 00007D6C 4BFF83F1 */ bl u_debug_set_cursor_pos
+/* 00007D6C 4BFF83F1 */ bl window_set_cursor_pos
 /* 00007D70 387E43C4 */ addi r3, r30, 0x43c4
 /* 00007D74 4BFF83E9 */ bl u_debug_print
 /* 00007D78 38600001 */ li r3, 1
-/* 00007D7C 4BFF83E1 */ bl u_debug_set_text_color
+/* 00007D7C 4BFF83E1 */ bl window_set_text_color
 /* 00007D80 809F0D5C */ lwz r4, 0xd5c(r31)
 /* 00007D84 387E43CC */ addi r3, r30, 0x43cc
 /* 00007D88 4CC63182 */ crclr 6
 /* 00007D8C 80840010 */ lwz r4, 0x10(r4)
-/* 00007D90 4BFF83CD */ bl u_debug_printf
+/* 00007D90 4BFF83CD */ bl window_printf_2
 /* 00007D94 38600000 */ li r3, 0
-/* 00007D98 4BFF83C5 */ bl u_debug_set_text_color
+/* 00007D98 4BFF83C5 */ bl window_set_text_color
 /* 00007D9C 38600003 */ li r3, 3
 /* 00007DA0 38800005 */ li r4, 5
-/* 00007DA4 4BFF83B9 */ bl u_debug_set_cursor_pos
+/* 00007DA4 4BFF83B9 */ bl window_set_cursor_pos
 /* 00007DA8 3B800000 */ li r28, 0
 /* 00007DAC 579D103A */ slwi r29, r28, 2
 /* 00007DB0 48000068 */ b lbl_00007E18
@@ -8777,14 +8777,14 @@ lbl_00007DB4:
 /* 00007DB8 7C1C0000 */ cmpw r28, r0
 /* 00007DBC 40820028 */ bne lbl_00007DE4
 /* 00007DC0 38600001 */ li r3, 1
-/* 00007DC4 4BFF8399 */ bl u_debug_set_text_color
+/* 00007DC4 4BFF8399 */ bl window_set_text_color
 /* 00007DC8 3860FFFF */ li r3, -1
 /* 00007DCC 38800000 */ li r4, 0
-/* 00007DD0 4BFF838D */ bl func_8002FC90
+/* 00007DD0 4BFF838D */ bl window_move_cursor
 /* 00007DD4 387E0400 */ addi r3, r30, 0x400
 /* 00007DD8 4BFF8385 */ bl u_debug_print
 /* 00007DDC 38600000 */ li r3, 0
-/* 00007DE0 4BFF837D */ bl u_debug_set_text_color
+/* 00007DE0 4BFF837D */ bl window_set_text_color
 lbl_00007DE4:
 /* 00007DE4 80DF0D5C */ lwz r6, 0xd5c(r31)
 /* 00007DE8 387E43D0 */ addi r3, r30, 0x43d0
@@ -8796,7 +8796,7 @@ lbl_00007DE4:
 /* 00007E00 7C04E82E */ lwzx r0, r4, r29
 /* 00007E04 7C86E82E */ lwzx r4, r6, r29
 /* 00007E08 7CA50050 */ subf r5, r5, r0
-/* 00007E0C 4BFF8351 */ bl u_debug_printf
+/* 00007E0C 4BFF8351 */ bl window_printf_2
 /* 00007E10 3BBD0004 */ addi r29, r29, 4
 /* 00007E14 3B9C0001 */ addi r28, r28, 1
 lbl_00007E18:
@@ -8823,7 +8823,7 @@ lbl_00007E18:
 /* 00007E68 7FA60214 */ add r29, r6, r0
 /* 00007E6C 38600001 */ li r3, 1
 /* 00007E70 38800023 */ li r4, 0x23
-/* 00007E74 4BFF82E9 */ bl u_debug_set_cursor_pos
+/* 00007E74 4BFF82E9 */ bl window_set_cursor_pos
 /* 00007E78 807F0D5C */ lwz r3, 0xd5c(r31)
 /* 00007E7C 57BD1838 */ slwi r29, r29, 3
 /* 00007E80 80630004 */ lwz r3, 4(r3)
@@ -8943,7 +8943,7 @@ lbl_00008008:
 /* 00008020 93C10060 */ stw r30, 0x60(r1)
 /* 00008024 93A1005C */ stw r29, 0x5c(r1)
 /* 00008028 93810058 */ stw r28, 0x58(r1)
-/* 0000802C 4BFF8131 */ bl u_debug_set_cursor_pos
+/* 0000802C 4BFF8131 */ bl window_set_cursor_pos
 /* 00008030 3C600000 */ lis r3, lbl_0001468C@ha
 /* 00008034 38630000 */ addi r3, r3, lbl_0001468C@l
 /* 00008038 4BFF8125 */ bl u_debug_print
@@ -8956,7 +8956,7 @@ lbl_00008008:
 /* 00008054 5404402E */ slwi r4, r0, 8
 /* 00008058 3C840001 */ addis r4, r4, 1
 /* 0000805C 38848140 */ addi r4, r4, -32448  ;# fixed addi
-/* 00008060 4BFF80FD */ bl u_debug_printf
+/* 00008060 4BFF80FD */ bl window_printf_2
 /* 00008064 38600002 */ li r3, 2
 /* 00008068 38800280 */ li r4, 0x280
 /* 0000806C 38A001C0 */ li r5, 0x1c0
@@ -9507,7 +9507,7 @@ lbl_0000884C:
 /* 00008868 3BA30000 */ addi r29, r3, lbl_000102B0@l
 /* 0000886C 38600001 */ li r3, 1
 /* 00008870 38800001 */ li r4, 1
-/* 00008874 4BFF78E9 */ bl u_debug_set_cursor_pos
+/* 00008874 4BFF78E9 */ bl window_set_cursor_pos
 /* 00008878 387D4520 */ addi r3, r29, 0x4520
 /* 0000887C 4BFF78E1 */ bl u_debug_print
 /* 00008880 3C600000 */ lis r3, modeCtrl@ha
@@ -9520,23 +9520,23 @@ lbl_00008890:
 /* 00008898 40820028 */ bne lbl_000088C0
 /* 0000889C 38600002 */ li r3, 2
 /* 000088A0 389B0003 */ addi r4, r27, 3
-/* 000088A4 4BFF78B9 */ bl u_debug_set_cursor_pos
+/* 000088A4 4BFF78B9 */ bl window_set_cursor_pos
 /* 000088A8 38600002 */ li r3, 2
-/* 000088AC 4BFF78B1 */ bl u_debug_set_text_color
+/* 000088AC 4BFF78B1 */ bl window_set_text_color
 /* 000088B0 387D0400 */ addi r3, r29, 0x400
 /* 000088B4 4BFF78A9 */ bl u_debug_print
 /* 000088B8 38600000 */ li r3, 0
-/* 000088BC 4BFF78A1 */ bl u_debug_set_text_color
+/* 000088BC 4BFF78A1 */ bl window_set_text_color
 lbl_000088C0:
 /* 000088C0 38600003 */ li r3, 3
 /* 000088C4 389B0003 */ addi r4, r27, 3
-/* 000088C8 4BFF7895 */ bl u_debug_set_cursor_pos
+/* 000088C8 4BFF7895 */ bl window_set_cursor_pos
 /* 000088CC A09C0004 */ lhz r4, 4(r28)
 /* 000088D0 387D452C */ addi r3, r29, 0x452c
 /* 000088D4 A0BC0006 */ lhz r5, 6(r28)
 /* 000088D8 4CC63182 */ crclr 6
 /* 000088DC 80DC0000 */ lwz r6, 0(r28)
-/* 000088E0 4BFF787D */ bl u_debug_printf
+/* 000088E0 4BFF787D */ bl window_printf_2
 /* 000088E4 3B7B0001 */ addi r27, r27, 1
 /* 000088E8 281B0009 */ cmplwi r27, 9
 /* 000088EC 3B9C000C */ addi r28, r28, 0xc
@@ -9985,7 +9985,7 @@ lbl_00008F40:
 /* 00008F54 BF61000C */ stmw r27, 0xc(r1)
 /* 00008F58 3BC30000 */ addi r30, r3, lbl_000102B0@l
 /* 00008F5C 38600001 */ li r3, 1
-/* 00008F60 4BFF71FD */ bl u_debug_set_cursor_pos
+/* 00008F60 4BFF71FD */ bl window_set_cursor_pos
 /* 00008F64 387E01F8 */ addi r3, r30, 0x1f8
 /* 00008F68 4BFF71F5 */ bl u_debug_print
 /* 00008F6C 3C600000 */ lis r3, modeCtrl@ha
@@ -9999,26 +9999,26 @@ lbl_00008F80:
 /* 00008F88 40820028 */ bne lbl_00008FB0
 /* 00008F8C 38600002 */ li r3, 2
 /* 00008F90 389B0003 */ addi r4, r27, 3
-/* 00008F94 4BFF71C9 */ bl u_debug_set_cursor_pos
+/* 00008F94 4BFF71C9 */ bl window_set_cursor_pos
 /* 00008F98 38600002 */ li r3, 2
-/* 00008F9C 4BFF71C1 */ bl u_debug_set_text_color
+/* 00008F9C 4BFF71C1 */ bl window_set_text_color
 /* 00008FA0 387E0400 */ addi r3, r30, 0x400
 /* 00008FA4 4BFF71B9 */ bl u_debug_print
 /* 00008FA8 38600000 */ li r3, 0
-/* 00008FAC 4BFF71B1 */ bl u_debug_set_text_color
+/* 00008FAC 4BFF71B1 */ bl window_set_text_color
 lbl_00008FB0:
 /* 00008FB0 801F0008 */ lwz r0, 8(r31)
 /* 00008FB4 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 00008FB8 4082002C */ bne lbl_00008FE4
 /* 00008FBC 38600003 */ li r3, 3
 /* 00008FC0 389B0003 */ addi r4, r27, 3
-/* 00008FC4 4BFF7199 */ bl u_debug_set_cursor_pos
+/* 00008FC4 4BFF7199 */ bl window_set_cursor_pos
 /* 00008FC8 A09C0004 */ lhz r4, 4(r28)
 /* 00008FCC 387E452C */ addi r3, r30, 0x452c
 /* 00008FD0 A0BC0006 */ lhz r5, 6(r28)
 /* 00008FD4 4CC63182 */ crclr 6
 /* 00008FD8 80DC0000 */ lwz r6, 0(r28)
-/* 00008FDC 4BFF7181 */ bl u_debug_printf
+/* 00008FDC 4BFF7181 */ bl window_printf_2
 /* 00008FE0 48000038 */ b lbl_00009018
 lbl_00008FE4:
 /* 00008FE4 801D0000 */ lwz r0, 0(r29)
@@ -10026,13 +10026,13 @@ lbl_00008FE4:
 /* 00008FEC 4082002C */ bne lbl_00009018
 /* 00008FF0 38600003 */ li r3, 3
 /* 00008FF4 389B0003 */ addi r4, r27, 3
-/* 00008FF8 4BFF7165 */ bl u_debug_set_cursor_pos
+/* 00008FF8 4BFF7165 */ bl window_set_cursor_pos
 /* 00008FFC A09C0004 */ lhz r4, 4(r28)
 /* 00009000 387E452C */ addi r3, r30, 0x452c
 /* 00009004 A0BC0006 */ lhz r5, 6(r28)
 /* 00009008 4CC63182 */ crclr 6
 /* 0000900C 80DC0000 */ lwz r6, 0(r28)
-/* 00009010 4BFF714D */ bl u_debug_printf
+/* 00009010 4BFF714D */ bl window_printf_2
 /* 00009014 48000014 */ b lbl_00009028
 lbl_00009018:
 /* 00009018 3B7B0001 */ addi r27, r27, 1
@@ -10048,7 +10048,7 @@ lbl_00009028:
 /* 0000903C 80830044 */ lwz r4, 0x44(r3)
 /* 00009040 387E4550 */ addi r3, r30, 0x4550
 /* 00009044 4CC63182 */ crclr 6
-/* 00009048 4BFF7115 */ bl u_debug_printf
+/* 00009048 4BFF7115 */ bl window_printf_2
 lbl_0000904C:
 /* 0000904C BB61000C */ lmw r27, 0xc(r1)
 /* 00009050 80010024 */ lwz r0, 0x24(r1)
@@ -10090,21 +10090,21 @@ lbl_000090C8:
 lbl_000090D0:
 /* 000090D0 38600004 */ li r3, 4
 /* 000090D4 38800004 */ li r4, 4
-/* 000090D8 4BFF7085 */ bl u_debug_set_cursor_pos
+/* 000090D8 4BFF7085 */ bl window_set_cursor_pos
 /* 000090DC 387F0974 */ addi r3, r31, 0x974
 /* 000090E0 4CC63182 */ crclr 6
-/* 000090E4 4BFF7079 */ bl u_debug_printf
+/* 000090E4 4BFF7079 */ bl window_printf_2
 /* 000090E8 801E0040 */ lwz r0, 0x40(r30)
 /* 000090EC 387F0980 */ addi r3, r31, 0x980
 /* 000090F0 4CC63182 */ crclr 6
 /* 000090F4 54001838 */ slwi r0, r0, 3
 /* 000090F8 7C9F0214 */ add r4, r31, r0
 /* 000090FC 80840940 */ lwz r4, 0x940(r4)
-/* 00009100 4BFF705D */ bl u_debug_printf
+/* 00009100 4BFF705D */ bl window_printf_2
 /* 00009104 809E0044 */ lwz r4, 0x44(r30)
 /* 00009108 387F0990 */ addi r3, r31, 0x990
 /* 0000910C 4CC63182 */ crclr 6
-/* 00009110 4BFF704D */ bl u_debug_printf
+/* 00009110 4BFF704D */ bl window_printf_2
 /* 00009114 4BFF7049 */ bl draw_normal_game_scene
 /* 00009118 4BFF9045 */ bl lbl_0000215C
 /* 0000911C 3C600000 */ lis r3, currRenderMode@ha
@@ -10156,10 +10156,10 @@ lbl_000090D0:
 lbl_000091D4:
 /* 000091D4 38600004 */ li r3, 4
 /* 000091D8 38800004 */ li r4, 4
-/* 000091DC 4BFF6F81 */ bl u_debug_set_cursor_pos
+/* 000091DC 4BFF6F81 */ bl window_set_cursor_pos
 /* 000091E0 387F09A0 */ addi r3, r31, 0x9a0
 /* 000091E4 4CC63182 */ crclr 6
-/* 000091E8 4BFF6F75 */ bl u_debug_printf
+/* 000091E8 4BFF6F75 */ bl window_printf_2
 /* 000091EC 4800040D */ bl lbl_000095F8
 /* 000091F0 480007A9 */ bl lbl_00009998
 /* 000091F4 4BFF6F69 */ bl draw_test_camera_target
@@ -10173,21 +10173,21 @@ lbl_00009204:
 lbl_0000920C:
 /* 0000920C 38600004 */ li r3, 4
 /* 00009210 38800004 */ li r4, 4
-/* 00009214 4BFF6F49 */ bl u_debug_set_cursor_pos
+/* 00009214 4BFF6F49 */ bl window_set_cursor_pos
 /* 00009218 801E0070 */ lwz r0, 0x70(r30)
 /* 0000921C 387F26E0 */ addi r3, r31, 0x26e0
 /* 00009220 4CC63182 */ crclr 6
 /* 00009224 1C00000C */ mulli r0, r0, 0xc
 /* 00009228 7C9F0214 */ add r4, r31, r0
 /* 0000922C 80842080 */ lwz r4, 0x2080(r4)
-/* 00009230 4BFF6F2D */ bl u_debug_printf
+/* 00009230 4BFF6F2D */ bl window_printf_2
 /* 00009234 3B7E0074 */ addi r27, r30, 0x74
 /* 00009238 809E0074 */ lwz r4, 0x74(r30)
 /* 0000923C 28040000 */ cmplwi r4, 0
 /* 00009240 40820014 */ bne lbl_00009254
 /* 00009244 387F26F4 */ addi r3, r31, 0x26f4
 /* 00009248 4CC63182 */ crclr 6
-/* 0000924C 4BFF6F11 */ bl u_debug_printf
+/* 0000924C 4BFF6F11 */ bl window_printf_2
 /* 00009250 480000D4 */ b lbl_00009324
 lbl_00009254:
 /* 00009254 801E006C */ lwz r0, 0x6c(r30)
@@ -10197,7 +10197,7 @@ lbl_00009254:
 /* 00009264 7C840214 */ add r4, r4, r0
 /* 00009268 80840004 */ lwz r4, 4(r4)
 /* 0000926C 8084FFF8 */ lwz r4, -8(r4)
-/* 00009270 4BFF6EED */ bl u_debug_printf
+/* 00009270 4BFF6EED */ bl window_printf_2
 /* 00009274 801E006C */ lwz r0, 0x6c(r30)
 /* 00009278 387F2714 */ addi r3, r31, 0x2714
 /* 0000927C 809B0000 */ lwz r4, 0(r27)
@@ -10207,7 +10207,7 @@ lbl_00009254:
 /* 0000928C 80840004 */ lwz r4, 4(r4)
 /* 00009290 8084FFFC */ lwz r4, -4(r4)
 /* 00009294 80840000 */ lwz r4, 0(r4)
-/* 00009298 4BFF6EC5 */ bl u_debug_printf
+/* 00009298 4BFF6EC5 */ bl window_printf_2
 /* 0000929C 4BFF6EC1 */ bl mathutil_mtxA_from_mtxB
 /* 000092A0 801E006C */ lwz r0, 0x6c(r30)
 /* 000092A4 807B0000 */ lwz r3, 0(r27)
@@ -12537,20 +12537,20 @@ lbl_0000B57C:
 /* 0000B5A0 3C600000 */ lis r3, lbl_00010118@ha
 /* 0000B5A4 3BC30000 */ addi r30, r3, lbl_00010118@l
 /* 0000B5A8 38600008 */ li r3, 8
-/* 0000B5AC 4BFF4BB1 */ bl u_debug_set_cursor_pos
+/* 0000B5AC 4BFF4BB1 */ bl window_set_cursor_pos
 /* 0000B5B0 387D0000 */ addi r3, r29, 0
 /* 0000B5B4 4CC63182 */ crclr 6
-/* 0000B5B8 4BFF4BA5 */ bl u_debug_printf
+/* 0000B5B8 4BFF4BA5 */ bl window_printf_2
 /* 0000B5BC 3C600000 */ lis r3, lbl_10000F70@ha
 /* 0000B5C0 4CC63182 */ crclr 6
 /* 0000B5C4 3BE30000 */ addi r31, r3, lbl_10000F70@l
 /* 0000B5C8 809F0008 */ lwz r4, 8(r31)
 /* 0000B5CC 387D000C */ addi r3, r29, 0xc
-/* 0000B5D0 4BFF4B8D */ bl u_debug_printf
+/* 0000B5D0 4BFF4B8D */ bl window_printf_2
 /* 0000B5D4 C03F000C */ lfs f1, 0xc(r31)
 /* 0000B5D8 387D001C */ addi r3, r29, 0x1c
 /* 0000B5DC 4CC63242 */ crset 6
-/* 0000B5E0 4BFF4B7D */ bl u_debug_printf
+/* 0000B5E0 4BFF4B7D */ bl window_printf_2
 /* 0000B5E4 480008B5 */ bl lbl_0000BE98
 /* 0000B5E8 38600000 */ li r3, 0
 /* 0000B5EC 4BFF4B71 */ bl change_current_camera
@@ -14649,12 +14649,12 @@ lbl_0000D544:
 /* 0000D544 3B200000 */ li r25, 0
 lbl_0000D548:
 /* 0000D548 38600002 */ li r3, 2
-/* 0000D54C 4BFF2C11 */ bl u_debug_set_text_color
+/* 0000D54C 4BFF2C11 */ bl window_set_text_color
 /* 0000D550 801F00A0 */ lwz r0, 0xa0(r31)
 /* 0000D554 389B0003 */ addi r4, r27, 3
 /* 0000D558 807F009C */ lwz r3, 0x9c(r31)
 /* 0000D55C 7C802214 */ add r4, r0, r4
-/* 0000D560 4BFF2BFD */ bl u_debug_set_cursor_pos
+/* 0000D560 4BFF2BFD */ bl window_set_cursor_pos
 /* 0000D564 341A0004 */ addic. r0, r26, 4
 /* 0000D568 38800000 */ li r4, 0
 /* 0000D56C 40810088 */ ble lbl_0000D5F4
@@ -14701,10 +14701,10 @@ lbl_0000D5F4:
 /* 0000D600 7FBC21AE */ stbx r29, r28, r4
 /* 0000D604 389C0000 */ addi r4, r28, 0
 /* 0000D608 387E0E30 */ addi r3, r30, 0xe30
-/* 0000D60C 4BFF2B51 */ bl u_debug_printf
+/* 0000D60C 4BFF2B51 */ bl window_printf_2
 /* 0000D610 807F009C */ lwz r3, 0x9c(r31)
 /* 0000D614 809F00A0 */ lwz r4, 0xa0(r31)
-/* 0000D618 4BFF2B45 */ bl u_debug_set_cursor_pos
+/* 0000D618 4BFF2B45 */ bl window_set_cursor_pos
 /* 0000D61C 341A0004 */ addic. r0, r26, 4
 /* 0000D620 40810084 */ ble lbl_0000D6A4
 /* 0000D624 381A0004 */ addi r0, r26, 4
@@ -14749,7 +14749,7 @@ lbl_0000D6A4:
 /* 0000D6B0 7F97E9AE */ stbx r28, r23, r29
 /* 0000D6B4 38970000 */ addi r4, r23, 0
 /* 0000D6B8 387E0E30 */ addi r3, r30, 0xe30
-/* 0000D6BC 4BFF2AA1 */ bl u_debug_printf
+/* 0000D6BC 4BFF2AA1 */ bl window_printf_2
 /* 0000D6C0 341A0004 */ addic. r0, r26, 4
 /* 0000D6C4 40810084 */ ble lbl_0000D748
 /* 0000D6C8 381A0004 */ addi r0, r26, 4
@@ -14798,18 +14798,18 @@ lbl_0000D760:
 /* 0000D760 387E0E38 */ addi r3, r30, 0xe38
 /* 0000D764 4CC63182 */ crclr 6
 /* 0000D768 38810014 */ addi r4, r1, 0x14
-/* 0000D76C 4BFF29F1 */ bl u_debug_printf
+/* 0000D76C 4BFF29F1 */ bl window_printf_2
 /* 0000D770 3AF70001 */ addi r23, r23, 1
 lbl_0000D774:
 /* 0000D774 7C17D000 */ cmpw r23, r26
 /* 0000D778 4180FFE8 */ blt lbl_0000D760
 /* 0000D77C 38600000 */ li r3, 0
-/* 0000D780 4BFF29DD */ bl u_debug_set_text_color
+/* 0000D780 4BFF29DD */ bl window_set_text_color
 /* 0000D784 807F009C */ lwz r3, 0x9c(r31)
 /* 0000D788 809F00A0 */ lwz r4, 0xa0(r31)
 /* 0000D78C 38630002 */ addi r3, r3, 2
 /* 0000D790 38840002 */ addi r4, r4, 2
-/* 0000D794 4BFF29C9 */ bl u_debug_set_cursor_pos
+/* 0000D794 4BFF29C9 */ bl window_set_cursor_pos
 /* 0000D798 3B400000 */ li r26, 0
 /* 0000D79C 48000048 */ b lbl_0000D7E4
 lbl_0000D7A0:
@@ -14818,25 +14818,25 @@ lbl_0000D7A0:
 /* 0000D7A8 7C00B800 */ cmpw r0, r23
 /* 0000D7AC 40820014 */ bne lbl_0000D7C0
 /* 0000D7B0 38600001 */ li r3, 1
-/* 0000D7B4 4BFF29A9 */ bl u_debug_set_text_color
+/* 0000D7B4 4BFF29A9 */ bl window_set_text_color
 /* 0000D7B8 387E0E40 */ addi r3, r30, 0xe40
 /* 0000D7BC 48000010 */ b lbl_0000D7CC
 lbl_0000D7C0:
 /* 0000D7C0 38600000 */ li r3, 0
-/* 0000D7C4 4BFF2999 */ bl u_debug_set_text_color
+/* 0000D7C4 4BFF2999 */ bl window_set_text_color
 /* 0000D7C8 387E0E48 */ addi r3, r30, 0xe48
 lbl_0000D7CC:
 /* 0000D7CC 809F0098 */ lwz r4, 0x98(r31)
 /* 0000D7D0 56E0103A */ slwi r0, r23, 2
 /* 0000D7D4 4CC63182 */ crclr 6
 /* 0000D7D8 7C84002E */ lwzx r4, r4, r0
-/* 0000D7DC 4BFF2981 */ bl u_debug_printf
+/* 0000D7DC 4BFF2981 */ bl window_printf_2
 /* 0000D7E0 3B5A0001 */ addi r26, r26, 1
 lbl_0000D7E4:
 /* 0000D7E4 7C1AD800 */ cmpw r26, r27
 /* 0000D7E8 4180FFB8 */ blt lbl_0000D7A0
 /* 0000D7EC 38600000 */ li r3, 0
-/* 0000D7F0 4BFF296D */ bl u_debug_set_text_color
+/* 0000D7F0 4BFF296D */ bl window_set_text_color
 /* 0000D7F4 801F0090 */ lwz r0, 0x90(r31)
 /* 0000D7F8 7C60C050 */ subf r3, r0, r24
 /* 0000D7FC 3003FFFF */ addic r0, r3, -1  ;# fixed addi
@@ -14875,13 +14875,13 @@ lbl_0000D844:
 /* 0000D86C 38800000 */ li r4, 0
 /* 0000D870 93A1000C */ stw r29, 0xc(r1)
 /* 0000D874 93810008 */ stw r28, 8(r1)
-/* 0000D878 4BFF28E5 */ bl u_debug_set_cursor_pos
+/* 0000D878 4BFF28E5 */ bl window_set_cursor_pos
 /* 0000D87C 387E0E50 */ addi r3, r30, 0xe50
 /* 0000D880 4CC63182 */ crclr 6
-/* 0000D884 4BFF28D9 */ bl u_debug_printf
+/* 0000D884 4BFF28D9 */ bl window_printf_2
 /* 0000D888 3860000B */ li r3, 0xb
 /* 0000D88C 38800001 */ li r4, 1
-/* 0000D890 4BFF28CD */ bl u_debug_set_cursor_pos
+/* 0000D890 4BFF28CD */ bl window_set_cursor_pos
 /* 0000D894 3C600000 */ lis r3, motInfo@ha
 /* 0000D898 4CC63182 */ crclr 6
 /* 0000D89C 3BA30000 */ addi r29, r3, motInfo@l
@@ -14893,11 +14893,11 @@ lbl_0000D844:
 /* 0000D8B4 84858000 */ lwzu r4, -0x8000(r5)
 /* 0000D8B8 7C050050 */ subf r0, r5, r0
 /* 0000D8BC 5405E13E */ srwi r5, r0, 4
-/* 0000D8C0 4BFF289D */ bl u_debug_printf
+/* 0000D8C0 4BFF289D */ bl window_printf_2
 /* 0000D8C4 809D0000 */ lwz r4, 0(r29)
 /* 0000D8C8 387E0E74 */ addi r3, r30, 0xe74
 /* 0000D8CC 4CC63182 */ crclr 6
-/* 0000D8D0 4BFF288D */ bl u_debug_printf
+/* 0000D8D0 4BFF288D */ bl window_printf_2
 /* 0000D8D4 801F0088 */ lwz r0, 0x88(r31)
 /* 0000D8D8 28000000 */ cmplwi r0, 0
 /* 0000D8DC 40820058 */ bne lbl_0000D934
@@ -14929,10 +14929,10 @@ lbl_0000D934:
 /* 0000D93C 40820098 */ bne lbl_0000D9D4
 /* 0000D940 38600017 */ li r3, 0x17
 /* 0000D944 38800003 */ li r4, 3
-/* 0000D948 4BFF2815 */ bl u_debug_set_cursor_pos
+/* 0000D948 4BFF2815 */ bl window_set_cursor_pos
 /* 0000D94C 387E0E84 */ addi r3, r30, 0xe84
 /* 0000D950 4CC63182 */ crclr 6
-/* 0000D954 4BFF2809 */ bl u_debug_printf
+/* 0000D954 4BFF2809 */ bl window_printf_2
 /* 0000D958 3B800000 */ li r28, 0
 /* 0000D95C 57801838 */ slwi r0, r28, 3
 /* 0000D960 7FBE0214 */ add r29, r30, r0
@@ -14946,22 +14946,22 @@ lbl_0000D96C:
 /* 0000D97C 28000000 */ cmplwi r0, 0
 /* 0000D980 4082001C */ bne lbl_0000D99C
 /* 0000D984 38600002 */ li r3, 2
-/* 0000D988 4BFF27D5 */ bl u_debug_set_text_color
+/* 0000D988 4BFF27D5 */ bl window_set_text_color
 /* 0000D98C 387E0E98 */ addi r3, r30, 0xe98
 /* 0000D990 4CC63182 */ crclr 6
-/* 0000D994 4BFF27C9 */ bl u_debug_printf
+/* 0000D994 4BFF27C9 */ bl window_printf_2
 /* 0000D998 48000018 */ b lbl_0000D9B0
 lbl_0000D99C:
 /* 0000D99C 38600000 */ li r3, 0
-/* 0000D9A0 4BFF27BD */ bl u_debug_set_text_color
+/* 0000D9A0 4BFF27BD */ bl window_set_text_color
 /* 0000D9A4 387E0E9C */ addi r3, r30, 0xe9c
 /* 0000D9A8 4CC63182 */ crclr 6
-/* 0000D9AC 4BFF27B1 */ bl u_debug_printf
+/* 0000D9AC 4BFF27B1 */ bl window_printf_2
 lbl_0000D9B0:
 /* 0000D9B0 809D0004 */ lwz r4, 4(r29)
 /* 0000D9B4 387E0EA0 */ addi r3, r30, 0xea0
 /* 0000D9B8 4CC63182 */ crclr 6
-/* 0000D9BC 4BFF27A1 */ bl u_debug_printf
+/* 0000D9BC 4BFF27A1 */ bl window_printf_2
 /* 0000D9C0 3BBD0008 */ addi r29, r29, 8
 /* 0000D9C4 3B9C0001 */ addi r28, r28, 1
 lbl_0000D9C8:
@@ -14970,7 +14970,7 @@ lbl_0000D9C8:
 /* 0000D9D0 4180FF9C */ blt lbl_0000D96C
 lbl_0000D9D4:
 /* 0000D9D4 38600000 */ li r3, 0
-/* 0000D9D8 4BFF2785 */ bl u_debug_set_text_color
+/* 0000D9D8 4BFF2785 */ bl window_set_text_color
 /* 0000D9DC 8001001C */ lwz r0, 0x1c(r1)
 /* 0000D9E0 83E10014 */ lwz r31, 0x14(r1)
 /* 0000D9E4 83C10010 */ lwz r30, 0x10(r1)
@@ -15180,13 +15180,13 @@ lbl_0000DCA0:
 /* 0000DCE0 7C050000 */ cmpw r5, r0
 /* 0000DCE4 40820018 */ bne lbl_0000DCFC
 /* 0000DCE8 38600002 */ li r3, 2
-/* 0000DCEC 4BFF2471 */ bl u_debug_set_text_color
+/* 0000DCEC 4BFF2471 */ bl window_set_text_color
 /* 0000DCF0 387E0E98 */ addi r3, r30, 0xe98
 /* 0000DCF4 4BFF2469 */ bl u_debug_print
 /* 0000DCF8 48000014 */ b lbl_0000DD0C
 lbl_0000DCFC:
 /* 0000DCFC 38600000 */ li r3, 0
-/* 0000DD00 4BFF245D */ bl u_debug_set_text_color
+/* 0000DD00 4BFF245D */ bl window_set_text_color
 /* 0000DD04 387E0E9C */ addi r3, r30, 0xe9c
 /* 0000DD08 4BFF2455 */ bl u_debug_print
 lbl_0000DD0C:
@@ -15197,11 +15197,11 @@ lbl_0000DD0C:
 /* 0000DD1C 7C030000 */ cmpw r3, r0
 /* 0000DD20 40820010 */ bne lbl_0000DD30
 /* 0000DD24 38600002 */ li r3, 2
-/* 0000DD28 4BFF2435 */ bl u_debug_set_text_color
+/* 0000DD28 4BFF2435 */ bl window_set_text_color
 /* 0000DD2C 4800000C */ b lbl_0000DD38
 lbl_0000DD30:
 /* 0000DD30 38600001 */ li r3, 1
-/* 0000DD34 4BFF2429 */ bl u_debug_set_text_color
+/* 0000DD34 4BFF2429 */ bl window_set_text_color
 lbl_0000DD38:
 /* 0000DD38 3C000200 */ lis r0, 0x200
 /* 0000DD3C 900100C0 */ stw r0, 0xc0(r1)
@@ -15219,7 +15219,7 @@ lbl_0000DD38:
 /* 0000DD6C 38600000 */ li r3, 0
 /* 0000DD70 38040001 */ addi r0, r4, 1
 /* 0000DD74 901F007C */ stw r0, 0x7c(r31)
-/* 0000DD78 4BFF23E5 */ bl u_debug_set_text_color
+/* 0000DD78 4BFF23E5 */ bl window_set_text_color
 /* 0000DD7C 387E0EAC */ addi r3, r30, 0xeac
 /* 0000DD80 4BFF23DD */ bl u_debug_print
 /* 0000DD84 800100E4 */ lwz r0, 0xe4(r1)
@@ -15264,7 +15264,7 @@ lbl_0000DDA4:
 /* 0000DE1C 7FBDDA14 */ add r29, r29, r27
 /* 0000DE20 801D0000 */ lwz r0, 0(r29)
 /* 0000DE24 5403063E */ clrlwi r3, r0, 0x18
-/* 0000DE28 4BFF2335 */ bl u_debug_set_text_color
+/* 0000DE28 4BFF2335 */ bl window_set_text_color
 /* 0000DE2C 807F0078 */ lwz r3, 0x78(r31)
 /* 0000DE30 801F007C */ lwz r0, 0x7c(r31)
 /* 0000DE34 7C030000 */ cmpw r3, r0
@@ -15279,7 +15279,7 @@ lbl_0000DE50:
 /* 0000DE50 809C0004 */ lwz r4, 4(r28)
 /* 0000DE54 387E0EB8 */ addi r3, r30, 0xeb8
 /* 0000DE58 4CC63182 */ crclr 6
-/* 0000DE5C 4BFF2301 */ bl u_debug_printf
+/* 0000DE5C 4BFF2301 */ bl window_printf_2
 /* 0000DE60 80BC0010 */ lwz r5, 0x10(r28)
 /* 0000DE64 38000003 */ li r0, 3
 /* 0000DE68 54040FFE */ srwi r4, r0, 0x1f
@@ -15291,7 +15291,7 @@ lbl_0000DE50:
 /* 0000DE80 7C1B0214 */ add r0, r27, r0
 /* 0000DE84 7C03002E */ lwzx r0, r3, r0
 /* 0000DE88 5403063E */ clrlwi r3, r0, 0x18
-/* 0000DE8C 4BFF22D1 */ bl u_debug_set_text_color
+/* 0000DE8C 4BFF22D1 */ bl window_set_text_color
 /* 0000DE90 809C0010 */ lwz r4, 0x10(r28)
 /* 0000DE94 3C600000 */ lis r3, lbl_801C6470@ha
 /* 0000DE98 38030000 */ addi r0, r3, lbl_801C6470@l
@@ -15300,10 +15300,10 @@ lbl_0000DE50:
 /* 0000DEA4 7C601A14 */ add r3, r0, r3
 /* 0000DEA8 80830000 */ lwz r4, 0(r3)
 /* 0000DEAC 387E0EBC */ addi r3, r30, 0xebc
-/* 0000DEB0 4BFF22AD */ bl u_debug_printf
+/* 0000DEB0 4BFF22AD */ bl window_printf_2
 /* 0000DEB4 801D0000 */ lwz r0, 0(r29)
 /* 0000DEB8 5403063E */ clrlwi r3, r0, 0x18
-/* 0000DEBC 4BFF22A1 */ bl u_debug_set_text_color
+/* 0000DEBC 4BFF22A1 */ bl window_set_text_color
 /* 0000DEC0 801C0000 */ lwz r0, 0(r28)
 /* 0000DEC4 2C000008 */ cmpwi r0, 8
 /* 0000DEC8 4080001C */ bge lbl_0000DEE4
@@ -15319,12 +15319,12 @@ lbl_0000DEE8:
 /* 0000DEE8 80BC0008 */ lwz r5, 8(r28)
 /* 0000DEEC 387E0ED0 */ addi r3, r30, 0xed0
 /* 0000DEF0 4CC63182 */ crclr 6
-/* 0000DEF4 4BFF2269 */ bl u_debug_printf
+/* 0000DEF4 4BFF2269 */ bl window_printf_2
 /* 0000DEF8 809F007C */ lwz r4, 0x7c(r31)
 /* 0000DEFC 38600000 */ li r3, 0
 /* 0000DF00 38040001 */ addi r0, r4, 1
 /* 0000DF04 901F007C */ stw r0, 0x7c(r31)
-/* 0000DF08 4BFF2255 */ bl u_debug_set_text_color
+/* 0000DF08 4BFF2255 */ bl window_set_text_color
 /* 0000DF0C 387E0EAC */ addi r3, r30, 0xeac
 /* 0000DF10 4BFF224D */ bl u_debug_print
 /* 0000DF14 BB61002C */ lmw r27, 0x2c(r1)
@@ -15356,13 +15356,13 @@ lbl_0000DF70:
 /* 0000DF74 93DF007C */ stw r30, 0x7c(r31)
 /* 0000DF78 38600003 */ li r3, 3
 /* 0000DF7C 38800007 */ li r4, 7
-/* 0000DF80 4BFF21DD */ bl u_debug_set_cursor_pos
+/* 0000DF80 4BFF21DD */ bl window_set_cursor_pos
 /* 0000DF84 387B0EDC */ addi r3, r27, 0xedc
 /* 0000DF88 4CC63182 */ crclr 6
-/* 0000DF8C 4BFF21D1 */ bl u_debug_printf
+/* 0000DF8C 4BFF21D1 */ bl window_printf_2
 /* 0000DF90 38600001 */ li r3, 1
 /* 0000DF94 38800008 */ li r4, 8
-/* 0000DF98 4BFF21C5 */ bl u_debug_set_cursor_pos
+/* 0000DF98 4BFF21C5 */ bl window_set_cursor_pos
 /* 0000DF9C 80BF006C */ lwz r5, 0x6c(r31)
 /* 0000DFA0 387B0EF4 */ addi r3, r27, 0xef4
 /* 0000DFA4 389B0EFC */ addi r4, r27, 0xefc
@@ -15720,11 +15720,11 @@ lbl_0000E458:
 lbl_0000E498:
 /* 0000E498 3860000F */ li r3, 0xf
 /* 0000E49C 38800014 */ li r4, 0x14
-/* 0000E4A0 4BFF1CBD */ bl u_debug_set_cursor_pos
+/* 0000E4A0 4BFF1CBD */ bl window_set_cursor_pos
 /* 0000E4A4 3C600000 */ lis r3, lbl_00015868@ha
 /* 0000E4A8 4CC63182 */ crclr 6
 /* 0000E4AC 38630000 */ addi r3, r3, lbl_00015868@l
-/* 0000E4B0 4BFF1CAD */ bl u_debug_printf
+/* 0000E4B0 4BFF1CAD */ bl window_printf_2
 /* 0000E4B4 48000154 */ b lbl_0000E608
 lbl_0000E4B8:
 /* 0000E4B8 C03E000C */ lfs f1, 0xc(r30)
@@ -15755,12 +15755,12 @@ lbl_0000E4B8:
 /* 0000E51C 4BFF1C41 */ bl mathutil_mtxA_scale_s
 /* 0000E520 3860000F */ li r3, 0xf
 /* 0000E524 38800012 */ li r4, 0x12
-/* 0000E528 4BFF1C35 */ bl u_debug_set_cursor_pos
+/* 0000E528 4BFF1C35 */ bl window_set_cursor_pos
 /* 0000E52C 3C600000 */ lis r3, lbl_00015890@ha
 /* 0000E530 809D0008 */ lwz r4, 8(r29)
 /* 0000E534 38630000 */ addi r3, r3, lbl_00015890@l
 /* 0000E538 4CC63182 */ crclr 6
-/* 0000E53C 4BFF1C21 */ bl u_debug_printf
+/* 0000E53C 4BFF1C21 */ bl window_printf_2
 /* 0000E540 80BE005C */ lwz r5, 0x5c(r30)
 /* 0000E544 3C600000 */ lis r3, charaGMAs@ha
 /* 0000E548 801E0060 */ lwz r0, 0x60(r30)
@@ -15855,33 +15855,33 @@ lbl_0000E694:
 /* 0000E698 901F007C */ stw r0, 0x7c(r31)
 /* 0000E69C 38600003 */ li r3, 3
 /* 0000E6A0 38800004 */ li r4, 4
-/* 0000E6A4 4BFF1AB9 */ bl u_debug_set_cursor_pos
+/* 0000E6A4 4BFF1AB9 */ bl window_set_cursor_pos
 /* 0000E6A8 809F0004 */ lwz r4, 4(r31)
 /* 0000E6AC 387E0F1C */ addi r3, r30, 0xf1c
 /* 0000E6B0 4CC63182 */ crclr 6
 /* 0000E6B4 80840000 */ lwz r4, 0(r4)
 /* 0000E6B8 A0840038 */ lhz r4, 0x38(r4)
-/* 0000E6BC 4BFF1AA1 */ bl u_debug_printf
+/* 0000E6BC 4BFF1AA1 */ bl window_printf_2
 /* 0000E6C0 38600005 */ li r3, 5
 /* 0000E6C4 38800006 */ li r4, 6
-/* 0000E6C8 4BFF1A95 */ bl u_debug_set_cursor_pos
+/* 0000E6C8 4BFF1A95 */ bl window_set_cursor_pos
 /* 0000E6CC 387E0F30 */ addi r3, r30, 0xf30
 /* 0000E6D0 4CC63182 */ crclr 6
-/* 0000E6D4 4BFF1A89 */ bl u_debug_printf
+/* 0000E6D4 4BFF1A89 */ bl window_printf_2
 /* 0000E6D8 38600000 */ li r3, 0
 /* 0000E6DC 38800007 */ li r4, 7
-/* 0000E6E0 4BFF1A7D */ bl u_debug_set_cursor_pos
+/* 0000E6E0 4BFF1A7D */ bl window_set_cursor_pos
 /* 0000E6E4 38600001 */ li r3, 1
-/* 0000E6E8 4BFF1A75 */ bl u_debug_set_text_color
+/* 0000E6E8 4BFF1A75 */ bl window_set_text_color
 /* 0000E6EC 387E0F50 */ addi r3, r30, 0xf50
 /* 0000E6F0 4CC63182 */ crclr 6
 /* 0000E6F4 389E0F68 */ addi r4, r30, 0xf68
 /* 0000E6F8 38BE0F6C */ addi r5, r30, 0xf6c
 /* 0000E6FC 38DE0F74 */ addi r6, r30, 0xf74
 /* 0000E700 38FE0F7C */ addi r7, r30, 0xf7c
-/* 0000E704 4BFF1A59 */ bl u_debug_printf
+/* 0000E704 4BFF1A59 */ bl window_printf_2
 /* 0000E708 38600000 */ li r3, 0
-/* 0000E70C 4BFF1A51 */ bl u_debug_set_text_color
+/* 0000E70C 4BFF1A51 */ bl window_set_text_color
 /* 0000E710 809F0004 */ lwz r4, 4(r31)
 /* 0000E714 3C600000 */ lis r3, motInfo@ha
 /* 0000E718 3BA30000 */ addi r29, r3, motInfo@l
@@ -16061,12 +16061,12 @@ lbl_0000E978:
 /* 0000E98C 4182007C */ beq lbl_0000EA08
 /* 0000E990 38600019 */ li r3, 0x19
 /* 0000E994 38800015 */ li r4, 0x15
-/* 0000E998 4BFF17C5 */ bl u_debug_set_cursor_pos
+/* 0000E998 4BFF17C5 */ bl window_set_cursor_pos
 /* 0000E99C 809F00C0 */ lwz r4, 0xc0(r31)
 /* 0000E9A0 387E0FB4 */ addi r3, r30, 0xfb4
 /* 0000E9A4 4CC63182 */ crclr 6
 /* 0000E9A8 80840008 */ lwz r4, 8(r4)
-/* 0000E9AC 4BFF17B1 */ bl u_debug_printf
+/* 0000E9AC 4BFF17B1 */ bl window_printf_2
 /* 0000E9B0 2C1D0003 */ cmpwi r29, 3
 /* 0000E9B4 809F00C0 */ lwz r4, 0xc0(r31)
 /* 0000E9B8 40820024 */ bne lbl_0000E9DC
@@ -16287,13 +16287,13 @@ lbl_0000ECB4:
 /* 0000ECD4 93C10020 */ stw r30, 0x20(r1)
 /* 0000ECD8 3BC40000 */ addi r30, r4, lbl_000148E8@l
 /* 0000ECDC 38800007 */ li r4, 7
-/* 0000ECE0 4BFF147D */ bl u_debug_set_cursor_pos
+/* 0000ECE0 4BFF147D */ bl window_set_cursor_pos
 /* 0000ECE4 387E0FC4 */ addi r3, r30, 0xfc4
 /* 0000ECE8 4CC63182 */ crclr 6
-/* 0000ECEC 4BFF1471 */ bl u_debug_printf
+/* 0000ECEC 4BFF1471 */ bl window_printf_2
 /* 0000ECF0 38600001 */ li r3, 1
 /* 0000ECF4 38800008 */ li r4, 8
-/* 0000ECF8 4BFF1465 */ bl u_debug_set_cursor_pos
+/* 0000ECF8 4BFF1465 */ bl window_set_cursor_pos
 /* 0000ECFC 801F00A8 */ lwz r0, 0xa8(r31)
 /* 0000ED00 387E0FDC */ addi r3, r30, 0xfdc
 /* 0000ED04 389E0F0C */ addi r4, r30, 0xf0c
@@ -17153,7 +17153,7 @@ lbl_0000F940:
 /* 0000F95C 93C10018 */ stw r30, 0x18(r1)
 /* 0000F960 3BC40000 */ addi r30, r4, lbl_000101E0@l
 /* 0000F964 93A10014 */ stw r29, 0x14(r1)
-/* 0000F968 4BFF07F5 */ bl func_8002FFEC
+/* 0000F968 4BFF07F5 */ bl u_clear_buffers_2_and_5
 /* 0000F96C 3C600000 */ lis r3, lbl_0000F6F0@ha
 /* 0000F970 38630000 */ addi r3, r3, lbl_0000F6F0@l
 /* 0000F974 38800000 */ li r4, 0

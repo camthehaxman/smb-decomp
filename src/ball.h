@@ -123,14 +123,14 @@ struct Ball
     { \
         struct Ball *ball; \
         struct Ball *ballBackup_; \
-        s8 *unk_; \
+        s8 *status; \
         int i_; \
         ballBackup_ = currentBall; \
         ball = ballInfo; \
-        unk_ = g_poolInfo.playerPool.statusList; \
-        for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, ball++, unk_++) \
+        status = g_poolInfo.playerPool.statusList; \
+        for (i_ = 0; i_ < g_poolInfo.playerPool.count; i_++, ball++, status++) \
         { \
-            if (*unk_ == 2) \
+            if (*status == STAT_NORMAL) \
             { \
                 currentBall = ball; \
                 { code } \

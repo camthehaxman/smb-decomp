@@ -59,6 +59,20 @@ enum
     LIGHT_GROUP_BG_f,
 };
 
+struct LightGroup
+{
+    s16 lightPoolIdxs[8];
+    u8 filler10[4];
+    GXLightObj lightObjs[8];
+    u32 lightMask;
+    struct Color3f ambient;
+    Mtx viewFromWorld;
+    u8 filler254[4];
+};
+
+extern struct Light s_u_lightPool[32];
+extern struct LightGroup s_lightGroups[22];
+
 extern s32 s_lightPoolSize;
 extern s32 u_someLGIdx;
 extern s8 s_lightGroupStackPos;
@@ -75,6 +89,13 @@ extern s32 lbl_802F1C84;
 extern s32 u_printLight;
 extern s32 lbl_802F1C8C;
 extern s32 u_lightToPrint;
+extern u32 lbl_802F1C90;
+extern s8 lbl_802F1C74;
+extern s8 lbl_802F1C75;
+extern char *lightTypeNames[];
+extern char *s_lightIdNames[];
+extern char *s_lightGroupNames[];
+extern s8 lbl_802F1C6C[8];
 
 void light_init();
 void light_main();

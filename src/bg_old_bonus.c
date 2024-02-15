@@ -13,6 +13,7 @@
 #include "mathutil.h"
 #include "mt_effect.h"
 #include "nl2ngc.h"
+#include "window.h"
 
 void bg_old_bonus_init(void)
 {

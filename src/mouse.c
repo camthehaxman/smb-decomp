@@ -7,6 +7,7 @@
 #include "mouse.h"
 #include "pool.h"
 #include "sprite.h"
+#include "window.h"
 
 struct Mouse {
     s16 posHorizontal;
@@ -20,7 +21,6 @@ struct Mouse {
 };
 
 struct Mouse mouse;
-extern s32 lbl_802F1EA8;
 
 #define INVALID_SPRITE_INDEX -1;
 
@@ -43,7 +43,7 @@ void ev_mouse_main(void)
 {
     struct Sprite *_spriteInfo;
     int phi_r8;
-    s8 *_statusList;
+    s8 *status;
     u16 _button;
     int i;
     
@@ -108,14 +108,14 @@ void ev_mouse_main(void)
             } else {
                 mouse.spriteIdx = INVALID_SPRITE_INDEX;
                 _spriteInfo = &spriteWork[0];
-                _statusList = g_poolInfo.spritePool.statusList;
+                status = g_poolInfo.spritePool.statusList;
                 for (
                     i = 0;
                     i < g_poolInfo.spritePool.count;
-                    i++, _spriteInfo++, _statusList++
+                    i++, _spriteInfo++, status++
                     ) {
                     if (
-                        *_statusList != 0
+                        *status != STAT_NULL
                         && mouse.posHorizontal >= _spriteInfo->left
                         && mouse.posHorizontal <= _spriteInfo->right
                         && mouse.posVertical >= _spriteInfo->top

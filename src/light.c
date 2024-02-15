@@ -40,16 +40,9 @@ s32 lbl_802F1C80;
 s32 lightingStageId;
 s32 s_u_lightGroupsInitialized;
 
-u8 lbl_802F1C75;
-u8 lbl_802F1C74;
-u8 lbl_802F1C73;
-u8 lbl_802F1C72;
-u8 lbl_802F1C71;
-u8 lbl_802F1C70;
-u8 lbl_802F1C6F;
-u8 lbl_802F1C6E;
-u8 lbl_802F1C6D;
-u8 lbl_802F1C6C;
+s8 lbl_802F1C75;
+s8 lbl_802F1C74;
+s8 lbl_802F1C6C[8];
 
 s32 lbl_802F1C68;
 s32 lbl_802F1C64;
@@ -223,17 +216,6 @@ void init_light_dir(struct Light *light)
         break;
     }
 }
-
-struct LightGroup
-{
-    s16 lightPoolIdxs[8];
-    u8 filler10[4];
-    GXLightObj lightObjs[8];
-    u32 lightMask;
-    struct Color3f ambient;
-    Mtx viewFromWorld;
-    u8 filler254[4];
-};
 
 // Lighting information for current background
 struct BgLightInfo g_bgLightInfo;

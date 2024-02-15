@@ -527,6 +527,9 @@ struct Stage
     struct Stage_Child90 *unk90;
 };
 
+extern s32 lbl_802F1F4C;
+extern s32 lbl_802F1F50;
+
 void ev_stage_init(void);
 void ev_stage_main(void);
 void ev_stage_dest(void);

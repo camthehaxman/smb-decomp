@@ -1663,7 +1663,7 @@ lbl_00001888:
 /* 00001890 9421FFF0 */ stwu r1, -0x10(r1)
 /* 00001894 93E1000C */ stw r31, 0xc(r1)
 /* 00001898 93C10008 */ stw r30, 8(r1)
-/* 0000189C 4BFFE8C5 */ bl func_8002FFEC
+/* 0000189C 4BFFE8C5 */ bl u_clear_buffers_2_and_5
 /* 000018A0 4BFFE8C1 */ bl event_finish_all
 /* 000018A4 3C600000 */ lis r3, polyDisp@ha
 /* 000018A8 84030000 */ lwzu r0, polyDisp@l(r3)

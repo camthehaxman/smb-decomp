@@ -18,6 +18,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/common.gma.h"
@@ -122,8 +123,8 @@ void u_spawn_goal_stobjs(struct StageAnimGroup *arg0, int arg1)
         {
             if (totalGoals >= MAX_GOALS)
             {
-                u_debug_set_cursor_pos(16, 16);
-                u_debug_printf("Warning!!! Goal Tape Max(%d) Over!!!\n", MAX_GOALS);
+                window_set_cursor_pos(16, 16);
+                window_printf_2("Warning!!! Goal Tape Max(%d) Over!!!\n", MAX_GOALS);
                 break;
             }
             stobj.u_some_pos = goal->pos;
@@ -513,7 +514,7 @@ void stobj_goaltape_draw(struct Stobj *stobj)
     apply_curr_light_group_ambient();
     nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
     temp_r5 = replayInfo.unk14;
-    if (g_poolInfo.playerPool.statusList[temp_r5] == 2 && (ballInfo[temp_r5].flags & 0x01000000))
+    if (g_poolInfo.playerPool.statusList[temp_r5] == STAT_NORMAL && (ballInfo[temp_r5].flags & 0x01000000))
         time = (100.0 * func_80049E7C(replayInfo.unk0[temp_r5], replayInfo.unk10)) / 60.0;
     else
     {

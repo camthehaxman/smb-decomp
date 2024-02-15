@@ -24,6 +24,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "window.h"
 
 #include "../data/common.gma.h"
 
@@ -969,7 +970,7 @@ void effect_nameent_code_main(struct Effect *effect)
         effect->scale.y += 0.2 * (4.0 - effect->scale.y);
         effect->scale.x -= 0.06666666666666667;
         if (effect->scale.x < 0.0)
-            g_poolInfo.effectPool.statusList[effect->poolIndex] = 3;
+            g_poolInfo.effectPool.statusList[effect->poolIndex] = STAT_DEST;
         break;
     }
 }
@@ -1051,7 +1052,7 @@ void effect_get_nameent_code_main(struct Effect *effect)
     case 1:
         var_f4 = 2.0f;
         if (effect->scale.x < 0.0)
-            g_poolInfo.effectPool.statusList[effect->poolIndex] = 3;
+            g_poolInfo.effectPool.statusList[effect->poolIndex] = STAT_DEST;
         break;
     }
     effect->unk88.x *= 0.8;

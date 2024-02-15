@@ -16,6 +16,7 @@
 #include "gxutil.h"
 #include "mathutil.h"
 #include "stage.h"
+#include "window.h"
 
 static struct BGModelSearch bonusBgModelFind[] =
 {

@@ -189,12 +189,12 @@ extern float unknownTrigTable[];
 // extern ? lbl_801B3A24;
 // extern ? lbl_801B3A54;
 // extern ? lbl_801B3B18;
-// extern ? lbl_801B7474;
+// extern ? mainMenuWindow;
 // extern ? lbl_801B74A0;
 // extern ? lbl_801B757C;
 // extern ? lbl_801B75F8;
 // extern ? lbl_801B7884;
-// extern ? lbl_801B7948;
+// extern ? poolStatusNames;
 // extern ? lbl_801B7978;
 // extern ? lbl_801B7998;
 // extern ? lbl_801B79A4;
@@ -513,15 +513,8 @@ extern struct Struct801EEDA8 lbl_801EEDA8;
 // extern ? lbl_801F003C;
 extern struct BgLightInfo g_bgLightInfo;
 // extern ? s_lightGroups;
-// extern ? lbl_801F39FC;
-// extern ? lbl_801F3A08;
-
-// extern ? lbl_80201928;
-// extern ? lbl_802020D4;
-// extern ? lbl_80202880;
-// extern ? lbl_802037D8;
-// extern ? lbl_80203F84;
-// extern ? lbl_80205688;
+extern struct Color3f lbl_801F39FC;
+extern struct Light lbl_801F3A08;
 
 // extern ? lbl_80206D00;
 // extern ? stagePreview;
@@ -1105,42 +1098,6 @@ extern struct GMA *commonGma;
 // extern ? commonTpl;
 
 extern s8 lbl_802F1C32;
-
-// extern ? lbl_802F1E08;
-// extern ? lbl_802F1E0C;
-// extern ? lbl_802F1E10;
-// extern ? lbl_802F1E14;
-// extern ? lbl_802F1E18;
-// extern ? lbl_802F1E19;
-// extern ? lbl_802F1E1C;
-// extern ? lbl_802F1E20;
-// extern ? lbl_802F1E24;
-// extern ? lbl_802F1E28;
-// extern ? lbl_802F1E2C;
-// extern ? lbl_802F1E30;
-// extern ? lbl_802F1E34;
-// extern ? lbl_802F1E38;
-// extern ? lbl_802F1E3C;
-// extern ? lbl_802F1E40;
-// extern ? lbl_802F1E44;
-// extern ? lbl_802F1E48;
-// extern ? lbl_802F1E4C;
-// extern ? lbl_802F1E50;
-// extern ? lbl_802F1E51;
-// extern ? lbl_802F1E54;
-// extern ? lbl_802F1E58;
-
-extern s32 lbl_802F1EB0;
-extern s32 lbl_802F1EB4;
-extern float lbl_802F1EC4;
-extern float lbl_802F1EC8;
-extern float lbl_802F1ECC;
-extern u16 lbl_802F1ED0;
-extern u16 lbl_802F1ED2;
-extern u16 lbl_802F1ED4;
-extern u32 lbl_802F1ED8;
-extern u32 dipSwitches;
-extern u32 debugFlags;
 
 extern struct MotDat *motDat;
 

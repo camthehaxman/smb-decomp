@@ -13,6 +13,7 @@
 #include "mode.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 static void help_sprite_draw(struct Sprite *);
 static void help_sprite_destroy(struct Sprite *);
@@ -1465,7 +1466,7 @@ static void draw_help_blurbs(s8 arg0, struct Sprite *sprite, NLsprarg *params, s
     char *line2;
     s8 i;
 
-    u_debug_set_cursor_pos(1, 1);
+    window_set_cursor_pos(1, 1);
 
     for (i = 0; i < itemCount; i++)
     {

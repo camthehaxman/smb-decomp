@@ -10,6 +10,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "stage.h"
+#include "window.h"
 
 static struct BGModelSearch sunsetBgObjFind[] =
 {

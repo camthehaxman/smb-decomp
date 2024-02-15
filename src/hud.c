@@ -22,6 +22,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "textbox.h"
+#include "window.h"
 
 u8 playerNumColors[] =
 {
@@ -2140,7 +2141,7 @@ void hud_show_competition_mode_info(void)
     phi_r28 = g_poolInfo.playerPool.statusList;
     for (i = 0; i < g_poolInfo.playerPool.count; i++, phi_r28++)
     {
-        if (*phi_r28 != 0)
+        if (*phi_r28 != STAT_NULL)
             show_competition_player_hud(i);
     }
 
@@ -4692,7 +4693,7 @@ static void bomb_sprite_main(s8 *status, struct Sprite *sprite)
         xscale = sprite->scaleX;
         yscale = sprite->scaleY;
         *status = 0;
-        u_debug_set_cursor_pos(5, 5);
+        window_set_cursor_pos(5, 5);
         for (i = 0; i < 10; i++)
         {
             fragSprite = create_sprite();

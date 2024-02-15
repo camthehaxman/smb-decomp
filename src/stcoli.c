@@ -11,8 +11,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
-#include "types.h"
-#include "variables.h"
+#include "window.h"
 
 #include "../data/common.nlobj.h"
 
@@ -2105,7 +2104,7 @@ void stcoli_sub29(struct StageColiTri *tri, Point3d *arg1, Point3d *arg2, Point3
     temp_f1 = (temp_f31 * temp_f31) + (temp_f30 * temp_f30);
     if (temp_f1 <= 1.1920929e-7f)
     {
-        func_8003026C(2, "edge length is too short\n");
+        u_printf_if_debug(2, "edge length is too short\n");
         return;
     }
     temp_f1 = mathutil_rsqrt(temp_f1);
@@ -2116,7 +2115,7 @@ void stcoli_sub29(struct StageColiTri *tri, Point3d *arg1, Point3d *arg2, Point3
     temp_f1 = (temp_f31 * temp_f31) + (temp_f30 * temp_f30);
     if (temp_f1 <= 1.1920929e-7f)
     {
-        func_8003026C(2, "edge length is too short\n");
+        u_printf_if_debug(2, "edge length is too short\n");
         return;
     }
     temp_f1 = mathutil_rsqrt(temp_f1);

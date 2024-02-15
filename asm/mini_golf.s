@@ -5887,20 +5887,20 @@ lbl_000056C4:
 /* 0000570C 4182001C */ beq lbl_00005728
 /* 00005710 38600001 */ li r3, 1
 /* 00005714 38800023 */ li r4, 0x23
-/* 00005718 4BFFAAB9 */ bl u_debug_set_cursor_pos
+/* 00005718 4BFFAAB9 */ bl window_set_cursor_pos
 /* 0000571C 387F01D0 */ addi r3, r31, 0x1d0
 /* 00005720 4CC63182 */ crclr 6
-/* 00005724 4BFFAAAD */ bl u_debug_printf
+/* 00005724 4BFFAAAD */ bl window_printf_2
 lbl_00005728:
 /* 00005728 881D00F3 */ lbz r0, 0xf3(r29)
 /* 0000572C 28000000 */ cmplwi r0, 0
 /* 00005730 4182001C */ beq lbl_0000574C
 /* 00005734 38600001 */ li r3, 1
 /* 00005738 38800023 */ li r4, 0x23
-/* 0000573C 4BFFAA95 */ bl u_debug_set_cursor_pos
+/* 0000573C 4BFFAA95 */ bl window_set_cursor_pos
 /* 00005740 387F01D8 */ addi r3, r31, 0x1d8
 /* 00005744 4CC63182 */ crclr 6
-/* 00005748 4BFFAA89 */ bl u_debug_printf
+/* 00005748 4BFFAA89 */ bl window_printf_2
 lbl_0000574C:
 /* 0000574C 807D0000 */ lwz r3, 0(r29)
 /* 00005750 28032000 */ cmplwi r3, 0x2000
@@ -17205,7 +17205,7 @@ lbl_0000FE50:
 /* 0000FEA8 FC00001E */ fctiwz f0, f0
 /* 0000FEAC D8010068 */ stfd f0, 0x68(r1)
 /* 0000FEB0 8381006C */ lwz r28, 0x6c(r1)
-/* 0000FEB4 4BFF031D */ bl u_debug_set_cursor_pos
+/* 0000FEB4 4BFF031D */ bl window_set_cursor_pos
 /* 0000FEB8 801F0010 */ lwz r0, 0x10(r31)
 /* 0000FEBC 2C003000 */ cmpwi r0, 0x3000
 /* 0000FEC0 4081000C */ ble lbl_0000FECC

@@ -20,6 +20,7 @@
 #include "sprite.h"
 #include "stage.h"
 #include "stobj.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/common.nlobj.h"
