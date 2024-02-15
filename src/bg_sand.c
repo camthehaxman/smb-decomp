@@ -15,6 +15,7 @@
 #include "ord_tbl.h"
 #include "rend_efc.h"
 #include "stage.h"
+#include "window.h"
 
 static struct BGModelSearch sandBgModelFind[] =
 {

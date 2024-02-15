@@ -34,6 +34,7 @@
 #include "stage.h"
 #include "stobj.h"
 #include "thread.h"
+#include "window.h"
 #include "world.h"
 
 #define SCREEN_ASPECT (640.0f / 480.0f)

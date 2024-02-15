@@ -17,6 +17,7 @@
 #include "stcoli.h"
 #include "stobj.h"
 #include "vibration.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/bg_jun.gma.h"

@@ -14,6 +14,7 @@
 #include "pool.h"
 #include "sprite.h"
 #include "textbox.h"
+#include "window.h"
 
 struct TextDrawInfo
 {

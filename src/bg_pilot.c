@@ -8,8 +8,9 @@
 #include "gxcache.h"
 #include "mathutil.h"
 #include "mode.h"
-#include "stage.h"
 #include "rend_efc.h"
+#include "stage.h"
+#include "window.h"
 
 struct BGModelSearch table1[] =
 {

@@ -24,6 +24,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "window.h"
 
 #include "../data/common.gma.h"
 

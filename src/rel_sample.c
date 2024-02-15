@@ -5,6 +5,7 @@
 
 #include "global.h"
 #include "mode.h"
+#include "window.h"
 
 static int counter;
 

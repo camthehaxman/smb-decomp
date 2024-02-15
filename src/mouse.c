@@ -7,6 +7,7 @@
 #include "mouse.h"
 #include "pool.h"
 #include "sprite.h"
+#include "window.h"
 
 struct Mouse {
     s16 posHorizontal;
@@ -20,7 +21,6 @@ struct Mouse {
 };
 
 struct Mouse mouse;
-extern s32 lbl_802F1EA8;
 
 #define INVALID_SPRITE_INDEX -1;
 

@@ -10,6 +10,7 @@
 #include "gxutil.h"
 #include "mathutil.h"
 #include "rend_efc.h"
+#include "window.h"
 
 static struct RenderEffect s_renderEffects[4];
 

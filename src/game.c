@@ -21,6 +21,7 @@
 #include "info.h"
 #include "input.h"
 #include "item.h"
+#include "light.h"
 #include "load.h"
 #include "mathutil.h"
 #include "minimap.h"
@@ -34,8 +35,8 @@
 #include "stage.h"
 #include "stobj.h"
 #include "textbox.h"
+#include "window.h"
 #include "world.h"
-#include "light.h"
 
 s8 lbl_802F1C25;
 s8 lbl_802F1C24;

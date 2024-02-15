@@ -18,6 +18,7 @@
 #include "hud.h"
 #include "info.h"
 #include "input.h"
+#include "light.h"
 #include "load.h"
 #include "mathutil.h"
 #include "minimap.h"
@@ -31,11 +32,11 @@
 #include "spline.h"
 #include "sprite.h"
 #include "stage.h"
+#include "stcoli.h"
 #include "textbox.h"
 #include "thread.h"
+#include "window.h"
 #include "world.h"
-#include "stcoli.h"
-#include "light.h"
 
 u32 introBackdropColor;
 u32 advSubmode;

@@ -11,6 +11,7 @@
 #include "sprite.h"
 #include "stage.h"
 #include "textbox.h"
+#include "window.h"
 
 // Super Monkey Ball levels are organized into 3 "difficulties", which are
 // Beginner, Advanced, and Expert.

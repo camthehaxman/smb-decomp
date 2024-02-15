@@ -19,6 +19,7 @@
 #include "rend_efc.h"
 #include "stobj.h"
 #include "stage.h"
+#include "window.h"
 
 void func_800993A8(struct RenderEffect *rendEfc);
 void func_800994A8(struct RenderEffect *rendEfc);

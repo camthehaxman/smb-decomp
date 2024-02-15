@@ -9,6 +9,7 @@
 #include "mathutil.h"
 #include "nl2ngc.h"
 #include "stage.h"
+#include "window.h"
 
 char starpointObjName[] = "obj_STARPOINT_";
 

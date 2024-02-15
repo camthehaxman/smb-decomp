@@ -15,6 +15,7 @@
 #include "pool.h"
 #include "recplay.h"
 #include "stage.h"
+#include "window.h"
 #include "world.h"
 
 struct BuiltinReplay

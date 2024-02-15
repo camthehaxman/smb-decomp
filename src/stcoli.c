@@ -11,8 +11,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
-#include "types.h"
-#include "variables.h"
+#include "window.h"
 
 #include "../data/common.nlobj.h"
 

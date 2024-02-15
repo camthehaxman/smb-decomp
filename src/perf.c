@@ -6,6 +6,7 @@
 #include "gxutil.h"
 #include "input.h"
 #include "perf.h"
+#include "window.h"
 
 OSTick perfTimers[8];
 u32 perfEnabled;

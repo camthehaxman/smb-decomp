@@ -19,40 +19,12 @@
 #include "sound.h"
 #include "sprite.h"
 #include "stobj.h"
+#include "window.h"
 
 // each character is 12x12 pixels
 #define SCREEN_ROWS (448/12)
 #define SCREEN_COLUMNS (640/12)
 
-
-// .sbss
-
-// static
-static int currWindowIndex;
-static s32 lbl_802F1E0C;
-static s32 windowCursorX;
-static s32 windowCursorY;
-static s8 lbl_802F1E18;
-static s8 lbl_802F1E19;
-static u32 lbl_802F1E1C;
-static u32 lbl_802F1E20;
-static u32 lbl_802F1E24;
-static u32 lbl_802F1E28;
-static u8 windowColorId;
-static u32 unusedWindowX;
-static u32 unusedWindowY;
-static u32 unusedWindowWidth;
-static u32 unusedWindowHeight;
-static s32 lbl_802F1E40;
-static s32 lbl_802F1E44;
-static u32 lbl_802F1E48;
-static u32 lbl_802F1E4C;
-static s8 lbl_802F1E50;
-static s8 lbl_802F1E51;
-static s32 lbl_802F1E54;
-static s32 lbl_802F1E58;
-
-// non-static
 u32 debugFlags;
 u32 dipSwitches;
 u32 lbl_802F1ED8;
@@ -91,6 +63,30 @@ u16 lbl_802F1E66;
 u16 lbl_802F1E64;
 float lbl_802F1E60;
 float lbl_802F1E5C;
+
+static int currWindowIndex;
+static s32 lbl_802F1E0C;
+static s32 windowCursorX;
+static s32 windowCursorY;
+static s8 lbl_802F1E18;
+static s8 lbl_802F1E19;
+static u32 lbl_802F1E1C;
+static u32 lbl_802F1E20;
+static u32 lbl_802F1E24;
+static u32 lbl_802F1E28;
+static u8 windowColorId;
+static u32 unusedWindowX;
+static u32 unusedWindowY;
+static u32 unusedWindowWidth;
+static u32 unusedWindowHeight;
+static s32 lbl_802F1E40;
+static s32 lbl_802F1E44;
+static u32 lbl_802F1E48;
+static u32 lbl_802F1E4C;
+static s8 lbl_802F1E50;
+static s8 lbl_802F1E51;
+static s32 lbl_802F1E54;
+static s32 lbl_802F1E58;
 
 struct RangeFloat
 {
@@ -145,13 +141,13 @@ static char *lbl_802F0828[] = { "OFF", "ON" };
 
 // .data
 
-struct RangeInt   lbl_801B3B18 = { 3, 0, 100, 1 };
-struct RangeFloat posScaleRange = { 3, -10.0f, 10.0f, 0.1f };
-struct RangeFloat lbl_801B3B38 = { 3, -10.0f, 10.0f, 0.001f };
-struct RangeFloat lbl_801B3B38_2 = { 3, -10.0f, 10.0f, 0.00001f };
-struct RangeFloat lbl_801B3B38_3 = { 3, -10.0f, 10.0f, 0.01f };
-struct RangeInt   angleRange = { 3, 0, 0, 128 };
-struct RangeInt   lbl_801B3B78 = { 0, 0, 1, 1 };
+static struct RangeInt   lbl_801B3B18 = { 3, 0, 100, 1 };
+static struct RangeFloat posScaleRange = { 3, -10.0f, 10.0f, 0.1f };
+static struct RangeFloat lbl_801B3B38 = { 3, -10.0f, 10.0f, 0.001f };
+static struct RangeFloat lbl_801B3B38_2 = { 3, -10.0f, 10.0f, 0.00001f };
+static struct RangeFloat lbl_801B3B38_3 = { 3, -10.0f, 10.0f, 0.01f };
+static struct RangeInt   angleRange = { 3, 0, 0, 128 };
+static struct RangeInt   lbl_801B3B78 = { 0, 0, 1, 1 };
 
 struct WindowItem lbl_801B3D98[] =
 {
@@ -223,17 +219,17 @@ struct WindowItem lbl_801B3D98[] =
     {ITEM_END, 0,  0, NULL,                   NULL,         NULL},
 };
 
-struct WindowDesc dipSwitchWindow = { 9, 0, 25, 29, lbl_801B3D98, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc dipSwitchWindow = { 9, 0, 25, 29, lbl_801B3D98, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B43F4[] =
+static struct WindowItem lbl_801B43F4[] =
 {
     {ITEM_NONE, 1, 1, "Game", NULL, NULL},
     {ITEM_END, 0, 0, NULL,   NULL, NULL},
 };
 
-struct WindowDesc lbl_801B4424 = { 0, 0, 10, 10, lbl_801B43F4, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc lbl_801B4424 = { 0, 0, 10, 10, lbl_801B43F4, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B4480[] =
+static struct WindowItem lbl_801B4480[] =
 {
     {ITEM_NONE, 1, 1, "Mode",          NULL,              NULL},
     {17, 3, 3, "main_mode: %d", &gameMode,         NULL},
@@ -244,9 +240,9 @@ struct WindowItem lbl_801B4480[] =
     {ITEM_END, 0, 0, NULL,            NULL,              NULL},
 };
 
-struct WindowDesc modeWindow = { 33, 0, 20, 11, lbl_801B4480, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc modeWindow = { 33, 0, 20, 11, lbl_801B4480, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B4554[] =
+static struct WindowItem lbl_801B4554[] =
 {
     {ITEM_NONE,  1,  1, "Event", NULL,                NULL},
     {ITEM_STRING,  2,  3, "%10s",  &eventInfo[0].name,  NULL},
@@ -294,11 +290,11 @@ struct WindowItem lbl_801B4554[] =
     {ITEM_END,  0,  0, NULL,    NULL,                NULL},
 };
 
-struct WindowDesc eventWindow = {0, 11, 27, 26, lbl_801B4554, 0, 0, 0, 0, 0, 0};
+static struct WindowDesc eventWindow = {0, 11, 27, 26, lbl_801B4554, 0, 0, 0, 0, 0, 0};
 
-struct RangeInt lbl_801B49A0 = {0, 0, 3, 1};
+static struct RangeInt lbl_801B49A0 = {0, 0, 3, 1};
 
-struct WindowItem lbl_801B4A38[] =
+static struct WindowItem lbl_801B4A38[] =
 {
     {ITEM_NONE, 1,  1, "Camera",         NULL,                    NULL},
     {10, 2,  3, "id:       [%d]", NULL,                    &lbl_801B49A0},
@@ -314,24 +310,24 @@ struct WindowItem lbl_801B4A38[] =
     {ITEM_END, 0,  0, NULL,             NULL,                    NULL},
 };
 
-struct WindowDesc cameraWindow = {36, 22, 17, 15, lbl_801B4A38, sizeof(struct Camera), 0, 0, 0, 0, 0};
+static struct WindowDesc cameraWindow = {36, 22, 17, 15, lbl_801B4A38, sizeof(struct Camera), 0, 0, 0, 0, 0};
 
-struct WindowItem lbl_801B4B84[] =
+static struct WindowItem lbl_801B4B84[] =
 {
     {ITEM_NONE, 1, 1, "Effect", NULL, NULL},
     {ITEM_END, 0, 0, NULL,     NULL, NULL},
 };
 
-struct WindowDesc effectWindow = {0, 0, 10, 10, lbl_801B4B84, 0, 0, 0, 0, 0, 0};
+static struct WindowDesc effectWindow = {0, 0, 10, 10, lbl_801B4B84, 0, 0, 0, 0, 0, 0};
 
-struct RangeFloat lbl_801B4BE0 = { 3, 0.0f, 640.0f, 1.0f };
-struct RangeInt   lbl_801B4BF0 = { 0, 0, 63, 1 };
-struct RangeInt   lbl_801B4C00 = { 0, 0, 178, 1 };
-struct RangeInt   lbl_801B4C10 = { 0, 0, 8, 1 };
-struct RangeInt   lbl_801B4C20 = { 0, 0, 255, 1 };
-struct RangeFloat lbl_801B4C30 = { 0, 0.0f, 1.0f, 0.01f };
+static struct RangeFloat lbl_801B4BE0 = { 3, 0.0f, 640.0f, 1.0f };
+static struct RangeInt   lbl_801B4BF0 = { 0, 0, 63, 1 };
+static struct RangeInt   lbl_801B4C00 = { 0, 0, 178, 1 };
+static struct RangeInt   lbl_801B4C10 = { 0, 0, 8, 1 };
+static struct RangeInt   lbl_801B4C20 = { 0, 0, 255, 1 };
+static struct RangeFloat lbl_801B4C30 = { 0, 0.0f, 1.0f, 0.01f };
 
-struct WindowItem lbl_801B4D94[] =
+static struct WindowItem lbl_801B4D94[] =
 {
     {ITEM_NONE, 1,  1, "Sprite",            NULL,                     NULL},
     {10, 3,  3, "Sprite ID : %3d",   NULL,                     &lbl_801B4BF0},
@@ -358,9 +354,9 @@ struct WindowItem lbl_801B4D94[] =
     {ITEM_END, 0,  0, NULL,                NULL,                     NULL},
 };
 
-struct WindowDesc spriteWindow = {0, 0, 24, 30, lbl_801B4D94, sizeof(struct Sprite), 0, 0, 0, 0, 0};
+static struct WindowDesc spriteWindow = {0, 0, 24, 30, lbl_801B4D94, sizeof(struct Sprite), 0, 0, 0, 0, 0};
 
-char *lbl_801B503C[] =
+static char *lbl_801B503C[] =
 {
     "GX_SP_OFF",
     "GX_SP_FLAT",
@@ -371,19 +367,19 @@ char *lbl_801B503C[] =
     "GX_SP_RING2",
 };
 
-struct RangeInt   lbl_801B5058 = { 0, 0, 31, 1 };
-struct RangeInt   lbl_801B5068 = { 0, 0, 7, 1 };
-struct RangeInt   lbl_801B5078 = { 0, 0, 8, 1 };
-struct RangeFloat lbl_801B5088 = { 0, 0.0f, 1.0f, 0.01f };
-struct RangeFloat lbl_801B5098 = { 2, 0.1f, 1.0f, 0.1f };
-struct RangeFloat lbl_801B50A8 = { 3, 0.0f, 1.0f, 0.1f };
-struct RangeFloat lbl_801B50B8 = { 3, 0.0f, 1.0f, 0.01f };
-struct RangeFloat lbl_801B50C8 = { 3, 0.0f, 1.0f, 0.01f };
-struct RangeInt   lbl_801B50D8 = { 0, 0, 6, 1 };
-struct RangeFloat lbl_801B50E8 = { 0, 0.0f, 90.0f, 0.1f };
-struct RangeInt   lbl_801B50F8 = { 0, 1, 199, 1 };
+static struct RangeInt   lbl_801B5058 = { 0, 0, 31, 1 };
+static struct RangeInt   lbl_801B5068 = { 0, 0, 7, 1 };
+static struct RangeInt   lbl_801B5078 = { 0, 0, 8, 1 };
+static struct RangeFloat lbl_801B5088 = { 0, 0.0f, 1.0f, 0.01f };
+static struct RangeFloat lbl_801B5098 = { 2, 0.1f, 1.0f, 0.1f };
+static struct RangeFloat lbl_801B50A8 = { 3, 0.0f, 1.0f, 0.1f };
+static struct RangeFloat lbl_801B50B8 = { 3, 0.0f, 1.0f, 0.01f };
+static struct RangeFloat lbl_801B50C8 = { 3, 0.0f, 1.0f, 0.01f };
+static struct RangeInt   lbl_801B50D8 = { 0, 0, 6, 1 };
+static struct RangeFloat lbl_801B50E8 = { 0, 0.0f, 90.0f, 0.1f };
+static struct RangeInt   lbl_801B50F8 = { 0, 1, 199, 1 };
 
-struct WindowItem lbl_801B5170[] =
+static struct WindowItem lbl_801B5170[] =
 {
     {ITEM_NONE,  1,  1, "Light Param",  NULL,                     NULL},
     { 2,  2,  3, "data ID : %d", &u_lightToPrint,          &lbl_801B5058},
@@ -419,12 +415,12 @@ struct WindowItem lbl_801B5170[] =
     {ITEM_END,  0,  0, NULL,           NULL,                     },
 };
 
-struct WindowDesc lightParamWindow = {0, 0, 21, 33, lbl_801B5170, 0, 0, 0, 0, 0, 0};
+static struct WindowDesc lightParamWindow = {0, 0, 21, 33, lbl_801B5170, 0, 0, 0, 0, 0, 0};
 
-struct RangeInt lbl_801B549C = { 0, 0, 21, 1 };
-struct RangeInt lbl_801B54AC = { 0, -1, 31, 1 };
+static struct RangeInt lbl_801B549C = { 0, 0, 21, 1 };
+static struct RangeInt lbl_801B54AC = { 0, -1, 31, 1 };
 
-struct WindowItem lbl_801B5538[] =
+static struct WindowItem lbl_801B5538[] =
 {
     {ITEM_NONE,  1,  1, "Light Group",   NULL, 0},
     { 6,  2,  3, "group ID : %d", &lbl_802F1C75,               &lbl_801B549C},
@@ -449,9 +445,9 @@ struct WindowItem lbl_801B5538[] =
     {ITEM_END,  0,  0, 0,               NULL,                        NULL},
 };
 
-struct WindowDesc lightGroupWindow = { 36, 0, 17, 16, lbl_801B5538, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc lightGroupWindow = { 36, 0, 17, 16, lbl_801B5538, 0, 0, 0, 0, 0, 0 };
 
-char *lbl_801B57B8[] =
+static char *lbl_801B57B8[] =
 {
     "GX_FOG_NONE",
     "no define",
@@ -463,11 +459,11 @@ char *lbl_801B57B8[] =
     "GX_FOG_REVEXP2",
 };
 
-struct RangeInt   lbl_801B57D8 = { 0, 0, 7, 1 };
-struct RangeFloat lbl_801B57E8 = { 3, -10.0f, 10.0f, 1.0f };
-struct RangeInt   lbl_801B57F8 = { 0, 0, 255, 1 };
+static struct RangeInt   lbl_801B57D8 = { 0, 0, 7, 1 };
+static struct RangeFloat lbl_801B57E8 = { 3, -10.0f, 10.0f, 1.0f };
+static struct RangeInt   lbl_801B57F8 = { 0, 0, 255, 1 };
 
-struct WindowItem fogWindowItems[] =
+static struct WindowItem fogWindowItems[] =
 {
     {ITEM_NONE,  1,  1, "Fog",           NULL,                NULL},
     { 6,  2, -2, "sw : ",         &fogInfo.enabled, &lbl_801B3B78},
@@ -482,15 +478,15 @@ struct WindowItem fogWindowItems[] =
     {ITEM_END,  0,  0, NULL,            NULL,             NULL},
 };
 
-struct WindowDesc fogWindow = { 0, 0, 28, 16, fogWindowItems, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc fogWindow = { 0, 0, 28, 16, fogWindowItems, 0, 0, 0, 0, 0, 0 };
 
-struct RangeInt lbl_801B598C = { 0, 0, 100, 5 };
-struct RangeInt lbl_801B599C = { 0, 0, 16, 1 };
-struct RangeInt lbl_801B59AC = { 0, 0, 1061, 1 };
-struct RangeInt lbl_801B59BC = { 0, -128, 127, 1 };
-struct RangeInt lbl_801B59CC = { 3, 0, 100, 1 };
+static struct RangeInt lbl_801B598C = { 0, 0, 100, 5 };
+static struct RangeInt lbl_801B599C = { 0, 0, 16, 1 };
+static struct RangeInt lbl_801B59AC = { 0, 0, 1061, 1 };
+static struct RangeInt lbl_801B59BC = { 0, -128, 127, 1 };
+static struct RangeInt lbl_801B59CC = { 3, 0, 100, 1 };
 
-struct WindowItem lbl_801B5A50[] =
+static struct WindowItem lbl_801B5A50[] =
 {
     {13,  1,  1, "Sound",                0, 0},
     {14,  2, -2, " RAM:%08X",            &g_soundTotalBytesLoaded, 0},
@@ -510,9 +506,9 @@ struct WindowItem lbl_801B5A50[] =
     {31,  0,  0, 0, 0, 0},
 };
 
-struct WindowDesc soundWindow = { 0, 0, 35, 20, lbl_801B5A50, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc soundWindow = { 0, 0, 35, 20, lbl_801B5A50, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B5DE0[] =
+static struct WindowItem lbl_801B5DE0[] =
 {
     {13,  1,  1, "Monkey Fight", 0, 0},
     { 3,  2,  3, "CAM ANG X : 0x%04X", &lbl_802F1EA2, &angleRange},
@@ -539,31 +535,31 @@ struct WindowItem lbl_801B5DE0[] =
     {31,  0,  0, 0, 0, 0},
 };
 
-struct WindowDesc fightWindow = { 24, 0, 32, 36, lbl_801B5DE0, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc fightWindow = { 24, 0, 32, 36, lbl_801B5DE0, 0, 0, 0, 0, 0, 0 };
 
-struct RangeInt unusedRange1 = { 0, 0, 255, 1 };
+static struct RangeInt unusedRange1 = { 0, 0, 255, 1 };
 
-struct WindowItem raceCpuWindow[] =
+static struct WindowItem raceCpuWindow[] =
 {
     {13,  1,  1, "MINI RACE CPU", 0, 0},
     {31,  0,  0, 0, 0, 0},
 };
 
-struct WindowDesc lbl_801B6054_desc = { 28, 25, 24, 11, raceCpuWindow, 0x14, 0, 0, 0, 0, 0 };
+static struct WindowDesc lbl_801B6054_desc = { 28, 25, 24, 11, raceCpuWindow, 0x14, 0, 0, 0, 0, 0 };
 
-struct RangeInt   unusedRange2 = { 3, 0, 100, 128 };
-struct RangeFloat unusedRange3 = { 3, -10.0f, 10.0f, 0.02f };
+static struct RangeInt   unusedRange2 = { 3, 0, 100, 128 };
+static struct RangeFloat unusedRange3 = { 3, -10.0f, 10.0f, 0.02f };
 
-struct WindowItem raceWindow[] =
+static struct WindowItem raceWindow[] =
 {
     {13,  1,  1, "Monkey Race", 0, 0},
     {31,  0,  0, 0, 0, 0},
 };
 
-struct WindowDesc lbl_801B610C = { 23, 19, 30, 17, raceWindow, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc lbl_801B610C = { 23, 19, 30, 17, raceWindow, 0, 0, 0, 0, 0, 0 };
 
 
-struct WindowItem lbl_801B61E4[] =
+static struct WindowItem lbl_801B61E4[] =
 {
     {13,  1,  1, "Performance", NULL, NULL},
     {13,  3,  3, "MAIN LOOP", NULL, NULL},
@@ -641,11 +637,11 @@ struct WindowItem lbl_801B61E4[] =
     {31,  0,  0, NULL, NULL, NULL},
 };
 
-struct WindowDesc perfWindow = { 5, 7, 43, 29, lbl_801B61E4, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc perfWindow = { 5, 7, 43, 29, lbl_801B61E4, 0, 0, 0, 0, 0, 0 };
 
-struct RangeInt lbl_801B6900 = { 0, 0, 3, 1 };
+static struct RangeInt lbl_801B6900 = { 0, 0, 3, 1 };
 
-struct WindowItem lbl_801B6AD4[] =
+static struct WindowItem lbl_801B6AD4[] =
 {
     {13,  1,  1, "Input Test", NULL, NULL},
     {10,  2,  3, "PAD           [%d]", NULL, &lbl_801B6900},
@@ -673,9 +669,9 @@ struct WindowItem lbl_801B6AD4[] =
     {31,  0,  0, NULL, NULL, NULL},
 };
 
-struct WindowDesc inputWindow = { 0, 0, 21, 30, lbl_801B6AD4, sizeof(struct ControllerInfo), 0, 0, 0, 0, 0 };
+static struct WindowDesc inputWindow = { 0, 0, 21, 30, lbl_801B6AD4, sizeof(struct ControllerInfo), 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B6D8C[] =
+static struct WindowItem lbl_801B6D8C[] =
 {
     {13,  1,  1, "Window Info", NULL, NULL},
     {15,  3,  3, "locateX : %3d", &unusedWindowX, NULL},
@@ -685,9 +681,9 @@ struct WindowItem lbl_801B6D8C[] =
     {31,  0,  0, NULL, NULL, NULL},
 };
 
-struct WindowDesc windowWindow = { 34, 28, 19, 9, lbl_801B6D8C, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc windowWindow = { 34, 28, 19, 9, lbl_801B6D8C, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B6F28[] =
+static struct WindowItem lbl_801B6F28[] =
 {
     {13,  1,  1, "Change Param", NULL, NULL},
     { 3,  2,  3, "xang   %04hX", &lbl_802F1ED4, &angleRange},
@@ -707,9 +703,9 @@ struct WindowItem lbl_801B6F28[] =
     {31,  0,  0, NULL, NULL, NULL},
 };
 
-struct WindowDesc lbl_801B70A8 = { 0, 18, 15, 19, lbl_801B6F28, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc lbl_801B70A8 = { 0, 18, 15, 19, lbl_801B6F28, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B7134[] =
+static struct WindowItem lbl_801B7134[] =
 {
     {13,  1,  1, "Bumper Param", NULL, NULL},
     { 7,  2,  2, "LOD LEVEL[0]: %4.5f", &lbl_8028C0B0.unk0[0], &lbl_801B3B38},
@@ -719,18 +715,18 @@ struct WindowItem lbl_801B7134[] =
     {31,  0,  0, NULL, NULL, NULL},
 };
 
-struct WindowDesc lbl_801B71C4 = { 4, 4, 32, 8, lbl_801B7134, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc lbl_801B71C4 = { 4, 4, 32, 8, lbl_801B7134, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B71FC[] =
+static struct WindowItem lbl_801B71FC[] =
 {
     {13,  1,  1, "Heap Free", NULL, NULL},
     {29,  2,  3, NULL, NULL, NULL},
     {31,  0,  0, NULL, NULL, NULL},
 };
 
-struct WindowDesc lbl_801B7244 = { 0, 0, 38, 11, lbl_801B71FC, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc lbl_801B7244 = { 0, 0, 38, 11, lbl_801B71FC, 0, 0, 0, 0, 0, 0 };
 
-struct WindowItem lbl_801B727C[] =
+static struct WindowItem lbl_801B727C[] =
 {
     {13,  1,  1, "Main Menu", NULL, NULL},
     { 0,  2, -2, "Dip Switch", &dipSwitchWindow, NULL},
@@ -755,7 +751,7 @@ struct WindowItem lbl_801B727C[] =
     {31,  0,  0, NULL, NULL, NULL},
 };
 
-struct WindowDesc mainMenuWindow = { 4, 2, 20, 30, lbl_801B727C, 0, 0, 0, 0, 0, 0 };
+static struct WindowDesc mainMenuWindow = { 4, 2, 20, 30, lbl_801B727C, 0, 0, 0, 0, 0, 0 };
 
 // bss
 
@@ -768,17 +764,16 @@ static u8 screenBuffer6[SCREEN_ROWS * SCREEN_COLUMNS];
 static u8 screenBuffer7[SCREEN_ROWS * SCREEN_COLUMNS];
 static u8 screenBuffer8[SCREEN_ROWS * SCREEN_COLUMNS];
 
-struct WindowDesc *windowList[16];  // 0x3D60
-FORCE_BSS_ORDER(windowList)
+static struct WindowDesc *windowList[16];
+static struct WindowDesc windowWork[16];
 
-struct WindowDesc windowWork[16];  // 0x3DA0
-FORCE_BSS_ORDER(windowWork)
+static void draw_window_frame(struct WindowDesc *arg0);
+static void func_8002FCAC(int arg0, int arg1);
+static void clear_buffer_region(int arg0, int arg1, int arg2, int arg3);
+static void draw_char(int x, int y, s8 arg2, u8 colorId);
+static void draw_some_window_quad_2(float x1, float y1, float x2, float y2);
 
-void clear_buffer_region(int arg0, int arg1, int arg2, int arg3);
-void draw_char(int x, int y, s8 arg2, u8 colorId);
-void draw_some_window_quad_2(float x1, float y1, float x2, float y2);
-
-void func_8002DC54(void)
+static void func_8002DC54(void)
 {
     struct WindowDesc **var_r3;
     int var_r4;
@@ -820,7 +815,7 @@ static void func_8002DD5C_inline(void)
     currWindowIndex = 0;
 }
 
-void func_8002DD5C(void)
+static void func_8002DD5C(void)
 {
     if (currWindowIndex == 0)
     {
@@ -840,7 +835,7 @@ void func_8002DD5C(void)
 }
 
 #pragma dont_inline on
-void cycle_window(void)
+static void cycle_window(void)
 {
     int r6;
     int i;
@@ -863,7 +858,7 @@ void cycle_window(void)
 }
 #pragma dont_inline reset
 
-void window_open(struct WindowDesc *arg0)
+static void window_open(struct WindowDesc *arg0)
 {
     int i;
     struct WindowDesc **r6;
@@ -907,7 +902,7 @@ void window_open(struct WindowDesc *arg0)
     }
 }
 
-void process_window(struct WindowDesc *window)
+static void process_window(struct WindowDesc *window)
 {
     void *temp_r4_6;
     f32 somefloatval;
@@ -1178,9 +1173,6 @@ void process_window(struct WindowDesc *window)
     window->unk28 /= 2;
 }
 
-void draw_window_frame(struct WindowDesc *arg0);
-void func_8002FCAC(int arg0, int arg1);
-
 static void set_some_params(int a, int b, int c, int d)
 {
     lbl_802F1E1C = a;
@@ -1189,7 +1181,7 @@ static void set_some_params(int a, int b, int c, int d)
     lbl_802F1E28 = d;
 }
 
-void window_show_items(struct WindowDesc *window, u32 arg1)
+static void window_show_items(struct WindowDesc *window, u32 arg1)
 {
     struct WindowItem *item;
     int i;
@@ -1307,7 +1299,7 @@ void window_show_items(struct WindowDesc *window, u32 arg1)
             window_printf(2, item->format, onOff);
             break;
         case 24:
-            if (*(u16 *)pValue & (u16)item->param)
+            if (*(u16 *)pValue & (u16)(u32)item->param)
                 onOff = " ON";
             else
                 onOff = "OFF";
@@ -1344,7 +1336,7 @@ void window_show_items(struct WindowDesc *window, u32 arg1)
     func_8002FCAC(0, 0);
 }
 
-void draw_window_frame(struct WindowDesc *window)
+static void draw_window_frame(struct WindowDesc *window)
 {
     int i;
 
@@ -1697,7 +1689,7 @@ void window_move_cursor(int dx, int dy)
     windowCursorY += dy;
 }
 
-void func_8002FCAC(int arg0, int arg1)
+static void func_8002FCAC(int arg0, int arg1)
 {
     lbl_802F1E18 = arg0;
     lbl_802F1E19 = arg1;
@@ -1823,7 +1815,7 @@ void u_clear_buffers_2_and_5(void)
     memset(screenBuffer5, 0, sizeof(screenBuffer5));
 }
 
-void clear_buffer_region(int arg0, int arg1, int arg2, int arg3)
+static void clear_buffer_region(int arg0, int arg1, int arg2, int arg3)
 {
     u8 *var_r8;
     u8 *var_r9;
@@ -1888,20 +1880,22 @@ int u_printf_if_debug(int unused, char *fmt, ...)
     return 0;
 }
 
-u32 lbl_801B75F8[] =
-{
-    0xFFFFFFFF,
-    0xFF0000FF,
-    0x00FF00FF,
-    0x0000FFFF,
-    0xFFFF00FF,
-    0xFF00FFFF,
-    0x00FFFFFF,
-    0x000000FF,
-};
+#define RGBA_alt(r, g, b, a) (((r) << 24) | ((g) << 16) | ((b) << 8) | (a))
 
-void draw_char(int x, int y, s8 arg2, u8 colorId)
+static void draw_char(int x, int y, s8 arg2, u8 colorId)
 {
+    static u32 textColors[] =
+    {
+        RGBA_alt(255, 255, 255, 255),
+        RGBA_alt(255,   0,   0, 255),
+        RGBA_alt(  0, 255,   0, 255),
+        RGBA_alt(  0,   0, 255, 255),
+        RGBA_alt(255, 255,   0, 255),
+        RGBA_alt(255,   0, 255, 255),
+        RGBA_alt(  0, 255, 255, 255),
+        RGBA_alt(  0,   0,   0, 255),
+    };
+
     if (arg2 < 0x80)
     {
         float u = (12.0 * (float)(arg2 & 0xF)) / 192.0;
@@ -1913,7 +1907,7 @@ void draw_char(int x, int y, s8 arg2, u8 colorId)
         GXColor sp1C = {0};
 
         y1 *= 1.0714285714285714;
-        temp = lbl_801B75F8[colorId & 0xFF];
+        temp = textColors[colorId & 0xFF];
         sp20.r = (temp >> 24) /*& 0xFF*/;
         sp20.g = (temp >> 16) & 0xFF;
         sp20.b = (temp >> 8) /*& 0xFF*/;
@@ -1921,7 +1915,7 @@ void draw_char(int x, int y, s8 arg2, u8 colorId)
 
         GXSetTevColor(GX_TEVREG0, sp20);
         GXSetTevColor(GX_TEVREG1, sp1C);
-        GXBegin(GX_QUADS, GX_VTXFMT7, 4U);
+        GXBegin(GX_QUADS, GX_VTXFMT7, 4);
         GXPosition3f32(x1,         y1,         -0.0078125f);
         GXTexCoord2f32(u,          v + 0.010416666666666666);
         GXPosition3f32(x1 + 12.0f, y1,         -0.0078125f);
@@ -1934,7 +1928,7 @@ void draw_char(int x, int y, s8 arg2, u8 colorId)
     }
 }
 
-void draw_some_window_quad_2(float x1, float y1, float x2, float y2)
+static void draw_some_window_quad_2(float x1, float y1, float x2, float y2)
 {
     GXColor tevColor0 = {0, 0, 0, 96};
     GXColor tevColor1 = {0, 0, 0, 0};

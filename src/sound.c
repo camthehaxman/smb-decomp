@@ -19,6 +19,7 @@
 #include "sound.h"
 #include "spline.h"
 #include "stage.h"
+#include "window.h"
 
 struct Struct801FE498
 {

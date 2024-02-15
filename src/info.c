@@ -23,6 +23,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "window.h"
 
 s8 lbl_802F1CB0[8];
 s32 practiceBestScore;

@@ -11,6 +11,7 @@
 #include "mode.h"
 #include "relocation.h"
 #include "sprite.h"
+#include "window.h"
 
 char *gameModeRelNames[] =
 {

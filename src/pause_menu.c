@@ -13,6 +13,7 @@
 #include "recplay.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 struct PauseMenuState pauseMenuState;
 

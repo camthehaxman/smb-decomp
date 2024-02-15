@@ -9,9 +9,7 @@
 #include "mathutil.h"
 #include "nl2ngc.h"
 #include "stage.h"
-
-extern s32 lbl_802F1F4C;
-extern s32 lbl_802F1F50;
+#include "window.h"
 
 void bg_old_water_init(void)
 {

@@ -22,6 +22,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "textbox.h"
+#include "window.h"
 
 u8 playerNumColors[] =
 {

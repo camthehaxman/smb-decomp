@@ -11,8 +11,9 @@
 #include "gxutil.h"
 #include "load.h"
 #include "mathutil.h"
-#include "sprite.h"
 #include "mouse.h"
+#include "sprite.h"
+#include "window.h"
 
 struct TPL *u_unkBitmapTPL;
 s32 spriteParamsBufState;

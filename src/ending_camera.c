@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "ending.h"
 #include "mathutil.h"
+#include "window.h"
 
 static void lbl_800C00F4(struct Camera *, struct Ball *);
 static void func_800C013C(struct Camera *camera, struct Ball *ball);

@@ -12,6 +12,7 @@
 #include "relocation.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 #pragma force_active on
 u32 unused_801C7ED8[] =

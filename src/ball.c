@@ -29,6 +29,7 @@
 #include "stcoli.h"
 #include "thread.h"
 #include "vibration.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/common.gma.h"

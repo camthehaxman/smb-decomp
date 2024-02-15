@@ -13,6 +13,7 @@
 #include "mode.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 static void help_sprite_draw(struct Sprite *);
 static void help_sprite_destroy(struct Sprite *);

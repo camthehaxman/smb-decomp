@@ -17,6 +17,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "thread.h"
+#include "window.h"
 
 static void mini_commend_finish(void);
 static void lbl_8009C5E0(struct Sprite *);

@@ -18,6 +18,7 @@
 #include "recplay.h"
 #include "spline.h"
 #include "stage.h"
+#include "window.h"
 #include "world.h"
 
 #define SCREEN_ASPECT (640.0f / 480.0f)

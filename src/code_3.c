@@ -9,6 +9,7 @@
 #include "mathutil.h"
 #include "mot_ape.h"
 #include "nl2ngc.h"
+#include "window.h"
 
 static s8 lbl_802F2060;
 

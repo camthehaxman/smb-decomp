@@ -12,6 +12,7 @@
 #include "stage.h"
 #include "stcoli.h"
 #include "stobj.h"
+#include "window.h"
 
 static void do_object_collision(void);
 

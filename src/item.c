@@ -10,6 +10,7 @@
 #include "pool.h"
 #include "stage.h"
 #include "stcoli.h"
+#include "window.h"
 
 static void item_dummy_init(struct Item *);
 static void item_dummy_main(struct Item *);

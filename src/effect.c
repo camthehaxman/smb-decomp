@@ -21,6 +21,7 @@
 #include "pool.h"
 #include "stage.h"
 #include "stcoli.h"
+#include "window.h"
 #include "world.h"
 
 #include "../data/common.gma.h"

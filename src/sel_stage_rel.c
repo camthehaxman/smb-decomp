@@ -21,6 +21,7 @@
 #include "rend_efc.h"
 #include "sprite.h"
 #include "stage.h"
+#include "window.h"
 
 static int lbl_0000185D;
 

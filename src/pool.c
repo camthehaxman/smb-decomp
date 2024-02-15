@@ -4,6 +4,7 @@
 #include "event.h"
 #include "input.h"
 #include "pool.h"
+#include "window.h"
 
 static void func_800308AC(void);
 static void func_80030914(struct PoolInfo_sub *, int);

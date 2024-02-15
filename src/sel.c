@@ -10,6 +10,7 @@
 #include "relocation.h"
 #include "sound.h"
 #include "sprite.h"
+#include "window.h"
 
 extern struct StageSelection stageSelection;
 extern struct RelModule lbl_802F1BD8;

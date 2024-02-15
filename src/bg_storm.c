@@ -7,9 +7,10 @@
 #include "camera.h"
 #include "effect.h"
 #include "event.h"
+#include "gma.h"
 #include "mathutil.h"
 #include "stcoli.h"
-#include "gma.h"
+#include "window.h"
 
 static struct BGModelSearch stormBgModelFind[] =
 {
