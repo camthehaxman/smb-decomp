@@ -56,7 +56,7 @@ submode_mini_ranking_main_func:
 /* 800A75E8 000A3508  4B F8 86 99 */	bl u_debug_set_cursor_pos
 /* 800A75EC 000A350C  38 7E 00 30 */	addi r3, r30, 0x30
 /* 800A75F0 000A3510  4C C6 31 82 */	crclr 6
-/* 800A75F4 000A3514  4B F8 8B B9 */	bl u_debug_printf
+/* 800A75F4 000A3514  4B F8 8B B9 */	bl window_printf_2
 /* 800A75F8 000A3518  3C 60 80 1F */	lis r3, modeCtrl@ha
 /* 800A75FC 000A351C  4C C6 31 82 */	crclr 6
 /* 800A7600 000A3520  38 63 EC 20 */	addi r3, r3, modeCtrl@l
@@ -64,7 +64,7 @@ submode_mini_ranking_main_func:
 /* 800A7608 000A3528  80 83 00 10 */	lwz r4, 0x10(r3)
 /* 800A760C 000A352C  38 7E 00 3C */	addi r3, r30, 0x3c
 /* 800A7610 000A3530  38 A0 00 0C */	li r5, 0xc
-/* 800A7614 000A3534  4B F8 8B 99 */	bl u_debug_printf
+/* 800A7614 000A3534  4B F8 8B 99 */	bl window_printf_2
 /* 800A7618 000A3538  80 0D 9D 00 */	lwz r0, debugFlags@sda21(r13)
 /* 800A761C 000A353C  70 00 00 0A */	andi. r0, r0, 0xa
 /* 800A7620 000A3540  40 82 04 2C */	bne lbl_800A7A4C

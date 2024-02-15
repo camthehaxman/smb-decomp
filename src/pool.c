@@ -105,7 +105,7 @@ void debug_main(void)
         event_finish(EVENT_MOUSE);
 }
 
-char *lbl_801B7948[] =
+char *u_stateNames[] =
 {
     "STAT_NULL",
     "STAT_INIT",

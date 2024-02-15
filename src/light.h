@@ -94,6 +94,7 @@ extern s8 lbl_802F1C74;
 extern s8 lbl_802F1C75;
 extern char *lightTypeNames[];
 extern char *s_lightIdNames[];
+extern char *s_lightGroupNames[];
 
 void light_init();
 void light_main();

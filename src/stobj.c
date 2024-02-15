@@ -1014,11 +1014,11 @@ static void stobj_jamabar_debug(struct Stobj *stobj)
     window_printf(2, "OFS: X,%7.3f\n", stobj->u_local_pos.x);
     window_printf(2, string______Y__7_3f_n_2, stobj->u_local_pos.y);
     window_printf(2, string______Z__7_3f_n_2, stobj->u_local_pos.z);
-    func_8002FD68(2, lbl_802F0B40);
+    u_set_window_text(2, lbl_802F0B40);
     window_printf(2, "OFS SPD: X,%7.3f\n", stobj->u_local_vel.x);
     window_printf(2, "         Y,%7.3f\n", stobj->u_local_vel.y);
     window_printf(2, "         Z,%7.3f\n", stobj->u_local_vel.z);
-    func_8002FD68(2, lbl_802F0B40);
+    u_set_window_text(2, lbl_802F0B40);
 }
 
 static void stobj_dummy_init(struct Stobj *stobj) {}

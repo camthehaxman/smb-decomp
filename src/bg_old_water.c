@@ -42,7 +42,7 @@ void bg_old_water_init(void)
         backgroundInfo.unk20.z = temp_f2 * (decodedStageLzPtr->goals[0].pos.z - backgroundInfo.unk14.z);
     }
     backgroundInfo.unk88 = 1.8e-06 * (float)MAX(lbl_802F1F50, lbl_802F1F4C);
-    func_8003026C(2, "background.lm_stg_cpu_load_f:%7.7f\n", backgroundInfo.unk88);
+    u_printf_if_debug(2, "background.lm_stg_cpu_load_f:%7.7f\n", backgroundInfo.unk88);
 }
 
 void bg_old_water_main(void)

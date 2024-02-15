@@ -3233,7 +3233,7 @@ static inline int append_to_sprite_params_buf(NLsprarg *params)
 {
     if (spriteParamsBufCount == 256)
     {
-        func_8003026C(2, "nlSprPut : SPRITE BUFFER OVER !! bmp %d\n", params->sprno);
+        u_printf_if_debug(2, "nlSprPut : SPRITE BUFFER OVER !! bmp %d\n", params->sprno);
         OSReport("nlSprPut : SPRITE BUFFER OVER !! bmp %d\n", params->sprno);
         return 0;
     }

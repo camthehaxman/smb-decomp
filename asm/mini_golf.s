@@ -5890,7 +5890,7 @@ lbl_000056C4:
 /* 00005718 4BFFAAB9 */ bl u_debug_set_cursor_pos
 /* 0000571C 387F01D0 */ addi r3, r31, 0x1d0
 /* 00005720 4CC63182 */ crclr 6
-/* 00005724 4BFFAAAD */ bl u_debug_printf
+/* 00005724 4BFFAAAD */ bl window_printf_2
 lbl_00005728:
 /* 00005728 881D00F3 */ lbz r0, 0xf3(r29)
 /* 0000572C 28000000 */ cmplwi r0, 0
@@ -5900,7 +5900,7 @@ lbl_00005728:
 /* 0000573C 4BFFAA95 */ bl u_debug_set_cursor_pos
 /* 00005740 387F01D8 */ addi r3, r31, 0x1d8
 /* 00005744 4CC63182 */ crclr 6
-/* 00005748 4BFFAA89 */ bl u_debug_printf
+/* 00005748 4BFFAA89 */ bl window_printf_2
 lbl_0000574C:
 /* 0000574C 807D0000 */ lwz r3, 0(r29)
 /* 00005750 28032000 */ cmplwi r3, 0x2000

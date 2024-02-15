@@ -23,7 +23,7 @@ struct PoolInfo
     s8 effectBuf[MAX_EFFECTS];
 };
 
-extern char *lbl_801B7948[];
+extern char *u_stateNames[];
 extern struct PoolInfo g_poolInfo;
 
 void chkstatus_init(void);

@@ -436,8 +436,8 @@ lbl_8002E278:
 /* 8002E27C 0002A19C  90 0D 9C 28 */	stw r0, lbl_802F1E08@sda21(r13)
 /* 8002E280 0002A1A0  4E 80 00 20 */	blr
 
-.global func_8002E284
-func_8002E284:
+.global process_window
+process_window:
 /* 8002E284 0002A1A4  7C 08 02 A6 */	mflr r0
 /* 8002E288 0002A1A8  3C 80 80 1F */	lis r4, analogButtonInfo@ha
 /* 8002E28C 0002A1AC  90 01 00 04 */	stw r0, 4(r1)
@@ -1062,18 +1062,18 @@ lbl_8002EA80:
 /* 8002EAB4 0002A9D4  90 AD 9C 48 */	stw r5, lbl_802F1E28@sda21(r13)
 /* 8002EAB8 0002A9D8  41 82 00 10 */	beq lbl_8002EAC8
 /* 8002EABC 0002A9DC  38 60 00 02 */	li r3, 2
-/* 8002EAC0 0002A9E0  48 00 12 A1 */	bl u_debug_set_text_color
+/* 8002EAC0 0002A9E0  48 00 12 A1 */	bl window_set_text_color
 /* 8002EAC4 0002A9E4  48 00 00 0C */	b lbl_8002EAD0
 lbl_8002EAC8:
 /* 8002EAC8 0002A9E8  38 60 00 00 */	li r3, 0
-/* 8002EACC 0002A9EC  48 00 12 95 */	bl u_debug_set_text_color
+/* 8002EACC 0002A9EC  48 00 12 95 */	bl window_set_text_color
 lbl_8002EAD0:
 /* 8002EAD0 0002A9F0  7E E3 BB 78 */	mr r3, r23
 /* 8002EAD4 0002A9F4  48 00 04 39 */	bl draw_window_frame
 /* 8002EAD8 0002A9F8  38 60 00 00 */	li r3, 0
-/* 8002EADC 0002A9FC  48 00 12 85 */	bl u_debug_set_text_color
+/* 8002EADC 0002A9FC  48 00 12 85 */	bl window_set_text_color
 /* 8002EAE0 0002AA00  81 17 00 0C */	lwz r8, 0xc(r23)
-/* 8002EAE4 0002AA04  3C 60 80 1B */	lis r3, lbl_801B7948@ha
+/* 8002EAE4 0002AA04  3C 60 80 1B */	lis r3, u_stateNames@ha
 /* 8002EAE8 0002AA08  80 F7 00 08 */	lwz r7, 8(r23)
 /* 8002EAEC 0002AA0C  3C 80 80 1B */	lis r4, lbl_801B757C@ha
 /* 8002EAF0 0002AA10  80 D7 00 04 */	lwz r6, 4(r23)
@@ -1084,7 +1084,7 @@ lbl_8002EAD0:
 /* 8002EB04 0002AA24  90 0D 9C 44 */	stw r0, lbl_802F1E24@sda21(r13)
 /* 8002EB08 0002AA28  38 05 00 01 */	addi r0, r5, 1
 /* 8002EB0C 0002AA2C  90 0D 9C 3C */	stw r0, lbl_802F1E1C@sda21(r13)
-/* 8002EB10 0002AA30  3B E3 79 48 */	addi r31, r3, lbl_801B7948@l
+/* 8002EB10 0002AA30  3B E3 79 48 */	addi r31, r3, u_stateNames@l
 /* 8002EB14 0002AA34  3B C4 75 7C */	addi r30, r4, lbl_801B757C@l
 /* 8002EB18 0002AA38  90 CD 9C 40 */	stw r6, lbl_802F1E20@sda21(r13)
 /* 8002EB1C 0002AA3C  3B 40 00 00 */	li r26, 0
@@ -1116,7 +1116,7 @@ lbl_8002EB6C:
 /* 8002EB70 0002AA90  38 99 00 00 */	addi r4, r25, 0
 /* 8002EB74 0002AA94  48 00 11 0D */	bl u_debug_set_cursor_pos
 /* 8002EB78 0002AA98  38 60 00 00 */	li r3, 0
-/* 8002EB7C 0002AA9C  48 00 11 E5 */	bl u_debug_set_text_color
+/* 8002EB7C 0002AA9C  48 00 11 E5 */	bl window_set_text_color
 /* 8002EB80 0002AAA0  80 1C 00 00 */	lwz r0, 0(r28)
 /* 8002EB84 0002AAA4  54 00 06 3E */	clrlwi r0, r0, 0x18
 /* 8002EB88 0002AAA8  2C 00 00 0D */	cmpwi r0, 0xd
@@ -1137,13 +1137,13 @@ lbl_8002EBB4:
 /* 8002EBBC 0002AADC  28 18 00 00 */	cmplwi r24, 0
 /* 8002EBC0 0002AAE0  41 82 00 20 */	beq lbl_8002EBE0
 /* 8002EBC4 0002AAE4  38 60 00 02 */	li r3, 2
-/* 8002EBC8 0002AAE8  48 00 11 99 */	bl u_debug_set_text_color
+/* 8002EBC8 0002AAE8  48 00 11 99 */	bl window_set_text_color
 /* 8002EBCC 0002AAEC  48 00 00 14 */	b lbl_8002EBE0
 lbl_8002EBD0:
 /* 8002EBD0 0002AAF0  28 18 00 00 */	cmplwi r24, 0
 /* 8002EBD4 0002AAF4  41 82 00 0C */	beq lbl_8002EBE0
 /* 8002EBD8 0002AAF8  38 60 00 02 */	li r3, 2
-/* 8002EBDC 0002AAFC  48 00 11 85 */	bl u_debug_set_text_color
+/* 8002EBDC 0002AAFC  48 00 11 85 */	bl window_set_text_color
 lbl_8002EBE0:
 /* 8002EBE0 0002AB00  80 9C 00 00 */	lwz r4, 0(r28)
 /* 8002EBE4 0002AB04  54 80 05 AD */	rlwinm. r0, r4, 0, 0x16, 0x16
@@ -1357,10 +1357,10 @@ lbl_8002EEA4:
 /* 8002EEBC 0002ADDC  38 99 00 00 */	addi r4, r25, 0
 /* 8002EEC0 0002ADE0  48 00 0D C1 */	bl u_debug_set_cursor_pos
 /* 8002EEC4 0002ADE4  38 60 00 01 */	li r3, 1
-/* 8002EEC8 0002ADE8  48 00 0E 99 */	bl u_debug_set_text_color
+/* 8002EEC8 0002ADE8  48 00 0E 99 */	bl window_set_text_color
 /* 8002EECC 0002ADEC  38 60 00 02 */	li r3, 2
 /* 8002EED0 0002ADF0  38 8D 87 84 */	addi r4, r13, lbl_802F0964@sda21
-/* 8002EED4 0002ADF4  48 00 0E 95 */	bl func_8002FD68
+/* 8002EED4 0002ADF4  48 00 0E 95 */	bl u_set_window_text
 lbl_8002EED8:
 /* 8002EED8 0002ADF8  3B 9C 00 18 */	addi r28, r28, 0x18
 /* 8002EEDC 0002ADFC  3B 7B 00 01 */	addi r27, r27, 1
@@ -1398,7 +1398,7 @@ draw_window_frame:
 /* 8002EF4C 0002AE6C  48 00 0D 35 */	bl u_debug_set_cursor_pos
 /* 8002EF50 0002AE70  38 60 00 02 */	li r3, 2
 /* 8002EF54 0002AE74  38 8D 87 88 */	addi r4, r13, lbl_802F0968@sda21
-/* 8002EF58 0002AE78  48 00 0E 11 */	bl func_8002FD68
+/* 8002EF58 0002AE78  48 00 0E 11 */	bl u_set_window_text
 /* 8002EF5C 0002AE7C  80 7F 00 08 */	lwz r3, 8(r31)
 /* 8002EF60 0002AE80  80 1F 00 00 */	lwz r0, 0(r31)
 /* 8002EF64 0002AE84  38 63 FF FF */	addi r3, r3, -1
@@ -1407,7 +1407,7 @@ draw_window_frame:
 /* 8002EF70 0002AE90  48 00 0D 11 */	bl u_debug_set_cursor_pos
 /* 8002EF74 0002AE94  38 60 00 02 */	li r3, 2
 /* 8002EF78 0002AE98  38 8D 87 8C */	addi r4, r13, lbl_802F096C@sda21
-/* 8002EF7C 0002AE9C  48 00 0D ED */	bl func_8002FD68
+/* 8002EF7C 0002AE9C  48 00 0D ED */	bl u_set_window_text
 /* 8002EF80 0002AEA0  80 7F 00 0C */	lwz r3, 0xc(r31)
 /* 8002EF84 0002AEA4  80 1F 00 04 */	lwz r0, 4(r31)
 /* 8002EF88 0002AEA8  38 83 FF FF */	addi r4, r3, -1
@@ -1416,7 +1416,7 @@ draw_window_frame:
 /* 8002EF94 0002AEB4  48 00 0C ED */	bl u_debug_set_cursor_pos
 /* 8002EF98 0002AEB8  38 60 00 02 */	li r3, 2
 /* 8002EF9C 0002AEBC  38 8D 87 90 */	addi r4, r13, lbl_802F0970@sda21
-/* 8002EFA0 0002AEC0  48 00 0D C9 */	bl func_8002FD68
+/* 8002EFA0 0002AEC0  48 00 0D C9 */	bl u_set_window_text
 /* 8002EFA4 0002AEC4  80 7F 00 08 */	lwz r3, 8(r31)
 /* 8002EFA8 0002AEC8  80 9F 00 0C */	lwz r4, 0xc(r31)
 /* 8002EFAC 0002AECC  80 BF 00 00 */	lwz r5, 0(r31)
@@ -1428,7 +1428,7 @@ draw_window_frame:
 /* 8002EFC4 0002AEE4  48 00 0C BD */	bl u_debug_set_cursor_pos
 /* 8002EFC8 0002AEE8  38 60 00 02 */	li r3, 2
 /* 8002EFCC 0002AEEC  38 8D 87 94 */	addi r4, r13, lbl_802F0974@sda21
-/* 8002EFD0 0002AEF0  48 00 0D 99 */	bl func_8002FD68
+/* 8002EFD0 0002AEF0  48 00 0D 99 */	bl u_set_window_text
 /* 8002EFD4 0002AEF4  3B C0 00 01 */	li r30, 1
 /* 8002EFD8 0002AEF8  48 00 00 24 */	b lbl_8002EFFC
 lbl_8002EFDC:
@@ -1438,7 +1438,7 @@ lbl_8002EFDC:
 /* 8002EFE8 0002AF08  48 00 0C 99 */	bl u_debug_set_cursor_pos
 /* 8002EFEC 0002AF0C  38 60 00 02 */	li r3, 2
 /* 8002EFF0 0002AF10  38 8D 87 98 */	addi r4, r13, lbl_802F0978@sda21
-/* 8002EFF4 0002AF14  48 00 0D 75 */	bl func_8002FD68
+/* 8002EFF4 0002AF14  48 00 0D 75 */	bl u_set_window_text
 /* 8002EFF8 0002AF18  3B DE 00 01 */	addi r30, r30, 1
 lbl_8002EFFC:
 /* 8002EFFC 0002AF1C  80 7F 00 08 */	lwz r3, 8(r31)
@@ -1454,7 +1454,7 @@ lbl_8002F014:
 /* 8002F020 0002AF40  48 00 0C 61 */	bl u_debug_set_cursor_pos
 /* 8002F024 0002AF44  38 60 00 02 */	li r3, 2
 /* 8002F028 0002AF48  38 8D 87 9C */	addi r4, r13, lbl_802F097C@sda21
-/* 8002F02C 0002AF4C  48 00 0D 3D */	bl func_8002FD68
+/* 8002F02C 0002AF4C  48 00 0D 3D */	bl u_set_window_text
 /* 8002F030 0002AF50  3B DE 00 01 */	addi r30, r30, 1
 lbl_8002F034:
 /* 8002F034 0002AF54  80 7F 00 0C */	lwz r3, 0xc(r31)
@@ -1473,7 +1473,7 @@ lbl_8002F04C:
 /* 8002F064 0002AF84  48 00 0C 1D */	bl u_debug_set_cursor_pos
 /* 8002F068 0002AF88  38 60 00 02 */	li r3, 2
 /* 8002F06C 0002AF8C  38 8D 87 98 */	addi r4, r13, lbl_802F0978@sda21
-/* 8002F070 0002AF90  48 00 0C F9 */	bl func_8002FD68
+/* 8002F070 0002AF90  48 00 0C F9 */	bl u_set_window_text
 /* 8002F074 0002AF94  3B DE 00 01 */	addi r30, r30, 1
 lbl_8002F078:
 /* 8002F078 0002AF98  80 7F 00 08 */	lwz r3, 8(r31)
@@ -1492,7 +1492,7 @@ lbl_8002F090:
 /* 8002F0A8 0002AFC8  48 00 0B D9 */	bl u_debug_set_cursor_pos
 /* 8002F0AC 0002AFCC  38 60 00 02 */	li r3, 2
 /* 8002F0B0 0002AFD0  38 8D 87 9C */	addi r4, r13, lbl_802F097C@sda21
-/* 8002F0B4 0002AFD4  48 00 0C B5 */	bl func_8002FD68
+/* 8002F0B4 0002AFD4  48 00 0C B5 */	bl u_set_window_text
 /* 8002F0B8 0002AFD8  3B DE 00 01 */	addi r30, r30, 1
 lbl_8002F0BC:
 /* 8002F0BC 0002AFDC  80 7F 00 0C */	lwz r3, 0xc(r31)
@@ -1593,7 +1593,7 @@ lbl_8002F1D8:
 /* 8002F21C 0002B13C  C8 01 00 08 */	lfd f0, 8(r1)
 /* 8002F220 0002B140  EC 63 F8 28 */	fsubs f3, f3, f31
 /* 8002F224 0002B144  EC 80 F8 28 */	fsubs f4, f0, f31
-/* 8002F228 0002B148  48 00 12 B9 */	bl func_800304E0
+/* 8002F228 0002B148  48 00 12 B9 */	bl draw_some_window_quad_2
 lbl_8002F22C:
 /* 8002F22C 0002B14C  3B BD 00 01 */	addi r29, r29, 1
 /* 8002F230 0002B150  2C 1D 00 10 */	cmpwi r29, 0x10
@@ -1661,7 +1661,7 @@ lbl_8002F2FC:
 /* 8002F318 0002B238  7C 00 07 74 */	extsb r0, r0
 /* 8002F31C 0002B23C  7C 63 E2 14 */	add r3, r3, r28
 /* 8002F320 0002B240  7C 80 EA 14 */	add r4, r0, r29
-/* 8002F324 0002B244  48 00 0F ED */	bl func_80030310
+/* 8002F324 0002B244  48 00 0F ED */	bl draw_some_window_quad_1
 lbl_8002F328:
 /* 8002F328 0002B248  3B FF 00 01 */	addi r31, r31, 1
 /* 8002F32C 0002B24C  2C 1F 00 35 */	cmpwi r31, 0x35
@@ -2129,7 +2129,7 @@ lbl_8002F89C:
 /* 8002F9E8 0002B908  80 63 3D 60 */	lwz r3, 0x3d60(r3)
 /* 8002F9EC 0002B90C  28 03 00 00 */	cmplwi r3, 0
 /* 8002F9F0 0002B910  41 82 00 08 */	beq lbl_8002F9F8
-/* 8002F9F4 0002B914  4B FF E8 91 */	bl func_8002E284
+/* 8002F9F4 0002B914  4B FF E8 91 */	bl process_window
 lbl_8002F9F8:
 /* 8002F9F8 0002B918  88 0D 9C 70 */	lbz r0, lbl_802F1E50@sda21(r13)
 /* 8002F9FC 0002B91C  3C 60 80 1F */	lis r3, s_u_lightPool@ha
@@ -2273,7 +2273,7 @@ lbl_8002FBFC:
 /* 8002FC00 0002BB20  3B DE FF FC */	addi r30, r30, -4
 /* 8002FC04 0002BB24  40 80 FF C0 */	bge lbl_8002FBC4
 /* 8002FC08 0002BB28  38 60 00 00 */	li r3, 0
-/* 8002FC0C 0002BB2C  48 00 01 55 */	bl u_debug_set_text_color
+/* 8002FC0C 0002BB2C  48 00 01 55 */	bl window_set_text_color
 /* 8002FC10 0002BB30  80 0D 9C C8 */	lwz r0, lbl_802F1EA8@sda21(r13)
 /* 8002FC14 0002BB34  28 00 00 00 */	cmplwi r0, 0
 /* 8002FC18 0002BB38  41 82 00 40 */	beq lbl_8002FC58
@@ -2366,7 +2366,7 @@ lbl_8002FCF4:
 /* 8002FD38 0002BC58  48 0D 4F C1 */	bl vsprintf
 /* 8002FD3C 0002BC5C  38 7F 00 00 */	addi r3, r31, 0
 /* 8002FD40 0002BC60  38 81 00 70 */	addi r4, r1, 0x70
-/* 8002FD44 0002BC64  48 00 00 25 */	bl func_8002FD68
+/* 8002FD44 0002BC64  48 00 00 25 */	bl u_set_window_text
 /* 8002FD48 0002BC68  80 01 02 8C */	lwz r0, 0x28c(r1)
 /* 8002FD4C 0002BC6C  38 60 00 00 */	li r3, 0
 /* 8002FD50 0002BC70  83 E1 02 84 */	lwz r31, 0x284(r1)
@@ -2374,13 +2374,13 @@ lbl_8002FCF4:
 /* 8002FD58 0002BC78  7C 08 03 A6 */	mtlr r0
 /* 8002FD5C 0002BC7C  4E 80 00 20 */	blr
 
-.global u_debug_set_text_color
-u_debug_set_text_color:
+.global window_set_text_color
+window_set_text_color:
 /* 8002FD60 0002BC80  98 6D 9C 4C */	stb r3, lbl_802F1E2C@sda21(r13)
 /* 8002FD64 0002BC84  4E 80 00 20 */	blr
 
-.global func_8002FD68
-func_8002FD68:
+.global u_set_window_text
+u_set_window_text:
 /* 8002FD68 0002BC88  94 21 FF E0 */	stwu r1, -0x20(r1)
 /* 8002FD6C 0002BC8C  3C A0 80 20 */	lis r5, lbl_80201928@ha
 /* 8002FD70 0002BC90  2C 03 00 01 */	cmpwi r3, 1
@@ -2644,7 +2644,7 @@ lbl_80030100:
 /* 8003010C 0002C02C  38 21 00 20 */	addi r1, r1, 0x20
 /* 80030110 0002C030  4E 80 00 20 */	blr
 
-glabel func_80030114
+glabel window_printf_1
 /* 80030114 0002C034  7C 08 02 A6 */	mflr r0
 /* 80030118 0002C038  90 01 00 04 */	stw r0, 4(r1)
 /* 8003011C 0002C03C  94 21 FD 88 */	stwu r1, -0x278(r1)
@@ -2678,15 +2678,15 @@ lbl_80030144:
 /* 80030188 0002C0A8  48 0D 4B 71 */	bl vsprintf
 /* 8003018C 0002C0AC  38 60 00 01 */	li r3, 1
 /* 80030190 0002C0B0  38 81 00 6C */	addi r4, r1, 0x6c
-/* 80030194 0002C0B4  4B FF FB D5 */	bl func_8002FD68
+/* 80030194 0002C0B4  4B FF FB D5 */	bl u_set_window_text
 /* 80030198 0002C0B8  80 01 02 7C */	lwz r0, 0x27c(r1)
 /* 8003019C 0002C0BC  38 60 00 00 */	li r3, 0
 /* 800301A0 0002C0C0  38 21 02 78 */	addi r1, r1, 0x278
 /* 800301A4 0002C0C4  7C 08 03 A6 */	mtlr r0
 /* 800301A8 0002C0C8  4E 80 00 20 */	blr
 
-.global u_debug_printf
-u_debug_printf:
+.global window_printf_2
+window_printf_2:
 /* 800301AC 0002C0CC  7C 08 02 A6 */	mflr r0
 /* 800301B0 0002C0D0  90 01 00 04 */	stw r0, 4(r1)
 /* 800301B4 0002C0D4  94 21 FD 88 */	stwu r1, -0x278(r1)
@@ -2720,7 +2720,7 @@ lbl_800301DC:
 /* 80030220 0002C140  48 0D 4A D9 */	bl vsprintf
 /* 80030224 0002C144  38 60 00 00 */	li r3, 0
 /* 80030228 0002C148  38 81 00 6C */	addi r4, r1, 0x6c
-/* 8003022C 0002C14C  4B FF FB 3D */	bl func_8002FD68
+/* 8003022C 0002C14C  4B FF FB 3D */	bl u_set_window_text
 /* 80030230 0002C150  80 01 02 7C */	lwz r0, 0x27c(r1)
 /* 80030234 0002C154  38 60 00 00 */	li r3, 0
 /* 80030238 0002C158  38 21 02 78 */	addi r1, r1, 0x278
@@ -2734,14 +2734,14 @@ u_debug_print:
 /* 8003024C 0002C16C  90 01 00 04 */	stw r0, 4(r1)
 /* 80030250 0002C170  38 60 00 00 */	li r3, 0
 /* 80030254 0002C174  94 21 FF F8 */	stwu r1, -8(r1)
-/* 80030258 0002C178  4B FF FB 11 */	bl func_8002FD68
+/* 80030258 0002C178  4B FF FB 11 */	bl u_set_window_text
 /* 8003025C 0002C17C  80 01 00 0C */	lwz r0, 0xc(r1)
 /* 80030260 0002C180  38 21 00 08 */	addi r1, r1, 8
 /* 80030264 0002C184  7C 08 03 A6 */	mtlr r0
 /* 80030268 0002C188  4E 80 00 20 */	blr
 
-.global func_8003026C
-func_8003026C:
+.global u_printf_if_debug
+u_printf_if_debug:
 /* 8003026C 0002C18C  7C 08 02 A6 */	mflr r0
 /* 80030270 0002C190  90 01 00 04 */	stw r0, 4(r1)
 /* 80030274 0002C194  94 21 FD 80 */	stwu r1, -0x280(r1)
@@ -2787,8 +2787,8 @@ lbl_80030300:
 /* 80030308 0002C228  7C 08 03 A6 */	mtlr r0
 /* 8003030C 0002C22C  4E 80 00 20 */	blr
 
-.global func_80030310
-func_80030310:
+.global draw_some_window_quad_1
+draw_some_window_quad_1:
 /* 80030310 0002C230  7C 08 02 A6 */	mflr r0
 /* 80030314 0002C234  90 01 00 04 */	stw r0, 4(r1)
 /* 80030318 0002C238  7C A0 07 74 */	extsb r0, r5
@@ -2907,8 +2907,8 @@ lbl_800304C0:
 /* 800304D8 0002C3F8  38 21 00 68 */	addi r1, r1, 0x68
 /* 800304DC 0002C3FC  4E 80 00 20 */	blr
 
-.global func_800304E0
-func_800304E0:
+.global draw_some_window_quad_2
+draw_some_window_quad_2:
 /* 800304E0 0002C400  7C 08 02 A6 */	mflr r0
 /* 800304E4 0002C404  38 80 00 00 */	li r4, 0
 /* 800304E8 0002C408  90 01 00 04 */	stw r0, 4(r1)
@@ -3093,7 +3093,7 @@ lbl_801B3B18:
 	.4byte 0
 	.4byte 0x00000064
 	.4byte 0x00000001
-glabel lbl_801B3B28
+glabel posScaleRange
 	.4byte 0x00000003
 	.4byte 0xC1200000
 	.4byte 0x41200000
@@ -3111,7 +3111,7 @@ glabel lbl_801B3B38
 	.4byte 0xC1200000
 	.4byte 0x41200000
 	.4byte 0x3C23D70A
-glabel lbl_801B3B68
+glabel angleRange
 	.4byte 0x00000003
 	.4byte 0
 	.4byte 0
@@ -3616,7 +3616,7 @@ glabel lbl_801B3D98
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B43C8
+glabel dipSwitchWindow
 	.4byte 0x00000009
 	.4byte 0
 	.4byte 0x00000019
@@ -3705,7 +3705,7 @@ glabel lbl_801B4480
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B4528
+glabel modeWindow
 	.4byte 0x00000021
 	.4byte 0
 	.4byte 0x00000014
@@ -3855,134 +3855,134 @@ glabel lbl_801B4554
 	.4byte 0x00000003
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000004
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x18  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000005
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x30  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000006
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x48  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000007
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x60  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000008
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x78  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000009
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x90  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x0000000A
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0xA8  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x0000000B
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0xC0  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x0000000C
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0xD8  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x0000000D
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0xF0  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x0000000E
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x108  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x0000000F
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x120  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000010
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x138  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000011
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x150  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000012
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x168  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000013
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x180  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000014
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x198  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000015
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x1B0  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000016
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x1C8  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x00000019
 	.4byte 0x0000000D
 	.4byte 0x00000017
 	.4byte lbl_802F0858  ;# ptr
 	.4byte eventInfo+0x1E0  ;# ptr
-	.4byte lbl_801B7948  ;# ptr
+	.4byte u_stateNames  ;# ptr
 	.4byte 0x0000001F
 	.4byte 0
 	.4byte 0
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B4974
+glabel eventWindow
 	.4byte 0
 	.4byte 0x0000000B
 	.4byte 0x0000001B
@@ -4102,7 +4102,7 @@ glabel lbl_801B4A38
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B4B58
+glabel cameraWindow
 	.4byte 0x00000024
 	.4byte 0x00000016
 	.4byte 0x00000011
@@ -4127,7 +4127,7 @@ glabel lbl_801B4B84
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B4BB4
+glabel effectWindow
 	.4byte 0
 	.4byte 0
 	.4byte 0x0000000A
@@ -4260,7 +4260,7 @@ glabel lbl_801B4D94
 	.4byte 0xFFFFFFFF
 	.4byte string_____depth____4_1f  ;# ptr
 	.4byte spriteWork+0x4C  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
@@ -4320,19 +4320,19 @@ glabel lbl_801B4D94
 	.4byte 0xFFFFFFFF
 	.4byte string______zang____04hX  ;# ptr
 	.4byte spriteWork+0x68  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string______zm_x____4_1f  ;# ptr
 	.4byte spriteWork+0x40  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
 	.4byte string______zm_y____4_1f  ;# ptr
 	.4byte spriteWork+0x44  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0xFFFFFFFF
@@ -4357,7 +4357,7 @@ glabel lbl_801B4D94
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B4FBC
+glabel spriteWindow
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000018
@@ -4557,31 +4557,31 @@ glabel lbl_801B5170
 	.4byte 0xFFFFFFFE
 	.4byte string_px__f  ;# ptr
 	.4byte lbl_801F3A20  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_py__f  ;# ptr
 	.4byte lbl_801F3A24  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_pz__f  ;# ptr
 	.4byte lbl_801F3A28  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000004
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFE
 	.4byte string_xa__04X  ;# ptr
 	.4byte lbl_801F3A2C  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000004
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_ya__04X  ;# ptr
 	.4byte lbl_801F3A2E  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFE
@@ -4666,7 +4666,7 @@ glabel lbl_801B5170
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B5470
+glabel lightParamWindow
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000015
@@ -4838,7 +4838,7 @@ glabel lbl_801B5538
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B5730
+glabel lightGroupWindow
 	.4byte 0x00000024
 	.4byte 0
 	.4byte 0x00000011
@@ -4908,7 +4908,7 @@ glabel string_color_g___3d
 glabel string_color_b___3d
 	.asciz "color b :%3d"
 	.balign 4
-glabel lbl_801B5858
+glabel fogWindowItems
 	.4byte 0x0000000D
 	.4byte 0x00000001
 	.4byte 0x00000001
@@ -4975,12 +4975,12 @@ glabel lbl_801B5858
 	.4byte 0
 	.4byte 0
 	.4byte 0
-glabel lbl_801B5960
+glabel fogWindow
 	.4byte 0
 	.4byte 0
 	.4byte 0x0000001C
 	.4byte 0x00000010
-	.4byte lbl_801B5858  ;# ptr
+	.4byte fogWindowItems  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0
@@ -5217,19 +5217,19 @@ glabel lbl_801B5DE0
 	.4byte 0x00000003
 	.4byte string_CAM_ANG_X___0x_04X  ;# ptr
 	.4byte lbl_802F1EA2  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000003
 	.4byte 0x00000002
 	.4byte 0x00000004
 	.4byte string_____ANG_Y___0x_04X  ;# ptr
 	.4byte lbl_802F1EA0  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000005
 	.4byte string_BALL_POWER___4_2f  ;# ptr
 	.4byte lbl_802F1E9C  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0x00000007
@@ -5259,7 +5259,7 @@ glabel lbl_801B5DE0
 	.4byte 0x0000000B
 	.4byte string_BLT_SPD___________4_2f  ;# ptr
 	.4byte lbl_802F1E88  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x0000000C
@@ -5277,31 +5277,31 @@ glabel lbl_801B5DE0
 	.4byte 0x0000000E
 	.4byte string_BLT_COLI_RAD______4_2f  ;# ptr
 	.4byte lbl_802F1E7C  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x0000000F
 	.4byte string_________LV_COEF___4_2f  ;# ptr
 	.4byte lbl_802F1E78  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000010
 	.4byte string_BLT_RANGE_________4_2f  ;# ptr
 	.4byte lbl_802F1E74  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000011
 	.4byte string_________LV_COEF___4_2f  ;# ptr
 	.4byte lbl_802F1E70  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000012
 	.4byte string_BLT_BALL_BREAK____4_2f  ;# ptr
 	.4byte lbl_802F1E6C  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000004
 	.4byte 0x00000002
 	.4byte 0x00000014
@@ -5331,13 +5331,13 @@ glabel lbl_801B5DE0
 	.4byte 0x00000019
 	.4byte string_KILL_DECIDE_SEC___4_2f  ;# ptr
 	.4byte lbl_802F1E60  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x0000001B
 	.4byte string_MUTEKI_SEC________4_2f  ;# ptr
 	.4byte lbl_802F1E5C  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x0000001F
 	.4byte 0
 	.4byte 0
@@ -6264,55 +6264,55 @@ glabel lbl_801B6F28
 	.4byte 0x00000003
 	.4byte string_xang____04hX  ;# ptr
 	.4byte lbl_802F1ED4  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000003
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_yang____04hX  ;# ptr
 	.4byte lbl_802F1ED2  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000003
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_zang____04hX  ;# ptr
 	.4byte lbl_802F1ED0  ;# ptr
-	.4byte lbl_801B3B68  ;# ptr
+	.4byte angleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_xpos____4_1f  ;# ptr
 	.4byte lbl_802F1ECC  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_ypos____4_1f  ;# ptr
 	.4byte lbl_802F1EC8  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_zpos____4_1f  ;# ptr
 	.4byte lbl_802F1EC4  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_float___4_1f  ;# ptr
 	.4byte lbl_802F1EC0  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_float2__4_1f  ;# ptr
 	.4byte lbl_802F1EBC  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_float3__4_1f  ;# ptr
 	.4byte lbl_802F1EB8  ;# ptr
-	.4byte lbl_801B3B28  ;# ptr
+	.4byte posScaleRange  ;# ptr
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFE
@@ -6469,7 +6469,7 @@ glabel lbl_801B727C
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFE
 	.4byte string_Dip_Switch  ;# ptr
-	.4byte lbl_801B43C8  ;# ptr
+	.4byte dipSwitchWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
@@ -6481,49 +6481,49 @@ glabel lbl_801B727C
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_Mode  ;# ptr
-	.4byte lbl_801B4528  ;# ptr
+	.4byte modeWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_Event  ;# ptr
-	.4byte lbl_801B4974  ;# ptr
+	.4byte eventWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_Camera  ;# ptr
-	.4byte lbl_801B4B58  ;# ptr
+	.4byte cameraWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_Effect  ;# ptr
-	.4byte lbl_801B4BB4  ;# ptr
+	.4byte effectWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_Sprite  ;# ptr
-	.4byte lbl_801B4FBC  ;# ptr
+	.4byte spriteWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_Light_Param  ;# ptr
-	.4byte lbl_801B5470  ;# ptr
+	.4byte lightParamWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte string_Light_Group  ;# ptr
-	.4byte lbl_801B5730  ;# ptr
+	.4byte lightGroupWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
 	.4byte 0xFFFFFFFF
 	.4byte lbl_802F090C  ;# ptr
-	.4byte lbl_801B5960  ;# ptr
+	.4byte fogWindow  ;# ptr
 	.4byte 0
 	.4byte 0
 	.4byte 0x00000002
@@ -6767,9 +6767,11 @@ glabel string_st_03d
 glabel string_edit___
 	.asciz "edit : "
 glabel lbl_802F0908
-	.4byte 0x25326400
+	.asciz "%2d"
+	.balign 4
 glabel lbl_802F090C
-	.4byte 0x466F6700
+	.asciz "Fog"
+	.balign 4
 glabel string_sw___
 	.asciz "sw : "
 	.balign 4
@@ -6785,7 +6787,7 @@ glabel string_ID____
 	.asciz "ID  : "
 	.balign 4
 glabel lbl_802F0938
-	.4byte 0x52455100
+	.asciz "REQ"
 glabel string__13s
 	.asciz "%13s"
 	.balign 4

@@ -54,7 +54,7 @@ void mode_adv_func(void)
     if (!(gameSubmode > SMD_ADV_TOP && gameSubmode < SMD_ADV_BOTTOM))
     {
         u_debug_set_cursor_pos(10, 10);
-        u_debug_printf("sub_mode: error %d in Adv", gameSubmode);
+        window_printf_2("sub_mode: error %d in Adv", gameSubmode);
         return;
     }
 
