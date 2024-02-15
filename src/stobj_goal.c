@@ -122,7 +122,7 @@ void u_spawn_goal_stobjs(struct StageAnimGroup *arg0, int arg1)
         {
             if (totalGoals >= MAX_GOALS)
             {
-                u_debug_set_cursor_pos(16, 16);
+                window_set_cursor_pos(16, 16);
                 window_printf_2("Warning!!! Goal Tape Max(%d) Over!!!\n", MAX_GOALS);
                 break;
             }

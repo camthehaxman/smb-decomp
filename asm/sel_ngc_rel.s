@@ -216,7 +216,7 @@ lbl_0000033C:
 /* 00000364 3BE30000 */ addi r31, r3, lbl_10000000@l
 /* 00000368 7000000A */ andi. r0, r0, 0xa
 /* 0000036C 40820248 */ bne lbl_000005B4
-/* 00000370 4BFFFE19 */ bl func_8002FFEC
+/* 00000370 4BFFFE19 */ bl u_clear_buffers_2_and_5
 /* 00000374 38600001 */ li r3, 1
 /* 00000378 4BFFFE11 */ bl event_start
 /* 0000037C 38600004 */ li r3, 4

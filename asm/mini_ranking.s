@@ -53,7 +53,7 @@ submode_mini_ranking_main_func:
 /* 800A75DC 000A34FC  38 80 00 01 */	li r4, 1
 /* 800A75E0 000A3500  93 A1 00 6C */	stw r29, 0x6c(r1)
 /* 800A75E4 000A3504  93 81 00 68 */	stw r28, 0x68(r1)
-/* 800A75E8 000A3508  4B F8 86 99 */	bl u_debug_set_cursor_pos
+/* 800A75E8 000A3508  4B F8 86 99 */	bl window_set_cursor_pos
 /* 800A75EC 000A350C  38 7E 00 30 */	addi r3, r30, 0x30
 /* 800A75F0 000A3510  4C C6 31 82 */	crclr 6
 /* 800A75F4 000A3514  4B F8 8B B9 */	bl window_printf_2

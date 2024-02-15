@@ -800,7 +800,7 @@ void func_80049FF0(void)
     if (debugFlags & 0xA)
         return;
 
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     gameSubmodeRequest = SMD_TEST_REPLAY_MAIN;
     event_finish_all();
     func_80044920();
@@ -849,7 +849,7 @@ void func_8004A0C8(void)
     if (debugFlags & 0xA)
         return;
 
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     if ((controllerInfo[0].unk0[2].button & PAD_BUTTON_LEFT)
      || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_LEFT) && (controllerInfo[0].unk0[0].button & PAD_TRIGGER_R)))
     {
@@ -874,7 +874,7 @@ void func_8004A0C8(void)
     else
         header = s_builtinReplays[temp_r0_2].header;
 
-    u_debug_set_cursor_pos(8, 8);
+    window_set_cursor_pos(8, 8);
     window_printf_2(" REPLAY TEST\n\n");
     if (lbl_802F1F78.replayId != 11)
         window_printf_2("     ID: %03d\n", lbl_802F1F78.replayId);
@@ -977,7 +977,7 @@ void func_8004A0C8(void)
         }
         break;
     case 1:
-        u_debug_set_cursor_pos(32, 30);
+        window_set_cursor_pos(32, 30);
         switch (modeCtrl.submodeTimer)
         {
         case 0:

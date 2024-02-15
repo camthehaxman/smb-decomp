@@ -4692,7 +4692,7 @@ static void bomb_sprite_main(s8 *status, struct Sprite *sprite)
         xscale = sprite->scaleX;
         yscale = sprite->scaleY;
         *status = 0;
-        u_debug_set_cursor_pos(5, 5);
+        window_set_cursor_pos(5, 5);
         for (i = 0; i < 10; i++)
         {
             fragSprite = create_sprite();

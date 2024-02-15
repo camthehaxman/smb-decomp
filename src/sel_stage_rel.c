@@ -70,7 +70,7 @@ static void sel_stage_init(void)
     g_poolInfo.playerPool.statusList[3] = 0;
     modeCtrl.currPlayer = 0;
 
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     event_finish_all();
     free_all_bitmap_groups_except_com();
     background_set_random_seed(loadingStageIdRequest);

@@ -58,12 +58,12 @@ static inline void show_loading_msg(void)
     int chr;
     int asterisks;
 
-    u_debug_set_cursor_pos(14, 15);
+    window_set_cursor_pos(14, 15);
     chr = throbber[(globalAnimTimer/2) % 4];
     window_printf_2("%c", chr);
     u_debug_print("NOW LOADING");
     window_printf_2("%c", chr);
-    u_debug_set_cursor_pos(15, 16);
+    window_set_cursor_pos(15, 16);
     u_debug_print("LEFT: ");
     asterisks = get_load_queue_count();
     while (asterisks > 0)

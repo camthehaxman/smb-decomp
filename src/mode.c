@@ -615,7 +615,7 @@ int title_screen_debug_menu(void)
             modeCtrl.unk1C = 0;
     }
 
-    u_debug_set_cursor_pos(15, 15);
+    window_set_cursor_pos(15, 15);
     for (i = 0; i < 5; i++)
     {
         if (i == modeCtrl.menuSel)
@@ -624,20 +624,20 @@ int title_screen_debug_menu(void)
         if (i == modeCtrl.menuSel)
             window_set_text_color(0);
     }
-    u_debug_set_cursor_pos(13, 15 + modeCtrl.menuSel);
+    window_set_cursor_pos(13, 15 + modeCtrl.menuSel);
     u_debug_print("*");
-    u_debug_set_cursor_pos(11, 13);
+    window_set_cursor_pos(11, 13);
     u_debug_print("\x18");
     for (i = 0; i < 16; i++)
         u_debug_print("\x16");
     u_debug_print("\x19");
-    u_debug_set_cursor_pos(11, 14);
+    window_set_cursor_pos(11, 14);
     for (i = 0; i < 7; i++)
         u_debug_print("\x17\n");
-    u_debug_set_cursor_pos(28, 14);
+    window_set_cursor_pos(28, 14);
     for (i = 0; i < 7; i++)
         u_debug_print("\x17\n");
-    u_debug_set_cursor_pos(11, 21);
+    window_set_cursor_pos(11, 21);
     u_debug_print("\x1A");
     for (i = 0; i < 16; i++)
         u_debug_print("\x16");

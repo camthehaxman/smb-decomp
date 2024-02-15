@@ -83,7 +83,7 @@ void debug_main(void)
 
     if (debugFlags & 1)
     {
-        u_debug_set_cursor_pos(43, 0);
+        window_set_cursor_pos(43, 0);
         u_debug_print("DEBUG MODE");
     }
 

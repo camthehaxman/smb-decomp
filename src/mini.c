@@ -1404,7 +1404,7 @@ void mode_mini_func(void)
 {
     if (!(gameSubmode > SMD_MINI_TOP && gameSubmode < SMD_MINI_BOTTOM))
     {
-        u_debug_set_cursor_pos(10, 10);
+        window_set_cursor_pos(10, 10);
         window_printf_2("sub_mode: error %d in Mini", gameSubmode);
         return;
     }
@@ -1553,14 +1553,14 @@ void submode_mini_select_main_func(void)
         gameSubmodeRequest = s_minigameTestMenu[index].submode;
         modeCtrl.gameType = s_minigameTestMenu[index].gameType;
     }
-    u_debug_set_cursor_pos(1, 1);
+    window_set_cursor_pos(1, 1);
     window_printf_2("MINI GAME");
-    u_debug_set_cursor_pos(10, 3);
+    window_set_cursor_pos(10, 3);
     for (i = 0; i < (u32)ARRAY_COUNT(s_minigameTestMenu); i++)
     {
         if (i == lbl_802F2170)
         {
-            func_8002FC90(-2, 0);
+            window_move_cursor(-2, 0);
             u_debug_print("\x1c ");
         }
         window_printf_2("%s\n", s_minigameTestMenu[i].name);
@@ -1643,9 +1643,9 @@ void submode_mini_ending_main_func(void)
 
 void u_draw_ending_viewer_text(void)
 {
-    u_debug_set_cursor_pos(4, 4);
+    window_set_cursor_pos(4, 4);
     window_printf_2("ENDING VIEWER\n");
-    u_debug_set_cursor_pos(6, 6);
+    window_set_cursor_pos(6, 6);
     window_printf_2("COURSE[%d]\n", modeCtrl.difficulty);
     window_printf_2("PLAYER[%d]\n", modeCtrl.currPlayer);
     u_ending_draw();

@@ -47,7 +47,7 @@ void mode_game_func(void)
 {
     if (!(gameSubmode > SMD_GAME_TOP && gameSubmode < SMD_GAME_BOTTOM))
     {
-        u_debug_set_cursor_pos(10, 10);
+        window_set_cursor_pos(10, 10);
         window_printf_2("sub_mode: error %d in Game", gameSubmode);
         return;
     }
@@ -174,7 +174,7 @@ void submode_game_ready_init_func(void)
         return;
 
     modeCtrl.submodeTimer = 120;
-    func_8002FFEC();
+    u_clear_buffers_2_and_5();
     event_finish_all();
     switch (modeCtrl.gameType)
     {

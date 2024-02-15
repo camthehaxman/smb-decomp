@@ -14,9 +14,15 @@
 #include "input.h"
 #include "light.h"
 #include "mode.h"
+#include "perf.h"
 #include "pool.h"
 #include "sound.h"
 #include "sprite.h"
+#include "stobj.h"
+
+// each character is 12x12 pixels
+#define SCREEN_ROWS (448/12)
+#define SCREEN_COLUMNS (640/12)
 
 extern struct Light lbl_801F3A08;
 
@@ -27,26 +33,52 @@ extern s8 lbl_802F1E51;
 
 extern s8 lbl_802F1C6C[8];
 
-extern struct WindowDesc lbl_801B7474;
+extern struct WindowDesc mainMenuWindow;
 
-extern u32 lbl_802F1E30;
-extern u32 lbl_802F1E34;
-extern u32 lbl_802F1E38;
-extern u32 lbl_802F1E3C;
+extern u32 unusedWindowX;
+extern u32 unusedWindowY;
+extern u32 unusedWindowWidth;
+extern u32 unusedWindowHeight;
 
 extern s32 lbl_802F1E54;
 extern s32 lbl_802F1E58;
+extern float lbl_802F1EC0;
+extern float lbl_802F1EBC;
+extern float lbl_802F1EB8;
+extern u32 lbl_802F1EAC;
+extern char *lbl_802F1EA4;
+extern u16 lbl_802F1EA2;
+extern u16 lbl_802F1EA0;
+extern u32 lbl_802F1E9C;
+extern u32 lbl_802F1E98;
+extern u32 lbl_802F1E94;
+extern u32 lbl_802F1E90;
+extern u32 lbl_802F1E8C;
+extern u32 lbl_802F1E88;
+extern u32 lbl_802F1E84;
+extern u32 lbl_802F1E80;
+extern u32 lbl_802F1E7C;
+extern float lbl_802F1E78;
+extern float lbl_802F1E74;
+extern float lbl_802F1E70;
+extern float lbl_802F1E6C;
+extern u16 lbl_802F1E6A;
+extern u16 lbl_802F1E68;
+extern u16 lbl_802F1E66;
+extern u16 lbl_802F1E64;
+extern float lbl_802F1E60;
+extern float lbl_802F1E5C;
 
 extern struct Color3f lbl_801F39FC;
 
-u8 lbl_80201928[0x7AC];  FORCE_BSS_ORDER(lbl_80201928)  // 0, size = 0x7A9
-u8 lbl_802020D4[0x7AC];  FORCE_BSS_ORDER(lbl_802020D4)  // 0x7AC, size = 0x7A9
-u8 lbl_80202880[0x7AC];  FORCE_BSS_ORDER(lbl_80202880)  // 0xF58, size = 0x7A9
-u8 lbl_80201928_1704[0x7AC]; FORCE_BSS_ORDER(lbl_80201928_1704)  // 0x1704, size = 0x7A9
-u8 lbl_802037D8[0x7AC];  FORCE_BSS_ORDER(lbl_802037D8)  // 0x1EB0, size = 0x7A9
-u8 lbl_80203F84[0x7AC];  FORCE_BSS_ORDER(lbl_80203F84)  // 0x265C, size = 0x7A9
-u8 lbl_80203F84_2[0x7AC];  FORCE_BSS_ORDER(lbl_80203F84_2)  // 0x2E08
-u8 lbl_80203F84_3[0x7AC];  FORCE_BSS_ORDER(lbl_80203F84_3)  // 0x35B4
+static u8 screenBuffer1[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer2[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer3[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer4[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer5[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer6[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer7[SCREEN_ROWS * SCREEN_COLUMNS];
+static u8 screenBuffer8[SCREEN_ROWS * SCREEN_COLUMNS];
 
 struct RangeFloat
 {
@@ -75,8 +107,8 @@ enum WindowItemType
 struct WindowItem
 {
     u32 type;  // enum WindowItemType
-    s32 unk4;
-    s32 unk8;
+    s32 x;
+    s32 y;
     char *format;
     void *pValue;
     void *param;  // usage of this depends on "type"
@@ -84,15 +116,15 @@ struct WindowItem
 
 struct WindowDesc
 {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-    s32 unkC;
+    s32 x;
+    s32 y;
+    s32 width;
+    s32 height;
     struct WindowItem *items;
     u32 structSize;
-    u32 unk18;
-    s32 unk1C;
-    s32 unk20;
+    u32 structIndex;
+    s32 selection;
+    s32 isActive;
     s32 unk24;
     s32 unk28;
 };
@@ -103,6 +135,9 @@ static char *lbl_802F0828[] = { "OFF", "ON" };
 
 struct RangeInt   lbl_801B3B18 = { 3, 0, 100, 1 };
 struct RangeFloat posScaleRange = { 3, -10.0f, 10.0f, 0.1f };
+struct RangeFloat lbl_801B3B38 = { 3, -10.0f, 10.0f, 0.001f };
+struct RangeFloat lbl_801B3B38_2 = { 3, -10.0f, 10.0f, 0.00001f };
+struct RangeFloat lbl_801B3B38_3 = { 3, -10.0f, 10.0f, 0.01f };
 struct RangeInt   angleRange = { 3, 0, 0, 128 };
 struct RangeInt   lbl_801B3B78 = { 0, 0, 1, 1 };
 
@@ -443,17 +478,284 @@ struct RangeInt lbl_801B59AC = { 0, 0, 1061, 1 };
 struct RangeInt lbl_801B59BC = { 0, -128, 127, 1 };
 struct RangeInt lbl_801B59CC = { 3, 0, 100, 1 };
 
-struct WindowDesc *lbl_80205688[16];  // 0x3D60
-FORCE_BSS_ORDER(lbl_80205688)
+struct WindowItem lbl_801B5A50[] =
+{
+    {13,  1,  1, "Sound",                0, 0},
+    {14,  2, -2, " RAM:%08X",            &g_soundTotalBytesLoaded, 0},
+    {14,  2, -1, "ARAM:%08X",            &g_soundAramTop, 0},
+    { 5,  2, -2, "SE  vol : %3d",        &lbl_802F1DF5, &lbl_801B598C},
+    { 5,  2, -1, "BGM vol : %3d",        &u_volumeRelated1, &lbl_801B598C},
+    {13,  2, -2, "VOL OFS",              0, 0},
+    { 2,  4, -1, "GRP : ",               &lbl_802F1DE4, &lbl_801B599C},
+    {22, 10,  0, "%s",                   &lbl_802F1DDC, 0},
+    { 2,  4, -1, "ID  : ",               &lbl_802F1DE8, &lbl_801B59AC},
+    {22, 10,  0, "%s",                   &lbl_802F1DE0, 0},
+    { 6,  4, -1, "ofs : %d",             &lbl_802F1E51, &lbl_801B59BC},
+    { 2,  4, -1, "REQ",                  &lbl_802F1E54, &lbl_801B3B78},
+    { 2,  4, -1, "OFF",                  &lbl_802F1E58, &lbl_801B3B78},
+    { 2,  2, -2, "stream loop ofs : %d", &lbl_802F1DD0, &lbl_801B59CC},
+    { 2,  2, -1, "stream vol ofs  : %d", &lbl_802F1DCC, &lbl_801B59CC},
+    {31,  0,  0, 0, 0, 0},
+};
 
-struct WindowDesc bss_3DA0[16];
-FORCE_BSS_ORDER(bss_3DA0)
+struct WindowDesc soundWindow = { 0, 0, 35, 20, lbl_801B5A50, 0, 0, 0, 0, 0, 0 };
 
-extern int lbl_802F1E08;  // s32 vs int actually matters here
+struct WindowItem lbl_801B5DE0[] =
+{
+    {13,  1,  1, "Monkey Fight", 0, 0},
+    { 3,  2,  3, "CAM ANG X : 0x%04X", &lbl_802F1EA2, &angleRange},
+    { 3,  2,  4, "    ANG Y : 0x%04X", &lbl_802F1EA0, &angleRange},
+    { 7,  2,  5, "BALL POWER: %4.2f", &lbl_802F1E9C, &posScaleRange},
+    { 2,  2,  7, "BLT INTERVAL   : %4d", &lbl_802F1E98, &lbl_801B3B18},
+    { 2,  2,  8, "BLT TRIGER MODE: %4d", &lbl_802F1E94, &lbl_801B3B18},
+    { 2,  2,  9, "BLT SWING MODE : %4d", &lbl_802F1E90, &lbl_801B3B18},
+    { 2,  2, 10, "BLT TIME       : %4d", &lbl_802F1E8C, &lbl_801B3B18},
+    { 7,  2, 11, "BLT SPD        : %4.2f", &lbl_802F1E88, &posScaleRange},
+    { 7,  2, 12, "BLT POWER      : %4.3f", &lbl_802F1E84, &lbl_801B3B38},
+    { 7,  2, 13, "BLT REACT POWER: %4.3f", &lbl_802F1E80, &lbl_801B3B38},
+    { 7,  2, 14, "BLT COLI RAD   : %4.2f", &lbl_802F1E7C, &posScaleRange},
+    { 7,  2, 15, "        LV COEF: %4.2f", &lbl_802F1E78, &posScaleRange},
+    { 7,  2, 16, "BLT RANGE      : %4.2f", &lbl_802F1E74, &posScaleRange},
+    { 7,  2, 17, "        LV COEF: %4.2f", &lbl_802F1E70, &posScaleRange},
+    { 7,  2, 18, "BLT BALL BREAK : %4.2f", &lbl_802F1E6C, &posScaleRange},
+    { 4,  2, 20, "KILL TOP POINT : %4d", &lbl_802F1E6A, &lbl_801B3B18},
+    { 4,  2, 21, "KILL POINT     : %4d", &lbl_802F1E68, &lbl_801B3B18},
+    { 4,  2, 22, "FALL POINT     : %4d", &lbl_802F1E66, &lbl_801B3B18},
+    { 4,  2, 23, "PUNCH HIT POINT: %4d", &lbl_802F1E64, &lbl_801B3B18},
+    { 7,  2, 25, "KILL DECIDE SEC: %4.2f", &lbl_802F1E60, &posScaleRange},
+    { 7,  2, 27, "MUTEKI SEC     : %4.2f", &lbl_802F1E5C, &posScaleRange},
+    {31,  0,  0, 0, 0, 0},
+};
+
+struct WindowDesc fightWindow = { 24, 0, 32, 36, lbl_801B5DE0, 0, 0, 0, 0, 0, 0 };
+
+struct RangeInt unusedRange1 = { 0, 0, 255, 1 };
+
+struct WindowItem raceCpuWindow[] =
+{
+    {13,  1,  1, "MINI RACE CPU", 0, 0},
+    {31,  0,  0, 0, 0, 0},
+};
+
+struct WindowDesc lbl_801B6054_desc = { 28, 25, 24, 11, raceCpuWindow, 0x14, 0, 0, 0, 0, 0 };
+
+struct RangeInt   unusedRange2 = { 3, 0, 100, 128 };
+struct RangeFloat unusedRange3 = { 3, -10.0f, 10.0f, 0.02f };
+
+struct WindowItem raceWindow[] =
+{
+    {13,  1,  1, "Monkey Race", 0, 0},
+    {31,  0,  0, 0, 0, 0},
+};
+
+struct WindowDesc lbl_801B610C = { 23, 19, 30, 17, raceWindow, 0, 0, 0, 0, 0, 0 };
+
+
+struct WindowItem lbl_801B61E4[] =
+{
+    {13,  1,  1, "Performance", NULL, NULL},
+    {13,  3,  3, "MAIN LOOP", NULL, NULL},
+    {21,  3,  5, "%13s", "PRE_PROCESS", NULL},
+    {21,  3,  6, "%13s", "SOUND_SYSTEM", NULL},
+    {21,  3,  7, "%13s", "INPUT", NULL},
+    {21,  3,  8, "%13s", "DEBUG_CONTROL", NULL},
+    {21,  3,  9, "%13s", "LOAD_MAIN", NULL},
+    {21,  3, 10, "%13s", "MODE", NULL},
+    {21,  3, 11, "%13s", "CHECK_STATUS", NULL},
+    {21,  3, 12, "%13s", "EVENT", NULL},
+    {21,  3, 13, "%13s", "POLY_DISP", NULL},
+    {21,  3, 14, "%13s", "BITMAP_DISP", NULL},
+    {21,  3, 15, "%13s", "WINDOW_MAIN", NULL},
+    {21,  3, 16, "%13s", "EPI_PROCESS", NULL},
+    {21,  3, 17, "%13s", "SYNC_WAIT", NULL},
+    {21,  3, 18, "%13s", "SHADOW_ERASE", NULL},
+    {15, 17,  5, "%5d", &perfInfo.unk0, NULL},
+    {15, 17,  6, "%5d", &perfInfo.soundTime, NULL},
+    {15, 17,  7, "%5d", &perfInfo.inputTime, NULL},
+    {15, 17,  8, "%5d", &perfInfo.debugTime, NULL},
+    {15, 17,  9, "%5d", &perfInfo.loadTime, NULL},
+    {15, 17, 10, "%5d", &perfInfo.unk14, NULL},
+    {15, 17, 11, "%5d", &perfInfo.unk18, NULL},
+    {15, 17, 12, "%5d", &perfInfo.eventTime, NULL},
+    {15, 17, 13, "%5d", &perfInfo.polydispTime, NULL},
+    {15, 17, 14, "%5d", &perfInfo.bitmapTime, NULL},
+    {15, 17, 15, "%5d", &perfInfo.windowTime, NULL},
+    {15, 17, 16, "%5d", &perfInfo.gpwaitTime, NULL},
+    {15, 17, 17, "%5d", &perfInfo.unk30, NULL},
+    {15, 17, 18, "%5d", &perfInfo.unk34, NULL},
+    {13, 24,  3, "EVENT", NULL, NULL},
+    {22, 24,  5, "%10s", &eventInfo[0].name, NULL},
+    {22, 24,  6, "%10s", &eventInfo[1].name, NULL},
+    {22, 24,  7, "%10s", &eventInfo[2].name, NULL},
+    {22, 24,  8, "%10s", &eventInfo[3].name, NULL},
+    {22, 24,  9, "%10s", &eventInfo[4].name, NULL},
+    {22, 24, 10, "%10s", &eventInfo[5].name, NULL},
+    {22, 24, 11, "%10s", &eventInfo[6].name, NULL},
+    {22, 24, 12, "%10s", &eventInfo[7].name, NULL},
+    {22, 24, 13, "%10s", &eventInfo[8].name, NULL},
+    {22, 24, 14, "%10s", &eventInfo[9].name, NULL},
+    {22, 24, 15, "%10s", &eventInfo[10].name, NULL},
+    {22, 24, 16, "%10s", &eventInfo[11].name, NULL},
+    {22, 24, 17, "%10s", &eventInfo[12].name, NULL},
+    {22, 24, 18, "%10s", &eventInfo[13].name, NULL},
+    {22, 24, 19, "%10s", &eventInfo[14].name, NULL},
+    {22, 24, 20, "%10s", &eventInfo[15].name, NULL},
+    {22, 24, 21, "%10s", &eventInfo[16].name, NULL},
+    {22, 24, 22, "%10s", &eventInfo[17].name, NULL},
+    {22, 24, 23, "%10s", &eventInfo[18].name, NULL},
+    {22, 24, 24, "%10s", &eventInfo[19].name, NULL},
+    {22, 24, 25, "%10s", &eventInfo[20].name, NULL},
+    {15, 35,  5, "%5d", &eventInfo[0].time, NULL},
+    {15, 35,  6, "%5d", &eventInfo[1].time, NULL},
+    {15, 35,  7, "%5d", &eventInfo[2].time, NULL},
+    {15, 35,  8, "%5d", &eventInfo[3].time, NULL},
+    {15, 35,  9, "%5d", &eventInfo[4].time, NULL},
+    {15, 35, 10, "%5d", &eventInfo[5].time, NULL},
+    {15, 35, 11, "%5d", &eventInfo[6].time, NULL},
+    {15, 35, 12, "%5d", &eventInfo[7].time, NULL},
+    {15, 35, 13, "%5d", &eventInfo[8].time, NULL},
+    {15, 35, 14, "%5d", &eventInfo[9].time, NULL},
+    {15, 35, 15, "%5d", &eventInfo[10].time, NULL},
+    {15, 35, 16, "%5d", &eventInfo[11].time, NULL},
+    {15, 35, 17, "%5d", &eventInfo[12].time, NULL},
+    {15, 35, 18, "%5d", &eventInfo[13].time, NULL},
+    {15, 35, 19, "%5d", &eventInfo[14].time, NULL},
+    {15, 35, 20, "%5d", &eventInfo[15].time, NULL},
+    {15, 35, 21, "%5d", &eventInfo[16].time, NULL},
+    {15, 35, 22, "%5d", &eventInfo[17].time, NULL},
+    {15, 35, 23, "%5d", &eventInfo[18].time, NULL},
+    {15, 35, 24, "%5d", &eventInfo[19].time, NULL},
+    {15, 35, 25, "%5d", &eventInfo[20].time, NULL},
+    {31,  0,  0, NULL, NULL, NULL},
+};
+
+struct WindowDesc perfWindow = { 5, 7, 43, 29, lbl_801B61E4, 0, 0, 0, 0, 0, 0 };
+
+struct RangeInt lbl_801B6900 = { 0, 0, 3, 1 };
+
+struct WindowItem lbl_801B6AD4[] =
+{
+    {13,  1,  1, "Input Test", NULL, NULL},
+    {10,  2,  3, "PAD           [%d]", NULL, &lbl_801B6900},
+    {24,  2, -2, "BUTTON LEFT   %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_LEFT},
+    {24,  2, -1, "BUTTON RIGHT  %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_RIGHT},
+    {24,  2, -1, "BUTTON DOWN   %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_DOWN},
+    {24,  2, -1, "BUTTON UP     %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_UP},
+    {24,  2, -1, "TRIGGER Z     %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_TRIGGER_Z},
+    {24,  2, -1, "TRIGGER R     %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_TRIGGER_R},
+    {24,  2, -1, "TRIGGER L     %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_TRIGGER_L},
+    {24,  2, -1, "BUTTON A      %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_A},
+    {24,  2, -1, "BUTTON B      %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_B},
+    {24,  2, -1, "BUTTON X      %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_X},
+    {24,  2, -1, "BUTTON Y      %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_Y},
+    {24,  2, -1, "BUTTON MENU   %3s", &controllerInfo[0].unk0[0].button, (void *)PAD_BUTTON_MENU},
+    {19,  2, -2, "stickX       %4d", &controllerInfo[0].unk0[0].stickX, NULL},
+    {19,  2, -1, "stickY       %4d", &controllerInfo[0].unk0[0].stickY, NULL},
+    {19,  2, -1, "substickX    %4d", &controllerInfo[0].unk0[0].substickX, NULL},
+    {19,  2, -1, "substickY    %4d", &controllerInfo[0].unk0[0].substickY, NULL},
+    {18,  2, -1, "triggerLeft  %4d", &controllerInfo[0].unk0[0].triggerLeft, NULL},
+    {18,  2, -1, "triggerRight %4d", &controllerInfo[0].unk0[0].triggerRight, NULL},
+    {18,  2, -1, "analogA      %4d", &controllerInfo[0].unk0[0].analogA, NULL},
+    {18,  2, -1, "analogB      %4d", &controllerInfo[0].unk0[0].analogB, NULL},
+    {18,  2, -1, "err          %4d", &controllerInfo[0].unk0[0].err, NULL},
+    {31,  0,  0, NULL, NULL, NULL},
+};
+
+struct WindowDesc inputWindow = { 0, 0, 21, 30, lbl_801B6AD4, sizeof(struct ControllerInfo), 0, 0, 0, 0, 0 };
+
+struct WindowItem lbl_801B6D8C[] =
+{
+    {13,  1,  1, "Window Info", NULL, NULL},
+    {15,  3,  3, "locateX : %3d", &unusedWindowX, NULL},
+    {15,  3,  4, "locateY : %3d", &unusedWindowY, NULL},
+    {15,  3,  5, "  sizeX : %3d", &unusedWindowWidth, NULL},
+    {15,  3,  6, "  sizeY : %3d", &unusedWindowHeight, NULL},
+    {31,  0,  0, NULL, NULL, NULL},
+};
+
+struct WindowDesc windowWindow = { 34, 28, 19, 9, lbl_801B6D8C, 0, 0, 0, 0, 0, 0 };
+
+struct WindowItem lbl_801B6F28[] =
+{
+    {13,  1,  1, "Change Param", NULL, NULL},
+    { 3,  2,  3, "xang   %04hX", &lbl_802F1ED4, &angleRange},
+    { 3,  2, -1, "yang   %04hX", &lbl_802F1ED2, &angleRange},
+    { 3,  2, -1, "zang   %04hX", &lbl_802F1ED0, &angleRange},
+    { 7,  2, -1, "xpos   %4.1f", &lbl_802F1ECC, &posScaleRange},
+    { 7,  2, -1, "ypos   %4.1f", &lbl_802F1EC8, &posScaleRange},
+    { 7,  2, -1, "zpos   %4.1f", &lbl_802F1EC4, &posScaleRange},
+    { 7,  2, -1, "float  %4.1f", &lbl_802F1EC0, &posScaleRange},
+    { 7,  2, -1, "float2 %4.1f", &lbl_802F1EBC, &posScaleRange},
+    { 7,  2, -1, "float3 %4.1f", &lbl_802F1EB8, &posScaleRange},
+    { 2,  2, -2, "xint   %4d",   &lbl_802F1EB4, &lbl_801B3B18},
+    { 2,  2, -1, "yint   %4d",   &lbl_802F1EB0, &lbl_801B3B18},
+    { 2,  2, -1, "zint   %4d",   &lbl_802F1EAC, &lbl_801B3B18},
+    { 5,  2, -2, "char   %4o",   &lbl_802F1EA4, &lbl_801B3B18},
+    {19,  2, -1, "          %c", &lbl_802F1EA4, NULL},
+    {31,  0,  0, NULL, NULL, NULL},
+};
+
+struct WindowDesc lbl_801B70A8 = { 0, 18, 15, 19, lbl_801B6F28, 0, 0, 0, 0, 0, 0 };
+
+struct WindowItem lbl_801B7134[] =
+{
+    {13,  1,  1, "Bumper Param", NULL, NULL},
+    { 7,  2,  2, "LOD LEVEL[0]: %4.5f", &lbl_8028C0B0.unk0[0], &lbl_801B3B38},
+    { 7,  2,  3, "LOD LEVEL[1]: %4.5f", &lbl_8028C0B0.unk0[1], &lbl_801B3B38},
+    { 7,  2,  4, "LOD LEVEL[2]: %4.5f", &lbl_8028C0B0.unk0[2], &lbl_801B3B38},
+    { 7,  2,  5, "LOD LEVEL[3]: %4.5f", &lbl_8028C0B0.unk0[3], &lbl_801B3B38},
+    {31,  0,  0, NULL, NULL, NULL},
+};
+
+struct WindowDesc lbl_801B71C4 = { 4, 4, 32, 8, lbl_801B7134, 0, 0, 0, 0, 0, 0 };
+
+struct WindowItem lbl_801B71FC[] =
+{
+    {13,  1,  1, "Heap Free", NULL, NULL},
+    {29,  2,  3, NULL, NULL, NULL},
+    {31,  0,  0, NULL, NULL, NULL},
+};
+
+struct WindowDesc lbl_801B7244 = { 0, 0, 38, 11, lbl_801B71FC, 0, 0, 0, 0, 0, 0 };
+
+struct WindowItem lbl_801B727C[] =
+{
+    {13,  1,  1, "Main Menu", NULL, NULL},
+    { 0,  2, -2, "Dip Switch", &dipSwitchWindow, NULL},
+    { 0,  2, -1, "Game", &lbl_801B4424, NULL},
+    { 0,  2, -1, "Mode", &modeWindow, NULL},
+    { 0,  2, -1, "Event", &eventWindow, NULL},
+    { 0,  2, -1, "Camera", &cameraWindow, NULL},
+    { 0,  2, -1, "Effect", &effectWindow, NULL},
+    { 0,  2, -1, "Sprite", &spriteWindow, NULL},
+    { 0,  2, -1, "Light Param", &lightParamWindow, NULL},
+    { 0,  2, -1, "Light Group", &lightGroupWindow, NULL},
+    { 0,  2, -1, "Fog", &fogWindow, NULL},
+    { 0,  2, -1, "Sound", &soundWindow, NULL},
+    { 0,  2, -1, "Bumper Param", &lbl_801B71C4, NULL},
+    { 0,  2, -2, "Monkey Fight", &fightWindow, NULL},
+    { 0,  2, -1, "Monkey Race", &lbl_801B610C, NULL},
+    { 0,  2, -2, "Performance", &perfWindow, NULL},
+    { 0,  2, -1, "Heap Free", &lbl_801B7244, NULL},
+    { 0,  2, -1, "Input Test", &inputWindow, NULL},
+    { 0,  2, -2, "Change Param", &lbl_801B70A8, NULL},
+    { 0,  2, -1, "Window Info", &windowWindow, NULL},
+    {31,  0,  0, NULL, NULL, NULL},
+};
+
+struct WindowDesc mainMenuWindow = { 4, 2, 20, 30, lbl_801B727C, 0, 0, 0, 0, 0, 0 };
+
+struct WindowDesc *windowList[16];  // 0x3D60
+FORCE_BSS_ORDER(windowList)
+
+struct WindowDesc windowWork[16];  // 0x3DA0
+FORCE_BSS_ORDER(windowWork)
+
+extern int currWindowIndex;  // s32 vs int actually matters here
 extern u32 lbl_802F1EA8;
 
-void func_80030030(int arg0, int arg1, int arg2, int arg3);
-void draw_some_window_quad_1(int arg0, int arg1, s8 arg2, u8 arg3);
+void clear_buffer_region(int arg0, int arg1, int arg2, int arg3);
+void draw_char(int x, int y, s8 arg2, u8 colorId);
 void draw_some_window_quad_2(float x1, float y1, float x2, float y2);
 
 void func_8002DC54(void)
@@ -463,7 +765,7 @@ void func_8002DC54(void)
 
     if (lbl_802F1EA8 == 0)
     {
-        var_r3 = &lbl_80205688[15];
+        var_r3 = &windowList[15];
         for (var_r4 = 15; var_r4 >= 0; var_r4--, var_r3--)
         {
             if (*var_r3 != 0)
@@ -471,16 +773,16 @@ void func_8002DC54(void)
         }
         if (var_r4 >= 0)
         {
-            lbl_802F1E08 = var_r4;
+            currWindowIndex = var_r4;
             lbl_802F1EA8 = 1;
         }
     }
     else
     {
-        lbl_802F1E08 --;
-        if (lbl_802F1E08 < 0 || lbl_80205688[lbl_802F1E08] == NULL)
+        currWindowIndex --;
+        if (currWindowIndex < 0 || windowList[currWindowIndex] == NULL)
         {
-            lbl_802F1E08 = 0;
+            currWindowIndex = 0;
             lbl_802F1EA8 = 0;
         }
     }
@@ -488,28 +790,28 @@ void func_8002DC54(void)
 
 static void func_8002DD5C_inline(void)
 {
-    struct WindowDesc **r6 = &lbl_80205688[lbl_802F1E08];
+    struct WindowDesc **r6 = &windowList[currWindowIndex];
     void *r4 = *r6;
     int i;
 
-    for (i = lbl_802F1E08; i > 0; i--, r6--)
+    for (i = currWindowIndex; i > 0; i--, r6--)
         *r6 = *(r6 - 1);
-    lbl_80205688[0] = r4;
-    lbl_802F1E08 = 0;
+    windowList[0] = r4;
+    currWindowIndex = 0;
 }
 
 void func_8002DD5C(void)
 {
-    if (lbl_802F1E08 == 0)
+    if (currWindowIndex == 0)
     {
-        struct WindowDesc **r3 = lbl_80205688;
+        struct WindowDesc **r3 = windowList;
         struct WindowDesc *r4 = *r3;
         int i;
 
         for (i = 0; i < 15 && *(r3 + 1) != 0; i++, r3++)
             *r3 = *(r3 + 1);
         *r3 = r4;
-        lbl_802F1E08 = i;
+        currWindowIndex = i;
     }
     else
     {
@@ -518,33 +820,33 @@ void func_8002DD5C(void)
 }
 
 #pragma dont_inline on
-void func_8002DE38(void)
+void cycle_window(void)
 {
     int r6;
     int i;  // r7
 
     for (i = 0; i < 16; i++)
     {
-        r6 = ((lbl_802F1E08 - i) + 16) % 16;
-        if (lbl_80205688[r6] != 0)
+        r6 = ((currWindowIndex - i) + 16) % 16;
+        if (windowList[r6] != 0)
         {
-            lbl_802F1E08 = r6;
+            currWindowIndex = r6;
             lbl_802F1EA8 = 1;
             break;
         }
     }
     if (i >= 16)
     {
-        lbl_802F1E08 = 0;
+        currWindowIndex = 0;
         lbl_802F1EA8 = 0;
     }
 }
 #pragma dont_inline reset
 
-void func_8002E06C(struct WindowDesc *arg0)
+void window_open(struct WindowDesc *arg0)
 {
 
-    struct WindowDesc *var_r4;
+    //struct WindowDesc *var_r4;
     //int var_r6;
     int i;
     #define var_r6 i
@@ -552,32 +854,32 @@ void func_8002E06C(struct WindowDesc *arg0)
     struct WindowDesc *var_r7;
 
     lbl_802F1EA8 = 1;
-    if (lbl_80205688[15] == NULL)
+    if (windowList[15] == NULL)
     {
-        //var_r4 = lbl_80205688.unk40;
+        //var_r4 = windowList.unk40;
         for (var_r6 = 0; var_r6 < 16; var_r6++)
         {
-            if (bss_3DA0[var_r6].unk20 == 0)
+            if (windowWork[var_r6].isActive == 0)
                 break;
         }
         if (var_r6 < 16)
         {
-            var_r7 = &bss_3DA0[var_r6];
+            var_r7 = &windowWork[var_r6];
             //var_r7 = var_r7;
             //someinline(var_r7, arg0);
             //*var_r7 = *arg0;
-            var_r7->unk0 = arg0->unk0;
-            var_r7->unk4 = arg0->unk4;
-            var_r7->unk8 = arg0->unk8;
-            var_r7->unkC = arg0->unkC;
+            var_r7->x = arg0->x;
+            var_r7->y = arg0->y;
+            var_r7->width = arg0->width;
+            var_r7->height = arg0->height;
             var_r7->items = arg0->items;
             var_r7->structSize = arg0->structSize;
-            var_r7->unk18 = arg0->unk18;
-            var_r7->unk1C = arg0->unk1C;
-            var_r7->unk20 = 1;
+            var_r7->structIndex = arg0->structIndex;
+            var_r7->selection = arg0->selection;
+            var_r7->isActive = TRUE;
             var_r7->unk24 = arg0->unk24;
             var_r7->unk28 = arg0->unk28;
-            r6 = lbl_80205688;
+            r6 = windowList;
             for (i = 0; i < 16; i++, r6++)
             {
                 void *old = *r6;
@@ -586,7 +888,7 @@ void func_8002E06C(struct WindowDesc *arg0)
                 if (old == NULL)
                     break;
             }
-            lbl_802F1E08 = 0;
+            currWindowIndex = 0;
         }
     }
     #undef var_r6
@@ -625,65 +927,67 @@ void process_window(struct WindowDesc *window)
     struct WindowItem *item;
     struct RangeInt *someParam;
     struct RangeFloat *someParamF;
-    struct WindowDesc *subWindow;  // idk?
+    struct WindowDesc *subWindow;
     u32 *pValue;
     s32 *new_var;
 
+    // resize window
     if ((analogButtonInfo[0][4] & 0x80) || ((analogButtonInfo[0][0] & 0x80) && (analogButtonInfo[0][0] & 0x200)))
     {
-        window->unkC--;
-        window->unkC = MAX(window->unkC, 3);
+        window->height--;
+        window->height = MAX(window->height, 3);
     }
     else if ((analogButtonInfo[0][4] & 0x40) || ((analogButtonInfo[0][0] & 0x40) && (analogButtonInfo[0][0] & 0x200)))
     {
-        window->unkC++;
-        window->unkC = MIN(window->unkC, 0x25 - window->unk4);
+        window->height++;
+        window->height = MIN(window->height, SCREEN_ROWS - window->y);
     }
     if ((analogButtonInfo[0][4] & 0x10) || ((analogButtonInfo[0][0] & 0x10) && (analogButtonInfo[0][0] & 0x200)))
     {
-        window->unk8--;
-        window->unk8 = MAX(window->unk8, 3);
+        window->width--;
+        window->width = MAX(window->width, 3);
     }
     else if ((analogButtonInfo[0][4] & 0x20) || ((analogButtonInfo[0][0] & 0x20) && (analogButtonInfo[0][0] & 0x200)))
     {
-        window->unk8++;
-        window->unk8 = MIN(window->unk8, 0x35 - window->unk0);
+        window->width++;
+        window->width = MIN(window->width, SCREEN_COLUMNS - window->x);
     }
     if ((analogButtonInfo[0][4] & 8) || ((analogButtonInfo[0][0] & 8) && (analogButtonInfo[0][0] & 0x200)))
     {
-        temp_r5 = window->unk4 - 1;
+        temp_r5 = window->y - 1;
         var_r6 = MAX(temp_r5, 0);
-        window->unk28 += (window->unk4 - var_r6) * 0xC;
-        window->unk4 = var_r6;
+        window->unk28 += (window->y - var_r6) * 12;
+        window->y = var_r6;
     }
     else if ((analogButtonInfo[0][4] & 4) || ((analogButtonInfo[0][0] & 4) && (analogButtonInfo[0][0] & 0x200)))
     {
-        temp_r5_2 = window->unk4;
+        temp_r5_2 = window->y;
         var_r6_2 = temp_r5_2 + 1;
-        temp_r3_4 = 0x25 - window->unkC;
+        temp_r3_4 = SCREEN_ROWS - window->height;
         var_r6_2 = MIN(var_r6_2, temp_r3_4);
-        window->unk28 += (temp_r5_2 - var_r6_2) * 0xC;
-        window->unk4 = var_r6_2;
+        window->unk28 += (temp_r5_2 - var_r6_2) * 12;
+        window->y = var_r6_2;
     }
     if ((analogButtonInfo[0][4] & 1) || ((analogButtonInfo[0][0] & 1) && (analogButtonInfo[0][0] & 0x200)))
     {
-        temp_r4 = window->unk0 - 1;
+        temp_r4 = window->x - 1;
         var_r6 = MAX(temp_r4, 0);
-        window->unk24 += (window->unk0 - var_r6) * 0xC;
-        window->unk0 = var_r6;
+        window->unk24 += (window->x - var_r6) * 12;
+        window->x = var_r6;
     }
     else if ((analogButtonInfo[0][4] & 2) || ((analogButtonInfo[0][0] & 2) && (analogButtonInfo[0][0] & 0x200)))
     {
-        temp_r5_2 = window->unk0;
+        temp_r5_2 = window->x;
         var_r6_2 = temp_r5_2 + 1;
-        temp_r3_4 = 0x35 - window->unk8;
+        temp_r3_4 = SCREEN_COLUMNS - window->width;
         var_r6_2 = MIN(var_r6_2, temp_r3_4);
-        window->unk24 += (temp_r5_2 - var_r6_2) * 0xC;
-        window->unk0 = var_r6_2;
+        window->unk24 += (temp_r5_2 - var_r6_2) * 12;
+        window->x = var_r6_2;
     }
+
     if (lbl_802F1E40 != 0)
     {
-        temp_r5_4 = window->unk1C;
+        temp_r5_4 = window->selection;
         var_r6_3 = temp_r5_4;
         do
         {
@@ -699,11 +1003,11 @@ void process_window(struct WindowDesc *window)
             if (var_r6_3 == 0 || var_r6_3 == temp_r5_4)
                 break;
         } while ((u8)window->items[var_r6_3].type > 12);
-        window->unk1C = var_r6_3;
+        window->selection = var_r6_3;
     }
     else if (lbl_802F1E44 != 0)
     {
-        var_r7 = temp_r6_3 = window->unk1C;
+        var_r7 = temp_r6_3 = window->selection;
         do
         {
             var_r7++;
@@ -715,9 +1019,9 @@ void process_window(struct WindowDesc *window)
             if (var_r7 == temp_r6_3)
                 break;
         } while ((u8)window->items[var_r7].type > 12);
-        window->unk1C = var_r7;
+        window->selection = var_r7;
     }
-    item = &window->items[window->unk1C];
+    item = &window->items[window->selection];
     switch ((s32)item->type)
     {
     case 0:
@@ -727,20 +1031,20 @@ void process_window(struct WindowDesc *window)
             if (subWindow != NULL)
             {
                 lbl_802F1EA8 = 1U;
-                lbl_80205688[lbl_802F1E08]->unk0 = subWindow->unk0;
-                lbl_80205688[lbl_802F1E08]->unk4 = subWindow->unk4;
-                lbl_80205688[lbl_802F1E08]->unk8 = subWindow->unk8;
-                lbl_80205688[lbl_802F1E08]->unkC = subWindow->unkC;
-                lbl_80205688[lbl_802F1E08]->items = subWindow->items;
-                lbl_80205688[lbl_802F1E08]->structSize = subWindow->structSize;
-                lbl_80205688[lbl_802F1E08]->unk18 = subWindow->unk18;
-                lbl_80205688[lbl_802F1E08]->unk1C = subWindow->unk1C;
+                windowList[currWindowIndex]->x = subWindow->x;
+                windowList[currWindowIndex]->y = subWindow->y;
+                windowList[currWindowIndex]->width = subWindow->width;
+                windowList[currWindowIndex]->height = subWindow->height;
+                windowList[currWindowIndex]->items = subWindow->items;
+                windowList[currWindowIndex]->structSize = subWindow->structSize;
+                windowList[currWindowIndex]->structIndex = subWindow->structIndex;
+                windowList[currWindowIndex]->selection = subWindow->selection;
             }
         }
         break;
     case 11:
         if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A) && item->pValue != NULL)
-            func_8002E06C(item->pValue);
+            window_open(item->pValue);
         break;
     default:
         if ((controllerInfo[0].unk0[4].button & PAD_BUTTON_A)
@@ -750,7 +1054,7 @@ void process_window(struct WindowDesc *window)
             if (item->type & 0x200)
                 var_r8 = 0;
             else
-                var_r8 = window->unk18;
+                var_r8 = window->structIndex;
             pValue = item->pValue;
             temp_r4_6 = (void *)((u8 *)pValue + (window->structSize * var_r8));
             switch ((u8)item->type)
@@ -765,7 +1069,7 @@ void process_window(struct WindowDesc *window)
                 switch ((u8)item->type)
                 {
                 case 10:
-                    someintval = window->unk18;
+                    someintval = window->structIndex;
                     break;
                 case 1:
                     someintval = *(u32 *)temp_r4_6;
@@ -816,7 +1120,7 @@ void process_window(struct WindowDesc *window)
                     *(s32 *)temp_r4_6 = someintval;
                     break;
                 case 10:
-                    window->unk18 = (u32)someintval;
+                    window->structIndex = (u32)someintval;
                     break;
                 case 3:
                 case 4:
@@ -830,9 +1134,10 @@ void process_window(struct WindowDesc *window)
                 break;
             case 7:
                 someParamF = item->param;
-                somefloatval = *(float *)temp_r4_6;
+                somefloatval = 1.0f;
                 deltaFloat = someParamF->delta;
-                deltaFloat *= /*1.0f*/ 2.0f;
+                deltaFloat = deltaFloat * somefloatval;//dumb(deltaFloat, 1.0f);
+                somefloatval = *(float *)temp_r4_6;
                 rangeFlags = someParamF->flags;
                 minFloat = someParamF->min;
                 maxFloat = someParamF->max;
@@ -878,52 +1183,49 @@ static void set_some_params(int a, int b, int c, int d)
     lbl_802F1E28 = d;
 }
 
-u8 datafiller[0x1AF4] = {0};
-
-void func_8002EA40(struct WindowDesc *desc, u32 arg1)
+void window_show_items(struct WindowDesc *window, u32 arg1)
 {
     struct WindowItem *item;
-    int var_r27;
-    int var_r26;
-    int var_r25;
-    char *var_r5_2;
+    int i;
+    int x, y;
+    char *onOff;
     void *pValue;
     int var_r5;
 
     if (arg1 != 0)
-        func_8002FCAC(desc->unk24, desc->unk28);
+        func_8002FCAC(window->unk24, window->unk28);
     else
         func_8002FCAC(0, 0);
-    func_80030030(desc->unk0, desc->unk4, desc->unk8, desc->unkC);
-    set_some_params(desc->unk0, desc->unk4, desc->unk8, desc->unkC);
+    clear_buffer_region(window->x, window->y, window->width, window->height);
+    set_some_params(window->x, window->y, window->width, window->height);
     if (arg1 != 0)
         window_set_text_color(2);
     else
         window_set_text_color(0);
-    draw_window_frame(desc);
+    draw_window_frame(window);
     window_set_text_color(0);
-    set_some_params(desc->unk0 + 1, desc->unk4 + 1, desc->unk8 - 2, desc->unkC - 2);
-    var_r26 = 0;
-    var_r25 = 0;
-    var_r27 = 0;
-    item = desc->items;
+    set_some_params(window->x + 1, window->y + 1, window->width - 2, window->height - 2);
+    x = 0;
+    y = 0;
+    i = 0;
+    item = window->items;
     while (item->type != ITEM_END)
     {
-        if (item->unk4 > 0)
-            var_r26 = desc->unk0 + item->unk4;
+        if (item->x > 0)
+            x = window->x + item->x;
         else
-            var_r26 -= item->unk4;
-        if (item->unk8 > 0)
-            var_r25 = desc->unk4 + item->unk8;
+            x -= item->x;
+        if (item->y > 0)
+            y = window->y + item->y;
         else
-            var_r25 -= item->unk8;
-        u_debug_set_cursor_pos(var_r26, var_r25);
+            y -= item->y;
+        window_set_cursor_pos(x, y);
         window_set_text_color(0);
         switch (item->type & 0xFF)
         {
         case ITEM_NONE:
         case 26:
-            if (var_r27 == 0 && arg1 != 0)
+            if (i == 0 && arg1 != 0)
                 window_set_text_color(2);
             break;
         case 1:
@@ -943,8 +1245,8 @@ void func_8002EA40(struct WindowDesc *desc, u32 arg1)
         if (item->type & 0x200)
             var_r5 = 0;
         else
-            var_r5 = desc->unk18;
-        pValue = (u8 *)item->pValue + (desc->structSize * var_r5);
+            var_r5 = window->structIndex;
+        pValue = (u8 *)item->pValue + (window->structSize * var_r5);
         switch (item->type & 0xFF)
         {
         case 0:
@@ -962,7 +1264,7 @@ void func_8002EA40(struct WindowDesc *desc, u32 arg1)
             window_printf(2, item->format, *(int *)pValue);
             break;
         case 10:
-            window_printf(2, item->format, desc->unk18);
+            window_printf(2, item->format, window->structIndex);
             break;
         case 3:
         case 16:
@@ -993,20 +1295,20 @@ void func_8002EA40(struct WindowDesc *desc, u32 arg1)
         case ITEM_BIT:
         case 23:
             if (*(u32 *)pValue & (u32)item->param)
-                var_r5_2 = " ON";
+                onOff = " ON";
             else
-                var_r5_2 = "OFF";
-            window_printf(2, item->format, var_r5_2);
+                onOff = "OFF";
+            window_printf(2, item->format, onOff);
             break;
         case 24:
             if (*(u16 *)pValue & (u16)item->param)
-                var_r5_2 = " ON";
+                onOff = " ON";
             else
-                var_r5_2 = "OFF";
-            window_printf(2, item->format, var_r5_2);
+                onOff = "OFF";
+            window_printf(2, item->format, onOff);
             break;
         case 26:
-            window_printf(2, item->format, desc->unk18);
+            window_printf(2, item->format, window->structIndex);
             break;
         case 25:
             window_printf(2, item->format, ((u32 *)item->param)[*(u8 *)pValue]);
@@ -1020,67 +1322,80 @@ void func_8002EA40(struct WindowDesc *desc, u32 arg1)
             window_printf(2, "     CharaHeap %08X / %08X\n", OSCheckHeap(charaHeap), charaHeapSize);
             break;
         case 30:
-            window_printf(2, item->format, u_stateNames[((s8 *)item->pValue)[desc->unk18]]);
+            window_printf(2, item->format, u_stateNames[((s8 *)item->pValue)[window->structIndex]]);
             break;
         }
-        if (desc->unk1C == var_r27 && arg1 != 0)
+        if (window->selection == i && arg1 != 0)
         {
-            u_debug_set_cursor_pos(var_r26 - 1, var_r25);
+            // draw selection arrow
+            window_set_cursor_pos(x - 1, y);
             window_set_text_color(1);
             u_set_window_text(2, "\x1C");
         }
         item++;
-        var_r27++;
+        i++;
     }
     func_8002FCAC(0, 0);
 }
 
-void draw_window_frame(struct WindowDesc *desc)
+void draw_window_frame(struct WindowDesc *window)
 {
     int i;
 
-    set_some_params(desc->unk0, desc->unk4, desc->unk8, desc->unkC);
-    u_debug_set_cursor_pos(desc->unk0, desc->unk4);
+    set_some_params(window->x, window->y, window->width, window->height);
+
+    // top left corner
+    window_set_cursor_pos(window->x, window->y);
     u_set_window_text(2, "\x18");
-    u_debug_set_cursor_pos(desc->unk0 + desc->unk8 - 1, desc->unk4);
+
+    // top right corner
+    window_set_cursor_pos(window->x + window->width - 1, window->y);
     u_set_window_text(2, "\x19");
-    u_debug_set_cursor_pos(desc->unk0, desc->unk4 + desc->unkC - 1);
+
+    // bottom left corner
+    window_set_cursor_pos(window->x, window->y + window->height - 1);
     u_set_window_text(2, "\x1A");
-    u_debug_set_cursor_pos(desc->unk0 + desc->unk8 - 1, desc->unk4 + desc->unkC - 1);
+
+    // bottom right corner
+    window_set_cursor_pos(window->x + window->width - 1, window->y + window->height - 1);
     u_set_window_text(2, "\x1B");
 
-    for (i = 1; i < desc->unk8 - 1; i++)
+    // top border
+    for (i = 1; i < window->width - 1; i++)
     {
-        u_debug_set_cursor_pos(desc->unk0 + i, desc->unk4);
+        window_set_cursor_pos(window->x + i, window->y);
         u_set_window_text(2, "\x16");
     }
 
-    for (i = 1; i < desc->unkC - 1; i++)
+    // left border
+    for (i = 1; i < window->height - 1; i++)
     {
-        u_debug_set_cursor_pos(desc->unk0, desc->unk4 + i);
+        window_set_cursor_pos(window->x, window->y + i);
         u_set_window_text(2, "\x17");
     }
 
-    for (i = 1; i < desc->unk8 - 1; i++)
+    // bottom border
+    for (i = 1; i < window->width - 1; i++)
     {
-        u_debug_set_cursor_pos(desc->unk0 + i, desc->unk4 + desc->unkC - 1);
+        window_set_cursor_pos(window->x + i, window->y + window->height - 1);
         u_set_window_text(2, "\x16");
     }
 
-    for (i = 1; i < desc->unkC - 1; i++)
+    // right border
+    for (i = 1; i < window->height - 1; i++)
     {
-        u_debug_set_cursor_pos(desc->unk0 + desc->unk8 - 1, desc->unk4 + i);
+        window_set_cursor_pos(window->x + window->width - 1, window->y + i);
         u_set_window_text(2, "\x17");
     }
 }
 
-void func_8002F0E4(void)
+void window_draw(void)
 {
     u8 *var_r30_2;
     struct WindowDesc **var_r30;
-    int var_r31;
-    int var_r29;
-    int var_r27;
+    int col;
+    int i;
+    int row;
     s8 *var_r26;
     s8 *var_r25;
     s8 *var_r24;
@@ -1095,19 +1410,19 @@ void func_8002F0E4(void)
     struct WindowDesc *temp_r7;
 
     GXSetZMode_cached(1, GX_LESS, 1);
-    var_r30 = lbl_80205688;
-    for (var_r29 = 0; var_r29 < 16; var_r29++, var_r30++)
+    var_r30 = windowList;
+    for (i = 0; i < 16; i++, var_r30++)
     {
         temp_r7 = *var_r30;
         if (temp_r7 != NULL)
         {
-            temp_r5 = temp_r7->unk0;
-            temp_r8 = temp_r7->unk4;
+            temp_r5 = temp_r7->x;
+            temp_r8 = temp_r7->y;
             var_r6 = (temp_r5 * 12) + 6;
             var_r5 = (temp_r8 * 12) + 6;
-            var_r8 = ((temp_r5 + temp_r7->unk8) * 12) - 6;
-            var_r9 = ((temp_r8 + temp_r7->unkC) * 12) - 6;
-            if (var_r29 == lbl_802F1E08 && lbl_802F1EA8 != 0U)
+            var_r8 = ((temp_r5 + temp_r7->width) * 12) - 6;
+            var_r9 = ((temp_r8 + temp_r7->height) * 12) - 6;
+            if (i == currWindowIndex && lbl_802F1EA8 != 0U)
             {
                 temp_r0 = temp_r7->unk24;
                 temp_r3 = temp_r7->unk28;
@@ -1123,19 +1438,19 @@ void func_8002F0E4(void)
     GXLoadTexObj_cached(&u_unkBitmapTPL->texObjs[31], 0);
     GXInitTexObjLOD(&u_unkBitmapTPL->texObjs[31], GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
 
-    var_r26 = (s8 *)lbl_80202880;
-    var_r30_2 = lbl_80203F84;
-    var_r25 = (s8 *)lbl_80203F84_2;
-    var_r24 = (s8 *)lbl_80203F84_3;
-    for (var_r27 = 0; var_r27 < 0x25; var_r27++)
+    var_r26 = (s8 *)screenBuffer3;
+    var_r30_2 = screenBuffer6;
+    var_r25 = (s8 *)screenBuffer7;
+    var_r24 = (s8 *)screenBuffer8;
+    for (row = 0; row < SCREEN_ROWS; row++)
     {
-        for (var_r31 = 0; var_r31 < 0x35; var_r31++)
+        for (col = 0; col < SCREEN_COLUMNS; col++)
         {
             if (*var_r26 != 0x20)
             {
-                draw_some_window_quad_1(
-                    *var_r25 + (var_r31 * 12),
-                    *var_r24 + (var_r27 * 12),
+                draw_char(
+                    *var_r25 + (col * 12),
+                    *var_r24 + (row * 12),
                     *var_r26,
                     *var_r30_2);
             }
@@ -1152,16 +1467,16 @@ void window_init(void)
 {
     s32 i;
 
-    lbl_802F1E08 = 0;
+    currWindowIndex = 0;
     lbl_802F1EA8 = 0U;
     for (i = 0; i < 16; i++)
-        bss_3DA0[i].unk20 = 0;
-    memset(lbl_80201928, 0x20, 0x7A9);
-    memset(lbl_802020D4, 0x20, 0x7A9);
-    memset(lbl_80202880, 0x20, 0x7A9);
-    memset(lbl_80201928_1704, 0, 0x7A9);
-    memset(lbl_802037D8, 0, 0x7A9);
-    memset(lbl_80203F84, 0, 0x7A9);
+        windowWork[i].isActive = FALSE;
+    memset(screenBuffer1, 0x20, sizeof(screenBuffer1));
+    memset(screenBuffer2, 0x20, sizeof(screenBuffer2));
+    memset(screenBuffer3, 0x20, sizeof(screenBuffer3));
+    memset(screenBuffer4, 0, sizeof(screenBuffer4));
+    memset(screenBuffer5, 0, sizeof(screenBuffer5));
+    memset(screenBuffer6, 0, sizeof(screenBuffer6));
 }
 
 static void dont_inline_func_8002DD5C(void)
@@ -1178,7 +1493,7 @@ void window_main(void)
     int temp_r4_2;
     int var_ctr;
     int var_ctr_3;
-    u32 *var_r3_5;
+    u32 *bufPtr;
     u8 *var_r12;
     int var_r3_7;
     u8 *var_r4;
@@ -1196,32 +1511,33 @@ void window_main(void)
 
     var_r22 = 1;
 
-    lbl_802F1E40 = ((controllerInfo[0].unk0[4].button & 8) || ((controllerInfo[0].unk0[0].button & 8) && (analogButtonInfo[0][0] & 0x200)));
-    lbl_802F1E44 = ((controllerInfo[0].unk0[4].button & 4) || ((controllerInfo[0].unk0[0].button & 4) && (analogButtonInfo[0][0] & 0x200)));
-    lbl_802F1E48 = ((controllerInfo[0].unk0[4].button & 1) || ((controllerInfo[0].unk0[0].button & 1) && (analogButtonInfo[0][0] & 0x200)));
-    lbl_802F1E4C = ((controllerInfo[0].unk0[4].button & 2) || ((controllerInfo[0].unk0[0].button & 2) && (analogButtonInfo[0][0] & 0x200)));
+    lbl_802F1E40 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_UP) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_UP) && (analogButtonInfo[0][0] & 0x200)));
+    lbl_802F1E44 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_DOWN) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_DOWN) && (analogButtonInfo[0][0] & 0x200)));
+    lbl_802F1E48 = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_LEFT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_LEFT) && (analogButtonInfo[0][0] & 0x200)));
+    lbl_802F1E4C = ((controllerInfo[0].unk0[4].button & PAD_BUTTON_RIGHT) || ((controllerInfo[0].unk0[0].button & PAD_BUTTON_RIGHT) && (analogButtonInfo[0][0] & 0x200)));
 
-    var_r3_5 = (u32 *)lbl_80203F84_2;
-    for (var_ctr = 487; var_ctr >= 0; var_ctr--)
-        *var_r3_5++ = 0;
-    var_r3_5 = (u32 *)lbl_80203F84_3;
-    for (var_ctr = 487; var_ctr >= 0; var_ctr--)
-        *var_r3_5++ = 0;
+    // clear buffers (not using memset for some reason)
+    bufPtr = (u32 *)screenBuffer7;
+    for (var_ctr = SCREEN_ROWS * SCREEN_COLUMNS / 4 - 3; var_ctr >= 0; var_ctr--)
+        *bufPtr++ = 0;
+    bufPtr = (u32 *)screenBuffer8;
+    for (var_ctr = SCREEN_ROWS * SCREEN_COLUMNS / 4 - 3; var_ctr >= 0; var_ctr--)
+        *bufPtr++ = 0;
 
-    memcpy(lbl_80202880, lbl_802020D4, 0x7A9);
-    memcpy(lbl_80203F84, lbl_802037D8, 0x7A9);
+    memcpy(screenBuffer3, screenBuffer2, sizeof(screenBuffer3));
+    memcpy(screenBuffer6, screenBuffer5, sizeof(screenBuffer6));
 
-    var_r12 = lbl_80201928;
-    var_r8 = lbl_80202880;
-    var_r9 = lbl_80201928_1704;
-    var_r10 = lbl_80203F84;
-    for (var_r3_7 = 0; var_r3_7 < 0x25; var_r3_7++)
+    var_r12 = screenBuffer1;
+    var_r8 = screenBuffer3;
+    var_r9 = screenBuffer4;
+    var_r10 = screenBuffer6;
+    for (var_r3_7 = 0; var_r3_7 < SCREEN_ROWS; var_r3_7++)
     {
         var_r4 = var_r12;
         var_r5 = var_r8;
         var_r6 = var_r9;
         var_r7 = var_r10;
-        for (var_ctr_3 = 0; var_ctr_3 < 0x35; var_ctr_3++)
+        for (var_ctr_3 = 0; var_ctr_3 < SCREEN_COLUMNS; var_ctr_3++)
         {
             r11 = *var_r4;
             if (r11 != 0x20)
@@ -1234,37 +1550,37 @@ void window_main(void)
             var_r6++;
             var_r7++;
         }
-        var_r12 += 0x35;
-        var_r8 += 0x35;
-        var_r9 += 0x35;
-        var_r10 += 0x35;
+        var_r12 += SCREEN_COLUMNS;
+        var_r8 += SCREEN_COLUMNS;
+        var_r9 += SCREEN_COLUMNS;
+        var_r10 += SCREEN_COLUMNS;
     }
 
-    memset(lbl_80201928, 0x20, 0x7A9);
-    memset(lbl_80201928_1704, 0, 0x7A9);
+    memset(screenBuffer1, 0x20, sizeof(screenBuffer1));
+    memset(screenBuffer4, 0, sizeof(screenBuffer4));
 
     if (analogButtonInfo[0][0] & 0x100)
     {
-        if ((dipSwitches & 1) && (controllerInfo[0].unk0[2].button & 0x1000))
+        if ((dipSwitches & 1) && (controllerInfo[0].unk0[2].button & PAD_BUTTON_START))
         {
-            func_8002E06C(&lbl_801B7474);
+            window_open(&mainMenuWindow);
         }
-        else if (controllerInfo[0].unk0[2].button & 0x800)
+        else if (controllerInfo[0].unk0[2].button & PAD_BUTTON_Y)
         {
             if (lbl_802F1EA8 != 0U)
             {
-                temp_r3 = lbl_80205688[lbl_802F1E08];
+                temp_r3 = windowList[currWindowIndex];
                 if (temp_r3 != NULL)
                 {
                     lbl_802F1EA8 = 1U;
-                    temp_r3->unk20 = 0;
+                    temp_r3->isActive = FALSE;
 
-                    var_r4_2 = &lbl_80205688[lbl_802F1E08];
-                    for (var_ctr_4 = lbl_802F1E08; var_ctr_4 < 15; var_ctr_4++, var_r4_2++)
+                    var_r4_2 = &windowList[currWindowIndex];
+                    for (var_ctr_4 = currWindowIndex; var_ctr_4 < 15; var_ctr_4++, var_r4_2++)
                         *var_r4_2 = *(var_r4_2 + 1);
                     *var_r4_2 = NULL;
 
-                    func_8002DE38();
+                    cycle_window();
                 }
             }
         }
@@ -1296,8 +1612,8 @@ void window_main(void)
     temp_r22 = lbl_802F1DE8;
     spC = lbl_802F1DE4;
     lbl_802F1E51 = lbl_80201500[temp_r22];
-    if (var_r22 != 0 && lbl_802F1EA8 != 0 && lbl_80205688[lbl_802F1E08] != 0)
-        process_window(lbl_80205688[lbl_802F1E08]);
+    if (var_r22 != 0 && lbl_802F1EA8 != 0 && windowList[currWindowIndex] != 0)
+        process_window(windowList[currWindowIndex]);
     lbl_801F3A08.spotFn = lbl_802F1E50;
 
     s_u_lightPool[lbl_802F1C90] = lbl_801F3A08;
@@ -1335,51 +1651,51 @@ void window_main(void)
     }
     for (var_r31 = 15; var_r31 >= 0; var_r31--)
     {
-        if (lbl_80205688[var_r31] != NULL)
+        if (windowList[var_r31] != NULL)
         {
-            if (var_r31 == lbl_802F1E08 && lbl_802F1EA8 != 0)
-                func_8002EA40(lbl_80205688[var_r31], 1);
+            if (var_r31 == currWindowIndex && lbl_802F1EA8 != 0)
+                window_show_items(windowList[var_r31], 1);
             else
-                func_8002EA40(lbl_80205688[var_r31], 0);
+                window_show_items(windowList[var_r31], 0);
         }
     }
     window_set_text_color(0);
     if (lbl_802F1EA8 != 0U)
     {
-        temp_r3_7 = lbl_80205688[lbl_802F1E08];
+        temp_r3_7 = windowList[currWindowIndex];
         if (temp_r3_7 != NULL)
         {
-            lbl_802F1E30 = temp_r3_7->unk0;
-            lbl_802F1E34 = temp_r3_7->unk4;
-            lbl_802F1E38 = temp_r3_7->unk8;
-            lbl_802F1E3C = temp_r3_7->unkC;
+            unusedWindowX = temp_r3_7->x;
+            unusedWindowY = temp_r3_7->y;
+            unusedWindowWidth = temp_r3_7->width;
+            unusedWindowHeight = temp_r3_7->height;
             return;
         }
     }
-    lbl_802F1E30 = 0;
-    lbl_802F1E34 = 0;
-    lbl_802F1E38 = 0;
-    lbl_802F1E3C = 0;
+    unusedWindowX = 0;
+    unusedWindowY = 0;
+    unusedWindowWidth = 0;
+    unusedWindowHeight = 0;
 }
 
-extern s32 lbl_802F1E10;
+extern s32 windowCursorX;
 extern s32 lbl_802F1E0C;
-extern s32 lbl_802F1E14;
+extern s32 windowCursorY;
 extern s8 lbl_802F1E18;
 extern s8 lbl_802F1E19;
-extern u8 lbl_802F1E2C;
+extern u8 windowColorId;
 
-void u_debug_set_cursor_pos(int arg0, int arg1)
+void window_set_cursor_pos(int x, int y)
 {
-    lbl_802F1E10 = arg0;
-    lbl_802F1E0C = arg0;
-    lbl_802F1E14 = arg1;
+    windowCursorX = x;
+    lbl_802F1E0C = x;
+    windowCursorY = y;
 }
 
-void func_8002FC90(int arg0, int arg1)
+void window_move_cursor(int dx, int dy)
 {
-    lbl_802F1E10 += arg0;
-    lbl_802F1E14 += arg1;
+    windowCursorX += dx;
+    windowCursorY += dy;
 }
 
 void func_8002FCAC(int arg0, int arg1)
@@ -1402,7 +1718,7 @@ int window_printf(int arg0, char *fmt, ...)
 
 void window_set_text_color(int arg0)
 {
-    lbl_802F1E2C = arg0;
+    windowColorId = arg0;
 }
 
 void u_set_window_text(int arg0, const char *text)
@@ -1411,80 +1727,81 @@ void u_set_window_text(int arg0, const char *text)
     u8 *var_r6;
     u8 *var_r7;
     u8 *var_r8;
-    int var_r9;
-    int var_r10;
-    int var_r11;
-    int var_r12;
+    int xmin;
+    int ymin;
+    int xmax;
+    int ymax;
 
     switch (arg0)
     {
     case 0:
-        var_r9 = 0;
-        var_r10 = 0;
-        var_r11 = 0x34;
-        var_r5 = lbl_80201928 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-        var_r12 = 0x24;
-        var_r6 = lbl_80201928_1704 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
+        xmin = 0;
+        ymin = 0;
+        xmax = 0x34;
+        var_r5 = screenBuffer1 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+        ymax = 0x24;
+        var_r6 = screenBuffer4 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
         var_r7 = NULL;
         var_r8 = NULL;
         break;
     case 1:
-        var_r9 = 0;
-        var_r10 = 0;
-        var_r11 = 0x34;
-        var_r5 = lbl_802020D4 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-        var_r12 = 0x24;
-        var_r6 = lbl_802037D8 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
+        xmin = 0;
+        ymin = 0;
+        xmax = 0x34;
+        var_r5 = screenBuffer2 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+        ymax = 0x24;
+        var_r6 = screenBuffer5 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
         var_r7 = NULL;
         var_r8 = NULL;
         break;
     default:
-        var_r9 = lbl_802F1E1C;
-        var_r10 = lbl_802F1E20;
-        var_r11 = var_r9 + lbl_802F1E24 - 1;
-        var_r5 = lbl_80202880  + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-        var_r12 = var_r10 + lbl_802F1E28 - 1;
-        var_r6 = lbl_80203F84 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-        var_r7 = lbl_80203F84_2 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-        var_r8 = lbl_80203F84_3 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
+        xmin = lbl_802F1E1C;
+        ymin = lbl_802F1E20;
+        xmax = xmin + lbl_802F1E24 - 1;
+        var_r5 = screenBuffer3  + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+        ymax = ymin + lbl_802F1E28 - 1;
+        var_r6 = screenBuffer6 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+        var_r7 = screenBuffer7 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+        var_r8 = screenBuffer8 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
         break;
     }
 
     while (*text != 0)
     {
-        if (lbl_802F1E10 >= 0x35)
+        if (windowCursorX >= SCREEN_COLUMNS)
         {
-            lbl_802F1E10 = 0;
-            lbl_802F1E14++;
+            // wrap to new line
+            windowCursorX = 0;
+            windowCursorY++;
         }
         if (*text == '\n')
         {
-            if (lbl_802F1E10 >= lbl_802F1E0C)
-                lbl_802F1E14++;
-            lbl_802F1E10 = lbl_802F1E0C - 1;
+            if (windowCursorX >= lbl_802F1E0C)
+                windowCursorY++;
+            windowCursorX = lbl_802F1E0C - 1;
             switch (arg0)
             {
             case 0:
-                var_r5 = lbl_80201928 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-                var_r6 = lbl_80201928_1704 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
+                var_r5 = screenBuffer1 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+                var_r6 = screenBuffer4 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
                 break;
             case 1:
-                var_r5 = lbl_802020D4 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-                var_r6 = lbl_802037D8 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
+                var_r5 = screenBuffer2 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+                var_r6 = screenBuffer5 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
                 break;
             default:
-                var_r5 = lbl_80202880 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-                var_r6 = lbl_80203F84 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-                var_r7 = lbl_80203F84_2 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
-                var_r8 = lbl_80203F84_3 + (lbl_802F1E14 * 0x35) + lbl_802F1E10;
+                var_r5 = screenBuffer3 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+                var_r6 = screenBuffer6 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+                var_r7 = screenBuffer7 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
+                var_r8 = screenBuffer8 + (windowCursorY * SCREEN_COLUMNS) + windowCursorX;
                 break;
             }
         }
-        else if (lbl_802F1E10 >= var_r9 && lbl_802F1E10 <= var_r11
-         && lbl_802F1E14 >= var_r10 && lbl_802F1E14 <= var_r12)
+        else if (windowCursorX >= xmin && windowCursorX <= xmax
+         && windowCursorY >= ymin && windowCursorY <= ymax)
         {
             *var_r5 = *text;
-            *var_r6 = lbl_802F1E2C;
+            *var_r6 = windowColorId;
             if (var_r7 != NULL)
                 *var_r7 = lbl_802F1E18;
             if (var_r8 != NULL)
@@ -1497,29 +1814,29 @@ void u_set_window_text(int arg0, const char *text)
         var_r5++;
         text++;
         var_r6++;
-        lbl_802F1E10++;
+        windowCursorX++;
     }
 }
 
-void func_8002FFEC(void)
+void u_clear_buffers_2_and_5(void)
 {
-    memset(lbl_802020D4, 0x20, 0x7A9);
-    memset(lbl_802037D8, 0, 0x7A9);
+    memset(screenBuffer2, 0x20, sizeof(screenBuffer2));
+    memset(screenBuffer5, 0, sizeof(screenBuffer5));
 }
 
-void func_80030030(int arg0, int arg1, int arg2, int arg3)
+void clear_buffer_region(int arg0, int arg1, int arg2, int arg3)
 {
     u8 *var_r8;
     u8 *var_r9;
-    int i;
-    int j;
+    int row;
+    int col;
 
-    for (i = arg1; i < arg1 + arg3; i++)
+    for (row = arg1; row < arg1 + arg3; row++)
     {
-        var_r8 = lbl_80202880 + i * 0x35 + arg0;
-        var_r9 = lbl_80203F84 + i * 0x35 + arg0;
+        var_r8 = screenBuffer3 + row * SCREEN_COLUMNS + arg0;
+        var_r9 = screenBuffer6 + row * SCREEN_COLUMNS + arg0;
 
-        for (j = arg0; j < arg0 + arg2; j++)
+        for (col = arg0; col < arg0 + arg2; col++)
         {
             *var_r8++ = 0x20;
             *var_r9++ = 0;
@@ -1570,22 +1887,32 @@ int u_printf_if_debug(int unused, char *fmt, ...)
     return 0;
 }
 
-extern u32 lbl_801B75F8[];
+u32 lbl_801B75F8[] =
+{
+    0xFFFFFFFF,
+    0xFF0000FF,
+    0x00FF00FF,
+    0x0000FFFF,
+    0xFFFF00FF,
+    0xFF00FFFF,
+    0x00FFFFFF,
+    0x000000FF,
+};
 
-void draw_some_window_quad_1(int arg0, int arg1, s8 arg2, u8 arg3)
+void draw_char(int x, int y, s8 arg2, u8 colorId)
 {
     if (arg2 < 0x80)
     {
-        float temp_f31 = (12.0 * (float)(arg2 & 0xF)) / 192.0;
-        float temp_f29 = (12.0 * (float)((arg2 >> 4) & 0xF)) / 96.0;
-        float temp_f28 = arg0;
-        float temp_f30 = arg1;
+        float u = (12.0 * (float)(arg2 & 0xF)) / 192.0;
+        float v = (12.0 * (float)((arg2 >> 4) & 0xF)) / 96.0;
+        float x1 = x;
+        float y1 = y;
         u32 temp;
         GXColor sp20;
         GXColor sp1C = {0};
 
-        temp_f30 *= 1.0714285714285714;
-        temp = lbl_801B75F8[arg3 & 0xFF];
+        y1 *= 1.0714285714285714;
+        temp = lbl_801B75F8[colorId & 0xFF];
         sp20.r = (temp >> 24) /*& 0xFF*/;
         sp20.g = (temp >> 16) & 0xFF;
         sp20.b = (temp >> 8) /*& 0xFF*/;
@@ -1594,14 +1921,14 @@ void draw_some_window_quad_1(int arg0, int arg1, s8 arg2, u8 arg3)
         GXSetTevColor(GX_TEVREG0, sp20);
         GXSetTevColor(GX_TEVREG1, sp1C);
         GXBegin(GX_QUADS, GX_VTXFMT7, 4U);
-        GXPosition3f32(temp_f28, temp_f30, -0.0078125f);
-        GXTexCoord2f32(temp_f31, 0.010416666666666666 + temp_f29);
-        GXPosition3f32(12.0f + temp_f28, temp_f30, -0.0078125f);
-        GXTexCoord2f32(0.0625 + temp_f31, 0.010416666666666666 + temp_f29);
-        GXPosition3f32(12.0f + temp_f28, 12.0f + temp_f30, -0.0078125f);
-        GXTexCoord2f32(0.0625 + temp_f31, 0.125 + temp_f29);
-        GXPosition3f32(temp_f28, 12.0f + temp_f30, -0.0078125f);
-        GXTexCoord2f32(temp_f31, 0.125 + temp_f29);
+        GXPosition3f32(x1,         y1,         -0.0078125f);
+        GXTexCoord2f32(u,          v + 0.010416666666666666);
+        GXPosition3f32(x1 + 12.0f, y1,         -0.0078125f);
+        GXTexCoord2f32(u + 0.0625, 0.010416666666666666 + v);
+        GXPosition3f32(x1 + 12.0f, y1 + 12.0f, -0.0078125f);
+        GXTexCoord2f32(u + 0.0625, v + 0.125);
+        GXPosition3f32(x1,         y1 + 12.0f, -0.0078125f);
+        GXTexCoord2f32(u,          v + 0.125);
         GXEnd();
     }
 }
@@ -1628,3 +1955,5 @@ void draw_some_window_quad_2(float x1, float y1, float x2, float y2)
     GXTexCoord2f32(0.0f, 1.0f);
     GXEnd();
 }
+
+u32 lbl_802F0980 = 32;

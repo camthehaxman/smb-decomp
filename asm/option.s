@@ -36,7 +36,7 @@ _prolog:
 /* 000000D4 38000001 */ li r0, 1
 /* 000000D8 9421FFF8 */ stwu r1, -8(r1)
 /* 000000DC 90030000 */ stw r0, lbl_802F2130@l(r3)
-/* 000000E0 480000CD */ bl func_8002FFEC
+/* 000000E0 480000CD */ bl u_clear_buffers_2_and_5
 /* 000000E4 480000C9 */ bl free_all_bitmap_groups_except_com
 /* 000000E8 480000C5 */ bl func_800249D4
 /* 000000EC 480000C1 */ bl unload_stage
@@ -3274,7 +3274,7 @@ lbl_00002FA8:
 /* 00002FEC 80630024 */ lwz r3, 0x24(r3)
 /* 00002FF0 4BFFD1BD */ bl camera_setup_splitscreen_viewports
 /* 00002FF4 4BFFD1B9 */ bl func_80044920
-/* 00002FF8 4BFFD1B5 */ bl func_8002FFEC
+/* 00002FF8 4BFFD1B5 */ bl u_clear_buffers_2_and_5
 /* 00002FFC 38600009 */ li r3, 9
 /* 00003000 4BFFD1AD */ bl event_start
 /* 00003004 801C0000 */ lwz r0, 0(r28)

@@ -22,7 +22,7 @@ void mode_sel_func(void)
 {
     if (!(gameSubmode > SMD_SEL_TOP && gameSubmode < SMD_SEL_BOTTOM))
     {
-        u_debug_set_cursor_pos(10, 10);
+        window_set_cursor_pos(10, 10);
         window_printf_2("sub_mode: error %d in Sel", gameSubmode);
         return;
     }
