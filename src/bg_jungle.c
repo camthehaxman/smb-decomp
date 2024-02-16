@@ -11,6 +11,7 @@
 #include "lens_flare.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "polydisp.h"
 #include "stage.h"
 #include "window.h"
 
@@ -133,7 +134,7 @@ void bg_jungle_draw(void)
      || gameSubmode == SMD_GAME_OVER_MAIN)
         avdisp_set_post_mult_color(0.3f, 0.3f, 0.3, 1.0f);
 
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
         r28 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         r28 = 1 << (modeCtrl.unk30 - 1);

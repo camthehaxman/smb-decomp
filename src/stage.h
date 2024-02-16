@@ -217,6 +217,57 @@ STAGE_LIST
 #undef DEFINE_STAGE
 };
 
+struct StageBgAnim
+{
+    s32 loopStartSeconds;
+    s32 loopEndSeconds;
+    u32 scaleXKeyframeCount;
+    struct Keyframe *scaleXKeyframes;
+    u32 scaleYKeyframeCount;
+    struct Keyframe *scaleYKeyframes;
+    u32 scaleZKeyframeCount;
+    struct Keyframe *scaleZKeyframes;
+    u32 rotXKeyframeCount;
+    struct Keyframe *rotXKeyframes;
+    u32 rotYKeyframeCount;
+    struct Keyframe *rotYKeyframes;
+    u32 rotZKeyframeCount;
+    struct Keyframe *rotZKeyframes;
+    u32 posXKeyframeCount;
+    struct Keyframe *posXKeyframes;
+    u32 posYKeyframeCount;
+    struct Keyframe *posYKeyframes;
+    u32 posZKeyframeCount;
+    struct Keyframe *posZKeyframes;
+    u32 visibleKeyframeCount;
+    struct Keyframe *visibleKeyframes;  // Model visible if value >= 0.5?
+    u32 translucencyKeyframeCount;
+    struct Keyframe *translucencyKeyframes;
+};
+
+struct NightWindowAnim
+{
+    Point3d pos;
+    s16 rotX;
+    s16 rotY;
+    s16 rotZ;
+    s8 id; // Which list of flipbook models to animate
+};
+
+struct StormFireAnim
+{
+    Point3d pos;
+    s8 frameOffset;
+};
+
+struct StageFlipbookAnims
+{
+    s32 nightWindowAnimCount;
+    struct NightWindowAnim *nightWindowAnims;
+    s32 stormFireAnimCount;
+    struct StormFireAnim *stormFireAnims;
+};
+
 struct StageColiTri
 {
     /*0x00*/ Point3d pos; // Position of vertex 1 in itemgroup space

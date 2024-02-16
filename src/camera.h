@@ -150,7 +150,7 @@ void change_current_camera();
 void change_current_camera_matrix(int cameraId);
 void reset_camera_perspective(void);
 void shake_camera(int cameraId, int b, Vec *c);
-void camera_set_state(int state);
+void camera_set_state_all(int state);
 void camera_set_or_clear_flags(int flags, int set);
 void camera_clear(struct Camera *camera);
 void camera_shake_main(struct Camera *camera);

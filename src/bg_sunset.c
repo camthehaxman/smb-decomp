@@ -9,6 +9,7 @@
 #include "info.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "polydisp.h"
 #include "stage.h"
 #include "window.h"
 
@@ -115,7 +116,7 @@ void bg_sunset_draw(void)
     int i;
     struct BGSunsetLayer *layer;
 
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
         r28 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         r28 = 1 << (modeCtrl.unk30 - 1);

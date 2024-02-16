@@ -1,3 +1,6 @@
+/**
+ * recplay.c - Manages recording and playback of replays
+ */
 #include <stdlib.h>
 #include <string.h>
 #include <dolphin.h>
@@ -12,157 +15,173 @@
 #include "light.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "polydisp.h"
 #include "pool.h"
 #include "recplay.h"
+#include "recplay_cmpr.h"
 #include "stage.h"
 #include "window.h"
 #include "world.h"
 
-struct BuiltinReplay
+#define MAX_FRAMES 720
+
+struct ReplayInfo g_recplayInfo;
+
+// Assignment of replay slots for each player
+struct PlayerRecordingStatus
+{
+    s16 replayIndex;  // index of the replay in the s_replays array
+    s16 isRecording;  // 1 if currently recording, 0 if not recording
+};
+static struct PlayerRecordingStatus s_recordingStatus[8];
+
+struct Replay
 {
     struct ReplayHeader header;
     s16 unk18;
-    s16 unk1A;
+    s16 frameCount;  // number of frames in the replay
     s16 unk1C;
     s16 goalEntered;
     s16 unk20;
     Vec unk24;
     s32 unk30;
-    s16 unk34;
-    s16 unk36;
-    struct ReplayBallFrame ballFrames[720];
-    struct ReplayWorldFrame worldFrames[720];
+    s16 currFrame;  // current frame being recorded
+    s16 time;  // time length of the replay in frames
+    struct ReplayBallFrame ballFrames[MAX_FRAMES];
+    struct ReplayWorldFrame worldFrames[MAX_FRAMES];
 };
 
-struct Struct8020AE20
-{
-    s16 unk0;
-    s16 unk2;
-};
+// Array of loaded replays
+// The first 7 entries here are available for single player use, while the last 4 are assigned to
+// each player during competition mode (see submode_game_play_init_func in game.c)
+static struct Replay s_replays[11];
 
-static struct Struct8020AE20 recSys[8];
-static struct BuiltinReplay s_builtinReplays[11];
-static u32 s_dummyVar;
+static u32 s_dummyVar;  // set to the size of the Replay struct, but never actually used
+
 static s32 s_builtinReplayFilesCount;
-static char **s_builtinReplayFileNames;
-static s32 delayStopCounter;
-static u32 s_totalSize = sizeof(s_builtinReplays);
+static char **s_builtinReplayFileNames;  // pointer to array of strings containing the filenames of built-in replays
+static s32 s_recordingStopTimer;  // a timer that is decremented each frame. Recording automaticallystops when it reaches zero.
 
 static struct
 {
-    s32 replayId;
+    s32 replayIndex;
     u32 unk4;
 } lbl_802F1F78;
 
-void func_8004A820(void);
-void end_grading_play(void);
-void grading_play(void);
-float func_8004ABD8(void);
-void func_8004ABE4(void);
-void func_8004AC68(struct BuiltinReplay *);
-void func_8004ACF0(struct BuiltinReplay *);
-int func_8004AD78(struct BuiltinReplay *);
-float func_8004ADC0(struct BuiltinReplay *);
-int func_8004AEA0(void);
-static int dummy_return_true(struct BuiltinReplay *);
+static void func_8004A820(void);
+static void end_grading_play(void);
+static void grading_play(void);
+static float func_8004ABD8(void);
+static void u_reset_replay_floor_counts(void);
+static void increment_replay_floor_counts(struct Replay *);
+static void decrement_replay_floor_counts(struct Replay *);
+static int get_replay_floor_count(struct Replay *);
+static float calc_replay_grade_adjustment(struct Replay *);
+static int u_get_highest_grade_replay(void);
+static int dummy_return_true(struct Replay *);
 
+// Initialize at power-on
 void recplay_init(void)
 {
     int i;
     int bufLen;
     char **pFileName;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
     int temp_r3;
     int nItems;
     char *buffer;
     DVDFileInfo file;
     DVDDir dir;
     DVDDirEntry dirent;
+    static u32 s_totalSize = sizeof(s_replays);
 
-    if (s_totalSize != 0)
+    if (s_totalSize == 0)  // s_totalSize is always non-zero
+        return;
+
+    // read the recdata.bin file into s_replays
+    // This fills the entire array
+    DVDChangeDir("recdata");
+    if (DVDOpen("recdata.bin", &file))
     {
-        DVDChangeDir("recdata");
-        if (DVDOpen("recdata.bin", &file))
-        {
-            size_t size = MIN(file.length, sizeof(s_builtinReplays));
-            avDVDRead(&file, s_builtinReplays, OSRoundUp32B(size), 0);
-            DVDClose(&file);
-        }
-        DVDChangeDir("/test");
-
-        s_dummyVar = sizeof(struct BuiltinReplay);
-
-        if (!(dipSwitches & DIP_DEBUG))
-        {
-            replay = s_builtinReplays;
-            for (i = ARRAY_COUNT(s_builtinReplays); i > 0; i--, replay++)
-            {
-                if (!dummy_return_true(replay))
-                    memset(replay, 0, sizeof(*replay));  // never happens
-            }
-        }
-
-        temp_r3 = func_8004AEA0();
-        if (temp_r3 >= 0)
-        {
-            replay = &s_builtinReplays[temp_r3];
-            memcpy(&s_builtinReplays[6], replay, sizeof(s_builtinReplays[6]));
-            memset(replay, 0, sizeof(*replay));
-        }
-        func_8004ABE4();
-
-        recSys[0].unk0 = 0;
-        recSys[0].unk2 = 0;
-        recSys[1].unk0 = 0;
-        recSys[1].unk2 = 0;
-        recSys[2].unk0 = 0;
-        recSys[2].unk2 = 0;
-        recSys[3].unk0 = 0;
-        recSys[3].unk2 = 0;
-
-        if (DVDOpenDir("recdata", &dir) != 0)
-        {
-            // Scan for built-in replay files
-            nItems = 0;
-            bufLen = 0;
-            while (DVDReadDir(&dir, &dirent) != 0)
-            {
-                if (!dirent.isDir)
-                {
-                    nItems++;
-                    bufLen += strlen(dirent.name) + 1;
-                }
-            }
-            s_builtinReplayFilesCount = nItems;
-            buffer = OSAlloc(OSRoundUp32B(bufLen));
-            s_builtinReplayFileNames = OSAlloc(OSRoundUp32B(nItems * sizeof(*s_builtinReplayFileNames)));
-
-            // Get names of all built-in replay files
-            dir.location = dir.entryNum + 1;
-            pFileName = s_builtinReplayFileNames;
-            while (DVDReadDir(&dir, &dirent) != 0)
-            {
-                if (!dirent.isDir)
-                {
-                    strcpy(buffer, dirent.name);
-                    *pFileName++ = buffer;
-                    buffer += strlen(dirent.name) + 1;
-                }
-            }
-            DVDCloseDir(&dir);
-        }
-        func_8004AFC0();
+        size_t size = MIN(file.length, sizeof(s_replays));
+        avDVDRead(&file, s_replays, OSRoundUp32B(size), 0);
+        DVDClose(&file);
     }
+    DVDChangeDir("/test");
+
+    s_dummyVar = sizeof(struct Replay);
+
+    if (!(dipSwitches & DIP_DEBUG))
+    {
+        replay = s_replays;
+        for (i = ARRAY_COUNT(s_replays); i > 0; i--, replay++)
+        {
+            if (!dummy_return_true(replay))
+                memset(replay, 0, sizeof(*replay));  // never happens
+        }
+    }
+
+    temp_r3 = u_get_highest_grade_replay();
+    if (temp_r3 >= 0)
+    {
+        replay = &s_replays[temp_r3];
+        memcpy(&s_replays[6], replay, sizeof(s_replays[6]));
+        memset(replay, 0, sizeof(*replay));
+    }
+    u_reset_replay_floor_counts();
+
+    s_recordingStatus[0].replayIndex = 0;
+    s_recordingStatus[0].isRecording = 0;
+    s_recordingStatus[1].replayIndex = 0;
+    s_recordingStatus[1].isRecording = 0;
+    s_recordingStatus[2].replayIndex = 0;
+    s_recordingStatus[2].isRecording = 0;
+    s_recordingStatus[3].replayIndex = 0;
+    s_recordingStatus[3].isRecording = 0;
+
+    if (DVDOpenDir("recdata", &dir) != 0)
+    {
+        // Scan for built-in replay files
+        nItems = 0;
+        bufLen = 0;
+        while (DVDReadDir(&dir, &dirent) != 0)
+        {
+            if (!dirent.isDir)
+            {
+                nItems++;
+                bufLen += strlen(dirent.name) + 1;
+            }
+        }
+        s_builtinReplayFilesCount = nItems;
+        buffer = OSAlloc(OSRoundUp32B(bufLen));
+        s_builtinReplayFileNames = OSAlloc(OSRoundUp32B(nItems * sizeof(*s_builtinReplayFileNames)));
+
+        // Get names of all built-in replay files
+        dir.location = dir.entryNum + 1;
+        pFileName = s_builtinReplayFileNames;
+        while (DVDReadDir(&dir, &dirent) != 0)
+        {
+            if (!dirent.isDir)
+            {
+                strcpy(buffer, dirent.name);
+                *pFileName++ = buffer;
+                buffer += strlen(dirent.name) + 1;
+            }
+        }
+        DVDCloseDir(&dir);
+    }
+    func_8004AFC0();
 }
 
-void u_load_random_builtin_replay(void)
+void recplay_load_builtin_replays(void)
 {
-    struct BuiltinReplay *temp_r30;
+    struct Replay *replay;
     int temp_r3_3;
     u32 temp_r28;
-    int var_r29;
-    struct BuiltinReplay *var_r28;
-    struct BuiltinReplay *temp_r3_2;
+    int count;
+    int fileIdx;
+    struct Replay *toLoad;
+    void *fileBuf;
     u32 fileSize;
     DVDFileInfo file;
     int i;
@@ -170,35 +189,37 @@ void u_load_random_builtin_replay(void)
     if (s_builtinReplayFileNames == NULL || s_builtinReplayFilesCount == 0)
         return;
 
-    var_r29 = (rand() & 0x7FFF) % 6 + 1;
+    count = (rand() & 0x7FFF) % 6 + 1;  // choose a random number replays to load from the file (up to 6)
     DVDChangeDir("recdata");
-    if (DVDOpen(s_builtinReplayFileNames[(rand() & 0x7FFF) % s_builtinReplayFilesCount], &file))
+    fileIdx = (rand() & 0x7FFF) % s_builtinReplayFilesCount;  // choose a random file to load
+    if (DVDOpen(s_builtinReplayFileNames[fileIdx], &file))
     {
-        fileSize = MIN(file.length, var_r29 * sizeof(struct BuiltinReplay));
+        fileSize = MIN(file.length, count * sizeof(struct Replay));
         fileSize = OSRoundUp32B(fileSize);
-        temp_r3_2 = OSAllocFromHeap(__OSCurrHeap, fileSize);
-        if (temp_r3_2 != NULL)
+        fileBuf = OSAllocFromHeap(__OSCurrHeap, fileSize);
+        if (fileBuf != NULL)
         {
-            avDVDRead(&file, temp_r3_2, fileSize, 0);
-            var_r28 = temp_r3_2;
+            avDVDRead(&file, fileBuf, fileSize, 0);
+            toLoad = fileBuf;
 
-            for (; var_r29 > 0; var_r29--, var_r28++)
+            for (; count > 0; count--, toLoad++)
             {
-                if (var_r28->header.unkC != 0.0 && var_r28->header.stageId != 0)
+                if (toLoad->header.grade != 0.0 && toLoad->header.stageId != 0)
                 {
-                    temp_r30 = &s_builtinReplays[func_80048E78()];
-                    func_8004ACF0(temp_r30);
-                    memcpy(temp_r30, var_r28, sizeof(*temp_r30));
-                    func_8004AC68(temp_r30);
+                    replay = &s_replays[recplay_find_new_index()];
+                    decrement_replay_floor_counts(replay);
+                    memcpy(replay, toLoad, sizeof(*replay));
+                    increment_replay_floor_counts(replay);
                 }
             }
-            OSFree(temp_r3_2);
-            temp_r3_3 = func_8004AEA0();
+            OSFree(fileBuf);
+
+            temp_r3_3 = u_get_highest_grade_replay();
             if (temp_r3_3 >= 0)
             {
-                temp_r30 = &s_builtinReplays[temp_r3_3];
-                memcpy(&s_builtinReplays[6], temp_r30, sizeof(s_builtinReplays[6]));
-                memset(temp_r30, 0, sizeof(*temp_r30));
+                replay = &s_replays[temp_r3_3];
+                memcpy(&s_replays[6], replay, sizeof(s_replays[6]));
+                memset(replay, 0, sizeof(*replay));
             }
         }
 
@@ -207,30 +228,32 @@ void u_load_random_builtin_replay(void)
     }
 
     DVDChangeDir("/test");
-    temp_r30 = s_builtinReplays;
-    for (i = 11; i > 0; i--, temp_r30++)
-        temp_r30->header.unkC *= 0.92f;
+
+    // Penalize the built-in replays slightly so that the player's own replays are preferred
+    replay = s_replays;
+    for (i = 11; i > 0; i--, replay++)
+        replay->header.grade *= 0.92f;
 }
 
 void recplay_init_first(void)
 {
     int i;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    replay = s_builtinReplays;
+    replay = s_replays;
     for (i = 11; i > 0; i--, replay++)
     {
         if (replay->header.flags & 0x8000)
             replay->header.flags &= ~0x8000;
         if (!(dipSwitches & DIP_DEBUG))
-            replay->header.unkC *= 0.92f;
+            replay->header.grade *= 0.92f;
     }
     cmp_recplay_init_first();
 }
 
 void ev_recplay_init(void)
 {
-    delayStopCounter = 0;
+    s_recordingStopTimer = 0;
     dummy_8004AFD4();
 }
 
@@ -238,142 +261,148 @@ void ev_recplay_main(void)
 {
     struct Ball *ball;
     int i;
-    struct Struct8020AE20 *var_r28;
+    struct PlayerRecordingStatus *recstat;
 
     if (debugFlags & 0xA)
         return;
 
-    if (delayStopCounter > 0)
+    if (s_recordingStopTimer > 0)
     {
-        delayStopCounter--;
-        if (delayStopCounter == 0)
-            stop_recplay();
+        s_recordingStopTimer--;
+        if (s_recordingStopTimer == 0)
+            recplay_stop_recording();
     }
 
-    var_r28 = recSys;
+    // Record ball and world frame for each player
+
+    recstat = s_recordingStatus;
     ball = ballInfo;
-    for (i = 4; i > 0; i--, var_r28++, ball++)
+    for (i = 4; i > 0; i--, recstat++, ball++)
     {
         modeCtrl.gameType;  // needed to match
 
-        if ((s16)(int)var_r28->unk2 != 0)
+        if ((s16)(int)recstat->isRecording)
         {
-            struct BuiltinReplay *replay;
-            int var_r6;
-            struct ReplayBallFrame *temp_r5;
-            struct ReplayWorldFrame *temp_r7;
+            struct Replay *replay;
+            int frame;
+            struct ReplayBallFrame *ballFrame;
+            struct ReplayWorldFrame *worldFrame;
 
-            replay = &s_builtinReplays[var_r28->unk0];
-            var_r6 = replay->unk34;
+            replay = &s_replays[recstat->replayIndex];
+            frame = replay->currFrame;
 
-            temp_r5 = &replay->ballFrames[var_r6];
-            temp_r5->pos = ball->pos;
-            temp_r5->rotX = ball->rotX;
-            temp_r5->rotY = ball->rotY;
-            temp_r5->rotZ = ball->rotZ;
-            temp_r5->unk12 = (32767.0f * ball->unk114.x);
-            temp_r5->unk14 = (32767.0f * ball->unk114.y);
-            temp_r5->unk16 = (32767.0f * ball->unk114.z);
-            temp_r5->unk18 = ball->flags;
-            temp_r5->unk1C = ball->unk130;
+            ballFrame = &replay->ballFrames[frame];
+            ballFrame->pos = ball->pos;
+            ballFrame->rotX = ball->rotX;
+            ballFrame->rotY = ball->rotY;
+            ballFrame->rotZ = ball->rotZ;
+            ballFrame->unk12 = (32767.0f * ball->unk114.x);
+            ballFrame->unk14 = (32767.0f * ball->unk114.y);
+            ballFrame->unk16 = (32767.0f * ball->unk114.z);
+            ballFrame->unk18 = ball->flags;
+            ballFrame->unk1C = ball->unk130;
 
-            temp_r7 = &replay->worldFrames[var_r6];
-            temp_r7->rotX = currentWorld->xrot;
-            temp_r7->rotZ = currentWorld->zrot;
+            worldFrame = &replay->worldFrames[frame];
+            worldFrame->rotX = currentWorld->xrot;
+            worldFrame->rotZ = currentWorld->zrot;
 
-            replay->unk1A++;
+            replay->frameCount++;
             replay->unk30 = stageInfo.unk0;
-            if (++var_r6 > 0x2CF)
-                var_r6 -= 0x2D0;
-            replay->unk34 = var_r6;
-            if (replay->unk36 < 0x2D0)
-                replay->unk36++;
+            if (++frame > MAX_FRAMES - 1)
+                frame -= MAX_FRAMES;
+            replay->currFrame = frame;
+            if (replay->time < MAX_FRAMES)
+                replay->time++;
             grading_play();
         }
     }
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL
      || modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
-        u_serialize_some_replay_data();
+        recplay_cmpr_record_frame();
 }
 
 void ev_recplay_dest(void)
 {
-    if (delayStopCounter > 0)
+    if (s_recordingStopTimer > 0)
     {
-        stop_recplay();
-        delayStopCounter = 0;
+        recplay_stop_recording();
+        s_recordingStopTimer = 0;
     }
-    func_8004B334();
+    recplay_cmpr_dest();
 }
 
-int func_80048E78(void)
+// Computes an index in the s_replays array that a new replay can use.
+// If there are no free slots, then the replay with the lowest grade is
+// replaced.
+int recplay_find_new_index(void)
 {
-    float var_f29;
-    int var_r31;
-    struct BuiltinReplay *replay;
-    int var_r29;
+    float minGrade;
+    int i;
+    struct Replay *replay;
+    int index;
 
-    replay = s_builtinReplays;
-    var_r29 = 0;
-    var_f29 = replay->header.unkC;
-    for (var_r31 = 6; var_r31 > 0; var_r31--, replay++)
+    replay = s_replays;
+    index = 0;
+    minGrade = replay->header.grade;
+    for (i = 6; i > 0; i--, replay++)
     {
-        float temp_f30 = replay->header.unkC;
+        float grade = replay->header.grade;
 
-        if (temp_f30 == 0.0)
+        if (grade == 0.0)  // no replay
         {
-            var_r29 = 6 - var_r31;
+            index = 6 - i;
             break;
         }
         else
         {
-            float temp_f0 = temp_f30 * func_8004ADC0(replay);
-
-            if (temp_f0 < var_f29)
+            grade *= calc_replay_grade_adjustment(replay);
+            if (grade < minGrade)
             {
-                var_r29 = 6 - var_r31;
-                var_f29 = temp_f0;
+                index = 6 - i;
+                minGrade = grade;
             }
         }
     }
-    return var_r29;
+    return index;
 }
 
-void func_80048F20(void)
+void u_recplay_reset_recording_state(void)
 {
-    struct Struct8020AE20 *ptr;
+    struct PlayerRecordingStatus *recstat;
     int i;
 
-    stop_recplay();
-    ptr = recSys;
-    for (i = 0; i < 4; i++, ptr++)
-        ptr->unk0 = -1;
+    recplay_stop_recording();
+    recstat = s_recordingStatus;
+    for (i = 0; i < 4; i++, recstat++)
+        recstat->replayIndex = -1;
 }
 
-void func_80048F58(int arg0, int arg1)
+// Assigns the specified replay recording slot to the player
+void recplay_set_player_replay_index(int playerId, int replayIndex)
 {
-    recSys[arg0].unk0 = arg1;
+    s_recordingStatus[playerId].replayIndex = replayIndex;
 }
 
-void func_80048F74(void)
+// Starts recording for all players that have an assigned replay slot
+void recplay_start_recording(void)
 {
     int i;
-    struct BuiltinReplay *replay;
-    struct Struct8020AE20 *var_r19;
+    struct Replay *replay;
+    struct PlayerRecordingStatus *recstat;
     int isPractice = (modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE);
 
-    var_r19 = recSys;
-    for (i = 4; i > 0; i--, var_r19++)
+    recstat = s_recordingStatus;
+    for (i = 4; i > 0; i--, recstat++)
     {
-        if (var_r19->unk0 >= 0)
+        if (recstat->replayIndex >= 0)
         {
-            replay = &s_builtinReplays[var_r19->unk0];
+            replay = &s_replays[recstat->replayIndex];
             if (replay->header.floorNum != 0)
-                func_8004ACF0(replay);
-            replay->unk34 = 0;
-            replay->unk36 = 0;
+                decrement_replay_floor_counts(replay);
+            replay->currFrame = 0;
+            replay->time = 0;
             replay->unk18 = infoWork.timerCurr;
-            replay->unk1A = 0;
+            replay->frameCount = 0;
             replay->header.flags = 0x8000;
             replay->header.stageId = currStageId;
             if (!isPractice)
@@ -405,132 +434,140 @@ void func_80048F74(void)
                 if (lbl_8027CE24[0].unk4 & COURSE_FLAG_MASTER)
                     replay->header.flags |= REPLAY_FLAG_MASTER;
             }
-            func_8004AC68(replay);
-            var_r19->unk2 = 1;
+            increment_replay_floor_counts(replay);
+            recstat->isRecording = 1;
             func_8004A820();
         }
     }
+
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL
      || modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
-        func_8004B354();
+        recplay_cmpr_start_recording();
 }
 
-void stop_recplay(void)
+// Stops recording for all players that currently are recording
+void recplay_stop_recording(void)
 {
     int i;
-    struct Struct8020AE20 *var_r28;
-    struct BuiltinReplay *replay;
+    struct PlayerRecordingStatus *recstat;
+    struct Replay *replay;
 
-    delayStopCounter = 0;
-    var_r28 = recSys;
-    for (i = 4; i > 0; i--, var_r28++)
+    s_recordingStopTimer = 0;
+
+    recstat = s_recordingStatus;
+    for (i = 4; i > 0; i--, recstat++)
     {
-        if (var_r28->unk0 >= 0)
+        if (recstat->replayIndex >= 0)
         {
-            if (var_r28->unk2 == 1)
+            if (recstat->isRecording == 1)
             {
-                replay = &s_builtinReplays[var_r28->unk0];
-                if (replay->unk1A < 720)
+                replay = &s_replays[recstat->replayIndex];
+                if (replay->frameCount < 720)
                     replay->header.flags |= REPLAY_FLAG_4;
                 else
                     replay->header.flags &= ~REPLAY_FLAG_4;
                 end_grading_play();
-                replay->header.unkC = func_8004ABD8();
+                replay->header.grade = func_8004ABD8();
             }
-            var_r28->unk2 = 0;
+            recstat->isRecording = 0;
         }
     }
 
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL
      || modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
-        func_8004B540();
+        recplay_cmpr_stop_recording();
 }
 
-void func_8004923C(int arg0)
+void recplay_set_recording_stop_timer(int timer)
 {
-    delayStopCounter = arg0;
-    if (arg0 == 0)
-        stop_recplay();
+    s_recordingStopTimer = timer;
+    if (timer == 0)
+        recplay_stop_recording();
 }
 
-void func_80049268(int arg0)
+// Records that the player reached a goal
+void recplay_record_goal(int playerId)
 {
-    struct Struct8020AE20 *temp_r3;
-    struct BuiltinReplay *replay;
+    struct PlayerRecordingStatus *recstat;
+    struct Replay *replay;
 
-    temp_r3 = &recSys[arg0];
-    if (temp_r3->unk2 == 1)
+    recstat = &s_recordingStatus[playerId];
+    if (recstat->isRecording == 1)
     {
-        replay = &s_builtinReplays[temp_r3->unk0];
-        replay->header.flags |= REPLAY_FLAG_WIN;
+        replay = &s_replays[recstat->replayIndex];
+        replay->header.flags |= REPLAY_FLAG_GOAL;
         replay->unk1C = infoWork.unk1C;
         replay->unk24 = infoWork.unk10;
         replay->goalEntered = infoWork.goalEntered;
         replay->unk20 = infoWork.unkE;
-        func_8004B550();
+        recplay_cmpr_record_goal();
     }
 }
 
-void func_800492FC(int arg0)
+// Records that the player fell off the stage
+void recplay_record_fallout(int playerId)
 {
-    struct Struct8020AE20 *temp_r3;
-    struct BuiltinReplay *replay;
+    struct PlayerRecordingStatus *recstat;
+    struct Replay *replay;
 
-    temp_r3 = &recSys[arg0];
-    if (temp_r3->unk2 == 1)
+    recstat = &s_recordingStatus[playerId];
+    if (recstat->isRecording == 1)
     {
-        replay = &s_builtinReplays[temp_r3->unk0];
+        replay = &s_replays[recstat->replayIndex];
         replay->header.flags |= REPLAY_FLAG_FALLOUT;
         replay->unk1C = infoWork.timerCurr;
-        func_8004B5AC();
+        recplay_cmpr_record_fallout();
     }
 }
 
-void func_80049368(int arg0)
+// Records that the player ran out of time
+void recplay_record_timeover(int playerId)
 {
-    struct Struct8020AE20 *temp_r3;
-    struct BuiltinReplay *replay;
+    struct PlayerRecordingStatus *recstat;
+    struct Replay *replay;
 
-    temp_r3 = &recSys[arg0];
-    if (temp_r3->unk2 == 1)
+    recstat = &s_recordingStatus[playerId];
+    if (recstat->isRecording == 1)
     {
-        replay = &s_builtinReplays[temp_r3->unk0];
+        replay = &s_replays[recstat->replayIndex];
         replay->header.flags |= REPLAY_FLAG_TIME_OVER;
-        func_8004B60C();
+        recplay_cmpr_record_timeover();
     }
 }
 
-void func_800493C4(int arg0)
+// Records that the player cleared a bonus stage
+void recplay_record_bonus_clear(int playerId)
 {
-    struct Struct8020AE20 *temp_r3;
-    struct BuiltinReplay *replay;
+    struct PlayerRecordingStatus *recstat;
+    struct Replay *replay;
 
-    temp_r3 = &recSys[arg0];
-    if (temp_r3->unk2 == 1)
+    recstat = &s_recordingStatus[playerId];
+    if (recstat->isRecording == 1)
     {
-        replay = &s_builtinReplays[temp_r3->unk0];
-        replay->header.flags |= REPLAY_FLAG_7;
+        replay = &s_replays[recstat->replayIndex];
+        replay->header.flags |= REPLAY_FLAG_BONUS_CLEAR;
         replay->unk1C = infoWork.timerCurr;
-        func_8004B694();
+        recplay_cmpr_record_bonus_clear();
     }
 }
 
-void func_80049430(char *playerName)
+void recplay_record_player_name(char *playerName)
 {
-    int hasSymbol;
+    BOOL hasSymbol;
     volatile char *symbols;
     char *p;
     int i;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    hasSymbol = 0;
+    // Don't allow special characters in player name
+    hasSymbol = FALSE;
     for (p = playerName; *p != 0; p++)
     {
         for (symbols = "#$%@^"; *symbols != 0; symbols++)
         {
             if (*symbols == *p)
             {
-                hasSymbol = 1;
+                hasSymbol = TRUE;
                 playerName = "";
                 break;
             }
@@ -540,7 +577,7 @@ void func_80049430(char *playerName)
             break;
     }
 
-    replay = s_builtinReplays;
+    replay = s_replays;
     for (i = 11; i > 0; i--, replay++)
     {
         if (replay->header.flags & REPLAY_FLAG_15)
@@ -549,24 +586,24 @@ void func_80049430(char *playerName)
             replay->header.playerName[3] = 0;
         }
     }
-    set_replay_player_name(playerName);
+    recplay_cmpr_record_player_name(playerName);
 }
 
-void func_80049514(int replayId)
+void func_80049514(int replayIndex)
 {
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    if (replayId == 11)
+    if (replayIndex == 11)
     {
         func_8004B70C();
         return;
     }
-    replay = &s_builtinReplays[replayId];
+    replay = &s_replays[replayIndex];
     infoWork.timerMax = replay->unk18;
     infoWork.timerCurr = replay->unk18;
     infoWork.flags &= ~(INFO_FLAG_GOAL|INFO_FLAG_TIMEOVER|INFO_FLAG_FALLOUT|INFO_FLAG_05|INFO_FLAG_BONUS_STAGE|INFO_FLAG_BONUS_CLEAR|INFO_FLAG_10);
     infoWork.currFloor = replay->header.floorNum;
-    if (replay->header.flags & REPLAY_FLAG_WIN)
+    if (replay->header.flags & REPLAY_FLAG_GOAL)
     {
         infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_05;
         infoWork.timerCurr = replay->unk1C;
@@ -586,17 +623,18 @@ void func_80049514(int replayId)
         modeCtrl.courseFlags |= COURSE_FLAG_MASTER;
 }
 
-float func_8004964C(int replayId)
+float recplay_get_time(int replayIndex)
 {
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    if (replayId == 11)
-        return func_8004B81C();
-    replay = &s_builtinReplays[replayId];
-    return ((int)replay->unk36 != 0) ? replay->unk36 - 1 : 0;
+    if (replayIndex == 11)
+        return recplay_cmpr_get_time();
+    replay = &s_replays[replayIndex];
+    return ((int)replay->time != 0) ? replay->time - 1 : 0;
 }
 
-void func_800496BC(int replayId, struct ReplayBallFrame *arg1, float arg2)
+// Gets the ball's position and rotation at the specified time in the replay
+void recplay_get_ball_frame(int replayIndex, struct ReplayBallFrame *out, float time)
 {
     float temp_f30;
     float temp_f31;
@@ -607,55 +645,57 @@ void func_800496BC(int replayId, struct ReplayBallFrame *arg1, float arg2)
     s32 var_r3_2;
     s32 var_r6;
     struct Ball *ball;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
     struct ReplayBallFrame sp64;
     struct ReplayBallFrame sp44;
-    struct ReplayBallFrame sp24;
+    struct ReplayBallFrame curr;
     Point3d sp18;
     u8 unused[4];
 
     ball = currentBall;
-    if (replayId == 11)
+    if (replayIndex == 11)
     {
-        func_8004B850(arg2, arg1);
+        recplay_cmpr_get_ball_frame(time, out);
         return;
     }
-    replay = &s_builtinReplays[replayId];
-    if ((s16)(int)replay->unk36 == 0)
+    replay = &s_replays[replayIndex];
+
+    // If there are no frames, just copy the ball's current position
+    if ((s16)(int)replay->time == 0)
     {
-        arg1->pos = ball->pos;
-        arg1->rotX = ball->rotX;
-        arg1->rotY = ball->rotY;
-        arg1->rotZ = ball->rotZ;
+        out->pos = ball->pos;
+        out->rotX = ball->rotX;
+        out->rotY = ball->rotY;
+        out->rotZ = ball->rotZ;
         return;
     }
-    if (arg2 < 0.0)
+    if (time < 0.0)
     {
-        var_r3 = replay->unk34 - 1;
+        var_r3 = replay->currFrame - 1;
         if (var_r3 < 0)
             var_r3 += 720;
-        *arg1 = replay->ballFrames[var_r3];
+        *out = replay->ballFrames[var_r3];
         return;
     }
-    if (replayId == 11)
-        var_f1 = func_8004B81C();
+    if (replayIndex == 11)
+        var_f1 = recplay_cmpr_get_time();
     else
-        var_f1 = ((s16)replay->unk36 != 0) ? replay->unk36 - 1 : 0;
-    if (var_f1 <= arg2)
+        var_f1 = ((s16)replay->time != 0) ? replay->time - 1 : 0;
+    if (var_f1 <= time)
     {
-        int var_r4 = replay->unk34 - replay->unk36;
+        int var_r4 = replay->currFrame - replay->time;
         while (var_r4 < 0)
             var_r4 += 720;
-        *arg1 = replay->ballFrames[var_r4];
+        *out = replay->ballFrames[var_r4];
         return;
     }
 
-    temp_r5 = arg2;
+    temp_r5 = time;
 
-    temp_f31 = arg2 - temp_r5;
+    temp_f31 = time - temp_r5;
     temp_f30 = 1.0 - temp_f31;
 
-    var_r3_2 = replay->unk34 - 1 - temp_r5;
+    var_r3_2 = replay->currFrame - 1 - temp_r5;
     if (var_r3_2 < 0)
         var_r3_2 += 720;
     var_r6 = var_r3_2 - 1;
@@ -665,32 +705,33 @@ void func_800496BC(int replayId, struct ReplayBallFrame *arg1, float arg2)
     sp64 = replay->ballFrames[var_r3_2];
     sp44 = replay->ballFrames[var_r6];
 
-    sp24.pos.x = (sp64.pos.x * temp_f30) + (sp44.pos.x * temp_f31);
-    sp24.pos.y = (sp64.pos.y * temp_f30) + (sp44.pos.y * temp_f31);
-    sp24.pos.z = (sp64.pos.z * temp_f30) + (sp44.pos.z * temp_f31);
+    curr.pos.x = (sp64.pos.x * temp_f30) + (sp44.pos.x * temp_f31);
+    curr.pos.y = (sp64.pos.y * temp_f30) + (sp44.pos.y * temp_f31);
+    curr.pos.z = (sp64.pos.z * temp_f30) + (sp44.pos.z * temp_f31);
 
-    sp24.rotX = sp64.rotX * temp_f30 + sp44.rotX * temp_f31;
-    sp24.rotY = sp64.rotY * temp_f30 + sp44.rotY * temp_f31;
-    sp24.rotZ = sp64.rotZ * temp_f30 + sp44.rotZ * temp_f31;
+    curr.rotX = sp64.rotX * temp_f30 + sp44.rotX * temp_f31;
+    curr.rotY = sp64.rotY * temp_f30 + sp44.rotY * temp_f31;
+    curr.rotZ = sp64.rotZ * temp_f30 + sp44.rotZ * temp_f31;
 
     sp18.x = sp64.unk12 * temp_f30 + sp44.unk12 * temp_f31;
     sp18.y = sp64.unk14 * temp_f30 + sp44.unk14 * temp_f31;
     sp18.z = sp64.unk16 * temp_f30 + sp44.unk16 * temp_f31;
     mathutil_vec_set_len(&sp18, &sp18, 32767.0f);
 
-    sp24.unk12 = sp18.x;
-    sp24.unk14 = sp18.y;
-    sp24.unk16 = sp18.z;
-    sp24.unk18 = sp64.unk18;
-    sp24.unk1C = sp64.unk1C * temp_f30 + sp44.unk1C * temp_f31;
-    *arg1 = sp24;
+    curr.unk12 = sp18.x;
+    curr.unk14 = sp18.y;
+    curr.unk16 = sp18.z;
+    curr.unk18 = sp64.unk18;
+    curr.unk1C = sp64.unk1C * temp_f30 + sp44.unk1C * temp_f31;
+    *out = curr;
 }
 
-void func_80049C1C(int replayId, struct ReplayWorldFrame *arg1, float arg2)
+// Gets the world tilt angles at the specified time in the replay
+void recplay_get_world_frame(int replayIndex, struct ReplayWorldFrame *out, float time)
 {
     struct ReplayWorldFrame sp20;
     struct ReplayWorldFrame sp1C;
-    struct ReplayWorldFrame sp18;
+    struct ReplayWorldFrame curr;
     float temp_f5;
     float temp_f6;
     float var_f1;
@@ -698,49 +739,49 @@ void func_80049C1C(int replayId, struct ReplayWorldFrame *arg1, float arg2)
     s32 var_r3;
     s32 var_r3_2;
     s32 var_r5;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
     struct World *world;
     u8 unused[4];
 
     world = currentWorld;
-    if (replayId == 11)
+    if (replayIndex == 11)
     {
-        func_8004BFCC(arg2, arg1);
+        recplay_cmpr_get_world_frame(time, out);
         return;
     }
-    replay = &s_builtinReplays[replayId];
-    if ((s16)(int)replay->unk36 == 0)
+    replay = &s_replays[replayIndex];
+    if ((s16)(int)replay->time == 0)
     {
-        arg1->rotX = (s16) world->xrot;
-        arg1->rotZ = (s16) world->zrot;
+        out->rotX = (s16) world->xrot;
+        out->rotZ = (s16) world->zrot;
         return;
     }
-    if (arg2 < 0.0)
+    if (time < 0.0)
     {
-        var_r3 = replay->unk34 - 1;
+        var_r3 = replay->currFrame - 1;
         if (var_r3 < 0)
             var_r3 += 720;
-        *arg1 = replay->worldFrames[var_r3];
+        *out = replay->worldFrames[var_r3];
         return;
     }
-    if (replayId == 11)
-        var_f1 = func_8004B81C();
+    if (replayIndex == 11)
+        var_f1 = recplay_cmpr_get_time();
     else
-        var_f1 = ((s16)replay->unk36 != 0) ? replay->unk36 - 1 : 0;
-    if (var_f1 <= arg2)
+        var_f1 = ((s16)replay->time != 0) ? replay->time - 1 : 0;
+    if (var_f1 <= time)
     {
-        int var_r4 = replay->unk34 - replay->unk36;
+        int var_r4 = replay->currFrame - replay->time;
         while (var_r4 < 0)
             var_r4 += 720;
-        *arg1 = replay->worldFrames[var_r4];
+        *out = replay->worldFrames[var_r4];
         return;
     }
 
-    temp_r5 = arg2;
-    temp_f5 = arg2 - temp_r5;
+    temp_r5 = time;
+    temp_f5 = time - temp_r5;
     temp_f6 = 1.0 - temp_f5;
 
-    var_r3_2 = replay->unk34 - 1 - temp_r5;
+    var_r3_2 = replay->currFrame - 1 - temp_r5;
     if (var_r3_2 < 0)
         var_r3_2 += 720;
     var_r5 = var_r3_2 - 1;
@@ -750,21 +791,21 @@ void func_80049C1C(int replayId, struct ReplayWorldFrame *arg1, float arg2)
     sp20 = replay->worldFrames[var_r3_2];
     sp1C = replay->worldFrames[var_r5];
 
-    sp18.rotX = sp20.rotX * temp_f6 + sp1C.rotX * temp_f5;
-    sp18.rotZ = sp20.rotZ * temp_f6 + sp1C.rotZ * temp_f5;
-    *arg1 = sp18;
+    curr.rotX = sp20.rotX * temp_f6 + sp1C.rotX * temp_f5;
+    curr.rotZ = sp20.rotZ * temp_f6 + sp1C.rotZ * temp_f5;
+    *out = curr;
 }
 
-float func_80049E7C(int replayId, float arg1)
+float recplay_get_info_timer(int replayIndex, float arg1)
 {
     float var_f1;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    if (replayId == 11)
-        return func_8004C1D8(arg1);
-    replay = &s_builtinReplays[replayId];
-    var_f1 = arg1 + (float)(replay->unk18 - replay->unk1A);
-    if (replay->header.flags & REPLAY_FLAG_WIN)
+    if (replayIndex == 11)
+        return recplay_cmpr_get_info_timer(arg1);
+    replay = &s_replays[replayIndex];
+    var_f1 = arg1 + (float)(replay->unk18 - replay->frameCount);
+    if (replay->header.flags & REPLAY_FLAG_GOAL)
     {
         if (var_f1 < replay->unk1C)
             var_f1 = replay->unk1C;
@@ -772,31 +813,31 @@ float func_80049E7C(int replayId, float arg1)
     return var_f1;
 }
 
-void get_replay_header(int replayId, struct ReplayHeader *header)
+void recplay_get_header(int replayIndex, struct ReplayHeader *header)
 {
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    if (replayId == 11)
+    if (replayIndex == 11)
     {
-        func_8004C28C(header);
+        recplay_cmpr_get_header(header);
         return;
     }
-    replay = &s_builtinReplays[replayId];
+    replay = &s_replays[replayIndex];
     *header = replay->header;
 }
 
-float get_recplay_stage_timer(float arg0, int replayId)
+float recplay_get_stage_timer(float arg0, int replayIndex)
 {
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    if (replayId == 11)
+    if (replayIndex == 11)
         return func_8004C254(arg0);
-    replay = &s_builtinReplays[replayId];
+    replay = &s_replays[replayIndex];
     return replay->unk30 - arg0;
 }
 
 #pragma force_active on
-void func_80049FF0(void)
+void u_replay_test_init(void)
 {
     if (debugFlags & 0xA)
         return;
@@ -819,30 +860,15 @@ void func_80049FF0(void)
     event_start(EVENT_EFFECT);
     event_start(EVENT_REND_EFC);
     event_start(EVENT_BACKGROUND);
-    replayInfo.unk14 = 0;
-    lbl_802F1F78.replayId = replayInfo.unk0[replayInfo.unk14];
+    g_recplayInfo.u_playerId = 0;
+    lbl_802F1F78.replayIndex = g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId];
     lbl_802F1F78.unk4 = 0;
 }
-#pragma force_active reset
 
-struct Struct80250A68 replayInfo;
-
-static float func_8004A0C8_sub(int a)
-{
-    if (a == 11)
-        return func_8004B81C();
-    else
-    {
-        struct BuiltinReplay *replay = &s_builtinReplays[a];
-        return ((s16)replay->unk36 != 0) ? replay->unk36 - 1 : 0;
-    }
-}
-
-#pragma force_active on
-void func_8004A0C8(void)
+void u_replay_test_main(void)
 {
     struct Ball *currBall = currentBall;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
     int temp_r0_2;
     struct ReplayHeader header;
     u8 unused[0xC];
@@ -854,31 +880,31 @@ void func_8004A0C8(void)
     if ((controllerInfo[0].pressed.button & PAD_BUTTON_LEFT)
      || ((controllerInfo[0].held.button & PAD_BUTTON_LEFT) && (controllerInfo[0].held.button & PAD_TRIGGER_R)))
     {
-        if (lbl_802F1F78.replayId > 0)
-            lbl_802F1F78.replayId--;
+        if (lbl_802F1F78.replayIndex > 0)
+            lbl_802F1F78.replayIndex--;
     }
     if ((controllerInfo[0].pressed.button & PAD_BUTTON_RIGHT)
      || ((controllerInfo[0].held.button & PAD_BUTTON_RIGHT) && (controllerInfo[0].held.button & PAD_TRIGGER_R)))
     {
-        if (lbl_802F1F78.replayId < 11)
-            lbl_802F1F78.replayId++;
+        if (lbl_802F1F78.replayIndex < 11)
+            lbl_802F1F78.replayIndex++;
     }
 
-    if (lbl_802F1F78.replayId < 11)
-        replay = &s_builtinReplays[lbl_802F1F78.replayId];
+    if (lbl_802F1F78.replayIndex < 11)
+        replay = &s_replays[lbl_802F1F78.replayIndex];
     else
         replay = NULL;
 
-    temp_r0_2 = lbl_802F1F78.replayId;
+    temp_r0_2 = lbl_802F1F78.replayIndex;
     if (temp_r0_2 == 11)
-        func_8004C28C(&header);
+        recplay_cmpr_get_header(&header);
     else
-        header = s_builtinReplays[temp_r0_2].header;
+        header = s_replays[temp_r0_2].header;
 
     window_set_cursor_pos(8, 8);
     window_printf_2(" REPLAY TEST\n\n");
-    if (lbl_802F1F78.replayId != 11)
-        window_printf_2("     ID: %03d\n", lbl_802F1F78.replayId);
+    if (lbl_802F1F78.replayIndex != 11)
+        window_printf_2("     ID: %03d\n", lbl_802F1F78.replayIndex);
     else
     {
         window_set_text_color(WINDOW_COLOR_RED);
@@ -886,7 +912,7 @@ void func_8004A0C8(void)
         window_set_text_color(WINDOW_COLOR_WHITE);
     }
 
-    if (func_8004A0C8_sub(lbl_802F1F78.replayId) == 0.0f)
+    if (recplay_get_time(lbl_802F1F78.replayIndex) == 0.0f)
     {
         window_set_text_color(WINDOW_COLOR_RED);
         window_printf_2("       :NO DATA\n");
@@ -900,12 +926,12 @@ void func_8004A0C8(void)
         {
             window_printf_2("  MONKY: %3d\n", header.character);
             window_printf_2("   NAME: %s\n", header.playerName);
-            window_printf_2("  GRADE: %f\n", header.unkC);
+            window_printf_2("  GRADE: %f\n", header.grade);
             if (replay != NULL)
             {
                 window_printf_2("\n");
-                window_printf_2("Same Kind Data Count : %d\n", func_8004AD78(replay));
-                window_printf_2("Adjust Coeff : %f\n", func_8004ADC0(replay));
+                window_printf_2("Same Kind Data Count : %d\n", get_replay_floor_count(replay));
+                window_printf_2("Adjust Coeff : %f\n", calc_replay_grade_adjustment(replay));
             }
         }
     }
@@ -915,7 +941,7 @@ void func_8004A0C8(void)
     switch (lbl_802F1F78.unk4)
     {
     case 0:
-        if (func_8004A0C8_sub(lbl_802F1F78.replayId) > 0.0)
+        if (recplay_get_time(lbl_802F1F78.replayIndex) > 0.0)
         {
             if ((controllerInfo[0].pressed.button & PAD_BUTTON_A)
              && !(controllerInfo[0].pressed.button & PAD_BUTTON_B))
@@ -923,11 +949,11 @@ void func_8004A0C8(void)
                 float var_f1_4;
                 int temp_r0_7;
 
-                replayInfo.unk0[replayInfo.unk14] = lbl_802F1F78.replayId;
+                g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId] = lbl_802F1F78.replayIndex;
                 currStageId = header.stageId;
                 modeCtrl.difficulty = header.difficulty;
                 event_finish(EVENT_EFFECT);
-                func_80049514(replayInfo.unk0[replayInfo.unk14]);
+                func_80049514(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
                 infoWork.flags |= INFO_FLAG_REPLAY;
                 load_stage(currStageId);
                 event_finish(EVENT_STAGE);
@@ -946,14 +972,14 @@ void func_8004A0C8(void)
                 event_start(EVENT_BALL);
                 BALL_FOREACH( ball->state = 9; )
                 WORLD_FOREACH( world->state = 6; )
-                camera_set_state(0x2C);
-                replayInfo.unk10 = func_8004A0C8_sub(replayInfo.unk0[replayInfo.unk14]);
-                var_f1_4 = replayInfo.unk10;
-                temp_r0_7 = replayInfo.unk0[replayInfo.unk14];
+                camera_set_state_all(0x2C);
+                g_recplayInfo.u_timeOffset = recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
+                var_f1_4 = g_recplayInfo.u_timeOffset;
+                temp_r0_7 = g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId];
                 if (temp_r0_7 == 11)
-                    var_f1_4 = func_8004C254(replayInfo.unk10);
+                    var_f1_4 = func_8004C254(g_recplayInfo.u_timeOffset);
                 else
-                    var_f1_4 = s_builtinReplays[temp_r0_7].unk30 - var_f1_4;
+                    var_f1_4 = s_replays[temp_r0_7].unk30 - var_f1_4;
                 animate_anim_groups(var_f1_4);
             }
         }
@@ -965,7 +991,7 @@ void func_8004A0C8(void)
                 BALL_FOREACH( ball->state = 0; )
                 WORLD_FOREACH( world->state = 4; )
                 if (header.floorNum != 0)
-                    func_8004ACF0(replay);
+                    decrement_replay_floor_counts(replay);
                 memset(replay, 0, sizeof(*replay));
             }
         }
@@ -1005,40 +1031,40 @@ void func_8004A800(void)
 }
 #pragma force_active reset
 
-struct
+static struct
 {
-    float unk0;
+    float grade;
     Vec unk4;
     Vec unk10;
     s32 unk1C;
-} _gpp;
+} someGradingStruct;
 
-void func_8004A820(void)
+static void func_8004A820(void)
 {
-    _gpp.unk0 = 0.0f;
-    _gpp.unk4 = currentBall->pos;
-    _gpp.unk10 = currentBall->vel;
-    _gpp.unk1C = 0;
+    someGradingStruct.grade = 0.0f;
+    someGradingStruct.unk4 = currentBall->pos;
+    someGradingStruct.unk10 = currentBall->vel;
+    someGradingStruct.unk1C = 0;
 }
 
-void end_grading_play(void)
+static void end_grading_play(void)
 {
     float temp_f7;
     float f1;
     float var_f0;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    replay = &s_builtinReplays[recSys[0].unk0];
-    temp_f7 = (float)_gpp.unk1C / (float)replay->unk1A;
-    f1 = replay->unk1A + 1;
-    var_f0 = _gpp.unk0;
+    replay = &s_replays[s_recordingStatus[0].replayIndex];
+    temp_f7 = (float)someGradingStruct.unk1C / (float)replay->frameCount;
+    f1 = replay->frameCount + 1;
+    var_f0 = someGradingStruct.grade;
     var_f0 *= 1.0 / f1;
-    if (replay->header.flags & REPLAY_FLAG_WIN)
+    if (replay->header.flags & REPLAY_FLAG_GOAL)
     {
         var_f0 *= 2.0;
         var_f0 *= 1.0 + (float)(replay->unk18 - replay->unk1C) / (float)replay->unk18;
         if (replay->header.flags & 0x10)
-            var_f0 *= 1.0 + (replay->unk1A - 360.0) / 720.0;
+            var_f0 *= 1.0 + (replay->frameCount - 360.0) / 720.0;
         var_f0 *= 1.0 + 0.5 * (1.0 - temp_f7);
         var_f0 *= 1.0 + 0.25 * (0.02 * replay->header.floorNum);
     }
@@ -1049,11 +1075,11 @@ void end_grading_play(void)
     }
     if (replay->header.flags & REPLAY_FLAG_TIME_OVER)
         var_f0 *= 0.1;
-    _gpp.unk0 = var_f0;
+    someGradingStruct.grade = var_f0;
 }
 
 #ifdef NONMATCHING
-void grading_play(void)
+static void grading_play(void)
 {
     Vec sp2C;
     Vec sp20;
@@ -1067,12 +1093,12 @@ void grading_play(void)
 
     ball = currentBall;
     sp2C = ball->pos;
-    sp20.x = ball->pos.x - _gpp.unk4.x;
-    sp20.y = ball->pos.y - _gpp.unk4.y;
-    sp20.z = ball->pos.z - _gpp.unk4.z;
+    sp20.x = ball->pos.x - someGradingStruct.unk4.x;
+    sp20.y = ball->pos.y - someGradingStruct.unk4.y;
+    sp20.z = ball->pos.z - someGradingStruct.unk4.z;
     sp14 = sp20;
     temp_f30 = mathutil_vec_len(&sp14);
-    sp8 = _gpp.unk10;
+    sp8 = someGradingStruct.unk10;
     f1 = mathutil_vec_len(&sp8);
     var_f31 += 2.0 * (temp_f30 - f1);
     temp_f1_3 = sp14.x * sp8.x + sp14.y * sp8.y + sp14.z * sp8.z;
@@ -1080,13 +1106,13 @@ void grading_play(void)
     if (temp_f1_3 > 1.1920929e-7f)
         var_f31 += mathutil_sqrt(temp_f1_3) * 1.0;
     if (ball->flags & 1)
-        _gpp.unk1C++;
-    _gpp.unk0 += var_f31;
-    _gpp.unk4 = sp2C;
-    _gpp.unk10 = sp20;
+        someGradingStruct.unk1C++;
+    someGradingStruct.grade += var_f31;
+    someGradingStruct.unk4 = sp2C;
+    someGradingStruct.unk10 = sp20;
 }
 #else
-asm void grading_play(void)
+static asm void grading_play(void)
 {
     nofralloc
 #include "../asm/nonmatchings/grading_play.s"
@@ -1094,107 +1120,111 @@ asm void grading_play(void)
 #pragma peephole on
 #endif
 
-float func_8004ABD8(void)
+static float func_8004ABD8(void)
 {
-    return _gpp.unk0;
+    return someGradingStruct.grade;
 }
 
-s8 lbl_80250AA0[3][61];
-s8 lbl_80250B58[3][7];
+static s8 s_replayCountPerFloor[3][61];  // number of replays per floor in each difficulty
+static s8 s_replayCountPer10Floors[3][7];  // number of replays per group of 10 floors in each difficulty
 
-void func_8004ABE4(void)
+static void u_reset_replay_floor_counts(void)
 {
     s32 i;
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
 
-    memset(lbl_80250AA0, 0, sizeof(lbl_80250AA0));
-    memset(&lbl_80250B58, 0, sizeof(lbl_80250B58));
+    memset(s_replayCountPerFloor, 0, sizeof(s_replayCountPerFloor));
+    memset(&s_replayCountPer10Floors, 0, sizeof(s_replayCountPer10Floors));
 
-    replay = s_builtinReplays;
-    for (i = ARRAY_COUNT(s_builtinReplays); i > 0; i--, replay++)
+    replay = s_replays;
+    for (i = ARRAY_COUNT(s_replays); i > 0; i--, replay++)
     {
         if (replay->header.floorNum != 0)
-            func_8004AC68(replay);
+            increment_replay_floor_counts(replay);
     }
 }
 
-void func_8004AC68(struct BuiltinReplay *replay)
+static void increment_replay_floor_counts(struct Replay *replay)
 {
-    s8 *temp_r6 = lbl_80250AA0[replay->header.difficulty];
-    int var_r8 = replay->header.floorNum - 1;
+    s8 *perFloor = s_replayCountPerFloor[replay->header.difficulty];
+    int index = replay->header.floorNum - 1;
 
     if (replay->header.flags & REPLAY_FLAG_MASTER)
-        var_r8 += 60;
+        index += 60;
     else if (replay->header.flags & REPLAY_FLAG_EXTRA)
-        var_r8 += 50;
-    temp_r6[var_r8]++;
-    lbl_80250B58[replay->header.difficulty][var_r8 / 10]++;
+        index += 50;
+    perFloor[index]++;
+    s_replayCountPer10Floors[replay->header.difficulty][index / 10]++;
 }
 
-void func_8004ACF0(struct BuiltinReplay *replay)
+static void decrement_replay_floor_counts(struct Replay *replay)
 {
-    s8 *temp_r6 = lbl_80250AA0[replay->header.difficulty];
-    int var_r8 = replay->header.floorNum - 1;
+    s8 *perFloor = s_replayCountPerFloor[replay->header.difficulty];
+    int index = replay->header.floorNum - 1;
 
     if (replay->header.flags & REPLAY_FLAG_MASTER)
-        var_r8 += 60;
+        index += 60;
     else if (replay->header.flags & REPLAY_FLAG_EXTRA)
-        var_r8 += 50;
-    temp_r6[var_r8]--;
-    lbl_80250B58[replay->header.difficulty][var_r8 / 10]--;
+        index += 50;
+    perFloor[index]--;
+    s_replayCountPer10Floors[replay->header.difficulty][index / 10]--;
 }
 
-int func_8004AD78(struct BuiltinReplay *replay)
+// Returns the number of replays that are for this replay's floor
+static int get_replay_floor_count(struct Replay *replay)
 {
-    s8 *temp_r6 = lbl_80250AA0[replay->header.difficulty];
-    int var_r8 = replay->header.floorNum - 1;
+    s8 *perFloor = s_replayCountPerFloor[replay->header.difficulty];
+    int index = replay->header.floorNum - 1;
 
     if (replay->header.flags & REPLAY_FLAG_MASTER)
-        var_r8 += 60;
+        index += 60;
     else if (replay->header.flags & REPLAY_FLAG_EXTRA)
-        var_r8 += 50;
-    return temp_r6[var_r8];
+        index += 50;
+    return perFloor[index];
 }
 
-float func_8004ADC0(struct BuiltinReplay *replay)
+// Computes a coefficient used by recplay_find_new_index to penalize
+// replays that have the same floor or group of floors as other replays.
+// The goal of this is to have more variety in the replays that are shown
+// during the ADV sequence.
+static float calc_replay_grade_adjustment(struct Replay *replay)
 {
-    s8 *temp_r6 = lbl_80250AA0[replay->header.difficulty];
-    s8 *ptr = lbl_80250B58[replay->header.difficulty];
-    int var_r8 = replay->header.floorNum - 1;
-    float f1;
+    s8 *perFloor = s_replayCountPerFloor[replay->header.difficulty];
+    s8 *per10Floor = s_replayCountPer10Floors[replay->header.difficulty];
+    int index = replay->header.floorNum - 1;
+    float value;
 
     if (replay->header.flags & REPLAY_FLAG_MASTER)
-        var_r8 += 60;
+        index += 60;
     else if (replay->header.flags & REPLAY_FLAG_EXTRA)
-        var_r8 += 50;
-    f1 = temp_r6[var_r8] + 0.2 * ptr[var_r8 / 10];
-    if (f1 > 0.0)
-        return 1.0 / f1;
-    else
-        return 1.0f;
+        index += 50;
+    value = perFloor[index] + 0.2 * per10Floor[index / 10];
+    if (value > 0.0)
+        return 1.0 / value;
+    return 1.0f;
 }
 
-int func_8004AEA0(void)
+static int u_get_highest_grade_replay(void)
 {
-    struct BuiltinReplay *replay;
+    struct Replay *replay;
     int i;
     int var_r3 = -1;
     float var_f1 = -1.0f;
 
-    replay = s_builtinReplays;
+    replay = s_replays;
     for (i = 6; i > 0; i--, replay++)
     {
-        if ((replay->header.flags & REPLAY_FLAG_WIN) && (replay->header.flags & 0x10)
-         && replay->header.unkC > var_f1)
+        if ((replay->header.flags & REPLAY_FLAG_GOAL) && (replay->header.flags & 0x10)
+         && replay->header.grade > var_f1)
         {
             var_r3 = 6 - i;
-            var_f1 = replay->header.unkC;
+            var_f1 = replay->header.grade;
         }
     }
     return var_r3;
 }
 
-static int dummy_return_true(struct BuiltinReplay *unused)
+static int dummy_return_true(struct Replay *unused)
 {
     return TRUE;
 }

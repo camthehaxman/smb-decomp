@@ -60,7 +60,7 @@ static void func_800C013C(struct Camera *camera, struct Ball *ball)
         temp_r31 = chara->ape;
         mathutil_mtxA_from_quat(&temp_r31->unk60);
         mathutil_mtxA_to_mtx(sp10);
-        mathutil_mtxA_from_translate(&temp_r31->unk30);
+        mathutil_mtxA_from_translate(&temp_r31->pos);
         mathutil_mtxA_scale_s(temp_r31->modelScale);
         mathutil_mtxA_translate(&temp_r31->unk3C);
         mathutil_mtxA_mult_right(sp10);
@@ -82,7 +82,7 @@ static void func_800C013C(struct Camera *camera, struct Ball *ball)
         temp_r31 = chara->ape;
         mathutil_mtxA_from_quat(&temp_r31->unk60);
         mathutil_mtxA_to_mtx(sp10);
-        mathutil_mtxA_from_translate(&temp_r31->unk30);
+        mathutil_mtxA_from_translate(&temp_r31->pos);
         mathutil_mtxA_scale_s(temp_r31->modelScale);
         mathutil_mtxA_translate(&temp_r31->unk3C);
         mathutil_mtxA_mult_right(sp10);
@@ -144,7 +144,7 @@ static void func_800C0354(struct Camera *arg0, struct Ball *ball)
         ape = chara->ape;
         mathutil_mtxA_from_quat(&ape->unk60);
         mathutil_mtxA_to_mtx(sp10);
-        mathutil_mtxA_from_translate(&ape->unk30);
+        mathutil_mtxA_from_translate(&ape->pos);
         mathutil_mtxA_scale_s(ape->modelScale);
         mathutil_mtxA_translate(&ape->unk3C);
         mathutil_mtxA_mult_right(sp10);
@@ -181,7 +181,7 @@ static void func_800C0354(struct Camera *arg0, struct Ball *ball)
         ape = chara->ape;
         mathutil_mtxA_from_quat(&ape->unk60);
         mathutil_mtxA_to_mtx(sp10);
-        mathutil_mtxA_from_translate(&ape->unk30);
+        mathutil_mtxA_from_translate(&ape->pos);
         mathutil_mtxA_scale_s(ape->modelScale);
         mathutil_mtxA_translate(&ape->unk3C);
         mathutil_mtxA_mult_right(sp10);

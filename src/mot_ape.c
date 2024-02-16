@@ -18,10 +18,11 @@
 #include "mot_ape.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
+#include "polydisp.h"
 #include "thread.h"
 #include "window.h"
 
-struct Ape_child lbl_801C7A70 =
+static struct Ape_child lbl_801C7A70 =
 {
     0.0f,
     0,
@@ -33,20 +34,23 @@ struct Ape_child lbl_801C7A70 =
     0,
 };
 
-u32 u_animMatrixIdxToJointIdx[] = { 1, 5, 7, 8, 12, 13, 16, 18, 19, 21, 22, 23, 24, 26, 27 };
+static u32 u_animMatrixIdxToJointIdx[] = { 1, 5, 7, 8, 12, 13, 16, 18, 19, 21, 22, 23, 24, 26, 27 };
 
 // yaw angles for something?
-float lbl_801C7ACC[] = { 23.0f, 21.1f, 22.0f, 21.5f };
-u32 lbl_801C7ADC[] = { 16, 8, 32, 6, 9, 16, 24, 4, 6, 4, 14, 20, 24, 30, 20, 20 };
-s32 lbl_801C7B1C[] = { 0, 4, 6, 14, 6, 10 };
+static float lbl_801C7ACC[] = { 23.0f, 21.1f, 22.0f, 21.5f };
+static u32 lbl_801C7ADC[] = { 16, 8, 32, 6, 9, 16, 24, 4, 6, 4, 14, 20, 24, 30, 20, 20 };
+static s32 lbl_801C7B1C[] = { 0, 4, 6, 14, 6, 10 };
 
-void ape_dummy_1(struct Ape *);
-void ape_dummy_2(struct Ape *);
-void ape_dummy_3(struct Ape *);
-void ape_dummy_4(struct Ape *);
+static void ape_dummy_1(struct Ape *);
+static void ape_dummy_2(struct Ape *);
+static void ape_dummy_3(struct Ape *);
+static void ape_dummy_4(struct Ape *);
+static void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *model1, struct GMAModel *model2);
+static void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused);
+static void mot_ape_8008CAAC(struct Ape *, float);
 
 // none of these functions actually do anything
-void (*apeDummyFuncs[])(struct Ape *) =
+static void (*apeDummyFuncs[])(struct Ape *) =
 {
     ape_dummy_1,
     ape_dummy_2,
@@ -85,7 +89,7 @@ GXTexObj *u_apeTextures[8];
 
 u32 *motLabel;
 s32 u_motAnimCount;
-struct MotSkeleton *motSkeleton;
+struct SkeletonFileData *motsklFileData;
 struct MotInfo *motInfo;
 u8 lbl_802F209C[8];
 u8 lbl_802F2094[8];
@@ -95,7 +99,7 @@ Mtx **u_animTransformMatrices;
 struct NlObj *apeFaceObj;
 struct TPL *apeFaceTpl;
 s32 lbl_802F207C;
-float lbl_802F2078;
+float u_globalAnimSpeedScale;  // seems to control the speed of all animations, where 1 is normal speed
 s8 lbl_802F2074;
 volatile int transferInProgress;
 s32 lbl_802F206C;
@@ -106,7 +110,7 @@ static void aram_transfer_callback(u32 a)
     transferInProgress = FALSE;
 }
 
-void load_character_resources(void)
+static void load_character_resources(void)
 {
     OSHeapHandle oldHeap;
     ARQRequest arqReq;
@@ -288,16 +292,16 @@ void load_character_resources(void)
     OSSetCurrentHeap(oldHeap);
 }
 
-void u_find_ape_face_part(const struct ApeGfxFileInfo *filesInfo, int b, struct Struct80089A04 *c)
+static void u_find_ape_face_part(const struct ApeGfxFileInfo *filesInfo, int b, struct Struct80089A04 *c)
 {
     int i;
     const struct ApeGfxFileInfo *thisFile = &filesInfo[(b >> 1) & 1];
 
     for (i = 0; i < thisFile->partCounts[b & 1]; i++)
     {
-        struct ApeFacePart *faceParts = thisFile->facePartInfo[b & 1];
+        struct ApeBodyPart *parts = thisFile->facePartInfo[b & 1];
 
-        if (strcmp(faceParts[i].name, c->names[b]) == 0)
+        if (strcmp(parts[i].name, c->names[b]) == 0)
         {
             c->unk30[b] = i;
             return;
@@ -307,9 +311,9 @@ void u_find_ape_face_part(const struct ApeGfxFileInfo *filesInfo, int b, struct 
     c->unk30[b] = -1;
 }
 
-struct Struct8003699C_child *u_create_joints_probably(struct MotSkeletonEntry1 *skel)
+static struct ApeAnimationThing *u_create_joints_probably(struct Skeleton *skel)
 {
-    struct Struct8003699C_child *r30;
+    struct ApeAnimationThing *r30;
 
     if (gameSubmode == SMD_MINI_BILLIARDS_INIT || gameSubmode == SMD_MINI_BILLIARDS_MAIN)
     {
@@ -324,24 +328,24 @@ struct Struct8003699C_child *u_create_joints_probably(struct MotSkeletonEntry1 *
     if (r30 == NULL)
         OSPanic("mot_ape.c", 396, "rob init Heap Over.\n");
     r30->unk32 = 1;
-    r30->unk38 = 1;
+    r30->u_poseNum = 1;
     r30->unk36 = 0;
     r30->unk0 = 0;
     r30->unk34 = 0xFFFF;
-    r30->unk3C = 1.0f;
-    r30->unk40 = 0.0f;
+    r30->u_someDeltaTime = 1.0f;
+    r30->u_timeInKeyframe = 0.0f;
     r30->unk2C = 0x4000;
     r30->unk2E = 0x4000;
     r30->unk2A = 0;
     r30->unk28 = 0;
     u_create_joints_from_skeleton(r30->joints, skel, r30->unk36);
     func_80035FDC(r30);
-    func_800355B8(r30);
-    func_800355FC(r30);
+    mot_joint_800355B8(r30);
+    mot_joint_800355FC(r30);
     return r30;
 }
 
-void u_iter_joints_80089BD4(struct AnimJoint *joint)
+static void u_iter_joints_80089BD4(struct AnimJoint *joint)
 {
     int i;
     Vec spC;
@@ -379,7 +383,7 @@ void u_iter_joints_80089BD4(struct AnimJoint *joint)
     }
 }
 
-struct Struct80089CBC *func_80089CBC(void *unused, int b, int c)
+static struct Struct80089CBC *func_80089CBC(void *unused, int b, int c)
 {
     struct Struct80089CBC *r6 = (void *)((u8 *)motInfo + 0x28000);
 
@@ -410,12 +414,12 @@ static inline void func_80089CF4_inline(struct Ape *ape)
     }
 }
 
-void func_80089CF4(struct Ape *ape, int r29)
+static void func_80089CF4(struct Ape *ape, int r29)
 {
-    struct Struct8003699C_child *r6 = ape->unk0;
-    float f31 = (float)r6->unk38 / (float)r6->unk3A;
-    struct Struct8003699C_child *r28;
-    struct Struct8003699C_child *r27;
+    struct ApeAnimationThing *r6 = ape->unk0;
+    float f31 = (float)r6->u_poseNum / (float)r6->unk3A;
+    struct ApeAnimationThing *r28;
+    struct ApeAnimationThing *r27;
     u32 i;
     u8 dummy[0x10];
 
@@ -432,7 +436,7 @@ void func_80089CF4(struct Ape *ape, int r29)
     if (ape->flags & (1 << 9))
     {
         // swap
-        struct Struct8003699C_child *temp = ape->unk0;
+        struct ApeAnimationThing *temp = ape->unk0;
         ape->unk0 = ape->unk4;
         ape->unk4 = temp;
     }
@@ -442,48 +446,48 @@ void func_80089CF4(struct Ape *ape, int r29)
     }
     r27 = ape->unk0;
     r28 = ape->unk4;
-    ape->unk8 = 0.0f;
+    ape->animTimerCurr = 0.0f;
     ape->unkC2 = 0;
     ape->flags &= ~((1 << 12)|(1 << 13));
     if (lbl_802F206C != 0)
-        ape->unkC = ape->unk1C->unk14;
+        ape->animTimerMax = ape->unk1C->unk14;
     else
-        ape->unkC = 0.0f;
+        ape->animTimerMax = 0.0f;
     r27->unk32 = r29;
-    r27->unk38 = 1;
+    r27->u_poseNum = 1;
     ape->unk24 = ape->unk28;
     ape->unk9C = ape->unkB0;
-    ape->unk18 = ape->unkC + 1.0f;
-    r27->unk40 = 0.0f;
+    ape->unk18 = ape->animTimerMax + 1.0f;
+    r27->u_timeInKeyframe = 0.0f;
     func_80035FDC(r27);
     if (r27->unk32 == 0)
         r27->unk32 = 1;
-    func_800355B8(r27);
-    if (ape->unkC > 9.9999999392252903e-09f && (ape->flags & (1 << 9)))
+    mot_joint_800355B8(r27);
+    if (ape->animTimerMax > 9.9999999392252903e-09f && (ape->flags & (1 << 9)))
     {
-        float f4 = ((float)r28->unk3A / r28->unk3C);
+        float f4 = ((float)r28->unk3A / r28->u_someDeltaTime);
 
-        f4 /= ((float)r27->unk3A / r27->unk3C);
+        f4 /= ((float)r27->unk3A / r27->u_someDeltaTime);
 
         if (f4 < 1.0f)
         {
-            r28->unk3C *= f4;
-            r27->unk3C = ape->unk1C->unk18;
+            r28->u_someDeltaTime *= f4;
+            r27->u_someDeltaTime = ape->unk1C->unk18;
         }
         else
-            r27->unk3C = ape->unk1C->unk18 / f4;
+            r27->u_someDeltaTime = ape->unk1C->unk18 / f4;
     }
     else
-        r27->unk3C = ape->unk1C->unk18;
+        r27->u_someDeltaTime = ape->unk1C->unk18;
     if (ape->unk1C->unkC & (1 << 3))
     {
-        r27->unk38 = f31 * r27->unk3A;
-        if (r27->unk38 >= r27->unk3A)
-            r27->unk38 = 1;
+        r27->u_poseNum = f31 * r27->unk3A;
+        if (r27->u_poseNum >= r27->unk3A)
+            r27->u_poseNum = 1;
     }
     for (i = 0; i < ape->unk94; i++)
     {
-        struct Struct802B39C0_B0_child *var = &ape->unk98[i];
+        struct BodyPartThing *var = &ape->unk98[i];
 
         var->unkC = 0;
         var->unk14[3] = 0;
@@ -491,11 +495,11 @@ void func_80089CF4(struct Ape *ape, int r29)
     func_80089CF4_inline(ape);
     for (i = 0; i < ape->unk94; i++)
     {
-        struct Struct802B39C0_B0_child *r28 = &ape->unk98[i];
+        struct BodyPartThing *r28 = &ape->unk98[i];
 
         if (r28->unkC != NULL)
             r28->unk10 = 0.0f;
-        func_8008A55C(ape->charaId, r28, r27->unk3A, 1);
+        mot_ape_8008A55C(ape->charaId, r28, r27->unk3A, 1);
         if (r28->unkC == NULL)
         {
             if (r28->unk4 > 0.0f)
@@ -507,22 +511,22 @@ void func_80089CF4(struct Ape *ape, int r29)
     }
 }
 
-void lbl_8008A108(void) {}
+static void emptyfunc(void) {}
 
-int lbl_8008A10C(void)
+static int return_0(void)
 {
     return 0;
 }
 
-void ape_dummy_1(struct Ape *ape) {}
+static void ape_dummy_1(struct Ape *ape) {}
 
-void ape_dummy_2(struct Ape *ape) {}
+static void ape_dummy_2(struct Ape *ape) {}
 
-void ape_dummy_3(struct Ape *ape) {}
+static void ape_dummy_3(struct Ape *ape) {}
 
-void ape_dummy_4(struct Ape *ape) {}
+static void ape_dummy_4(struct Ape *ape) {}
 
-void u_iter_joints_8008A124(struct AnimJoint *joint, float b)
+static void u_iter_joints_8008A124(struct AnimJoint *joint, float b)
 {
     int i;
     struct AnimJoint *a = joint;
@@ -572,7 +576,7 @@ void u_iter_joints_8008A124(struct AnimJoint *joint, float b)
     }
 }
 
-void u_iter_joints_8008A2C4(struct AnimJoint *joint)
+static void u_iter_joints_8008A2C4(struct AnimJoint *joint)
 {
     int i;
     struct AnimJoint *a = joint;
@@ -612,7 +616,7 @@ void u_iter_joints_8008A2C4(struct AnimJoint *joint)
     }
 }
 
-void u_iter_joints_8008A3A4(struct AnimJoint *r28, struct AnimJoint *r29, float c)
+static void u_iter_joints_8008A3A4(struct AnimJoint *r28, struct AnimJoint *r29, float c)
 {
     int i;
     struct AnimJoint *a = r28;
@@ -673,7 +677,8 @@ void u_iter_joints_8008A3A4(struct AnimJoint *r28, struct AnimJoint *r29, float 
 
 extern const double lbl_802F56D8;
 
-void func_8008A55C(u32 a, struct Struct802B39C0_B0_child *b, int c, int d)
+// something related to face animation?
+void mot_ape_8008A55C(u32 a, struct BodyPartThing *b, int c, int d)
 {
     int dummy;
     int r8;
@@ -697,7 +702,7 @@ void func_8008A55C(u32 a, struct Struct802B39C0_B0_child *b, int c, int d)
     {
         struct Struct80089CBC *r7 = b->unkC;
 
-        b->unk0 = r7->unk0 & ~(1 << 31);
+        b->type = r7->unk0 & ~(1 << 31);
         b->unk8 = r7->unk8;
         if (r7->unk4 < d)
             b->unk14[3] = (c + r7->unk4) - d;
@@ -743,42 +748,44 @@ void func_8008A55C(u32 a, struct Struct802B39C0_B0_child *b, int c, int d)
     }
 }
 
-void func_8008A7F0_inline(struct Ape *ape, struct Struct8003699C_child *b)
+static void func_8008A7F0_inline(struct Ape *ape, struct ApeAnimationThing *b)
 {
-    struct Struct802B39C0_B0_child *r28;
+    struct BodyPartThing *r28;
     int i;
     r28 = ape->unk98;
 
     for (i = 0; i < ape->unk94; i++)
-        func_8008A55C(ape->charaId, r28++, b->unk3A, b->unk38);
+        mot_ape_8008A55C(ape->charaId, r28++, b->unk3A, b->u_poseNum);
 }
 
-void func_8008A7F0(struct Ape *ape, struct Struct8003699C_child *b)
+static void mot_ape_8008A7F0(struct Ape *ape, struct ApeAnimationThing *b)
 {
     u8 dummy[16];
 
-    if (b->unk40 >= 1.0f)
+    // advance to next pose if this one is over?
+    if (b->u_timeInKeyframe >= 1.0f)
     {
         if (!(ape->flags & (1 << 13)))
         {
             do
             {
-                b->unk38++;
-                b->unk40 -= 1.0f;
-            } while (b->unk40 >= 1.0f);
+                b->u_poseNum++;
+                b->u_timeInKeyframe -= 1.0f;
+            } while (b->u_timeInKeyframe >= 1.0f);
         }
         else
-            b->unk40 = 0.0f;
+            b->u_timeInKeyframe = 0.0f;
         func_8008A7F0_inline(ape, b);
     }
-    if (b->unk38 >= b->unk3A)
+
+    if (b->u_poseNum >= b->unk3A)
     {
         if (!(ape->flags & (1 << 12)))
         {
             if (ape->unk1C->unkC & (1 << 4))
-                b->unk38 = ape->unk1C->unk8;
+                b->u_poseNum = ape->unk1C->unk8;
             else
-                b->unk38 = 1;
+                b->u_poseNum = 1;
             ape->unkC2++;
             if (b->unk34 != 0xFFFF)
             {
@@ -789,7 +796,7 @@ void func_8008A7F0(struct Ape *ape, struct Struct8003699C_child *b)
             else
             {
                 func_80035FDC(b);
-                func_800355B8(b);
+                mot_joint_800355B8(b);
                 func_80089CF4_inline(ape);
                 func_8008A7F0_inline(ape, b);
             }
@@ -805,10 +812,10 @@ void func_8008A7F0(struct Ape *ape, struct Struct8003699C_child *b)
             }
         }
     }
-    func_800355FC(b);
+    mot_joint_800355FC(b);
 }
 
-void u_free_character_graphics(int chara, int lod)
+static void u_free_character_graphics(int chara, int lod)
 {
     int index = chara * 2;
     OSHeapHandle oldHeap;
@@ -862,9 +869,9 @@ void u_free_character_graphics(int chara, int lod)
     OSSetCurrentHeap(oldHeap);
 }
 
-struct GMAShape *next_shape(struct GMAShape *mesh);
+static struct GMAShape *next_shape(struct GMAShape *mesh);
 
-void *u_find_some_mesh_with_red(struct GMAModel *model)
+static void *u_find_some_mesh_with_red(struct GMAModel *model)
 {
     struct GMAShape *mesh;
     int i;
@@ -879,7 +886,7 @@ void *u_find_some_mesh_with_red(struct GMAModel *model)
     return NULL;
 }
 
-void u_load_character_graphics(enum Character chara, int lod)
+static void u_load_character_graphics(enum Character chara, int lod)
 {
     OSHeapHandle oldHeap;
     int index = chara * 2;
@@ -932,7 +939,7 @@ void u_load_character_graphics(enum Character chara, int lod)
 
         for (i = 0; i < 2; i++)
         {
-            model = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[i]].model;
+            model = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].lodModelIDs[i]].model;
             lbl_802B47F0[lod * 2 + i] = u_find_some_mesh_with_red(model);
         }
         u_apeMaterials[index + 0] = NULL;
@@ -940,10 +947,10 @@ void u_load_character_graphics(enum Character chara, int lod)
     }
     else
     {
-        struct GMAModel *model1 = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[0]].model;
-        struct GMAModel *model2 = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].unk1C[1]].model;
+        struct GMAModel *lowPolyModel = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].lodModelIDs[0]].model;
+        struct GMAModel *highPolyModel = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].lodModelIDs[1]].model;
 
-        u_init_ape_materials(chara, lod, model1, model2);
+        u_init_ape_materials(chara, lod, lowPolyModel, highPolyModel);
     }
 }
 
@@ -954,7 +961,7 @@ struct Struct8008AE2C
     u32 unkC;
 };
 
-struct GMAShape *next_shape(struct GMAShape *mesh)
+static struct GMAShape *next_shape(struct GMAShape *mesh)
 {
     int i;
     u8 *ret = (u8 *)mesh + 0x60;
@@ -989,7 +996,7 @@ void mot_ape_init(void)
     for (i = 0; i < 32; i++)
         uselessArray[i] = 0;
     lbl_802F206C = 1;
-    lbl_802F2078 = 1.0f;
+    u_globalAnimSpeedScale = 1.0f;
     load_character_resources();
     u_animTransformMatrices = u_avdisp_alloc_matrix_lists(30);
     mathutil_mtxA_push();
@@ -1036,7 +1043,7 @@ void u_something_with_skel_model_names(void)
     }
 }
 
-void new_ape_close(struct Ape *ape)
+void ape_destroy(struct Ape *ape)
 {
     thread_kill(ape->threadId);
     if (lbl_802F2074 == 2)
@@ -1056,13 +1063,13 @@ void new_ape_close(struct Ape *ape)
     }
     OSFreeToHeap(subHeap, ape->unk98);
     apeStructPtrs[--nextApeIndex] = ape;
-    u_free_character_graphics(ape->charaId, (ape->unk90 >= 2));
+    u_free_character_graphics(ape->charaId, (ape->u_lodGma >= 2));
 }
 
-u8 lbl_802F12D8[8] = {0, 0, 2, 4, 6, 0, 0, 0};
-u8 lbl_802F12E0[8] = {1, 1, 3, 5, 7, 0, 0, 0};
+static u8 lbl_802F12D8[8] = {0, 0, 2, 4, 6, 0, 0, 0};
+static u8 lbl_802F12E0[8] = {1, 1, 3, 5, 7, 0, 0, 0};
 
-void u_make_ape_inline(struct Ape *ape)
+static void u_make_ape_inline(struct Ape *ape)
 {
     int i;
     int j;
@@ -1084,53 +1091,53 @@ void u_make_ape_inline(struct Ape *ape)
 const Vec unused_80171980 = {1, 0, 0};
 #pragma force_active reset
 
-void func_8008B3B8_inline_3(u8 a, struct Struct8003699C_child *r24_)
+static void func_8008B3B8_inline_3(u8 skelIdx, struct ApeAnimationThing *r24_)
 {
     void *r3;
 
     r3 = &r24_->unk4114;
-    u_init_something_joints_from_something(r3, r24_, 1, lbl_802F12D8[a]);
+    u_init_something_joints_from_something(r3, r24_, 1, lbl_802F12D8[skelIdx]);
     r3 = &r24_->unk84;
-    u_init_something_joints_from_something(r3, r24_, 2, lbl_802F12E0[a]);
+    u_init_something_joints_from_something(r3, r24_, 2, lbl_802F12E0[skelIdx]);
 }
 
-static u8 find_motskl_entry_idx(char *skelName)
+static u8 u_get_skeleton_index_from_name(char *skelName)
 {
     u8 i;
-    u8 r23;
-    for (r23 = 0, i = 0; i < motSkeleton->unk4; i++)
+    u8 skelIdx;
+    for (skelIdx = 0, i = 0; i < motsklFileData->skeletonsCount; i++)
     {
-        if (strcmp(skelName, motSkeleton->unk0[i].name) == 0)
+        if (strcmp(skelName, motsklFileData->skeletons[i].name) == 0)
         {
-            r23 = i;
+            skelIdx = i;
             break;
         }
     }
-    return r23;
+    return skelIdx;
 }
 
-static void find_motskl_entry(char *skelName, struct MotSkeletonEntry1 **r27)
+static void u_get_skeleton_from_name(char *skelName, struct Skeleton **out)
 {
     int i;
-    *r27 = &motSkeleton->unk0[0];
-    for (i = 0; i < motSkeleton->unk4; i++)
+    *out = &motsklFileData->skeletons[0];
+    for (i = 0; i < motsklFileData->skeletonsCount; i++)
     {
-        if (strcmp(skelName, motSkeleton->unk0[i].name) == 0)
+        if (strcmp(skelName, motsklFileData->skeletons[i].name) == 0)
         {
-            *r27 = &motSkeleton->unk0[i];
+            *out = &motsklFileData->skeletons[i];
             break;
         }
     }
 }
 
-struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
+static struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 {
     struct Ape *ape;
-    struct Struct8003699C_child *r24;
-    struct Struct8003699C_child *r31;
-    struct MotSkeletonEntry1 *skel;
+    struct ApeAnimationThing *r24;
+    struct ApeAnimationThing *r31;
+    struct Skeleton *skel;
     int i;
-    u8 r23;
+    u8 skelIdx;
     int r20;
 
     ape = apeStructPtrs[nextApeIndex];
@@ -1138,7 +1145,7 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
     memset(ape, 0, sizeof(*ape));
     ape->unk70 = r20;
 
-    find_motskl_entry(skelName, &skel);
+    u_get_skeleton_from_name(skelName, &skel);
 
     r24 = u_create_joints_probably(skel);
     r31 = u_create_joints_probably(skel);
@@ -1150,9 +1157,9 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
 
     for (i = 0; i < ape->unk94; i++)
     {
-        struct Struct802B39C0_B0_child *var = &ape->unk98[i];
+        struct BodyPartThing *var = &ape->unk98[i];
 
-        var->unk0 = 0x7FFFFFFF;
+        var->type = 0x7FFFFFFF;
         var->unk4 = -1.0f;
         var->unk8 = 0;
         var->unkC = 0;
@@ -1164,9 +1171,9 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
     ape->unk4 = r31;
     ape->unk1C = &lbl_801C7A70;
     ape->unk20 = 0;
-    ape->unk8 = 0.0f;
+    ape->animTimerCurr = 0.0f;
     ape->charaId = 0;
-    ape->unkC = 0.0f;
+    ape->animTimerMax = 0.0f;
     ape->flags = 0;
     ape->unk18 = 0;
     ape->unk24 = 1;
@@ -1177,25 +1184,25 @@ struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
     ape->unk54 = 0;
 
     // These really should be assigned using compound literals, but that causes the stack usage to not match.
-    { static const Vec v = {0}; Vec v_; ape->unk30 = v_ = v; } //0x3C
+    { static const Vec v = {0}; Vec v_; ape->pos = v_ = v; } //0x3C
     { static const Vec v = {0}; Vec v_; ape->unk3C = v_ = v; } //0x48
     { static const Vec v = {0}; Vec v_; ape->unk48 = v_ = v; } //0x54
     { static const Quaternion q = {1, 0, 0, 0}; Quaternion q_; *(Quaternion *)&ape->unkA0 = q_ = q; } //0x60
     ape->modelScale = 1.0f;
     { static const Quaternion q = {0, 0, 0, 1}; Quaternion q_; ape->unk60 = q_ = q; } //0x70
     ape->colorId = 0;
-    ape->unk90 = lbl_802F207C;
+    ape->u_lodGma = lbl_802F207C;
 
     {u8 stackpad[0x10];}
 
     u_make_ape_inline(ape);
-    r23 = find_motskl_entry_idx(skelName);
-    func_8008B3B8_inline_3(r23, ape->unk0);
-    r23++;r23--;
-    func_8008B3B8_inline_3(r23, ape->unk4);
+    skelIdx = u_get_skeleton_index_from_name(skelName);
+    func_8008B3B8_inline_3(skelIdx, ape->unk0);
+    skelIdx++;skelIdx--;
+    func_8008B3B8_inline_3(skelIdx, ape->unk4);
 
-    ape->unkB8 = lbl_8008A10C;
-    ape->unkBC = lbl_8008A108;
+    ape->unkB8 = return_0;
+    ape->unkBC = emptyfunc;
     ape->threadId = thread_create(mot_ape_thread, ape, THREAD_GROUP_7);
     nextApeIndex++;
     return ape;
@@ -1232,7 +1239,7 @@ struct Ape *u_make_ape(enum Character charaId)
     ape->unkB0 = 0;
     u_load_character_graphics(charaId, lbl_802F207C >> 1);
     func_80089CF4(ape, ((struct MotInfo2 *)&motInfo[charaId])->unk38->unk180.unk10);
-    func_800355FC(ape->unk0);
+    mot_joint_800355FC(ape->unk0);
 
     r5 = &ape->unk0->joints[0];
     r5->unk1A4.x = r5->transformMtx[0][3];
@@ -1259,12 +1266,12 @@ void func_8008B9DC(struct Ape *ape, int b)
 }
 #pragma force_active reset
 
-void func_8008BA24(int a)
+void mot_ape_set_some_var_1(int a)
 {
     lbl_802F206C = a;
 }
 
-void func_8008BA2C(struct Ape *ape, int b, int c)
+void mot_ape_8008BA2C(struct Ape *ape, int b, int c)
 {
     struct Ape_child *r6 = ((struct Ape_child *)(((struct MotInfo *)&motInfo[ape->charaId])->unk30[b]));
 
@@ -1273,12 +1280,12 @@ void func_8008BA2C(struct Ape *ape, int b, int c)
     ape->unkB0 = c;
     ape->unk18 = 0;
     func_80089CF4(ape, r6[c].unk10);
-    func_800355FC(ape->unk0);
-    ape->unkC = 0.0f;
+    mot_joint_800355FC(ape->unk0);
+    ape->animTimerMax = 0.0f;
 }
 
 #pragma force_active on
-void func_8008BAA8(int *a, int *b)
+void mot_ape_8008BAA8(int *a, int *b)
 {
     int i;
 
@@ -1300,7 +1307,7 @@ void func_8008BAA8(int *a, int *b)
 void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
 {
     struct MotInfo *r30;
-    struct Struct8003699C_child *r7;
+    struct ApeAnimationThing *r7;
     struct Ape_child *r8;
     int r9;
     u32 r10;
@@ -1316,7 +1323,7 @@ void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
     {
     case 7:
         r10 = c;
-        func_8008BAA8(&b, &c);
+        mot_ape_8008BAA8(&b, &c);
         r8 = (void *)((struct MotInfo *)r30)->unk30[b];
         r9 = c;
         break;
@@ -1347,7 +1354,7 @@ void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
             r5 = &r8[r9];
             if (r8[r9].unk4 == 1 && r7->unk32 != r8[r9].unk10)
             {
-                if (r7->unk32 != r8[r9 + 1].unk10 || r7->unk38 < r7->unk3A - r5->unk14)
+                if (r7->unk32 != r8[r9 + 1].unk10 || r7->u_poseNum < r7->unk3A - r5->unk14)
                     r9++;
             }
         }
@@ -1400,7 +1407,7 @@ void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
     }
 }
 
-void func_8008BEF8(int a)
+void mot_ape_set_some_var_2(int a)
 {
     lbl_802F207C = a;
 }
@@ -1411,7 +1418,7 @@ void u_switch_ape_character_lod_maybe(struct Ape *ape, int b)
 
     if (b >= 4 || b < 0)
         return;
-    unk = ape->unk90;
+    unk = ape->u_lodGma;
     if (unk >= 2 && b <= 1)
     {
         lbl_802F2090 = 0;
@@ -1424,12 +1431,12 @@ void u_switch_ape_character_lod_maybe(struct Ape *ape, int b)
         u_free_character_graphics(ape->charaId, 0);
         u_load_character_graphics(ape->charaId, 1);
     }
-    ape->unk90 = b;
+    ape->u_lodGma = b;
 }
 
-void func_8008BFB4(struct Ape *ape, int b, int *c, float *d)
+void mot_ape_8008BFB4(struct Ape *ape, int b, int *c, float *d)
 {
-    *c = ape->unk98[b].unk0;
+    *c = ape->unk98[b].type;
     *d = ape->unk98[b].unk4;
 }
 
@@ -1437,7 +1444,7 @@ void func_8008BFB4(struct Ape *ape, int b, int *c, float *d)
 void func_8008BFD8(void) {}
 #pragma force_active reset
 
-void func_8008BFDC(struct Ape *ape, u16 b, u16 c)
+void mot_ape_8008BFDC(struct Ape *ape, u16 b, u16 c)
 {
     struct AnimJoint *r31;
     struct AnimJoint *r30 = ape->unk0->joints;
@@ -1482,9 +1489,9 @@ void ape_face_dir(struct Ape *ape, Vec *b)
         mathutil_mtxA_rotate_z(-5461);
     else
         mathutil_mtxA_rotate_z(-16384);
-    sp2C.x = b->x - ape->unk30.x;
-    sp2C.y = b->y - ape->unk30.y;
-    sp2C.z = b->z - ape->unk30.z;
+    sp2C.x = b->x - ape->pos.x;
+    sp2C.y = b->y - ape->pos.y;
+    sp2C.z = b->z - ape->pos.z;
     mathutil_mtxA_rigid_inv_tf_vec(&sp2C, &sp2C);
     mathutil_vec_normalize_len(&sp2C);
     r27_ = (ape->unk1C->unkC & 1) == 0;
@@ -1545,7 +1552,7 @@ void ape_face_dir(struct Ape *ape, Vec *b)
     mathutil_mtxA_to_mtx(r30->transformMtx);
 }
 
-void func_8008C408(struct Ape *ape, Vec *b)
+void mot_ape_set_quat_from_vec(struct Ape *ape, Vec *b)
 {
     Vec sp10 = *b;
 
@@ -1561,15 +1568,17 @@ void func_8008C408(struct Ape *ape, Vec *b)
     mathutil_mtxA_to_quat(&ape->unk60);
 }
 
-void u_mot_ape_set_some_var(float a)
+void u_set_global_skelanim_speed_scale(float a)
 {
-    lbl_802F2078 = a;
+    u_globalAnimSpeedScale = a;
 }
 
-void new_ape_calc(struct Ape *ape)
+// The main function that updates skeletal animation
+// Does not animate the ears, though. That is done somewhere else
+void ape_skel_anim_main(struct Ape *ape)
 {
-    struct Struct8003699C_child *r31 = ape->unk0;
-    struct Struct8003699C_child *r29;
+    struct ApeAnimationThing *r31 = ape->unk0;
+    struct ApeAnimationThing *r29;
 
     if ((debugFlags & 0xA) || (ape->flags & (1 << 3)))
         return;
@@ -1577,74 +1586,74 @@ void new_ape_calc(struct Ape *ape)
     ape->unk18--;
     ape->flags &= ~(1 << 16);
     func_80085DB0(ape);
-    r31->unk40 += r31->unk3C * lbl_802F2078;
-    func_8008A7F0(ape, r31);
-    if (ape->unkC > 9.9999999392252903e-09f)
+    r31->u_timeInKeyframe += r31->u_someDeltaTime * u_globalAnimSpeedScale;
+    mot_ape_8008A7F0(ape, r31);
+    if (ape->animTimerMax > 9.9999999392252903e-09f)
     {
         r29 = ape->unk4;
         r31 = ape->unk0;
         if (ape->flags & (1 << 9))
         {
-            r29->unk40 += r29->unk3C;
-            if (r29->unk40 >= 1.0f)
+            r29->u_timeInKeyframe += r29->u_someDeltaTime;
+            if (r29->u_timeInKeyframe >= 1.0f)
             {
-                r29->unk38++;
-                r29->unk40 -= 1.0f;
+                r29->u_poseNum++;
+                r29->u_timeInKeyframe -= 1.0f;
             }
-            if (r29->unk38 >= r29->unk3A)
+            if (r29->u_poseNum >= r29->unk3A)
             {
                 if (ape->unk1C->unkC & (1 << 4))
-                    r29->unk38 = ape->unk1C->unk8;
+                    r29->u_poseNum = ape->unk1C->unk8;
                 else
-                    r29->unk38 = 1;
-                func_800355B8(r29);
+                    r29->u_poseNum = 1;
+                mot_joint_800355B8(r29);
             }
-            func_800355FC(r29);
+            mot_joint_800355FC(r29);
             u_iter_joints_8008A2C4(r31->joints);
             u_iter_joints_8008A2C4(r29->joints);
-            u_iter_joints_8008A3A4(r31->joints, r29->joints, ape->unk8 / ape->unkC);
+            u_iter_joints_8008A3A4(r31->joints, r29->joints, ape->animTimerCurr / ape->animTimerMax);
         }
         else
-            u_iter_joints_8008A124(r31->joints, ape->unk8 / ape->unkC);
-        ape->unk8 += 1.0f;
-        if (ape->unk8 > ape->unkC)
+            u_iter_joints_8008A124(r31->joints, ape->animTimerCurr / ape->animTimerMax);
+        ape->animTimerCurr += 1.0f;
+        if (ape->animTimerCurr > ape->animTimerMax)
         {
-            ape->unkC = 0.0f;
-            r31->unk3C = ape->unk1C->unk18;
+            ape->animTimerMax = 0.0f;
+            r31->u_someDeltaTime = ape->unk1C->unk18;
         }
     }
-    func_80036064(r31);
+    u_animate_ape_hands(r31);
 }
 
-void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
+static void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
 {
     int i;
-    u32 index = (ape->unk90 >> 1) + (ape->charaId * 2);
-    struct ApeGfxFileInfo *r27 = &apeGfxFileInfo[index];
-    struct ApeFacePart *r29 = r27->facePartInfo[ape->unk90 & 1];
+    u32 gmaIndex = (ape->u_lodGma >> 1) + (ape->charaId * 2);
+    struct ApeGfxFileInfo *gfxInfo = &apeGfxFileInfo[gmaIndex];
+    struct ApeBodyPart *r29 = gfxInfo->facePartInfo[ape->u_lodGma & 1];
     struct GMAModel *model;
-    struct Struct802B39C0_B0_child *sp18[10];
-    struct Struct802B39C0_B0_child *r6;
-    struct Struct802B39C0_B0_child **ptr;
+    struct BodyPartThing *sp18[10];
+    struct BodyPartThing *r6;
+    struct BodyPartThing **ptr;
     u8 dummy[8];
 
     ptr = sp18;
-    for (i = 0; i < r27->partCounts[ape->unk90 & 1]; ptr++, i++)
+    for (i = 0; i < gfxInfo->partCounts[ape->u_lodGma & 1]; ptr++, i++)
         *ptr = NULL;
 
     r6 = ape->unk98;
     for (i = 0; i < ape->unk94; r6++, i++)
     {
-        if (r6->unk14[ape->unk90] != -1)
-           sp18[r6->unk14[ape->unk90]] = r6;
+        if (r6->unk14[ape->u_lodGma] != -1)
+           sp18[r6->unk14[ape->u_lodGma]] = r6;
     }
 
     // Draw head and hands?
     ptr = sp18;
-    for (i = 0; i < r27->partCounts[ape->unk90 & 1]; r29++, ptr++, i++)
+    for (i = 0; i < gfxInfo->partCounts[ape->u_lodGma & 1]; r29++, ptr++, i++)
     {
         struct AnimJoint *joint = &joints[r29->jointIdx];
-        struct GMAModel *model = charaGMAs[index]->modelEntries[r29->modelId].model;
+        struct GMAModel *model = charaGMAs[gmaIndex]->modelEntries[r29->modelId].model;
 
         if (model != NULL)
         {
@@ -1684,20 +1693,20 @@ void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
             u_animTransformMatrices[i] = &joint->transformMtx;
     }
 
-    model = charaGMAs[index]->modelEntries[r27->unk1C[ape->unk90 & 1]].model;
+    model = charaGMAs[gmaIndex]->modelEntries[gfxInfo->lodModelIDs[ape->u_lodGma & 1]].model;
     u_init_ape_materials_maybe_with_colors(ape, model);
     avdisp_draw_model_unculled_sort_none(model);  // Draw body, limbs, and hair
 }
 
-struct Struct8008C924
+struct ApeDrawNode
 {
     struct OrdTblNode node;
-    u32 unk8;
+    u32 lightGroup;  // unused
     struct Ape *ape;
-    float unk10;
+    float opacity;
 };  // 0x14
 
-void lbl_8008CA80(struct Struct8008C924 *);
+static void ape_draw_callback(struct ApeDrawNode *);
 
 void mot_ape_thread(struct Ape *ape, int status)
 {
@@ -1708,44 +1717,44 @@ void mot_ape_thread(struct Ape *ape, int status)
         return;
     if (ape->unkC1 & (1 << currentCamera->unk204))
         return;
-    if ((polyDisp.unk0 & (1 << 2)) && get_height_world_mirror_plane(&ape->unk30) < 0.0f)
+    if ((polyDisp.flags & (1 << 2)) && get_height_world_mirror_plane(&ape->pos) < 0.0f)
         return;
 
-    if (ape->flags & (1 << 20))
+    if (ape->flags & APE_FLAG_TRANSLUCENT)
     {
-        struct Struct8008C924 *node;
+        struct ApeDrawNode *node;
         struct OrdTblNode *entry;
 
-        if (ballInfo[ape->ballId].unk15C[currentCamera->unk204] < 1.1920928955078125e-07f)
+        if (ballInfo[ape->ballId].u_opacity[currentCamera->unk204] < 1.1920928955078125e-07f)
             return;
         mathutil_mtxA_from_mtxB();
-        entry = ord_tbl_get_entry_for_pos(&ape->unk30);
+        entry = ord_tbl_get_entry_for_pos(&ape->pos);
         node = ord_tbl_alloc_node(sizeof(*node));
-        node->node.drawFunc = (OrdTblDrawFunc)lbl_8008CA80;
-        node->unk8 = peek_light_group();
+        node->node.drawFunc = (OrdTblDrawFunc)ape_draw_callback;
+        node->lightGroup = peek_light_group();
         node->ape = ape;
-        node->unk10 = ballInfo[ape->ballId].unk15C[currentCamera->unk204];
+        node->opacity = ballInfo[ape->ballId].u_opacity[currentCamera->unk204];
         ord_tbl_insert_node(entry, &node->node);
     }
     else
-        func_8008CAAC(ape, 1.0f);
+        mot_ape_8008CAAC(ape, 1.0f);
 }
 
-void lbl_8008CA80(struct Struct8008C924 *node)
+static void ape_draw_callback(struct ApeDrawNode *node)
 {
     struct Ape *ape = node->ape;
 
-    func_8008CAAC(ape, node->unk10);
+    mot_ape_8008CAAC(ape, node->opacity);
 }
 
-void func_8008CAAC(struct Ape *ape, float b)
+static void mot_ape_8008CAAC(struct Ape *ape, float opacity)
 {
     int r30 = ape->charaId;
     struct AnimJoint *r29 = ape->unk0->joints;
     u8 dummy[8];
     Vec sp10;
 
-    func_8000E1A4(b);
+    polydisp_set_some_color_based_on_curr_mode(opacity);
 
     mathutil_mtxA_push();
     mathutil_mtxA_from_quat(&ape->unk60);
@@ -1753,7 +1762,7 @@ void func_8008CAAC(struct Ape *ape, float b)
     mathutil_mtxA_pop();
 
     mathutil_mtxA_from_mtxB();
-    mathutil_mtxA_translate(&ape->unk30);
+    mathutil_mtxA_translate(&ape->pos);
     mathutil_mtxA_scale_xyz(ape->modelScale, ape->modelScale, ape->modelScale);
     nlSetScaleFactor(ape->modelScale);
     mathutil_mtxA_translate(&ape->unk3C);
@@ -1776,7 +1785,7 @@ u16 lbl_801C7D98[] = { 7, 1, 3, 2 };
 u16 lbl_801C7DA0[] = { 10, 1, 3, 2 };
 u16 lbl_801C7DA8[] = { 4, 9, 11, 10 };
 
-u16 *lbl_801C7DB0[] =
+static u16 *lbl_801C7DB0[] =
 {
     lbl_801C7D80,
     lbl_801C7D88,
@@ -1788,7 +1797,7 @@ u16 *lbl_801C7DB0[] =
     lbl_801C7D98,
 };
 
-struct GMATevLayer *find_material(struct GMAModel *model, u32 id)
+static struct GMATevLayer *find_material(struct GMAModel *model, u32 id)
 {
     struct GMATevLayer *materials = model->tevLayers;
     int i;
@@ -1807,15 +1816,15 @@ struct GMATevLayer *find_material(struct GMAModel *model, u32 id)
 
 FORCE_BSS_ORDER(unused802B4B20)
 
-void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *model1, struct GMAModel *model2)
+static void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *lowPolyModel, struct GMAModel *highPolyModel)
 {
     int i;
     struct GMAModel *models[2];
     u8 dummy[4];
     u32 var = charaId * 2;
 
-    models[0] = model1;
-    models[1] = model2;
+    models[0] = lowPolyModel;
+    models[1] = highPolyModel;
     for (i = 0; i < 2; i++)
     {
         struct GMATevLayer *mtrl = find_material(models[i], lbl_801C7DB0[var + lod][0]);
@@ -1825,14 +1834,14 @@ void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *mode
     }
 }
 
-void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused)
+static void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused)
 {
-    u32 index = (ape->charaId * 2) + (ape->unk90 & 1);
+    u32 index = (ape->charaId * 2) + (ape->u_lodGma & 1);
 
     if (u_apeMaterials[index] != NULL)
     {
         struct GMATevLayer *mtrl = u_apeMaterials[index];
-        u16 *r7 = lbl_801C7DB0[(ape->charaId * 2) + (ape->unk90 >> 1)];
+        u16 *r7 = lbl_801C7DB0[(ape->charaId * 2) + (ape->u_lodGma >> 1)];
 
         if (ape->colorId != 0)
             mtrl->texObj = &lbl_802B47E0[ape->charaId][r7[ape->colorId]];
@@ -1850,7 +1859,7 @@ void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *un
             {0x4C, 0xB2, 0x4C, 0xFF},  // green
         };
 
-        lbl_802B47F0[ape->unk90]->materialColor = colors[ape->colorId];
-        lbl_802B47F0[ape->unk90]->ambientColor = colors[ape->colorId];
+        lbl_802B47F0[ape->u_lodGma]->materialColor = colors[ape->colorId];
+        lbl_802B47F0[ape->u_lodGma]->ambientColor = colors[ape->colorId];
     }
 }

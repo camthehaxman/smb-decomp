@@ -18,6 +18,7 @@
 #include "name_entry.h"
 #include "nl2ngc.h"
 #include "obj_collision.h"
+#include "polydisp.h"
 #include "pool.h"
 #include "stage.h"
 #include "stcoli.h"
@@ -916,7 +917,7 @@ static void effect_paperfrag_draw(struct Effect *effect)
     float var_f31;
     float new_var;
 
-    if (polyDisp.unk0 & 4)
+    if (polyDisp.flags & 4)
     {
         temp_f30 = 0.1 * effect->scale.x;
         var_f31 = temp_f30 + get_height_world_mirror_plane(&effect->pos);
@@ -1008,7 +1009,7 @@ static void effect_get_banana_main(struct Effect *effect)
 
 static void effect_get_banana_draw(struct Effect *effect)
 {
-    if (!(polyDisp.unk0 & 4))
+    if (!(polyDisp.flags & 4))
     {
         mathutil_mtxA_from_translate(&effect->pos);
         mathutil_mtxA_rotate_y(effect->rotY);
@@ -1144,7 +1145,7 @@ static void effect_coli_particle_draw(struct Effect *effect)
     struct PointWithColor sp18;
     Vec spC;
 
-    if ((polyDisp.unk0 & 4) && get_height_world_mirror_plane(&effect->pos) < 0.0f)
+    if ((polyDisp.flags & 4) && get_height_world_mirror_plane(&effect->pos) < 0.0f)
         return;
     mathutil_mtxA_from_mtx(userWork->matrices[3]);
     mathutil_mtxA_tf_point(&effect->unk58, &sp38);
@@ -2117,7 +2118,7 @@ static void effect_colistar_particle_draw(struct Effect *effect)
     s16 temp_r29;
     s16 var_r28;
 
-    if ((polyDisp.unk0 & 4)
+    if ((polyDisp.flags & 4)
      && get_height_world_mirror_plane(&effect->pos) < -(model->boundSphereRadius * effect->scale.x))
         return;
 
@@ -2465,7 +2466,7 @@ static void effect_meteo_draw(struct Effect *effect)
 {
     struct GMAModel *temp_r31 = effect->model;
 
-    if ((polyDisp.unk0 & 4) && func_8000E53C(&effect->pos) < -(temp_r31->boundSphereRadius * effect->scale.x))
+    if ((polyDisp.flags & 4) && func_8000E53C(&effect->pos) < -(temp_r31->boundSphereRadius * effect->scale.x))
         return;
     mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
@@ -2668,7 +2669,7 @@ static void effect_bns_stg_star_draw(struct Effect *effect)
     struct GMAModel *shotstarModel = bgWork->shotstarModel;
     struct GMAModel *starlightModel = bgWork->starlightModel;
 
-    if ((polyDisp.unk0 & 4) && func_8000E53C(&effect->pos) < -shotstarModel->boundSphereRadius)
+    if ((polyDisp.flags & 4) && func_8000E53C(&effect->pos) < -shotstarModel->boundSphereRadius)
         return;
 
     mathutil_mtxA_from_mtx(userWork->matrices[0]);
@@ -2726,7 +2727,7 @@ static void effect_bns_stg_star_tail_draw(struct Effect *effect)
     struct NlModel *model = g_commonNlObj->models[NLMODEL_common_CROSS_LIGHT];
     float scale = 52.68 * (effect->scale.x * effect->colorFactor);
 
-    if ((polyDisp.unk0 & 4) && func_8000E53C(&model->boundSphereCenter) < -(model->boundSphereRadius * scale))
+    if ((polyDisp.flags & 4) && func_8000E53C(&model->boundSphereCenter) < -(model->boundSphereRadius * scale))
         return;
     mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_translate(&effect->pos);
@@ -2800,7 +2801,7 @@ static void effect_bgmst_gen_cloud_draw(struct Effect *effect)
     struct GMAModel *model;
     float scale;
 
-    if (polyDisp.unk0 & 4)
+    if (polyDisp.flags & 4)
         return;
     if (effect->colorFactor <= 0.0f)
         return;
@@ -2877,7 +2878,7 @@ static void effect_bgstm_rainripple_draw(struct Effect *effect)
     float var_f31;
     float temp_f30;
 
-    if (!(polyDisp.unk0 & 4))
+    if (!(polyDisp.flags & 4))
     {
         mathutil_mtxA_from_mtxB_translate(&effect->pos);
         mathutil_mtxA_get_translate_alt(&pos);
@@ -2918,7 +2919,7 @@ static void effect_bgmst_water_draw(struct Effect *effect)
     EnvMapFunc func;
     u32 var_r3;
 
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
         var_r3 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         var_r3 = 1 << (modeCtrl.unk30 - 1);
@@ -3096,7 +3097,7 @@ static void effect_commendfrag_draw(struct Effect *effect)
     float var_f31;
     float new_var;
 
-    if (polyDisp.unk0 & 4)
+    if (polyDisp.flags & 4)
     {
         temp_f30 = 0.1 * effect->scale.x;
         var_f31 = temp_f30 + get_height_world_mirror_plane(&effect->pos);
@@ -3237,7 +3238,7 @@ static void effect_bgend_water_draw(struct Effect *effect)
     EnvMapFunc func;
     u32 var_r3;
 
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
         var_r3 = 1 << 4;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         var_r3 = 1 << (modeCtrl.unk30 - 1);

@@ -17,6 +17,7 @@
 #include "mt_effect.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
+#include "polydisp.h"
 #include "sprite.h"
 #include "stage.h"
 #include "stobj.h"

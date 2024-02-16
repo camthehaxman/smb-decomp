@@ -16,6 +16,8 @@
 #include "input.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "pause_menu.h"
+#include "polydisp.h"
 #include "pool.h"
 #include "ranking_screen.h"
 #include "recplay.h"
@@ -55,7 +57,7 @@ void hud_show_pause_menu(void)
         sprite->type = SPRITE_TYPE_BITMAP;
         sprite->fontId = FONT_JAP_24x24_2P;
         sprite->textAlign = ALIGN_CC;
-        sprite->unk4C = 0.005f;
+        sprite->depth = 0.005f;
         sprite->userVar = 1;
         sprite->opacity = 0.5f;
         sprite->mulR = 0;
@@ -112,7 +114,7 @@ void func_80075E1C(int unused, struct Sprite *sprite)
             gameOver->textAlign = ALIGN_CC;
             gameOver->counter = 60;
             gameOver->userVar = 60;
-            gameOver->unk4C = sprite->unk4C - 0.001;
+            gameOver->depth = sprite->depth - 0.001;
             gameOver->mainFunc = game_over_sprite_main;
             strcpy(gameOver->text, "GAME OVER");
         }
@@ -223,7 +225,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
     params.sprno = bmpId;
     params.x = sprite->x;
     params.y = sprite->y;
-    params.z = sprite->unk4C + 0.001;
+    params.z = sprite->depth + 0.001;
     params.zm_x = 1.0f;
     params.zm_y = 1.0f;
     params.trnsl = 1.0f;
@@ -233,7 +235,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
     params.sprno = u_get_monkey_bitmap_id(0, 0, playerCharacterSelection[pauseMenuState.playerId]);
     params.x = sprite->x - 110.0f;
     params.y = sprite->y + sprite->scaleY + 12.0f;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.zm_x = 0.5f;
     params.zm_y = 0.325f;
     params.trnsl = 1.0f;
@@ -256,7 +258,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
         float y;
         char text[32];
 
-        func_80071B1C((i == pauseMenuState.selection) ? sprite->unk4C - 0.001 : sprite->unk4C);
+        func_80071B1C((i == pauseMenuState.selection) ? sprite->depth - 0.001 : sprite->depth);
 
         if (pauseMenuState.itemCount == 6)
             phi_f22 = i * 30 - 90;
@@ -273,11 +275,11 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
         set_text_pos(3.0f + x, 3.0f + y);
         set_text_mul_color(RGBA(32, 32, 0, 0));
         set_text_add_color(RGBA(0, 0, 0, 0));
-        u_draw_text(text);
+        sprite_puts(text);
         set_text_pos(x, y);
         set_text_mul_color((i == pauseMenuState.selection) ? RGBA(255, 255, 0, 0) : RGBA(128, 128, 0, 0));
         set_text_add_color((((pauseMenuState.unk4) & 1) && i == pauseMenuState.selection) ? temp_r16 : 0);
-        u_draw_text(text);
+        sprite_puts(text);
 
         // Display billiards guide toggle
         if (menuType == PAUSEMENU_CONT_GUIDE_HOW_EXIT && i == 1)
@@ -290,7 +292,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
             set_text_pos(3.0f + x, 3.0f + y);
             set_text_mul_color(RGBA(32, 32, 0,0));
             set_text_add_color(RGBA(0, 0, 0, 0));
-            u_draw_text(text);
+            sprite_puts(text);
             set_text_pos(x, y);
             if (pauseMenuState.unk4 & 8)
                 set_text_mul_color(RGBA(192, 192, 0, 0));
@@ -300,14 +302,14 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
                 set_text_add_color(flashColor);
             else
                 set_text_add_color(RGBA(0, 0, 0, 0));
-            u_draw_text(text);
+            sprite_puts(text);
 
             strcpy(text, "OFF");
             x += 50.0f;
             set_text_pos(3.0f + x, 3.0f + y);
             set_text_mul_color(RGBA(32, 32, 0,0));
             set_text_add_color(RGBA(0, 0, 0, 0));
-            u_draw_text(text);
+            sprite_puts(text);
             set_text_pos(x, y);
             if (!(pauseMenuState.unk4 & 8))
                 set_text_mul_color(RGBA(192, 192, 0, 0));
@@ -317,7 +319,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
                 set_text_add_color(flashColor);
             else
                 set_text_add_color(RGBA(0, 0, 0, 0));
-            u_draw_text(text);
+            sprite_puts(text);
         }
         if (i == pauseMenuState.selection)
             sprite->scaleX = phi_f22;
@@ -326,7 +328,7 @@ static void pause_menu_sprite_draw(struct Sprite *sprite)
     params.sprno = BMP_COM_white_mask8x8;
     params.x = 320.1f;
     params.y = 240.1f;
-    params.z = (sprite->userVar == 2) ? 0.001 : sprite->unk4C + 0.002;
+    params.z = (sprite->userVar == 2) ? 0.001 : sprite->depth + 0.002;
     params.zm_x = 80.0f;
     params.zm_y = 60.0f;
     params.trnsl = sprite->opacity;
@@ -389,7 +391,7 @@ void u_logo_plus_sprite_something(void)
         sprite->x = 320.0f;
         sprite->y = 115.0f;
         sprite->textAlign = ALIGN_CC;
-        sprite->unk4C = 300.0f;
+        sprite->depth = 300.0f;
         sprite->bmpId = BMP_ADV_adv_logo_plus;
         strcpy(sprite->text, "logo plus");
     }
@@ -402,7 +404,7 @@ void u_logo_plus_sprite_something(void)
         sprite->x = 320.0f;
         sprite->y = 240.0f;
         sprite->textAlign = ALIGN_CC;
-        sprite->unk4C = 301.0f;
+        sprite->depth = 301.0f;
         sprite->bmpId = BMP_ADV_logo_sega512;
         sprite->counter = 0;
         sprite->mainFunc = sega_logo_sprite_main;
@@ -438,7 +440,7 @@ static void sega_logo_sprite_main(s8 *a, struct Sprite *sprite)
         sprite->bmpId = BMP_ADV_logo_av256;
         sprite->scaleX = 1.0f;
         sprite->scaleY = 1.0f;
-        sprite->unk4C = 100.0f;
+        sprite->depth = 100.0f;
         if (logoPlus != NULL)
         {
             logoPlus->bmpId = BMP_ADV_logo_plus256x40;
@@ -471,7 +473,7 @@ static void lbl_80076AC0(struct Sprite *sprite)
     params.sprno = sprite->bmpId;
     params.x = sprite->x + (r5 % 2 == 1 ? 128 : -128);
     params.y = sprite->y + (sprite->userVar == 0 ? 50 : 0);
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.u0 = 0.0f;
     params.v0 = 0.15625 * r5;
     params.u1 = 1.0f;
@@ -501,7 +503,7 @@ void hud_show_adv_copyright_info(int a)
         sprite->x = 357.0f;
         sprite->y = 463.0f;
         sprite->textAlign = ALIGN_LB;
-        sprite->unk4C = 0.03f;
+        sprite->depth = 0.03f;
         sprite->bmpId = BMP_COM_copyright_02;
         sprite->mainFunc = copyright_sprite_main;
         strcpy(sprite->text, "(C)");
@@ -527,7 +529,7 @@ void hud_show_adv_copyright_info(int a)
         sprite->type = SPRITE_TYPE_BITMAP;
         sprite->x = 16.0f;
         sprite->y = 462.0f;
-        sprite->unk4C = 0.03f;
+        sprite->depth = 0.03f;
         sprite->bmpId = BMP_COM_str_sega;
         sprite->textAlign = ALIGN_LB;
         sprite->mainFunc = copyright_sprite_main;
@@ -624,7 +626,7 @@ void hud_show_title_banner(int arg0)
     if (sprite != NULL)
     {
         sprite->type = SPRITE_TYPE_BITMAP;
-        sprite->unk4C = 0.095f;
+        sprite->depth = 0.095f;
         sprite->opacity = 0.0f;
         sprite->counter = arg0;
         sprite->userVar = arg0;
@@ -744,7 +746,7 @@ static void title_sprite_draw(struct Sprite *sprite)
     params.sprno = BMP_ADV_adv_title_bg;
     params.x = 320.1f;
     params.y = 240.1f;
-    params.z = 0.004 + sprite->unk4C;
+    params.z = 0.004 + sprite->depth;
     params.trnsl = sprite->opacity;
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
     nlSprPut(&params);
@@ -757,7 +759,7 @@ static void title_sprite_draw(struct Sprite *sprite)
         params.sprno = BMP_ADV_adv_title_spr_kage;
         params.x = letter->x - 8.0f;
         params.y = letter->y + offset->pos - 5.0f;
-        params.z = 0.002 + sprite->unk4C;
+        params.z = 0.002 + sprite->depth;
         params.trnsl = sprite->opacity;
         params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_DEPTH_UPDATE;
         nlSprPut(&params);
@@ -765,13 +767,13 @@ static void title_sprite_draw(struct Sprite *sprite)
         params.sprno = letter->bmpId;
         params.x = letter->x;
         params.y = letter->y + offset->pos;
-        params.z = sprite->unk4C;
+        params.z = sprite->depth;
         params.trnsl = 1.0f;
         params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_DEPTH_UPDATE;
         nlSprPut(&params);
 
         params.sprno = BMP_ADV_adv_title_spr_gawa;
-        params.z = sprite->unk4C - 0.002;
+        params.z = sprite->depth - 0.002;
         params.trnsl = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
         nlSprPut(&params);
     }
@@ -784,7 +786,7 @@ static void title_sprite_draw(struct Sprite *sprite)
         params.sprno = BMP_ADV_adv_title_mnk_kage;
         params.x = 56.0f + (letter->x + offset->pos - 12.0f);
         params.y = 56.0f + (letter->y - 5.0f);
-        params.z = 0.002 + sprite->unk4C;
+        params.z = 0.002 + sprite->depth;
         params.trnsl = sprite->opacity;
         params.ang = 0;
         params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
@@ -793,14 +795,14 @@ static void title_sprite_draw(struct Sprite *sprite)
         params.sprno = letter->bmpId;
         params.x = 44.0f + (letter->x + offset->pos);
         params.y = 44.0f + letter->y;
-        params.z = sprite->unk4C;
+        params.z = sprite->depth;
         params.trnsl = 1.0f;
         params.ang = -256.0f * offset->pos;
         params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC | NLSPR_DEPTH_UPDATE;
         nlSprPut(&params);
 
         params.sprno = BMP_ADV_adv_title_mnk_gawa;
-        params.z = sprite->unk4C - 0.002;
+        params.z = sprite->depth - 0.002;
         params.trnsl = 1.0 - fabs(0.2 * mathutil_sin(512.0f * offset->pos));
         params.ang = 0;
         nlSprPut(&params);
@@ -809,7 +811,7 @@ static void title_sprite_draw(struct Sprite *sprite)
     params.sprno = BMP_ADV_adv_title_tm;
     params.x = 482.0f;
     params.y = 338.0f;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.trnsl = lbl_802F2014;
     params.ang = 0;
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_DEPTH_UPDATE;
@@ -818,7 +820,7 @@ static void title_sprite_draw(struct Sprite *sprite)
     params.sprno = smileFaceTable[0];
     params.x = 320.0f;
     params.y = 331.0f;
-    params.z = sprite->unk4C - 0.004;
+    params.z = sprite->depth - 0.004;
     params.zm_x = lbl_802F2010 * 0.7;
     params.zm_y = lbl_802F2010 * 0.7 * 0.65;
     params.trnsl = 1.0f;
@@ -838,7 +840,7 @@ void hud_show_title_menu(void)
     if (sprite != NULL)
     {
         sprite->tag = 12;
-        sprite->unk4C = 0.049f;
+        sprite->depth = 0.049f;
         sprite->fontId = FONT_JAP_24x24_2P;
         sprite->x = 320.0f;
         sprite->y = 374.0f;
@@ -853,7 +855,7 @@ void hud_show_title_menu(void)
     if (sprite != NULL)
     {
         sprite->tag = 13;
-        sprite->unk4C = 0.049f;
+        sprite->depth = 0.049f;
         sprite->fontId = FONT_JAP_24x24_2P;
         sprite->x = 320.0f;
         sprite->y = 398.0f;
@@ -947,7 +949,7 @@ void hud_show_title_screen_monkey_sprite(void)
         sprite->y = 60.0f;
         sprite->fontId = FONT_ASCII;
         sprite->textAlign = ALIGN_PIC;
-        sprite->unk4C = 0.04f;
+        sprite->depth = 0.04f;
         sprite->drawFunc = monkey_sprite_draw;
         sprintf(sprite->text, "saru");
     }
@@ -983,7 +985,7 @@ void u_show_adv_ready_hud(void)
         sprite->y = 85.0f;
         sprite->fontId = FONT_NUM_24x37;
         sprite->textAlign = ALIGN_CB;
-        sprite->unk4C = 0.19f;
+        sprite->depth = 0.19f;
         sprite->mainFunc = normal_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
         sprite = create_child_sprite(sprite);
@@ -992,7 +994,7 @@ void u_show_adv_ready_hud(void)
             sprite->x = -4.0f;
             sprite->fontId = FONT_NUM_12x19;
             sprite->textAlign = ALIGN_CB;
-            sprite->unk4C = 0.19f;
+            sprite->depth = 0.19f;
             sprite->mainFunc = normal_timer_100th_seconds_sprite_main;
             sprintf(sprite->text, ":00");
         }
@@ -1100,7 +1102,7 @@ void hud_create_adv_demo_banana_sprite(int index)
         sprite->x = textBoxes[index + 1].x;
         sprite->y = textBoxes[index + 1].y;
         sprite->textAlign = ALIGN_CC;
-        sprite->unk4C = (f32) (0.05 + (0.01 * (f64) (index + 1)));
+        sprite->depth = (f32) (0.05 + (0.01 * (f64) (index + 1)));
         sprite->bmpId = (index == 2) ? BMP_COM_banana_01 : BMP_COM_banana_10;
         sprite->opacity = 0.0f;
         sprite->scaleX = (index == 2) ? 0.7 : 0.8;
@@ -1140,7 +1142,7 @@ void u_show_eieipu_sprite(int arg0)
         sprite->tag = SPRITE_TAG_EIEIPU;
         sprite->type = SPRITE_TYPE_BITMAP;
         sprite->textAlign = ALIGN_CC;
-        sprite->unk4C = 10.0f;
+        sprite->depth = 10.0f;
         sprite->userVar = arg0;
         sprite->counter = 0;
         sprite->flags |= 0x40000;
@@ -1238,7 +1240,7 @@ static void eieipu_sprite_draw(struct Sprite *sprite)
     int i;
     NLsprarg params;
 
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.u0 = 0.0f;
     params.v0 = 0.0f;
     params.u1 = 1.0f;
@@ -1332,7 +1334,7 @@ void hud_show_stage_name_banner(void)
         sprite->tag = SPRITE_TAG_FLOOR_NAME_BANNER;
         sprite->x = 320.0f;
         sprite->y = 240.0f;
-        sprite->unk4C = 0.15f;
+        sprite->depth = 0.15f;
         if ((modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE && (lbl_8027CE24[0].unk4 & 8))
          || (modeCtrl.courseFlags & COURSE_FLAG_EXTRA))
         {
@@ -1496,7 +1498,7 @@ static void floor_intro_sprite_draw(struct Sprite *sprite)
             set_text_opacity(MIN(0.0625 * (sprite->counter - 30 - ((i - 1) * 16)), sprite->opacity));
         else if (i == 0 && sprite->userVar > 0)
             set_text_opacity(sprite->opacity);
-        u_draw_char(text[i]);
+        sprite_putc(text[i]);
     }
     reset_text_draw_settings();
 }
@@ -1550,7 +1552,7 @@ void hud_show_ready_banner(int duration)
     {
         sprite->x = 320.0f;
         sprite->y = 240.0f;
-        sprite->unk4C = (modeCtrl.unk30 == 1) ? 0.1 : 0.05;
+        sprite->depth = (modeCtrl.unk30 == 1) ? 0.1 : 0.05;
         sprite->fontId = FONT_ASC_72x64;
         sprite->textAlign = ALIGN_CC;
         sprite->mulR = 255;
@@ -1704,7 +1706,7 @@ void hud_show_normal_mode_info(void)
         sprite->y = 86.0f;
         sprite->fontId = FONT_ASCII;
         sprite->textAlign = ALIGN_PIC;
-        sprite->unk4C = 0.1f;
+        sprite->depth = 0.1f;
         sprite->drawFunc = monkey_sprite_draw;
         sprintf(sprite->text, "saru");
     }
@@ -1724,7 +1726,7 @@ void hud_show_normal_mode_info(void)
         sprite->y = 85.0f;
         sprite->fontId = FONT_NUM_24x37;
         sprite->textAlign = ALIGN_CB;
-        sprite->unk4C = 0.19f;
+        sprite->depth = 0.19f;
         sprite->mainFunc = competition_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
         sprite = create_child_sprite(sprite);
@@ -1733,7 +1735,7 @@ void hud_show_normal_mode_info(void)
             sprite->x = -4.0f;
             sprite->fontId = FONT_NUM_12x19;
             sprite->textAlign = ALIGN_CB;
-            sprite->unk4C = 0.19f;
+            sprite->depth = 0.19f;
             sprite->mainFunc = competition_timer_100th_seconds_sprite_main;
             sprintf(sprite->text, ":00");
         }
@@ -1865,7 +1867,7 @@ void hud_show_normal_mode_info(void)
         sprite->y = (modeCtrl.courseFlags & 1) ? 420 : 428;
         sprite->fontId = FONT_ASC_20x20;
         sprite->textAlign = ALIGN_LB;
-        sprite->unk4C = 0.2f;
+        sprite->depth = 0.2f;
         sprite->mainFunc = normal_ball_speed_sprite_main;
         strcpy(sprite->text, "00");
         sprite = create_child_sprite(sprite);
@@ -1874,7 +1876,7 @@ void hud_show_normal_mode_info(void)
             sprite->x = 4.0f;
             sprite->type = SPRITE_TYPE_BITMAP;
             sprite->textAlign = ALIGN_CT;
-            sprite->unk4C = 0.2f;
+            sprite->depth = 0.2f;
             sprite->bmpId = BMP_COM_game_icon_mph;
             strcpy(sprite->text, "mph");
         }
@@ -2033,7 +2035,7 @@ static void show_competition_player_hud(int playerId)
         sprite->y = bottom - 16.0f;
         sprite->fontId = FONT_ASC_18x16;
         sprite->userVar = playerId;
-        sprite->unk4C = 0.2f;
+        sprite->depth = 0.2f;
         sprite->mainFunc = competition_ball_speed_sprite_main;
         strcpy(sprite->text, "00");
         sprite = create_child_sprite(sprite);
@@ -2043,7 +2045,7 @@ static void show_competition_player_hud(int playerId)
             sprite->y = -3.0f;
             sprite->type = SPRITE_TYPE_BITMAP;
             sprite->textAlign = ALIGN_CT;
-            sprite->unk4C = 0.2f;
+            sprite->depth = 0.2f;
             sprite->bmpId = 0x58;
             strcpy(sprite->text, "mph");
         }
@@ -2102,7 +2104,7 @@ void hud_show_competition_mode_info(void)
         sprite->y = 257.0f;
         sprite->fontId = FONT_NUM_24x37;
         sprite->textAlign = ALIGN_CB;
-        sprite->unk4C = 0.19f;
+        sprite->depth = 0.19f;
         sprite->mainFunc = competition_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
         sprite = create_child_sprite(sprite);
@@ -2111,7 +2113,7 @@ void hud_show_competition_mode_info(void)
             sprite->x = -4.0f;
             sprite->fontId = FONT_NUM_12x19;
             sprite->textAlign = ALIGN_CB;
-            sprite->unk4C = 0.19f;
+            sprite->depth = 0.19f;
             sprite->mainFunc = competition_timer_100th_seconds_sprite_main;
             sprintf(sprite->text, ":00");
         }
@@ -2149,7 +2151,7 @@ void hud_show_competition_mode_info(void)
     if (sprite != NULL)
     {
         sprite->bmpId = BMP_COM_frame;
-        sprite->unk4C = 400.0f;
+        sprite->depth = 400.0f;
         sprite->scaleX = 1.0f;
         sprite->scaleY = 80.0f;
         sprite->drawFunc = competition_separator_sprite_draw;
@@ -2191,7 +2193,7 @@ static void competition_separator_sprite_draw(struct Sprite *sprite)
     params.sprno = sprite->bmpId;
     params.x = 320.0f;
     params.y = 240.0f;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.zm_x = sprite->scaleX;
     params.zm_y = sprite->scaleY;
     params.u0 = sprite->unk7C;
@@ -2298,13 +2300,13 @@ static void competition_timer_100th_seconds_sprite_main(s8 *arg0, struct Sprite 
 
 static void normal_timer_seconds_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
+    int time = (int)recplay_get_info_timer(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], g_recplayInfo.u_timeOffset) + 1;
     sprintf(sprite->text, "%03d", time / 60);
 }
 
 static void normal_timer_100th_seconds_sprite_main(s8 *arg0, struct Sprite *sprite)
 {
-    int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
+    int time = (int)recplay_get_info_timer(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], g_recplayInfo.u_timeOffset) + 1;
     int val = 100.0 * ((float)(time % 60) / 60.0);
     sprintf(sprite->text, ":%02d", val);
 }
@@ -2361,7 +2363,7 @@ static void banana_count_sprite_draw(struct Sprite *sprite)
     set_text_pos(sprite->x - 70.0f, sprite->y - 10.0f);
     set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, sprite->mulB, 0));
     set_text_add_color(RGBA(sprite->addR, sprite->addG, sprite->addB, 0));
-    u_draw_text("    100");
+    sprite_puts("    100");
 
     r22 = lbl_80292C00_alias;
     for (i = 0; i < 3; i++, r22++)
@@ -2390,7 +2392,7 @@ static void banana_count_sprite_draw(struct Sprite *sprite)
         set_text_pos(x, y);
         set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, temp_r23, 0));
         set_text_scale(temp_f28, temp_f28);
-        func_80072AC0("%d", phi_r3);
+        sprite_printf("%d", phi_r3);
     }
     reset_text_draw_settings();
 }
@@ -2421,7 +2423,7 @@ static void lbl_8007ADF4(struct Sprite *sprite)
             y = sprite->y - 10.0f;
             set_text_pos(x, y);
             set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, 0, 0));
-            u_draw_text("?");
+            sprite_puts("?");
             continue;
         }
 
@@ -2445,7 +2447,7 @@ static void lbl_8007ADF4(struct Sprite *sprite)
         set_text_pos(x, y);
         set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, temp_r23, 0));
         set_text_scale(temp_f28, temp_f28);
-        func_80072AC0("%d", phi_r3);
+        sprite_printf("%d", phi_r3);
     }
     reset_text_draw_settings();
 }
@@ -2467,7 +2469,7 @@ static void lbl_8007B134(struct Sprite *sprite)
     texHdr = &bitmapGroups[(params.sprno >> 8) & 0xFF].tpl->texHeaders[params.sprno & 0xFF];
     params.x = sprite->x;
     params.y = sprite->y;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.u0 = (16.0f * sprite->userVar) / texHdr->width;
     params.v0 = (16.0f * phi_r5) / texHdr->height;
     params.u1 = params.u0 + (16.0f / texHdr->width);
@@ -2713,7 +2715,7 @@ static void final_floor_sprite_draw(struct Sprite *sprite)
         set_text_pos(sprite->x - 0.5 * w, sprite->y - 0.5 * h);
         set_text_scale(sprite->scaleX, sprite->scaleY);
         set_text_opacity(sprite->opacity);
-        u_draw_text(sprite->text);
+        sprite_puts(sprite->text);
     }
     else
     {
@@ -2750,7 +2752,7 @@ static void final_floor_sprite_draw(struct Sprite *sprite)
             set_text_scale(sprite->scaleX * temp_f20, sprite->scaleY * temp_f19);
             set_text_opacity(sprite->opacity * temp_f18);
             if (text[i] != ' ')
-                u_draw_char(text[i]);
+                sprite_putc(text[i]);
         }
     }
     reset_text_draw_settings();
@@ -2768,7 +2770,7 @@ void hud_show_go_banner(int arg0)
     {
         sprite->x = 320.0f;
         sprite->y = 240.0f;
-        sprite->unk4C = (modeCtrl.unk30 == 1) ? 0.1 : 0.05;
+        sprite->depth = (modeCtrl.unk30 == 1) ? 0.1 : 0.05;
         sprite->mulR = 0;
         sprite->mulG = 128;
         sprite->mulB = 255;
@@ -2847,7 +2849,7 @@ static void go_sprite_draw(struct Sprite *sprite)
     t = sprite->userVar - sprite->counter;
     reset_text_draw_settings();
     set_text_font(sprite->fontId);
-    func_80071B1C(sprite->unk4C);
+    func_80071B1C(sprite->depth);
     func_80071B50(sprite->flags);
     set_text_opacity(sprite->opacity);
     set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, sprite->mulB, 0));
@@ -2883,7 +2885,7 @@ static void go_sprite_draw(struct Sprite *sprite)
         set_text_pos(
             (sprite->x + phi_f29) - temp_r23 + ((i == 0) ? -temp_r23 : temp_r23),
             (sprite->y + phi_f2) - temp_r3);
-        u_draw_char((i == 0) ? 0x47 : 0x4F);
+        sprite_putc((i == 0) ? 0x47 : 0x4F);
     }
 }
 
@@ -2903,7 +2905,7 @@ void hud_show_goal_banner(int duration)
             sprite->y = 240.0f;
         else
             sprite->y = 320.0f;
-        sprite->unk4C = 0.05f;
+        sprite->depth = 0.05f;
         sprite->fontId = FONT_ASC_72x64;
         sprite->textAlign = ALIGN_CC;
         sprite->counter = duration;
@@ -2947,7 +2949,7 @@ static void goal_sprite_draw(struct Sprite *sprite)
     int i;
 
     params.sprno = BMP_NML_game_goal;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.ang = sprite->rotation;
     params.listType = -1;
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
@@ -3058,7 +3060,7 @@ static void warp_sprite_main(s8 *arg0, struct Sprite *sprite)
         {
             warpSprite->x = sprite->x;
             warpSprite->y = sprite->y;
-            warpSprite->unk4C = sprite->unk4C + 0.1;
+            warpSprite->depth = sprite->depth + 0.1;
             warpSprite->mulR = sprite->mulR;
             warpSprite->mulG = sprite->mulG;
             warpSprite->mulB = sprite->mulB;
@@ -3085,7 +3087,7 @@ static void lbl_8007CDCC(s8 *arg0, struct Sprite *sprite)
 {
     sprite->addG += 6;
     sprite->addB += 7;
-    sprite->unk4C += 0.001;
+    sprite->depth += 0.001;
     sprite->scaleX += 0.008;
     sprite->scaleY += 0.008;
     sprite->opacity -= 0.03125;
@@ -3108,7 +3110,7 @@ void hud_show_fallout_banner(int duration)
         {
             sprite->x = 320.0f;
             sprite->y = 240.0f;
-            sprite->unk4C = 0.05f;
+            sprite->depth = 0.05f;
             sprite->mulR = 255;
             sprite->mulG = 140;
             sprite->mulB = 0;
@@ -3199,7 +3201,7 @@ void hud_show_time_over_banner(int duration)
         {
             sprite->x = 320.0f;
             sprite->y = 240.0f;
-            sprite->unk4C = 0.05f;
+            sprite->depth = 0.05f;
             sprite->mulR = 255;
             sprite->mulG = 140;
             sprite->mulB = 0;
@@ -3254,7 +3256,7 @@ void hud_show_perfect_banner(int unused)
     {
         sprite->x = 320.0f;
         sprite->y = 240.0f;
-        sprite->unk4C = 0.05f;
+        sprite->depth = 0.05f;
         sprite->fontId = FONT_ASC_72x64;
         sprite->textAlign = ALIGN_CC;
         sprite->counter = 0;
@@ -3274,7 +3276,7 @@ static void show_bonus_finish_banner(void)
     {
         sprite->x = 320.0f;
         sprite->y = 240.0f;
-        sprite->unk4C = 0.05f;
+        sprite->depth = 0.05f;
         sprite->fontId = FONT_ASC_72x64;
         sprite->textAlign = ALIGN_CC;
         sprite->counter = 0;
@@ -3336,7 +3338,7 @@ void hud_show_continue_interface(void)
             sprite->mulB = 0;
             sprite->fontId = FONT_JAP_24x24_2P;
             sprite->textAlign = ALIGN_CC;
-            sprite->unk4C = 0.11f;
+            sprite->depth = 0.11f;
             sprite->opacity = 0.0f;
             sprite->mainFunc = num_continues_sprite_main;
             sprite->flags |= 0x200000;
@@ -3352,7 +3354,7 @@ void hud_show_continue_interface(void)
             sprite->mulB = 0;
             sprite->fontId = FONT_JAP_24x24_2P;
             sprite->textAlign = ALIGN_CC;
-            sprite->unk4C = 0.1f;
+            sprite->depth = 0.1f;
             sprite->opacity = 0.0f;
             sprite->mainFunc = num_continues_sprite_main;
             sprite->flags |= 0x200000;
@@ -3546,7 +3548,7 @@ void hud_show_game_over_banner(int duration)
         sprite->textAlign = ALIGN_CC;
         sprite->counter = duration;
         sprite->userVar = duration;
-        sprite->unk4C = 0.008f;
+        sprite->depth = 0.008f;
         sprite->mainFunc = game_over_sprite_main;
         strcpy(sprite->text, "GAME OVER");
     }
@@ -3566,7 +3568,7 @@ void hud_show_game_over_banner(int duration)
             sprite->mulB = playerNumColors[phi_r0 * 3 + 2];
             sprite->userVar = -0x1E;
             sprite->counter = 120;
-            sprite->unk4C = 0.008f;
+            sprite->depth = 0.008f;
             sprite->mainFunc = game_over_player_num_sprite_main;
             sprintf(sprite->text, "%dP", currentBall->playerId + 1);
         }
@@ -3674,7 +3676,7 @@ void hud_show_hurry_up_banner(void)
         sprite->tag = 20;
         sprite->x = 320.0f;
         sprite->y = 240.0f;
-        sprite->unk4C = 0.05f;
+        sprite->depth = 0.05f;
         sprite->fontId = FONT_ASC_32x32;
         sprite->textAlign = ALIGN_CC;
         sprite->mulR = 255;
@@ -3707,7 +3709,7 @@ static void hurry_up_sprite_main(s8 *arg0, struct Sprite *sprite)
 
 static void replay_sprite_main(s8 *, struct Sprite *);
 
-void show_replay_text(int arg0)
+void hud_show_replay_text(int arg0)
 {
     struct Sprite *sprite;
 
@@ -4022,7 +4024,7 @@ void func_8007EB2C(int arg0)
         sprite->scaleY = 0.75 * sprite->scaleX;
         sprite->opacity = lbl_801C206C[var].unk8;
         sprite->userVar = lbl_801C206C[var].unkC;
-        sprite->unk4C = 0.1 - 0.001 * sprite->scaleX;
+        sprite->depth = 0.1 - 0.001 * sprite->scaleX;
         sprite->flags |= 0x1000;
         sprite->mainFunc = lbl_8007EC80;
         if (modeCtrl.courseFlags & COURSE_FLAG_MASTER)
@@ -4049,7 +4051,7 @@ void func_8007ECB8(void)
     if (sprite != NULL)
     {
         sprite->bmpId = BMP_COM_frame;
-        sprite->unk4C = 400.0f;
+        sprite->depth = 400.0f;
         sprite->scaleX = 1.0f;
         sprite->scaleY = 80.0f;
         sprite->drawFunc = competition_separator_sprite_draw;
@@ -4100,13 +4102,13 @@ void func_8007ECB8(void)
 
 static void lbl_8007EF0C(s8 *arg0, struct Sprite *sprite)
 {
-    sprintf(sprite->text, "%03d", ballInfo[sprite->userVar].unk138);
+    sprintf(sprite->text, "%03d", ballInfo[sprite->userVar].bananaBonus);
 }
 
 static void lbl_8007F060(s8 *, struct Sprite *);
 static void lbl_8007F1A4(struct Sprite *);
 
-void func_8007EF50(struct Ball *ball)
+void hud_create_some_ranking_icon(struct Ball *ball)
 {
     struct Sprite *sprite;
     struct Viewport *vp;
@@ -4194,7 +4196,7 @@ static void lbl_8007F1A4(struct Sprite *sprite)
     texHdr = &bitmapGroups[(params.sprno >> 8) & 0xFF].tpl->texHeaders[params.sprno & 0xFF];
     params.x = sprite->x;
     params.y = sprite->y;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.u0 = temp_r6->unk0 / texHdr->width;
     params.v0 = temp_r6->unk4 / texHdr->height;
     params.u1 = params.u0 + temp_r6->unk8 / texHdr->width;
@@ -4357,12 +4359,12 @@ static void clear_score_sprite_draw(struct Sprite *sprite)
     if (func_8007F61C(sprite, t, f31))
     {
         set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, sprite->mulB, 0));
-        u_draw_text("CLEAR SCORE : ");
+        sprite_puts("CLEAR SCORE : ");
     }
     if (lbl_8007F754_inline2(sprite, t, f31))
     {
         set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, sprite->mulB, 0));
-        u_draw_text(sprite->text);
+        sprite_puts(sprite->text);
     }
     reset_text_draw_settings();
 }
@@ -4379,12 +4381,12 @@ static void warp_bonus_sprite_draw(struct Sprite *sprite)
     if (func_8007F61C(sprite, t, f31))
     {
         set_text_mul_color(RGBA(0, 192, 255, 0));
-        u_draw_text(" WARP BONUS   ");
+        sprite_puts(" WARP BONUS   ");
     }
     if (lbl_8007F754_inline2(sprite, t, f31))
     {
         set_text_mul_color(RGBA(0, 192, 255, 0));
-        u_draw_text(sprite->text);
+        sprite_puts(sprite->text);
     }
     reset_text_draw_settings();
 }
@@ -4401,12 +4403,12 @@ static void time_bonus_sprite_draw(struct Sprite *sprite)
     if (func_8007F61C(sprite, t, f31))
     {
         set_text_mul_color(RGBA(255, 255, 0, 0));
-        u_draw_text(" TIME BONUS   ");
+        sprite_puts(" TIME BONUS   ");
     }
     if (lbl_8007F754_inline2(sprite, t, f31))
     {
         set_text_mul_color(RGBA(255, 255, 0, 0));
-        u_draw_text(sprite->text);
+        sprite_puts(sprite->text);
     }
     reset_text_draw_settings();
 }
@@ -4426,13 +4428,13 @@ static void floor_score_sprite_draw(struct Sprite *sprite)
     {
         set_text_mul_color(RGBA(255, 128, 0, 0));
         set_text_add_color(RGBA(r31, r31, r31, 0));
-        u_draw_text("FLOOR SCORE : ");
+        sprite_puts("FLOOR SCORE : ");
     }
     if (lbl_8007F754_inline2(sprite, t, f31))
     {
         set_text_mul_color(RGBA(255, 128, 0, 0));
         set_text_add_color(RGBA(r31, r31, r31, 0));
-        u_draw_text(sprite->text);
+        sprite_puts(sprite->text);
     }
     reset_text_draw_settings();
 }
@@ -4529,7 +4531,7 @@ static void best_score_sprite_draw(struct Sprite *sprite)
 
         set_text_mul_color(phi_r4 ? RGBA(255, 0, 0, 0) : r28);
         set_text_pos(sprite->x + 20.0 * i * sprite->scaleX + ((i > 4) ? -8 : 0), sprite->y);
-        u_draw_char(sprite->text[i]);
+        sprite_putc(sprite->text[i]);
     }
 }
 
@@ -4550,7 +4552,7 @@ static void lbl_800800D4(struct Sprite *sprite)
     sprite->drawFunc = drawFunc;
 
     set_text_pos(sprite->left, sprite->top);
-    u_draw_text(sprite->text);
+    sprite_puts(sprite->text);
 
     temp_r3 = find_sprite_with_tag(8);
     if (temp_r3 != NULL && temp_r3->userVar > 0)
@@ -4562,7 +4564,7 @@ static void lbl_800800D4(struct Sprite *sprite)
         set_text_add_color(RGBA(temp_r30, temp_r30, temp_r30, 0));
         set_text_pos(sprite->left + (17.6 * strlen(sprite->text)), sprite->top);
         set_text_scale(0.8 + (0.3 * temp_f31), 0.8 + (0.4 * temp_f31));
-        func_80072AC0("+%d", practiceBestScore - sprite->userVar);
+        sprite_printf("+%d", practiceBestScore - sprite->userVar);
     }
 }
 
@@ -4706,7 +4708,7 @@ static void bomb_sprite_main(s8 *status, struct Sprite *sprite)
             fragSprite->fontId = FONT_ASCII;
             fragSprite->bmpId = bombFragBitmapIds[i];
             fragSprite->textAlign = ALIGN_LT;
-            fragSprite->unk4C = 0.2f;
+            fragSprite->depth = 0.2f;
             fragSprite->mainFunc = bomb_frag_sprite_main;
             fragSprite->scaleX = xscale;
             fragSprite->scaleY = yscale;
@@ -4733,7 +4735,7 @@ void hud_show_bomb(float x, float y)
         sprite->fontId = FONT_ASCII;
         sprite->bmpId = BMP_NML_icon_bombtimer;
         sprite->textAlign = ALIGN_CC;
-        sprite->unk4C = 0.2f;
+        sprite->depth = 0.2f;
         sprite->mainFunc = bomb_sprite_main;
         sprintf(sprite->text, "timer.pic");
         crackY = sprite->y;
@@ -4750,7 +4752,7 @@ void hud_show_bomb(float x, float y)
             sprite->fontId = FONT_ASCII;
             sprite->bmpId = BMP_NML_icon_bomb_hibi;
             sprite->textAlign = ALIGN_CC;
-            sprite->unk4C = 0.197f;
+            sprite->depth = 0.197f;
             sprite->opacity = 0.0f;
             sprite->mainFunc = bomb_crack_sprite_main;
             sprite->userVar = 0;

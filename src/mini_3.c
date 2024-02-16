@@ -7,32 +7,32 @@
 
 void func_800948F4(void)
 {
-    func_80094914();
+    poly_shadow_init();
 }
 
-static s32 lbl_802F2190;
-static struct PolyShadowUnit *lbl_802F2194;
-struct PolyShadowUnit lbl_802B9390[64];
+static s32 entryRemain;
+static struct PolyShadowUnit *entryPtr;
+static struct PolyShadowUnit entryBuf[64];
 
-void func_80094914(void)
+void poly_shadow_init(void)
 {
-    lbl_802F2190 = ARRAY_COUNT(lbl_802B9390);
-    lbl_802F2194 = lbl_802B9390;
+    entryRemain = ARRAY_COUNT(entryBuf);
+    entryPtr = entryBuf;
 }
 
 int set_poly_shadow(struct PolyShadowUnit *arg0)
 {
-    if (lbl_802F2190 == 0)
+    if (entryRemain == 0)
         return 0;
-    *lbl_802F2194 = *arg0;
-    lbl_802F2194->unk30 = MAX(MAX(lbl_802F2194->unk14.x, lbl_802F2194->unk14.y), lbl_802F2194->unk14.z);
-    lbl_802F2194->unk34 = lbl_802F2194->unk30 * lbl_802F2194->unk28->boundSphereRadius;
-    lbl_802F2194++;
-    lbl_802F2190--;
+    *entryPtr = *arg0;
+    entryPtr->unk30 = MAX(MAX(entryPtr->unk14.x, entryPtr->unk14.y), entryPtr->unk14.z);
+    entryPtr->unk34 = entryPtr->unk30 * entryPtr->unk28->boundSphereRadius;
+    entryPtr++;
+    entryRemain--;
     return 1;
 }
 
-void func_80094A34(void)
+void poly_shadow_draw(void)
 {
     Vec sp14;
     Vec sp8;
@@ -43,14 +43,14 @@ void func_80094A34(void)
     float temp_f27;
     float temp_f3;
 
-    var_r29 = ARRAY_COUNT(lbl_802B9390) - lbl_802F2190;
+    var_r29 = ARRAY_COUNT(entryBuf) - entryRemain;
     if (var_r29 != 0)
     {
         temp_f1 = -currentCamera->sub28.unk38;
         temp_f27 = temp_f1 / currentCamera->sub28.vp.height;
         avdisp_set_z_mode(1, 3, 0);
 
-        var_r28 = lbl_802B9390;
+        var_r28 = entryBuf;
         for (; var_r29 > 0; var_r29--, var_r28++)
         {
             mathutil_mtxA_from_mtxB_translate(&var_r28->unk0);

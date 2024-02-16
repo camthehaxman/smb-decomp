@@ -9,6 +9,7 @@
 #include "event.h"
 #include "gma.h"
 #include "mathutil.h"
+#include "polydisp.h"
 #include "stcoli.h"
 #include "window.h"
 
@@ -88,7 +89,7 @@ void bg_storm_main(void)
 
     memset(&effect, 0, sizeof(effect));
     effect.type = ET_BGSTM_RAINRIPPLE;
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
     {
         spD0.x = RAND_FLOAT() - 0.5f;
         spD0.y = 0.0f;
@@ -153,7 +154,7 @@ void bg_storm_draw(void)
     float f25;
 
     bg_default_draw();
-    if (polyDisp.unk0 & (1 << 2))
+    if (polyDisp.flags & (1 << 2))
         return;
     mathutil_mtxA_from_mtx(userWork->matrices[0]);
     mathutil_mtxA_rigid_inv_tf_tl(&sp7C);

@@ -9,6 +9,7 @@
 #include "global.h"
 #include "ball.h"
 #include "input.h"
+#include "memcard.h"
 #include "mode.h"
 #include "pool.h"
 #include "vibration.h"

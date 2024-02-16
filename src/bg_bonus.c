@@ -15,6 +15,7 @@
 #include "gxcache.h"
 #include "gxutil.h"
 #include "mathutil.h"
+#include "polydisp.h"
 #include "stage.h"
 #include "window.h"
 
@@ -155,7 +156,7 @@ void bg_bonus_draw(void)
     {
         float pulse = (starpoint->red + starpoint->green + starpoint->blue) * 0.75f;
 
-        if (polyDisp.unk0 & (1 << 2))
+        if (polyDisp.flags & (1 << 2))
         {
             starPos.x = starpoint->u_pos.x * bgScale.x;
             starPos.y = starpoint->u_pos.y * bgScale.y;

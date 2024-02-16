@@ -379,7 +379,7 @@ static struct WindowItem spriteWindowItems[] =
     {WI_STRING,      3, -2, "%s",                &spriteWork[0].text,      NULL},
     {WI_EDIT_F32,    3, -1, "locate_dx : %4.1f", &spriteWork[0].x,         &spritePosRange},
     {WI_EDIT_F32,    3, -1, "locate_dy : %4.1f", &spriteWork[0].y,         &spritePosRange},
-    {WI_EDIT_F32,    3, -1, "    depth : %4.1f", &spriteWork[0].unk4C,     &posScaleRange},
+    {WI_EDIT_F32,    3, -1, "    depth : %4.1f", &spriteWork[0].depth,     &posScaleRange},
     {WI_EDIT_U8,     3, -1, "     font : %3d",   &spriteWork[0].fontId,    &fontIdRange},
     {WI_STRINGTABLE, 3, -1, "  %s",              &spriteWork[0].fontId,    &fontStrArray},
     {WI_EDIT_S8,     3, -1, "    align : %3d",   &spriteWork[0].textAlign, &alignRange},

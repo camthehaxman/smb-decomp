@@ -167,7 +167,7 @@ void func_800700D8(int a)
         r8 = &spriteWork[i];
         while (r10->unk0 != NULL)
         {
-            if (r8->unk4C > r10->unk0->unk4C)
+            if (r8->depth > r10->unk0->depth)
                 break;
             r10 = r10->unk8;
         }
@@ -931,7 +931,7 @@ struct Sprite *create_sprite(void)
 
         memset(sprite, 0, sizeof(*sprite));
         sprite->unk2 = index;
-        sprite->unk4C = 0.1f;
+        sprite->depth = 0.1f;
         sprite->mulR = 255;
         sprite->mulG = 255;
         sprite->mulB = 255;
@@ -2634,7 +2634,7 @@ void set_text_pos(float x, float y)
     textDrawInfo.y = y;
 }
 
-void u_draw_char(char chr)
+void sprite_putc(char chr)
 {
     NLsprarg params;
     struct FontParams *font = &fontInfo[textDrawInfo.fontId];
@@ -2687,7 +2687,7 @@ static inline int func_80071E58_inline(int chr, int fontId, struct FontParams *f
     }
 }
 
-void u_draw_text(char *str)
+void sprite_puts(char *str)
 {
     struct TextDrawInfo *drawInfo = &textDrawInfo;
     int fontIdBackup;
@@ -2982,7 +2982,7 @@ float u_get_text_width(char *str)
     return width;
 }
 
-void func_80072AC0(char *str, ...)
+void sprite_printf(char *str, ...)
 {
     va_list args;
     char buf[0x200];
@@ -2990,7 +2990,7 @@ void func_80072AC0(char *str, ...)
     va_start(args, str);
     vsprintf(buf, str, args);
     va_end(args);
-    u_draw_text(buf);
+    sprite_puts(buf);
 }
 
 void u_draw_text_sprite(struct Sprite *sprite)
@@ -3002,12 +3002,12 @@ void u_draw_text_sprite(struct Sprite *sprite)
     textDrawInfo.mulColor = RGBA(sprite->mulR, sprite->mulG, sprite->mulB, (u8)(sprite->opacity * 255.0f));
     textDrawInfo.addColor = RGBA(sprite->addR, sprite->addG, sprite->addB, 0);
     textDrawInfo.unk18 = sprite->rotation;
-    textDrawInfo.unk1C = sprite->unk4C;
+    textDrawInfo.unk1C = sprite->depth;
     textDrawInfo.scaleX = sprite->scaleX;
     textDrawInfo.scaleY = sprite->scaleY;
     textDrawInfo.opacity = sprite->opacity;
     textDrawInfo.unk2C = sprite->flags;
-    u_draw_text(sprite->text);
+    sprite_puts(sprite->text);
 }
 
 void draw_bitmap_sprite(struct Sprite *sprite)
@@ -3017,7 +3017,7 @@ void draw_bitmap_sprite(struct Sprite *sprite)
     params.sprno = sprite->bmpId;
     params.x = (sprite->left + sprite->right) / 2;
     params.y = (sprite->top + sprite->bottom) / 2;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.zm_x = sprite->scaleX;
     params.zm_y = sprite->scaleY;
     params.u0 = sprite->unk7C;

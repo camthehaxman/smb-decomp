@@ -7,6 +7,7 @@
 #include "gxcache.h"
 #include "input.h"
 #include "mathutil.h"
+#include "memcard.h"
 #include "mode.h"
 
 static void *lbl_802F1B50;

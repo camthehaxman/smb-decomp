@@ -626,7 +626,7 @@ void shake_camera(int cameraId, int b, Vec *c)
         camera->shakeTimer = b;
 }
 
-void camera_set_state(int state)
+void camera_set_state_all(int state)
 {
     int i;
     struct Camera *camera;
@@ -1081,13 +1081,13 @@ void camera_func_attract_level(struct Camera *camera, struct Ball *ball)
     }
     else
     {
-        camera->eye.x = ballInfo[advDemoInfo.unkC].ape->unk30.x + calc_spline(t, eyeXSpline);
-        camera->eye.y = ballInfo[advDemoInfo.unkC].ape->unk30.y + calc_spline(t, eyeYSpline);
-        camera->eye.z = ballInfo[advDemoInfo.unkC].ape->unk30.z + calc_spline(t, eyeZSpline);
+        camera->eye.x = ballInfo[advDemoInfo.unkC].ape->pos.x + calc_spline(t, eyeXSpline);
+        camera->eye.y = ballInfo[advDemoInfo.unkC].ape->pos.y + calc_spline(t, eyeYSpline);
+        camera->eye.z = ballInfo[advDemoInfo.unkC].ape->pos.z + calc_spline(t, eyeZSpline);
 
-        camera->lookAt.x = ballInfo[advDemoInfo.unkC].ape->unk30.x + calc_spline(t, lookAtXSpline);
-        camera->lookAt.y = ballInfo[advDemoInfo.unkC].ape->unk30.y + calc_spline(t, lookAtYSpline);
-        camera->lookAt.z = ballInfo[advDemoInfo.unkC].ape->unk30.z + calc_spline(t, lookAtZSpline);
+        camera->lookAt.x = ballInfo[advDemoInfo.unkC].ape->pos.x + calc_spline(t, lookAtXSpline);
+        camera->lookAt.y = ballInfo[advDemoInfo.unkC].ape->pos.y + calc_spline(t, lookAtYSpline);
+        camera->lookAt.z = ballInfo[advDemoInfo.unkC].ape->pos.z + calc_spline(t, lookAtZSpline);
     }
 
     dir.x = camera->lookAt.x - camera->eye.x;
@@ -1649,14 +1649,14 @@ void camera_func_5(struct Camera *camera, struct Ball *ball)
     mathutil_mtxA_rotate_y(rand() & 0x7FFF);
     mathutil_mtxA_tf_vec(&sp30, &sp30);
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp10,
-        (0.75 + 0.25 * RAND_FLOAT()) * replayInfo.unk10);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10,
+        (0.75 + 0.25 * RAND_FLOAT()) * g_recplayInfo.u_timeOffset);
 
     camera->eye.x = sp10.pos.x + sp30.x;
     camera->eye.y = sp10.pos.y + sp30.y;
     camera->eye.z = sp10.pos.z + sp30.z;
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp10, 0.0f);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10, 0.0f);
 
     r29 = &sp30;
 
@@ -1678,9 +1678,9 @@ void camera_func_5(struct Camera *camera, struct Ball *ball)
     camera->eyeVel.y *= 0.25;
     camera->eyeVel.z *= 0.25;
 
-    f31 = (replayInfo.unk10 < 60.0f) ? replayInfo.unk10 : 60.0f;
+    f31 = (g_recplayInfo.u_timeOffset < 60.0f) ? g_recplayInfo.u_timeOffset : 60.0f;
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp10, replayInfo.unk10 - f31);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10, g_recplayInfo.u_timeOffset - f31);
 
     f3 = 1.0 / f31;
 
@@ -1726,15 +1726,15 @@ void camera_func_7(struct Camera *camera, struct Ball *ball)
     mathutil_mtxA_rotate_y(rand() & 0x7FFF);
     mathutil_mtxA_tf_vec(&sp50, &sp50);
 
-    f31 = (0.25 * RAND_FLOAT()) * replayInfo.unk10;
+    f31 = (0.25 * RAND_FLOAT()) * g_recplayInfo.u_timeOffset;
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp30, f31);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp30, f31);
 
     camera->eye.x = sp30.pos.x + sp50.x;
     camera->eye.y = sp30.pos.y + sp50.y;
     camera->eye.z = sp30.pos.z + sp50.z;
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp30, 0.0f);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp30, 0.0f);
 
     r29 = &sp50;
 
@@ -1756,8 +1756,8 @@ void camera_func_7(struct Camera *camera, struct Ball *ball)
     camera->eyeVel.y *= 0.1;
     camera->eyeVel.z *= 0.1;
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp30, f31);
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp10, 1.0 + f31);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp30, f31);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10, 1.0 + f31);
 
     camera->eyeVel.x -= 0.6 * (sp30.pos.x - sp10.pos.x);
     camera->eyeVel.y -= 0.6 * (sp30.pos.y - sp10.pos.y);
@@ -1907,7 +1907,7 @@ void camera_func_16(struct Camera *camera, struct Ball *ball)
         return;
     }
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp34, 0.0f);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp34, 0.0f);
     goal = decodedStageLzPtr->goals[infoWork.goalEntered];
     if (infoWork.unkE > 0)
     {
@@ -2797,29 +2797,29 @@ void camera_func_44(struct Camera *camera, struct Ball *ball)
 
     camera->timerCurr = 0;
     r30 = &lbl_801EFB94[camera->unk204];
-    f31 = func_8004964C(replayInfo.unk0[ball->playerId]);
-    get_replay_header(replayInfo.unk0[ball->playerId], &r30->unk8);
+    f31 = recplay_get_time(g_recplayInfo.u_replayIndexes[ball->playerId]);
+    recplay_get_header(g_recplayInfo.u_replayIndexes[ball->playerId], &r30->unk8);
 
     statesLen = 0;
     states[statesLen] = 5;
     statesLen++;
 
-    if ((r30->unk8.flags & 1) && replayInfo.unk10 > f31 - 240.0f)
+    if ((r30->unk8.flags & 1) && g_recplayInfo.u_timeOffset > f31 - 240.0f)
     {
         states[statesLen] = 16;
         statesLen++;
     }
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp10, replayInfo.unk10);
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp30, 0.0f);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10, g_recplayInfo.u_timeOffset);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp30, 0.0f);
     if (mathutil_vec_distance(&sp10.pos, &sp30.pos) < 16.0)
     {
         states[statesLen] = 7;
         statesLen++;
     }
 
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp30, replayInfo.unk10 - 60.0);
-    if (mathutil_vec_distance(&sp10.pos, &sp30.pos) > 1.0 && replayInfo.unk10 > 240.0)
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp30, g_recplayInfo.u_timeOffset - 60.0);
+    if (mathutil_vec_distance(&sp10.pos, &sp30.pos) > 1.0 && g_recplayInfo.u_timeOffset > 240.0)
     {
         states[statesLen] = 46;
         statesLen++;
@@ -2869,7 +2869,7 @@ void camera_func_demo(struct Camera *camera, struct Ball *ball)
     case 47:
         if (!(camera->timerCurr & 0x1F))
         {
-            func_800496BC(replayInfo.unk0[ball->playerId], &sp10, replayInfo.unk10 - 60.0);
+            recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10, g_recplayInfo.u_timeOffset - 60.0);
             if (mathutil_vec_distance(&ball->pos, &sp10.pos) < 0.5)
                 bvar = 1;
         }
@@ -2909,14 +2909,14 @@ void camera_func_46(struct Camera *camera, struct Ball *ball)
     camera_clear(camera);
     camera->unk26 = 0;
     camera->flags |= 4;
-    if (replayInfo.unk10 > 180.0)
-        camera->unk60 = replayInfo.unk10 - (RAND_FLOAT() * 1.5 + 0.5) * 60.0;
+    if (g_recplayInfo.u_timeOffset > 180.0)
+        camera->unk60 = g_recplayInfo.u_timeOffset - (RAND_FLOAT() * 1.5 + 0.5) * 60.0;
     else
-        camera->unk60 = replayInfo.unk10 * (RAND_FLOAT() * 0.5 + 0.5);
+        camera->unk60 = g_recplayInfo.u_timeOffset * (RAND_FLOAT() * 0.5 + 0.5);
     camera->unk64 = RAND_FLOAT() * 2.0 + 0.3;
     camera->unk80 = camera->unk60 * (RAND_FLOAT() * 0.5 + 0.2);
-    camera->unk80 = (camera->unk80 - camera->unk60) / replayInfo.unk10;
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp10, camera->unk60);
+    camera->unk80 = (camera->unk80 - camera->unk60) / g_recplayInfo.u_timeOffset;
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10, camera->unk60);
     camera->lookAtStart = sp10.pos;
     camera->eye = sp10.pos;
     camera->lookAtEnd.x = 0.0f;
@@ -2939,7 +2939,7 @@ void camera_func_47(struct Camera *camera, struct Ball *ball)
         return;
 
     camera->unk60 += camera->unk80;
-    func_800496BC(replayInfo.unk0[ball->playerId], &sp10, camera->unk60);
+    recplay_get_ball_frame(g_recplayInfo.u_replayIndexes[ball->playerId], &sp10, camera->unk60);
     f1 = mathutil_vec_distance(&ball->pos, &camera->eye);
     f31 = 2.0 - f1 * 0.125;
     if (f31 < 0.0)
@@ -2998,7 +2998,7 @@ void camera_func_47(struct Camera *camera, struct Ball *ball)
 
     camera_face_direction(camera, &sp3C);
 
-    if (replayInfo.unk10 < 60.0f)
+    if (g_recplayInfo.u_timeOffset < 60.0f)
         camera->state = 14;
 }
 
@@ -3017,7 +3017,7 @@ void camera_func_48(struct Camera *camera, struct Ball *ball)
 
     camera_clear(camera);
     camera->flags |= 4;
-    get_replay_header(replayInfo.unk0[ball->playerId], &sp34);
+    recplay_get_header(g_recplayInfo.u_replayIndexes[ball->playerId], &sp34);
 
     if (!(sp34.flags & 1)
      || infoWork.goalEntered >= decodedStageLzPtr->goalsCount

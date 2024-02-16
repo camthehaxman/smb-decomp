@@ -141,7 +141,7 @@ SOURCES := \
 	src/stage.c \
 	src/code_8.c \
 	src/recplay.c \
-	src/recplay_2.c \
+	src/recplay_cmpr.c \
 	src/effect.c \
 	src/background.c \
 	src/bg_old_bluesky.c \

@@ -9,6 +9,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "name_entry.h"
+#include "pool.h"
 #include "ranking_screen.h"
 #include "recplay.h"
 #include "sprite.h"
@@ -277,7 +278,7 @@ static void update_ranking_screen(void)
             lbl_802B37F0.unk4 = 0;
             lbl_802B37F0.unk130 = 0;
             lbl_802B37F0.unk10 = 0.0f;
-            func_80088A10();
+            ranking_screen_80088A10();
             break;
         }
         if (lbl_802B37F0.unk1C != 0)
@@ -466,13 +467,13 @@ static void draw_ranking_screen(void)
     func_80071B1C(1.03f);
     set_text_opacity(lbl_802B37F0.unkC);
     set_text_pos(65.0f, 136.0f + lbl_802B37F0.unk14);
-    u_draw_char(0x30);
+    sprite_putc(0x30);
     set_text_pos(180.0f, 136.0f + lbl_802B37F0.unk14);
-    u_draw_char(0x31);
+    sprite_putc(0x31);
     set_text_pos(289.0f, 136.0f + lbl_802B37F0.unk14);
-    u_draw_char(0x32);
+    sprite_putc(0x32);
     set_text_pos(460.0f, 136.0f + lbl_802B37F0.unk14);
-    u_draw_char(0x33);
+    sprite_putc(0x33);
     set_text_opacity(1.0f);
 
     params.sprno = BMP_RNK_rnk_lines;
@@ -497,12 +498,12 @@ static void draw_ranking_screen(void)
             // rank
             set_text_font(FONT_ICON_RNK);
             set_text_pos(x + 65, var_r29);
-            u_draw_char('1' + var_r30);
+            sprite_putc('1' + var_r30);
 
             // initials
             set_text_font(FONT_ASC_30x31);
             set_text_pos(x + 172, var_r29);
-            u_draw_text(record->initials);
+            sprite_puts(record->initials);
 
             // floor
             draw_ranking_floor_num(var_r30, x, var_r29, record);
@@ -510,7 +511,7 @@ static void draw_ranking_screen(void)
             // score number
             set_text_font(FONT_NUM_26x31);
             set_text_pos(x + 396, var_r29);
-            func_80072AC0("%07d", record->score);
+            sprite_printf("%07d", record->score);
 
             // line start
             params.x = x + 39;
@@ -599,19 +600,19 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
         if (record->floorNum == 0xFF)
         {
             set_text_pos(302.0 + x, y);
-            u_draw_text("--");
+            sprite_puts("--");
             return;
         }
         sprintf(text, "%d", record->floorNum);
         len = strlen(text);
         set_text_pos(328.0 + x - len * 13.0, y);
-        u_draw_text(text);
+        sprite_puts(text);
         break;
     case 1:
         set_text_font(FONT_NUM_26x31);
         sprintf(text, "%d", record->floorNum);
         set_text_pos(32.0 + (x = 328.0 + x - 29.0), y);
-        u_draw_text(text);
+        sprite_puts(text);
         params.sprno = BMP_RNK_rnk_ex_icon;
         params.x = x;
         params.y = y;
@@ -665,7 +666,7 @@ void draw_ranking_floor_num(int rank, int startX, int startY, struct ScoreRecord
         len = strlen(text);
         set_text_pos(x - len * 13.0, y);
         func_80071B1C(0.09f);
-        u_draw_text(text);
+        sprite_puts(text);
         set_text_opacity(1.0f);
         break;
     }
@@ -750,7 +751,7 @@ void init_ranking_screen(int difficulty)
         lbl_802B37F0.unk18 = 0;
         break;
     }
-    lbl_802B37F0.unk168 = func_800AEC74(difficulty, NULL);
+    lbl_802B37F0.unk168 = u_get_score_records_for_difficulty(difficulty, NULL);
 
     var = 0;
     entry = lbl_802B37F0.rankingEntries;
@@ -773,7 +774,7 @@ void init_ranking_screen(int difficulty)
     }
 }
 
-void func_8008897C(int arg0)
+void ranking_screen_8008897C(int arg0)
 {
     if (lbl_802B37F0.unk0 != 0)
     {
@@ -796,7 +797,7 @@ static void ranking_screen_sprite_draw(struct Sprite *sprite)
     draw_ranking_screen();
 }
 
-void func_80088A10(void)
+void ranking_screen_80088A10(void)
 {
     struct RankingEntry *entry;
     int i;
@@ -854,12 +855,12 @@ void show_rank_title_logo(void)
         sprite->tag = 3;
         sprite->x = 8.0f;
         sprite->y = 8.0f;
-        sprite->mulR = 0xFF;
-        sprite->mulG = 0xFF;
-        sprite->mulB = 0xFF;
+        sprite->mulR = 255;
+        sprite->mulG = 255;
+        sprite->mulB = 255;
         sprite->textAlign = 0;
         sprite->bmpId = BMP_RNK_rnk_monkeyball_logo;
-        sprite->unk4C = 0.26f;
+        sprite->depth = 0.26f;
         sprite->mainFunc = rnk_title_sprite_main;
         strcpy(sprite->text, "RNK TITILE");
     }
@@ -875,13 +876,13 @@ static struct
     float unk14;
     s16 unk18;
     u8 filler1A[2];
-    struct ReplayHeader unk1C;
+    struct ReplayHeader replayHdr;
     u32 unk34;
     u32 unk38;
-    char floorName[0x64-0x3C];
+    char floorName[40];
 } lbl_802B395C;
 
-static void rnk_title_sprite_main(s8 *arg0, struct Sprite *sprite)
+static void rnk_title_sprite_main(s8 *status, struct Sprite *sprite)
 {
     float temp_f4 = lbl_802B37F0.unk12C;
 
@@ -891,7 +892,7 @@ static void rnk_title_sprite_main(s8 *arg0, struct Sprite *sprite)
         sprite->rotation += 0x400;
     }
     if (temp_f4 >= 640.0)
-        *arg0 = 0;
+        *status = STAT_NULL;
 }
 
 static void func_80088D44(void)
@@ -900,17 +901,17 @@ static void func_80088D44(void)
 
     lbl_802B395C.unk34 = 0xFFFFFF;
     lbl_802B395C.unk38 = 0;
-    if (lbl_802B395C.unk1C.flags & 0x20)
+    if (lbl_802B395C.replayHdr.flags & 0x20)
     {
         lbl_802B395C.unk34 = 0xFFFF00;
         lbl_802B395C.unk38 = 0x404040;
     }
-    if (lbl_802B395C.unk1C.flags & 0x40)
-        sprintf(lbl_802B395C.floorName, "MASTER %d", lbl_802B395C.unk1C.floorNum);
-    else if (lbl_802B395C.unk1C.flags & 0x20)
-        sprintf(lbl_802B395C.floorName, "EXTRA %d", lbl_802B395C.unk1C.floorNum);
+    if (lbl_802B395C.replayHdr.flags & 0x40)
+        sprintf(lbl_802B395C.floorName, "MASTER %d", lbl_802B395C.replayHdr.floorNum);
+    else if (lbl_802B395C.replayHdr.flags & 0x20)
+        sprintf(lbl_802B395C.floorName, "EXTRA %d", lbl_802B395C.replayHdr.floorNum);
     else
-        sprintf(lbl_802B395C.floorName, "FLOOR %d", lbl_802B395C.unk1C.floorNum);
+        sprintf(lbl_802B395C.floorName, "FLOOR %d", lbl_802B395C.replayHdr.floorNum);
     lbl_802B395C.unk14 = 40.0 + (float)strlen(lbl_802B395C.floorName) * 20.0;
     len = strlen(lbl_802B395C.floorName) * 20;
     lbl_802B395C.unk14 = 40.0 + (float)len;
@@ -920,15 +921,15 @@ void func_80088E90(void)
 {
     lbl_802B395C.unk0 = 0;
     lbl_802B395C.unk4 = 1;
-    lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
-    get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
+    lbl_802B395C.unk18 = g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId];
+    recplay_get_header(lbl_802B395C.unk18, &lbl_802B395C.replayHdr);
     func_80088D44();
     lbl_802B395C.unk8 = -lbl_802B395C.unk14;
     lbl_802B395C.unkC = 0.0f;
     lbl_802B395C.unk10 = lbl_802B395C.unk8;
 }
 
-void func_80088F18(void)
+void u_show_some_ranking_sprite(void)
 {
     s32 temp_r31;
     struct Sprite *sprite;
@@ -948,13 +949,13 @@ void func_80088F18(void)
     lbl_802B395C.unk4 = 1;
     if (temp_r31 != 0)
     {
-        lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
-        get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
+        lbl_802B395C.unk18 = g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId];
+        recplay_get_header(lbl_802B395C.unk18, &lbl_802B395C.replayHdr);
         func_80088D44();
     }
 }
 
-void func_80088FD4(int arg0)
+void ranking_screen_80088FD4(int arg0)
 {
     if (arg0 != 0)
         func_80088E90();
@@ -985,7 +986,7 @@ static void func_800890D4(void)
         lbl_802B395C.unk10 = 8.0f;
         break;
     case 2:
-        if (lbl_802B395C.unk18 != replayInfo.unk0[replayInfo.unk14])
+        if (lbl_802B395C.unk18 != g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId])
         {
             lbl_802B395C.unk4 = 3;
             lbl_802B395C.unk10 = -lbl_802B395C.unk14;
@@ -995,8 +996,8 @@ static void func_800890D4(void)
         if (lbl_802B395C.unk8 == lbl_802B395C.unk10)
         {
             lbl_802B395C.unk4 = 1;
-            lbl_802B395C.unk18 = replayInfo.unk0[replayInfo.unk14];
-            get_replay_header(lbl_802B395C.unk18, &lbl_802B395C.unk1C);
+            lbl_802B395C.unk18 = g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId];
+            recplay_get_header(lbl_802B395C.unk18, &lbl_802B395C.replayHdr);
             func_80088D44();
         }
         break;
@@ -1029,13 +1030,13 @@ static void func_8008923C(void)
     if (var_f31 + lbl_802B395C.unk14 > 640.0 - lbl_802B37F0.unk12C)
         var_f31 = (float)(640.0 - lbl_802B37F0.unk12C) - lbl_802B395C.unk14;
     var_f29 = 4.0f + var_f31;
-    if (!(lbl_802B395C.unk1C.flags & 0x40))
+    if (!(lbl_802B395C.replayHdr.flags & 0x40))
     {
         reset_text_draw_settings();
         set_text_font(FONT_ICON_LV);
         set_text_scale(0.5f, 0.5f);
         set_text_pos(var_f31, y + 4.0f);
-        u_draw_char(lbl_802B395C.unk1C.difficulty + 0x34);
+        sprite_putc(lbl_802B395C.replayHdr.difficulty + 0x34);
         var_f29 = 40.0f + var_f31;
     }
     set_text_font(FONT_ASC_20x20);
@@ -1043,19 +1044,19 @@ static void func_8008923C(void)
     set_text_mul_color(lbl_802B395C.unk34);
     set_text_add_color(lbl_802B395C.unk38);
     set_text_pos(var_f29, y);
-    u_draw_text(lbl_802B395C.floorName);
+    sprite_puts(lbl_802B395C.floorName);
     y += 20.0f;
     reset_text_draw_settings();
     set_text_font(FONT_ASC_8x16);
     set_text_pos(40.0f + var_f31, y);
-    if (lbl_802B395C.unk1C.playerName[0] != 0)
+    if (lbl_802B395C.replayHdr.playerName[0] != 0)
     {
         set_text_mul_color(RGBA(255, 128, 0, 0));
         set_text_add_color(RGBA(64, 48, 48, 0));
-        func_80072AC0("%s", lbl_802B395C.unk1C.playerName);
+        sprite_printf("%s", lbl_802B395C.replayHdr.playerName);
         set_text_mul_color(RGBA(255, 255, 255, 0));
         set_text_add_color(RGBA(0, 0, 0, 0));
-        u_draw_text("'S ");
+        sprite_puts("'S ");
     }
-    func_80072AC0("REPLAY");
+    sprite_printf("REPLAY");
 }

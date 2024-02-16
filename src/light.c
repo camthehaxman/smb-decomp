@@ -26,6 +26,7 @@
 #include "mode.h"
 #include "nl2ngc.h"
 #include "perf.h"
+#include "polydisp.h"
 #include "stage.h"
 
 #include "../data/common.nlobj.h"

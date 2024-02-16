@@ -16,6 +16,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "name_entry.h"
+#include "polydisp.h"
 #include "pool.h"
 #include "ranking_screen.h"
 #include "recplay.h"
@@ -38,7 +39,7 @@ struct NameEntryButton
     struct Color3f color;
 };
 
-static struct Struct802C6220 lbl_802C6220;
+static struct Struct802C6220 s_scoreRecordInfo;
 
 static char s_buttonLetters[NUM_BUTTONS] =
 {
@@ -211,7 +212,7 @@ void ev_name_entry_init(void)
     }
 
     call_bitmap_load_group(BMP_RNK);
-    s_nameEntry.unk10 = func_800AECCC(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]);
+    s_nameEntry.unk10 = u_calc_rank_of_score_record(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]);
     s_nameEntry.unk14 = 0;
     s_nameEntry.unk18 = 640.0f;
     s_nameEntry.unk1C = 60.0f;
@@ -380,7 +381,7 @@ void ev_name_entry_main(void)
         memcpy(&lbl_802C67D4[modeCtrl.currPlayer][0].initials, s_nameEntry.name, 4);
         func_800AF098();
         func_800AED54(s_nameEntry.name);
-        func_80049430(s_nameEntry.name);
+        recplay_record_player_name(s_nameEntry.name);
         u_play_sound_0(0x34);
         u_play_sound_0(0x59);
         break;
@@ -426,7 +427,7 @@ void ev_name_entry_main(void)
         else if (s_nameEntry.counter == 96.0)
         {
             s_nameEntry.unk14 = 0;
-            func_8008897C(0);
+            ranking_screen_8008897C(0);
         }
         else if (s_nameEntry.counter < 0)
             s_nameEntry.state = 0xB;
@@ -435,7 +436,7 @@ void ev_name_entry_main(void)
         s_nameEntry.state = 0;
         camera->state = 0xE;
         ball->state = 0x1B;
-        func_8008897C(1);
+        ranking_screen_8008897C(1);
         s_nameEntry.unk14 = 0;
         break;
     }
@@ -591,24 +592,24 @@ void draw_name_entry_hud(void)
         set_text_font(FONT_ICON_TPL);
         func_80071B1C(1.03f);
         set_text_pos(x + 65, y);
-        u_draw_char(0x30);  // RANK
+        sprite_putc(0x30);  // RANK
         set_text_pos(x + 180, y);
-        u_draw_char(0x31);  // NAME
+        sprite_putc(0x31);  // NAME
         set_text_pos(x + 289, y);
-        u_draw_char(0x32);  // FLOOR
+        sprite_putc(0x32);  // FLOOR
         set_text_pos(x + 460, y);
-        u_draw_char(0x33);  // SCORE
+        sprite_putc(0x33);  // SCORE
 
         // rank
         y = s_nameEntry.unk1C;
         set_text_font(FONT_ICON_RNK);
         set_text_pos(x + 65, y);
-        u_draw_char(s_nameEntry.unk10 + 0x31);
+        sprite_putc(s_nameEntry.unk10 + 0x31);
 
         // initials
         set_text_font(FONT_ASC_30x31);
         set_text_pos(x + 172, y);
-        u_draw_text(s_nameEntry.name);
+        sprite_puts(s_nameEntry.name);
 
         // floor
         draw_ranking_floor_num(s_nameEntry.unk10, x, y, &lbl_802C67D4[modeCtrl.currPlayer][0]);
@@ -617,7 +618,7 @@ void draw_name_entry_hud(void)
         set_text_font(FONT_NUM_26x31);
         y = s_nameEntry.unk1C;
         set_text_pos(x + 396, y);
-        func_80072AC0("%07d", lbl_802C67D4[modeCtrl.currPlayer][0].score);
+        sprite_printf("%07d", lbl_802C67D4[modeCtrl.currPlayer][0].score);
 
         // line start
         params.sprno = BMP_RNK_rnk_lines;
@@ -742,7 +743,7 @@ static void reset_efc_name_ent_code(int arg0)
 void func_800AEAD0(void)
 {
     int i, j;
-    struct ScoreRecord *rec = lbl_802C6220.records;
+    struct ScoreRecord *rec = s_scoreRecordInfo.records;
 
     for (i = 0; i < 3; i++)
     {
@@ -789,9 +790,9 @@ static void load_default_score_records(void)
     struct ScoreRecord *var_r22;
     int score;
 
-    memset(&lbl_802C6220, 0, sizeof(lbl_802C6220));
-    lbl_802C6220.size = sizeof(lbl_802C6220);
-    var_r22 = lbl_802C6220.records;
+    memset(&s_scoreRecordInfo, 0, sizeof(s_scoreRecordInfo));
+    s_scoreRecordInfo.size = sizeof(s_scoreRecordInfo);
+    var_r22 = s_scoreRecordInfo.records;
     for (i = 0; i < 3; i++, var_r22 += 5)
     {
         score = 50000;
@@ -808,22 +809,22 @@ static void load_default_score_records(void)
     }
 }
 
-struct ScoreRecord *func_800AEC74(int arg0, struct ScoreRecord *arg1)
+struct ScoreRecord *u_get_score_records_for_difficulty(int difficulty, struct ScoreRecord *dest)
 {
     u8 filler[4];
-    struct ScoreRecord *ptr = &lbl_802C6220.records[arg0 * 5];
+    struct ScoreRecord *src = &s_scoreRecordInfo.records[difficulty * 5];
 
-    if (arg1 != NULL)
+    if (dest != NULL)
     {
-        memcpy(arg1, ptr, 5 * sizeof(*arg1));
-        return arg1;
+        memcpy(dest, src, 5 * sizeof(*dest));
+        return dest;
     }
-    return ptr;
+    return src;
 }
 
-int func_800AECCC(int arg0, struct ScoreRecord *arg1)
+int u_calc_rank_of_score_record(int difficulty, struct ScoreRecord *arg1)
 {
-    struct ScoreRecord *ptr = &lbl_802C6220.records[arg0 * 5];
+    struct ScoreRecord *ptr = &s_scoreRecordInfo.records[difficulty * 5];
     int i;
 
     for (i = 0; i < 5; i++, ptr++)
@@ -842,7 +843,7 @@ static void func_800AED54(char *name)
     struct ScoreRecord *var_r22;
     struct ScoreRecord *var_r23;
 
-    var_r22 = lbl_802C6220.records;
+    var_r22 = s_scoreRecordInfo.records;
     for (i = 3; i > 0; i--, var_r22 += 5)
     {
         var_r23 = var_r22;
@@ -903,8 +904,8 @@ static void func_800AF098_inline(struct ScoreRecord *var_r23)
     struct ScoreRecord *var_r28;
     int temp_r3;
 
-    temp_r27 = &lbl_802C6220.records[modeCtrl.difficulty * 5];
-    temp_r3 = func_800AECCC(modeCtrl.difficulty, var_r23);
+    temp_r27 = &s_scoreRecordInfo.records[modeCtrl.difficulty * 5];
+    temp_r3 = u_calc_rank_of_score_record(modeCtrl.difficulty, var_r23);
     if (temp_r3 >= 0)
     {
         var_r28 = temp_r27 + 3;
@@ -1223,15 +1224,15 @@ void stobj_nameent_btn_debug(struct Stobj *stobj) {}
 
 void func_800AFC1C(struct MemcardContents *data)
 {
-    memcpy(&data->gameData.unk2C8, &lbl_802C6220, sizeof(data->gameData.unk2C8));
+    memcpy(&data->gameData.unk2C8, &s_scoreRecordInfo, sizeof(data->gameData.unk2C8));
 }
 
 void func_800AFC4C(struct MemcardContents *data)
 {
     int var_r0;
 
-    memcpy(&lbl_802C6220, &data->gameData.unk2C8, sizeof(lbl_802C6220));
-    if (lbl_802C6220.size != sizeof(lbl_802C6220))
+    memcpy(&s_scoreRecordInfo, &data->gameData.unk2C8, sizeof(s_scoreRecordInfo));
+    if (s_scoreRecordInfo.size != sizeof(s_scoreRecordInfo))
         var_r0 = FALSE;
     else
         var_r0 = TRUE;

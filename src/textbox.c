@@ -314,20 +314,20 @@ static void draw_textbox(int a, struct TextBox *tbox)
             if (col == -1)  // left border
             {
                 if (row == -1)
-                    u_draw_text("\x01");  // draw top left corner
+                    sprite_puts("\x01");  // draw top left corner
                 else if (row == numRows)
-                    u_draw_text("\x0B");  // draw bottom left corner
+                    sprite_puts("\x0B");  // draw bottom left corner
                 else
-                    u_draw_text("\x06");  // draw left border
+                    sprite_puts("\x06");  // draw left border
             }
             else if (col == numColumns)  // right border
             {
                 if (row == -1)
-                    u_draw_text("\x03");  // draw top right corner
+                    sprite_puts("\x03");  // draw top right corner
                 else if (row == numRows)
-                    u_draw_text("\x0D");  // draw bottom right corner
+                    sprite_puts("\x0D");  // draw bottom right corner
                 else
-                    u_draw_text("\x08");  // draw right border
+                    sprite_puts("\x08");  // draw right border
 
             }
             else if (tbox->style == TEXTBOX_STYLE_SPIKY
@@ -338,11 +338,11 @@ static void draw_textbox(int a, struct TextBox *tbox)
                 {
                     set_text_scale((tbox->textWidth / f1 / TEXTBOX_FONT_SIZE) * f26, f25);
                     if (row == -1)
-                        u_draw_text("\x02");  // draw top border
+                        sprite_puts("\x02");  // draw top border
                     else if (row == numRows)
-                        u_draw_text("\x0C");  // draw bottom border
+                        sprite_puts("\x0C");  // draw bottom border
                     else
-                        u_draw_text("\x07");  // draw inside background
+                        sprite_puts("\x07");  // draw inside background
                     set_text_scale(f26, f25);
                 }
             }
@@ -350,15 +350,15 @@ static void draw_textbox(int a, struct TextBox *tbox)
             {
                 set_text_scale(f26 * tbox->textWidth / TEXTBOX_FONT_SIZE, f25);
                 if (row == -1)
-                    u_draw_text("\x02");  // draw top border
+                    sprite_puts("\x02");  // draw top border
                 else if (row == numRows)
-                    u_draw_text("\x0C");  // draw bottom border
+                    sprite_puts("\x0C");  // draw bottom border
                 else
-                    u_draw_text("\x07");  // draw inside background
+                    sprite_puts("\x07");  // draw inside background
                 set_text_scale(f26, f25);
             }
         }
-        u_draw_text("\n");
+        sprite_puts("\n");
     }
 
     func_80071B1C(a * 0.01f + 0.05);
@@ -379,76 +379,76 @@ static void draw_textbox(int a, struct TextBox *tbox)
         set_text_pos(
             x - TEXTBOX_FONT_SIZE,
             y);
-        u_draw_text("\x04");  // left arrow
+        sprite_puts("\x04");  // left arrow
         break;
     case TEXTBOX_STYLE_CENTER_LEFT:
         set_text_pos(
             x - TEXTBOX_FONT_SIZE,
             y + ((tbox->numRows - 1) * TEXTBOX_FONT_SIZE) * 0.5f);
-        u_draw_text("\x04");  // left arrow
+        sprite_puts("\x04");  // left arrow
         break;
     case TEXTBOX_STYLE_BOTTOM_LEFT:
         set_text_pos(
             x - TEXTBOX_FONT_SIZE,
             y + (tbox->numRows - 1) * TEXTBOX_FONT_SIZE);
-        u_draw_text("\x04");  // left arrow
+        sprite_puts("\x04");  // left arrow
         break;
     case TEXTBOX_STYLE_TOP_RIGHT:
         set_text_pos(
             x + tbox->textWidth,
             y);
-        u_draw_text("\x05");  // right arrow
+        sprite_puts("\x05");  // right arrow
         break;
     case TEXTBOX_STYLE_CENTER_RIGHT:
         set_text_pos(
             x + tbox->textWidth,
             y + ((tbox->numRows - 1) * TEXTBOX_FONT_SIZE) * 0.5f);
-        u_draw_text("\x05");  // right arrow
+        sprite_puts("\x05");  // right arrow
         break;
     case TEXTBOX_STYLE_BOTTOM_RIGHT:
         set_text_pos(
             x + tbox->textWidth,
             y + (tbox->numRows - 1) * TEXTBOX_FONT_SIZE);
-        u_draw_text("\x05");  // right arrow
+        sprite_puts("\x05");  // right arrow
         break;
     case TEXTBOX_STYLE_LEFT_UP:
         zero = 0.0f;
         set_text_pos(
             (x + zero) + 14.0f,
             y - TEXTBOX_FONT_SIZE);
-        u_draw_text("\x10");  // up arrow
+        sprite_puts("\x10");  // up arrow
         break;
     case TEXTBOX_STYLE_CENTER_UP:
         set_text_pos(
             x + tbox->textWidth * 0.5f - 10.0f,
             y - TEXTBOX_FONT_SIZE);
-        u_draw_text("\x10");  // up arrow
+        sprite_puts("\x10");  // up arrow
         break;
     case TEXTBOX_STYLE_RIGHT_UP:
         set_text_pos(
             x + tbox->textWidth - 34.0f,
             y - TEXTBOX_FONT_SIZE);
-        u_draw_text("\x10");  // up arrow
+        sprite_puts("\x10");  // up arrow
         break;
     case TEXTBOX_STYLE_LEFT_DOWN:
         zero = 0.0f;
         set_text_pos(
             (x + zero) + 14.0f,
             y + (tbox->numRows * TEXTBOX_FONT_SIZE));
-        u_draw_text("\x15");  // down arrow
+        sprite_puts("\x15");  // down arrow
         break;
     case TEXTBOX_STYLE_CENTER_DOWN:
     case TEXTBOX_STYLE_SPIKY:
         set_text_pos(
             x + tbox->textWidth * 0.5f - 10.0f,
             y + (tbox->numRows * TEXTBOX_FONT_SIZE));
-        u_draw_text("\x15");  // down arrow
+        sprite_puts("\x15");  // down arrow
         break;
     case TEXTBOX_STYLE_RIGHT_DOWN:
         set_text_pos(
             x + tbox->textWidth - 34.0f,
             y + (tbox->numRows * TEXTBOX_FONT_SIZE));
-        u_draw_text("\x15");  // down arrow
+        sprite_puts("\x15");  // down arrow
         break;
     }
 
@@ -499,7 +499,7 @@ static void draw_textbox(int a, struct TextBox *tbox)
             set_text_scale(1.0f, 1.0f);
         calc_textbox_text_pos(tbox, &textX, &textY);
         set_text_pos(textX, textY + row * TEXTBOX_FONT_SIZE + scrollOffset);
-        u_draw_text(line->text);
+        sprite_puts(line->text);
     }
     lbl_802F200C = -1.0f;
     reset_text_draw_settings();

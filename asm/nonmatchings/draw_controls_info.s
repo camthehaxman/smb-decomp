@@ -146,7 +146,7 @@ lbl_80082E30:
 /* 80082E88 0007EDA8  4B FE EC D9 */	bl set_text_pos
 /* 80082E8C 0007EDAC  80 73 00 08 */	lwz r3, 8(r19)
 /* 80082E90 0007EDB0  7C 63 D8 2E */	lwzx r3, r3, r27
-/* 80082E94 0007EDB4  4B FE EF C5 */	bl u_draw_text
+/* 80082E94 0007EDB4  4B FE EF C5 */	bl sprite_puts
 /* 80082E98 0007EDB8  3B 7B 00 04 */	addi r27, r27, 4
 /* 80082E9C 0007EDBC  3A 94 00 01 */	addi r20, r20, 1
 lbl_80082EA0:

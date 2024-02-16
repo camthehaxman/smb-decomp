@@ -9,6 +9,7 @@
 #include "input.h"
 #include "load.h"
 #include "mode.h"
+#include "pause_menu.h"
 #include "relocation.h"
 #include "sprite.h"
 #include "window.h"
@@ -713,7 +714,7 @@ void u_menu_input_debug(void)
                 gameSubmodeRequest = SMD_TEST_SELECT_INIT;
                 break;
             }
-            debugFlags &= -12;
+            debugFlags &= ~0xB;
             return;
         }
     }

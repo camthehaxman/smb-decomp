@@ -435,7 +435,7 @@ void world_sub_7(struct World *world)
     if (debugFlags & 0xA)
         return;
 
-    func_80049C1C(replayInfo.unk0[world->playerId], &spC, replayInfo.unk10);
+    recplay_get_world_frame(g_recplayInfo.u_replayIndexes[world->playerId], &spC, g_recplayInfo.u_timeOffset);
     var1 = -world->xrot;
     var2 = -world->zrot;
     world->xrot += var1 >> 2;
@@ -469,7 +469,7 @@ void world_sub_9(struct World *world)
     if (debugFlags & 0xA)
         return;
 
-    func_80049C1C(replayInfo.unk0[world->playerId], &spC, replayInfo.unk10);
+    recplay_get_world_frame(g_recplayInfo.u_replayIndexes[world->playerId], &spC, g_recplayInfo.u_timeOffset);
     var1 = spC.rotX - world->xrot;
     var2 = spC.rotZ - world->zrot;
     world->xrot += var1 >> 2;

@@ -11,6 +11,7 @@
 #include "gxutil.h"
 #include "load.h"
 #include "mathutil.h"
+#include "memcard.h"
 #include "mouse.h"
 #include "sprite.h"
 #include "window.h"

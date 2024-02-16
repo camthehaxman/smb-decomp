@@ -2229,9 +2229,9 @@ lbl_00001FDC:
 /* 0000200C 39200000 */ li r9, 0
 /* 00002010 39400000 */ li r10, 0
 /* 00002014 4BFFE149 */ bl GXInitTexObj
-/* 00002018 4BFFE145 */ bl func_80049FF0
+/* 00002018 4BFFE145 */ bl u_replay_test_init
 /* 0000201C 38600002 */ li r3, 2
-/* 00002020 4BFFE13D */ bl camera_set_state
+/* 00002020 4BFFE13D */ bl camera_set_state_all
 /* 00002024 3C600000 */ lis r3, gameSubmodeRequest@ha
 /* 00002028 38000068 */ li r0, 0x68
 /* 0000202C B0030000 */ sth r0, gameSubmodeRequest@l(r3)
@@ -2290,7 +2290,7 @@ lbl_000020D8:
 /* 000020EC 3803FFFF */ addi r0, r3, -1  ;# fixed addi
 /* 000020F0 90040000 */ stw r0, 0(r4)
 lbl_000020F4:
-/* 000020F4 4BFFE069 */ bl func_8004A0C8
+/* 000020F4 4BFFE069 */ bl u_replay_test_main
 /* 000020F8 8001000C */ lwz r0, 0xc(r1)
 /* 000020FC 38210008 */ addi r1, r1, 8
 /* 00002100 7C0803A6 */ mtlr r0
@@ -2564,7 +2564,7 @@ lbl_000024FC:
 /* 00002510 3860000F */ li r3, 0xf
 /* 00002514 4BFFDC49 */ bl event_start
 /* 00002518 38600002 */ li r3, 2
-/* 0000251C 4BFFDC41 */ bl camera_set_state
+/* 0000251C 4BFFDC41 */ bl camera_set_state_all
 /* 00002520 3C600000 */ lis r3, gameSubmodeRequest@ha
 /* 00002524 3800006A */ li r0, 0x6a
 /* 00002528 B0030000 */ sth r0, gameSubmodeRequest@l(r3)
@@ -2587,7 +2587,7 @@ lbl_0000255C:
 /* 00002564 9421FFF8 */ stwu r1, -8(r1)
 /* 00002568 48008DFD */ bl lbl_0000B364
 /* 0000256C 38600002 */ li r3, 2
-/* 00002570 4BFFDBED */ bl camera_set_state
+/* 00002570 4BFFDBED */ bl camera_set_state_all
 /* 00002574 3C600000 */ lis r3, gameSubmodeRequest@ha
 /* 00002578 3800006C */ li r0, 0x6c
 /* 0000257C B0030000 */ sth r0, gameSubmodeRequest@l(r3)
@@ -2642,7 +2642,7 @@ lbl_000025B0:
 /* 00002638 38600013 */ li r3, 0x13
 /* 0000263C 4BFFDB21 */ bl event_start
 /* 00002640 38600002 */ li r3, 2
-/* 00002644 4BFFDB19 */ bl camera_set_state
+/* 00002644 4BFFDB19 */ bl camera_set_state_all
 /* 00002648 3C600000 */ lis r3, gameSubmodeRequest@ha
 /* 0000264C 3800006E */ li r0, 0x6e
 /* 00002650 B0030000 */ sth r0, gameSubmodeRequest@l(r3)
@@ -2705,7 +2705,7 @@ lbl_000026F8:
 /* 00002724 3860000F */ li r3, 0xf
 /* 00002728 4BFFDA35 */ bl event_start
 /* 0000272C 38600002 */ li r3, 2
-/* 00002730 4BFFDA2D */ bl camera_set_state
+/* 00002730 4BFFDA2D */ bl camera_set_state_all
 /* 00002734 3C600000 */ lis r3, gameSubmodeRequest@ha
 /* 00002738 38000070 */ li r0, 0x70
 /* 0000273C B0030000 */ sth r0, gameSubmodeRequest@l(r3)
@@ -3781,7 +3781,7 @@ lbl_000035DC:
 /* 0000365C EC401828 */ fsubs f2, f0, f3
 /* 00003660 4BFFCAFD */ bl set_text_pos
 /* 00003664 387D298C */ addi r3, r29, 0x298c
-/* 00003668 4BFFCAF5 */ bl u_draw_text
+/* 00003668 4BFFCAF5 */ bl sprite_puts
 /* 0000366C 92C1007C */ stw r22, 0x7c(r1)
 /* 00003670 3C600000 */ lis r3, lbl_0000FED0@ha
 /* 00003674 3C800000 */ lis r4, lbl_0000FED0@ha
@@ -3802,7 +3802,7 @@ lbl_000035DC:
 /* 000036B0 EC420028 */ fsubs f2, f2, f0
 /* 000036B4 4BFFCAA9 */ bl set_text_pos
 /* 000036B8 387D298C */ addi r3, r29, 0x298c
-/* 000036BC 4BFFCAA1 */ bl u_draw_text
+/* 000036BC 4BFFCAA1 */ bl sprite_puts
 /* 000036C0 93010074 */ stw r24, 0x74(r1)
 /* 000036C4 3C800000 */ lis r4, lbl_0000FED0@ha
 /* 000036C8 C8240000 */ lfd f1, lbl_0000FED0@l(r4)
@@ -3823,7 +3823,7 @@ lbl_000035DC:
 /* 00003704 EC42002A */ fadds f2, f2, f0
 /* 00003708 4BFFCA55 */ bl set_text_pos
 /* 0000370C 387D298C */ addi r3, r29, 0x298c
-/* 00003710 4BFFCA4D */ bl u_draw_text
+/* 00003710 4BFFCA4D */ bl sprite_puts
 /* 00003714 93010064 */ stw r24, 0x64(r1)
 /* 00003718 3C800000 */ lis r4, lbl_0000FED0@ha
 /* 0000371C 3C600000 */ lis r3, lbl_0000FED0@ha
@@ -3842,7 +3842,7 @@ lbl_000035DC:
 /* 00003750 EC42002A */ fadds f2, f2, f0
 /* 00003754 4BFFCA09 */ bl set_text_pos
 /* 00003758 387D298C */ addi r3, r29, 0x298c
-/* 0000375C 4BFFCA01 */ bl u_draw_text
+/* 0000375C 4BFFCA01 */ bl sprite_puts
 lbl_00003760:
 /* 00003760 BAC10098 */ lmw r22, 0x98(r1)
 /* 00003764 800100C4 */ lwz r0, 0xc4(r1)
@@ -4133,7 +4133,7 @@ lbl_00003B30:
 /* 00003B64 C05D00F4 */ lfs f2, 0xf4(r29)
 /* 00003B68 4BFFC5F5 */ bl set_text_pos
 /* 00003B6C 807C0004 */ lwz r3, 4(r28)
-/* 00003B70 4BFFC5ED */ bl u_draw_text
+/* 00003B70 4BFFC5ED */ bl sprite_puts
 /* 00003B74 3C600000 */ lis r3, controllerInfo@ha
 /* 00003B78 A0030000 */ lhz r0, controllerInfo@l(r3)
 /* 00003B7C 540005AD */ rlwinm. r0, r0, 0, 0x16, 0x16
@@ -4216,7 +4216,7 @@ lbl_00003C34:
 lbl_00003CA8:
 /* 00003CA8 7CE70379 */ or. r7, r7, r0
 /* 00003CAC 41820018 */ beq lbl_00003CC4
-/* 00003CB0 4BFFC4AD */ bl new_ape_close
+/* 00003CB0 4BFFC4AD */ bl ape_destroy
 /* 00003CB4 2C1F0003 */ cmpwi r31, 3
 /* 00003CB8 418200C8 */ beq lbl_00003D80
 /* 00003CBC 4BFFC4A1 */ bl thread_exit
@@ -4270,7 +4270,7 @@ lbl_00003D70:
 /* 00003D70 C0050140 */ lfs f0, 0x140(r5)
 /* 00003D74 80830000 */ lwz r4, 0(r3)
 /* 00003D78 D004003C */ stfs f0, 0x3c(r4)
-/* 00003D7C 4BFFC3E1 */ bl new_ape_calc
+/* 00003D7C 4BFFC3E1 */ bl ape_skel_anim_main
 lbl_00003D80:
 /* 00003D80 80010024 */ lwz r0, 0x24(r1)
 /* 00003D84 83E1001C */ lwz r31, 0x1c(r1)
@@ -4296,16 +4296,16 @@ lbl_00003D94:
 /* 00003DD0 809F0154 */ lwz r4, 0x154(r31)
 /* 00003DD4 2C040000 */ cmpwi r4, 0
 /* 00003DD8 40800020 */ bge lbl_00003DF8
-/* 00003DDC 3C600000 */ lis r3, motSkeleton@ha
-/* 00003DE0 38630000 */ addi r3, r3, motSkeleton@l
+/* 00003DDC 3C600000 */ lis r3, motsklFileData@ha
+/* 00003DE0 38630000 */ addi r3, r3, motsklFileData@l
 /* 00003DE4 80630000 */ lwz r3, 0(r3)
 /* 00003DE8 80630004 */ lwz r3, 4(r3)
 /* 00003DEC 3803FFFF */ addi r0, r3, -1  ;# fixed addi
 /* 00003DF0 901F0154 */ stw r0, 0x154(r31)
 /* 00003DF4 48000024 */ b lbl_00003E18
 lbl_00003DF8:
-/* 00003DF8 3C600000 */ lis r3, motSkeleton@ha
-/* 00003DFC 38630000 */ addi r3, r3, motSkeleton@l
+/* 00003DF8 3C600000 */ lis r3, motsklFileData@ha
+/* 00003DFC 38630000 */ addi r3, r3, motsklFileData@l
 /* 00003E00 80630000 */ lwz r3, 0(r3)
 /* 00003E04 80030004 */ lwz r0, 4(r3)
 /* 00003E08 7C040040 */ cmplw r4, r0
@@ -4313,9 +4313,9 @@ lbl_00003DF8:
 /* 00003E10 38000000 */ li r0, 0
 /* 00003E14 901F0154 */ stw r0, 0x154(r31)
 lbl_00003E18:
-/* 00003E18 3C600000 */ lis r3, motSkeleton@ha
+/* 00003E18 3C600000 */ lis r3, motsklFileData@ha
 /* 00003E1C 801F0154 */ lwz r0, 0x154(r31)
-/* 00003E20 80A30000 */ lwz r5, motSkeleton@l(r3)
+/* 00003E20 80A30000 */ lwz r5, motsklFileData@l(r3)
 /* 00003E24 1C000018 */ mulli r0, r0, 0x18
 /* 00003E28 809F0158 */ lwz r4, 0x158(r31)
 /* 00003E2C 80650000 */ lwz r3, 0(r5)
@@ -4507,7 +4507,7 @@ lbl_000040B8:
 /* 000040F0 3860000F */ li r3, 0xf
 /* 000040F4 4BFFC069 */ bl event_start
 /* 000040F8 38600003 */ li r3, 3
-/* 000040FC 4BFFC061 */ bl camera_set_state
+/* 000040FC 4BFFC061 */ bl camera_set_state_all
 /* 00004100 3C600000 */ lis r3, currentCamera@ha
 /* 00004104 C01F0060 */ lfs f0, 0x60(r31)
 /* 00004108 38830000 */ addi r4, r3, currentCamera@l
@@ -4579,7 +4579,7 @@ lbl_000041C4:
 /* 00004208 40820DF0 */ bne lbl_00004FF8
 /* 0000420C 4BFFBF51 */ bl u_clear_buffers_2_and_5
 /* 00004210 38600003 */ li r3, 3
-/* 00004214 4BFFBF49 */ bl camera_set_state
+/* 00004214 4BFFBF49 */ bl camera_set_state_all
 /* 00004218 3C600000 */ lis r3, currentCamera@ha
 /* 0000421C C0170060 */ lfs f0, 0x60(r23)
 /* 00004220 38830000 */ addi r4, r3, currentCamera@l
@@ -4655,13 +4655,13 @@ lbl_0000431C:
 /* 00004324 4BFFBE39 */ bl window_set_cursor_pos
 /* 00004328 3C800000 */ lis r4, u_motAnimCount@ha
 /* 0000432C 3C600000 */ lis r3, motLabel@ha
-/* 00004330 3CA00000 */ lis r5, motSkeleton@ha
+/* 00004330 3CA00000 */ lis r5, motsklFileData@ha
 /* 00004334 3CE00000 */ lis r7, modeCtrl@ha
 /* 00004338 3CC00000 */ lis r6, lbl_00013178@ha
 /* 0000433C 3B440000 */ addi r26, r4, u_motAnimCount@l
 /* 00004340 3B630000 */ addi r27, r3, motLabel@l
 /* 00004344 3A410038 */ addi r18, r1, 0x38
-/* 00004348 3B250000 */ addi r25, r5, motSkeleton@l
+/* 00004348 3B250000 */ addi r25, r5, motsklFileData@l
 /* 0000434C 3A870000 */ addi r20, r7, modeCtrl@l
 /* 00004350 3A660000 */ addi r19, r6, lbl_00013178@l
 /* 00004354 3AC00000 */ li r22, 0
@@ -4886,7 +4886,7 @@ lbl_0000453C:
 /* 00004690 54000529 */ rlwinm. r0, r0, 0, 0x14, 0x14
 /* 00004694 41820054 */ beq lbl_000046E8
 /* 00004698 38600003 */ li r3, 3
-/* 0000469C 4BFFBAC1 */ bl camera_set_state
+/* 0000469C 4BFFBAC1 */ bl camera_set_state_all
 /* 000046A0 C0170060 */ lfs f0, 0x60(r23)
 /* 000046A4 80730000 */ lwz r3, 0(r19)
 /* 000046A8 D0030000 */ stfs f0, 0(r3)
@@ -5229,8 +5229,8 @@ lbl_00004B48:
 /* 00004B54 801F0158 */ lwz r0, 0x158(r31)
 /* 00004B58 2C000000 */ cmpwi r0, 0
 /* 00004B5C 4080001C */ bge lbl_00004B78
-/* 00004B60 3C600000 */ lis r3, motSkeleton@ha
-/* 00004B64 38630000 */ addi r3, r3, motSkeleton@l
+/* 00004B60 3C600000 */ lis r3, motsklFileData@ha
+/* 00004B64 38630000 */ addi r3, r3, motsklFileData@l
 /* 00004B68 80630000 */ lwz r3, 0(r3)
 /* 00004B6C 8063000C */ lwz r3, 0xc(r3)
 /* 00004B70 3803FFFF */ addi r0, r3, -1  ;# fixed addi
@@ -5265,8 +5265,8 @@ lbl_00004BAC:
 /* 00004BD8 4BFFB585 */ bl thread_kill
 lbl_00004BDC:
 /* 00004BDC 809F0158 */ lwz r4, 0x158(r31)
-/* 00004BE0 3C600000 */ lis r3, motSkeleton@ha
-/* 00004BE4 38630000 */ addi r3, r3, motSkeleton@l
+/* 00004BE0 3C600000 */ lis r3, motsklFileData@ha
+/* 00004BE4 38630000 */ addi r3, r3, motsklFileData@l
 /* 00004BE8 38040001 */ addi r0, r4, 1
 /* 00004BEC 901F0158 */ stw r0, 0x158(r31)
 /* 00004BF0 80630000 */ lwz r3, 0(r3)
@@ -5653,7 +5653,7 @@ lbl_000050A4:
 /* 00005148 3860000F */ li r3, 0xf
 /* 0000514C 4BFFB011 */ bl event_start
 /* 00005150 38600002 */ li r3, 2
-/* 00005154 4BFFB009 */ bl camera_set_state
+/* 00005154 4BFFB009 */ bl camera_set_state_all
 /* 00005158 3CA00000 */ lis r5, lbl_0000502C@ha
 /* 0000515C 3C800000 */ lis r4, submodeFinishFunc@ha
 /* 00005160 38050000 */ addi r0, r5, lbl_0000502C@l
@@ -7455,7 +7455,7 @@ lbl_00006A70:
 /* 00006ACC 3860000F */ li r3, 0xf
 /* 00006AD0 4BFF968D */ bl event_start
 /* 00006AD4 38600002 */ li r3, 2
-/* 00006AD8 4BFF9685 */ bl camera_set_state
+/* 00006AD8 4BFF9685 */ bl camera_set_state_all
 /* 00006ADC 3C600000 */ lis r3, currentCamera@ha
 /* 00006AE0 C01D0060 */ lfs f0, 0x60(r29)
 /* 00006AE4 39030000 */ addi r8, r3, currentCamera@l
@@ -8331,7 +8331,7 @@ lbl_00007718:
 /* 00007754 3860000F */ li r3, 0xf
 /* 00007758 4BFF8A05 */ bl event_start
 /* 0000775C 38600002 */ li r3, 2
-/* 00007760 4BFF89FD */ bl camera_set_state
+/* 00007760 4BFF89FD */ bl camera_set_state_all
 /* 00007764 3C600000 */ lis r3, currentCamera@ha
 /* 00007768 C0190060 */ lfs f0, 0x60(r25)
 /* 0000776C 38C30000 */ addi r6, r3, currentCamera@l
@@ -9086,7 +9086,7 @@ lbl_000081BC:
 /* 00008244 38600010 */ li r3, 0x10
 /* 00008248 4BFF7F15 */ bl event_start
 /* 0000824C 3860000C */ li r3, 0xc
-/* 00008250 4BFF7F0D */ bl camera_set_state
+/* 00008250 4BFF7F0D */ bl camera_set_state_all
 /* 00008254 3C600000 */ lis r3, g_poolInfo@ha
 /* 00008258 38630000 */ addi r3, r3, g_poolInfo@l
 /* 0000825C 3883000C */ addi r4, r3, 0xc
@@ -9298,7 +9298,7 @@ lbl_0000847C:
 /* 00008568 38600010 */ li r3, 0x10
 /* 0000856C 4BFF7BF1 */ bl event_start
 /* 00008570 38600048 */ li r3, 0x48
-/* 00008574 4BFF7BE9 */ bl camera_set_state
+/* 00008574 4BFF7BE9 */ bl camera_set_state_all
 /* 00008578 4800004C */ b lbl_000085C4
 lbl_0000857C:
 /* 0000857C A87D0D62 */ lha r3, 0xd62(r29)
@@ -9318,7 +9318,7 @@ lbl_0000857C:
 /* 000085B4 38600010 */ li r3, 0x10
 /* 000085B8 4BFF7BA5 */ bl event_start
 /* 000085BC 3860000C */ li r3, 0xc
-/* 000085C0 4BFF7B9D */ bl camera_set_state
+/* 000085C0 4BFF7B9D */ bl camera_set_state_all
 lbl_000085C4:
 /* 000085C4 801C0000 */ lwz r0, 0(r28)
 /* 000085C8 3C600000 */ lis r3, modeCtrl@ha
@@ -9435,7 +9435,7 @@ lbl_00008744:
 /* 00008760 38600010 */ li r3, 0x10
 /* 00008764 4BFF79F9 */ bl event_start
 /* 00008768 38600048 */ li r3, 0x48
-/* 0000876C 4BFF79F1 */ bl camera_set_state
+/* 0000876C 4BFF79F1 */ bl camera_set_state_all
 /* 00008770 4800004C */ b lbl_000087BC
 lbl_00008774:
 /* 00008774 A87D0D62 */ lha r3, 0xd62(r29)
@@ -9455,7 +9455,7 @@ lbl_00008774:
 /* 000087AC 38600010 */ li r3, 0x10
 /* 000087B0 4BFF79AD */ bl event_start
 /* 000087B4 3860000C */ li r3, 0xc
-/* 000087B8 4BFF79A5 */ bl camera_set_state
+/* 000087B8 4BFF79A5 */ bl camera_set_state_all
 lbl_000087BC:
 /* 000087BC 3C600000 */ lis r3, controllerInfo@ha
 /* 000087C0 38630000 */ addi r3, r3, controllerInfo@l
@@ -9618,7 +9618,7 @@ lbl_000089D4:
 /* 00008A08 8063002C */ lwz r3, 0x2c(r3)
 /* 00008A0C 4BFF7751 */ bl nl2ngc_draw_model_sort_translucent_alt2
 lbl_00008A10:
-/* 00008A10 4BFF774D */ bl func_80094A34
+/* 00008A10 4BFF774D */ bl poly_shadow_draw
 /* 00008A14 3C600000 */ lis r3, eventInfo@ha
 /* 00008A18 38630000 */ addi r3, r3, eventInfo@l
 /* 00008A1C 880301C8 */ lbz r0, 0x1c8(r3)
@@ -12431,9 +12431,9 @@ lbl_0000B3F8:
 /* 0000B418 39200000 */ li r9, 0
 /* 0000B41C 39400000 */ li r10, 0
 /* 0000B420 4BFF4D3D */ bl GXInitTexObj
-/* 0000B424 4BFF4D39 */ bl func_80049FF0
+/* 0000B424 4BFF4D39 */ bl u_replay_test_init
 /* 0000B428 38600002 */ li r3, 2
-/* 0000B42C 4BFF4D31 */ bl camera_set_state
+/* 0000B42C 4BFF4D31 */ bl camera_set_state_all
 /* 0000B430 8001001C */ lwz r0, 0x1c(r1)
 /* 0000B434 83E10014 */ lwz r31, 0x14(r1)
 /* 0000B438 83C10010 */ lwz r30, 0x10(r1)
@@ -12518,7 +12518,7 @@ lbl_0000B53C:
 /* 0000B558 C0010010 */ lfs f0, 0x10(r1)
 /* 0000B55C FC000050 */ fneg f0, f0
 /* 0000B560 D01F0000 */ stfs f0, 0(r31)
-/* 0000B564 4BFF4BF9 */ bl func_8004A0C8
+/* 0000B564 4BFF4BF9 */ bl u_replay_test_main
 /* 0000B568 80010024 */ lwz r0, 0x24(r1)
 /* 0000B56C 83E1001C */ lwz r31, 0x1c(r1)
 /* 0000B570 38210020 */ addi r1, r1, 0x20
@@ -13180,9 +13180,9 @@ lbl_0000BEF8:
 /* 0000BF68 39400000 */ li r10, 0
 /* 0000BF6C 4BFF41F1 */ bl GXInitTexObj
 /* 0000BF70 48000141 */ bl lbl_0000C0B0
-/* 0000BF74 4BFF41E9 */ bl func_80049FF0
+/* 0000BF74 4BFF41E9 */ bl u_replay_test_init
 /* 0000BF78 38600002 */ li r3, 2
-/* 0000BF7C 4BFF41E1 */ bl camera_set_state
+/* 0000BF7C 4BFF41E1 */ bl camera_set_state_all
 /* 0000BF80 8001001C */ lwz r0, 0x1c(r1)
 /* 0000BF84 83E10014 */ lwz r31, 0x14(r1)
 /* 0000BF88 83C10010 */ lwz r30, 0x10(r1)
@@ -13216,7 +13216,7 @@ lbl_0000BFE8:
 /* 0000BFEC 90010004 */ stw r0, 4(r1)
 /* 0000BFF0 9421FFF8 */ stwu r1, -8(r1)
 /* 0000BFF4 4800024D */ bl lbl_0000C240
-/* 0000BFF8 4BFF4165 */ bl func_8004A0C8
+/* 0000BFF8 4BFF4165 */ bl u_replay_test_main
 /* 0000BFFC 8001000C */ lwz r0, 0xc(r1)
 /* 0000C000 38210008 */ addi r1, r1, 8
 /* 0000C004 7C0803A6 */ mtlr r0
@@ -14992,7 +14992,7 @@ lbl_0000D9FC:
 /* 0000DA20 807F0004 */ lwz r3, 4(r31)
 /* 0000DA24 28030000 */ cmplwi r3, 0
 /* 0000DA28 41820008 */ beq lbl_0000DA30
-/* 0000DA2C 4BFF2731 */ bl new_ape_close
+/* 0000DA2C 4BFF2731 */ bl ape_destroy
 lbl_0000DA30:
 /* 0000DA30 807F006C */ lwz r3, 0x6c(r31)
 /* 0000DA34 4BFF2729 */ bl u_make_ape
@@ -17013,7 +17013,7 @@ lbl_0000F6F0:
 /* 0000F74C 3BA50000 */ addi r29, r5, lbl_10003BF8@l
 /* 0000F750 41820050 */ beq lbl_0000F7A0
 /* 0000F754 807D0004 */ lwz r3, 4(r29)
-/* 0000F758 4BFF0A05 */ bl new_ape_close
+/* 0000F758 4BFF0A05 */ bl ape_destroy
 /* 0000F75C 3C600000 */ lis r3, __OSCurrHeap@ha
 /* 0000F760 809D0084 */ lwz r4, 0x84(r29)
 /* 0000F764 3BC30000 */ addi r30, r3, __OSCurrHeap@l
@@ -17067,7 +17067,7 @@ lbl_0000F7BC:
 /* 0000F81C 3861000C */ addi r3, r1, 0xc
 /* 0000F820 38810008 */ addi r4, r1, 8
 /* 0000F824 90A10008 */ stw r5, 8(r1)
-/* 0000F828 4BFF0935 */ bl func_8008BAA8
+/* 0000F828 4BFF0935 */ bl mot_ape_8008BAA8
 /* 0000F82C 801F006C */ lwz r0, 0x6c(r31)
 /* 0000F830 8061000C */ lwz r3, 0xc(r1)
 /* 0000F834 1C8000B4 */ mulli r4, r0, 0xb4
@@ -17209,7 +17209,7 @@ lbl_0000FA2C:
 /* 0000FA34 4082FFE8 */ bne lbl_0000FA1C
 /* 0000FA38 4BFFE0F5 */ bl lbl_0000DB2C
 /* 0000FA3C 38600003 */ li r3, 3
-/* 0000FA40 4BFF071D */ bl camera_set_state
+/* 0000FA40 4BFF071D */ bl camera_set_state_all
 /* 0000FA44 3C600000 */ lis r3, currentCamera@ha
 /* 0000FA48 C01E000C */ lfs f0, 0xc(r30)
 /* 0000FA4C 38830000 */ addi r4, r3, currentCamera@l
@@ -17231,8 +17231,8 @@ lbl_0000FA2C:
 /* 0000FA8C 80640000 */ lwz r3, 0(r4)
 /* 0000FA90 D0030014 */ stfs f0, 0x14(r3)
 /* 0000FA94 4BFF06C9 */ bl u_something_with_skel_model_names
-/* 0000FA98 3C600000 */ lis r3, motSkeleton@ha
-/* 0000FA9C 3BA30000 */ addi r29, r3, motSkeleton@l
+/* 0000FA98 3C600000 */ lis r3, motsklFileData@ha
+/* 0000FA9C 3BA30000 */ addi r29, r3, motsklFileData@l
 /* 0000FAA0 807D0000 */ lwz r3, 0(r29)
 /* 0000FAA4 3C800000 */ lis r4, __OSCurrHeap@ha
 /* 0000FAA8 38A40000 */ addi r5, r4, __OSCurrHeap@l
@@ -17261,11 +17261,11 @@ lbl_0000FAF4:
 /* 0000FAFC 7C050040 */ cmplw r5, r0
 /* 0000FB00 4180FFD4 */ blt lbl_0000FAD4
 /* 0000FB04 809F0080 */ lwz r4, 0x80(r31)
-/* 0000FB08 3C600000 */ lis r3, motSkeleton@ha
+/* 0000FB08 3C600000 */ lis r3, motsklFileData@ha
 /* 0000FB0C 54A0103A */ slwi r0, r5, 2
 /* 0000FB10 3BC00000 */ li r30, 0
 /* 0000FB14 7FC4012E */ stwx r30, r4, r0
-/* 0000FB18 3BA30000 */ addi r29, r3, motSkeleton@l
+/* 0000FB18 3BA30000 */ addi r29, r3, motsklFileData@l
 /* 0000FB1C 3C600000 */ lis r3, __OSCurrHeap@ha
 /* 0000FB20 809D0000 */ lwz r4, 0(r29)
 /* 0000FB24 38630000 */ addi r3, r3, __OSCurrHeap@l
@@ -17395,7 +17395,7 @@ lbl_0000FCD4:
 /* 0000FCFC 900300B4 */ stw r0, 0xb4(r3)
 lbl_0000FD00:
 /* 0000FD00 807F0004 */ lwz r3, 4(r31)
-/* 0000FD04 4BFF0459 */ bl new_ape_calc
+/* 0000FD04 4BFF0459 */ bl ape_skel_anim_main
 /* 0000FD08 801F0064 */ lwz r0, 0x64(r31)
 /* 0000FD0C 3C800000 */ lis r4, lbl_000156F0@ha
 /* 0000FD10 38600000 */ li r3, 0
@@ -17848,8 +17848,8 @@ lbl_000102B0:
     .4byte lbl_00002A30
     .4byte lbl_00003774
     .4byte lbl_000037B0
-    .4byte func_80049FF0
-    .4byte func_8004A0C8
+    .4byte u_replay_test_init
+    .4byte u_replay_test_main
     .4byte lbl_000040B8
     .4byte lbl_000041C4
     .4byte lbl_0000500C

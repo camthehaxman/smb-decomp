@@ -18,16 +18,16 @@ FORCE_BSS_ORDER(lbl_802B2E70)
 s32 lbl_802B3770[0x10];
 u32 lbl_802B37B0[0x10];
 
-static void draw_aiai_hair(struct Ape *, struct ApeFacePart *, struct Struct802B39C0_B0_child *);
-static void draw_eye(struct Ape *, struct ApeFacePart *, struct Struct802B39C0_B0_child *);
-static void draw_baby_hand(struct Ape *, struct ApeFacePart *, struct Struct802B39C0_B0_child *);
-static void draw_left_hand(struct Ape *, struct ApeFacePart *, struct Struct802B39C0_B0_child *);
-static void draw_right_hand(struct Ape *, struct ApeFacePart *, struct Struct802B39C0_B0_child *);
+static void draw_aiai_hair(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
+static void draw_eye(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
+static void draw_baby_hand(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
+static void draw_left_hand(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
+static void draw_right_hand(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
 static void func_80086434(int arg0, struct GMAModel *arg1);
 static struct GMAShape *func_80086538(struct GMAShape *);
-static void draw_baby_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *unused2);
-static void draw_head(struct Ape *, struct ApeFacePart *, struct Struct802B39C0_B0_child *);
-static void draw_ear(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *arg2);
+static void draw_baby_head(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2);
+static void draw_head(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
+static void draw_ear(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *arg2);
 
 static GXColor lbl_801C57E0[] =
 {
@@ -816,7 +816,7 @@ static u32 *lbl_801C6B7C[] =
     lbl_801C6B3C,
 };
 
-static struct ApeFacePart lbl_801C6BA4[] =
+static struct ApeBodyPart lbl_801C6BA4[] =
 {
     {
         60,
@@ -869,7 +869,7 @@ static struct ApeFacePart lbl_801C6BA4[] =
     },
 };
 
-static struct ApeFacePart lbl_801C6C9C[] =
+static struct ApeBodyPart lbl_801C6C9C[] =
 {
     {
         60,
@@ -922,7 +922,7 @@ static struct ApeFacePart lbl_801C6C9C[] =
     },
 };
 
-static struct ApeFacePart lbl_801C6D88[] =
+static struct ApeBodyPart lbl_801C6D88[] =
 {
     {
         19,
@@ -968,7 +968,7 @@ static struct ApeFacePart lbl_801C6D88[] =
     },
 };
 
-static struct ApeFacePart lbl_801C6E48[] =
+static struct ApeBodyPart lbl_801C6E48[] =
 {
     {
         7,
@@ -1007,7 +1007,7 @@ static struct ApeFacePart lbl_801C6E48[] =
     },
 };
 
-static struct ApeFacePart lbl_801C6EF4[] =
+static struct ApeBodyPart lbl_801C6EF4[] =
 {
     {
         15,
@@ -1053,7 +1053,7 @@ static struct ApeFacePart lbl_801C6EF4[] =
     },
 };
 
-static struct ApeFacePart lbl_801C6FC0[] =
+static struct ApeBodyPart lbl_801C6FC0[] =
 {
     {
         15,
@@ -1099,7 +1099,7 @@ static struct ApeFacePart lbl_801C6FC0[] =
     },
 };
 
-struct ApeFacePart lbl_801C708C[] =
+struct ApeBodyPart lbl_801C708C[] =
 {
     {
         18,
@@ -1145,7 +1145,7 @@ struct ApeFacePart lbl_801C708C[] =
     },
 };
 
-static struct ApeFacePart lbl_801C714C[] =
+static struct ApeBodyPart lbl_801C714C[] =
 {
     {
         7,
@@ -1184,7 +1184,7 @@ static struct ApeFacePart lbl_801C714C[] =
     },
 };
 
-static struct ApeFacePart lbl_801C71F8[] =
+static struct ApeBodyPart lbl_801C71F8[] =
 {
     {
         15,
@@ -1230,7 +1230,7 @@ static struct ApeFacePart lbl_801C71F8[] =
     },
 };
 
-static struct ApeFacePart lbl_801C72C4[] =
+static struct ApeBodyPart lbl_801C72C4[] =
 {
     {
         15,
@@ -1276,7 +1276,7 @@ static struct ApeFacePart lbl_801C72C4[] =
     },
 };
 
-static struct ApeFacePart lbl_801C73A0[] =
+static struct ApeBodyPart lbl_801C73A0[] =
 {
     {
         19,
@@ -1329,7 +1329,7 @@ static struct ApeFacePart lbl_801C73A0[] =
     },
 };
 
-static struct ApeFacePart lbl_801C7480[] =
+static struct ApeBodyPart lbl_801C7480[] =
 {
     {
         11,
@@ -1368,7 +1368,7 @@ static struct ApeFacePart lbl_801C7480[] =
     },
 };
 
-static struct ApeFacePart lbl_801C752C[] =
+static struct ApeBodyPart lbl_801C752C[] =
 {
     {
         5,
@@ -1414,7 +1414,7 @@ static struct ApeFacePart lbl_801C752C[] =
     },
 };
 
-static struct ApeFacePart lbl_801C75F8[] =
+static struct ApeBodyPart lbl_801C75F8[] =
 {
     {
         5,
@@ -1460,7 +1460,7 @@ static struct ApeFacePart lbl_801C75F8[] =
     },
 };
 
-static struct ApeFacePart lbl_801C76C4[] =
+static struct ApeBodyPart lbl_801C76C4[] =
 {
     {
         4,
@@ -1506,7 +1506,7 @@ static struct ApeFacePart lbl_801C76C4[] =
     },
 };
 
-static struct ApeFacePart lbl_801C7784[] =
+static struct ApeBodyPart lbl_801C7784[] =
 {
     {
         17,
@@ -1597,7 +1597,7 @@ struct ApeGfxFileInfo apeGfxFileInfo[] =
     },
 };
 
-void func_80085C0C(int arg0)
+void set_ambient_light(int arg0)
 {
     struct Color3f ambient;
 
@@ -1616,13 +1616,13 @@ void func_80085C0C(int arg0)
     }
 }
 
-static void draw_aiai_hair(struct Ape *ape, struct ApeFacePart *unused1, struct Struct802B39C0_B0_child *unused2)
+static void draw_aiai_hair(struct Ape *ape, struct ApeBodyPart *unused1, struct BodyPartThing *unused2)
 {
     int var_r6;
     int r0;
     struct GMAModel *model;
 
-    var_r6 = ape->unk90 >> 1;
+    var_r6 = ape->u_lodGma >> 1;
     r0 = var_r6 + (ape->charaId << 1);
     if (ape->flags & 0x8000)
     {
@@ -1657,14 +1657,14 @@ void func_80085DB0(struct Ape *ape)
         ape->flags |= 0x80;
 }
 
-static void draw_eye(struct Ape *ape, struct ApeFacePart *unused1, struct Struct802B39C0_B0_child *unused2)
+static void draw_eye(struct Ape *ape, struct ApeBodyPart *unused1, struct BodyPartThing *unused2)
 {
     s32 var_r8;
     int var_r7;
     struct GMAModel *model;
     int r0;
 
-    r0 = (ape->unk90 >> 1) + (ape->charaId << 1);
+    r0 = (ape->u_lodGma >> 1) + (ape->charaId << 1);
     if (!(ape->flags & 0x10000))
     {
         if (ape->flags & 0x80)
@@ -1692,7 +1692,7 @@ static void draw_eye(struct Ape *ape, struct ApeFacePart *unused1, struct Struct
             lbl_802B37B0[ape->unk70] = 0;
             var_r8 = 0;
         }
-        model = charaGMAs[r0]->modelEntries[lbl_801C6648[((ape->unk90 >> 1) * 4 + ape->charaId)][var_r8]].model;
+        model = charaGMAs[r0]->modelEntries[lbl_801C6648[((ape->u_lodGma >> 1) * 4 + ape->charaId)][var_r8]].model;
         avdisp_draw_model_unculled_sort_none(model);
     }
 }
@@ -1725,14 +1725,14 @@ static inline void func_80085F94_sub(struct GMAModel *temp_r31, int temp_r10)
     }
 }
 
-static void draw_baby_hand(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *unused2)
+static void draw_baby_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
 {
     u8 unused3[8];
     struct Color3f sp18;
     u8 unused4[4];
     struct GMAModel *temp_r31;
 
-    temp_r31 = charaGMAs[(ape->unk90 >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    temp_r31 = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     if (lbl_802F2060 == 0)
     {
         get_curr_light_group_ambient(&sp18);
@@ -1744,12 +1744,12 @@ static void draw_baby_hand(struct Ape *ape, struct ApeFacePart *arg1, struct Str
         apply_curr_light_group_ambient();
 }
 
-static void draw_left_hand(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *unused2)
+static void draw_left_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
 {
     u8 unused[8];
-    struct GMAModel *model = charaGMAs[(ape->unk90 >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    struct GMAModel *model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     struct Struct8003699C_child_sub *temp_r29 = &ape->unk0->unk4114;
-    struct AnimJoint *joints = temp_r29->unk38;
+    struct AnimJoint *joints = temp_r29->joints;
     s16 *var_r4;
     Mtx **var_r5;
 
@@ -1774,12 +1774,12 @@ static void draw_left_hand(struct Ape *ape, struct ApeFacePart *arg1, struct Str
     avdisp_draw_model_unculled_sort_none(model);
 }
 
-static void draw_right_hand(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *unused2)
+static void draw_right_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
 {
     u8 unused[8];
-    struct GMAModel *model = charaGMAs[(ape->unk90 >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    struct GMAModel *model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     struct Struct8003699C_child_sub *temp_r29 = &ape->unk0->unk84;
-    struct AnimJoint *joints = temp_r29->unk38;
+    struct AnimJoint *joints = temp_r29->joints;
     s16 *var_r4;
     Mtx **var_r5;
 
@@ -1962,13 +1962,13 @@ static struct GMAShape *func_80086538(struct GMAShape *shape)
     return (struct GMAShape *)ptr;
 }
 
-static void draw_baby_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *unused2)
+static void draw_baby_head(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
 {
     u8 unused3[8];
     struct Color3f sp14;
     struct GMAModel *model;
 
-    model = charaGMAs[(ape->unk90 >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     if (lbl_802F2060 == 0)
     {
         get_curr_light_group_ambient(&sp14);
@@ -2035,14 +2035,15 @@ static void func_80086794_sub2(int temp_r27, struct Ape *ape)
     {
         lbl_802B37B0[ape->unk70] = 0;
         ape->flags |= 0x10000;
-        func_80085C0C(0);
+        set_ambient_light(0);
         avdisp_draw_model_unculled_sort_none(charaGMAs[ape->charaId << 1]->modelEntries[temp_r28_4[temp_r27]].model);
         if (lbl_802F2060 == 0)
             apply_curr_light_group_ambient();
     }
 }
 
-static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *arg2)
+// Draws the head (used for every character)
+static void draw_head(struct Ape *ape, struct ApeBodyPart *part, struct BodyPartThing *arg2)
 {
     struct NlModel *nlModel;
     struct GMAModel *gmaModel;
@@ -2064,9 +2065,9 @@ static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct80
     ape->flags &= 0xFFFEFFFF;
     if (arg2 != NULL && arg2->unk4 != 0.0f)
     {
-        if (ape->unk90 >= 2)
+        if (ape->u_lodGma >= 2)
             var_r29 += 4;
-        switch (arg2->unk0)
+        switch (arg2->type)
         {
         case 0:
             if (var_r29 == 1 || var_r29 == 3)
@@ -2075,7 +2076,7 @@ static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct80
         case 6:
             if (var_r29 == 2)
             {
-                gmaModel = charaGMAs[(ape->unk90 >> 1) + (var_r29 << 1)]->modelEntries[arg1->modelId].model;
+                gmaModel = charaGMAs[(ape->u_lodGma >> 1) + (var_r29 << 1)]->modelEntries[part->modelId].model;
                 if (lbl_802F2060 == 0)
                 {
                     get_curr_light_group_ambient(&sp30);
@@ -2130,7 +2131,7 @@ static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct80
             get_curr_light_group_ambient(&sp24);
             nlLightAmbRGB(1.35f * sp24.r, 1.35f * sp24.g, 1.35f * sp24.b);
         }
-        if (var_r29 == 2 && ape->unk90 < 2)
+        if (var_r29 == 2 && ape->u_lodGma < 2)
         {
             struct NlMesh_sub *sub;
             struct NlMesh *var_r5;
@@ -2164,8 +2165,8 @@ static void draw_head(struct Ape *ape, struct ApeFacePart *arg1, struct Struct80
     }
 
 block_50:
-    temp_r27_3 = (ape->unk90 >> 1) + (ape->charaId << 1);
-    gmaModel = charaGMAs[temp_r27_3]->modelEntries[arg1->modelId].model;
+    temp_r27_3 = (ape->u_lodGma >> 1) + (ape->charaId << 1);
+    gmaModel = charaGMAs[temp_r27_3]->modelEntries[part->modelId].model;
     if (lbl_802F2060 == 0)
     {
         get_curr_light_group_ambient(&sp14);
@@ -2236,13 +2237,13 @@ void func_80086D20(struct Ape *ape, int arg1, int arg2)
 }
 #pragma force_active reset
 
-static void draw_ear(struct Ape *ape, struct ApeFacePart *arg1, struct Struct802B39C0_B0_child *arg2)
+static void draw_ear(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *arg2)
 {
     u8 unused[8];
     struct Color3f sp14;
     struct GMAModel *model;
 
-    model = charaGMAs[(ape->unk90 >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     if (lbl_802F2060 == 0)
     {
         get_curr_light_group_ambient(&sp14);

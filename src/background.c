@@ -14,6 +14,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "nl2ngc.h"
+#include "polydisp.h"
 #include "stage.h"
 #include "window.h"
 
@@ -582,7 +583,7 @@ void bg_default_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (polyDisp.unk0 & 1))
+     && (polyDisp.flags & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != 0)
     {
@@ -609,7 +610,7 @@ void animate_bg_objects(struct StageBgObject *bgObj, int bgObjCount, float timeS
 
     if (bgObj == NULL2)
         return;
-    if (polyDisp.unk0 & 0x11)
+    if (polyDisp.flags & 0x11)
         r29 = 16;
     else if (gameMode == MD_GAME || gameMode == MD_MINI)
         r29 = 1 << (modeCtrl.unk30 - 1);
@@ -701,7 +702,7 @@ void draw_bg_objects(Mtx viewFromWorld, struct StageBgObject *bgObj, int bgObjCo
 
     if (bgObj == NULL)
         return;
-    if (polyDisp.unk0 & ((1 << 0)|(1 << 4)))
+    if (polyDisp.flags & ((1 << 0)|(1 << 4)))
         r30 = 1 << 4;
     else if (gameMode == MD_GAME || gameMode == MD_MINI)
         r30 = 1 << (modeCtrl.unk30 - 1);
@@ -711,7 +712,7 @@ void draw_bg_objects(Mtx viewFromWorld, struct StageBgObject *bgObj, int bgObjCo
     {
         if (!(bgObj->flags & r30))
             continue;
-        if ((polyDisp.unk0 & (1 << 2))
+        if ((polyDisp.flags & (1 << 2))
          && (bgObj->flags & (1 << 7)))
             continue;
         if (!(bgObj->flags & (1 << 16)))
@@ -728,7 +729,7 @@ void draw_bg_objects(Mtx viewFromWorld, struct StageBgObject *bgObj, int bgObjCo
         mathutil_mtxA_scale(&bgObj->scale);
         scale = MAX(bgObj->scale.x, bgObj->scale.y);
         scale = MAX(bgObj->scale.z, scale);
-        if ((polyDisp.unk0 & (1 << 2))
+        if ((polyDisp.flags & (1 << 2))
          && get_height_mirror_plane(&model->boundSphereCenter) < -(scale * model->boundSphereRadius))
             continue;
         if (test_scaled_sphere_in_frustum(&model->boundSphereCenter, model->boundSphereRadius, scale) == 0)
@@ -1026,7 +1027,7 @@ void bg_night_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (polyDisp.unk0 & 1))
+     && (polyDisp.flags & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
@@ -1061,7 +1062,7 @@ void bg_ice2_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (polyDisp.unk0 & 1))
+     && (polyDisp.flags & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
@@ -1130,7 +1131,7 @@ void bg_billiards_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (polyDisp.unk0 & 1))
+     && (polyDisp.flags & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
@@ -1165,7 +1166,7 @@ void bg_golf_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (polyDisp.unk0 & 1))
+     && (polyDisp.flags & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {
@@ -1200,7 +1201,7 @@ void bg_bowling_draw(void)
 {
     push_light_group();
     if ((decodedStageLzPtr->bgObjects != NULL || decodedStageLzPtr->fgObjects != NULL)
-     && (polyDisp.unk0 & 1))
+     && (polyDisp.flags & 1))
         avdisp_set_ambient(0.5f, 0.5f, 0.5f);
     if (decodedStageLzPtr->bgObjects != NULL)
     {

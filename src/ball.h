@@ -4,6 +4,8 @@
 #include <dolphin/types.h>
 #include <dolphin/mtx.h>
 
+struct PhysicsBall;
+
 enum
 {
     BALL_FLAG_00 = 1 << 0,
@@ -42,8 +44,35 @@ enum
 
 enum
 {
+    BALL_STATE_0,
+    BALL_STATE_1,
+    BALL_STATE_READY_MAIN = 2,
+    BALL_STATE_3,
+    BALL_STATE_4,
     BALL_STATE_GOAL_INIT = 5,  // ball slows to a stop after entering the goal
     BALL_STATE_GOAL_MAIN = 6,
+    BALL_STATE_REPLAY_INIT_1,
+    BALL_STATE_REPLAY_MAIN_1 = 8,
+    BALL_STATE_REPLAY_INIT_2,
+    BALL_STATE_REPLAY_MAIN_2 = 10,
+    BALL_STATE_11,
+    BALL_STATE_12,
+    BALL_STATE_13,
+    BALL_STATE_14,
+    BALL_STATE_15,
+    BALL_STATE_16,
+    BALL_STATE_17,
+    BALL_STATE_18,
+    BALL_STATE_19,
+    BALL_STATE_20,
+    BALL_STATE_DEMO_INIT = 21,
+    BALL_STATE_22,  // minigame
+    BALL_STATE_23,  // minigame
+    BALL_STATE_24,  // minigame
+    BALL_STATE_25,  // minigame
+    BALL_STATE_26,  // minigame
+    BALL_STATE_27,
+    BALL_STATE_28,
 };
 
 struct Ball_child
@@ -103,7 +132,7 @@ struct Ball
     u8 filler12C[0x130-0x12C];
     float unk130;
     u32 unk134;
-    s32 unk138;
+    s32 bananaBonus;
     s32 unk13C;
     /*0x140*/ float targetRadius;  // radius that the ball grows/shrinks to?
     struct Ball_child *unk144;  // guessing this is the same type as unkFC?
@@ -114,7 +143,7 @@ struct Ball
     u8 filler14C[2];
     s16 unk14E;
     Vec unk150;  // positiom ball entered goal?
-    float unk15C[4];
+    /*0x15C*/ float u_opacity[4];  // something to do with ball-ball intersection (competition mode)
     u8 filler16C[0x1A4-0x16C];
 };
 
@@ -159,7 +188,7 @@ void u_choose_ape_anim(struct Ape *a, float b);
 void func_8003765C(struct Ape *a);
 void func_80037718();
 void func_80037B1C(struct Ball *);
-void func_80037B20(void);
+void ball_set_ape_flags_80037B20(void);
 void ev_ball_init(void);
 struct Ape *ape_get_by_type(int a, enum Character character, void (*c)(struct Ape *, int));
 void ev_ball_main(void);
@@ -179,7 +208,7 @@ void ball_func_3(struct Ball *);
 void ball_func_4(struct Ball *);
 void ball_func_goal_init(struct Ball *);
 void ball_func_goal_main(struct Ball *);
-void ball_func_7(struct Ball *);
+void ball_func_replay_init(struct Ball *);
 void ball_func_replay_main(struct Ball *);
 void ball_func_11(struct Ball *);
 void ball_func_12(struct Ball *);
@@ -198,20 +227,16 @@ void ball_func_28(struct Ball *);
 void handle_ball_linear_kinematics(struct Ball *, struct PhysicsBall *, int);
 void handle_ball_linear_kinematics_ignore_collision(struct Ball *, struct PhysicsBall *, int);
 void update_ball_ape_transform(struct Ball *, struct PhysicsBall *, int);
-// ? func_8003BBF4();
-// ? func_8003BD68();
+// ? ball_8003BBF4();
 void handle_ball_rotational_kinematics(struct Ball *, struct PhysicsBall *, int);
-void func_8003C38C(struct Ball *);
 void ball_set_type(struct Ball *, int);
 void ball_set_strongcoli_efc(struct Ball *);
 void init_physball_from_ball(struct Ball *, struct PhysicsBall *b);
-void func_8003CB3C(struct Ball *, struct PhysicsBall *b);
+void set_ball_pos_and_vel_from_physball(struct Ball *, struct PhysicsBall *b);
 void ball_ape_yang(struct Ball *);
 void ball_effect(void);
-void func_8003CDB0(struct Ball *);
 void ball_sound(struct Ball *);
 void ball_set_highspeed_efc(struct Ball *);
 void animate_ball_size_change(struct Ball *);
-// ? draw_ball_hemispheres();
 
 #endif

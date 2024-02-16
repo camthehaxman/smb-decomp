@@ -16,6 +16,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "ord_tbl.h"
+#include "polydisp.h"
 #include "rend_efc.h"
 #include "stobj.h"
 #include "stage.h"
@@ -291,7 +292,7 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
         GXSetScissor(0, 0, temp_r30->unk28, temp_r30->unk2A);
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(5);
-        polyDisp.unk0 |= 4;
+        polyDisp.flags |= 4;
         mathutil_mtxA_from_mtx(temp_r30->unk50);
         mathutil_mtxA_get_translate_alt(&polyDisp.unk4);
         mathutil_mtxA_tf_vec_xyz(&polyDisp.unk10, 0.0f, 1.0f, 0.0f);
@@ -335,7 +336,7 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
     }
     else
         func_800A5F28();
-    polyDisp.unk0 &= 0xFFFFFFFB;
+    polyDisp.flags &= 0xFFFFFFFB;
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, temp_r30->unk28, temp_r30->unk2A);
     GXSetTexCopyDst(temp_r30->unk28, temp_r30->unk2A, temp_r30->unk20, 0);

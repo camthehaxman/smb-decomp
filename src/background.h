@@ -38,6 +38,9 @@
 /*26*/ DEFINE_BG(BG_TYPE_MST,           "bg_mst",    NULL,    38, 0xFFFFCDFF) \
 /*27*/ DEFINE_BG(BG_TYPE_END,           "bg_ending", NULL,    -1, 0xFFFFFFFF)
 
+struct StageBgObject;
+struct StageFlipbookAnims;
+
 enum
 {
     BG_NULL = 0,

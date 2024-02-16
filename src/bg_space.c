@@ -15,6 +15,7 @@
 #include "lens_flare.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "polydisp.h"
 #include "stage.h"
 #include "window.h"
 
@@ -267,7 +268,7 @@ void bg_space_draw(void)
         GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
         scale = MAX(MAX(saturnObj->scale.x, saturnObj->scale.y), saturnObj->scale.z);
         avdisp_set_bound_sphere_scale(scale);
-        if (!(polyDisp.unk0 & 4))
+        if (!(polyDisp.flags & 4))
         {
             u_avdisp_set_some_func_1(lbl_800609AC);
             avdisp_draw_model_culled_sort_translucent(saturnObj->model);

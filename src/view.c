@@ -18,6 +18,8 @@
 #include "mode.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
+#include "pause_menu.h"
+#include "polydisp.h"
 #include "rend_efc.h"
 #include "shadow.h"
 #include "sprite.h"
@@ -179,7 +181,7 @@ void view_draw(void)
     Mtx44 projMtx;
     camera = &cameraInfo[modeCtrl.currPlayer];
 
-    polyDisp.unk0 |= 2;
+    polyDisp.flags |= 2;
     view_apply_camera(camera);
     MTXPerspective(projMtx, 59.99633789f, 1.33333333f, 0.1f, 20000.0f);
     GXSetProjection(projMtx, 0);
@@ -227,7 +229,7 @@ void view_draw(void)
     view_apply_camera(camera);
     currentBall = ballBackup;
     default_camera_env();
-    polyDisp.unk0 &= ~(1 << 1);
+    polyDisp.flags &= ~(1 << 1);
     cameraInfo[modeCtrl.currPlayer] = cameraBackup;
 }
 
@@ -254,16 +256,16 @@ void view_info_sprite_draw(struct Sprite *sprite)
     set_text_font(sprite->fontId);
     set_text_scale(sprite->scaleX, sprite->scaleY);
     func_80071B50(sprite->flags);
-    func_80071B1C(sprite->unk4C + 0.1);
+    func_80071B1C(sprite->depth + 0.1);
     set_text_mul_color(RGBA(0, 0, 0, 0));
     set_text_add_color(RGBA(0, 0, 0, 0));
     set_text_pos(sprite->x + 2.0, sprite->y + 2.0);
-    u_draw_text(sprite->text);
-    func_80071B1C(sprite->unk4C);
+    sprite_puts(sprite->text);
+    func_80071B1C(sprite->depth);
     set_text_mul_color(RGBA(sprite->mulR, sprite->mulG, sprite->mulB, 0));
     set_text_add_color(RGBA(sprite->addR, sprite->addG, sprite->addB, 0));
     set_text_pos(sprite->x, sprite->y);
-    u_draw_text(sprite->text);
+    sprite_puts(sprite->text);
 }
 
 void view_create_text_sprites(void)
@@ -576,7 +578,7 @@ void draw_stage_geometry(void)
                     if (model != NULL)
                     {
 
-                        if (!(polyDisp.unk0 & (1<<(31-0x1D))) || (r26->flags & (1<<(31-0x1D))))
+                        if (!(polyDisp.flags & (1<<(31-0x1D))) || (r26->flags & (1<<(31-0x1D))))
                             avdisp_draw_model_culled_sort_none(model);
                     }
                 }

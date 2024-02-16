@@ -17,7 +17,7 @@ void u_reset_channels_in_joints(struct AnimJoint *b);
 void u_load_channels_from_dat_into_joints(struct MotDat *dat, struct AnimJoint *b);
 void u_read_channel_from_dat(struct MotDat *a, struct MotionChannel *b);
 
-void u_create_joints_from_skeleton(struct AnimJoint *joint, struct MotSkeletonEntry1 *skel, u16 c)
+void u_create_joints_from_skeleton(struct AnimJoint *joint, struct Skeleton *skel, u16 c)
 {
     struct AnimJoint *jointArr = joint;
     const u32 *flags;
@@ -25,7 +25,7 @@ void u_create_joints_from_skeleton(struct AnimJoint *joint, struct MotSkeletonEn
     Vec *r28;
     struct ChildJointList *childList;
     struct MotRotation *rotation;
-    int jointIdx;
+    int thisIdx;
 
     r29 = skel->unkC;
     r28 = skel->unk10;
@@ -35,7 +35,7 @@ void u_create_joints_from_skeleton(struct AnimJoint *joint, struct MotSkeletonEn
     mathutil_mtxA_from_identity();
     joint->parentIdx = -1;
 
-    jointIdx = 0;
+    thisIdx = 0;
     while (1)
     {
         u8 i;
@@ -43,20 +43,22 @@ void u_create_joints_from_skeleton(struct AnimJoint *joint, struct MotSkeletonEn
         joint->flags = *flags;
         mathutil_mtxA_to_mtx(joint->rotateMtx);
         mathutil_mtxA_to_mtx(joint->transformMtx);
-        if (joint->flags & (1 << 6))
+        if (joint->flags & JOINT_FLAG_HAS_OTHER_ROTATION_MTX)
         {
             mathutil_mtxA_push();
             mathutil_mtxA_rotate_z(RADIANS_TO_S16(rotation->rotZ));
             mathutil_mtxA_rotate_y(RADIANS_TO_S16(rotation->rotY));
             mathutil_mtxA_rotate_x(RADIANS_TO_S16(rotation->rotX));
-            mathutil_mtxA_to_mtx(joint->unk1C);
+            mathutil_mtxA_to_mtx(joint->otherRotateMtx);
             rotation++;
             mathutil_mtxA_pop();
         }
+
+        // Update child joints to point back to this joint as its parent
         joint->childCount = childList->count;
         joint->childIndexes = childList->children;
         for (i = 0; i < joint->childCount; i++)
-            jointArr[joint->childIndexes[i]].parentIdx = (u8)jointIdx;
+            jointArr[joint->childIndexes[i]].parentIdx = (u8)thisIdx;
         if (joint->flags & (1 << 1))
         {
             joint->unk4 = *r29++;
@@ -68,7 +70,7 @@ void u_create_joints_from_skeleton(struct AnimJoint *joint, struct MotSkeletonEn
             break;
         joint++;
         childList++;
-        jointIdx++;
+        thisIdx++;
     }
     joint++;
     joint->flags = *flags;
@@ -213,10 +215,10 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
     if (!DVDOpen(sklname, &file))
         return 0;
     size = OSRoundUp32B(file.length);
-    motSkeleton = OSAlloc(size);
-    avDVDRead(&file, motSkeleton, size, 0);
+    motsklFileData = OSAlloc(size);
+    avDVDRead(&file, motsklFileData, size, 0);
     DVDClose(&file);
-    adjust_motskl_pointers(motSkeleton);
+    adjust_motskl_pointers(motsklFileData);
     totalSize += size;
 
     // info file
@@ -272,20 +274,20 @@ void adjust_motlabel_pointers(u32 *a)
     }
 }
 
-void adjust_motskl_pointers(struct MotSkeleton *fileData)
+void adjust_motskl_pointers(struct SkeletonFileData *fileData)
 {
     struct MotSkeletonEntry2 *r6;
     int j;
     int k;
-    struct MotSkeletonEntry1 *skel;
+    struct Skeleton *skel;
     struct ChildJointList *childList;
     int i;
 
-    fileData->unk0 = OFFSET_TO_PTR(fileData->unk0, fileData);
+    fileData->skeletons = OFFSET_TO_PTR(fileData->skeletons, fileData);
     fileData->unk8 = OFFSET_TO_PTR(fileData->unk8, fileData);
-    for (i = 0, skel = fileData->unk0; i < fileData->unk4; i++, skel++)
+    for (i = 0, skel = fileData->skeletons; i < fileData->skeletonsCount; i++, skel++)
     {
-        skel->unk0       = OFFSET_TO_PTR(skel->unk0, fileData);
+        skel->unused0    = OFFSET_TO_PTR(skel->unused0, fileData);
         skel->childLists = OFFSET_TO_PTR(skel->childLists, fileData);
         skel->rotations  = OFFSET_TO_PTR(skel->rotations, fileData);
         skel->unkC       = OFFSET_TO_PTR(skel->unkC, fileData);
@@ -293,7 +295,8 @@ void adjust_motskl_pointers(struct MotSkeleton *fileData)
         skel->name       = OFFSET_TO_PTR(skel->name, fileData);
     }
 
-    childList = fileData->unk0->childLists;
+    // only the first skeleton?
+    childList = fileData->skeletons[0].childLists;
     for (i = 0; i < 28; i++, childList++)
     {
         if (childList->children != NULL)
@@ -302,14 +305,14 @@ void adjust_motskl_pointers(struct MotSkeleton *fileData)
 
     for (i = 0, r6 = fileData->unk8; i < fileData->unkC; i++, r6++)
     {
-        r6->unk0 = OFFSET_TO_PTR(r6->unk0, fileData);
+        r6->unused0 = OFFSET_TO_PTR(r6->unused0, fileData);
         for (j = 0; j < 3; j++)
         {
             struct Struct80034B50_child2_child *r8;
 
             r6->unk4[j] = OFFSET_TO_PTR(r6->unk4[j], fileData);
             for (k = 0, r8 = r6->unk4[j]; k < r6->unk10[j]; k++, r8++)
-                r8->unk0 = OFFSET_TO_PTR(r8->unk0, fileData);
+                r8->unused0 = OFFSET_TO_PTR(r8->unused0, fileData);
         }
     }
 }

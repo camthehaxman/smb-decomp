@@ -176,7 +176,7 @@ static void show_dvd_err_msg(int msgId)
                 float x = (320.0 - (0.5 * u_get_text_width(errMsg->lines[i].text)));
                 float y = ((240.0 - (12.0 * errMsg->count)) + (24.0 * i));
                 set_text_pos(x, y);
-                func_80072AC0(errMsg->lines[i].text);
+                sprite_printf(errMsg->lines[i].text);
             }
             spriteParamsBufState = lbl_802F21FC;
         }

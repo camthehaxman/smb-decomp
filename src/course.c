@@ -1764,7 +1764,7 @@ void game_sprint_course(struct Sprite *sprite)
             if (i == 0)
                 set_text_mul_color(RGBA(0, 255, 0, 0));
             set_text_pos(x, y);
-            func_80072AC0("%d(%03d)", var_r27->unk0[0].unk0, var_r27->unk0[0].unk4);
+            sprite_printf("%d(%03d)", var_r27->unk0[0].unk0, var_r27->unk0[0].unk4);
             if (i == 0)
                 set_text_mul_color(RGBA(255, 255, 255, 0));
             var_r0 = var_r27->unk0[0].unk0;
@@ -1788,15 +1788,15 @@ void game_sprint_course(struct Sprite *sprite)
                     x + sprite->scaleX * (var_r4 * 8),
                     y + sprite->scaleY * (j * 8));
                 if (i > 0)
-                    u_draw_text("\x16>");
+                    sprite_puts("\x16>");
                 else if ((var_r27->unk20 > 1) && (j == 0))
-                    u_draw_text("\x13>");
+                    sprite_puts("\x13>");
                 else if ((var_r27->unk20 > 1) && (j == (s32) (var_r27->unk20 - 1)))
-                    u_draw_text("\x1A>");
+                    sprite_puts("\x1A>");
                 else if (var_r27->unk20 > 1)
-                    u_draw_text("\x11>");
+                    sprite_puts("\x11>");
                 else
-                    u_draw_text("\x16>");
+                    sprite_puts("\x16>");
 
                 if (i > 0)
                     break;
@@ -1807,11 +1807,11 @@ void game_sprint_course(struct Sprite *sprite)
                     x + sprite->scaleX * (var_r4 * 8) + sprite->scaleX * 16.0f,
                     y + sprite->scaleY * (j * 8));
                 if (var_r31[1].unk4 == -1)
-                    u_draw_text("CLEAR");
+                    sprite_puts("CLEAR");
                 else if (var_r31[1].unk4 == -1)  //! typo?
-                    u_draw_text("END");
+                    sprite_puts("END");
                 else
-                    func_80072AC0("%d(%03d)", var_r31[1].unk0, var_r31[1].unk4);
+                    sprite_printf("%d(%03d)", var_r31[1].unk0, var_r31[1].unk4);
                 set_text_mul_color(RGBA(255, 255, 255, 0));
             }
             x += sprite->scaleX * (var_r4 * 8) + sprite->scaleX * 16.0f;

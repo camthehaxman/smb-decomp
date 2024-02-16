@@ -91,7 +91,7 @@ static void sel_stage_init(void)
     event_start(EVENT_REND_EFC);
 
     rend_efc_mirror_enable();
-    camera_set_state(12);
+    camera_set_state_all(12);
     u_isCompetitionModeCourse = 0;
     func_800123DC();
     create_sel_stage_sprites();
@@ -219,7 +219,7 @@ static void sel_stage_handle_input(void)
         event_start(EVENT_STOBJ);
         event_start(EVENT_BACKGROUND);
         event_start(EVENT_REND_EFC);
-        camera_set_state(12);
+        camera_set_state_all(12);
         rend_efc_mirror_enable();
     }
 

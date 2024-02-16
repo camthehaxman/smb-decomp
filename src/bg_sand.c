@@ -13,6 +13,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "ord_tbl.h"
+#include "polydisp.h"
 #include "rend_efc.h"
 #include "stage.h"
 #include "window.h"
@@ -238,7 +239,7 @@ void bg_sand_draw(void)
     struct MyDrawNode2 *temp_r24_2;
     int i;
 
-    if (polyDisp.unk0 & 0x11)
+    if (polyDisp.flags & 0x11)
         var_r30 = 1 << 4;
     else if (gameMode == 2 || gameMode == 4)
         var_r30 = 1 << (modeCtrl.unk30 - 1);

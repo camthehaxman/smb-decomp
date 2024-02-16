@@ -11,6 +11,7 @@
 #include "input.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "pause_menu.h"
 #include "sound.h"
 #include "sprite.h"
 #include "window.h"
@@ -49,7 +50,7 @@ void func_80081F30(void)
         sprite->x = 320.0f;
         sprite->y = 240.0f;
         sprite->textAlign = ALIGN_LT;
-        sprite->unk4C = 0.002f;
+        sprite->depth = 0.002f;
         sprite->userVar = 0;
         sprite->fontId = FONT_JAP_24x24_2P;
         if (gameMode == MD_SEL)
@@ -842,7 +843,7 @@ void draw_controls_info(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
         for (var_r21 = 0; temp_r23[var_r21] != -1; var_r21++)
         {
             temp_r19 = &controlsTextboxes[temp_r23[var_r21]];
-            func_80071B1C(arg1->unk4C - 0.002);
+            func_80071B1C(arg1->depth - 0.002);
             temp_r28 = &lbl_801C2318_0x32C[temp_r19->unk0];
             arg2->sprno = temp_r28->unk0;
             arg2->x = temp_r19->x;
@@ -862,7 +863,7 @@ void draw_controls_info(s32 arg0, struct Sprite *arg1, NLsprarg *arg2)
                 set_text_pos(
                     (76.0f + arg2->x) - (0.5 * temp_f16 * temp_f15),
                     arg2->y + temp_r28->unk4[var_r20]);
-                u_draw_text(temp_r19->text[var_r20]);
+                sprite_puts(temp_r19->text[var_r20]);
             }
             temp_r19_3 = &lbl_801C2318_0xE18[temp_r23[var_r21]];
 
@@ -1514,7 +1515,7 @@ static void draw_help_blurbs(s8 arg0, struct Sprite *sprite, NLsprarg *params, s
         params->sprno = BMP_HOW_how_bar_circle;
         params->x = var_f28;
         params->y += 2.0f;
-        params->z = sprite->unk4C - 0.001;
+        params->z = sprite->depth - 0.001;
         params->u0 = 0.0f;
         params->u1 = 1.0f;
         params->zm_x = params->u1 - params->u0;
@@ -1528,7 +1529,7 @@ static void draw_help_blurbs(s8 arg0, struct Sprite *sprite, NLsprarg *params, s
         params->x = var_f28;
         params->y += (itemCount == 6) ? 6 : 7;
         temp_f25_2 = params->y;
-        params->z = (sprite->unk4C - 0.002);
+        params->z = (sprite->depth - 0.002);
         params->u0 = 0.0f;
         params->u1 = 1.0f;
         if (arg0 == 0 || params->sprno == SMD_ADV_GAME_READY_INIT)
@@ -1573,11 +1574,11 @@ static void draw_help_blurbs(s8 arg0, struct Sprite *sprite, NLsprarg *params, s
             set_text_scale(1.3f, 1.3f);
             set_text_mul_color(RGBA(0, 0, 0, 0));
             set_text_pos(14.0f + params->x, 4.0f + params->y);
-            func_80072AC0("%d", i + 1);
+            sprite_printf("%d", i + 1);
             set_text_scale(0.68f, 0.7f);
             set_text_mul_color(RGBA(255, 255, 192, 0));
         }
-        params->z = sprite->unk4C;
+        params->z = sprite->depth;
         params->zm_y = 1.0f;
         params->x = var_f28;
         params->y = temp_f25_2;
@@ -1601,11 +1602,11 @@ static void draw_help_blurbs(s8 arg0, struct Sprite *sprite, NLsprarg *params, s
 
         set_text_scale(MIN(474.0 / u_get_jpn_text_width(sprite->fontId, line1), 0.68), 0.7f);
         set_text_pos(56.0f + params->x, params->y - 1.0f);
-        u_draw_text(line1);
+        sprite_puts(line1);
 
         set_text_scale(MIN(474.0 / u_get_jpn_text_width(sprite->fontId, line2), 0.68), 0.7f);
         set_text_pos(56.0f + params->x, params->y + ((itemCount == 6) ? 16 : 21));
-        u_draw_text(line2);
+        sprite_puts(line2);
 
         set_text_opacity(1.0f);
         set_text_scale(0.68f, 0.7f);
@@ -1624,7 +1625,7 @@ static void help_sprite_draw(struct Sprite *sprite)
     s8 var_r9;
     u8 temp_r25_3;
 
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.u0 = 0.0f;
     params.v0 = 0.0f;
     params.u1 = 1.0f;
@@ -1639,11 +1640,11 @@ static void help_sprite_draw(struct Sprite *sprite)
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT;
     reset_text_draw_settings();
     set_text_font(sprite->fontId);
-    func_80071B1C(sprite->unk4C);
+    func_80071B1C(sprite->depth);
     params.sprno = BMP_COM_white_mask8x8;
     params.x = 320.1f;
     params.y = 240.1f;
-    params.z = 0.001 + sprite->unk4C;
+    params.z = 0.001 + sprite->depth;
     params.zm_x = lbl_802F202C;
     params.zm_y = lbl_802F2030;
     params.trnsl = 0.6666f;
@@ -1651,7 +1652,7 @@ static void help_sprite_draw(struct Sprite *sprite)
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_CC;
     nlSprPut(&params);
 
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.zm_x = 1.0f;
     params.zm_y = 1.0f;
     params.trnsl = 1.0f;
@@ -1665,21 +1666,21 @@ static void help_sprite_draw(struct Sprite *sprite)
     title = helpPageTitles[modeCtrl.gameType][currPage];
     func_80071B50(0x220000);
     set_text_scale(0.95f, 1.0f);
-    func_80071B1C(sprite->unk4C - 0.001);
+    func_80071B1C(sprite->depth - 0.001);
     set_text_mul_color(RGBA(32, 16, 0, 0));
     set_text_pos(
         3.0 + (320.0 - (0.95 * (0.5 * u_get_jpn_text_width(sprite->fontId, title)))),
         3.0f + (15.0f + params.y));
-    u_draw_text(title);
-    func_80071B1C(sprite->unk4C - 0.002);
+    sprite_puts(title);
+    func_80071B1C(sprite->depth - 0.002);
     set_text_mul_color(RGBA(255, 128, 0, 0));
     set_text_pos(
         320.0 - (0.95 * (0.5 * u_get_jpn_text_width(sprite->fontId, title))),
         15.0f + params.y);
-    u_draw_text(title);
+    sprite_puts(title);
     func_80071B50(0x20000);
     set_text_scale(1.0f, 1.0f);
-    func_80071B1C(sprite->unk4C);
+    func_80071B1C(sprite->depth);
     set_text_mul_color(RGBA(255, 255, 255, 0));
     set_text_mul_color(RGBA(0, 0, 0, 0));
     set_text_scale(0.5f, 0.6f);
@@ -1689,30 +1690,30 @@ static void help_sprite_draw(struct Sprite *sprite)
     nlSprPut(&params);
 
     set_text_pos(6.5 + params.x - 4.0, 40.0f + params.y);
-    u_draw_text("a/Back");
+    sprite_puts("a/Back");
     params.x = 576.0f + (40.0f * lbl_802F2028);
     params.y = 36.0f;
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT | NLSPR_FLIP_H;
     nlSprPut(&params);
 
     set_text_pos(6.5 + params.x - 4.0, 40.0f + params.y);
-    u_draw_text("a/Next");
+    sprite_puts("a/Next");
     params.attr = (sprite->flags & ~0xF) | NLSPR_DISP_LT;
     set_text_mul_color(RGBA(255, 255, 255, 0));
     set_text_scale(1.0f, 1.0f);
     set_text_mul_color(RGBA(255, 255, 255, 0));
     set_text_pos(446.0f + (160.0f * lbl_802F2028), 440.0f);
-    u_draw_text("p/LEVER/");
+    sprite_puts("p/LEVER/");
     temp_r25_2 = 255.0 * (1.0 - fabs(mathutil_sin(powerOnTimer << 9)));
     set_text_mul_color(RGBA(0, 255, 255, 0));
     set_text_add_color(RGBA(temp_r25_2, temp_r25_2, temp_r25_2, 0));
     set_text_pos(422.0f + (160.0f * lbl_802F2028), 440.0f);
-    u_draw_text("p/SANNKAKU_L/a/  p/SANNKAKU_R/");
+    sprite_puts("p/SANNKAKU_L/a/  p/SANNKAKU_R/");
     set_text_mul_color(RGBA(0, 0, 0, 0));
     set_text_add_color(RGBA(0, 0, 0, 0));
     set_text_pos(48.0f + (30.0f + (422.0f + (160.0f * lbl_802F2028))), 440.0f);
     set_text_scale(0.8f, 1.0f);
-    u_draw_text("a/Movement");
+    sprite_puts("a/Movement");
     set_text_scale(1.0f, 1.0f);
     set_text_mul_color(RGBA(255, 255, 255, 0));
 
@@ -1733,7 +1734,7 @@ static void help_sprite_draw(struct Sprite *sprite)
     temp_r25_3 = sprite->fontId;
     params.zm_x = 1.0f;
     params.zm_y = lbl_802F2038;
-    params.z = sprite->unk4C - 0.001;
+    params.z = sprite->depth - 0.001;
     sprite->fontId = 0xB1;
     set_text_font(sprite->fontId);
     set_text_opacity(lbl_802F203C);
@@ -1741,10 +1742,10 @@ static void help_sprite_draw(struct Sprite *sprite)
     draw_controls_info(0, sprite, &params);
     params.zm_x = 1.0f;
     params.zm_y = lbl_802F2040;
-    params.z = sprite->unk4C - 0.001;
+    params.z = sprite->depth - 0.001;
     set_text_opacity(lbl_802F2044);
     draw_controls_info(1, sprite, &params);
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.zm_x = 1.0f;
     params.zm_y = 1.0f;
     params.ang = 0;
@@ -1752,13 +1753,13 @@ static void help_sprite_draw(struct Sprite *sprite)
     sprite->fontId = temp_r25_3;
     set_text_font(sprite->fontId);
     set_text_mul_color(RGBA(255, 255, 255, 0));
-    func_80071B1C(sprite->unk4C);
+    func_80071B1C(sprite->depth);
     set_text_scale(1.0f, 1.0f);
     set_text_opacity(1.0f);
     func_80071B50(0x20000);
     set_text_scale(0.68f, 0.7f);
     set_text_mul_color(RGBA(255, 255, 192, 0));
-    func_80071B1C(sprite->unk4C - 0.002);
+    func_80071B1C(sprite->depth - 0.002);
 
     var_r27 = 0;
     var_r29 = 4;

@@ -16,6 +16,7 @@
 #include "mode.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
+#include "polydisp.h"
 #include "rend_efc.h"
 #include "stage.h"
 #include "stobj.h"
@@ -210,7 +211,7 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
     struct RenderEffectFlatMirror *work;
     struct Camera *camera;
 
-    if (polyDisp.unk0 & 0x20)
+    if (polyDisp.flags & 0x20)
         return;
 
     set_current_camera(modeCtrl.currPlayer);
@@ -318,7 +319,7 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
         GXSetScissor(0, 0, work->xres, work->yres);
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(5);
-        polyDisp.unk0 |= 4;
+        polyDisp.flags |= 4;
         mathutil_mtxA_from_mtx(work->unk2C);
         mathutil_mtxA_get_translate_alt(&polyDisp.unk4);
         mathutil_mtxA_tf_vec_xyz(&polyDisp.unk10, 0.0f, 1.0f, 0.0f);
@@ -334,7 +335,7 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
 
     if (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
     {
-        if (!(polyDisp.unk0 & 0x10))
+        if (!(polyDisp.flags & 0x10))
             draw_monkey();
         if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)
             stage_draw();
@@ -358,7 +359,7 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
     }
     else
         func_800A5F28();
-    polyDisp.unk0 &= 0xFFFFFFFB;
+    polyDisp.flags &= 0xFFFFFFFB;
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);
@@ -635,7 +636,7 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
         GXSetScissor(0, 0, work->xres, work->yres);
         mathutil_mtxA_from_mtxB();
         load_light_group_uncached(5);
-        polyDisp.unk0 |= 4;
+        polyDisp.flags |= 4;
         mathutil_mtxA_from_mtx(work->unk2C);
         mathutil_mtxA_get_translate_alt(&polyDisp.unk4);
         mathutil_mtxA_tf_vec_xyz(&polyDisp.unk10, 0.0f, 1.0f, 0.0f);
@@ -651,7 +652,7 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
 
     if (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
     {
-        if (!(polyDisp.unk0 & 0x10))
+        if (!(polyDisp.flags & 0x10))
             draw_monkey();
         if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)
             stage_draw();
@@ -673,7 +674,7 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
     }
     else
         func_800A5F28();
-    polyDisp.unk0 &= 0xFFFFFFFB;
+    polyDisp.flags &= 0xFFFFFFFB;
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);

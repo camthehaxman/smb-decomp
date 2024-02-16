@@ -112,7 +112,7 @@ static void do_object_collision(void)
             {
                 if (physBall.animGroupId != 0)
                     tf_physball_to_anim_group_space(&physBall, 0);
-                func_8003CB3C(ball, &physBall);
+                set_ball_pos_and_vel_from_physball(ball, &physBall);
             }
         }
     }

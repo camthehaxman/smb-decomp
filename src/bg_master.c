@@ -11,6 +11,7 @@
 #include "info.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "polydisp.h"
 #include "stage.h"
 #include "window.h"
 
@@ -118,7 +119,7 @@ void bg_master_main(void)
     int var_r26;
 
     work = backgroundInfo.work;
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
         var_r29 = 0x10;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         var_r29 = 1 << (modeCtrl.unk30 - 1);
@@ -230,7 +231,7 @@ void bg_master_draw(void)
     Vec sp8;
 
     temp_r31 = backgroundInfo.work;
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
         var_r30 = 0x10;
     else if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
         var_r30 = 1 << (modeCtrl.unk30 - 1);
@@ -263,7 +264,7 @@ void bg_master_draw(void)
         avdisp_enable_custom_tex_mtx(0U);
     }
     bg_default_draw();
-    if (!(polyDisp.unk0 & 4) && temp_r31->unk170 != 0)
+    if (!(polyDisp.flags & 4) && temp_r31->unk170 != 0)
     {
         avdisp_set_z_mode(1U, GX_LEQUAL, 0U);
         avdisp_enable_custom_tex_mtx(1U);

@@ -21,6 +21,7 @@
 #include "light.h"
 #include "load.h"
 #include "mathutil.h"
+#include "memcard.h"
 #include "minimap.h"
 #include "mode.h"
 #include "mot_ape.h"
@@ -77,7 +78,7 @@ void submode_adv_warning_init_func(void)
 {
     introBackdropColor = 0;
     u_clear_buffers_2_and_5();
-    func_8009F49C(2);
+    memcard_set_mode(MC_MODE_LOAD_GAMEDATA_2);
     event_start(EVENT_SPRITE);
     event_start(EVENT_MEMCARD);
     gameSubmodeRequest = SMD_ADV_WARNING_MAIN;
@@ -133,7 +134,7 @@ void submode_adv_logo_init_func(void)
     event_start(EVENT_CAMERA);
     event_start(EVENT_SPRITE);
     event_start(EVENT_SOUND);
-    camera_set_state(27);
+    camera_set_state_all(27);
     unload_stage();
     call_bitmap_load_group(BMP_ADV);
     u_logo_plus_sprite_something();
@@ -331,7 +332,7 @@ void submode_adv_demo_init_func(void)
         ballInfo[i].bananas = 0;
         worldInfo[i].state = 1;
     }
-    camera_set_state(29);
+    camera_set_state_all(29);
     call_bitmap_load_group(BMP_ADV);
     hud_show_press_start_textbox(0);
     hud_show_adv_copyright_info(0);
@@ -502,7 +503,7 @@ static void banana_textbox_callback(struct TextBox *tbox)
     static float lbl_801741CC[] = { -125, -70, -10 };
 
     mathutil_mtxA_from_mtxB();
-    u_math_unk15(&ballInfo[tbox->id - 1].ape->unk30, &spC, currentCamera->sub28.unk38);
+    u_math_unk15(&ballInfo[tbox->id - 1].ape->pos, &spC, currentCamera->sub28.unk38);
     tbox->x = spC.x;
     tbox->y = spC.y + lbl_801741CC[tbox->id - 1];
 }
@@ -531,7 +532,7 @@ void run_cutscene_script(void)
             if (!(modeCtrl.courseFlags & (1 << 13)))
             {
                 mathutil_mtxA_from_mtxB();
-                u_math_unk15(&ballInfo[cmd->param].ape->unk30, &sp3C, currentCamera->sub28.unk38);
+                u_math_unk15(&ballInfo[cmd->param].ape->pos, &sp3C, currentCamera->sub28.unk38);
                 memset(&tbox, 0, sizeof(tbox));
                 tbox.x = sp3C.x;
                 tbox.y = sp3C.y;
@@ -618,7 +619,7 @@ void run_cutscene_script(void)
         case CMD_UNK13:  // level camera?
             event_start(EVENT_WORLD);
             event_start(EVENT_INFO);
-            camera_set_state(54);
+            camera_set_state_all(54);
             light_init(currStageId);
             break;
         case CMD_INIT_CHARACTER_POS:
@@ -630,7 +631,7 @@ void run_cutscene_script(void)
         case CMD_UNK15:  // cutscene camera?
             event_finish(EVENT_WORLD);
             event_finish(EVENT_INFO);
-            camera_set_state(29);
+            camera_set_state_all(29);
             break;
         case CMD_AIAI_ANIM:
             advLogoInfo.unk18[0] = cmd->param;
@@ -1002,7 +1003,7 @@ void adv_ape_thread(struct Ape *ape, int status)
     switch (status)
     {
     case THREAD_STATUS_KILLED:
-        new_ape_close(ape);
+        ape_destroy(ape);
         return;
     }
     if (advDemoInfo.flags & (1 << 5))
@@ -1039,7 +1040,7 @@ void adv_ape_thread(struct Ape *ape, int status)
         func_80036EB8(ape);
         mathutil_mtxA_to_quat(&ape->unk60);
         u_choose_ape_anim(ape, f31);
-        new_ape_calc(ape);
+        ape_skel_anim_main(ape);
         if (!(ape->flags & (1 << 3)))
             func_8003765C(ape);
         if (advDemoInfo.unk8 >= 0x682 && advDemoInfo.unk8 < 0x6CC)
@@ -1051,9 +1052,9 @@ void adv_ape_thread(struct Ape *ape, int status)
             ball->unk104.z = -4.25f;
         }
         if (advDemoInfo.unk8 >= 0x6CC && advDemoInfo.unk8 < 0x73A && ape->charaId == 2)
-            ball->unk104.x = ape->unk30.x + 1.0;
+            ball->unk104.x = ape->pos.x + 1.0;
         if (advDemoInfo.unk8 >= 0x73A && advDemoInfo.unk8 < 0x7A2)
-            ball->unk104 = ballInfo[1].ape->unk30;
+            ball->unk104 = ballInfo[1].ape->pos;
         ape_face_dir(ape, &ball->unk104);
         ball->unk100 = 0;
         ball->unk110 = 0.0f;
@@ -1062,19 +1063,19 @@ void adv_ape_thread(struct Ape *ape, int status)
     {
         ape->flags &= ~0x13;
         ape->flags |= 1;
-        ape->unk30.x = calc_spline(f31, lbl_80174DD4[ape->charaId]);
-        ape->unk30.y = calc_spline(f31, lbl_80174DE4[ape->charaId]);
-        ape->unk30.z = calc_spline(f31, lbl_80174DF4[ape->charaId]);
+        ape->pos.x = calc_spline(f31, lbl_80174DD4[ape->charaId]);
+        ape->pos.y = calc_spline(f31, lbl_80174DE4[ape->charaId]);
+        ape->pos.z = calc_spline(f31, lbl_80174DF4[ape->charaId]);
         r30 = calc_spline(f31, lbl_80174E04[ape->charaId]);
         if (ape->charaId == lbl_802F1EB4)
         {
-            ape->unk30.x += lbl_802F1ECC * 0.1;
-            ape->unk30.y += lbl_802F1EC8 * 0.1;
-            ape->unk30.z += lbl_802F1EC4 * 0.1;
+            ape->pos.x += lbl_802F1ECC * 0.1;
+            ape->pos.y += lbl_802F1EC8 * 0.1;
+            ape->pos.z += lbl_802F1EC4 * 0.1;
             r30 += lbl_802F1ED2;
         }
         mathutil_mtxA_from_identity();
-        mathutil_mtxA_translate(&ape->unk30);
+        mathutil_mtxA_translate(&ape->pos);
         mathutil_mtxA_rotate_y(r30);
         mathutil_mtxA_rotate_y(0xC000);
         mathutil_mtxA_to_quat(&ape->unk60);
@@ -1125,7 +1126,7 @@ void adv_ape_thread(struct Ape *ape, int status)
         }
         new_ape_stat_motion(ape, r4, r5, r6, 0.0f);
         ape->unk3C = (Vec){ 0.0f, -0.12f, 0.0f };
-        new_ape_calc(ape);
+        ape_skel_anim_main(ape);
         if (advDemoInfo.flags & (1 << 9))
         {
             s16 sp30[] = { 0x2E00, 0xE100, 0x1500, 0x0000 };
@@ -1133,7 +1134,7 @@ void adv_ape_thread(struct Ape *ape, int status)
 
             lbl_802F1BB4[ape->charaId] += (sp30[ape->charaId] - lbl_802F1BB4[ape->charaId]) * 0.1;
             lbl_802F1BBC[ape->charaId] += (sp28[ape->charaId] - lbl_802F1BBC[ape->charaId]) * 0.1;
-            func_8008BFDC(ape, lbl_802F1ED2 + lbl_802F1BB4[ape->charaId], lbl_802F1ED0 + lbl_802F1BBC[ape->charaId]);
+            mot_ape_8008BFDC(ape, lbl_802F1ED2 + lbl_802F1BB4[ape->charaId], lbl_802F1ED0 + lbl_802F1BBC[ape->charaId]);
         }
         else if (ape->flags & (1<<(31-9)))
         {
@@ -1157,9 +1158,9 @@ void adv_ape_thread(struct Ape *ape, int status)
             ape->unkA0.z = 0.0f;
             mathutil_vec_normalize_len(&ape->unkA0);
             mathutil_mtxA_tf_vec_xyz(&sp1C, 1.0f, 0.0f, 0.0f);
-            sp1C.x += ape->unk30.x;
-            sp1C.y += ape->unk30.y;
-            sp1C.z += ape->unk30.z;
+            sp1C.x += ape->pos.x;
+            sp1C.y += ape->pos.y;
+            sp1C.z += ape->pos.z;
             ape_face_dir(ape, &sp1C);
             mathutil_mtxA_pop();
         }
@@ -1263,7 +1264,7 @@ void submode_adv_title_reinit_func(void)
     free_all_bitmap_groups_except_com();
     event_start(EVENT_SPRITE);
     event_start(EVENT_SOUND);
-    camera_set_state(27);
+    camera_set_state_all(27);
     unload_stage();
     call_bitmap_load_group(BMP_ADV);
     hud_show_title_banner(1);
@@ -1291,8 +1292,8 @@ void submode_adv_title_reinit_func(void)
     gameSubmodeRequest = SMD_ADV_TITLE_MAIN;
 }
 
-s32 lbl_802F02EC = 6;
-s32 lbl_802F02F0 = 6;
+s32 s_otherReplayIndex = 6;
+s32 s_currReplayIndex = 6;
 
 void submode_adv_title_main_func(void)
 {
@@ -1395,7 +1396,7 @@ void submode_adv_info_init_func(void)
     light_init(currStageId);
     ballInfo[0].state = 16;
     ballInfo[0].bananas = 0;
-    camera_set_state(43);
+    camera_set_state_all(43);
     call_bitmap_load_group(BMP_NML);
     hud_show_press_start_textbox(0);
     hud_show_adv_copyright_info(0);
@@ -1550,7 +1551,7 @@ void submode_adv_info_main_func(void)
     if (infoWork.flags & INFO_FLAG_FALLOUT)
     {
         infoWork.flags &= ~INFO_FLAG_FALLOUT;
-        camera_set_state(4);
+        camera_set_state_all(4);
         u_play_sound_0(29);
     }
     if (modeCtrl.submodeTimer == 583)
@@ -1563,7 +1564,7 @@ void submode_adv_info_main_func(void)
         infoWork.flags &= ~INFO_FLAG_GOAL;
         ballInfo[0].state = 5;
         ballInfo[0].flags |= 0x500;
-        camera_set_state(14);
+        camera_set_state_all(14);
     }
     if (modeCtrl.submodeTimer < 3360 && modeCtrl.submodeTimer > 2760)
     {
@@ -1617,7 +1618,7 @@ void submode_adv_info_main_func(void)
             start_screen_fade(FADE_OUT, RGBA(0, 0, 0, 0), (s8)cmd->param);
             break;
         case INFOCMD_CAMERA_STATE:
-            camera_set_state((s8)cmd->param);
+            camera_set_state_all((s8)cmd->param);
             break;
         case INFOCMD_BALL_SET_FLAGS:
             ballInfo[0].flags |= cmd->param;
@@ -1662,32 +1663,32 @@ void submode_adv_info_main_func(void)
  * Game Ready Submode
  */
 
-static int func_800119C0(void);
-static int func_80011A84(void);
+static int u_choose_some_replay_index_1(void);
+static int u_choose_some_replay_index_2(void);
 static int func_80011B98(void);
 static void func_80011BD4(void);
 
 void submode_adv_game_ready_init_func(void)
 {
-    struct ReplayHeader sp8;
+    struct ReplayHeader replayHdr;
     int r4;
 
     if (debugFlags & 0xA)
         return;
-    u_load_random_builtin_replay();
+    recplay_load_builtin_replays();
     func_80011BD4();
-    replayInfo.unk14 = 0;
-    replayInfo.unk0[replayInfo.unk14] = func_800119C0();
-    if (replayInfo.unk0[replayInfo.unk14] < 0)
+    g_recplayInfo.u_playerId = 0;
+    g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId] = u_choose_some_replay_index_1();
+    if (g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId] < 0)
     {
-        replayInfo.unk0[replayInfo.unk14] = 0;
+        g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId] = 0;
         gameSubmodeRequest = SMD_ADV_LOGO_INIT;
         start_screen_fade(FADE_UNK2, RGBA(0, 0, 0, 0), 1);
         return;
     }
-    replayInfo.unk10 = func_8004964C(replayInfo.unk0[replayInfo.unk14]);
-    get_replay_header(replayInfo.unk0[replayInfo.unk14], &sp8);
-    currStageId = sp8.stageId;
+    g_recplayInfo.u_timeOffset = recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
+    recplay_get_header(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], &replayHdr);
+    currStageId = replayHdr.stageId;
     event_finish_all();
     call_bitmap_load_group(BMP_RNK);
     modeCtrl.gameType = GAMETYPE_MAIN_NORMAL;
@@ -1697,7 +1698,7 @@ void submode_adv_game_ready_init_func(void)
     func_80044920();
     u_clear_buffers_2_and_5();
     event_start(EVENT_INFO);
-    func_80049514(replayInfo.unk0[replayInfo.unk14]);
+    func_80049514(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
     infoWork.flags |= INFO_FLAG_REPLAY|INFO_FLAG_11;
     load_stage(currStageId);
     event_start(EVENT_STAGE);
@@ -1722,7 +1723,7 @@ void submode_adv_game_ready_init_func(void)
     modeCtrl.submodeTimer = 120;
     ballInfo[0].state = 2;
     ballInfo[0].bananas = 0;
-    camera_set_state(10);
+    camera_set_state_all(10);
     u_show_adv_ready_hud();
     func_800885EC();
     func_80088E90();
@@ -1760,12 +1761,12 @@ void submode_adv_game_ready_main_func(void)
         func_8000FEC8(30);
     if (--modeCtrl.submodeTimer <= 0)
     {
-        struct ReplayHeader sp8;
+        struct ReplayHeader replayHdr;
 
-        get_replay_header(func_80011A84(), &sp8);
+        recplay_get_header(u_choose_some_replay_index_2(), &replayHdr);
         if (debugFlags & (1 << 2))
-            printf("/*-- pre_load_stage(%d) --*/\n", sp8.stageId);
-        preload_stage_files(sp8.stageId);
+            printf("/*-- pre_load_stage(%d) --*/\n", replayHdr.stageId);
+        preload_stage_files(replayHdr.stageId);
         gameSubmodeRequest = SMD_ADV_GAME_PLAY_INIT;
     }
 }
@@ -1774,16 +1775,16 @@ void submode_adv_game_play_init_func(void)
 {
     if (debugFlags & 0xA)
         return;
-    modeCtrl.submodeTimer = func_8004964C(replayInfo.unk0[replayInfo.unk14]) + 30.0;
+    modeCtrl.submodeTimer = recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]) + 30.0;
     event_resume(EVENT_WORLD);
     hud_show_go_banner(60);
     infoWork.flags &= ~(INFO_FLAG_TIMER_PAUSED|INFO_FLAG_08);
     ballInfo[0].state = 9;
     worldInfo[0].state = 9;
-    camera_set_state(0);
+    camera_set_state_all(0);
     infoWork.flags |= INFO_FLAG_REPLAY|INFO_FLAG_11;
-    replayInfo.unk10 = func_8004964C(replayInfo.unk0[replayInfo.unk14]);
-    animate_anim_groups(get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]));
+    g_recplayInfo.u_timeOffset = recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
+    animate_anim_groups(recplay_get_stage_timer(g_recplayInfo.u_timeOffset, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]));
     gameSubmodeRequest = SMD_ADV_GAME_PLAY_MAIN;
 }
 
@@ -1797,7 +1798,7 @@ void submode_adv_game_play_main_func(void)
         modeCtrl.unk18 = 0xB4;
         gameSubmodeRequest = SMD_ADV_RANKING_INIT;
         worldInfo[0].state = 6;
-        camera_set_state(14);
+        camera_set_state_all(14);
         minimap_set_state(MINIMAP_STATE_CLOSE);
     }
     if (!(modeCtrl.courseFlags & (1 << 13))
@@ -1849,12 +1850,12 @@ void submode_adv_ranking_main_func(void)
     case 2460:
         break;
     case 2160:
-        func_80088A10();
+        ranking_screen_80088A10();
         if (lbl_802F1BA8 == 0)
-            func_80088F18();
+            u_show_some_ranking_sprite();
         break;
     case 2100:
-        func_8008897C(0);
+        ranking_screen_8008897C(0);
         break;
     case 1620:
         if (lbl_802F1BA8 == 0)
@@ -1864,10 +1865,10 @@ void submode_adv_ranking_main_func(void)
         }
         break;
     case 1260:
-        func_80088A10();
+        ranking_screen_80088A10();
         break;
     case 1200:
-        func_8008897C(0);
+        ranking_screen_8008897C(0);
         break;
     case 720:
         if (lbl_802F1BA8 == 0)
@@ -1877,22 +1878,22 @@ void submode_adv_ranking_main_func(void)
         }
         break;
     case 360:
-        func_80088A10();
+        ranking_screen_80088A10();
         break;
     case 300:
-        func_8008897C(0);
+        ranking_screen_8008897C(0);
         break;
     case 90:
-        func_80088FD4(0);
+        ranking_screen_80088FD4(0);
         break;
     }
 
     if (ball->state == 4)
     {
-        struct ReplayHeader sp50;
+        struct ReplayHeader replayHdr;
 
-        get_replay_header(replayInfo.unk0[replayInfo.unk14], &sp50);
-        if (sp50.flags & (1 << 7))
+        recplay_get_header(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], &replayHdr);
+        if (replayHdr.flags & (1 << 7))
         {
             ball->state = 5;
             ball->flags |= 0x3500;
@@ -1922,10 +1923,10 @@ void submode_adv_ranking_main_func(void)
             event_finish(EVENT_BACKGROUND);
             event_finish(EVENT_BALL);
             event_finish(EVENT_SOUND);
-            replayInfo.unk0[replayInfo.unk14] = func_80011B98();
-            get_replay_header(replayInfo.unk0[replayInfo.unk14], &sp38);
+            g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId] = func_80011B98();
+            recplay_get_header(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], &sp38);
             currStageId = sp38.stageId;
-            func_80049514(replayInfo.unk0[replayInfo.unk14]);
+            func_80049514(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
             infoWork.flags |= INFO_FLAG_REPLAY;
             load_stage(currStageId);
             event_start(EVENT_STAGE);
@@ -1946,25 +1947,25 @@ void submode_adv_ranking_main_func(void)
             if (modeCtrl.submodeTimer > 2520)
             {
                 worldInfo[0].state = 9;
-                camera_set_state(0);
+                camera_set_state_all(0);
             }
             else
             {
                 worldInfo[0].state = 6;
-                camera_set_state(func_80011BE0());
+                camera_set_state_all(func_80011BE0());
                 infoWork.flags &= ~INFO_FLAG_11;
             }
 
-            f1 = func_8004964C(replayInfo.unk0[replayInfo.unk14]);
+            f1 = recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
             if (sp38.flags & (1 << 4))
                 f1 -= 30.0f;
             if (f1 > (float)modeCtrl.submodeTimer - 120.0)
                 f1 = (int)((float)modeCtrl.submodeTimer - 120.0);
             else if (f1 > (float)modeCtrl.submodeTimer * 0.5)
                 f1 = (int)((float)modeCtrl.submodeTimer * 0.5);
-            replayInfo.unk10 = f1;
-            animate_anim_groups(get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]));
-            get_replay_header(func_80011A84(), &sp8);
+            g_recplayInfo.u_timeOffset = f1;
+            animate_anim_groups(recplay_get_stage_timer(g_recplayInfo.u_timeOffset, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]));
+            recplay_get_header(u_choose_some_replay_index_2(), &sp8);
             if (debugFlags & (1 << 2))
                 printf("/*-- pre_load_stage(%d) --*/\n", sp8.stageId);
             preload_stage_files(sp8.stageId);
@@ -1977,8 +1978,8 @@ void submode_adv_ranking_main_func(void)
      && ANY_CONTROLLER_PRESSED(PAD_BUTTON_START))
     {
         func_8000FEC8(30);
-        func_8008897C(0);
-        func_80088FD4(0);
+        ranking_screen_8008897C(0);
+        ranking_screen_80088FD4(0);
     }
 
     if (modeCtrl.submodeTimer == 180)
@@ -2005,8 +2006,8 @@ void submode_adv_ranking_main_func(void)
     if (--modeCtrl.submodeTimer <= 0)
     {
         infoWork.flags &= ~INFO_FLAG_11;
-        func_8008897C(1);
-        func_80088FD4(1);
+        ranking_screen_8008897C(1);
+        ranking_screen_80088FD4(1);
         destroy_sprite_with_tag(SPRITE_TAG_LOGO_PLUS);
         call_bitmap_free_group(BMP_RNK);
         reset_camera_viewport();
@@ -2014,70 +2015,70 @@ void submode_adv_ranking_main_func(void)
     }
 }
 
-static int func_800119C0(void)
+static int u_choose_some_replay_index_1(void)
 {
-    struct ReplayHeader sp8;
+    struct ReplayHeader replayHdr;
     int i;
 
-    for (i = lbl_802F02EC + 1; i < 7; i++)
+    for (i = s_otherReplayIndex + 1; i < 7; i++)
     {
-        get_replay_header(i, &sp8);
-        if ((sp8.flags & (1 << 4)) && (sp8.flags & 1))
+        recplay_get_header(i, &replayHdr);
+        if ((replayHdr.flags & REPLAY_FLAG_4) && (replayHdr.flags & REPLAY_FLAG_GOAL))
             break;
     }
     if (i >= 7)
     {
-        for (i = 0; i < lbl_802F02EC; i++)
+        for (i = 0; i < s_otherReplayIndex; i++)
         {
-            get_replay_header(i, &sp8);
-            if ((sp8.flags & (1 << 4)) && (sp8.flags & 1))
+            recplay_get_header(i, &replayHdr);
+            if ((replayHdr.flags & REPLAY_FLAG_4) && (replayHdr.flags & REPLAY_FLAG_GOAL))
                 break;
         }
     }
-    lbl_802F02EC = i;
-    get_replay_header(lbl_802F02EC, &sp8);
-    if (sp8.stageId == 0)
-        sp8.stageId = 1;  // pointless
-    return lbl_802F02EC;
+    s_otherReplayIndex = i;
+    recplay_get_header(s_otherReplayIndex, &replayHdr);
+    if (replayHdr.stageId == 0)
+        replayHdr.stageId = 1;  // pointless
+    return s_otherReplayIndex;
 }
 
-static int func_80011A84(void)
+static int u_choose_some_replay_index_2(void)
 {
-    struct ReplayHeader sp8;
+    struct ReplayHeader replayHdr;
     int i;
 
-    for (i = lbl_802F02F0 + 1; i < 7; i++)
+    for (i = s_currReplayIndex + 1; i < 7; i++)
     {
-        if (i == lbl_802F02EC || func_8004964C(i) < 300.0)
+        if (i == s_otherReplayIndex || recplay_get_time(i) < 300.0)
             continue;
-        get_replay_header(i, &sp8);
-        if (sp8.flags & 0x83)
+        recplay_get_header(i, &replayHdr);
+        if (replayHdr.flags & (REPLAY_FLAG_GOAL|REPLAY_FLAG_FALLOUT|REPLAY_FLAG_BONUS_CLEAR))
             break;
     }
     if (i >= 7)
     {
-        for (i = 0; i <= lbl_802F02F0; i++)
+        for (i = 0; i <= s_currReplayIndex; i++)
         {
-            if (i == lbl_802F02EC || func_8004964C(i) < 300.0)
+            if (i == s_otherReplayIndex || recplay_get_time(i) < 300.0)
                 continue;
-            get_replay_header(i, &sp8);
-            if (sp8.flags & 0x83)
+            recplay_get_header(i, &replayHdr);
+            if (replayHdr.flags & (REPLAY_FLAG_GOAL|REPLAY_FLAG_FALLOUT|REPLAY_FLAG_BONUS_CLEAR))
                 break;
         }
-        if (i > lbl_802F02F0)
-            i = lbl_802F02EC;
+        if (i > s_currReplayIndex)
+            i = s_otherReplayIndex;
     }
-    lbl_802F02F0 = i;
-    get_replay_header(lbl_802F02F0, &sp8);
-    if (sp8.stageId == ST_000_DUMMY)
-        sp8.stageId = ST_001_PLAIN;  // pointless
+    s_currReplayIndex = i;
+    recplay_get_header(s_currReplayIndex, &replayHdr);
+    if (replayHdr.stageId == ST_000_DUMMY)
+        replayHdr.stageId = ST_001_PLAIN;  // pointless
     lbl_802F1BC4 = 1;
-    return lbl_802F02F0;
+    return s_currReplayIndex;
 }
 
 static int func_80011B98(void)
 {
-    int ret = (lbl_802F1BC4 != 0) ? lbl_802F02F0 : func_80011A84();
+    int ret = (lbl_802F1BC4 != 0) ? s_currReplayIndex : u_choose_some_replay_index_2();
 
     lbl_802F1BC4 = 0;
     return ret;

@@ -1,12 +1,12 @@
 /* 8004AA18 00046938  7C 08 02 A6 */	mflr r0
-/* 8004AA1C 0004693C  3C 60 80 21 */	lis r3, recSys@ha
+/* 8004AA1C 0004693C  3C 60 80 21 */	lis r3, s_recordingStatus@ha
 /* 8004AA20 00046940  90 01 00 04 */	stw r0, 4(r1)
 /* 8004AA24 00046944  94 21 FF A8 */	stwu r1, -0x58(r1)
 /* 8004AA28 00046948  DB E1 00 50 */	stfd f31, 0x50(r1)
 /* 8004AA2C 0004694C  DB C1 00 48 */	stfd f30, 0x48(r1)
 /* 8004AA30 00046950  93 E1 00 44 */	stw r31, 0x44(r1)
 /* 8004AA34 00046954  93 C1 00 40 */	stw r30, 0x40(r1)
-/* 8004AA38 00046958  3B C3 AE 20 */	addi r30, r3, recSys@l
+/* 8004AA38 00046958  3B C3 AE 20 */	addi r30, r3, s_recordingStatus@l
 /* 8004AA3C 0004695C  3F FE 00 04 */	addis r31, r30, 4
 /* 8004AA40 00046960  93 A1 00 3C */	stw r29, 0x3c(r1)
 /* 8004AA44 00046964  83 AD 9D 38 */	lwz r29, currentBall  //@sda21(r13)

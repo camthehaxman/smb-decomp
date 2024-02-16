@@ -101,58 +101,6 @@ struct GFXBufferInfo
     /*0x10*/ GXFifoObj *fifos[2];
 };
 
-struct StageBgAnim
-{
-    s32 loopStartSeconds;
-    s32 loopEndSeconds;
-    u32 scaleXKeyframeCount;
-    struct Keyframe *scaleXKeyframes;
-    u32 scaleYKeyframeCount;
-    struct Keyframe *scaleYKeyframes;
-    u32 scaleZKeyframeCount;
-    struct Keyframe *scaleZKeyframes;
-    u32 rotXKeyframeCount;
-    struct Keyframe *rotXKeyframes;
-    u32 rotYKeyframeCount;
-    struct Keyframe *rotYKeyframes;
-    u32 rotZKeyframeCount;
-    struct Keyframe *rotZKeyframes;
-    u32 posXKeyframeCount;
-    struct Keyframe *posXKeyframes;
-    u32 posYKeyframeCount;
-    struct Keyframe *posYKeyframes;
-    u32 posZKeyframeCount;
-    struct Keyframe *posZKeyframes;
-    u32 visibleKeyframeCount;
-    struct Keyframe *visibleKeyframes;  // Model visible if value >= 0.5?
-    u32 translucencyKeyframeCount;
-    struct Keyframe *translucencyKeyframes;
-};
-
-struct NightWindowAnim
-{
-    Point3d pos;
-    s16 rotX;
-    s16 rotY;
-    s16 rotZ;
-    s8 id; // Which list of flipbook models to animate
-};
-
-struct StormFireAnim
-{
-    Point3d pos;
-    s8 frameOffset;
-};
-
-struct StageFlipbookAnims
-{
-    s32 nightWindowAnimCount;
-    struct NightWindowAnim *nightWindowAnims;
-    s32 stormFireAnimCount;
-    struct StormFireAnim *stormFireAnims;
-};
-
-struct StageBgObject;
 struct Camera;
 struct Sprite;
 struct FontParams;
@@ -160,27 +108,6 @@ struct GMA;
 struct TPL;
 struct Ape;
 struct Ball;
-
-struct Struct80089CBC
-{
-    s32 unk0;
-    s32 unk4;
-    u32 unk8;
-    u32 unkC;
-    s32 unk10;
-    s32 unk14;
-    u8 filler18[0x20-0x18];
-};  // size = 0x20
-
-struct Struct802B39C0_B0_child
-{
-    u32 unk0;
-    float unk4;
-    s32 unk8;
-    struct Struct80089CBC *unkC;
-    float unk10;
-    s32 unk14[4];
-};  // size = 0x24
 
 // Represents a joint's channel (x, y, z, rotX, rotY, rotZ) whose value changes during the animation
 struct MotionChannel
@@ -192,12 +119,18 @@ struct MotionChannel
     float *values;
 };  // size = 0x10
 
+enum
+{
+    JOINT_FLAG_HAS_ROTATION_MTX = 8,
+    JOINT_FLAG_HAS_OTHER_ROTATION_MTX = 0x40,
+};
+
 struct AnimJoint
 {
-    u32 flags;
+    u32 flags;  // 0 here marks the end of the list
     Vec unk4;
     Vec unk10;
-    Mtx unk1C;
+    /*0x1C */Mtx otherRotateMtx;
     /*0x4C*/ u32 childCount;
     /*0x50*/ const u8 *childIndexes;  // indexes of joints that are attached to this one
     /*0x54*/ struct MotionChannel channels[6];  // x, y, z, rotX, rotY, rotZ
@@ -233,7 +166,7 @@ struct Struct8003699C_child_sub
     float unk2C;
     u8 filler30[4];
     struct AnimJoint *unk34;
-    struct AnimJoint unk38[29];
+    /*0x38*/ struct AnimJoint joints[29];
 };  // size = 0x4090
 
 struct Struct8003699C_child_child
@@ -244,7 +177,7 @@ struct Struct8003699C_child_child
 	u32 unk8;
 };  // size = 0xC
 
-struct Struct8003699C_child
+struct ApeAnimationThing
 {
     u32 unk0;
     u8 filler4[0x28-0x4];
@@ -256,10 +189,10 @@ struct Struct8003699C_child
     u16 unk32;
     u16 unk34;
     u16 unk36;
-    u16 unk38;
+    /*0x38*/ u16 u_poseNum;  // current pose (or keyframe?)
     u16 unk3A;
-    float unk3C;
-    float unk40;
+    float u_someDeltaTime;   // How much the anim progresses each tick?
+    float u_timeInKeyframe;  // Time spent in current pose. When this reaches 1, it goes to the next pose.
     u8 filler44[0x54-0x44];
     Mtx unk54;
     struct Struct8003699C_child_sub unk84;
@@ -275,7 +208,7 @@ struct MotRotation
     float rotZ;
 };
 
-struct Ape_child
+struct Ape_child  // something motion related from motInfo
 {
     float unk0;
     s32 unk4;
@@ -284,15 +217,20 @@ struct Ape_child
     s32 unk10;
     s32 unk14;
     float unk18;
-    u32 unk1C;
+    u32 unk1C;  // some flags
 };  // size = 0x20
+
+enum
+{
+    APE_FLAG_TRANSLUCENT = (1 << 20)
+};
 
 struct Ape
 {
-    struct Struct8003699C_child *unk0;
-    struct Struct8003699C_child *unk4;
-    float unk8;
-    float unkC;
+    struct ApeAnimationThing *unk0;
+    struct ApeAnimationThing *unk4;
+    /*0x008*/ float animTimerCurr;
+    /*0x00C*/ float animTimerMax;
     /*0x010*/ s32 charaId;
     /*0x014*/ u32 flags;
     s32 unk18;
@@ -300,8 +238,8 @@ struct Ape
     struct Ape_child *unk20;
     s32 unk24;
     s32 unk28;
-    struct MotSkeletonEntry1 *skel;  // skeleton?
-    Vec unk30;  // position?
+    struct Skeleton *skel;  // skeleton?
+    Vec pos;  // position?
     Vec unk3C;
     Vec unk48;
     s32 unk54;
@@ -311,9 +249,9 @@ struct Ape
     u32 unk70;
     u32 unk74;
     u8 filler78[0x90-0x78];
-    s32 unk90;  // some model ID?
-    u32 unk94;
-    struct Struct802B39C0_B0_child *unk98;
+    /*0x90*/ s32 u_lodGma;  // bit 0 is the LOD (whether to use the low or high poly model), while the rest of the bits are which GMA in charaGMAs to use
+    u32 unk94;  // number of elements in unk98
+    struct BodyPartThing *unk98;
     u32 unk9C;
     // Sometimes treated as a Vec, sometimes treated as a Quaternion
     Vec unkA0;
@@ -335,13 +273,6 @@ struct AnimGroupInfo
     /*0x1E*/ S16Vec prevRot;
     /*0x24*/ Mtx transform;     // Transform from anim group space to world space
     /*0x54*/ Mtx prevTransform; // Previous frame transform from animGroup space to world space
-};
-
-struct RaycastHit
-{
-    u32 flags;
-    Point3d pos;
-    Vec normal;
 };
 
 struct UnkStruct27
@@ -370,71 +301,6 @@ struct PolyShadowUnit
     GXColor unk2C;
     float unk30;
     float unk34;
-};
-
-enum
-{
-    COLI_FLAG_OCCURRED = 1 << 0, // If at least one ball collision occurred on the current frame
-};
-
-struct ColiPlane
-{
-    Point3d point; // A point on the plane
-    Vec normal;    // Normal of plane
-};
-
-struct PhysicsBall
-{
-    /*0x00*/ u32 flags;
-
-    // Current center position in animGroupId's local space
-    /*0x04*/ Point3d pos;
-
-    // Center position at end of previous frame in animGroupId's previous frame local space
-    /*0x10*/ Point3d prevPos;
-
-    // Current velocity in animGroupId's local space
-    /*0x1C*/ Vec vel;
-
-    /*0x28*/ float radius;
-    /*0x2C*/ float gravityAccel;
-    /*0x30*/ float restitution;
-
-    // The ball may collide with more than one surface during a frame. The "hardest" collision is
-    // recorded, which is used to draw visual collision effects for example.
-
-    // Largest (in magnitude) animGroup-relative ball velocity along the collision normal. It's
-    // always negative because when a collision occurs, the ball's animGroup-relative velocity is
-    // pointing away from the normal.
-    /*0x34*/ float hardestColiSpeed;
-
-    // Collision plane of the hardest collision, in hardestColiAnimGroupId's local space
-    /*0x38*/ struct ColiPlane hardestColiPlane;
-
-    // animGroup ID of the hardest collision
-    /*0x50*/ s32 hardestColiAnimGroupId;
-
-    // Friction applied to the ball's velocity on each contact with a surface.
-    //
-    // Specifically, it is the fraction of the ball's velocity parallel to the contact surface which
-    // is thrown away upon contact. The ball's velocity in this context is relative to the contact
-    // surface's velocity. For example, the relative velocity of a motionless ball on a platform
-    // with velocity (1, 0, 0) would be (-1, 0, 0).
-    /*0x54*/ float friction;
-
-    // animGroup whose local space we are in.
-    // As a reminder, ID 0 is world space.
-    /*0x58*/ s32 animGroupId;
-};
-
-struct ColiEdge
-{
-    // Winds counterclockwise around tri up normal
-    Point2d start;
-    Point2d end;
-
-    // Coplanar with triangle, points inside triangle
-    Vec2d normal;
 };
 
 typedef void (*Struct80206DEC_Func)(void);
@@ -477,9 +343,9 @@ struct ChildJointList
     const u8 *children;
 };
 
-struct MotSkeletonEntry1
+struct Skeleton
 {
-    void *unk0;
+    void *unused0;
     /*0x04*/ struct ChildJointList *childLists;
     /*0x08*/ struct MotRotation *rotations;
     Vec *unkC;
@@ -489,21 +355,21 @@ struct MotSkeletonEntry1
 
 struct Struct80034B50_child2_child
 {
-    void *unk0;
+    void *unused0;
     u8 filler4[0x18-0x4];
 };
 
 struct MotSkeletonEntry2
 {
-    void *unk0;
+    void *unused0;
     struct Struct80034B50_child2_child *unk4[3];
     s32 unk10[3];
 };
 
-struct MotSkeleton
+struct SkeletonFileData
 {
-    struct MotSkeletonEntry1 *unk0;
-    u32 unk4;
+    struct Skeleton *skeletons;
+    u32 skeletonsCount;
     struct MotSkeletonEntry2 *unk8;  // not used?
     u32 unkC;  // not used?
 };
@@ -517,16 +383,16 @@ struct MotInfo
     u8 *unkB0;
 };  // size = 0xB4
 
-struct Struct80034F5C_2
+struct JointPositionSomething
 {
     u16 unk0;
-    u16 unk2;
+    u16 jointIdx;
 };  // size = 4
 
-struct Struct80034F5C_3
+struct JointRotationSomething
 {
     u16 filler0;
-    u16 unk2;
+    u16 jointIdx;
     float unk4;
     float unk8;
     float unkC;
@@ -574,47 +440,9 @@ struct DynamicStagePart
     struct NlModel *tempModel;  // modified copy of the model
 };
 
-struct Struct801EEC80
-{
-    float unk0;
-    float unk4;
-    float unk8;
-    float unkC;
-};
-
-struct Struct801EEC90
-{
-    u32 unk0;
-    Vec unk4;
-    Vec unk10;
-    Vec unk1C;
-    Vec unk28;
-    Vec unk34;
-    Vec unk40;
-    s32 unk4C;  // 5C
-    u8 filler50[4];
-    u32 unk54;
-    s32 unk58;
-    float unk5C;
-    float unk60;
-    u8 filler64[4];
-};
-
 struct Struct802F1B4C
 {
     u32 unk6C;
-};
-
-struct PauseMenuState
-{
-    s32 unk0;
-    u32 unk4;
-    /*0x08*/ s32 selection;
-    /*0x0C*/ s32 itemCount;
-    /*0x10*/ s32 menuType;
-    /*0x14*/ s8 padId;  // controller that pressed start
-    /*0x15*/ s8 playerId;  // player who paused the game?
-    s16 unk16;
 };
 
 struct FogInfo
@@ -650,7 +478,6 @@ struct Sphere
     float radius;
 };
 
-struct Preview;
 struct NlDispList;
 
 struct Struct801EED88
@@ -781,22 +608,46 @@ struct ModelLOD
     float distance;
 };
 
-struct ApeFacePart
+struct Struct80089CBC
+{
+    s32 unk0;
+    s32 unk4;
+    u32 unk8;
+    u32 unkC;
+    s32 unk10;
+    s32 unk14;
+    u8 filler18[0x20-0x18];
+};  // size = 0x20
+
+// something related to body parts
+struct BodyPartThing
+{
+    u32 type;
+    float unk4;
+    s32 unk8;
+    struct Struct80089CBC *unkC;
+    float unk10;
+    s32 unk14[4];
+};  // size = 0x24
+
+// info on some part of the ape that can be animated
+// this does not include the main body and limbs, but does include the head and hands
+struct ApeBodyPart
 {
     s16 modelId;
     s16 jointIdx;
     Vec unk4;
-    void (*draw)(struct Ape *, struct ApeFacePart *, struct Struct802B39C0_B0_child *);
+    void (*draw)(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
     char *name;
-    u8 filler18[0x20-0x18];
+    u8 filler18[0x20-0x18];  // unused?
 };
 
 struct ApeGfxFileInfo
 {
     char *basename;  // base name of the file (without suffix)
-    struct ApeFacePart *facePartInfo[4];  // face part info per LOD?
+    struct ApeBodyPart *facePartInfo[4];  // face part info per LOD?
     /*0x14*/ s16 partCounts[4];  // counts?
-    s16 unk1C[2];
+    s16 lodModelIDs[2];  // first entry is low poly, second entry is high poly
     u8 filler20[4];
 };  // size = 0x24
 
@@ -909,13 +760,6 @@ struct Struct80089A04
     u32 unk14;
     u32 filler18[6];
     s32 unk30[4];
-};
-
-struct Struct80250A68
-{
-    s32 unk0[4];
-    float unk10;
-    s32 unk14;
 };
 
 struct Struct801EEDA8

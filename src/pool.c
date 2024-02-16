@@ -64,10 +64,10 @@ void debug_main(void)
     {
         if (!(debugFlags & 1))
         {
-            if ((analogInputs[0].held & PAD_BUTTON_B) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
+            if ((analogInputs[0].held & ANALOG_TRIGGER_RIGHT) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
                 debugFlags |= 3;
         }
-        else if (!(analogInputs[0].held & PAD_BUTTON_A) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
+        else if (!(analogInputs[0].held & ANALOG_TRIGGER_LEFT) && (controllerInfo[0].pressed.button & PAD_BUTTON_START))
             debugFlags &= ~3;
         else if (controllerInfo[0].pressed.button & PAD_TRIGGER_Z)
             debugFlags &= ~2;

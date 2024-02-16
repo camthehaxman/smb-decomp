@@ -12,6 +12,7 @@
 #include "nl2ngc.h"
 #include "obj_collision.h"
 #include "pool.h"
+#include "polydisp.h"
 #include "sound.h"
 #include "stage.h"
 #include "stcoli.h"

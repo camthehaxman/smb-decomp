@@ -1,6 +1,8 @@
 #ifndef _SRC_NAME_ENTRY_H_
 #define _SRC_NAME_ENTRY_H_
 
+struct PhysicsBall;
+
 extern struct ScoreRecord lbl_802C67D4[4][5];
 
 void name_entry_init(void);
@@ -10,8 +12,8 @@ void ev_name_entry_dest(void);
 void draw_name_entry_hud(void);
 int u_is_name_entry_finished(void);
 void func_800AEAD0(void);
-struct ScoreRecord *func_800AEC74(int, struct ScoreRecord *);
-int func_800AECCC(int, struct ScoreRecord *);
+struct ScoreRecord *u_get_score_records_for_difficulty(int, struct ScoreRecord *);
+int u_calc_rank_of_score_record(int, struct ScoreRecord *);
 void func_800AEDDC(void);
 void func_800AEDE0(void);
 void func_800AF164(void);

@@ -5,6 +5,8 @@
 #include <dolphin/mtx.h>
 #include <dolphin/gx/GXStruct.h>
 
+struct PhysicsBall;
+
 struct Item
 {
     /*0x00*/ s16 id; // Index in item pool

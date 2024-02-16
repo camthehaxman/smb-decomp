@@ -105,7 +105,7 @@ void ev_info_main(void)
         case GAMETYPE_MAIN_COMPETITION:
             if (ball->flags & BALL_FLAG_24)
             {
-                get_replay_header(replayInfo.unk0[ball->playerId], &spC8);
+                recplay_get_header(g_recplayInfo.u_replayIndexes[ball->playerId], &spC8);
                 if (!(spC8.flags & 1))
                     continue;
             }
@@ -118,7 +118,7 @@ void ev_info_main(void)
             }
             if (!(ball->flags & BALL_FLAG_GOAL) && !(infoWork.flags & INFO_FLAG_05))
             {
-                func_8004923C(0x5A);
+                recplay_set_recording_stop_timer(0x5A);
                 infoWork.flags &= ~(INFO_FLAG_REPLAY|INFO_FLAG_11);
                 r20++;
                 ball->flags |= BALL_FLAG_GOAL;
@@ -150,7 +150,7 @@ void ev_info_main(void)
                 }
                 if (infoWork.unk2C == 1)
                     func_800245E4(ball, goalId, sp64);
-                func_80049268(ball->playerId);
+                recplay_record_goal(ball->playerId);
             }
             init_physball_from_ball(ball, &sp6C);
             if (sp64 != sp6C.animGroupId)
@@ -166,7 +166,7 @@ void ev_info_main(void)
                 break;
             if (ball->flags & BALL_FLAG_24)
             {
-                get_replay_header(replayInfo.unk0[ball->playerId], &spC8);
+                recplay_get_header(g_recplayInfo.u_replayIndexes[ball->playerId], &spC8);
                 if (!(spC8.flags & 1))
                     break;
             }
@@ -180,7 +180,7 @@ void ev_info_main(void)
                 if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL)
                     func_800AEDDC();
             }
-            func_80049268(ball->playerId);
+            recplay_record_goal(ball->playerId);
             if (gameSubmode == SMD_ADV_GAME_PLAY_MAIN)
                 infoWork.flags |= INFO_FLAG_GOAL;
             init_physball_from_ball(ball, &sp6C);
@@ -216,7 +216,7 @@ void ev_info_main(void)
      && infoWork.bananasLeft == 0)
     {
         infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_05|INFO_FLAG_BONUS_CLEAR;
-        func_800493C4(ball->playerId);
+        recplay_record_bonus_clear(ball->playerId);
         BALL_FOREACH( ball->flags |= BALL_FLAG_13; )
     }
 
@@ -329,7 +329,7 @@ void ev_info_main(void)
             default:
                 infoWork.flags |= INFO_FLAG_FALLOUT|INFO_FLAG_TIMER_PAUSED;
                 ball->flags |= BALL_FLAG_11;
-                func_800492FC(ball->playerId);
+                recplay_record_fallout(ball->playerId);
                 break;
             }
         }
@@ -354,7 +354,7 @@ void ev_info_main(void)
                     break;
                 }
                 infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_TIMEOVER;
-                func_80049368(ball->playerId);
+                recplay_record_timeover(ball->playerId);
                 if (!(infoWork.flags & INFO_FLAG_BONUS_STAGE))
                     BALL_FOREACH( ball->winStreak = 0; ball->unk128++; )
                 BALL_FOREACH( ball->flags |= BALL_FLAG_TIMEOVER; )
@@ -368,7 +368,7 @@ void ev_info_main(void)
 
                     ball = currentBall;
                     infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_TIMEOVER;
-                    func_80049368(ball->playerId);
+                    recplay_record_timeover(ball->playerId);
                     ball->flags |= BALL_FLAG_TIMEOVER;
                 }
                 break;
@@ -487,7 +487,7 @@ void func_80023DB8(struct Ball *ball)
     r5 = lbl_802F1CB0[ball->rank];
     if ((modeCtrl.courseFlags & (1 << 11)) && ball->winStreak > 0)
         r5 *= ball->winStreak;
-    ball->unk138 = r5;
+    ball->bananaBonus = r5;
 }
 
 struct Struct801818D0
@@ -512,11 +512,11 @@ static void bonus_count_sprite_main(s8 *dummy, struct Sprite *sprite)
 
     sprite->opacity += (1.0f - sprite->opacity) * 0.1;
     if (sprite->bmpId >= 100)
-        sprintf(sprite->text, "BONUS  +%3d", ball->unk138);
+        sprintf(sprite->text, "BONUS  +%3d", ball->bananaBonus);
     else if (sprite->bmpId >= 10)
-        sprintf(sprite->text, "BONUS  +%2d", ball->unk138);
+        sprintf(sprite->text, "BONUS  +%2d", ball->bananaBonus);
     else
-        sprintf(sprite->text, "BONUS  +%1d", ball->unk138);
+        sprintf(sprite->text, "BONUS  +%1d", ball->bananaBonus);
 }
 
 static void bonus_banana_sprite_main(s8 *dummy, struct Sprite *sprite)
@@ -568,17 +568,17 @@ void rank_icon_sprite_main(s8 *dummy, struct Sprite *sprite)
             countSprite->mulG = 255;
             countSprite->mulB = 0;
             countSprite->opacity = 0.0f;
-            countSprite->bmpId = ball->unk138;  //! Huh? This is a text sprite
+            countSprite->bmpId = ball->bananaBonus;  //! Huh? This is a text sprite
             countSprite->mainFunc = bonus_count_sprite_main;
-            sprintf(countSprite->text, "BONUS  +000", ball->unk138);  //! bad format
+            sprintf(countSprite->text, "BONUS  +000", ball->bananaBonus);  //! bad format
             bananaSprite = create_child_sprite(countSprite);
             if (bananaSprite != NULL)
             {
                 bananaSprite->type = SPRITE_TYPE_BITMAP;
                 bananaSprite->x = -140.0f;
-                if (ball->unk138 < 10)
+                if (ball->bananaBonus < 10)
                     bananaSprite->x += 48.0f;
-                else if (ball->unk138 < 100)
+                else if (ball->bananaBonus < 100)
                     bananaSprite->x += 24.0f;
                 bananaSprite->y = -2.0f;
                 bananaSprite->bmpId = BMP_COM_banana_01;
@@ -631,7 +631,7 @@ static void rank_icon_sprite_draw(struct Sprite *sprite)
     tex = &bitmapGroups[(params.sprno >> 8) & 0xFF].tpl->texHeaders[params.sprno & 0xFF];
     params.x = sprite->x;
     params.y = sprite->y;
-    params.z = sprite->unk4C;
+    params.z = sprite->depth;
     params.u0 = r6->u1 / tex->width;
     params.v0 = r6->v1 / tex->height;
     params.u1 = params.u0 + r6->u2 / tex->width;

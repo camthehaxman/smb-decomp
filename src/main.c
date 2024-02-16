@@ -16,6 +16,7 @@
 #include "nl2ngc.h"
 #include "ord_tbl.h"
 #include "perf.h"
+#include "polydisp.h"
 #include "pool.h"
 #include "recplay.h"
 #include "shadow.h"

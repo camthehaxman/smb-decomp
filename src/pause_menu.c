@@ -8,9 +8,12 @@
 #include "hud.h"
 #include "info.h"
 #include "input.h"
+#include "memcard.h"
 #include "mode.h"
+#include "pause_menu.h"
 #include "pool.h"
 #include "recplay.h"
+#include "recplay_cmpr.h"
 #include "sound.h"
 #include "sprite.h"
 #include "window.h"
@@ -94,7 +97,7 @@ static int is_pausing_allowed(void)
     return TRUE;
 }
 
-int should_open_pause_menu(void)
+static int should_open_pause_menu(void)
 {
     if (!is_pausing_allowed())
         return FALSE;
@@ -117,7 +120,7 @@ int should_open_pause_menu(void)
     return FALSE;
 }
 
-void u_open_pause_menu(struct Sprite *menuSprite)
+static void u_open_pause_menu(struct Sprite *menuSprite)
 {
     int i;
 
@@ -209,9 +212,9 @@ void u_open_pause_menu(struct Sprite *menuSprite)
     u_play_music(50, 10);
 }
 
-void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
+static void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
 {
-    s8 r3 = pauseMenuState.selection;
+    s8 prevSelection = pauseMenuState.selection;
 
     if (lbl_802F1BA0 > 0)
         lbl_802F1BA0--;
@@ -227,7 +230,7 @@ void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
             pauseMenuState.selection = 0;
         lbl_802F1BA0 = 10;
     }
-    if (r3 != pauseMenuState.selection)
+    if (prevSelection != pauseMenuState.selection)
         u_play_sound_1(0x6F);
     if (pauseMenuState.menuType == PAUSEMENU_CONT_GUIDE_HOW_EXIT
      && pauseMenuState.selection == 1)  // "Guide"
@@ -272,7 +275,7 @@ void u_handle_pause_menu_navigation(struct Sprite *menuSprite)
     }
 }
 
-void u_pause_menu_load_how_to_play(struct Sprite *menuSprite)
+static void u_pause_menu_load_how_to_play(struct Sprite *menuSprite)
 {
     lbl_802F1B98 = 4;
     if (menuSprite != NULL)
@@ -293,7 +296,35 @@ void u_pause_menu_load_how_to_play(struct Sprite *menuSprite)
     debugFlags |= 8;
 }
 
-void u_activate_pause_menu_item(struct Sprite *menuSprite)
+static void pause_menu_handle_continue(void)
+{
+    lbl_802F1B98 = 0;
+    destroy_sprite_with_tag(4);
+    u_play_music(100, 10);
+}
+
+static void pause_menu_handle_view_stage_save_replay(struct Sprite *menuSprite)
+{
+    if (pauseMenuState.unk4 & (1 << 2))
+    {
+        lbl_802F1B98 = 3;
+        debugFlags |= 8;
+
+        // initiate the replay saving sequence
+        memcard_set_mode(MC_MODE_SAVE_REPLAY);
+        event_start(EVENT_MEMCARD);
+    }
+    else
+    {
+        lbl_802F1B98 = 2;
+        debugFlags |= 8;
+        event_start(EVENT_VIEW);
+        if (menuSprite != NULL)
+            menuSprite->unk78 |= 1;
+    }
+}
+
+static void u_activate_pause_menu_item(struct Sprite *menuSprite)
 {
     debugFlags &= ~(1 << 3);
     switch (pauseMenuState.menuType)
@@ -302,9 +333,7 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
         switch (pauseMenuState.selection)
         {
         case 0:  // "Continue"
-            lbl_802F1B98 = 0;
-            destroy_sprite_with_tag(4);
-            u_play_music(100, 10);
+            pause_menu_handle_continue();
             if (modeCtrl.gameType == GAMETYPE_MINI_BILLIARDS)
                 pauseMenuState.unk4 |= 0x20;
             break;
@@ -321,26 +350,10 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
         switch (pauseMenuState.selection)
         {
         case 0:  // "Continue"
-            lbl_802F1B98 = 0;
-            destroy_sprite_with_tag(4);
-            u_play_music(100, 10);
+            pause_menu_handle_continue();
             break;
         case 1:  // "View stage"
-            if (pauseMenuState.unk4 & (1 << 2))
-            {
-                lbl_802F1B98 = 3;
-                debugFlags |= 8;
-                func_8009F49C(5);
-                event_start(EVENT_MEMCARD);
-            }
-            else
-            {
-                lbl_802F1B98 = 2;
-                debugFlags |= 8;
-                event_start(EVENT_VIEW);
-                if (menuSprite != NULL)
-                    menuSprite->unk78 |= 1;
-            }
+            pause_menu_handle_view_stage_save_replay(menuSprite);
             break;
         case 2:  // "How to play"
             u_pause_menu_load_how_to_play(menuSprite);
@@ -363,9 +376,7 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
         switch (pauseMenuState.selection)
         {
         case 0:  // "Continue"
-            lbl_802F1B98 = 0;
-            destroy_sprite_with_tag(4);
-            u_play_music(100, 10);
+            pause_menu_handle_continue();
             break;
         case 1:  // "Retry"
             infoWork.attempts++;
@@ -374,21 +385,7 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
             u_play_music(100, 10);
             break;
         case 2:  // "View stage" or "Save replay"
-            if (pauseMenuState.unk4 & (1 << 2))
-            {
-                lbl_802F1B98 = 3;
-                debugFlags |= 8;
-                func_8009F49C(5);
-                event_start(EVENT_MEMCARD);
-            }
-            else
-            {
-                lbl_802F1B98 = 2;
-                debugFlags |= 8;
-                event_start(EVENT_VIEW);
-                if (menuSprite != NULL)
-                    menuSprite->unk78 |= 1;
-            }
+            pause_menu_handle_view_stage_save_replay(menuSprite);
             break;
         case 3:  // "How to play"
             u_pause_menu_load_how_to_play(menuSprite);
@@ -408,9 +405,7 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
         switch (pauseMenuState.selection)
         {
         case 0:  // "Continue"
-            lbl_802F1B98 = 0;
-            destroy_sprite_with_tag(4);
-            u_play_music(100, 10);
+            pause_menu_handle_continue();
             break;
         case 1:  // "Retry"
             destroy_sprite_with_tag(4);
@@ -430,9 +425,7 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
         switch (pauseMenuState.selection)
         {
         case 0:  // "Continue"
-            lbl_802F1B98 = 0;
-            destroy_sprite_with_tag(4);
-            u_play_music(100, 10);
+            pause_menu_handle_continue();
             pauseMenuState.unk4 |= 0x20;
             break;
         case 1:  // "Guide"
@@ -453,7 +446,7 @@ void u_activate_pause_menu_item(struct Sprite *menuSprite)
     }
 }
 
-void unkFunc8000AECC(struct Sprite *menuSprite)
+static void unkFunc8000AECC(struct Sprite *menuSprite)
 {
     struct Sprite *sprite;
 

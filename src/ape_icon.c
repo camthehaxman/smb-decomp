@@ -496,7 +496,7 @@ void monkey_sprite_draw(struct Sprite *sprite)
     bmpId = u_get_monkey_bitmap_id(apeIconInfo.emotion, apeIconInfo.frameNum, playerCharacterSelection[modeCtrl.currPlayer]);
     if (!bvar && gameMode == MD_GAME)
     {
-        func_8008BFB4(ball->ape, 0, &sp18_2, &sp14);
+        mot_ape_8008BFB4(ball->ape, 0, &sp18_2, &sp14);
         temp_r0_2 = mathutil_ceil(sp14 * 0.266660004854f);
         if (sp18_2 >= 0 && sp18_2 < 8)
         {
@@ -715,9 +715,9 @@ void monkey_sprite_draw(struct Sprite *sprite)
             }
 
             if (gameMode == MD_SEL && i == playerCharacterSelection[modeCtrl.currPlayer])
-                params.z = sprite->unk4C + (0.01 * i) - 0.02;
+                params.z = sprite->depth + (0.01 * i) - 0.02;
             else
-                params.z = sprite->unk4C + (0.01 * i);
+                params.z = sprite->depth + (0.01 * i);
 
             params.u0 = 0.0f;
             params.v0 = 0.0f;
@@ -731,7 +731,7 @@ void monkey_sprite_draw(struct Sprite *sprite)
             if (bvar)
             {
                 params.sprno = u_get_monkey_bitmap_id(-1, 0, playerCharacterSelection[modeCtrl.currPlayer]);
-                params.z = sprite->unk4C - 0.01;
+                params.z = sprite->depth - 0.01;
                 nlSprPut(&params);
             }
         }
@@ -743,7 +743,7 @@ void monkey_sprite_draw(struct Sprite *sprite)
         params.sprno = bmpId;
         params.x = sprite->x;
         params.y = sprite->y;
-        params.z = sprite->unk4C;
+        params.z = sprite->depth;
         params.zm_x = 0.5f;
         params.zm_y = 0.325f;
         params.u0 = 0.0f;
@@ -766,15 +766,15 @@ void monkey_sprite_draw(struct Sprite *sprite)
                 params.y = sprite->y - (12.0f * mathutil_sin((apeIconInfo.frameNum - 0x10) << 0xB));
             else
                 params.y = sprite->y;
-            params.z = sprite->unk4C - 0.01;
+            params.z = sprite->depth - 0.01;
             params.trnsl = 0.03125 * apeIconInfo.frameNum;
             nlSprPut(&params);
         }
         reset_text_draw_settings();
         set_text_font(FONT_ASC_16x16);
-        func_80071B1C(sprite->unk4C);
+        func_80071B1C(sprite->depth);
         set_text_pos(36.0f + params.x, 8.0f + params.y);
-        func_80072AC0("X%d", ball->lives - 1);
+        sprite_printf("X%d", ball->lives - 1);
 
 #ifndef NONMATCHING
         tbox == 0; i == 0;  // needed to match

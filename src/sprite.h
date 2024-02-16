@@ -255,7 +255,7 @@ struct Sprite
     /*0x40*/ float scaleX;
     /*0x44*/ float scaleY;
     /*0x48*/ s32 userVar;  // multi-purpose variable for use by callbacks
-             float unk4C;
+    /*0x4C*/ float depth;
              struct Sprite *unk50;
     /*0x54*/ struct Sprite *next;
              // actual bounds of the sprite (computed from alignment and other info)
@@ -318,10 +318,10 @@ void set_text_scale(float scaleX, float scaleY);
 void set_text_opacity(float opacity);
 void func_80071B50();
 void set_text_pos(float x, float y);
-void u_draw_char(char chr);
-void u_draw_text(char *str);
+void sprite_putc(char chr);
+void sprite_puts(char *str);
 float u_get_text_width(char *str);
-void func_80072AC0(char *str, ...);
+void sprite_printf(char *str, ...);
 void u_draw_text_sprite(struct Sprite *a);
 void draw_bitmap_sprite(struct Sprite *a);
 float u_get_ascii_text_width(char *str);

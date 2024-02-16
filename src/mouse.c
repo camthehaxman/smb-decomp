@@ -173,13 +173,13 @@ void mouse_draw(void)
             _spriteInfo = &spriteWork[mouse.spriteIdx];
             reset_text_draw_settings();
             set_text_pos( (_spriteInfo->left - 8), (_spriteInfo->top - 8) );
-            u_draw_text( "+" );
+            sprite_puts( "+" );
             set_text_pos( (_spriteInfo->left - 8), _spriteInfo->bottom );
-            u_draw_text( "+" );
+            sprite_puts( "+" );
             set_text_pos( _spriteInfo->right, (_spriteInfo->top - 8) );
-            u_draw_text( "+" );
+            sprite_puts( "+" );
             set_text_pos( _spriteInfo->right, _spriteInfo->bottom );
-            u_draw_text( "+" );
+            sprite_puts( "+" );
         }
     }
     return;

@@ -10,6 +10,7 @@
 #include "event.h"
 #include "info.h"
 #include "item.h"
+#include "memcard.h"
 #include "minimap.h"
 #include "mouse.h"
 #include "name_entry.h"

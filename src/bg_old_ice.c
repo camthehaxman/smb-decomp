@@ -9,6 +9,7 @@
 #include "mathutil.h"
 #include "mt_effect.h"
 #include "nl2ngc.h"
+#include "polydisp.h"
 
 void bg_old_ice_init(void)
 {

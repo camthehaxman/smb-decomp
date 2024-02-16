@@ -24,11 +24,13 @@
 #include "light.h"
 #include "load.h"
 #include "mathutil.h"
+#include "memcard.h"
 #include "minimap.h"
 #include "mode.h"
 #include "name_entry.h"
 #include "pool.h"
 #include "recplay.h"
+#include "recplay_cmpr.h"
 #include "rend_efc.h"
 #include "sound.h"
 #include "sprite.h"
@@ -209,7 +211,9 @@ void submode_game_ready_init_func(void)
     rend_efc_mirror_enable();
     event_suspend(EVENT_WORLD);
     light_init(currStageId);
-    r30 = func_80017004();
+
+    // preload the next stage early to reduce loading times
+    r30 = u_get_next_stage_id_not_practice();
     if (r30 != -1 && r30 != lbl_802F1C18)
     {
         preload_stage_files(r30);
@@ -217,9 +221,10 @@ void submode_game_ready_init_func(void)
         if (debugFlags & (1 << 2))
             printf("pre_load_stage init:%d now:%d\n", r30, currStageId);
     }
+
     infoWork.flags |= INFO_FLAG_TIMER_PAUSED|INFO_FLAG_08;
     BALL_FOREACH( ball->state = 2; )
-    camera_set_state(CAMERA_STATE_READY_INIT);
+    camera_set_state_all(CAMERA_STATE_READY_INIT);
     if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION
      && modeCtrl.playerCount == 3
      && modeCtrl.splitscreenMode == SPLITSCREEN_4_SPLIT)
@@ -230,7 +235,7 @@ void submode_game_ready_init_func(void)
     if (infoWork.attempts == 1)
     {
         modeCtrl.submodeTimer = 360;
-        camera_set_state(0x26);
+        camera_set_state_all(0x26);
         hud_show_stage_name_banner();
     }
     switch (modeCtrl.gameType)
@@ -293,7 +298,7 @@ void submode_game_ready_main_func(void)
         minimap_set_state(MINIMAP_STATE_OPEN);
     }
     if (modeCtrl.submodeTimer == 24.0)
-        BALL_FOREACH( ball->state = 3; )
+        BALL_FOREACH( ball->state = BALL_STATE_3; )
     if (g_currPlayerButtons[2] & PAD_BUTTON_A)
         minimap_zoom();
     if (--modeCtrl.submodeTimer <= 0)
@@ -313,28 +318,28 @@ void submode_game_play_init_func(void)
     event_resume(EVENT_WORLD);
     hud_show_go_banner(60);
     infoWork.flags &= ~(INFO_FLAG_TIMER_PAUSED|INFO_FLAG_08);
-    func_80048F20();
-    replayInfo.unk14 = 0;
+    u_recplay_reset_recording_state();
+    g_recplayInfo.u_playerId = 0;
     switch (modeCtrl.gameType)
     {
     case GAMETYPE_MAIN_COMPETITION:
         for (i = 0; i < modeCtrl.playerCount; i++)
         {
-            replayInfo.unk0[i] = i + 7;
-            func_80048F58(i, replayInfo.unk0[i]);
+            g_recplayInfo.u_replayIndexes[i] = i + 7;
+            recplay_set_player_replay_index(i, g_recplayInfo.u_replayIndexes[i]);
         }
         break;
     case GAMETYPE_MAIN_NORMAL:
-        replayInfo.unk14 = modeCtrl.currPlayer;
+        g_recplayInfo.u_playerId = modeCtrl.currPlayer;
         // fall through
     default:
-        replayInfo.unk0[replayInfo.unk14] = func_80048E78();
-        func_80048F58(replayInfo.unk14, replayInfo.unk0[replayInfo.unk14]);
+        g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId] = recplay_find_new_index();
+        recplay_set_player_replay_index(g_recplayInfo.u_playerId, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
         break;
     }
-    func_80048F74();
+    recplay_start_recording();
     WORLD_FOREACH( world->state = WORLD_STATE_INPUT_INIT; )
-    camera_set_state(0);
+    camera_set_state_all(0);
     gameSubmodeRequest = SMD_GAME_PLAY_MAIN;
 }
 
@@ -374,27 +379,27 @@ void submode_game_play_main_func(void)
     else if (infoWork.flags & INFO_FLAG_TIMEOVER)
     {
         infoWork.flags &= ~INFO_FLAG_TIMEOVER;
-        BALL_FOREACH( ball->state = 0; )
+        BALL_FOREACH( ball->state = BALL_STATE_0; )
         gameSubmodeRequest = SMD_GAME_TIMEOVER_INIT;
     }
     else if (infoWork.flags & INFO_FLAG_FALLOUT)
     {
         infoWork.flags &= ~INFO_FLAG_FALLOUT;
-        camera_set_state(4);
-        func_8004B65C();
+        camera_set_state_all(4);
+        recplay_cmpr_record_score();
         gameSubmodeRequest = SMD_GAME_RINGOUT_INIT;
     }
     else if (infoWork.flags & INFO_FLAG_BONUS_CLEAR)
     {
         infoWork.flags &= ~INFO_FLAG_BONUS_CLEAR;
-        func_8004B65C();
+        recplay_cmpr_record_score();
         gameSubmodeRequest = SMD_GAME_BONUS_CLEAR_INIT;
     }
 }
 
 void submode_game_goal_init_func(void)
 {
-    int r31;
+    int nextStage;
 
     if (debugFlags & 0xA)
         return;
@@ -412,14 +417,17 @@ void submode_game_goal_init_func(void)
         u_play_sound_0(0x128);
     }
     modeCtrl.unk3C = modeCtrl.submodeTimer;
-    r31 = func_80017004();
-    if (r31 != -1 && r31 != lbl_802F1C18)
+
+    // preload the next stage early to reduce loading times
+    nextStage = u_get_next_stage_id_not_practice();
+    if (nextStage != -1 && nextStage != lbl_802F1C18)
     {
-        preload_stage_files(r31);
-        lbl_802F1C18 = r31;
+        preload_stage_files(nextStage);
+        lbl_802F1C18 = nextStage;
     }
+
     minimap_set_state(MINIMAP_STATE_CLOSE);
-    camera_set_state(14);
+    camera_set_state_all(14);
     if (!(infoWork.flags & INFO_FLAG_13))
         hud_show_goal_banner(0x168);
     else
@@ -427,7 +435,7 @@ void submode_game_goal_init_func(void)
     if (!(infoWork.flags & INFO_FLAG_BONUS_STAGE) && modeCtrl.gameType != GAMETYPE_MAIN_COMPETITION)
         u_give_points(3, 0);
     if (infoWork.flags & INFO_FLAG_BONUS_STAGE)
-        func_8004B65C();
+        recplay_cmpr_record_score();
     gameSubmodeRequest = SMD_GAME_GOAL_MAIN;
 }
 
@@ -442,7 +450,7 @@ void submode_game_goal_main_func(void)
     if (!r31 && modeCtrl.submodeTimer == 330)
         u_play_sound_0(8);
     if (modeCtrl.submodeTimer == modeCtrl.unk3C - 60)
-        stop_recplay();
+        recplay_stop_recording();
     if (!r31)
     {
         BALL_FOREACH(
@@ -480,23 +488,23 @@ void submode_game_goal_replay_init_func(void)
     modeCtrl.courseFlags &= ~(1 << 10);
     modeCtrl.unk18 = 30;
     BALL_FOREACH( ball->flags &= ~BALL_FLAG_REVERSE_GRAVITY; )
-    BALL_FOREACH( ball->state = 9; )
+    BALL_FOREACH( ball->state = BALL_STATE_REPLAY_INIT_2; )
     WORLD_FOREACH( world->state = 6; )
-    camera_set_state(16);
-    func_80037B20();
-    erase_effect(0);
-    erase_effect(10);
-    replayInfo.unk14 = infoWork.playerId;
+    camera_set_state_all(16);
+    ball_set_ape_flags_80037B20();
+    erase_effect(ET_PAPERFRAG);
+    erase_effect(ET_LEVITATE);
+    g_recplayInfo.u_playerId = infoWork.playerId;
     infoWork.flags |= INFO_FLAG_REPLAY;
-    replayInfo.unk10 = MIN(modeCtrl.submodeTimer - 60, func_8004964C(replayInfo.unk0[replayInfo.unk14]));
-    animate_anim_groups(get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]));
-    r31 = func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10);
+    g_recplayInfo.u_timeOffset = MIN(modeCtrl.submodeTimer - 60, recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]));
+    animate_anim_groups(recplay_get_stage_timer(g_recplayInfo.u_timeOffset, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]));
+    r31 = recplay_get_info_timer(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], g_recplayInfo.u_timeOffset);
     release_captured_item(r31);
-    func_8006F5F0(r31);
-    show_replay_text(modeCtrl.submodeTimer);
+    stobj_goal_8006F5F0(r31);
+    hud_show_replay_text(modeCtrl.submodeTimer);
     if (!(infoWork.flags & INFO_FLAG_BONUS_STAGE) && modeCtrl.gameType != GAMETYPE_MAIN_COMPETITION)
         u_give_points(2, 0);
-    func_8004B65C();
+    recplay_cmpr_record_score();
     gameSubmodeRequest = SMD_GAME_GOAL_REPLAY_MAIN;
 }
 
@@ -522,23 +530,24 @@ void submode_game_goal_replay_main_func(void)
 
     if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
     {
-        int r3 = 0;
+        BOOL tick = FALSE;
 
+        // tick banana counters
         BALL_FOREACH(
-            if ((globalAnimTimer & 3) == 0 && ball->unk138 > 0)
+            if ((globalAnimTimer & 3) == 0 && ball->bananaBonus > 0)
             {
-                r3 = 1;
-                if (ball->unk138 > 100)
-                    r3 = 41;
-                else if (ball->unk138 > 10)
-                    r3 = 3;
-                ball->bananas += r3;
-                ball->unk138 -= r3;
+                int bananas = 1;
+                if (ball->bananaBonus > 100)
+                    bananas = 41;
+                else if (ball->bananaBonus > 10)
+                    bananas = 3;
+                ball->bananas += bananas;
+                ball->bananaBonus -= bananas;
                 ball->bananas = MIN(ball->bananas, 999);
-                r3 = 1;
+                tick = TRUE;
             }
         )
-        if (r3)
+        if (tick)
             u_play_sound_0(0x67);
     }
     modeCtrl.unk18--;
@@ -558,10 +567,10 @@ void submode_game_goal_replay_main_func(void)
     if (modeCtrl.gameType == GAMETYPE_MAIN_COMPETITION)
     {
         BALL_FOREACH(
-            if (ball->unk138 > 0)
+            if (ball->bananaBonus > 0)
             {
-                ball->bananas += ball->unk138;
-                ball->unk138 = 0;
+                ball->bananas += ball->bananaBonus;
+                ball->bananaBonus = 0;
                 ball->bananas = MIN(ball->bananas, 999);
             }
         )
@@ -611,6 +620,8 @@ void submode_game_goal_replay_main_func(void)
     }
 }
 
+// Continue screen
+
 void submode_game_continue_init_func(void)
 {
     if (debugFlags & 0xA)
@@ -650,7 +661,7 @@ void submode_game_continue_init_func(void)
             ball->ape->flags |= 0x100;
     )
 
-    camera_set_state(0x19);
+    camera_set_state_all(0x19);
     if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL && modeCtrl.playerCount == 1)
     {
         record_play_points();
@@ -720,7 +731,7 @@ void submode_game_continue_main_func(void)
         if (modeCtrl.unk10 == 0 && modeCtrl.submodeTimer == 60)
         {
             if (modeCtrl.gameType == GAMETYPE_MAIN_NORMAL
-             && (func_800AECCC(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]) >= 0
+             && (u_calc_rank_of_score_record(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]) >= 0
                  || (dipSwitches & (DIP_DEBUG|DIP_NAMEENTRY)) == (DIP_DEBUG|DIP_NAMEENTRY)))
                 start_screen_fade(FADE_OUT|FADE_ABOVE_SPRITES, RGBA(255, 255, 255, 0), modeCtrl.submodeTimer);
             else
@@ -759,7 +770,7 @@ void submode_game_timeover_init_func(void)
     if (!(infoWork.flags & INFO_FLAG_BONUS_STAGE))
         u_play_sound_0(11);
     u_play_sound_0(0x128);
-    camera_set_state(21);
+    camera_set_state_all(21);
     for (i = 0; i < 4; i++)
     {
         Vec sp8;
@@ -769,7 +780,7 @@ void submode_game_timeover_init_func(void)
         sp8.z = RAND_FLOAT() - 0.5f;
         shake_camera(i, modeCtrl.submodeTimer, &sp8);
     }
-    stop_recplay();
+    recplay_stop_recording();
     hud_show_time_over_banner(modeCtrl.submodeTimer);
     BALL_FOREACH( u_play_sound_0(28); )
     gameSubmodeRequest = SMD_GAME_TIMEOVER_MAIN;
@@ -848,7 +859,7 @@ void submode_game_ringout_main_func(void)
     {
         if (modeCtrl.submodeTimer == 260.0)
         {
-            stop_recplay();
+            recplay_stop_recording();
             modeCtrl.submodeTimer = 110;
         }
     }
@@ -856,25 +867,25 @@ void submode_game_ringout_main_func(void)
     {
         if (modeCtrl.submodeTimer == 240.0)
         {
-            stop_recplay();
-            BALL_FOREACH( ball->state = 7; )
+            recplay_stop_recording();
+            BALL_FOREACH( ball->state = BALL_STATE_REPLAY_INIT_1; )
             WORLD_FOREACH( world->state = 8; )
-            camera_set_state(5);
-            replayInfo.unk10 = MIN(func_8004964C(replayInfo.unk0[replayInfo.unk14]), 120.0f);
-            animate_anim_groups(get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]));
+            camera_set_state_all(5);
+            g_recplayInfo.u_timeOffset = MIN(recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]), 120.0f);
+            animate_anim_groups(recplay_get_stage_timer(g_recplayInfo.u_timeOffset, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]));
             infoWork.flags |= INFO_FLAG_REPLAY;
-            release_captured_item(func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10));
-            show_replay_text(modeCtrl.submodeTimer);
+            release_captured_item(recplay_get_info_timer(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], g_recplayInfo.u_timeOffset));
+            hud_show_replay_text(modeCtrl.submodeTimer);
             lbl_802F1C1C = 30;
         }
         if (modeCtrl.submodeTimer == 150.0)
         {
-            BALL_FOREACH( ball->state = 7; )
-            camera_set_state(7);
-            replayInfo.unk10 = MIN(func_8004964C(replayInfo.unk0[replayInfo.unk14]), modeCtrl.submodeTimer - 60);
-            animate_anim_groups(get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]));
+            BALL_FOREACH( ball->state = BALL_STATE_REPLAY_INIT_1; )
+            camera_set_state_all(7);
+            g_recplayInfo.u_timeOffset = MIN(recplay_get_time(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]), modeCtrl.submodeTimer - 60);
+            animate_anim_groups(recplay_get_stage_timer(g_recplayInfo.u_timeOffset, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]));
             infoWork.flags |= INFO_FLAG_REPLAY;
-            release_captured_item(func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10));
+            release_captured_item(recplay_get_info_timer(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], g_recplayInfo.u_timeOffset));
             lbl_802F1C1C = 60;
         }
     }
@@ -882,7 +893,7 @@ void submode_game_ringout_main_func(void)
     if ((g_currPlayerButtons[2] & PAD_BUTTON_A) && modeCtrl.unk18 < 0
      && !(infoWork.flags & (INFO_FLAG_BONUS_STAGE|INFO_FLAG_BONUS_CLEAR)) && currentBall->lives > 1)
     {
-        stop_recplay();
+        recplay_stop_recording();
         modeCtrl.submodeTimer = 0;
     }
     if (lbl_802F1C1C > 0)
@@ -936,15 +947,15 @@ void submode_game_bonus_clear_init_func(void)
     event_finish(EVENT_WORLD);
     event_finish(EVENT_VIBRATION);
     minimap_set_state(MINIMAP_STATE_CLOSE);
-    BALL_FOREACH( ball->state = 5; )
+    BALL_FOREACH( ball->state = BALL_STATE_GOAL_INIT; )
     BALL_FOREACH( ball->flags |= BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY; )
-    camera_set_state(14);
+    camera_set_state_all(14);
     if (infoWork.flags & INFO_FLAG_10)
         hud_show_time_over_banner(modeCtrl.submodeTimer);
     else
     {
         hud_show_perfect_banner(modeCtrl.submodeTimer);
-        stop_recplay();
+        recplay_stop_recording();
     }
     gameSubmodeRequest = SMD_GAME_BONUS_CLEAR_MAIN;
 }
@@ -955,7 +966,7 @@ void submode_game_bonus_clear_main_func(void)
         return;
 
     if (modeCtrl.submodeTimer == 150.0)
-        stop_recplay();
+        recplay_stop_recording();
 
     BALL_FOREACH(
         if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY) && (ball->ape->flags & BALL_FLAG_14))
@@ -1031,7 +1042,7 @@ void submode_game_over_main_func(void)
 
     else if (func_8009F4C4() == 1)
     {
-        func_8009F49C(3);
+        memcard_set_mode(MC_MODE_SAVE_GAMEDATA_3);
         event_start(EVENT_MEMCARD);
         gameSubmodeRequest = SMD_GAME_OVER_SAVE;
     }
@@ -1069,7 +1080,7 @@ void submode_game_over_point_main_func(void)
         return;
     if (func_8009F4C4() == 1)
     {
-        func_8009F49C(3);
+        memcard_set_mode(MC_MODE_SAVE_GAMEDATA_3);
         event_start(EVENT_MEMCARD);
         gameSubmodeRequest = SMD_GAME_OVER_SAVE;
     }
@@ -1117,17 +1128,15 @@ void submode_game_over_dest_func(void)
     }
 }
 
-#pragma force_active on
-char *nameEntryTextJpn[] =
+static char *nameEntryTextJpn[] =  // unused
 {
     "h/NAMAEWO OSIETE!",
     "h/ONAMAE OSIETE!",
     "h/NAMAEWO OSIETEHOSHIIDEk/CHU!",
     "k/NAMAE OSIERO! UHO UHOHO!",
 };
-#pragma force_active reset
 
-char *nameEntryText[] =
+static char *nameEntryText[] =
 {
     "ENTER YOUR NAME!",
     "ENTER YOUR NAME!",
@@ -1149,7 +1158,7 @@ void submode_game_nameentry_ready_init_func(void)
         return;
     }
     if (modeCtrl.gameType != GAMETYPE_MAIN_NORMAL
-     || (func_800AECCC(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]) < 0
+     || (u_calc_rank_of_score_record(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]) < 0
          && (dipSwitches & (DIP_DEBUG|DIP_NAMEENTRY)) != (DIP_DEBUG|DIP_NAMEENTRY)))
     {
         gameSubmodeRequest = SMD_GAME_OVER_INIT;
@@ -1190,7 +1199,7 @@ void submode_game_nameentry_ready_init_func(void)
     textbox_add_text(1, nameEntryText[playerCharacterSelection[modeCtrl.currPlayer]]);
     start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(255, 255, 255, 0), 30);
     BALL_FOREACH( ball->state = 15; )
-    camera_set_state(31);
+    camera_set_state_all(31);
     u_play_music(66, 0);
     gameSubmodeRequest = SMD_GAME_NAMEENTRY_READY_MAIN;
 }
@@ -1204,12 +1213,12 @@ void submode_game_nameentry_ready_main_func(void)
     {
         textbox_set_properties(1, TEXTBOX_STATE_FADEOUT, NULL);
         hud_show_name_entry_info(
-            func_800AECCC(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]),
+            u_calc_rank_of_score_record(modeCtrl.difficulty, &lbl_802C67D4[modeCtrl.currPlayer][0]),
             lbl_802C67D4[modeCtrl.currPlayer][0].score);
         hud_show_name_entry_banner(modeCtrl.submodeTimer);
     }
     if (modeCtrl.submodeTimer == 180)
-        camera_set_state(33);
+        camera_set_state_all(33);
     if (--modeCtrl.submodeTimer > 0)
         return;
     gameSubmodeRequest = SMD_GAME_NAMEENTRY_INIT;
@@ -1224,7 +1233,7 @@ void submode_game_nameentry_init_func(void)
     infoWork.flags &= ~INFO_FLAG_TIMER_PAUSED;
     WORLD_FOREACH( world->state = WORLD_STATE_INPUT_INIT; )
     BALL_FOREACH( ball->state = 4; )
-    camera_set_state(35);
+    camera_set_state_all(35);
     gameSubmodeRequest = SMD_GAME_NAMEENTRY_MAIN;
 }
 
@@ -1495,7 +1504,7 @@ void submode_game_extra_init_func(void)
     event_start(EVENT_CAMERA);
     event_start(EVENT_SPRITE);
     BALL_FOREACH( ball->state = 13; )
-    camera_set_state(51);
+    camera_set_state_all(51);
     start_screen_fade(FADE_IN|FADE_ABOVE_SPRITES, RGBA(0, 0, 0, 0), 120);
     if (backgroundSongs[backgroundInfo.bgId] != -1)
         u_play_music(0xFFEC0000 | (backgroundSongs[backgroundInfo.bgId] + 1), 6);
@@ -1601,7 +1610,7 @@ void submode_game_result_init_func(void)
         animate_anim_groups(0.0f);
     }
     BALL_FOREACH( ball->state = 11; )
-    camera_set_state(56);
+    camera_set_state_all(56);
 
     playerCountPtr = &modeCtrl.playerCount;  // fake match
     if (*playerCountPtr == 3)
@@ -1724,7 +1733,7 @@ static inline void u_something_with_rankings(struct Ball *ball)
 
 void submode_game_result_main_func(void)
 {
-    int r28;
+    int tick;
     int i;
     int r3;
 
@@ -1772,27 +1781,28 @@ void submode_game_result_main_func(void)
     }
     if (modeCtrl.submodeTimer > 180)
     {
-        r28 = 0;
+        tick = FALSE;
         BALL_FOREACH(
             int j;
-            int r4 = 0;
+            BOOL r4 = FALSE;
 
+            // tick banana counters
             if (modeCtrl.submodeTimer % 4 == 0 && ball->bananas > 0)
             {
-                int r3 = 1;
+                int bananas = 1;
 
                 if (ball->bananas > 100)
-                    r3 = 41;
+                    bananas = 41;
                 else if (ball->bananas > 10)
-                    r3 = 3;
-                ball->unk138 += r3;
-                r28 = 1;
-                ball->bananas -= r3;
+                    bananas = 3;
+                ball->bananaBonus += bananas;
+                ball->bananas -= bananas;
+                tick = TRUE;
                 if (ball->bananas == 0)
-                    r4 = 1;
+                    r4 = TRUE;
             }
             if (ball->rank == 0 && ball->bananas == 0)
-                r4 = 1;
+                r4 = TRUE;
             if (!r4)
                 continue;
             for (j = 0; j < modeCtrl.playerCount; j++)
@@ -1803,7 +1813,7 @@ void submode_game_result_main_func(void)
                     break;
                 }
             }
-            func_8007EF50(ball);
+            hud_create_some_ranking_icon(ball);
             u_play_sound_0(0x68);
             if (ball->rank == 1)
                 u_play_sound_0(0x1B);
@@ -1815,7 +1825,7 @@ void submode_game_result_main_func(void)
                 lbl_802F1C24++;
             }
         )
-        if (r28)
+        if (tick)
             u_play_sound_0(0x67);
     }
     if (++modeCtrl.submodeTimer < 240)
@@ -1905,7 +1915,7 @@ int u_get_next_stage_id(void)
     return currStageId + 1;
 }
 
-int func_80017004(void)
+int u_get_next_stage_id_not_practice(void)
 {
     if (modeCtrl.courseFlags & (1 << 0))
         return infoWork.unk32;

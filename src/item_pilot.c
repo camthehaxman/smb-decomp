@@ -14,8 +14,10 @@
 #include "item.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "polydisp.h"
 #include "sound.h"
 #include "stage.h"
+#include "stcoli.h"
 #include "vibration.h"
 #include "window.h"
 
@@ -236,7 +238,7 @@ void item_pilot_draw(struct Item *item)
     struct GMAModel *model;
     Vec spC;
 
-    if (polyDisp.unk0 & (1 << 2))
+    if (polyDisp.flags & (1 << 2))
         return;
     f30 = item->unk14;
     mathutil_mtxA_from_mtxB();

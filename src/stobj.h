@@ -1,6 +1,8 @@
 #ifndef _SRC_STOBJ_H_
 #define _SRC_STOBJ_H_
 
+struct PhysicsBall;
+
 // Stage object (stobj) type
 enum
 {
@@ -94,6 +96,6 @@ void stobj_goalbag_exmaster_coli(struct Stobj *, struct PhysicsBall *);
 void stobj_goalbag_exmaster_destroy(struct Stobj *);
 void stobj_goalbag_exmaster_debug(struct Stobj *);
 void u_break_goal_tape(int, struct PhysicsBall *);
-void func_8006F5F0(int);
+void stobj_goal_8006F5F0(int);
 
 #endif

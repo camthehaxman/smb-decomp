@@ -39,7 +39,7 @@ void submode_mini_commend_init_func(void)
     event_start(0x10);
     event_start(0xD);
     event_start(0x12);
-    camera_set_state(0x46);
+    camera_set_state_all(0x46);
     cameraInfo->eye.x = -0.5f;
     cameraInfo->eye.y = 1.3f;
     cameraInfo->eye.z = -2.5f;
@@ -221,7 +221,7 @@ void submode_mini_commend_main_func(void)
             func_8009CAE0(sp10, sp8, 0);
             break;
         }
-        camera_set_state(0x46);
+        camera_set_state_all(0x46);
         modeCtrl.unk10 = var_r30;
     }
     mathutil_mtxA_from_translate_xyz(lbl_802F1ECC, lbl_802F1EC8, lbl_802F1EC4);
@@ -558,7 +558,7 @@ static void func_8009C2A4(s8 *status, struct Sprite *sprite)
     {
         if (miniCommendInfo.unk6C != NULL)
         {
-            mathutil_mtxA_from_translate_xyz(miniCommendInfo.unk6C->unk30.x, 3.8 + lbl_802F1EC8, miniCommendInfo.unk6C->unk30.z);
+            mathutil_mtxA_from_translate_xyz(miniCommendInfo.unk6C->pos.x, 3.8 + lbl_802F1EC8, miniCommendInfo.unk6C->pos.z);
             var_f27 = 0.4f;
         }
         else
@@ -769,8 +769,8 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
             mathutil_mtxA_from_quat(&temp_r3_4->unk60);
             mathutil_mtxA_rotate_y(-0x4000);
             mathutil_mtxA_to_quat(&temp_r3_4->unk60);
-            func_8009D7FC(var_r22, &temp_r3_4->unk30);
-            func_8008BA2C(temp_r3_4, 10, (u8)temp_r3_4->unk74);
+            func_8009D7FC(var_r22, &temp_r3_4->pos);
+            mot_ape_8008BA2C(temp_r3_4, 10, (u8)temp_r3_4->unk74);
             miniCommendInfo.apePtrs[var_r22] = temp_r3_4;
         }
     }
@@ -799,10 +799,10 @@ static void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
         mathutil_mtxA_from_quat(&ape->unk60);
         mathutil_mtxA_rotate_y(-0x4000);
         mathutil_mtxA_to_quat(&ape->unk60);
-        ape->unk30.x = -0.5f;
-        ape->unk30.y = lbl_80171B60[0];
-        ape->unk30.z = 1.0f;
-        func_8008BA2C(ape, 10, (u8)ape->unk74);
+        ape->pos.x = -0.5f;
+        ape->pos.y = lbl_80171B60[0];
+        ape->pos.z = 1.0f;
+        mot_ape_8008BA2C(ape, 10, (u8)ape->unk74);
         miniCommendInfo.unk6C = ape;
         miniCommendInfo.unk74 = arg2;
         miniCommendInfo.unk0 |= 8;
@@ -839,7 +839,7 @@ static void mini_commend_free_data(void)
         }
         if (miniCommendInfo.unk6C != NULL)
         {
-            new_ape_close(miniCommendInfo.unk6C);
+            ape_destroy(miniCommendInfo.unk6C);
             miniCommendInfo.unk6C = NULL;
         }
         if (miniCommendInfo.unk70 >= 0)
@@ -851,7 +851,7 @@ static void mini_commend_free_data(void)
         {
             if (miniCommendInfo.apePtrs[i] != NULL)
             {
-                new_ape_close(miniCommendInfo.apePtrs[i]);
+                ape_destroy(miniCommendInfo.apePtrs[i]);
                 miniCommendInfo.apePtrs[i] = NULL;
             }
             if (miniCommendInfo.apeThreads[i] >= 0)
@@ -909,7 +909,7 @@ static void func_8009CD5C(void)
         }
         if (miniCommendInfo.unk6C != NULL)
         {
-            mathutil_mtxA_from_mtxB_translate(&miniCommendInfo.unk6C->unk30);
+            mathutil_mtxA_from_mtxB_translate(&miniCommendInfo.unk6C->pos);
             mathutil_mtxA_rotate_y(-0x8000);
             u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[3].model);
@@ -929,7 +929,7 @@ static void func_8009CD5C(void)
                 sp44.z = temp_r27->unk0->joints[0].transformMtx[2][3];
                 mathutil_mtxA_from_quat(&temp_r27->unk60);
                 mathutil_mtxA_to_mtx(sp50);
-                mathutil_mtxA_from_translate(&temp_r27->unk30);
+                mathutil_mtxA_from_translate(&temp_r27->pos);
                 mathutil_mtxA_scale_xyz(temp_r27->modelScale, temp_r27->modelScale, temp_r27->modelScale);
                 mathutil_mtxA_translate(&temp_r27->unk3C);
                 mathutil_mtxA_mult_right(sp50);
@@ -966,7 +966,7 @@ static void func_8009CD5C(void)
             {
                 mathutil_mtxA_from_quat(&var_r25_2->unk60);
                 mathutil_mtxA_to_mtx(sp14);
-                mathutil_mtxA_from_mtxB_translate(&var_r25_2->unk30);
+                mathutil_mtxA_from_mtxB_translate(&var_r25_2->pos);
                 mathutil_mtxA_scale_xyz(var_r25_2->modelScale, var_r25_2->modelScale, var_r25_2->modelScale);
                 mathutil_mtxA_translate(&var_r25_2->unk3C);
                 mathutil_mtxA_mult_right(sp14);
@@ -985,7 +985,7 @@ static void func_8009CD5C(void)
                     mathutil_mtxA_rotate_y(0x4000);
                     break;
                 case 2:
-                    mathutil_mtxA_from_mtxB_translate(&var_r25_2->unk30);
+                    mathutil_mtxA_from_mtxB_translate(&var_r25_2->pos);
                     break;
                 case 3:
                     mathutil_mtxA_mult_right(var_r25_2->unk0->joints[0xF].transformMtx);
@@ -1064,7 +1064,7 @@ static void func_8009D3AC(struct Ape *ape, int status)
      && (temp_r5 == 2 || (ape->charaId == 1 && temp_r5 == 3)))
         ape->unk0->unk0 |= 4;
     new_ape_stat_motion(ape, 0xA, temp_r5, 0, 0.0f);
-    new_ape_calc(ape);
+    ape_skel_anim_main(ape);
     temp_r3_2 = func_8009D5F4();
     temp_r0 = 1 << (u8)(ape->unk74 >> 8);
     if (temp_r3_2 == temp_r0 || ((temp_r3_2 & temp_r0) && (rand() & 0x7FFF) % 3 == 0))
@@ -1072,19 +1072,19 @@ static void func_8009D3AC(struct Ape *ape, int status)
         switch (ape->unk0->unk32)
         {
         case 0x172:
-            var_r0 = ape->unk0->unk38 == 0x60;
+            var_r0 = ape->unk0->u_poseNum == 0x60;
             break;
         case 0x173:
-            var_r0 = ape->unk0->unk38 == 0x4D;
+            var_r0 = ape->unk0->u_poseNum == 0x4D;
             break;
         case 0x14F:
-            var_r0 = ape->unk0->unk38 == 0x1B;
+            var_r0 = ape->unk0->u_poseNum == 0x1B;
             break;
         case 0x174:
-            var_r0 = ape->unk0->unk38 == 0x58;
+            var_r0 = ape->unk0->u_poseNum == 0x58;
             break;
         default:
-            var_r0 = ape->unk0->unk38 == 1;
+            var_r0 = ape->unk0->u_poseNum == 1;
             break;
         }
         if (var_r0)
@@ -1217,8 +1217,8 @@ void func_8009D98C(Vec *arg0)
     }
     if (miniCommendInfo.unk6C != NULL)
     {
-        vec1.y = MIN(vec1.y, miniCommendInfo.unk6C->unk30.y);
-        vec2.y = MAX(vec2.y, miniCommendInfo.unk6C->unk30.y);
+        vec1.y = MIN(vec1.y, miniCommendInfo.unk6C->pos.y);
+        vec2.y = MAX(vec2.y, miniCommendInfo.unk6C->pos.y);
     }
     arg0->x = 0.5 * (vec1.x + vec2.x);
     arg0->y = 0.5 * (vec1.y + vec2.y);
@@ -1280,13 +1280,13 @@ int func_8009DBB0(Vec *arg0, struct Struct8009DBB0 *arg1, Vec *arg2)
     if (miniCommendInfo.unk6C != NULL)
     {
         struct Ape *ape = miniCommendInfo.unk6C;
-        if (arg0->x >= ape->unk30.x - 0.5
-         && arg0->z >= ape->unk30.z - 0.5
-         && arg0->x <= ape->unk30.x + 0.5
-         && arg0->z <= ape->unk30.z + 0.5)
+        if (arg0->x >= ape->pos.x - 0.5
+         && arg0->z >= ape->pos.z - 0.5
+         && arg0->x <= ape->pos.x + 0.5
+         && arg0->z <= ape->pos.z + 0.5)
         {
             arg1->unk0 = 1;
-            arg1->unk4.y = ape->unk30.y;
+            arg1->unk4.y = ape->pos.y;
         }
     }
     return (arg1->unk0 & 1) != 0;

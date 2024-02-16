@@ -19,6 +19,7 @@
 #include "minimap.h"
 #include "mode.h"
 #include "nl2ngc.h"
+#include "polydisp.h"
 #include "preview.h"
 #include "recplay.h"
 #include "shadow.h"
@@ -136,7 +137,7 @@ void ev_stage_main(void)
     else if (infoWork.flags & INFO_FLAG_REPLAY)
     {
         stageInfo.u_stageTimer =
-            get_recplay_stage_timer(replayInfo.unk10, replayInfo.unk0[replayInfo.unk14]);
+            recplay_get_stage_timer(g_recplayInfo.u_timeOffset, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]);
         stageInfo.unk0 = stageInfo.u_stageTimer;
     }
     else
@@ -2026,7 +2027,7 @@ void stage_draw(void)
                 mathutil_mtxA_rotate_z(goal->rotZ);
                 mathutil_mtxA_rotate_y(goal->rotY);
                 mathutil_mtxA_rotate_x(goal->rotX);
-                func_8000E338(goal->type);
+                polydisp_set_nlobj_fade_color_from_goal_type(goal->type);
                 switch (goal->type)
                 {
                 default:
@@ -2106,7 +2107,7 @@ void stage_draw(void)
                         model = r27->model;
                         if (model != NULL && model != NULL) // WTF?
                         {
-                            if (!(polyDisp.unk0 & (1 << 2)) ||
+                            if (!(polyDisp.flags & (1 << 2)) ||
                                 (r27->flags & (1 << 2)))
                             {
                                 avdisp_draw_model_culled_sort_none(model);
@@ -2247,10 +2248,10 @@ void stage_draw(void)
             draw_blur_bridge_accordions();
 
         // draw starting position marker
-        if (gameSubmode == SMD_GAME_READY_MAIN && !(polyDisp.unk0 & (1 << 1)))
+        if (gameSubmode == SMD_GAME_READY_MAIN && !(polyDisp.flags & (1 << 1)))
         {
             nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
-            if (polyDisp.unk0 & (1 << 3))
+            if (polyDisp.flags & (1 << 3))
             {
                 mathutil_mtxA_from_identity();
                 mathutil_mtxA_scale_s(0.8f);

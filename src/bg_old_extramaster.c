@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "effect.h"
 #include "mathutil.h"
+#include "mt_effect.h"
 #include "nl2ngc.h"
 #include "stage.h"
 #include "window.h"

@@ -1598,7 +1598,7 @@ const struct ChildJointList lbl_80116FE0[] =
 
 const struct MotRotation lbl_80117068 = { -0.555491f, 0.259482f, 0.868701f };
 
-const struct ChildJointList *const lbl_80117074[] = { NULL, NULL, lbl_80116F18, lbl_80116FE0 };
+const struct ChildJointList *const childJointLists[] = { NULL, NULL, lbl_80116F18, lbl_80116FE0 };
 
 const struct MotRotation *const lbl_80117084[] = { NULL, NULL, &lbl_80116FA0, &lbl_80117068 };
 
@@ -1826,7 +1826,7 @@ void func_80036000(struct Struct8003699C_child_sub *arg0, u16 arg1, u16 arg2)
 }
 #pragma force_active reset
 
-void func_80036064(struct Struct8003699C_child *arg0)
+void u_animate_ape_hands(struct ApeAnimationThing *arg0)
 {
     float temp_f26;
     float temp_f2;
@@ -1840,7 +1840,7 @@ void func_80036064(struct Struct8003699C_child *arg0)
     phi_r31 = arg0->unk81A4;
     if (phi_r31 != NULL)
     {
-        temp_f26 = arg0->unk3A - (arg0->unk38 + arg0->unk40);
+        temp_f26 = arg0->unk3A - (arg0->u_poseNum + arg0->u_timeInKeyframe);
         if (arg0->unk0 & 4)
         {
             phi_r30 = &arg0->unk4114;
@@ -1853,7 +1853,7 @@ void func_80036064(struct Struct8003699C_child *arg0)
         }
         while (phi_r31->unk0 != 0)
         {
-            if (arg0->unk38 < phi_r31->unk2)
+            if (arg0->u_poseNum < phi_r31->unk2)
                 break;
 
             switch (phi_r31->unk0)
@@ -2045,74 +2045,77 @@ void func_80036544(struct Struct8003699C_child_sub *arg0)
 
 void func_800366F8(struct Struct8003699C_child_sub *arg0)
 {
-    u_load_new_anim_into_joints(arg0->unk38, arg0->unk8);
+    u_load_new_anim_into_joints(arg0->joints, arg0->unk8);
 }
 
-extern const struct Struct80034F5C_3 *const lbl_80114DD0[];
-extern const struct Struct80034F5C_2 *const lbl_80114DE0[];
+extern const struct JointRotationSomething *const lbl_80114DD0[];
+extern const struct JointPositionSomething *const lbl_80114DE0[];
 
 void func_80036720(struct Struct8003699C_child_sub *arg0)
 {
-    struct AnimJoint *temp_r31 = arg0->unk38;
-    const struct Struct80034F5C_3 *r4 = lbl_80114DD0[arg0->unk6];
-    const struct Struct80034F5C_2 *r5 = lbl_80114DE0[arg0->unk6];
+    struct AnimJoint *joint = arg0->joints;
+    const struct JointRotationSomething *rotInfo = lbl_80114DD0[arg0->unk6];
+    const struct JointPositionSomething *posInfo = lbl_80114DE0[arg0->unk6];
     float t = arg0->unkA + arg0->unk14;
     u32 r6 = arg0->unk0 & (1 << 2);
 
-    u_interpolate_joint_motion(temp_r31, r4, r5, t, r6);
+    u_interpolate_joint_motion(joint, rotInfo, posInfo, t, r6);
     mathutil_mtxA_from_identity();
-    mathutil_mtxA_to_mtx(temp_r31->unk168);
-    mathutil_mtxA_get_translate_alt2(&temp_r31->unk1CC);
-    u_joint_tree_calc_some_matrix(temp_r31, temp_r31);
+    mathutil_mtxA_to_mtx(joint->unk168);
+    mathutil_mtxA_get_translate_alt2(&joint->unk1CC);
+    u_joint_tree_calc_some_matrix(joint, joint);
 }
 
-void u_create_joints_from_hardcoded_arrays(struct AnimJoint *arg0, u16 arg1, u16 arg2)
+// similar to u_create_joints_from_skeleton, but reads info from hardcoded arrays instead
+void u_create_joints_from_hardcoded_arrays(struct AnimJoint *joint, u16 arg1, u16 arg2)
 {
-    struct AnimJoint *r31 = arg0;
-    const u32 *r30 = u_jointFlagLists[arg1];
+    struct AnimJoint *jointArr = joint;
+    const u32 *flags = u_jointFlagLists[arg1];
     const Vec *r29 = lbl_801171FC[arg1];
     const Vec *r28 = lbl_801177AC[arg2];
-    const struct ChildJointList *childList = lbl_80117074[arg1];
+    const struct ChildJointList *childList = childJointLists[arg1];
     const struct MotRotation *rotation = lbl_80117084[arg1];
-    int r25;
-    u8 r5;
+    int thisIdx;
+    u8 i;
 
     mathutil_mtxA_from_identity();
-    arg0->parentIdx = -1;
+    joint->parentIdx = -1;
 
-    r25 = 0;
+    thisIdx = 0;
     while (1)
     {
-        arg0->flags = *r30;
-        mathutil_mtxA_to_mtx(arg0->rotateMtx);
-        mathutil_mtxA_to_mtx(arg0->transformMtx);
-        if (arg0->flags & 0x40)
+        joint->flags = *flags;
+        mathutil_mtxA_to_mtx(joint->rotateMtx);
+        mathutil_mtxA_to_mtx(joint->transformMtx);
+        if (joint->flags & JOINT_FLAG_HAS_OTHER_ROTATION_MTX)
         {
             mathutil_mtxA_push();
             mathutil_mtxA_rotate_z(RADIANS_TO_S16(rotation->rotZ));
             mathutil_mtxA_rotate_y(RADIANS_TO_S16(rotation->rotY));
             mathutil_mtxA_rotate_x(RADIANS_TO_S16(rotation->rotX));
-            mathutil_mtxA_to_mtx(arg0->unk1C);
+            mathutil_mtxA_to_mtx(joint->otherRotateMtx);
             rotation++;
             mathutil_mtxA_pop();
         }
-        arg0->childCount = childList->count;
-        arg0->childIndexes = childList->children;
-        for (r5 = 0; r5 < arg0->childCount; r5++)
-            r31[arg0->childIndexes[r5]].parentIdx = (u8)r25;
-        if (arg0->flags & 2)
+
+        // Update child joints to point back to this joint as its parent
+        joint->childCount = childList->count;
+        joint->childIndexes = childList->children;
+        for (i = 0; i < joint->childCount; i++)
+            jointArr[joint->childIndexes[i]].parentIdx = (u8)thisIdx;
+        if (joint->flags & 2)
         {
-            arg0->unk4 = *r29++;
-            arg0->unk10 = *r28++;
+            joint->unk4 = *r29++;
+            joint->unk10 = *r28++;
         }
 
-        r30++;
-        if (*r30 == 0)
+        flags++;
+        if (*flags == 0)
             break;
-        arg0++;
+        joint++;
         childList++;
-        r25++;
+        thisIdx++;
     }
-    arg0++;
-    arg0->flags = *r30;
+    joint++;
+    joint->flags = *flags;
 }

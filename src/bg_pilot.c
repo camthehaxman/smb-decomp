@@ -8,6 +8,7 @@
 #include "gxcache.h"
 #include "mathutil.h"
 #include "mode.h"
+#include "polydisp.h"
 #include "rend_efc.h"
 #include "stage.h"
 #include "window.h"
@@ -157,7 +158,7 @@ void bg_pilot_draw(void)
     int unused;
 
     temp_r30 = backgroundInfo.work;
-    if (polyDisp.unk0 & 1)
+    if (polyDisp.flags & 1)
         unused = 0;
     else if (gameMode == 2 || gameMode == 4)
         unused = 0;
@@ -178,7 +179,7 @@ void bg_pilot_draw(void)
     if (temp_r30->unk10 != NULL)
         avdisp_draw_model_culled_sort_none(temp_r30->unk10);
     temp_r31 = temp_r30->unk14;
-    if (temp_r31 != NULL && !(polyDisp.unk0 & 4))
+    if (temp_r31 != NULL && !(polyDisp.flags & 4))
     {
         temp_r29 = temp_r30->unkE0;
         if (temp_r29 != NULL)

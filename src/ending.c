@@ -20,6 +20,7 @@
 #include "mot_ape.h"
 #include "nl2ngc.h"
 #include "ord_tbl.h"
+#include "polydisp.h"
 #include "rend_efc.h"
 #include "shadow.h"
 #include "sound.h"
@@ -654,7 +655,7 @@ static void ending_state_advanced_intro_main(void)
             chara->unk56 = modeCtrl.currPlayer;
         else
             chara->unk56 = 3;
-        erase_effect(0x2E);
+        erase_effect(ET_ENDING_BALLFRAG);
         CAMERA_FOREACH(camera->subState = 0;)
         temp_f31 = 1.0f / (modeCtrl.submodeTimer - 56);
         temp_f30 = 1.25f * (0.9f + (0.2f * RAND_FLOAT()));
@@ -678,7 +679,7 @@ static void ending_state_advanced_intro_main(void)
             chara->unk56 = modeCtrl.currPlayer;
         else
             chara->unk56 = 3;
-        erase_effect(0x2E);
+        erase_effect(ET_ENDING_BALLFRAG);
         CAMERA_FOREACH(camera->subState = 0;)
         temp_f31 = 1.0f / modeCtrl.submodeTimer;
         temp_f30 = 10.0f * (0.9f + (0.2f * RAND_FLOAT()));
@@ -712,9 +713,9 @@ static void ending_state_advanced_intro_main(void)
     case 75:
     case 64:
     case 57:
-        if (chara->ape->unk0->unk38 == (chara->ape->unk0->unk3A >> 1))
+        if (chara->ape->unk0->u_poseNum == (chara->ape->unk0->unk3A >> 1))
             SoundReq(lbl_802F18D8[playerCharacterSelection[modeCtrl.currPlayer]]);
-        if (chara->ape->unk0->unk38 > chara->ape->unk0->unk3A - 0x10)
+        if (chara->ape->unk0->u_poseNum > chara->ape->unk0->unk3A - 0x10)
         {
             memset(&effect, 0, sizeof(effect));
             effect.type = ET_ENDING_BALLFRAG;
@@ -761,7 +762,7 @@ static void ending_state_advanced_intro_main(void)
     case 74:
     case 63:
     case 56:
-        if (chara->ape->unk0->unk38 != chara->ape->unk0->unk3A - 1)
+        if (chara->ape->unk0->u_poseNum != chara->ape->unk0->unk3A - 1)
             modeCtrl.submodeTimer++;
         else
         {
@@ -920,7 +921,7 @@ void ending_state_advanced_end_main(void)
         }
         break;
     case 538:
-        if (chara->ape->unk0->unk38 > chara->ape->unk0->unk3A - 8)
+        if (chara->ape->unk0->u_poseNum > chara->ape->unk0->unk3A - 8)
         {
             chara->state = 8;
             chara->timer = modeCtrl.submodeTimer - 420;
@@ -1528,7 +1529,7 @@ static void ending_state_expert_breakin_init(void)
 static void ending_state_expert_breakin_main(void)
 {
     struct EndingSceneCharacter *chara = &endingInfo.work->characters[3];
-    int temp_r28 = chara->ape->unk0->unk38;
+    int temp_r28 = chara->ape->unk0->u_poseNum;
 
     if (chara->ape->unk9C == 8 && temp_r28 == 0x2A)
         SoundReq(0x181U);
@@ -1840,7 +1841,7 @@ static void ending_state_expert_apecam_main(void)
         ape = chara->ape;
         mathutil_mtxA_from_quat(&ape->unk60);
         mathutil_mtxA_to_mtx(sp8);
-        mathutil_mtxA_from_translate(&ape->unk30);
+        mathutil_mtxA_from_translate(&ape->pos);
         mathutil_mtxA_scale_s(ape->modelScale);
         mathutil_mtxA_translate(&ape->unk3C);
         mathutil_mtxA_mult_right(sp8);
@@ -2497,7 +2498,7 @@ static void ending_chara_draw(void)
         {
             mathutil_mtxA_from_quat(&temp_r26->unk60);
             mathutil_mtxA_to_mtx(sp38);
-            mathutil_mtxA_from_mtxB_translate(&temp_r26->unk30);
+            mathutil_mtxA_from_mtxB_translate(&temp_r26->pos);
             mathutil_mtxA_scale_s(temp_r26->modelScale);
             mathutil_mtxA_translate(&temp_r26->unk3C);
             mathutil_mtxA_mult_right(sp38);
@@ -2524,7 +2525,7 @@ static void ending_chara_draw(void)
             sp20 = chara->pos;
             mathutil_mtxA_from_quat(&temp_r26->unk60);
             mathutil_mtxA_to_mtx(sp38);
-            mathutil_mtxA_from_translate(&temp_r26->unk30);
+            mathutil_mtxA_from_translate(&temp_r26->pos);
             mathutil_mtxA_scale_s(temp_r26->modelScale);
             mathutil_mtxA_translate(&temp_r26->unk3C);
             new_var = &sp14;
@@ -2625,12 +2626,12 @@ static int set_ending_chara(int apeId, enum Character charaId)
         ape = chara->ape;
         if (ape == NULL)
             return 0;
-        ape->unk0->unk3C = 1.0f;
+        ape->unk0->u_someDeltaTime = 1.0f;
         ape->flags |= 0x20;
         chara->unk8 = 0xC;
         chara->unkA = -1;
         mathutil_mtxA_from_identity();
-        mathutil_mtxA_get_translate_alt2(&ape->unk30);
+        mathutil_mtxA_get_translate_alt2(&ape->pos);
         mathutil_mtxA_to_quat(&ape->unk60);
     }
     return 1;
@@ -2646,7 +2647,7 @@ static void ending_ape_thread(struct Ape *ape, int status)
 
     if (done)
     {
-        new_ape_close(ape);
+        ape_destroy(ape);
         if (status != THREAD_STATUS_KILLED)
             thread_exit();
         return;
@@ -2669,34 +2670,34 @@ static void ending_ape_thread(struct Ape *ape, int status)
         switch (chara->unk8)
         {
         case 9:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 8;
             break;
         case 8:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 0xA;
             break;
         case 10:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 0xE;
             break;
         case 14:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 0xB;
             break;
         case 11:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 0xF;
             break;
         case 15:
-            if (chara->unkA != -1 && ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (chara->unkA != -1 && ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
             {
                 chara->unk8 = chara->unkA;
                 chara->unkA = -1;
             }
             break;
         case 17:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 0x10;
             break;
         default:
@@ -2712,11 +2713,11 @@ static void ending_ape_thread(struct Ape *ape, int status)
         switch (chara->unk8)
         {
         case 14:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 0xF;
             break;
         case 15:
-            if (ape->unk0->unk38 == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
                 chara->unk8 = 0xE;
             if (chara->unkA != -1)
             {
@@ -2741,7 +2742,7 @@ static void ending_ape_thread(struct Ape *ape, int status)
         int temp_r5_3 = chara->unk8 - 0x12;
         new_ape_stat_motion(ape, 1, temp_r5_3, temp_r5_3 + 1, 0.0f);
     }
-    new_ape_calc(ape);
+    ape_skel_anim_main(ape);
     switch (chara->unk70)
     {
     case 2:
@@ -2758,7 +2759,7 @@ static void ending_ape_thread(struct Ape *ape, int status)
     mathutil_mtxA_rotate_z(chara->unk30.z);
     mathutil_mtxA_rotate_y(chara->unk30.y - 0x4000);
     mathutil_mtxA_rotate_x(chara->unk30.x);
-    mathutil_mtxA_get_translate_alt2(&ape->unk30);
+    mathutil_mtxA_get_translate_alt2(&ape->pos);
     mathutil_mtxA_to_quat(&ape->unk60);
 
     switch (ape->charaId)
@@ -2769,9 +2770,9 @@ static void ending_ape_thread(struct Ape *ape, int status)
         case 14:
             if (endingInfo.flags & 0x10)
             {
-                if (ape->unk0->unk38 == 0x16)
+                if (ape->unk0->u_poseNum == 0x16)
                     SoundReq(0xB3U);
-                else if (ape->unk0->unk38 == 0x44)
+                else if (ape->unk0->u_poseNum == 0x44)
                     SoundReq(0xE8U);
             }
             break;
@@ -2783,16 +2784,16 @@ static void ending_ape_thread(struct Ape *ape, int status)
         case 15:
             if (endingInfo.flags & 0x10)
             {
-                if (ape->unk0->unk38 == 0xC)
+                if (ape->unk0->u_poseNum == 0xC)
                     SoundReq(0x105U);
-                else if (ape->unk0->unk38 == 0x50 || ape->unk0->unk38 == 0x66)
+                else if (ape->unk0->u_poseNum == 0x50 || ape->unk0->u_poseNum == 0x66)
                     SoundReq(0x12FU);
-                else if (ape->unk0->unk38 == 0x76)
+                else if (ape->unk0->u_poseNum == 0x76)
                     u_play_sound_0(0x1FF);
             }
             break;
         case 14:
-            if ((endingInfo.flags & 0x10) && ape->unk0->unk38 == 0x12)
+            if ((endingInfo.flags & 0x10) && ape->unk0->u_poseNum == 0x12)
                 SoundReq(0xFCU);
             break;
         }
@@ -2801,7 +2802,7 @@ static void ending_ape_thread(struct Ape *ape, int status)
         switch (ape->unk9C)
         {
         case 14:
-            if ((endingInfo.flags & 0x10) && ape->unk0->unk38 == 0x24)
+            if ((endingInfo.flags & 0x10) && ape->unk0->u_poseNum == 0x24)
                 SoundReq(0x16BU);
             break;
         }
@@ -3549,7 +3550,7 @@ static void rend_efc_ape_face(void)
     GXInitTexObj(&texObj, lbl_802F1B40, 640, 448, GX_TF_RGB565, GX_CLAMP, GX_CLAMP, GX_FALSE);
     mathutil_mtxA_from_quat(&ape->unk60);
     mathutil_mtxA_to_mtx(sp14);
-    mathutil_mtxA_from_translate(&ape->unk30);
+    mathutil_mtxA_from_translate(&ape->pos);
     mathutil_mtxA_scale_s(ape->modelScale);
     mathutil_mtxA_translate(&ape->unk3C);
     mathutil_mtxA_mult_right(sp14);

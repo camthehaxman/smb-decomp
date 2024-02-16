@@ -15,19 +15,19 @@ struct InterpolateStuff
 };
 
 static void u_interp_pos_motion(struct AnimJoint *, struct AnimJoint *, u32, float);
-static void u_interp_rot_motion(struct AnimJoint *, struct AnimJoint *, const struct Struct80034F5C_3 *, u32, float);
+static void u_interp_rot_motion(struct AnimJoint *, struct AnimJoint *, const struct JointRotationSomething *, u32, float);
 static float interpolate_channel_keyframes(struct MotionChannel *, float);
 static float u_crazy_interpolation_stuff(struct InterpolateStuff *a, struct InterpolateStuff *b, float c);
 static void read_channel_keyframe_values(struct MotionChannel *, float *, float *, float *);
 static void seek_channel_next_keyframe(struct MotionChannel *);
 static void seek_channel_prev_keyframe(struct MotionChannel *);
 
-void u_interpolate_joint_motion(struct AnimJoint *joints, const struct Struct80034F5C_3 *b, const struct Struct80034F5C_2 *c, float t, u32 d)
+void u_interpolate_joint_motion(struct AnimJoint *joints, const struct JointRotationSomething *rotInfo, const struct JointPositionSomething *posInfo, float t, u32 d)
 {
     u32 flags;
     struct AnimJoint *joint = joints;
 
-    if (b == NULL || c == NULL)
+    if (rotInfo == NULL || posInfo == NULL)
         d = 0;
 
     flags = joint->flags;
@@ -38,27 +38,27 @@ void u_interpolate_joint_motion(struct AnimJoint *joints, const struct Struct800
         if (flags & (1 << 2))
         {
             if (d != 0)
-                u_interp_pos_motion(joint, &joints[c->unk2], d, t);
+                u_interp_pos_motion(joint, &joints[posInfo->jointIdx], d, t);
             else
                 u_interp_pos_motion(joint, joint, d, t);
-            c++;
+            posInfo++;
         }
-        if (flags & (1 << 3))
+        if (flags & JOINT_FLAG_HAS_ROTATION_MTX)
         {
             if (d != 0)
-                u_interp_rot_motion(joint, &joints[b->unk2], b, d, t);
+                u_interp_rot_motion(joint, &joints[rotInfo->jointIdx], rotInfo, d, t);
             else
-                u_interp_rot_motion(joint, joint, b, d, t);
-            b++;
+                u_interp_rot_motion(joint, joint, rotInfo, d, t);
+            rotInfo++;
         }
         joint++;
         flags = joint->flags;
     }
 }
 
-static void u_interp_pos_motion(struct AnimJoint *a, struct AnimJoint *b, u32 c, float t)
+static void u_interp_pos_motion(struct AnimJoint *joint1, struct AnimJoint *b, u32 c, float t)
 {
-    struct MotionChannel *chan = &a->channels[0];
+    struct MotionChannel *chan = &joint1->channels[0];
     int unused;
 
     if (chan->keyframeCount != 0)
@@ -84,7 +84,7 @@ static void u_interp_pos_motion(struct AnimJoint *a, struct AnimJoint *b, u32 c,
 
 }
 
-static void u_interp_rot_motion(struct AnimJoint *a, struct AnimJoint *b, const struct Struct80034F5C_3 *c, u32 d, float t)
+static void u_interp_rot_motion(struct AnimJoint *joint1, struct AnimJoint *joint2, const struct JointRotationSomething *c, u32 d, float t)
 {
     float radToS16;
     struct MotionChannel *chan;
@@ -92,7 +92,7 @@ static void u_interp_rot_motion(struct AnimJoint *a, struct AnimJoint *b, const 
     mathutil_mtxA_from_identity();
     radToS16 = 10430.3779296875f;
 
-    chan = &a->channels[5];
+    chan = &joint1->channels[5];
     if (chan->keyframeCount != 0)
     {
         float val = interpolate_channel_keyframes(chan, t);
@@ -119,7 +119,7 @@ static void u_interp_rot_motion(struct AnimJoint *a, struct AnimJoint *b, const 
         mathutil_mtxA_rotate_x((s16)(radToS16 * val));
     }
 
-    mathutil_mtxA_sq_to_mtx(b->rotateMtx);
+    mathutil_mtxA_sq_to_mtx(joint2->rotateMtx);
 }
 
 static float interpolate_channel_keyframes(struct MotionChannel *chan, float t)
@@ -241,13 +241,13 @@ static void seek_channel_prev_keyframe(struct MotionChannel *chan)
     chan->values -= *chan->valueCounts;
 }
 
-void func_800355B8(struct Struct8003699C_child *a)
+void mot_joint_800355B8(struct ApeAnimationThing *a)
 {
     a->unk3A = u_get_motdat_unk0(a->unk32);
     u_load_new_anim_into_joints(a->joints, a->unk32);
 }
 
-void func_800355FC(struct Struct8003699C_child *a)
+void mot_joint_800355FC(struct ApeAnimationThing *a)
 {
     struct AnimJoint *joints;
 

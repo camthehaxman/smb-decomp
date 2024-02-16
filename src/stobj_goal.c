@@ -12,6 +12,7 @@
 #include "mathutil.h"
 #include "mode.h"
 #include "nl2ngc.h"
+#include "polydisp.h"
 #include "pool.h"
 #include "recplay.h"
 #include "sound.h"
@@ -42,8 +43,8 @@ struct GoalTape
     float unk4;
     float unk8;
     float unkC;
-    s32 unk10;  // time tape was broken?
-    struct Stobj *unk14;
+    s32 u_breakTime;  // time tape was broken?
+    struct Stobj *stobj;
     struct GoalTape_sub unk18[8];
 };  // size = 0x198
 
@@ -56,7 +57,7 @@ struct GoalBag  // The "party ball", known as a "goal bag" internally
     float unk8;
     /*0x0C*/ struct Stobj *stobj;
     /*0x10*/ struct StageGoal goal;
-    s32 unk24;  // time ball was opened?
+    s32 u_openTime;  // time ball was opened?
 };  // size = 0x28
 
 static struct GoalBag goalBags[MAX_GOALS];
@@ -204,8 +205,8 @@ void stobj_goaltape_init(struct Stobj *stobj)
     stobj->boundSphereRadius = 1.3125f;
     stobj->u_model_origin = stobj->model->boundSphereCenter;
     temp_r31 = stobj->extraData;
-    temp_r31->unk14 = stobj;
-    temp_r31->unk10 = -1;
+    temp_r31->stobj = stobj;
+    temp_r31->u_breakTime = -1;
     mathutil_mtxA_from_translate(&stobj->u_some_pos);
     mathutil_mtxA_rotate_z(stobj->rotZ);
     mathutil_mtxA_rotate_y(stobj->rotY);
@@ -513,9 +514,9 @@ void stobj_goaltape_draw(struct Stobj *stobj)
     }
     apply_curr_light_group_ambient();
     nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
-    temp_r5 = replayInfo.unk14;
+    temp_r5 = g_recplayInfo.u_playerId;
     if (g_poolInfo.playerPool.statusList[temp_r5] == STAT_NORMAL && (ballInfo[temp_r5].flags & 0x01000000))
-        time = (100.0 * func_80049E7C(replayInfo.unk0[temp_r5], replayInfo.unk10)) / 60.0;
+        time = (100.0 * recplay_get_info_timer(g_recplayInfo.u_replayIndexes[temp_r5], g_recplayInfo.u_timeOffset)) / 60.0;
     else
     {
         temp_r0 = infoWork.timerCurr * 0x64;
@@ -744,7 +745,7 @@ void stobj_goalbag_init(struct Stobj *stobj)
     stobj->u_local_vel.z = 0.0f;
     bag = stobj->extraData;
     bag->stobj = stobj;
-    bag->unk24 = -1;
+    bag->u_openTime = -1;
     bag->openness = 0.0f;
     bag->unk8 = 0.0f;
 }
@@ -831,7 +832,7 @@ void stobj_goalbag_main(struct Stobj *stobj)
         {
             bag->openness = 0.0f;
             bag->u_flags = 0;
-            bag->unk24 = -1;
+            bag->u_openTime = -1;
             if (stobj->counter < 0)
             {
                 stobj->state = 1;
@@ -1233,7 +1234,7 @@ void u_break_goal_tape(int goalId, struct PhysicsBall *arg1)
         tape = &goalTapes[goalId];
         if (tape->u_flags == 0)
         {
-            stobj = tape->unk14;
+            stobj = tape->stobj;
             mathutil_mtxA_from_identity();
             mathutil_mtxA_translate(&stobj->u_some_pos);
             mathutil_mtxA_rotate_z(stobj->rotZ);
@@ -1241,8 +1242,8 @@ void u_break_goal_tape(int goalId, struct PhysicsBall *arg1)
             mathutil_mtxA_rotate_x(stobj->rotX);
             mathutil_mtxA_rigid_inv_tf_point(&arg1->pos, &sp1C);
             mathutil_mtxA_rigid_inv_tf_vec(&arg1->vel, &sp10);
-            if (tape->unk10 < 0)
-                tape->unk10 = infoWork.timerCurr;
+            if (tape->u_breakTime < 0)
+                tape->u_breakTime = infoWork.timerCurr;
             var_f31 = 17.5f;
             var_r28 = -1;
             var_r29 = tape->unk18;
@@ -1276,7 +1277,7 @@ void u_break_goal_tape(int goalId, struct PhysicsBall *arg1)
     }
 }
 
-void func_8006F5F0(int arg0)
+void stobj_goal_8006F5F0(int time)
 {
     int i;
     int j;
@@ -1284,18 +1285,18 @@ void func_8006F5F0(int arg0)
     struct GoalTape_sub *var_r26;
     u8 dummy[8];
 
-    func_8006FB20(arg0);
+    func_8006FB20(time);
     tape = goalTapes;
     for (i = ARRAY_COUNT(goalTapes); i > 0; i--, tape++)
     {
-        if (tape->unk10 <= arg0 && tape->u_flags != 0)
+        if (tape->u_breakTime <= time && tape->u_flags != 0)
         {
             tape->u_flags = 0;
             var_r26 = tape->unk18;
             for (j = 8; j > 0; j--, var_r26++)
             {
                 var_r26->unk0.x = 1.75 * ((j - 1) / 7.0f) - 0.875;
-                var_r26->unk0.y = tape->unk14->u_model_origin.y;
+                var_r26->unk0.y = tape->stobj->u_model_origin.y;
                 var_r26->unk0.z = 0.0f;
                 var_r26->unkC.x *= 0.25;
                 var_r26->unkC.y *= 0.25;
@@ -1339,8 +1340,8 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
             stobj->u_local_vel.z += 0.5 * arg1->vel.z;
             u_play_sound_0(0x16);
             u_play_sound_0(0x127);
-            if (bag->unk24 < 0)
-                bag->unk24 = infoWork.timerCurr;
+            if (bag->u_openTime < 0)
+                bag->u_openTime = infoWork.timerCurr;
             cameraMask = 1 << currentBall->playerId;
             memset(&effect, 0, sizeof(effect));
             effect.type = ET_PAPERFRAG;
@@ -1399,7 +1400,7 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
     }
 }
 
-static void func_8006FB20(int arg0)
+static void func_8006FB20(int time)
 {
     int i;
     struct GoalBag *bag;
@@ -1408,7 +1409,7 @@ static void func_8006FB20(int arg0)
     bag = goalBags;
     for (i = ARRAY_COUNT(goalBags); i > 0; i--, bag++)
     {
-        if (bag->unk24 <= arg0 && bag->u_flags != 0)
+        if (bag->u_openTime <= time && bag->u_flags != 0)
         {
             bag->u_flags = 0;
             bag->openness = 0.0f;
@@ -1445,7 +1446,7 @@ static void func_8006FD44(struct GoalTape *tape)
     u8 unused[8];
 
     tape->u_flags = 0;
-    tape->unk10 = -1;
+    tape->u_breakTime = -1;
     y = tape->unk8;
     var_r29 = tape->unk18;
     for (i = 8; i > 0; i--, var_r29++)
