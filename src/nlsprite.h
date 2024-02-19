@@ -23,7 +23,7 @@ typedef struct tagNLsprarg
 
     /*0x28*/ s32 ang;  // counterclockwise rotation in units of 1/65536 turn
     /*0x2C*/ float trnsl;  // opacity (0 is invisible, 1 is fully opaque)
-    s32 listType;
+    /*0x30*/ s32 listType;
     /*0x34*/ u32 attr;  // bit mask of flags (see below)
 
     // Color of sprite. The final color is computed by texColor * base_color + offset_color
