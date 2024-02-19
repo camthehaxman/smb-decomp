@@ -287,10 +287,18 @@ void func_800A7B7C(void)
         lbl_802C6180.unk0 &= ~1;
 }
 
+struct UnkStruct
+{
+    char unk0[3];
+    u8 unk3;
+    char unk4[3];
+    u8 unk7;
+};
+
 struct Struct801D5960
 {
     void (*unk0)();
-    char *unk4;
+    struct UnkStruct *unk4;
     u32 unk8;
     char *unkC;
 };
@@ -316,21 +324,21 @@ extern char lbl_801D5BF4[];
 
 struct Struct801D5960 lbl_801D5960[] =  // 0xB8
 {
-    {func_800AADC4, lbl_801D5A20, 8, "spr_bg/bg_rac.gct"},
-    {func_800AADC4, lbl_801D5A50, 8, "spr_bg/bg_rac.gct"},
-    {func_800AADC4, lbl_801D5A80, 8, "spr_bg/bg_rac.gct"},
-    {func_800AADC4, lbl_801D5AB0, 8, "spr_bg/bg_rac.gct"},
-    {func_800AADC4, lbl_801D5AE0, 8, "spr_bg/bg_rac.gct"},
-    {func_800AADC4, lbl_801D5B10, 8, "spr_bg/bg_rac.gct"},
+    {func_800AADC4, (void *)lbl_801D5A20, 8, "spr_bg/bg_rac.gct"},
+    {func_800AADC4, (void *)lbl_801D5A50, 8, "spr_bg/bg_rac.gct"},
+    {func_800AADC4, (void *)lbl_801D5A80, 8, "spr_bg/bg_rac.gct"},
+    {func_800AADC4, (void *)lbl_801D5AB0, 8, "spr_bg/bg_rac.gct"},
+    {func_800AADC4, (void *)lbl_801D5AE0, 8, "spr_bg/bg_rac.gct"},
+    {func_800AADC4, (void *)lbl_801D5B10, 8, "spr_bg/bg_rac.gct"},
 
-    {func_800AAE80, lbl_801D5B40, 8, "spr_bg/bg_tgt.gct"},
-    {func_800AAE80, lbl_801D5B68, 8, "spr_bg/bg_tgt.gct"},
-    {func_800AAE80, lbl_801D5B90, 8, "spr_bg/bg_tgt.gct"},
+    {func_800AAE80, (void *)lbl_801D5B40, 8, "spr_bg/bg_tgt.gct"},
+    {func_800AAE80, (void *)lbl_801D5B68, 8, "spr_bg/bg_tgt.gct"},
+    {func_800AAE80, (void *)lbl_801D5B90, 8, "spr_bg/bg_tgt.gct"},
 
-    {func_800AAF40, lbl_801D5BB8, 6, "spr_bg/bg_bwl.gct"},
-    {func_800AAF40, lbl_801D5BB8+34, 6, "spr_bg/bg_bwl.gct"},
+    {func_800AAF40, (void *)lbl_801D5BB8, 6, "spr_bg/bg_bwl.gct"},
+    {func_800AAF40, (void *)(lbl_801D5BB8+34), 6, "spr_bg/bg_bwl.gct"},
 
-    {func_800AAF40, lbl_801D5BF4, 8, "spr_bg/bg_glf.gct"},
+    {func_800AAF40, (void *)lbl_801D5BF4, 8, "spr_bg/bg_glf.gct"},
 };
 
 char lbl_801D5A20[] =
@@ -533,14 +541,14 @@ char lbl_801D5BF4[] =
     0x00, 0x63, 0x00, 0x63,
 };
 
-char *lbl_801D5C1C[] = // 0x374
+struct UnkStruct *lbl_801D5C1C[] = // 0x374
 {
-    lbl_801D5A48,
-    lbl_801D5A78,
-    lbl_801D5AA8,
-    lbl_801D5AD8,
-    lbl_801D5B08,
-    lbl_801D5B38,
+    (void *)lbl_801D5A48,
+    (void *)lbl_801D5A78,
+    (void *)lbl_801D5AA8,
+    (void *)lbl_801D5AD8,
+    (void *)lbl_801D5B08,
+    (void *)lbl_801D5B38,
 };
 
 NLsprarg lbl_801D58A8_38C =
@@ -678,7 +686,7 @@ static const u16 lbl_80171BA4[] = {0x3, 0x5D, 0x5D, 0x5D, 0x5D};
 
 struct Struct801D58A8_A8C
 {
-    u16 *unk0;
+    const u16 *unk0;
     u16 unk4;
     u16 unk6;
 } lbl_801D58A8_A8C[4] =
@@ -687,6 +695,31 @@ struct Struct801D58A8_A8C
     {lbl_80171B80, 9, 0},
     {lbl_80171B94, 8, 0},
     {lbl_80171BA4, 5, 0},
+};
+
+NLsprarg lbl_801D58A8_AAC =
+{
+    0x31C, 0, 0, 0.1, 1, 1, 0, 0, 1, 1, 0, 1, -1, 5, 0xFFFFFFFF, 0x00000000, 0, 0, 0, 0
+};
+
+NLsprarg lbl_801D58A8_AFC =
+{
+    0x320, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, -1, 5, 0xFFFFFFFF, 0x00000000, 0, 0, 0, 0
+};
+
+NLsprarg lbl_801D58A8_B4C =
+{
+    0x31F, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, -1, 5, 0xFFFFFFFF, 0x00000000, 0, 0, 0, 0
+};
+
+NLsprarg lbl_801D58A8_B9C =
+{
+    0x31F, 0, 0, 1, 0.84090906, 1, 0, 0, 0.84090906, 1, 0, 1, -1, 5, 0xFFFFFFFF, 0x00000000, 0, 0, 0, 0
+};
+
+NLsprarg lbl_801D58A8_BEC =
+{
+    0x320, 0, 0, 0.5, 1, 1, 0.5, 0, 1.5, 1, 0, 1, -1, 5, 0xFFFFFFFF, 0x00000000, 0, 0, 0, 0
 };
 
 float camPerspAngle = 60.0f;
@@ -771,11 +804,11 @@ void func_800A7C10(s8 *arg0, struct Sprite *arg1)
     temp = temp_r4_2 = playerControllerIDs[lbl_802C6180.unkA];
     if ((lbl_802C6180.unk0 & 4) && (lbl_802C6180.unkA == lbl_802C6180.unk5))
     {
-      var_r24 = lbl_801D5C1C[lbl_802C6180.unk4];
+      var_r24 = lbl_801D5C1C[lbl_802C6180.unk4]->unk0;
     }
     else
     {
-      var_r24 = lbl_801D5960[lbl_802C6180.unk4].unk4;
+      var_r24 = lbl_801D5960[lbl_802C6180.unk4].unk4->unk0;
       var_r24 += lbl_802C6180.unkB[lbl_802C6180.unkA] * lbl_801D5960[lbl_802C6180.unk4].unk8;
     }
     if (lbl_802C6180.unkF < 3)
@@ -917,7 +950,7 @@ void func_800A7C10(s8 *arg0, struct Sprite *arg1)
     if (lbl_802C6180.unk0 & 2)
     {
       int foo = lbl_802C6180.unk4;
-      char *src = &lbl_801D5960[foo].unk4[lbl_802C6180.unkB[lbl_802C6180.unk5] * lbl_801D5960[lbl_802C6180.unk4].unk8];
+      char *src = &lbl_801D5960[foo].unk4->unk0[lbl_802C6180.unkB[lbl_802C6180.unk5] * lbl_801D5960[lbl_802C6180.unk4].unk8];
       memcpy(lbl_801D5C1C[foo], src, 3);
     }
   }
@@ -947,6 +980,22 @@ void func_800A82D0(void)
     sp8.y = 423.0 + lbl_802C6180.unk1C - 412.0;
     func_800A916C(&sp8);
 }
+
+float lbl_801D6514[] = {0.0f, 40.0f, 84.0f};
+
+struct
+{
+    char *unk0;
+    u32 unk4;
+} lbl_801D58A8_CF4[] =
+{
+    {"a/-Jungle Circuit-", 10},
+    {"a/-Aqua Offroad-", 8},
+    {"a/-Frozen Highway-", 10},
+    {"a/-Sky Downtown-", 9},
+    {"a/-Pipe Warp Tunnel-", 10},
+    {"a/-Speed Desert-", 8},
+};
 
 void func_800A83C4(s32 arg0, f32 arg8, f32 arg9)
 {
@@ -1111,10 +1160,7 @@ void func_800A8828(char *arg0, s32 arg1, f32 arg8, f32 arg9)
       sprite_printf("%c", lbl_801D58A8[lbl_802C6180.unk10]);
     }
   }
-    
 }
-
-extern float lbl_801D6514[];
 
 void func_800A8C44(char *arg0, s32 arg1, float arg8, float arg9)
 {
@@ -1305,38 +1351,26 @@ void func_800A916C(struct Sprite *arg0)
     sprite_puts(arg0->text);
 }
 
-struct
-{
-    char *unk0;
-    u8 filler4[4];
-} lbl_801D58A8_CF4[4] = {0};
-
-//struct NLsprarg lbl_801D58A8_42C;
-//struct NLsprarg lbl_801D58A8_47C;
-//struct NLsprarg lbl_801D58A8_5BC;
-//struct NLsprarg lbl_801D58A8_60C;
-
-#if 0
 void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
 {
     struct Sprite sp20;
-    NLsprarg *temp_r3;
-    f32 temp_f19;
-    f32 temp_f29;
-    f32 var_f20;
-    f64 temp_f22;
-    f64 temp_f22_2;
-    f64 temp_f31;
-    s32 temp_r5;
+    float f30;
+    float temp_f29;
+    float f21;
+    float var_f20;
     s32 var_r0;
     s32 var_r0_2;
     s32 var_r0_3;
     s32 var_r26;
     u32 var_r5;
-    u8 *temp_r27;
-    u8 *var_r29;
+    struct UnkStruct *temp_r27;
+    NLsprarg *params;
+    float f1;
+    float f0;
+    float textWidth;
+    float temp_f19;
 
-    func_800A82D0(&lbl_802C6180, lbl_801D58A8);
+    func_800A82D0();
     sp20.depth = 0.1f;
     sp20.fontId = 0xB3;
     sp20.addR = 0;
@@ -1348,53 +1382,54 @@ void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
     sp20.flags = 0x200000;
     sp20.scaleX = 0.8f;
     sp20.scaleY = 0.8f;
-    strcpy(&sp20.text[0], lbl_801D58A8_CF4[lbl_802C6180.unk4].unk0);
+    strcpy(sp20.text, lbl_801D58A8_CF4[lbl_802C6180.unk4].unk0);
     reset_text_draw_settings();
-    set_text_font((s32) sp20.fontId);
+    set_text_font(sp20.fontId);
     set_text_scale(sp20.scaleX, sp20.scaleY);
     func_80071B50(sp20.flags);
     func_80071B1C(sp20.depth);
-    set_text_mul_color(sp20.mulB | (((sp20.mulG << 8) & ~0xFF0000) | ((sp20.mulR << 0x10) & 0xFF0000)));
-    set_text_add_color(sp20.addB | (((sp20.addG << 8) & ~0xFF0000) | ((sp20.addR << 0x10) & 0xFF0000)));
-    sp20.x = (f32) (374.0 - (0.5 * u_get_text_width(&sp20.text[0])));
+    set_text_mul_color(RGBA(sp20.mulR, sp20.mulG, sp20.mulB, 0));
+    set_text_add_color(RGBA(sp20.addR, sp20.addG, sp20.addB, 0));
+    textWidth = u_get_text_width(&sp20.text[0]);
+    sp20.x = 374.0 - (0.5 * textWidth);
     sp20.y = 37.0f;
     reset_text_draw_settings();
     set_text_font((s32) sp20.fontId);
     set_text_scale(sp20.scaleX, sp20.scaleY);
     func_80071B50(sp20.flags);
-    func_80071B1C((f32) (0.1 + (f64) sp20.depth));
+    func_80071B1C(0.1 + sp20.depth);
     set_text_mul_color(0U);
     set_text_add_color(0U);
-    set_text_pos((f32) (2.0 + (f64) sp20.x), (f32) (2.0 + 5.477246216e-315));
+    set_text_pos(2.0 + sp20.x, 2.0 + sp20.y);
     sprite_puts(&sp20.text[0]);
     func_80071B1C(sp20.depth);
-    set_text_mul_color(sp20.mulB | (((sp20.mulG << 8) & ~0xFF0000) | ((sp20.mulR << 0x10) & 0xFF0000)));
-    set_text_add_color(sp20.addB | (((sp20.addG << 8) & ~0xFF0000) | ((sp20.addR << 0x10) & 0xFF0000)));
+    set_text_mul_color(RGBA(sp20.mulR, sp20.mulG, sp20.mulB, 0));
+    set_text_add_color(RGBA(sp20.addR, sp20.addG, sp20.addB, 0));
     set_text_pos(sp20.x, sp20.y);
     sprite_puts(&sp20.text[0]);
     nlSprPut(&lbl_801D58A8_42C);
     nlSprPut(&lbl_801D58A8_47C);
     nlSprPut(&lbl_801D58A8_60C);
     nlSprPut(&lbl_801D58A8_5BC);
-    var_r26 = 0;
-    temp_f31 = 568.0 + 0.0;
+    f21 = 0.0f;
     var_f20 = 118.0f;
-    //var_r29 = (lbl_801D58A8 + ((s8) (u8) lbl_802C6180.unk4 * 0x10))->unkBC;
-    var_r29 = &lbl_801D5960[lbl_802C6180.unk4];
-    for (var_r26 = 0; var_r26 < 5; var_r26++, var_r29++)
+    temp_r27 = (void *)lbl_801D5960[lbl_802C6180.unk4].unk4;
+    for (var_r26 = 0; var_r26 < 5; var_r26++, temp_r27++)
     {
-        func_800A83C4(var_r26, 0.0f, var_f20);
-        func_800A85F8(var_r26, 50.0f + 0.0f, var_f20 - 1.0f);
-        func_800A8828(var_r29, var_r26, (f32) (172.0 + 0.0), (f32) ((f64) var_f20 - 1.0));
-        func_800A8C44(var_r29 + 4, var_r26, (f32) (346.0 + 0.0), (f64) (f32) (2.0 + (f64) var_f20));
-        temp_f22 = (f64) var_f20 - 5.0;
-        func_800A8FCC((s32) var_r29->unk3, var_r26, (f64) (f32) (520.0 + 0.0), (f64) (f32) temp_f22);
-        if (var_r29->unk7 & 1)
+        func_800A83C4(var_r26, f21, var_f20);
+        func_800A85F8(var_r26, 50.0f + f21, var_f20 - 1.0f);
+        func_800A8828(temp_r27->unk0, var_r26, 172.0 + f21, var_f20 - 1.0);
+        func_800A8C44(temp_r27->unk4, var_r26, 346.0 + f21, 2.0 + var_f20);
+        func_800A8FCC(temp_r27->unk3, var_r26, 520.0 + f21, var_f20 - 5.0);
+        f1 = 568.0 + f21;
+        f0 = var_f20 - 5.0;
+        if (temp_r27->unk7 & 1)
         {
-            lbl_801D58A8->unkAAC = 0x31C;
-            lbl_801D58A8->unkAB0 = (f32) temp_f31;
-            lbl_801D58A8->unkAB4 = (f32) temp_f22;
-            if (var_r26 != (s8) (u8) lbl_802C6180.unkB[(s8) (u8) lbl_802C6180.unkA])
+            params = &lbl_801D58A8_AAC;
+            params->sprno = 0x31C;
+            params->x = f1;
+            params->y = f0;
+            if (var_r26 != lbl_802C6180.unkB[lbl_802C6180.unkA])
             {
                 var_r0 = lbl_802C6180.unk18;
             }
@@ -1402,32 +1437,31 @@ void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
             {
                 var_r0 = -1;
             }
-            lbl_801D58A8[0xAAC].unk38 = var_r0;
-            nlSprPut((NLsprarg *) (lbl_801D58A8 + 0xAAC));
+            params->base_color = var_r0;
+            nlSprPut(params);
         }
-        //var_r26 += 1;
         var_f20 += lbl_802C6180.unk28;
-        //var_r29 += 8;
     }
-    if (((s8) lbl_802C6180.unk7 < 8) || (lbl_802C6180.unk0 & 6))
+    if (lbl_802C6180.unk7 < 8 || (lbl_802C6180.unk0 & 6))
     {
-        temp_r27 = (lbl_801D58A8 + ((s8) (u8) lbl_802C6180.unk4 * 4))->unk374;
-        temp_f19 = (f32) (4.0 * (60.0 - (f64) lbl_802C6180.unk28));
-        temp_f29 = (f32) (424.0 - (f64) temp_f19);
+        temp_r27 = (void *)lbl_801D5C1C[lbl_802C6180.unk4];
+        temp_f19 = 4.0 * (60.0 - lbl_802C6180.unk28);
+        temp_f29 = 424.0 - temp_f19;
+        f30 = 0.0f;
         if (!(lbl_802C6180.unk0 & 6))
         {
             mathutil_mtxA_from_identity();
             mathutil_mtxA_translate_xyz(320.0f, 224.0f, 0.0f);
-            mathutil_mtxA_scale_xyz((f32) (1.0 - (f64) ((f32) (s8) lbl_802C6180.unk7 * 0.125f)), 1.0f, 1.0f, 1.0);
+            mathutil_mtxA_scale_xyz(1.0 - (lbl_802C6180.unk7 / 8.0f), 1.0f, 1.0f);
             mathutil_mtxA_translate_xyz(-320.0f, -224.0f, 0.0f);
-            GXLoadPosMtxImm((f32 (*)[4]) mathutilData, 0U);
+            GXLoadPosMtxImm(mathutilData->mtxA, 0U);
         }
-        lbl_801D58A8->unk954 = (f32) (407.0 - (f64) temp_f19);
-        nlSprPut((NLsprarg *) (lbl_801D58A8 + 0x94C));
-        lbl_801D58A8->unk9F0 = 48.0f;
-        temp_f22_2 = 423.0 - (f64) temp_f19;
-        lbl_801D58A8->unk9F4 = (f32) temp_f22_2;
-        if (var_r26 != (s8) (u8) lbl_802C6180.unkB[(s8) (u8) lbl_802C6180.unkA])
+        lbl_801D58A8_94C.y = 407.0 - temp_f19;
+        nlSprPut(&lbl_801D58A8_94C);
+        params = &lbl_801D58A8_9EC;
+        params->x = 48.0f;
+        params->y = 423.0 - temp_f19;
+        if (var_r26 != lbl_802C6180.unkB[lbl_802C6180.unkA])
         {
             var_r0_2 = lbl_802C6180.unk18;
         }
@@ -1435,31 +1469,38 @@ void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
         {
             var_r0_2 = -1;
         }
-        lbl_801D58A8[0x9EC].unk38 = var_r0_2;
-        nlSprPut((NLsprarg *) (lbl_801D58A8 + 0x9EC));
+        params->base_color = var_r0_2;
+        nlSprPut(params);
         if (lbl_802C6180.unk0 & 6)
         {
-            temp_r3 = (lbl_801D58A8 + ((s8) lbl_802C6180.filler5[0] * 4))->unk93C;
-            temp_r3->x = 22.0f;
-            temp_r3->y = (f32) (temp_f22_2 - 10.0);
+            NLsprarg *new_var;
+            params = lbl_801D61E4[lbl_802C6180.unk5];
+            new_var = params;
+            params->x = 22.0f;
+            params->y = 423.0 - temp_f19 - 10.0;
             var_r5 = globalAnimTimer % 60;
             if (var_r5 > 0x1EU)
             {
                 var_r5 = 0x3C - var_r5;
             }
-            temp_r5 = var_r5 * 4;
-            temp_r3->offset_color = temp_r5 | ((temp_r5 << 0x10) | (temp_r5 << 8));
-            nlSprPut(temp_r3);
+            var_r5 = var_r5 * 4;
+            var_r5 = var_r5 | ((var_r5 << 0x10) | (var_r5 << 8));
+            params->offset_color = var_r5;
+            nlSprPut(new_var);
         }
-        func_800A8828(temp_r27, var_r26, (f32) (172.0 + 0.0), (f32) ((f64) temp_f29 - 1.0));
-        func_800A8C44(temp_r27 + 4, var_r26, (f32) (346.0 + 0.0), (f64) (f32) (2.0 + (f64) temp_f29));
-        func_800A8FCC((s32) temp_r27->unk3, var_r26, (f64) (f32) (520.0 + 0.0), (f64) (f32) ((f64) temp_f29 - 6.0));
+        func_800A8828(temp_r27->unk0, var_r26, 172.0 + f30, temp_f29 - 1.0);
+        func_800A8C44(temp_r27->unk4, var_r26, 346.0 + f30, temp_f29 + 2.0);
+        func_800A8FCC(temp_r27->unk3, var_r26, 520.0 + f30, temp_f29 - 6.0);
+
+        f1 = 568.0 + f21;
+        f0 = temp_f29 - 5.0;
         if (temp_r27->unk7 & 1)
         {
-            lbl_801D58A8->unkAAC = 0x31C;
-            lbl_801D58A8->unkAB0 = (f32) temp_f31;
-            lbl_801D58A8->unkAB4 = (f32) ((f64) temp_f29 - 5.0);
-            if (var_r26 != (s8) (u8) lbl_802C6180.unkB[(s8) (u8) lbl_802C6180.unkA])
+            params = &lbl_801D58A8_AAC;
+            params->sprno = 0x31C;
+            params->x = f1;
+            params->y = f0;
+            if (var_r26 != lbl_802C6180.unkB[lbl_802C6180.unkA])
             {
                 var_r0_3 = lbl_802C6180.unk18;
             }
@@ -1467,14 +1508,13 @@ void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
             {
                 var_r0_3 = -1;
             }
-            lbl_801D58A8[0xAAC].unk38 = var_r0_3;
-            nlSprPut((NLsprarg *) (lbl_801D58A8 + 0xAAC));
+            params->base_color = var_r0_3;
+            nlSprPut(params);
         }
         if (!(lbl_802C6180.unk0 & 6))
         {
             mathutil_mtxA_from_identity();
-            GXLoadPosMtxImm((f32 (*)[4]) mathutilData, 0U);
+            GXLoadPosMtxImm(mathutilData->mtxA, 0U);
         }
     }
 }
-#endif

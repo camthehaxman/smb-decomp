@@ -6982,8 +6982,8 @@ glabel lbl_801D58A8_A8C
 	.4byte 0x00080000
 	.4byte lbl_80171BA4  ;# ptr
 	.4byte 0x00050000
+glabel lbl_801D58A8_AAC
 	.4byte 0x0000031C
-glabel testlabel
 	.4byte 0
 	.4byte 0
 	.4byte 0x3DCCCCCD
@@ -7003,6 +7003,7 @@ glabel testlabel
 	.4byte 0
 	.4byte 0
 	.4byte 0
+glabel lbl_801D58A8_AFC
 	.4byte 0x00000320
 	.4byte 0
 	.4byte 0
@@ -7023,6 +7024,7 @@ glabel testlabel
 	.4byte 0
 	.4byte 0
 	.4byte 0
+glabel lbl_801D58A8_B4C
 	.4byte 0x0000031F
 	.4byte 0
 	.4byte 0
@@ -7043,6 +7045,7 @@ glabel testlabel
 	.4byte 0
 	.4byte 0
 	.4byte 0
+glabel lbl_801D58A8_B9C
 	.4byte 0x0000031F
 	.4byte 0
 	.4byte 0
@@ -7063,6 +7066,7 @@ glabel testlabel
 	.4byte 0
 	.4byte 0
 	.4byte 0
+glabel lbl_801D58A8_BEC
 	.4byte 0x00000320
 	.4byte 0
 	.4byte 0
