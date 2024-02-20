@@ -4415,7 +4415,9 @@ func_800AB444:
 /* 800AB474 000A7394  38 21 00 08 */	addi r1, r1, 8
 /* 800AB478 000A7398  7C 08 03 A6 */	mtlr r0
 /* 800AB47C 000A739C  4E 80 00 20 */	blr
-lbl_800AB480:
+
+.global func_800AB480
+func_800AB480:
 /* 800AB480 000A73A0  94 21 FF E8 */	stwu r1, -0x18(r1)
 /* 800AB484 000A73A4  80 04 00 48 */	lwz r0, 0x48(r4)
 /* 800AB488 000A73A8  2C 00 00 00 */	cmpwi r0, 0
@@ -4486,7 +4488,7 @@ glabel func_800AB564
 /* 800AB578 000A7498  41 82 00 70 */	beq lbl_800AB5E8
 /* 800AB57C 000A749C  38 00 00 65 */	li r0, 0x65
 /* 800AB580 000A74A0  98 0A 00 0F */	stb r0, 0xf(r10)
-/* 800AB584 000A74A4  3C C0 80 0B */	lis r6, lbl_800AB480@ha
+/* 800AB584 000A74A4  3C C0 80 0B */	lis r6, func_800AB480@ha
 /* 800AB588 000A74A8  3C A0 80 0B */	lis r5, func_800A916C@ha
 /* 800AB58C 000A74AC  C0 02 B6 60 */	lfs f0, lbl_802F5E60@sda21(r2)
 /* 800AB590 000A74B0  3C 60 80 1D */	lis r3, lbl_801D6654@ha
@@ -4496,7 +4498,7 @@ glabel func_800AB564
 /* 800AB5A0 000A74C0  39 00 00 B0 */	li r8, 0xb0
 /* 800AB5A4 000A74C4  C0 02 B6 64 */	lfs f0, lbl_802F5E64@sda21(r2)
 /* 800AB5A8 000A74C8  38 E0 FF FF */	li r7, -1
-/* 800AB5AC 000A74CC  38 C6 B4 80 */	addi r6, r6, lbl_800AB480@l
+/* 800AB5AC 000A74CC  38 C6 B4 80 */	addi r6, r6, func_800AB480@l
 /* 800AB5B0 000A74D0  D0 0A 00 08 */	stfs f0, 8(r10)
 /* 800AB5B4 000A74D4  38 05 91 6C */	addi r0, r5, func_800A916C@l
 /* 800AB5B8 000A74D8  38 6A 00 8C */	addi r3, r10, 0x8c
@@ -4526,7 +4528,7 @@ glabel func_800AB5F8
 /* 800AB60C 000A752C  41 82 00 70 */	beq lbl_800AB67C
 /* 800AB610 000A7530  38 00 00 65 */	li r0, 0x65
 /* 800AB614 000A7534  98 0A 00 0F */	stb r0, 0xf(r10)
-/* 800AB618 000A7538  3C C0 80 0B */	lis r6, lbl_800AB480@ha
+/* 800AB618 000A7538  3C C0 80 0B */	lis r6, func_800AB480@ha
 /* 800AB61C 000A753C  3C A0 80 0B */	lis r5, func_800A916C@ha
 /* 800AB620 000A7540  C0 02 B6 6C */	lfs f0, lbl_802F5E6C@sda21(r2)
 /* 800AB624 000A7544  3C 60 80 1D */	lis r3, lbl_801D6664@ha
@@ -4536,7 +4538,7 @@ glabel func_800AB5F8
 /* 800AB634 000A7554  39 00 00 B0 */	li r8, 0xb0
 /* 800AB638 000A7558  C0 02 B6 64 */	lfs f0, lbl_802F5E64@sda21(r2)
 /* 800AB63C 000A755C  38 E0 00 01 */	li r7, 1
-/* 800AB640 000A7560  38 C6 B4 80 */	addi r6, r6, lbl_800AB480@l
+/* 800AB640 000A7560  38 C6 B4 80 */	addi r6, r6, func_800AB480@l
 /* 800AB644 000A7564  D0 0A 00 08 */	stfs f0, 8(r10)
 /* 800AB648 000A7568  38 05 91 6C */	addi r0, r5, func_800A916C@l
 /* 800AB64C 000A756C  38 6A 00 8C */	addi r3, r10, 0x8c
@@ -7121,6 +7123,7 @@ glabel string_a__Pipe_Warp_Tunnel_
 glabel string_a__Speed_Desert_
 	.asciz "a/-Speed Desert-"
 	.balign 4
+
 	.4byte string_a__Jungle_Circuit_  ;# ptr
 	.4byte 0x0000000A
 	.4byte string_a__Aqua_Offroad_  ;# ptr
@@ -7133,15 +7136,19 @@ glabel string_a__Speed_Desert_
 	.4byte 0x0000000A
 	.4byte string_a__Speed_Desert_  ;# ptr
 	.4byte 0x00000008
+
 glabel string_a__5_rounds_
 	.asciz "a/-5 rounds-"
 	.balign 4
+
 glabel string_a__10_rounds_
 	.asciz "a/-10 rounds-"
 	.balign 4
+glabel testlabel
 glabel string_a__15_rounds_
 	.asciz "a/-15 rounds-"
 	.balign 4
+
 	.4byte string_a__5_rounds_  ;# ptr
 	.4byte string_a__10_rounds_  ;# ptr
 	.4byte string_a__15_rounds_  ;# ptr
@@ -7323,15 +7330,20 @@ glabel string_a_Golf
 .global lbl_802F1704
 lbl_802F1704:
 	# ROM: 0x1EBE44
-	.4byte 0x42470000
+	.asciz "BG"
+	.balign 4
 glabel lbl_802F1708
-	.4byte 0x424F5900
+	.asciz "BOY"
+	.balign 4
 glabel lbl_802F170C
-	.4byte 0x47414C00
+	.asciz "GAL"
+	.balign 4
 glabel lbl_802F1710
-	.4byte 0x4B494400
+	.asciz "KID"
+	.balign 4
 glabel lbl_802F1714
-	.4byte 0x474F5200
+	.asciz "GOR"
+	.balign 4
 
 .section .sbss
 

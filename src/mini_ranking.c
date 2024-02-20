@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <dolphin.h>
 
@@ -22,14 +23,12 @@ struct
     s8 unk6;
     s8 unk7;
     u8 unk8;
-    u8 unk9;
+    s8 unk9;
     s8 unkA;
     s8 unkB[4];
     s8 unkF;
     s8 unk10;
     u8 unk11[3];
-//    u8 unk12;
-//    u8 unk13;
     u8 unk14;
     u8 filler15[3];
     u32 unk18;
@@ -44,7 +43,15 @@ struct
 
 void lbl_800A7A6C(void);
 void func_800A916C(struct Sprite *arg0);
-void func_800AB720(void *);
+void func_800A9F00(struct Sprite *);
+void func_800AA6E4(struct Sprite *);
+void func_800AB2A0(int, u32);
+void func_800AB444(void);
+void func_800AB720(u8 *arg0);
+void func_800AB830(u8 *arg0);
+void func_800AB8D8(u8 *arg0);
+void func_800AB974(u8 *arg0);
+void func_800ABA10(u8 *arg0);
 
 void submode_mini_ranking_init_func(void)
 {
@@ -137,14 +144,14 @@ void submode_mini_ranking_main_func(void)
         case 3:
         case 4:
         case 5:
-            func_800AB720(&sp28);
-            func_800AB720(&sp30);
-            func_800AB720(&sp38);
-            func_800AB720(&sp40);
-            func_800AB720(&sp48);
-            func_800AB720(&sp50);
-            func_800AB720(&sp58);
-            func_800AB720(&sp60);
+            func_800AB720(sp28);
+            func_800AB720(sp30);
+            func_800AB720(sp38);
+            func_800AB720(sp40);
+            func_800AB720(sp48);
+            func_800AB720(sp50);
+            func_800AB720(sp58);
+            func_800AB720(sp60);
             if (func_800AC43C(modeCtrl.unk10, &sp28, 4) != 0)
             {
                 func_800AB2A0(modeCtrl.unk10, 1);
@@ -159,7 +166,7 @@ void submode_mini_ranking_main_func(void)
         case 6:
         case 7:
         case 8:
-            func_800AB830(&sp20);
+            func_800AB830(sp20);
             if (func_800AC43C(modeCtrl.unk10, &sp20, 1) != 0)
             {
                 func_800AB2A0(modeCtrl.unk10, 1);
@@ -172,7 +179,7 @@ void submode_mini_ranking_main_func(void)
             }
             return;
         case 9:
-            func_800AB8D8(&sp18);
+            func_800AB8D8(sp18);
             if (func_800AC43C(9, &sp18, 1) != 0)
             {
                 func_800AB2A0(9, 1);
@@ -185,7 +192,7 @@ void submode_mini_ranking_main_func(void)
             }
             break;
         case 10:
-            func_800AB974(&sp10);
+            func_800AB974(sp10);
             if (func_800AC43C(0xA, &sp10, 1) != 0)
             {
                 func_800AB2A0(0xA, 1);
@@ -198,7 +205,7 @@ void submode_mini_ranking_main_func(void)
             }
             break;
         case 11:
-            func_800ABA10(&sp8);
+            func_800ABA10(sp8);
             if (func_800AC43C(11, &sp8, 1) != 0)
             {
                 func_800AB2A0(11, 1);
@@ -266,7 +273,7 @@ void func_800A7B7C(void)
 {
     BOOL bvar = FALSE;
     int i;
-    
+
     for (i = lbl_802C6180.unkA + 1; i < 4; i++)
     {
         if (lbl_802C6180.unkB[i] >= 0)
@@ -997,6 +1004,13 @@ struct
     {"a/-Speed Desert-", 8},
 };
 
+char *lbl_801D58A8_D54[] =
+{
+    "a/-5 rounds-",
+    "a/-10 rounds-",
+    "a/-15 rounds-",
+};
+
 void func_800A83C4(s32 arg0, f32 arg8, f32 arg9)
 {
     u8 unused[8];
@@ -1351,9 +1365,10 @@ void func_800A916C(struct Sprite *arg0)
     sprite_puts(arg0->text);
 }
 
-void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
+void func_800A9254(struct Sprite *arg0)
 {
     struct Sprite sp20;
+    u8 unused[20];
     float f30;
     float temp_f29;
     float f21;
@@ -1394,7 +1409,7 @@ void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
     sp20.x = 374.0 - (0.5 * textWidth);
     sp20.y = 37.0f;
     reset_text_draw_settings();
-    set_text_font((s32) sp20.fontId);
+    set_text_font(sp20.fontId);
     set_text_scale(sp20.scaleX, sp20.scaleY);
     func_80071B50(sp20.flags);
     func_80071B1C(0.1 + sp20.depth);
@@ -1517,4 +1532,575 @@ void func_800A9254(struct Sprite *arg0, f64 arg1, f64 arg2)
             GXLoadPosMtxImm(mathutilData->mtxA, 0U);
         }
     }
+}
+
+void func_800A98A0(struct Sprite *arg0)
+{
+  struct Sprite sp20;
+  float f30;
+  f32 var_f29;
+  f32 var_f20;
+  float f17;
+  f32 temp_f14_3;
+  NLsprarg *temp_r25;
+  struct UnkStruct *var_r23;
+  double new_var;
+  s32 var_r22;
+  u32 var_r21;
+  float new_var2;
+  s32 var_r4;
+  //s32 var_r4_2;
+  u32 temp_r19;
+  u32 var_r0;
+  u32 var_r0_2;
+  u32 var_r0_3;
+  u32 var_r3;
+  u32 var_r3_3;
+  //u32 var_r4_3;
+  s32 i;
+  NLsprarg *params;
+//#define temp_r25 params
+  u8 unused[8];
+  s32 var_r18;
+  float textWidth;
+  func_800A82D0();
+  sp20.depth = 0.1f;
+  sp20.fontId = 0xB3;
+  sp20.addR = 0;
+  sp20.addG = 0;
+  sp20.addB = 0;
+  sp20.mulR = 0xEF;
+  sp20.mulG = 0x9A;
+  sp20.mulB = 0;
+  sp20.flags = 0x200000;
+  sp20.scaleX = 0.8f;
+  sp20.scaleY = 0.8f;
+  strcpy(&sp20.text[0], lbl_801D58A8_D54[lbl_802C6180.unk4 - 6]);
+  reset_text_draw_settings();
+  set_text_font((s32) sp20.fontId);
+  set_text_scale(sp20.scaleX, sp20.scaleY);
+  func_80071B50(sp20.flags);
+  func_80071B1C(sp20.depth);
+  set_text_mul_color((((0 << 24) | (sp20.mulR << 16)) | (sp20.mulG << 8)) | sp20.mulB);
+  set_text_add_color((((0 << 24) | (sp20.addR << 16)) | (sp20.addG << 8)) | sp20.addB);
+  textWidth = u_get_text_width(sp20.text);
+  sp20.x = 396.0 - (0.5 * textWidth);
+  sp20.y = 37.0f;
+  reset_text_draw_settings();
+  set_text_font(sp20.fontId);
+  set_text_scale(sp20.scaleX, sp20.scaleY);
+  func_80071B50(sp20.flags);
+  func_80071B1C(0.1 + sp20.depth);
+  set_text_mul_color(0U);
+  set_text_add_color(0U);
+  set_text_pos(2.0 + sp20.x, 2.0 + sp20.y);
+  sprite_puts(&sp20.text[0]);
+  func_80071B1C(sp20.depth);
+  set_text_mul_color((((0 << 24) | (sp20.mulR << 16)) | (sp20.mulG << 8)) | sp20.mulB);
+  set_text_add_color((((0 << 24) | (sp20.addR << 16)) | (sp20.addG << 8)) | sp20.addB);
+  set_text_pos(sp20.x, sp20.y);
+  sprite_puts(&sp20.text[0]);
+  nlSprPut(&lbl_801D58A8_42C);
+  nlSprPut(&lbl_801D58A8_47C);
+  nlSprPut(&lbl_801D58A8_51C);
+  nlSprPut(&lbl_801D58A8_5BC);
+  f30 = 0.0f;
+  f17 = 327.0;
+  f17 += f30;
+  var_f29 = lbl_802C6180.unk20;
+  temp_r25 = &lbl_801D58A8_AAC;
+  var_r23 = lbl_801D5960[lbl_802C6180.unk4].unk4;
+  for (var_r22 = 0; var_r22 < 5; var_r22++, var_r23++)
+  {
+    func_800A83C4(var_r22, f30, var_f29);
+    new_var = 568.0 + f30;
+    func_800A85F8(var_r22, 50.0f + f30, var_f29 - 1.0f);
+    func_800A8828(var_r23->unk0, var_r22, 172.0 + f30, var_f29 - 1.0);
+    var_r21 = *((u16 *) (&var_r23->unk4));
+    reset_text_draw_settings();
+    set_text_font(0x23);
+    if (lbl_802C6180.unk0 & 1)
+    {
+      var_r3 = 0;
+    }
+    else
+      if (!(lbl_802C6180.unk14 & (1 << var_r22)))
+    {
+      var_r3 = 0;
+    }
+    else
+    {
+      var_r3 = globalAnimTimer % 60;
+      if (var_r3 > 0x1EU)
+      {
+        var_r3 = 0x3C - var_r3;
+      }
+      var_r3 = var_r3 * 8;
+      var_r3 = var_r3 | ((var_r3 << 0x10) | (var_r3 << 8));
+    }
+    set_text_add_color(var_r3);
+    var_r4 = 0;
+    var_r18 = 0x2710;
+    for (i = 0; var_r18 > 0; i++)
+    {
+      if (((var_r4 != 0) || (var_r18 < 0xA)) || ((var_r21 / ((u32) var_r18)) != 0))
+      {
+        func_80071B1C(2.0f);
+        set_text_mul_color(0xFF000000U);
+        set_text_pos(new_var2 = 2.0f + (f17 + ((f32) (i * 0x16))), 2.0f + (2.0f + var_f29));
+        temp_r19 = var_r21 / ((u32) var_r18);
+        sprite_printf("%d", temp_r19);
+        func_80071B1C(1.0f);
+        if (var_r22 != lbl_802C6180.unkB[lbl_802C6180.unkA])
+        {
+          var_r3_3 = lbl_802C6180.unk18;
+        }
+        else
+        {
+          var_r3_3 = -1U;
+        }
+        set_text_mul_color(var_r3_3);
+        set_text_pos(f17 + ((f32) (i * 0x16)), 2.0f + var_f29);
+        sprite_printf("%d", temp_r19);
+        var_r21 %= var_r18;
+        var_r4 = 1;
+      }
+      var_r18 = var_r18 / 10;
+    }
+
+    params = &lbl_801D58A8_AFC;
+    params->x = 438.0 + f30;
+    params->y = 10.0 + var_f29;
+    if (var_r22 != lbl_802C6180.unkB[lbl_802C6180.unkA])
+    {
+      var_r0 = lbl_802C6180.unk18;
+    }
+    else
+    {
+      var_r0 = -1U;
+    }
+
+    params->base_color = var_r0;
+    if (lbl_802C6180.unk0 & 1)
+    {
+        var_r3 = 0;
+        //var_r3 > 0;
+    }
+    else if (!(lbl_802C6180.unk14 & (1 << var_r22)))
+    {
+      var_r3 = 0;
+    }
+    else
+    {
+      var_r3 = globalAnimTimer % 60;
+      if (var_r3 > 0x1EU)
+      {
+        var_r3 = 0x3C - var_r3;
+      }
+      var_r3 = var_r3 * 8;
+      var_r3 = var_r3 | ((var_r3 << 0x10) | (var_r3 << 8));
+    }
+    params->offset_color = var_r3;
+    nlSprPut(params);
+    func_800A8FCC(var_r23->unk3, var_r22, 520.0 + f30, var_f29 - 5.0);
+    var_f20 = (f32) new_var;
+    temp_f14_3 = (f32) (var_f29 - 5.0);
+    if (var_r23->unk4[2] & 1)
+    {
+      //params = &lbl_801D58A8_AAC;
+      lbl_801D58A8_AAC.sprno = 0x327;
+      lbl_801D58A8_AAC.x = var_f20;
+      lbl_801D58A8_AAC.y = temp_f14_3;
+      if (var_r22 != lbl_802C6180.unkB[lbl_802C6180.unkA])
+      {
+        var_r0_2 = lbl_802C6180.unk18;
+      }
+      else
+      {
+        var_r0_2 = -1U;
+      }
+      temp_r25->base_color = var_r0_2;
+      nlSprPut(temp_r25);
+      var_f20 += 16.0;
+    }
+    if (var_r23->unk4[2] & 2)
+    {
+      params = &lbl_801D58A8_AAC;
+      params->sprno = 0x328;
+      params->x = var_f20;
+      params->y = temp_f14_3;
+      if (var_r22 != lbl_802C6180.unkB[lbl_802C6180.unkA])
+      {
+        var_r0_3 = lbl_802C6180.unk18;
+      }
+      else
+      {
+        var_r0_3 = -1U;
+      }
+      temp_r25->base_color = var_r0_3;
+      nlSprPut(temp_r25);
+    }
+    var_f29 += lbl_802C6180.unk24;
+  }
+
+}
+
+void func_800AADC4(int arg0, u32 arg1)
+{
+    struct Sprite *sprite;
+
+    func_800A7A8C(arg0, arg1);
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->x = 166.0f;
+        sprite->y = 34.0f;
+        sprite->textAlign = 0;
+        sprite->fontId = 0xB1;
+        sprite->mulR = 0xFF;
+        sprite->mulG = 0xFF;
+        sprite->mulB = 0;
+        sprite->drawFunc = func_800A916C;
+        strcpy(sprite->text, "a/Race");
+    }
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->depth = 1.0f;
+        sprite->mainFunc = func_800A7C10;
+        sprite->drawFunc = func_800A9254;
+        strcpy(sprite->text, "RANK");
+    }
+}
+
+void func_800AAE80(int arg0, u32 arg1)
+{
+    struct Sprite *sprite;
+
+    func_800A7A8C(arg0, arg1);
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->x = 188.0f;
+        sprite->y = 34.0f;
+        sprite->textAlign = 0;
+        sprite->fontId = 0xB3;
+        sprite->mulR = 0xFF;
+        sprite->mulG = 0xFF;
+        sprite->mulB = 0;
+        sprite->drawFunc = func_800A916C;
+        strcpy(sprite->text, "a/Target");
+    }
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->depth = 1.0f;
+        sprite->mainFunc = func_800A7C10;
+        sprite->drawFunc = func_800A98A0;
+        strcpy(sprite->text, "RANK");
+    }
+}
+
+void func_800AAF40(int arg0, u32 arg1)
+{
+    struct Sprite *sprite;
+
+    func_800A7A8C(arg0, arg1);
+    switch (lbl_802C6180.unk4)
+    {
+    case 9:
+        sprite = create_sprite();
+        if (sprite != NULL)
+        {
+            sprite->tag = 0x65;
+            sprite->x = 152.0f;
+            sprite->y = 34.0f;
+            sprite->textAlign = 0;
+            sprite->fontId = 0xB3;
+            sprite->mulR = 0xFF;
+            sprite->mulG = 0xFF;
+            sprite->mulB = 0;
+            sprite->drawFunc = func_800A916C;
+            strcpy(sprite->text, "a/Bowling");
+        }
+        sprite = create_sprite();
+        if (sprite != NULL)
+        {
+            sprite->tag = 0x65;
+            sprite->x = 304.0f;
+            sprite->y = 37.0f;
+            sprite->scaleX = 0.8f;
+            sprite->scaleY = 0.8f;
+            sprite->fontId = 0xB3;
+            sprite->textAlign = 4;
+            sprite->mulR = 0xEF;
+            sprite->mulG = 0x9A;
+            sprite->mulB = 0;
+            sprite->drawFunc = func_800A916C;
+            strcpy(sprite->text, "a/-Normal Mode-");
+        }
+        break;
+    case 10:
+        sprite = create_sprite();
+        if (sprite != NULL)
+        {
+            sprite->tag = 0x65;
+            sprite->x = 152.0f;
+            sprite->y = 34.0f;
+            sprite->textAlign = 0;
+            sprite->fontId = 0xB3;
+            sprite->mulR = 0xFF;
+            sprite->mulG = 0xFF;
+            sprite->mulB = 0;
+            sprite->drawFunc = func_800A916C;
+            strcpy(sprite->text, "a/Bowling");
+        }
+        sprite = create_sprite();
+        if (sprite != NULL)
+        {
+            sprite->tag = 0x65;
+            sprite->x = 294.0f;
+            sprite->y = 37.0f;
+            sprite->scaleX = 0.8f;
+            sprite->scaleY = 0.8f;
+            sprite->fontId = 0xB3;
+            sprite->textAlign = 4;
+            sprite->mulR = 0xEF;
+            sprite->mulG = 0x9A;
+            sprite->mulB = 0;
+            sprite->drawFunc = func_800A916C;
+            strcpy(sprite->text, "a/-Challenge Mode-");
+        }
+        break;
+    }
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->depth = 1.0f;
+        sprite->mainFunc = func_800A7C10;
+        sprite->drawFunc = func_800A9F00;
+        strcpy(sprite->text, "RANK");
+    }
+}
+
+void func_800AB174(int arg0, u32 arg1)
+{
+    struct Sprite *sprite;
+
+    func_800A7A8C(arg0, arg1);
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->x = 222.0f;
+        sprite->y = 34.0f;
+        sprite->textAlign = 0;
+        sprite->fontId = 0xB3;
+        sprite->mulR = 0xFF;
+        sprite->mulG = 0xFF;
+        sprite->mulB = 0;
+        sprite->drawFunc = func_800A916C;
+        strcpy(sprite->text, "a/Golf");
+    }
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->x = 316.0f;
+        sprite->y = 37.0f;
+        sprite->scaleX = 0.8f;
+        sprite->scaleY = 0.8f;
+        sprite->textAlign = 0;
+        sprite->fontId = 0xB3;
+        sprite->mulR = 0xEF;
+        sprite->mulG = 0x9A;
+        sprite->mulB = 0;
+        sprite->drawFunc = func_800A916C;
+        strcpy(sprite->text, "a/-18 holes-");
+    }
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->depth = 1.0f;
+        sprite->mainFunc = func_800A7C10;
+        sprite->drawFunc = func_800AA6E4;
+        strcpy(sprite->text, "RANK");
+    }
+}
+
+void func_800AB2A0(int arg0, u32 arg1)
+{
+    struct Struct801D5960 *temp_r31;
+
+    call_bitmap_load_group(3);
+    if (gameMode != 5)
+        u_play_music(0x42U, 0);
+    destroy_sprite_with_tag(0x65);
+    temp_r31 = &lbl_801D5960[arg0];
+    temp_r31->unk0(arg0, arg1);
+    preview_create(&lbl_802C6180.unk2C, temp_r31->unkC, 0, 0x280U, 0x1E0U, 0xEU);
+    preview_sync(&lbl_802C6180.unk2C);
+}
+
+void func_800AB358(int arg0, u32 arg1)
+{
+    //s8 **temp_r28;
+    //struct Struct801D5960 *temp_r28;
+    char **temp_r28;
+    char *temp_r27;
+    //struct _anonymous *temp_r29;
+
+    //temp_r27 = *(&lbl_801D5960->unkC + ((s8) (u8) lbl_802C6180.unk4 * 0x10));
+    
+    temp_r27 = lbl_801D5960[lbl_802C6180.unk4].unkC;
+    destroy_sprite_with_tag(0x65);
+    lbl_801D5960[arg0].unk0(arg0, arg1);
+    temp_r28 = &lbl_801D5960[arg0].unkC;
+    if (strcmp(temp_r27, *temp_r28) != 0)
+    {
+//        temp_r29 = &lbl_802C6180 + 0x2C;
+        preview_free(&lbl_802C6180.unk2C);
+        preview_create(&lbl_802C6180.unk2C, *temp_r28, 0, 0x280U, 0x1E0U, 0xEU);
+        preview_sync(&lbl_802C6180.unk2C);
+    }
+}
+
+void func_800AB414(void)
+{
+    int i;
+
+    lbl_802C6180.unk0 = 0;
+    for (i = 0; i < 4; i++)
+        lbl_802C6180.unkB[i] = -1;
+    lbl_802C6180.unk14 = 0;
+    lbl_802C6180.unk5 = -1U;
+}
+
+void func_800AB444(void)
+{
+    destroy_sprite_with_tag(0x65);
+    call_bitmap_free_group(3);
+    preview_free(&lbl_802C6180.unk2C);
+}
+
+void func_800AB480(s8 *arg0, struct Sprite *arg1)
+{
+    if (arg1->userVar > 0)
+        arg1->x = 544.0 + (arg1->counter % 30);
+    else
+        arg1->x = 46.0 - (arg1->counter % 30);
+    arg1->counter++;
+    if (arg1->counter >= 30)
+        arg1->counter = 0;
+}
+
+void func_800AB564(void)
+{
+    struct Sprite *sprite;
+
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->x = 46.0f;
+        sprite->y = 24.0f;
+        sprite->depth = 0.05f;
+        sprite->scaleX = 2.0f;
+        sprite->scaleY = 2.0f;
+        sprite->textAlign = 0;
+        sprite->fontId = 0xB0;
+        sprite->userVar = -1;
+        sprite->mainFunc = func_800AB480;
+        sprite->drawFunc = func_800A916C;
+        strcpy(sprite->text, "p/SANNKAKU_L/");
+    }
+}
+
+void func_800AB5F8(void)
+{
+    struct Sprite *sprite;
+
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->x = 544.0f;
+        sprite->y = 24.0f;
+        sprite->depth = 0.05f;
+        sprite->scaleX = 2.0f;
+        sprite->scaleY = 2.0f;
+        sprite->textAlign = 0;
+        sprite->fontId = 0xB0;
+        sprite->userVar = 1;
+        sprite->mainFunc = func_800AB480;
+        sprite->drawFunc = func_800A916C;
+        strcpy(sprite->text, "p/SANNKAKU_R/");
+    }
+}
+
+void func_800AB68C(void)
+{
+    struct Sprite *sprite;
+
+    sprite = create_sprite();
+    if (sprite != NULL)
+    {
+        sprite->tag = 0x65;
+        sprite->type = 1;
+        sprite->bmpId = 0x315;
+        sprite->x = 320.0f;
+        sprite->y = 240.0f;
+        sprite->depth = 10.0f;
+        sprite->textAlign = 4;
+        strcpy(sprite->text, "BG");
+    }
+}
+
+int func_800AB6F8(void)
+{
+    if (lbl_802C6180.unk9 >= 60)
+        return 0;
+    else
+        return -1;
+}
+
+char *lbl_801D6674[] = { "BOY", "GAL", "KID", "GOR" };
+
+void func_800AB720(u8 *arg0)
+{
+    arg0[3] = (rand() & 0x7FFF) % 4;
+    arg0[4] = (rand() & 0x7FFF) % 100;
+    arg0[5] = (rand() & 0x7FFF) % 60;
+    arg0[6] = (rand() & 0x7FFF) % 100;
+    arg0[7] = rand() & 3;
+    printf("race: %02d'%02d\"%02d %s(%d)\n", arg0[4], arg0[5], arg0[6], lbl_801D6674[arg0[3]], arg0[7]);
+}
+
+void func_800AB830(u8 *arg0)
+{
+    arg0[3] = (rand() & 0x7FFF) % 4;
+    *(u16 *)&arg0[4] = (rand() & 0x7FFF) % 10000;
+    arg0[6] = rand() & 3;
+    printf("target:%d %s\n", *(u16 *)&arg0[4], lbl_801D6674[arg0[3]]);
+}
+
+void func_800AB8D8(u8 *arg0)
+{
+    arg0[3] = (rand() & 0x7FFF) % 4;
+    *(u16 *)&arg0[4] = (rand() & 0x7FFF) % 300;
+    printf("bowl_nml:%d %s\n", *(u16 *)&arg0[4], lbl_801D6674[arg0[3]]);
+}
+
+void func_800ABA10(u8 *arg0)
+{
+    arg0[3] = (rand() & 0x7FFF) % 4;
+    *(u16 *)&arg0[4] = (rand() & 0x7FFF) % 100;
+    *(u16 *)&arg0[6] = (rand() & 0x7FFF) % 100;
+    printf("golf_cha:%d %d %d %s\n", *(u16 *)&arg0[4], *(u16 *)&arg0[6], *(u16 *)&arg0[4] + *(u16 *)&arg0[6], lbl_801D6674[arg0[3]]);
 }
