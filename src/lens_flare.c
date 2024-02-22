@@ -187,8 +187,8 @@ void lens_flare_draw(int cameraId)
         scale = r28->scale;
         scale *= lensFlareScale;
         mathutil_mtxA_scale_xyz(scale, scale, 1.0f);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_draw_model_unculled_sort_none(commonGma->modelEntries[r28->modelId].model);
     }
 }

@@ -168,8 +168,8 @@ void bg_pilot_draw(void)
         temp_r30->unk14->flags &= 0xFFFEFFFF;
     bg_default_draw();
     mathutil_mtxA_from_mtxB();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0U);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
     if (temp_r30->unk4 != NULL)
         avdisp_draw_model_culled_sort_none(temp_r30->unk4);
     if (temp_r30->unk8 != NULL)
@@ -237,12 +237,12 @@ void bg_pilot_draw(void)
             mathutil_mtxA_to_mtx(temp_r30->unkB0);
             mathutil_mtxA_from_mtxB();
             mathutil_mtxA_mult_right(temp_r29->unk50);
-            GXLoadPosMtxImm(mathutilData->mtxA, 0U);
-            GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
+            GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+            GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
             temp_r27 = u_avdisp_set_some_func_1(func_80064C30);
-            avdisp_set_z_mode(1U, GX_LEQUAL, 0U);
+            avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
             avdisp_draw_model_culled_sort_none(temp_r31->model);
-            avdisp_set_z_mode(1U, GX_LEQUAL, 1U);
+            avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
             u_avdisp_set_some_func_1(temp_r27);
         }
         else
@@ -297,14 +297,14 @@ void func_80064C30(struct GCMMatState_Unit *arg0)
     GXLoadTexObj_cached(temp_r31->unk1C, sp44.u_texMapId + 2);
     GXLoadTexMtxImm(temp_r31->unk50, sp44.unk8, GX_MTX3x4);
     GXLoadTexMtxImm(temp_r31->unk80, sp44.unk8 + 3, GX_MTX3x4);
-    GXSetTevKColorSel_cached(sp44.unk0, 2);
+    GXSetTevKColorSel_cached(sp44.unk0, GX_TEV_KCSEL_3_4);
     GXSetTexCoordGen(sp44.unk4, GX_TG_MTX3x4, GX_TG_POS, sp44.unk8);
-    GXSetTevSwapMode_cached(sp44.unk0, 0, 1);
-    GXSetTevOrder_cached(sp44.unk0, sp44.unk4, sp44.u_texMapId, 0xFF);
-    GXSetTevColorIn_cached(sp44.unk0, 0xF, 8, 0xE, 0);
-    GXSetTevColorOp_cached(sp44.unk0, 0, 0, 0, 1, 0);
-    GXSetTevAlphaIn_cached(sp44.unk0, 7, 4, 0, 0);
-    GXSetTevAlphaOp_cached(sp44.unk0, 0, 0, 0, 1, 0);
+    GXSetTevSwapMode_cached(sp44.unk0, GX_TEV_SWAP0, GX_TEV_SWAP1);
+    GXSetTevOrder_cached(sp44.unk0, sp44.unk4, sp44.u_texMapId, GX_COLOR_NULL);
+    GXSetTevColorIn_cached(sp44.unk0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
+    GXSetTevColorOp_cached(sp44.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(sp44.unk0, GX_CA_ZERO, GX_CA_TEXA, GX_CA_APREV, GX_CA_APREV);
+    GXSetTevAlphaOp_cached(sp44.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTexCoordGen(sp44.unk4 + 1, GX_TG_MTX3x4, GX_TG_POS, sp44.unk8 + 3);
     GXSetIndTexOrder(sp44.unk10, sp44.unk4 + 1, sp44.u_texMapId + 1);
     sp2C[0][0] = 0.0f;
@@ -314,22 +314,22 @@ void func_80064C30(struct GCMMatState_Unit *arg0)
     sp2C[1][1] = 0.0f;
     sp2C[1][2] = 0.0f;
     GXSetIndTexMtx(sp44.unk1C, sp2C, 0);
-    GXSetTevIndirect(sp44.unk0, sp44.unk10, GX_ITF_8, GX_ITB_STU, sp44.unk1C, GX_ITW_OFF, GX_ITW_OFF, 0U, 0, 0);
+    GXSetTevIndirect(sp44.unk0, sp44.unk10, GX_ITF_8, GX_ITB_STU, sp44.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     sp44.unk1C += 1;
     sp44.unk0 += 1;
     sp44.unk4 += 2;
     sp44.unk8 += 6;
     sp44.u_texMapId += 2;
-    GXSetTevKColorSel_cached(sp44.unk0, 1);
-    GXSetTevKAlphaSel_cached(sp44.unk0, 0);
+    GXSetTevKColorSel_cached(sp44.unk0, GX_TEV_KCSEL_7_8);
+    GXSetTevKAlphaSel_cached(sp44.unk0, GX_TEV_KASEL_1);
     GXLoadTexMtxImm(temp_r31->unkB0, sp44.unk8, GX_MTX2x4);
     GXSetTexCoordGen(sp44.unk4, GX_TG_MTX2x4, GX_TG_POS, sp44.unk8);
-    GXSetTevSwapMode_cached(sp44.unk0, 0, 1);
-    GXSetTevOrder_cached(sp44.unk0, sp44.unk4, sp44.u_texMapId, 0xFF);
-    GXSetTevColorIn_cached(sp44.unk0, 0xF, 8, 0xE, 0);
-    GXSetTevColorOp_cached(sp44.unk0, 0, 0, 0, 1, 0);
-    GXSetTevAlphaIn_cached(sp44.unk0, 0, 6, 4, 7);
-    GXSetTevAlphaOp_cached(sp44.unk0, 0, 0, 0, 1, 0);
+    GXSetTevSwapMode_cached(sp44.unk0, GX_TEV_SWAP0, GX_TEV_SWAP1);
+    GXSetTevOrder_cached(sp44.unk0, sp44.unk4, sp44.u_texMapId, GX_COLOR_NULL);
+    GXSetTevColorIn_cached(sp44.unk0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
+    GXSetTevColorOp_cached(sp44.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(sp44.unk0, GX_CA_APREV, GX_CA_KONST, GX_CA_TEXA, GX_CA_ZERO);
+    GXSetTevAlphaOp_cached(sp44.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     sp14[0][0] = 0.0f;
     sp14[0][1] = -0.8f;
     sp14[0][2] = 0.0f;
@@ -337,7 +337,7 @@ void func_80064C30(struct GCMMatState_Unit *arg0)
     sp14[1][1] = 0.0f;
     sp14[1][2] = 0.0f;
     GXSetIndTexMtx(sp44.unk1C, sp14, 0);
-    GXSetTevIndirect(sp44.unk0, sp44.unk10, GX_ITF_8, GX_ITB_STU, sp44.unk1C, GX_ITW_OFF, GX_ITW_OFF, 0U, 0, 0);
+    GXSetTevIndirect(sp44.unk0, sp44.unk10, GX_ITF_8, GX_ITB_STU, sp44.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     sp44.unk10 += 1;
     sp44.unk1C += 2;
     sp44.unk0 += 1;

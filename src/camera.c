@@ -381,7 +381,7 @@ void default_camera_env(void)
     mathutil_mtx_copy(cameraInfo[0].unk1A4, userWork->matrices[0]);
     mathutil_mtx_copy(cameraInfo[0].unk1D4, userWork->matrices[4]);
     MTXPerspective(mtx, 59.996337f, SCREEN_ASPECT, 0.1f, 20000.0f);
-    GXSetProjection(mtx, 0);
+    GXSetProjection(mtx, GX_PERSPECTIVE);
     GXSetViewport(0.0f, 0.0f, currRenderMode->fbWidth, currRenderMode->xfbHeight, 0.0f, 1.0f);
     GXSetScissor(0, 0, currRenderMode->fbWidth, currRenderMode->xfbHeight);
     clip_init_detail(&(Vec){0.0f, 0.0f, 0.0f}, &(S16Vec){0, 0, 0}, 59.996337, SCREEN_ASPECT, 0.0f, 0.0f);
@@ -516,7 +516,7 @@ void set_current_camera(int cameraId)
     }
     projMtx[0][2] -= projMtx[0][0] * camera->sub28.unk28 * camera->sub28.aspect * camera->sub28.unk38;
     projMtx[1][2] -= projMtx[1][1] * camera->sub28.unk2C * camera->sub28.unk38;
-    GXSetProjection(projMtx, 0);
+    GXSetProjection(projMtx, GX_PERSPECTIVE);
     if (camera->sub28.vp.width > 0.0f && camera->sub28.vp.height > 0.0f)
     {
         float fbW = currRenderMode->fbWidth;
@@ -580,7 +580,7 @@ void set_current_camera_matrix(int cameraId)
     }
     projMtx[0][2] -= projMtx[0][0] * camera->sub28.unk28 * camera->sub28.aspect * camera->sub28.unk38;
     projMtx[1][2] -= projMtx[1][1] * camera->sub28.unk2C * camera->sub28.unk38;
-    GXSetProjection(projMtx, 0);
+    GXSetProjection(projMtx, GX_PERSPECTIVE);
     clip_init_detail(
         &camera->eye,
         &(S16Vec){camera->rotX, camera->rotY, camera->rotZ},
@@ -609,7 +609,7 @@ void reset_camera_perspective(void)
         20000.0f);
     projMtx[0][2] -= projMtx[0][0] * camera->sub28.unk28 * camera->sub28.aspect * camera->sub28.unk38;
     projMtx[1][2] -= projMtx[1][1] * camera->sub28.unk2C * camera->sub28.unk38;
-    GXSetProjection(projMtx, 0);
+    GXSetProjection(projMtx, GX_PERSPECTIVE);
 }
 
 void shake_camera(int cameraId, int b, Vec *c)

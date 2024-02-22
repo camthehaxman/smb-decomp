@@ -171,7 +171,7 @@ static void draw_title_bar(int x1, int y1, int x2, int y2, struct Color3f *arg4,
     color2.b = b3;
 
     GXSetBlendMode_cached(GX_BM_NONE, GX_BL_ONE, GX_BL_ZERO, GX_LO_CLEAR);
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     {
         GXColor fogColor = {0};
         GXSetFog_cached(GX_FOG_NONE, 0.0f, 100.0f, 0.1f, 20000.0f, fogColor);
@@ -182,14 +182,14 @@ static void draw_title_bar(int x1, int y1, int x2, int y2, struct Color3f *arg4,
     GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     GXSetTevKAlphaSel_cached(GX_TEVSTAGE0, GX_TEV_KASEL_1);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_RASC);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetNumTevStages_cached(1);
     GXSetNumChans(1);
     mathutil_mtxA_push();
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     mathutil_mtxA_pop();
     z = -arg8;
 

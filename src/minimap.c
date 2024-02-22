@@ -275,30 +275,30 @@ static void u_draw_some_quad(struct Struct800847FC *a)
 
     gxutil_set_vtx_attrs(1 << GX_VA_POS);
     GXSetBlendMode_cached(1, 0, 1, 0);
-    GXSetZMode_cached(1, 7, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_ALWAYS, GX_ENABLE);
     {
         GXColor color = {0, 0, 0, 0};
         GXSetFog_cached(0, 0.0f, 100.0f, 0.1f, 20000.0f, color);
     }
     GXSetCullMode_cached(0);
     GXSetTevDirect(0);
-    GXSetTevOrder_cached(0, 0xFF, 0xFF, 0xFF);
-    GXSetTevKAlphaSel_cached(0, 0);
-    GXSetTevColorIn_cached(0, 15, 15, 15, 15);
-    GXSetTevColorOp_cached(0, 0, 0, 0, 1, 0);
-    GXSetTevAlphaIn_cached(0, 7, 7, 7, 6);
-    GXSetTevAlphaOp_cached(0, 0, 0, 3, 1, 0);
+    GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+    GXSetTevKAlphaSel_cached(GX_TEVSTAGE0, GX_TEV_KASEL_1);
+    GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_DIVIDE_2, GX_TRUE, GX_TEVPREV);
     GXSetNumTevStages_cached(1);
     mathutil_mtxA_push();
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     mathutil_mtxA_pop();
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
     GXPosition3f32(x1, y1, z);
     GXPosition3f32(x2, y1, z);
     GXPosition3f32(x2, y2, z);
     GXPosition3f32(x1, y2, z);
-    GXSetZMode_cached(1, 3, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 static u32 s_speechBubbleColors[] =

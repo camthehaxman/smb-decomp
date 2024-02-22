@@ -465,10 +465,10 @@ static void func_8009BF74(int arg0)
             mathutil_mtxA_from_mtx(sp24);
             mathutil_mtxA_translate(&sp18);
             mathutil_mtxA_rotate_y(-0x8000);
-            GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+            GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
             mathutil_mtxA_rotate_y(globalAnimTimer << 7);
             mathutil_mtxA_rotate_z(globalAnimTimer << 9);
-            GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
+            GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
             if (*c != ' ')
                 avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[lbl_801D3F5C[*c - '0']].model);
         }
@@ -918,7 +918,7 @@ static void func_8009CD5C(void)
         if (temp_r26 != NULL)
             u_avdisp_set_some_func_1(NULL);
         avdisp_set_post_mult_color(0.3f, 0.3f, 0.3f, 0.3f);
-        avdisp_set_z_mode(1U, GX_LEQUAL, 0U);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         for (i = 0; i < miniCommendInfo.unk24; i++)
         {
             temp_r27 = miniCommendInfo.apePtrs[i];
@@ -955,7 +955,7 @@ static void func_8009CD5C(void)
             }
         }
         avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
-        avdisp_set_z_mode(1U, GX_LEQUAL, 1U);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         for (i = 0; i < miniCommendInfo.unk24 + 1; i++)
         {
             if (i == miniCommendInfo.unk24)

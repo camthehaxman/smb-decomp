@@ -413,7 +413,7 @@ static void u_draw_tutorial_button_and_joystick(void)
     Mtx44 projMtx;
 
     MTXPerspective(projMtx, 1.0f, 1.33333333f, 0.1f, 100000.0f);
-    GXSetProjection(projMtx, 0);
+    GXSetProjection(projMtx, GX_PERSPECTIVE);
     mathutil_mtxA_from_identity();
     load_light_group_uncached(LIGHT_GROUP_SINGLE_UNIT);
     sp48.x = -0.0055f;
@@ -540,7 +540,7 @@ static void draw_depth_mask(struct DepthMaskParams *a)
     GXSetNumTevStages_cached(1);
     mathutil_mtxA_push();
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     mathutil_mtxA_pop();
 
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
@@ -550,7 +550,7 @@ static void draw_depth_mask(struct DepthMaskParams *a)
         GXPosition3f32(x2, y2, z);
     GXEnd();
 
-    GXSetZMode_cached(GX_ENABLE, 3, GX_ENABLE);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 static void func_8000C388(void)
@@ -1101,7 +1101,7 @@ static void draw_timer_bomb_fuse(void)
     MTXPerspective(mtx, 60.0f, 1.3333332538604736f, 0.00989999994635582f, 20000.0f);
     mtx[0][2] -= mtx[0][0] * x * 1.3333332538604736f * 0.5773502588272095f;
     mtx[1][2] -= mtx[1][1] * y * 0.5773502588272095f;
-    GXSetProjection(mtx, 0);
+    GXSetProjection(mtx, GX_PERSPECTIVE);
 
     /* NOTE: Most of the code here deals with manipulating vertices for the
      * arcade fuse model, which is never drawn in-game.

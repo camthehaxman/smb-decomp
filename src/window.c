@@ -1479,7 +1479,7 @@ void window_draw(void)
     int var_r9;
     struct WindowDesc *temp_r7;
 
-    GXSetZMode_cached(1, GX_LESS, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_LESS, GX_ENABLE);
     var_r30 = windowList;
     for (i = 0; i < 16; i++, var_r30++)
     {
@@ -1504,9 +1504,9 @@ void window_draw(void)
             draw_some_window_quad_2(var_r6, var_r5, var_r8, var_r9);
         }
     }
-    GXSetZMode_cached(1, GX_ALWAYS, 0);
-    GXLoadTexObj_cached(&u_unkBitmapTPL->texObjs[31], 0);
-    GXInitTexObjLOD(&u_unkBitmapTPL->texObjs[31], GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+    GXSetZMode_cached(GX_ENABLE, GX_ALWAYS, GX_DISABLE);
+    GXLoadTexObj_cached(&u_unkBitmapTPL->texObjs[31], GX_TEXMAP0);
+    GXInitTexObjLOD(&u_unkBitmapTPL->texObjs[31], GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
 
     charPtr = screenBufferChar3;
     colorPtr = screenBufferColor3;
@@ -1530,7 +1530,7 @@ void window_draw(void)
             yoffPtr++;
         }
     }
-    GXSetZMode_cached(1, GX_LEQUAL, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 void window_init(void)
@@ -2006,7 +2006,7 @@ static void draw_some_window_quad_2(float x1, float y1, float x2, float y2)
     GXColor tevColor1 = {0, 0, 0, 0};
     u8 unused[4];
 
-    GXLoadTexObj_cached(&u_unkBitmapTPL->texObjs[75], 0);
+    GXLoadTexObj_cached(&u_unkBitmapTPL->texObjs[75], GX_TEXMAP0);
     y1 *= 1.0714285714285714;
     y2 *= 1.0714285714285714;
     GXSetTevColor(GX_TEVREG0, tevColor0);

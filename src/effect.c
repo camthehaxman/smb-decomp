@@ -953,8 +953,8 @@ static void effect_paperfrag_draw(struct Effect *effect)
     }
     else
     {
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_draw_model_culled_sort_translucent(effect->model);
     }
 }
@@ -1016,8 +1016,8 @@ static void effect_get_banana_draw(struct Effect *effect)
         mathutil_mtxA_rotate_x(effect->rotX);
         mathutil_mtxA_rotate_z(effect->rotZ);
         mathutil_mtxA_scale_xyz(effect->scale.x, effect->scale.y, effect->scale.z);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_set_bound_sphere_scale(effect->scale.x);
         avdisp_draw_model_culled_sort_none(effect->model);
     }
@@ -1193,11 +1193,11 @@ static void effect_coli_particle_draw(struct Effect *effect)
         mathutil_mtxA_rotate_y(effect->unkA2);
         mathutil_mtxA_rotate_x(effect->unkA0);
         mathutil_mtxA_scale_s(temp_f31);
-        avdisp_set_z_mode(1, GX_LEQUAL, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_set_bound_sphere_scale(temp_f31);
         avdisp_set_post_mult_color(effect->unk18 * temp_f30, effect->unk1C * temp_f30, effect->unk20 * temp_f30, 1.0f);
         avdisp_draw_model_unculled_sort_translucent(commonGma->modelEntries[circle_white].model);
-        avdisp_set_z_mode(1, GX_LEQUAL, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         fade_color_base_default();
     }
 }
@@ -1373,8 +1373,8 @@ static void effect_holding_banana_draw(struct Effect *effect)
     mathutil_mtxA_rotate_x(effect->rotX);
     mathutil_mtxA_rotate_z(effect->rotZ);
     mathutil_mtxA_scale_xyz(effect->scale.x, effect->scale.y, effect->scale.z);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
     avdisp_set_bound_sphere_scale(effect->scale.x);
     avdisp_draw_model_culled_sort_none(effect->model);
 }
@@ -2130,8 +2130,8 @@ static void effect_colistar_particle_draw(struct Effect *effect)
     mathutil_mtxA_push();
     mathutil_mtxA_scale_s(effect->scale.x);
     avdisp_set_bound_sphere_scale(effect->scale.x);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
     avdisp_draw_model_culled_sort_translucent(model);
     mathutil_mtxA_pop();
 
@@ -2194,11 +2194,11 @@ static void effect_colistar_particle_draw(struct Effect *effect)
         mathutil_mtxA_scale(&spC);
         mathutil_mtxA_rotate_z(temp_r29 - var_r28);
         avdisp_set_bound_sphere_scale(spC.x);
-        avdisp_set_z_mode(1, GX_LEQUAL, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_set_post_mult_color(scale, scale, scale, 1.0f);
         avdisp_draw_model_culled_sort_translucent(model);
         fade_color_base_default();
-        avdisp_set_z_mode(1, GX_LEQUAL, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     }
 
     if (effect->colorFactor > 0.0f && effect->colorFactor < 0.6f)
@@ -2214,10 +2214,10 @@ static void effect_colistar_particle_draw(struct Effect *effect)
             avdisp_set_post_mult_color(0.71999997f, 0.63f, 0.54f, 1.0f);
         else
             avdisp_set_post_mult_color(0.71999997f * temp_f30, 0.63f * temp_f30, 0.54f * temp_f30, 1.0f);
-        avdisp_set_z_mode(1, GX_LEQUAL, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_set_bound_sphere_scale(scale);
         avdisp_draw_model_unculled_sort_translucent(commonGma->modelEntries[circle_white].model);
-        avdisp_set_z_mode(1, GX_LEQUAL, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         fade_color_base_default();
     }
 }
@@ -2348,9 +2348,9 @@ static void effect_bgwat_bubble_draw(struct Effect *effect)
     model = effect->model;
     if (test_scaled_sphere_in_frustum(&model->boundSphereCenter, model->boundSphereRadius, effect->scale.x) != 0)
     {
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
-        avdisp_set_z_mode(1, GX_LEQUAL, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_set_bound_sphere_scale(effect->scale.x);
         if (effect->colorFactor < 1.0f)
         {
@@ -2359,7 +2359,7 @@ static void effect_bgwat_bubble_draw(struct Effect *effect)
         }
         else
             avdisp_draw_model_unculled_sort_translucent(model);
-        avdisp_set_z_mode(1, GX_LEQUAL, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     }
 }
 
@@ -2484,8 +2484,8 @@ static void effect_meteo_draw(struct Effect *effect)
         }
         else
         {
-            GXLoadPosMtxImm(mathutilData->mtxA, 0);
-            GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+            GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+            GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
             avdisp_draw_model_unculled_sort_translucent(temp_r31);
         }
     }
@@ -2519,8 +2519,8 @@ static void effect_meteo_fix_draw(struct Effect *effect)
     if (test_scaled_sphere_in_frustum(&temp_r31->boundSphereCenter, temp_r31->boundSphereRadius, effect->scale.x) != 0)
     {
         avdisp_set_bound_sphere_scale(effect->scale.x);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_draw_model_unculled_sort_translucent(temp_r31);
     }
 }
@@ -2589,7 +2589,7 @@ static void effect_coliflash_draw(struct Effect *effect)
     temp_f28 = mathutil_vec_dot_normalized_safe(&sp18, &spC);
     if (temp_f28 > 0.0f)
         return;
-    avdisp_set_z_mode(1U, GX_GEQUAL, 0U);
+    avdisp_set_z_mode(GX_ENABLE, GX_GEQUAL, GX_DISABLE);
     if (var_f29 != 1.0f)
         avdisp_set_post_mult_color(var_f29, var_f29, var_f29, 1.0f);
     temp_f30 = 2.0f * effect->scale.x;
@@ -2614,7 +2614,7 @@ static void effect_coliflash_draw(struct Effect *effect)
     }
     avdisp_set_bound_sphere_scale(temp_f30);
     avdisp_draw_model_culled_sort_all(effect->model);
-    avdisp_set_z_mode(1, GX_LEQUAL, 1);
+    avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     if (var_f29 != 1.0f)
         fade_color_base_default();
 
@@ -2694,7 +2694,7 @@ static void effect_bns_stg_star_draw(struct Effect *effect)
         avdisp_set_bound_sphere_scale(scale);
         temp_f1_2 = 0.75f * effect->colorFactor;
         avdisp_set_post_mult_color(temp_f1_2, temp_f1_2, temp_f1_2, 1.0f);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_draw_model_unculled_sort_translucent(starlightModel);
         fade_color_base_default();
     }
@@ -2813,8 +2813,8 @@ static void effect_bgmst_gen_cloud_draw(struct Effect *effect)
     mathutil_mtxA_sq_from_identity();
     mathutil_mtxA_rotate_z(effect->rotZ);
     mathutil_mtxA_scale_s(scale);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    avdisp_set_z_mode(1, GX_LEQUAL, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
     avdisp_set_bound_sphere_scale(scale);
     if (effect->colorFactor < 1.0f)
     {
@@ -2823,7 +2823,7 @@ static void effect_bgmst_gen_cloud_draw(struct Effect *effect)
     }
     else
         avdisp_draw_model_culled_sort_translucent(model);
-    avdisp_set_z_mode(1, GX_LEQUAL, 1);
+    avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 static void effect_bgmst_gen_cloud_destroy(struct Effect *effect) {}
@@ -2899,10 +2899,10 @@ static void effect_bgstm_rainripple_draw(struct Effect *effect)
         mathutil_mtxA_rotate_x(-0x4000);
         mathutil_mtxA_scale_s(effect->scale.x * temp_f30);
         avdisp_set_bound_sphere_scale(effect->scale.x * temp_f30);
-        avdisp_set_z_mode(1, GX_LEQUAL, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_set_alpha(var_f31);
         avdisp_draw_model_culled_sort_translucent(effect->model);
-        avdisp_set_z_mode(1, GX_LEQUAL, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     }
 }
 
@@ -2933,11 +2933,11 @@ static void effect_bgmst_water_draw(struct Effect *effect)
         mathutil_mtxA_rotate_y(bgObj->rotY);
         mathutil_mtxA_rotate_x(bgObj->rotX);
         mathutil_mtxA_scale(&bgObj->scale);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         mathutil_mtxA_to_mtx(bgWork->unkB60);
         mathutil_mtxA_translate_xyz(0.0f, -20.0f, 0.0f);
         mathutil_mtxA_scale_xyz(1.0f, 0.0f, 1.0f);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         func = u_avdisp_set_some_func_1(bgWork->unkB14);
         avdisp_draw_model_culled_sort_none(bgWork->unkB0C);
         u_avdisp_set_some_func_1(func);
@@ -3135,8 +3135,8 @@ static void effect_commendfrag_draw(struct Effect *effect)
     }
     else
     {
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_draw_model_culled_sort_translucent(effect->model);
     }
 }
@@ -3210,7 +3210,7 @@ static void effect_banana_drop_draw(struct Effect *effect)
         avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[OBJ_BANANA_01_LOD150].model);
         if (!(effect->state & 3))
         {
-            avdisp_set_z_mode(1, GX_LEQUAL, 0);
+            avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
             avdisp_set_post_mult_color(0.3f, 0.3f, 0.3f, 0.3f);
             mathutil_mtxA_from_mtxB_translate((Vec *)effect->model);
             mathutil_mtxA_rotate_y(effect->unkA2 + (effect->u_otherTimer * 0x1999));
@@ -3220,7 +3220,7 @@ static void effect_banana_drop_draw(struct Effect *effect)
             u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_none(commonGma->modelEntries[polyshadow01].model);
             avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
-            avdisp_set_z_mode(1, GX_LEQUAL, 1);
+            avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         }
     }
 }
@@ -3254,11 +3254,11 @@ static void effect_bgend_water_draw(struct Effect *effect)
         mathutil_mtxA_scale(&bgObj->scale);
         func = u_avdisp_set_some_func_1(bgWork->unk18);
         mathutil_mtxA_push();
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         mathutil_mtxA_to_mtx(bgWork->unk64);
         mathutil_mtxA_translate_xyz(0.0f, -20.0f, 0.0f);
         mathutil_mtxA_scale_xyz(1.0f, 0.0f, 1.0f);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_draw_model_culled_sort_none(bgWork->waterModel);
         mathutil_mtxA_pop();
         u_avdisp_set_some_func_1(func);

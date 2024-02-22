@@ -994,8 +994,8 @@ void effect_nameent_code_draw(struct Effect *effect)
     mathutil_mtxA_scale_xyz(xscale, yscale, 1.0f);
     xscale = MAX(xscale, yscale);
     avdisp_set_bound_sphere_scale(xscale);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
     avdisp_draw_model_culled_sort_translucent(effect->model);
     !xscale;
 }
@@ -1083,8 +1083,8 @@ void effect_get_nameent_code_draw(struct Effect *effect)
     mathutil_mtxA_rotate_y(r3 - 0x4000);
     mathutil_mtxA_scale_xyz(effect->scale.x, effect->scale.y, effect->scale.z);
     avdisp_set_bound_sphere_scale(effect->scale.y);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
     avdisp_draw_model_culled_sort_translucent(effect->model);
 }
 
@@ -1148,8 +1148,8 @@ void stobj_nameent_btn_draw(struct Stobj *stobj)
     mathutil_mtxA_from_mtxB_translate(&stobj->localPos);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_x(stobj->rotX);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
     avdisp_draw_model_culled_sort_translucent(stobj->model);
     mathutil_mtxA_tf_point(&stobj->model->boundSphereCenter, &pos);
     if (pos.z < 0.0f)
@@ -1162,8 +1162,8 @@ void stobj_nameent_btn_draw(struct Stobj *stobj)
         temp_f31 = temp_f5 * (0.5f + (0.16666667f * (color.r + color.g + color.b)));
         mathutil_mtxA_from_translate(&pos);
         mathutil_mtxA_scale_s(temp_f31);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         avdisp_set_bound_sphere_scale(temp_f31);
         avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[circle_white].model);
     }

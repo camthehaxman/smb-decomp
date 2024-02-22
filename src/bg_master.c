@@ -256,8 +256,8 @@ void bg_master_draw(void)
                 mathutil_mtxA_rotate_y(temp_r29->rotY);
                 mathutil_mtxA_rotate_x(temp_r29->rotX);
                 mathutil_mtxA_scale(&temp_r29->scale);
-                GXLoadPosMtxImm(mathutilData->mtxA, 0U);
-                GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
+                GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+                GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
                 avdisp_draw_model_culled_sort_translucent(temp_r29->model);
             }
         }
@@ -266,7 +266,7 @@ void bg_master_draw(void)
     bg_default_draw();
     if (!(polyDisp.flags & 4) && temp_r31->unk170 != 0)
     {
-        avdisp_set_z_mode(1U, GX_LEQUAL, 0U);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_enable_custom_tex_mtx(1U);
         var_r27_2 = temp_r31->unk174;
         for (var_r28_2 = temp_r31->unk170; var_r28_2 > 0; var_r28_2--, var_r27_2++)
@@ -285,19 +285,19 @@ void bg_master_draw(void)
                 mathutil_mtxA_translate_xyz(150.0f, 0.0f, 0.0f);
                 mathutil_mtxA_rigid_inv_tf_tl(&sp8);
                 mathutil_mtxA_rotate_y(mathutil_atan2(sp8.x, sp8.z));
-                GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+                GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
                 avdisp_set_custom_tex_mtx(0, var_r27_2->unk38);
                 avdisp_draw_model_culled_sort_translucent(temp_r31->unkB08);
                 mathutil_mtxA_pop();
                 mathutil_mtxA_translate_xyz(-150.0f, 0.0f, 0.0f);
                 mathutil_mtxA_rigid_inv_tf_tl(&sp8);
                 mathutil_mtxA_rotate_y(mathutil_atan2(sp8.x, sp8.z));
-                GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+                GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
                 avdisp_set_custom_tex_mtx(0, var_r27_2->unk68);
                 avdisp_draw_model_culled_sort_translucent(temp_r31->unkB08);
             }
         }
-        avdisp_set_z_mode(1U, GX_LEQUAL, 1U);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         avdisp_enable_custom_tex_mtx(0U);
     }
 }
@@ -332,13 +332,13 @@ static void lbl_80063AD8(struct GCMMatState_Unit *arg0)
     GXSetTexCoordGen(sp2C.unk4, GX_TG_MTX2x4, GX_TG_NRM, sp2C.unk8);
     GXSetTexCoordGen(sp2C.unk4 + 1, GX_TG_MTX2x4, GX_TG_TEX0, sp2C.unk8 + 3);
     GXSetIndTexOrder(sp2C.unk10, sp2C.unk4 + 1, sp2C.u_texMapId + 1);
-    GXSetTevIndirect(sp2C.unk0, sp2C.unk10, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, 0U, 0, 0);
-    GXSetTevSwapMode_cached(sp2C.unk0, 0, 0);
-    GXSetTevOrder_cached(sp2C.unk0, sp2C.unk4, sp2C.u_texMapId, 0xFF);
-    GXSetTevColorIn_cached(sp2C.unk0, 8, 0xF, 0xF, 0);
-    GXSetTevColorOp_cached(sp2C.unk0, 0, 0, 0, 1, 0);
-    GXSetTevAlphaIn_cached(sp2C.unk0, 7, 7, 7, 0);
-    GXSetTevAlphaOp_cached(sp2C.unk0, 0, 0, 0, 1, 0);
+    GXSetTevIndirect(sp2C.unk0, sp2C.unk10, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevSwapMode_cached(sp2C.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
+    GXSetTevOrder_cached(sp2C.unk0, sp2C.unk4, sp2C.u_texMapId, GX_COLOR_NULL);
+    GXSetTevColorIn_cached(sp2C.unk0, GX_CC_TEXC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
+    GXSetTevColorOp_cached(sp2C.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(sp2C.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
+    GXSetTevAlphaOp_cached(sp2C.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     sp2C.unk0++;
     sp2C.unk10++;
     sp2C.unk4 += 2;

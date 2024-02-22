@@ -368,10 +368,10 @@ static void make_flat_mirror_texture(int unused, struct RenderEffect *rendEfc)
     polyDisp.flags &= 0xFFFFFFFB;
 
     // Copy the EFB to a texture
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);
-    GXCopyTex(work->imageBuf, 1);
+    GXCopyTex(work->imageBuf, GX_TRUE);
     GXInitTexObj(&work->texObj, work->imageBuf, work->xres, work->yres, work->format, GX_CLAMP, GX_CLAMP, 0U);
 
     *camera = cameraBackup;  // restore camera
@@ -403,7 +403,7 @@ static void func_80097E80(int unused, struct RenderEffect *rendEfc)
     color.a = work->unk60;
     GXSetTevKColor_cached(GX_KCOLOR0, color);
     GXSetTevKAlphaSel_cached(GX_TEVSTAGE0, GX_TEV_KASEL_K0_A);
-    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_POS, 0x1EU, 0U, 0x7DU);
+    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_POS, 0x1EU, GX_FALSE, 0x7DU);
     MTXPerspective(projMtx, 0.005493164f * currentCamera->sub28.fov, currentCamera->sub28.aspect, 0.1f, 20000.0f);
     mathutil_mtxA_from_identity();
     mathutilData->mtxA[0][2] = 0.5 - 0.5 * (projMtx[0][0] * currentCamera->sub28.unk28 * currentCamera->sub28.aspect * currentCamera->sub28.unk38);
@@ -423,15 +423,15 @@ static void func_80097E80(int unused, struct RenderEffect *rendEfc)
     GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
     GXSetTevSwapMode_cached(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_KONST, GX_CA_RASA, GX_CA_ZERO);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetNumTevStages_cached(1U);
     GXSetNumTexGens(1U);
     GXSetNumIndStages(0U);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     fog_gx_set();
     r28 = u_avdisp_set_some_func_2(lbl_8009825C);
 
@@ -445,7 +445,7 @@ static void func_80097E80(int unused, struct RenderEffect *rendEfc)
         mathutil_mtxA_from_mtxB();
         if (i > 0)
             mathutil_mtxA_mult_right(var_r31->transform);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
 
         var_r29 = decodedStageLzPtr->animGroups[i].unk90;
         for (j = 0; j < decodedStageLzPtr->animGroups[i].unk8C; j++, var_r29++)
@@ -499,7 +499,7 @@ void rend_efc_wavy_mirror_init(struct RenderEffect *rendEfc)
     work->format = GX_TF_RGBA8;
     work->xres = 640;
     work->yres = 224;
-    bufSize = GXGetTexBufferSize(work->xres, work->yres, work->format, GX_FALSE, 0U);
+    bufSize = GXGetTexBufferSize(work->xres, work->yres, work->format, GX_FALSE, 0);
     work->unk28 = OSAllocFromHeap(stageHeap, bufSize);
     if (work->unk28 == NULL)
     {
@@ -507,7 +507,7 @@ void rend_efc_wavy_mirror_init(struct RenderEffect *rendEfc)
         rendEfc->state = 0;
         return;
     }
-    bufSize = GXGetTexBufferSize(256, 256, GX_TF_IA8, GX_FALSE, 0U);
+    bufSize = GXGetTexBufferSize(256, 256, GX_TF_IA8, GX_FALSE, 0);
     work->unkB4 = OSAllocFromHeap(stageHeap, bufSize);
     if (work->unkB4 == NULL)
     {
@@ -687,10 +687,10 @@ static void make_wavy_mirror_texture(int unused, struct RenderEffect *rendEfc)
     polyDisp.flags &= 0xFFFFFFFB;
 
     // Copy the EFB to a texture
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);
-    GXCopyTex(work->unk28, 1);
+    GXCopyTex(work->unk28, GX_TRUE);
     GXInitTexObj(&work->unk0, work->unk28, work->xres, work->yres, work->format, GX_CLAMP, GX_CLAMP, 0U);
 
     *camera = cameraBackup;  // restore camera
@@ -708,7 +708,7 @@ static void func_80098B50(int arg0, struct RenderEffect *rendEfc)
     GXSetScissor(0U, 0U, 0x100U, 0x100U);
     GXLoadTexObj_cached(&commonGma->modelEntries[0x59].model->texObjs[0], GX_TEXMAP0);
     GXSetTevKAlphaSel_cached(GX_TEVSTAGE0, GX_TEV_KASEL_1);
-    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_NRM, 0x3CU, 1U, 0x40U);
+    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_NRM, 0x3CU, GX_TRUE, 0x40U);
     mathutil_mtxA_from_translate_xyz(0.5f, 0.5f, 1.0f);
     mathutil_mtxA_to_mtx(sp10);
     mathutil_mtxA_from_mtxB();
@@ -720,21 +720,21 @@ static void func_80098B50(int arg0, struct RenderEffect *rendEfc)
     GXSetTevSwapMode_cached(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetNumTevStages_cached(1U);
     GXSetNumTexGens(1U);
     GXSetNumIndStages(0U);
     GXSetBlendMode_cached(GX_BM_NONE, GX_BL_ONE, GX_BL_ZERO, GX_LO_CLEAR);
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     GXSetCullMode_cached(GX_CULL_BACK);
     if (dynamicStageParts != NULL)
     {
         struct DynamicStagePart *dynpart;
 
         mathutil_mtxA_from_mtxB();
-        GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         nlSetScaleFactor(1.0f);
         dynpart = dynamicStageParts;
         while (dynpart->modelName != NULL)
@@ -743,12 +743,12 @@ static void func_80098B50(int arg0, struct RenderEffect *rendEfc)
             dynpart++;
         }
     }
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     GXSetTexCopySrc(0, 0, 0x100, 0x100);
     GXSetTexCopyDst(0x100, 0x100, 0x2C, 0);
-    GXCopyTex(work->unkB4, 1);
+    GXCopyTex(work->unkB4, GX_TRUE);
     GXInitTexObj(&work->unk94, work->unkB4, 0x100U, 0x100U, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0U);
-    GXInitTexObjLOD(&work->unk94, GX_LINEAR, GX_LINEAR, 0.0f, 10.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+    GXInitTexObjLOD(&work->unk94, GX_LINEAR, GX_LINEAR, 0.0f, 10.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     u_gxutil_fog_something_2();
     set_current_camera(modeCtrl.currPlayer);
 }
@@ -772,8 +772,8 @@ static void func_80098EB4(int arg0, struct RenderEffect *rendEfc)
     color.a = work->unk90;
     GXSetTevKColor_cached(GX_KCOLOR0, color);
     GXSetTevKAlphaSel_cached(GX_TEVSTAGE0, GX_TEV_KASEL_K0_A);
-    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_POS, 0x1EU, 0U, 0x7DU);
-    GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX3x4, GX_TG_POS, 0x21U, 0U, 0x7DU);
+    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_POS, 0x1EU, GX_FALSE, 0x7DU);
+    GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX3x4, GX_TG_POS, 0x21U, GX_FALSE, 0x7DU);
     MTXPerspective(projMtx, 0.005493164f * currentCamera->sub28.fov, currentCamera->sub28.aspect, 0.1f, 20000.0f);
     mathutil_mtxA_from_identity();
     mathutilData->mtxA[0][2] = 0.5 - 0.5 * (projMtx[0][0] * currentCamera->sub28.unk28 * currentCamera->sub28.aspect * currentCamera->sub28.unk38);
@@ -800,9 +800,9 @@ static void func_80098EB4(int arg0, struct RenderEffect *rendEfc)
     GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);
     GXSetTevSwapMode_cached(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     var_r3 = 0;
     sp1C[0][0] = 0.0f;
     sp1C[0][1] = 1.6f;
@@ -830,19 +830,19 @@ static void func_80098EB4(int arg0, struct RenderEffect *rendEfc)
     }
     GXSetIndTexMtx(GX_ITM_0, sp1C, var_r3);
     GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD1, GX_TEXMAP1);
-    GXSetTevIndirect(GX_TEVSTAGE0, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_STU, GX_ITM_0, GX_ITW_OFF, GX_ITW_OFF, 0U, 0, 0);
+    GXSetTevIndirect(GX_TEVSTAGE0, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_STU, GX_ITM_0, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     GXSetNumTevStages_cached(1U);
     GXSetNumTexGens(2U);
     GXSetNumIndStages(1U);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     fog_gx_set();
     if (dynamicStageParts != NULL)
     {
         struct DynamicStagePart *dynpart;
 
         mathutil_mtxA_from_mtxB();
-        GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         dynpart = dynamicStageParts;
         while (dynpart->modelName != NULL)
         {

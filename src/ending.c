@@ -2530,7 +2530,7 @@ static void ending_chara_draw(void)
             mathutil_mtxA_translate(&temp_r26->unk3C);
             new_var = &sp14;
             mathutil_mtxA_mult_right(sp38);
-            avdisp_set_z_mode(1, GX_LEQUAL, 0);
+            avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
             var_r25 = lbl_801E31E4[temp_r26->charaId];
             while (var_r25->unk0 != -1)
             {
@@ -2580,7 +2580,7 @@ static void ending_chara_draw(void)
                 var_r25++;
             }
             fade_color_base_default();
-            avdisp_set_z_mode(1, GX_LEQUAL, 1);
+            avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         }
     }
 }
@@ -2598,14 +2598,14 @@ static void lbl_800BCD30(struct MyDrawNode *node)
     mathutil_mtxA_rotate_x(chara->unk58);
     mathutil_mtxA_rotate_z(chara->unk5C);
     u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-    avdisp_set_z_mode(1, 3, 0);
+    avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
     avdisp_draw_model_unculled_sort_none(modelEntries[clearHemisphereInsideParts[0]].model);
     avdisp_draw_model_unculled_sort_none(modelEntries[r29[0]].model);
     avdisp_draw_model_unculled_sort_none(modelEntries[r29[6]].model);
-    avdisp_set_z_mode(1, 3, 1);
+    avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     avdisp_draw_model_unculled_sort_none(modelEntries[clearHemisphereOutsideParts[0]].model);
     avdisp_draw_model_unculled_sort_none(modelEntries[r29[3]].model);
-    avdisp_set_z_mode(1, 3, 1);
+    avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 static int set_ending_chara(int apeId, enum Character charaId)
@@ -3546,7 +3546,7 @@ static void rend_efc_ape_face(void)
 
     GXSetTexCopySrc(0, 0, 640, 448);
     GXSetTexCopyDst(640, 448, GX_TF_RGB565, GX_FALSE);
-    GXCopyTex(lbl_802F1B40, 0U);
+    GXCopyTex(lbl_802F1B40, GX_FALSE);
     GXInitTexObj(&texObj, lbl_802F1B40, 640, 448, GX_TF_RGB565, GX_CLAMP, GX_CLAMP, GX_FALSE);
     mathutil_mtxA_from_quat(&ape->unk60);
     mathutil_mtxA_to_mtx(sp14);

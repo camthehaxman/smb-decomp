@@ -1260,7 +1260,7 @@ void u_ball_shadow_something_1(void)
         0,
         0,
         GXGetTexObjMipMap(tex1));
-    GXInitTexObjLOD(&lbl_801B7EC0.unk4, 1, 1, 0.0f, 0.0f, 0.0f, 0, 0, 0);
+    GXInitTexObjLOD(&lbl_801B7EC0.unk4, GX_LINEAR, GX_LINEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
 
     sp18.unk3C = (void *)&lbl_801B7EC0;
 

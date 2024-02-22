@@ -348,8 +348,8 @@ void draw_blur_bridge_accordions(void)
             if (flip)
                 mathutil_mtxA_rotate_y(-0x8000);
             mathutil_mtxA_scale_xyz(0.5 * temp, 1.0f, 1.0f);
-            GXLoadPosMtxImm(mathutilData->mtxA, 0);
-            GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+            GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+            GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
             avdisp_draw_model_culled_sort_translucent(blurBridgeAccordion);
         }
     }
@@ -2042,8 +2042,8 @@ void stage_draw(void)
                 }
                 if (model != NULL)
                 {
-                    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-                    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+                    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+                    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
                     avdisp_draw_model_culled_sort_translucent(model);
                     sp7C.unk2 = 4;
                     sp7C.model.gma = model;
@@ -2097,8 +2097,8 @@ void stage_draw(void)
                 mathutil_mtxA_from_mtxB();
                 if (i > 0)
                     mathutil_mtxA_mult_right(animGroup->transform);
-                GXLoadPosMtxImm(mathutilData->mtxA, 0);
-                GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+                GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+                GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
                 r27 = r23->unk0;
                 for (j = 0; j < r23->unk4; j++, r27++)
                 {
@@ -2343,7 +2343,7 @@ void draw_stage_preview(void)
         mathutil_mtxA_translate_xyz(0.0f, lbl_802F1EC8 * 10.0 + 100.0, 0.0f);
         mathutil_mtxA_rotate_x(0x4000);
         mathutil_mtxA_scale_s(lbl_802F1EC4 + 15.0);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
         bitmap_init_tev();
         preview_draw(&stagePreview, -1, 0, -1.0f, lbl_802F3768, 0.0f, 2.0f, -2.0f);
     }

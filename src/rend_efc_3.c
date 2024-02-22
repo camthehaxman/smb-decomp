@@ -58,7 +58,7 @@ void func_800993A8(struct RenderEffect *rendEfc)
     work->unk28 = 0x280;
     work->unk2A = 0x1C0;
     work->unk24 = lbl_802F1B40;
-    bufSize = GXGetTexBufferSize(256, 256, GX_TF_IA8, GX_FALSE, 0U);
+    bufSize = GXGetTexBufferSize(256, 256, GX_TF_IA8, GX_FALSE, 0);
     work->unk4C = OSAllocFromHeap(stageHeap, bufSize);
     if (work->unk4C == NULL)
     {
@@ -337,10 +337,10 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
     else
         view_draw_simple();
     polyDisp.flags &= 0xFFFFFFFB;
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     GXSetTexCopySrc(0, 0, temp_r30->unk28, temp_r30->unk2A);
     GXSetTexCopyDst(temp_r30->unk28, temp_r30->unk2A, temp_r30->unk20, 0);
-    GXCopyTex(temp_r30->unk24, 1);
+    GXCopyTex(temp_r30->unk24, GX_TRUE);
     GXInitTexObj(&temp_r30->unk0, temp_r30->unk24, temp_r30->unk28, temp_r30->unk2A, temp_r30->unk20, GX_CLAMP, GX_CLAMP, 0U);
     *camera = cameraBackup;  // restore camera
     set_current_camera(modeCtrl.currPlayer);
@@ -357,12 +357,12 @@ void func_8009A13C(int arg0, struct RenderEffect *arg1)
     GXSetScissor(0U, 0U, 0x100U, 0x100U);
     func_8009A2A4(arg1);
     func_8009A6E0(arg1);
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     GXSetTexCopySrc(0, 0, 0x100U, 0x100U);
     GXSetTexCopyDst(0x100U, 0x100U, GX_CTF_GB8, 0);
-    GXCopyTex(temp_r31->unk4C, 1);
+    GXCopyTex(temp_r31->unk4C, GX_TRUE);
     GXInitTexObj(&temp_r31->unk2C, temp_r31->unk4C, 0x100U, 0x100U, GX_TF_IA8, GX_MIRROR, GX_MIRROR, 0U);
-    GXInitTexObjLOD(&temp_r31->unk2C, GX_LINEAR, GX_LINEAR, 0.0f, 10.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+    GXInitTexObjLOD(&temp_r31->unk2C, GX_LINEAR, GX_LINEAR, 0.0f, 10.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     u_gxutil_fog_something_2();
     set_current_camera(modeCtrl.currPlayer);
 }
@@ -377,7 +377,7 @@ void func_8009A2A4(struct RenderEffect *rendEfc)
     temp_r30 = (struct BGPilotWork *)backgroundInfo.work;
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_mult_right(temp_r31->unk50);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     temp_r30_2 = u_avdisp_set_some_func_1((void*)lbl_8009A31C);
     avdisp_draw_model_culled_sort_none(temp_r30->unk24);
     u_avdisp_set_some_func_1(temp_r30_2);
@@ -397,9 +397,9 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     GXSetTevSwapMode_cached(sp10.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.unk0, sp10.unk4, sp10.u_texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp10.unk0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO);
-    GXSetTevColorOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(sp10.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
-    GXSetTevAlphaOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevDirect(sp10.unk0);
     sp10.unk0 += 1;
     sp10.unk4 += 1;
@@ -409,9 +409,9 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     GXSetTevSwapMode_cached(sp10.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.unk0, sp10.unk4, sp10.u_texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp10.unk0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO);
-    GXSetTevColorOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(sp10.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
-    GXSetTevAlphaOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevDirect(sp10.unk0);
     sp10.unk0 += 1;
     sp10.unk4 += 1;
@@ -421,9 +421,9 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     GXSetTevSwapMode_cached(sp10.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.unk0, sp10.unk4, sp10.u_texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp10.unk0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO);
-    GXSetTevColorOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(sp10.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
-    GXSetTevAlphaOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(sp10.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevDirect(sp10.unk0);
     sp10.unk0 += 1;
     sp10.unk4 += 1;
@@ -441,7 +441,7 @@ void func_8009A6E0(struct RenderEffect *rendEfc)
     temp_r31 = (void *)rendEfc->work;
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_mult_right(temp_r31->unk50);
-    avdisp_set_z_mode(1U, GX_ALWAYS, 0U);
+    avdisp_set_z_mode(GX_ENABLE, GX_ALWAYS, GX_DISABLE);
 
     var_r30 = temp_r31->unk90;
     for (i = 256; i > 0; i--, var_r30++)
@@ -455,7 +455,7 @@ void func_8009A6E0(struct RenderEffect *rendEfc)
             mathutil_mtxA_rotate_x(-0x4000);
             mathutil_mtxA_rotate_z(var_r30->unk28);
             mathutil_mtxA_scale_s(var_r30->unk20);
-            GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+            GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
             avdisp_set_bound_sphere_scale(var_r30->unk20);
             temp_f1 = 0.8f * var_r30->unk2C;
             avdisp_set_post_mult_color(temp_f1, temp_f1, temp_f1, temp_f1);
@@ -464,5 +464,5 @@ void func_8009A6E0(struct RenderEffect *rendEfc)
         }
     }
     fade_color_base_default();
-    avdisp_set_z_mode(1U, GX_LEQUAL, 1U);
+    avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }

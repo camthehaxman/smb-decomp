@@ -962,8 +962,8 @@ void stobj_goalbag_draw(struct Stobj *stobj)
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_x(stobj->rotX);
     mathutil_mtxA_rotate_z(stobj->rotZ);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
 
     if (bag->open == 0.0)
     {
@@ -979,8 +979,8 @@ void stobj_goalbag_draw(struct Stobj *stobj)
             }
             else
             {
-                GXLoadPosMtxImm(mathutilData->mtxA, 0);
-                GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+                GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+                GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
                 avdisp_draw_model_culled_sort_translucent(model);
             }
         }
@@ -1006,8 +1006,8 @@ void stobj_goalbag_draw(struct Stobj *stobj)
             }
             else
             {
-                GXLoadPosMtxImm(mathutilData->mtxA, 0);
-                GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+                GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+                GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
                 avdisp_draw_model_culled_sort_translucent(model);
             }
         }
@@ -1024,8 +1024,8 @@ void stobj_goalbag_draw(struct Stobj *stobj)
             }
             else
             {
-                GXLoadPosMtxImm(mathutilData->mtxA, 0);
-                GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+                GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+                GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
                 avdisp_draw_model_culled_sort_translucent(model);
             }
         }

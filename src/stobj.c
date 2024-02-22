@@ -711,8 +711,8 @@ static void stobj_bumper_draw(struct Stobj *stobj)
         struct GMAModel **phi_r5;
         float *phi_r6;
 
-        GXLoadPosMtxImm(mathutilData->mtxA, 0);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
 
         temp_f1 = -((radius * currentCamera->sub28.unk3C * currentCamera->sub28.vp.height) / sp18.z);
         phi_r6 = lbl_8028C0B0.unk0;
@@ -915,8 +915,8 @@ static void stobj_bumper_bgspecial_draw(struct Stobj *stobj)
             mathutil_mtxA_rotate_x(stobj->rotX);
             mathutil_mtxA_rotate_y(stobj->index << 11);
             mathutil_mtxA_translate_xyz(0.0f, birdY, 0.0f);
-            GXLoadPosMtxImm(mathutilData->mtxA, 0);
-            GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+            GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+            GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
             avdisp_draw_model_culled_sort_translucent(birdModel);
         }
         break;
@@ -1011,8 +1011,8 @@ static void stobj_jamabar_draw(struct Stobj *stobj)
     spC = stobj->unk3C;
     mathutil_mtxA_scale_xyz(spC.x, spC.y, spC.z);
     avdisp_set_bound_sphere_scale(spC.z);
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
-    GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+    GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
     avdisp_draw_model_culled_sort_translucent(stobj->model);
 }
 

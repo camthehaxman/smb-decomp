@@ -91,7 +91,7 @@ void func_800924CC(void)
     }
     DCFlushRange(pixels, 0x100);
     GXInitTexObj(texObj, pixels, 0x40U, 4U, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
-    GXInitTexObjLOD(texObj, GX_LINEAR, GX_LINEAR, 0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+    GXInitTexObjLOD(texObj, GX_LINEAR, GX_LINEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     lbl_802B57A0_0x3920[0][0] = 0.0f;
     lbl_802B57A0_0x3920[0][1] = 0.0f;
     lbl_802B57A0_0x3920[1][0] = 0.0f;
@@ -406,24 +406,24 @@ static void func_800934B0(void)
     s32 var_r3;
 
     GXSetNumChans(1);
-    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_POS, 0x1EU, 0U, 0x7DU);
-    GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD0, 0, 4);
+    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_POS, 0x1EU, GX_FALSE, 0x7DU);
+    GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
     GXSetTevDirect(GX_TEVSTAGE0);
-    GXSetTevSwapMode_cached(GX_TEVSTAGE0, 0, 1);
-    GXSetTevKColorSel_cached(GX_TEVSTAGE0, 0xC);
-    GXSetTevColorIn_cached(GX_TEVSTAGE0, 0xF, 0xE, 8, 0xF);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, 0, 0, 0, 1, 0);
-    GXSetTevAlphaIn_cached(GX_TEVSTAGE0, 7, 7, 7, 4);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, 0, 0, 0, 1, 0);
+    GXSetTevSwapMode_cached(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP1);
+    GXSetTevKColorSel_cached(GX_TEVSTAGE0, GX_TEV_KCSEL_K0);
+    GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_KONST, GX_CC_TEXC, GX_CC_ZERO);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_TEXA);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     var_r27 = 0xD;
-    GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX3x4, GX_TG_POS, 0x21U, 0U, 0x7DU);
-    GXSetTevOrder_cached(GX_TEVSTAGE1, GX_TEXCOORD1, 1, 0xFF);
+    GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX3x4, GX_TG_POS, 0x21U, GX_FALSE, 0x7DU);
+    GXSetTevOrder_cached(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR_NULL);
     GXSetTevDirect(GX_TEVSTAGE1);
-    GXSetTevSwapMode_cached(GX_TEVSTAGE1, 0, 1);
-    GXSetTevColorIn_cached(GX_TEVSTAGE1, 0xF, 8, 0, 0xC);
-    GXSetTevColorOp_cached(GX_TEVSTAGE1, 1, 0, 0, 1, 0);
-    GXSetTevAlphaIn_cached(GX_TEVSTAGE1, 7, 0, 4, 7);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE1, 0, 0, 0, 1, 0);
+    GXSetTevSwapMode_cached(GX_TEVSTAGE1, GX_TEV_SWAP0, GX_TEV_SWAP1);
+    GXSetTevColorIn_cached(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ONE);
+    GXSetTevColorOp_cached(GX_TEVSTAGE1, GX_TEV_SUB, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_APREV, GX_CA_TEXA, GX_CA_ZERO);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     var_r3 = lbl_802F2150;
     var_r30 = GX_TEVSTAGE2;
     var_r29 = GX_TEXCOORD2;
@@ -434,40 +434,40 @@ static void func_800934B0(void)
     var_r31 = var_r3 - 1;
     for (var_r31 = var_r3 - 1; var_r31 > 0; var_r31--)
     {
-        GXSetTexCoordGen2(var_r29, GX_TG_MTX3x4, GX_TG_POS, var_r28, 0U, 0x7DU);
-        GXSetTevOrder_cached(var_r30, var_r29, var_r26, 4);
+        GXSetTexCoordGen2(var_r29, GX_TG_MTX3x4, GX_TG_POS, var_r28, GX_FALSE, 0x7DU);
+        GXSetTevOrder_cached(var_r30, var_r29, var_r26, GX_COLOR0A0);
         GXSetTevDirect(var_r30);
-        GXSetTevSwapMode_cached(var_r30, 0, 1);
+        GXSetTevSwapMode_cached(var_r30, GX_TEV_SWAP0, GX_TEV_SWAP1);
         GXSetTevKColorSel_cached(var_r30, var_r27);
-        GXSetTevColorIn_cached(var_r30, 0xF, 0xE, 8, 0xF);
-        GXSetTevColorOp_cached(var_r30, 0, 0, 0, 1, 1);
-        GXSetTevAlphaIn_cached(var_r30, 7, 7, 7, 4);
-        GXSetTevAlphaOp_cached(var_r30, 0, 0, 0, 1, 1);
+        GXSetTevColorIn_cached(var_r30, GX_CC_ZERO, GX_CC_KONST, GX_CC_TEXC, GX_CC_ZERO);
+        GXSetTevColorOp_cached(var_r30, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG0);
+        GXSetTevAlphaIn_cached(var_r30, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_TEXA);
+        GXSetTevAlphaOp_cached(var_r30, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG0);
         var_r28 += 3;
         var_r27 += 1;
         var_r28 == 0;  // needed to match
         GXSetTexCoordGen(var_r29 + 1, GX_TG_MTX3x4, GX_TG_POS, var_r28);
-        GXSetTevOrder_cached(var_r30 + 1, var_r29 + 1, var_r26 + 1, 0xFF);
+        GXSetTevOrder_cached(var_r30 + 1, var_r29 + 1, var_r26 + 1, GX_COLOR_NULL);
         GXSetTevDirect(var_r30 + 1);
-        GXSetTevSwapMode_cached(var_r30 + 1, 0, 1);
-        GXSetTevColorIn_cached(var_r30 + 1, 0xF, 8, 2, 0xC);
-        GXSetTevColorOp_cached(var_r30 + 1, 1, 0, 0, 1, 1);
-        GXSetTevAlphaIn_cached(var_r30 + 1, 7, 1, 4, 7);
-        GXSetTevAlphaOp_cached(var_r30 + 1, 0, 0, 0, 1, 1);
+        GXSetTevSwapMode_cached(var_r30 + 1, GX_TEV_SWAP0, GX_TEV_SWAP1);
+        GXSetTevColorIn_cached(var_r30 + 1, GX_CC_ZERO, GX_CC_TEXC, GX_CC_C0, GX_CC_ONE);
+        GXSetTevColorOp_cached(var_r30 + 1, GX_TEV_SUB, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG0);
+        GXSetTevAlphaIn_cached(var_r30 + 1, GX_CA_ZERO, GX_CA_A0, GX_CA_TEXA, GX_CA_ZERO);
+        GXSetTevAlphaOp_cached(var_r30 + 1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG0);
         var_r29 += 2;
         var_r28 += 3;
         var_r26 += 2;
-        GXSetTevOrder_cached(var_r30 + 2, GX_TEXCOORD_NULL, 0xFF, 0xFF);
+        GXSetTevOrder_cached(var_r30 + 2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
         GXSetTevDirect(var_r30 + 2);
-        GXSetTevColorIn_cached(var_r30 + 2, 0xF, 2, 0, 0xF);
-        GXSetTevColorOp_cached(var_r30 + 2, 0, 0, 0, 1, 0);
-        GXSetTevAlphaIn_cached(var_r30 + 2, 1, 7, 7, 0);
-        GXSetTevAlphaOp_cached(var_r30 + 2, 0, 0, 0, 1, 0);
+        GXSetTevColorIn_cached(var_r30 + 2, GX_CC_ZERO, GX_CC_C0, GX_CC_CPREV, GX_CC_ZERO);
+        GXSetTevColorOp_cached(var_r30 + 2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+        GXSetTevAlphaIn_cached(var_r30 + 2, GX_CA_A0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
+        GXSetTevAlphaOp_cached(var_r30 + 2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
         var_r30 += 3;
     }
     GXSetNumIndStages(0U);
     GXSetBlendMode_cached(1, 0, 2, 0);
-    GXSetZMode_cached(1, GX_EQUAL, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_EQUAL, GX_ENABLE);
     {
         GXColor color = {0};
         GXSetFog_cached(0, 0.0f, 100.0f, 0.1f, 20000.0f, color);
@@ -486,11 +486,11 @@ static void func_80093920(void)
         var_r0 = 4;
     for (var_r31 = var_r0; var_r31 > 0; var_r31--)
     {
-        GXSetTevSwapMode_cached(var_r30, 0, 0);
-        GXSetTevSwapMode_cached(var_r30 + 1, 0, 0);
+        GXSetTevSwapMode_cached(var_r30, GX_TEV_SWAP0, GX_TEV_SWAP0);
+        GXSetTevSwapMode_cached(var_r30 + 1, GX_TEV_SWAP0, GX_TEV_SWAP0);
         var_r30 += 2;
     }
-    GXSetZMode_cached(1, GX_LEQUAL, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 static int lbl_800939F0(struct NlMesh *mesh, int size)

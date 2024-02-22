@@ -117,19 +117,19 @@ static void ballfrag_draw_func(struct MyNode *node)
     modelEntries = commonGma->modelEntries;
     if (effect->unkA0 < 0)
     {
-        avdisp_set_z_mode(1, 3, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_draw_model_culled_sort_none(modelEntries[clearHemisphereInsideParts[0]].model);
-        avdisp_set_z_mode(1, 3, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         avdisp_draw_model_culled_sort_none(modelEntries[clearHemisphereOutsideParts[0]].model);
     }
     else
     {
         s16 *r30 = coloredBallPartModelIDs[effect->unkA0];
 
-        avdisp_set_z_mode(1, 3, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
         avdisp_draw_model_unculled_sort_none(modelEntries[r30[0]].model);
         avdisp_draw_model_unculled_sort_none(modelEntries[r30[6]].model);
-        avdisp_set_z_mode(1, 3, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         avdisp_draw_model_unculled_sort_none(modelEntries[r30[3]].model);
     }
 }

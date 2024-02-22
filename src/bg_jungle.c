@@ -168,7 +168,7 @@ void bg_jungle_draw(void)
                 avdisp_draw_model_culled_sort_translucent(cloudObj->model);
             }
         }
-        avdisp_set_z_mode(1, 3, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
         avdisp_enable_custom_tex_mtx(0);
     }
 

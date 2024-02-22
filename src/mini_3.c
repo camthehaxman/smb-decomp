@@ -48,7 +48,7 @@ void poly_shadow_draw(void)
     {
         temp_f1 = -currentCamera->sub28.unk38;
         temp_f27 = temp_f1 / currentCamera->sub28.vp.height;
-        avdisp_set_z_mode(1, 3, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
 
         var_r28 = entryBuf;
         for (; var_r29 > 0; var_r29--, var_r28++)
@@ -80,13 +80,13 @@ void poly_shadow_draw(void)
             sp8.z = var_r28->unk14.z * temp_f3;
             mathutil_mtxA_scale(&sp8);
             avdisp_set_bound_sphere_scale(var_r28->unk30);
-            GXLoadPosMtxImm(mathutilData->mtxA, 0);
-            GXLoadNrmMtxImm(mathutilData->mtxA, 0);
+            GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+            GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
             var_f28 *= 0.003921569f;
             avdisp_set_post_mult_color(var_r28->unk2C.r * var_f28, var_r28->unk2C.g * var_f28, var_r28->unk2C.b * var_f28, 1.0f);
             avdisp_draw_model_culled_sort_none(var_r28->unk28);
             avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
         }
-        avdisp_set_z_mode(1, 3, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     }
 }

@@ -12,7 +12,7 @@ static void preview_init_common(struct Preview *preview, char *filename, int ind
     preview->width = width;
     preview->height = height;
     preview->format = format;
-    preview->size = GXGetTexBufferSize(width, height, format, 0, 0);
+    preview->size = GXGetTexBufferSize(width, height, format, GX_FALSE, 0);
 
     if (preview->flags & 1)
         preview->imagePtr = lbl_802F1B40;
@@ -140,7 +140,7 @@ void preview_draw(struct Preview *preview, u32 color0, u32 color1, float x, floa
     y1 = y;
     if ((int)preview->state == 3)
     {
-        GXLoadTexObj_cached(&preview->texObj, 0);
+        GXLoadTexObj_cached(&preview->texObj, GX_TEXMAP0);
 
         color.r = color0 >> 16;
         color.g = color0 >> 8;

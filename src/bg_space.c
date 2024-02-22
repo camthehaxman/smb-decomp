@@ -264,8 +264,8 @@ void bg_space_draw(void)
         mathutil_mtxA_rotate_y(saturnObj->rotY);
         mathutil_mtxA_rotate_x(saturnObj->rotX);
         mathutil_mtxA_scale(&saturnObj->scale);
-        GXLoadPosMtxImm(mathutilData->mtxA, 0U);
-        GXLoadNrmMtxImm(mathutilData->mtxA, 0U);
+        GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
+        GXLoadNrmMtxImm(mathutilData->mtxA, GX_PNMTX0);
         scale = MAX(MAX(saturnObj->scale.x, saturnObj->scale.y), saturnObj->scale.z);
         avdisp_set_bound_sphere_scale(scale);
         if (!(polyDisp.flags & 4))
@@ -310,7 +310,7 @@ static void lbl_800609AC(struct GCMMatState_Unit *arg0)
     GXSetTexCoordGen(sp14.unk4, GX_TG_MTX2x4, GX_TG_TEX0, sp14.unk8);
     GXLoadTexMtxImm(work->unk64, sp14.unk8, GX_MTX2x4);
     GXSetIndTexOrder(sp14.unk10, sp14.unk4, sp14.u_texMapId);
-    GXSetTevIndirect(sp14.unk0 - 1, sp14.unk10, 0, 7, sp14.unk1C, 0, 0, 0, 0, 0);
+    GXSetTevIndirect(sp14.unk0 - 1, sp14.unk10, GX_ITF_8, GX_ITB_STU, sp14.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     GXSetIndTexMtx(sp14.unk1C, work->unk94, -3);
     sp14.unk4 += 1;
     sp14.unk8 += 3;

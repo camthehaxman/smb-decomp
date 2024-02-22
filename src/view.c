@@ -184,7 +184,7 @@ void view_draw(void)
     polyDisp.flags |= 2;
     view_apply_camera(camera);
     MTXPerspective(projMtx, 59.99633789f, 1.33333333f, 0.1f, 20000.0f);
-    GXSetProjection(projMtx, 0);
+    GXSetProjection(projMtx, GX_PERSPECTIVE);
 
     {
         S16Vec rotation = {0};
@@ -511,7 +511,7 @@ void draw_banana_shadows(void)
      && decodedStageLzPtr->bananaCount > 0)
     {
         avdisp_set_post_mult_color(0.3f, 0.3f, 0.3f, 0.3f);
-        avdisp_set_z_mode(1, 3, 0);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
 
         for (i = 0; i < animGroupCount; i++)
         {
@@ -540,7 +540,7 @@ void draw_banana_shadows(void)
             }
         }
         avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
-        avdisp_set_z_mode(1, 3, 1);
+        avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     }
 }
 

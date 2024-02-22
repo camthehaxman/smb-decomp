@@ -187,7 +187,7 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
 
     GXSetTexCopySrc(left, top, width, height);
     GXSetTexCopyDst(width, height, 4, 0);
-    GXCopyTex(work->imageBuf, 0);
+    GXCopyTex(work->imageBuf, GX_FALSE);
     GXInitTexObj(&work->texObj, work->imageBuf, width, height, GX_TF_RGB565, GX_CLAMP, GX_CLAMP, 0U);
     GXSetNumChans(0);
     GXLoadTexObj_cached(&work->texObj, GX_TEXMAP0);
@@ -198,7 +198,7 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevKColorSel_cached(GX_TEVSTAGE0, GX_TEV_KCSEL_1_2);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_ZERO);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 0U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
 
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, 33);
     GXSetTevOrder_cached(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP0, GX_COLOR0A0);
@@ -206,7 +206,7 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevDirect(GX_TEVSTAGE1);
     GXSetTevKColorSel_cached(GX_TEVSTAGE1, GX_TEV_KCSEL_1_2);
     GXSetTevColorIn_cached(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
-    GXSetTevColorOp_cached(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 0U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
 
     GXSetTexCoordGen(GX_TEXCOORD2, GX_TG_MTX2x4, GX_TG_TEX0, 36);
     GXSetTevOrder_cached(GX_TEVSTAGE2, GX_TEXCOORD2, GX_TEXMAP0, GX_COLOR0A0);
@@ -214,7 +214,7 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevDirect(GX_TEVSTAGE2);
     GXSetTevKColorSel_cached(GX_TEVSTAGE2, GX_TEV_KCSEL_1_2);
     GXSetTevColorIn_cached(GX_TEVSTAGE2, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
-    GXSetTevColorOp_cached(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 0U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
 
     GXSetTexCoordGen(GX_TEXCOORD3, GX_TG_MTX2x4, GX_TG_TEX0, 39);
     GXSetTevOrder_cached(GX_TEVSTAGE3, GX_TEXCOORD3, GX_TEXMAP0, GX_COLOR0A0);
@@ -223,15 +223,15 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevKColorSel_cached(GX_TEVSTAGE3, GX_TEV_KCSEL_1_2);
     GXSetTevKAlphaSel_cached(GX_TEVSTAGE3, GX_TEV_KASEL_3_4);
     GXSetTevColorIn_cached(GX_TEVSTAGE3, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
-    GXSetTevColorOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_DIVIDE_2, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_DIVIDE_2, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE3, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
 
     GXSetNumTevStages_cached(4);
     GXSetNumTexGens(4);
     GXSetNumIndStages(0);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-    GXSetZMode_cached(0, GX_ALWAYS, 0);
+    GXSetZMode_cached(GX_DISABLE, GX_ALWAYS, GX_DISABLE);
     GXSetCullMode_cached(GX_CULL_BACK);
     fog_gx_set();
     temp_f31 = 3.0f / width;
@@ -239,19 +239,19 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     mathutil_mtxA_from_identity();
     mathutilData->mtxA[0][3] = temp_f31;
     mathutilData->mtxA[1][3] = 0.0f;
-    GXLoadTexMtxImm(mathutilData->mtxA, 30, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX0, GX_MTX2x4);
     mathutilData->mtxA[0][3] = -temp_f31;
     mathutilData->mtxA[1][3] = 0.0f;
-    GXLoadTexMtxImm(mathutilData->mtxA, 33, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX1, GX_MTX2x4);
     mathutilData->mtxA[0][3] = 0.0f;
     mathutilData->mtxA[1][3] = temp_f30;
-    GXLoadTexMtxImm(mathutilData->mtxA, 36, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX2, GX_MTX2x4);
     mathutilData->mtxA[0][3] = 0.0f;
     mathutilData->mtxA[1][3] = -temp_f30;
-    GXLoadTexMtxImm(mathutilData->mtxA, 39, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX3, GX_MTX2x4);
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
 
     temp_f31_2 = currentCamera->sub28.unk38;
     temp_f30_2 = temp_f31_2 * currentCamera->sub28.aspect;
@@ -268,7 +268,7 @@ void rend_efc_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXTexCoord2f32(0.0f, 1.0f);
     GXEnd();
 
-    GXSetZMode_cached(1, GX_LEQUAL, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 void rend_efc_motion_blur_init(struct RenderEffect *rendEfc)
@@ -332,19 +332,19 @@ void rend_efc_motion_blur_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevSwapMode_cached(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetNumTevStages_cached(1);
     GXSetNumTexGens(1);
     GXSetNumIndStages(0);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-    GXSetZMode_cached(0, GX_ALWAYS, 0);
+    GXSetZMode_cached(GX_DISABLE, GX_ALWAYS, GX_DISABLE);
     GXSetCullMode_cached(GX_CULL_BACK);
     fog_gx_set();
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0U);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     temp_f31 = mathutil_tan(0x1555U);
     temp_f30 = 1.3333334f * temp_f31;
 
@@ -361,9 +361,9 @@ void rend_efc_motion_blur_draw(int arg0, struct RenderEffect *rendEfc)
 
     GXSetTexCopySrc(0, 0, currRenderMode->fbWidth, currRenderMode->xfbHeight);
     GXSetTexCopyDst(currRenderMode->fbWidth, currRenderMode->xfbHeight, 6, 0);
-    GXCopyTex(work->imageBuf, 0);
+    GXCopyTex(work->imageBuf, GX_FALSE);
     GXInitTexObj(&work->texObj, work->imageBuf, currRenderMode->fbWidth, currRenderMode->xfbHeight, GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, 0U);
-    GXSetZMode_cached(1, GX_LEQUAL, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     set_current_camera(u_cameraId1);
 }
 
@@ -491,7 +491,7 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
 
     GXSetTexCopySrc(left, top, width, height);
     GXSetTexCopyDst(width, height, 4, 0);
-    GXCopyTex(work->unk20, 0);
+    GXCopyTex(work->unk20, GX_FALSE);
     GXInitTexObj(&work->unk0, work->unk20, width, height, GX_TF_RGB565, GX_CLAMP, GX_CLAMP, 0U);
     GXSetNumChans(0);
     GXLoadTexObj_cached(&work->unk0, GX_TEXMAP0);
@@ -501,21 +501,21 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevKColorSel_cached(GX_TEVSTAGE0, GX_TEV_KCSEL_1_2);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_ZERO);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 0U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, 0x21);
     GXSetTevOrder_cached(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP0, GX_COLOR0A0);
     GXSetTevSwapMode_cached(GX_TEVSTAGE1, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevDirect(GX_TEVSTAGE1);
     GXSetTevKColorSel_cached(GX_TEVSTAGE1, GX_TEV_KCSEL_1_2);
     GXSetTevColorIn_cached(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
-    GXSetTevColorOp_cached(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 0U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
     GXSetTexCoordGen(GX_TEXCOORD2, GX_TG_MTX2x4, GX_TG_TEX0, 0x24);
     GXSetTevOrder_cached(GX_TEVSTAGE2, GX_TEXCOORD2, GX_TEXMAP0, GX_COLOR0A0);
     GXSetTevSwapMode_cached(GX_TEVSTAGE2, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevDirect(GX_TEVSTAGE2);
     GXSetTevKColorSel_cached(GX_TEVSTAGE2, GX_TEV_KCSEL_1_2);
     GXSetTevColorIn_cached(GX_TEVSTAGE2, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
-    GXSetTevColorOp_cached(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 0U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
     GXSetTexCoordGen(GX_TEXCOORD3, GX_TG_MTX2x4, GX_TG_TEX0, 0x27);
     GXSetTevOrder_cached(GX_TEVSTAGE3, GX_TEXCOORD3, GX_TEXMAP0, GX_COLOR0A0);
     GXSetTevSwapMode_cached(GX_TEVSTAGE3, GX_TEV_SWAP0, GX_TEV_SWAP0);
@@ -523,14 +523,14 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevKColorSel_cached(GX_TEVSTAGE3, GX_TEV_KCSEL_1_2);
     GXSetTevKAlphaSel_cached(GX_TEVSTAGE3, GX_TEV_KASEL_3_4);
     GXSetTevColorIn_cached(GX_TEVSTAGE3, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, GX_CC_CPREV);
-    GXSetTevColorOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_DIVIDE_2, 1U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_DIVIDE_2, GX_TRUE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE3, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE3, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetNumTevStages_cached(4);
     GXSetNumTexGens(4);
     GXSetNumIndStages(0);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-    GXSetZMode_cached(0, GX_ALWAYS, 0);
+    GXSetZMode_cached(GX_DISABLE, GX_ALWAYS, GX_DISABLE);
     GXSetCullMode_cached(GX_CULL_BACK);
     fog_gx_set();
     temp_f30 = var_f31 / width;
@@ -538,19 +538,19 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     mathutil_mtxA_from_identity();
     mathutilData->mtxA[0][3] = temp_f30;
     mathutilData->mtxA[1][3] = 0.0f;
-    GXLoadTexMtxImm(mathutilData->mtxA, 30, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX0, GX_MTX2x4);
     mathutilData->mtxA[0][3] = -temp_f30;
     mathutilData->mtxA[1][3] = 0.0f;
-    GXLoadTexMtxImm(mathutilData->mtxA, 33, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX1, GX_MTX2x4);
     mathutilData->mtxA[0][3] = 0.0f;
     mathutilData->mtxA[1][3] = temp_f31;
-    GXLoadTexMtxImm(mathutilData->mtxA, 36, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX2, GX_MTX2x4);
     mathutilData->mtxA[0][3] = 0.0f;
     mathutilData->mtxA[1][3] = -temp_f31;
-    GXLoadTexMtxImm(mathutilData->mtxA, 39, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, GX_TEXMTX3, GX_MTX2x4);
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
 
     temp_f31_2 = currentCamera->sub28.unk38;
     temp_f30_2 = temp_f31_2 * currentCamera->sub28.aspect;
@@ -567,7 +567,7 @@ void rend_efc_focus_draw(int arg0, struct RenderEffect *rendEfc)
     GXTexCoord2f32(0.0f, 1.0f);
     GXEnd();
 
-    GXSetZMode_cached(1, GX_LEQUAL, 1);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
 }
 
 struct RenderEffectKaleidoscope
@@ -656,23 +656,23 @@ void rend_efc_kaleidoscope_draw(int arg0, struct RenderEffect *rendEfc)
     case 0:
         GXSetTexCopySrc(192, 112, 256, 256);
         GXSetTexCopyDst(256, 256, 5, 0);
-        GXCopyTex(work->unk44, 0);
+        GXCopyTex(work->unk44, GX_FALSE);
         GXInitTexObj(&work->unk4, work->unk44, 256, 256, GX_TF_RGB5A3, GX_REPEAT, GX_REPEAT, 0U);
         break;
     case 1:
         GXSetTexCopySrc(192, 112, 256, 256);
         GXSetTexCopyDst(256, 256, 5, 0);
-        GXCopyTex(work->unk44, 0);
+        GXCopyTex(work->unk44, GX_FALSE);
         GXInitTexObj(&work->unk4, work->unk44, 256, 256, GX_TF_RGB5A3, GX_MIRROR, GX_MIRROR, 0U);
         break;
     case 2:
         GXSetTexCopySrc(0, 0, currRenderMode->fbWidth, currRenderMode->xfbHeight);
         GXSetTexCopyDst(currRenderMode->fbWidth, currRenderMode->xfbHeight, 5, 0);
-        GXCopyTex(work->unk44, 0);
+        GXCopyTex(work->unk44, GX_FALSE);
         GXInitTexObj(&work->unk4, work->unk44, currRenderMode->fbWidth, currRenderMode->xfbHeight, GX_TF_RGB5A3, GX_CLAMP, GX_CLAMP, 0U);
         GXSetTexCopySrc(0, 0, currRenderMode->fbWidth, currRenderMode->xfbHeight);
         GXSetTexCopyDst(currRenderMode->fbWidth, currRenderMode->xfbHeight, 1, 0);
-        GXCopyTex(work->unk48, 0);
+        GXCopyTex(work->unk48, GX_FALSE);
         GXInitTexObj(&work->unk24, work->unk48, currRenderMode->fbWidth, currRenderMode->xfbHeight, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
         break;
     }
@@ -694,19 +694,19 @@ void rend_efc_kaleidoscope_draw(int arg0, struct RenderEffect *rendEfc)
     GXSetTevSwapMode_cached(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevDirect(GX_TEVSTAGE0);
     GXSetTevColorIn_cached(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
-    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 0U, GX_TEVPREV);
+    GXSetTevColorOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
     GXSetTevAlphaIn_cached(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1U, GX_TEVPREV);
+    GXSetTevAlphaOp_cached(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetNumTevStages_cached(1U);
     GXSetNumTexGens(1U);
     GXSetNumIndStages(0U);
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-    GXSetZMode_cached(0, GX_ALWAYS, 0);
+    GXSetZMode_cached(GX_DISABLE, GX_ALWAYS, GX_DISABLE);
     GXSetCullMode_cached(GX_CULL_BACK);
     fog_gx_set();
     gxutil_set_vtx_attrs((1 << GX_VA_POS) | (1 << GX_VA_TEX0));
     mathutil_mtxA_from_identity();
-    GXLoadPosMtxImm(mathutilData->mtxA, 0);
+    GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
     temp_f30 = mathutil_tan(0x1555U);
     temp_f31 = 1.3333334f * temp_f30;
     switch (work->unk0)
@@ -761,6 +761,6 @@ void rend_efc_kaleidoscope_draw(int arg0, struct RenderEffect *rendEfc)
         GXEnd();
         break;
     }
-    GXSetZMode_cached(1U, GX_LEQUAL, 1U);
+    GXSetZMode_cached(GX_ENABLE, GX_LEQUAL, GX_ENABLE);
     set_current_camera(u_cameraId1);
 }
