@@ -543,13 +543,13 @@ static struct WindowItem soundWindowItems[] =
     {WI_LABEL,      1,  1, "Sound",                NULL,                     NULL},
     {WI_U32,        2, -2, " RAM:%08X",            &g_soundTotalBytesLoaded, NULL},
     {WI_U32,        2, -1, "ARAM:%08X",            &g_soundAramTop,          NULL},
-    {WI_EDIT_U8,    2, -2, "SE  vol : %3d",        &lbl_802F1DF5,            &lbl_801B598C},
-    {WI_EDIT_U8,    2, -1, "BGM vol : %3d",        &u_volumeRelated1,        &lbl_801B598C},
+    {WI_EDIT_U8,    2, -2, "SE  vol : %3d",        &g_soundSEVol,            &lbl_801B598C},
+    {WI_EDIT_U8,    2, -1, "BGM vol : %3d",        &g_soundBGMVol,           &lbl_801B598C},
     {WI_LABEL,      2, -2, "VOL OFS",              NULL,                     NULL},
-    {WI_EDIT_S32,   4, -1, "GRP : ",               &lbl_802F1DE4,            &lbl_801B599C},
-    {WI_STRINGPTR, 10,  0, "%s",                   &lbl_802F1DDC,            NULL},
-    {WI_EDIT_S32,   4, -1, "ID  : ",               &lbl_802F1DE8,            &lbl_801B59AC},
-    {WI_STRINGPTR, 10,  0, "%s",                   &lbl_802F1DE0,            NULL},
+    {WI_EDIT_S32,   4, -1, "GRP : ",               &u_someSoundGroupId,      &lbl_801B599C},
+    {WI_STRINGPTR, 10,  0, "%s",                   &u_someSoundGroupName,    NULL},
+    {WI_EDIT_S32,   4, -1, "ID  : ",               &u_someSoundId,           &lbl_801B59AC},
+    {WI_STRINGPTR, 10,  0, "%s",                   &u_someSoundName,         NULL},
     {WI_EDIT_S8,    4, -1, "ofs : %d",             &lbl_802F1E51,            &lbl_801B59BC},
     {WI_EDIT_S32,   4, -1, "REQ",                  &lbl_802F1E54,            &lbl_801B3B78},
     {WI_EDIT_S32,   4, -1, "OFF",                  &lbl_802F1E58,            &lbl_801B3B78},
@@ -1679,8 +1679,8 @@ void window_main(void)
     lbl_802F1C6C[7] = s_lightGroups[lbl_802F1C75].lightPoolIdxs[7];
     lbl_801F39FC = s_lightGroups[lbl_802F1C75].ambient;
 
-    temp_r22 = lbl_802F1DE8;
-    spC = lbl_802F1DE4;
+    temp_r22 = u_someSoundId;
+    spC = u_someSoundGroupId;
     lbl_802F1E51 = lbl_80201500[temp_r22];
     if (var_r22 != 0 && lbl_802F1EA8 != 0 && windowList[currWindowIndex] != 0)
         process_window(windowList[currWindowIndex]);
@@ -1700,23 +1700,23 @@ void window_main(void)
 
     lbl_80201500[temp_r22] = lbl_802F1E51;
 
-    if (g_soundDesc[lbl_802F1DE8].unk8 == 1)
+    if (g_soundDesc[u_someSoundId].unk8 == 1)
     {
-        if (lbl_802F1DE8 == g_soundGroupDesc[lbl_802F1DE4].unused)
-            lbl_802F1DE8 = g_soundGroupDesc[lbl_802F1DE4+1].unused - 1;
+        if (u_someSoundId == g_soundGroupDesc[u_someSoundGroupId].unused)
+            u_someSoundId = g_soundGroupDesc[u_someSoundGroupId+1].unused - 1;
         else
-            lbl_802F1DE8 = g_soundGroupDesc[lbl_802F1DE4].unused + 1;
+            u_someSoundId = g_soundGroupDesc[u_someSoundGroupId].unused + 1;
     }
-    if (spC != lbl_802F1DE4)
-        lbl_802F1DE8 = g_soundGroupDesc[lbl_802F1DE4].unused + 1;
+    if (spC != u_someSoundGroupId)
+        u_someSoundId = g_soundGroupDesc[u_someSoundGroupId].unused + 1;
     if (lbl_802F1E54 != 0)
     {
-        SoundReqDirect(lbl_802F1DE8);
+        SoundReqDirect(u_someSoundId);
         lbl_802F1E54 = 0;
     }
     if (lbl_802F1E58 != 0)
     {
-        SoundOff(lbl_802F1DE8);
+        SoundOff(u_someSoundId);
         lbl_802F1E58 = 0;
     }
     for (var_r31 = 15; var_r31 >= 0; var_r31--)

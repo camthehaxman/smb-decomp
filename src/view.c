@@ -233,7 +233,7 @@ void view_draw(void)
     cameraInfo[modeCtrl.currPlayer] = cameraBackup;
 }
 
-void func_800A5F28(void)
+void view_draw_simple(void)
 {
     if (eventInfo[EVENT_STAGE].state == EV_STATE_RUNNING || eventInfo[EVENT_STAGE].state == EV_STATE_SUSPENDED)
         draw_stage_geometry();

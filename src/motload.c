@@ -17,6 +17,8 @@ void u_reset_channels_in_joints(struct AnimJoint *b);
 void u_load_channels_from_dat_into_joints(struct MotDat *dat, struct AnimJoint *b);
 void u_read_channel_from_dat(struct MotDat *a, struct MotionChannel *b);
 
+// Initializes joints from a skeleton
+// The first joint should always be the root joint
 void u_create_joints_from_skeleton(struct AnimJoint *joint, struct Skeleton *skel, u16 c)
 {
     struct AnimJoint *jointArr = joint;
@@ -41,7 +43,7 @@ void u_create_joints_from_skeleton(struct AnimJoint *joint, struct Skeleton *ske
         u8 i;
 
         joint->flags = *flags;
-        mathutil_mtxA_to_mtx(joint->rotateMtx);
+        mathutil_mtxA_to_mtx(joint->u_motRotation);
         mathutil_mtxA_to_mtx(joint->transformMtx);
         if (joint->flags & JOINT_FLAG_HAS_OTHER_ROTATION_MTX)
         {
@@ -199,6 +201,7 @@ int init_ape_model_info(char *datname, char *labelname, char *sklname, char *inf
     if ((motDat = OSAlloc(uncompSize)) == NULL)
         OSPanic("motload.c", 94, "cannot OSAlloc\n");
 
+    // decompress dat file
     compressed = OSAlloc(compSize);
     if (compressed == NULL)
         OSPanic("motload.c", 95, "cannot OSAlooc\n");
@@ -333,7 +336,7 @@ void adjust_motinfo_pointers(struct MotInfo *a)
     }
 }
 
-u16 u_get_motdat_unk0(u16 index)
+u16 u_get_motdat_keyframe_count(u16 index)
 {
-    return motDat[index - 1].unk0;
+    return motDat[index - 1].u_keyframeCount;
 }

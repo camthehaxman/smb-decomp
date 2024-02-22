@@ -128,8 +128,8 @@ enum
 struct AnimJoint
 {
     u32 flags;  // 0 here marks the end of the list
-    Vec unk4;
-    Vec unk10;
+    Vec unk4;  // some optional vector (depending on flags)
+    Vec unk10;  // some optional vector (depending on flags)
     /*0x1C */Mtx otherRotateMtx;
     /*0x4C*/ u32 childCount;
     /*0x50*/ const u8 *childIndexes;  // indexes of joints that are attached to this one
@@ -141,9 +141,9 @@ struct AnimJoint
     /*0x1A0*/ s32 parentIdx;  // index of this joint's parent, or -1 if this is the root
     Vec unk1A4;
     Quaternion unk1B0;
-    Point3d unk1C0;
-    Point3d unk1CC;
-    /*0x1D8*/ Mtx rotateMtx;
+    /*0x1C0*/ Point3d u_motionPos;  // value interpolated from motion channels
+    Point3d unk1CC;  // possibly u_motionPos, but transformed by its parent joints?
+    /*0x1D8*/ Mtx u_motRotation;  // rotation matrix interpolated from motion channels
     /*0x208*/ Mtx transformMtx;  // final transform matrix?
 };  // size = 0x238
 
@@ -186,13 +186,13 @@ struct ApeAnimationThing
     u16 unk2C;
     s16 unk2E;
     u8 filler30[2];
-    u16 unk32;
-    u16 unk34;
+    /*0x32*/ u16 u_animId;  // index into structs in motdat file (1-based), possibly the animation ID?
+    /*0x34*/ u16 u_nextAnimId;  // next animId when current one finishes, or 0xFFFF if none?
     u16 unk36;
-    /*0x38*/ u16 u_poseNum;  // current pose (or keyframe?)
-    u16 unk3A;
-    float u_someDeltaTime;   // How much the anim progresses each tick?
-    float u_timeInKeyframe;  // Time spent in current pose. When this reaches 1, it goes to the next pose.
+    /*0x38*/ u16 u_currKeyframe;  // current animation keyframe (1-based)
+    /*0x3A*/ u16 u_keyframeCount;  // once u_currKeyframe reaches this value, a new anim is loaded?
+    float u_someDeltaTime;   // How much the anim progresses each tick. anim speed?
+    float u_timeInKeyframe;  // Time spent in current keyframe. When this reaches 1, it goes to the next keyframe. Used to interpolate between keyframes
     u8 filler44[0x54-0x44];
     Mtx unk54;
     struct Struct8003699C_child_sub unk84;
@@ -208,20 +208,23 @@ struct MotRotation
     float rotZ;
 };
 
-struct Ape_child  // something motion related from motInfo
+struct SomeMotInfoStruct  // something motion related from motInfo
 {
-    float unk0;
+    float unk0;  // something related to time or speed?
     s32 unk4;
     u32 unk8;
     u32 unkC;
-    s32 unk10;
+    /*0x10*/ s32 animId;
     s32 unk14;
-    float unk18;
+    /*0x18*/ float u_maybeSpeed;  // possibly controls animation speed?
     u32 unk1C;  // some flags
 };  // size = 0x20
 
 enum
 {
+    APE_FLAG_INVISIBLE = (1 << 5),
+    APE_FLAG_BLINK = (1 << 7),  // starts eye blink when this is set
+    APE_FLAG_14 = (1 << 14),
     APE_FLAG_TRANSLUCENT = (1 << 20)
 };
 
@@ -234,24 +237,24 @@ struct Ape
     /*0x010*/ s32 charaId;
     /*0x014*/ u32 flags;
     s32 unk18;
-    struct Ape_child *unk1C;
-    struct Ape_child *unk20;
+    struct SomeMotInfoStruct *unk1C;
+    struct SomeMotInfoStruct *unk20;
     s32 unk24;
     s32 unk28;
     struct Skeleton *skel;  // skeleton?
     Vec pos;  // position?
     Vec unk3C;
     Vec unk48;
-    s32 unk54;
+    s32 unk54;  // teeter edge? used for something else in the result submode
     /*0x58*/ float modelScale;  // model scale?
     u32 threadId;
     Quaternion unk60;  // orientation?
     u32 unk70;
     u32 unk74;
     u8 filler78[0x90-0x78];
-    /*0x90*/ s32 u_lodGma;  // bit 0 is the LOD (whether to use the low or high poly model), while the rest of the bits are which GMA in charaGMAs to use
-    u32 unk94;  // number of elements in unk98
-    struct BodyPartThing *unk98;
+    /*0x90*/ s32 lod;  // level of detail (from 0 to 3) of the character model, with 0 being the most detailed and 1 being the least detailed
+    /*0x94*/ u32 u_bodyPartCount;  // number of elements in u_bodyParts
+    /*0x98*/ struct BodyPartThing *u_bodyParts;  // some array of structs related to body parts (only used in mot_ape.c)
     u32 unk9C;
     // Sometimes treated as a Vec, sometimes treated as a Quaternion
     Vec unkA0;
@@ -329,7 +332,7 @@ struct MotDatJoint
 // struct containing all transformation values for all joints in an animation
 struct MotDat
 {
-    u16 unk0;
+    u16 u_keyframeCount;  // TODO: how does this differ from keyframeCounts?
     struct MotDatJoint *jointInfo; // ptr to array of structs
     u8 *keyframeCounts;  // number of keyframes per channel
     u16 *times;  // times for each keyframe
@@ -343,13 +346,15 @@ struct ChildJointList
     const u8 *children;
 };
 
+// structure in motskl.bin
+// Defines (initial?) position and rotation of joints in a model?
 struct Skeleton
 {
     void *unused0;
     /*0x04*/ struct ChildJointList *childLists;
     /*0x08*/ struct MotRotation *rotations;
-    Vec *unkC;
-    Vec *unk10;
+    Vec *unkC;  // optional vectors (depends on joint flags)
+    Vec *unk10;  // optional vectors (depends on joint flags)
     /*0x14*/ char *name;  // skeleton name?
 };  // size = 0x18
 
@@ -374,11 +379,20 @@ struct SkeletonFileData
     u32 unkC;  // not used?
 };
 
+struct MotInfo2_child
+{
+    u8 filler0[0x180];
+    struct SomeMotInfoStruct unk180;
+};
+
+// motinfo.bin starts with 32 of these structs
+// something else is at 0x2000 in the file
+// something else is at 0x80000 in the file
 struct MotInfo
 {
     /*0x00*/ char skelName[24];
     /*0x10*/ char modelName[24];
-    u8 *unk30[16];
+    struct MotInfo2_child *unk30[16];
     u32 unk70[16];
     u8 *unkB0;
 };  // size = 0xB4
@@ -517,8 +531,8 @@ struct MemcardGameData
     /*0x588D*/ u8 unk49;
     /*0x588E*/ u8 unk4A;
     /*0x588F*/ u8 unk4B;
-    /*0x5890*/ u8 unk4C;
-    /*0x5891*/ u8 unk4D;
+    /*0x5890*/ u8 bgmVolume;
+    /*0x5891*/ u8 seVolume;
     /*0x5892*/ u8 unk4E;
     /*0x5893*/ u8 unk4F;
     /*0x5894*/ u8 unk50;
@@ -632,23 +646,23 @@ struct BodyPartThing
 
 // info on some part of the ape that can be animated
 // this does not include the main body and limbs, but does include the head and hands
-struct ApeBodyPart
+struct BodyPartDesc
 {
     s16 modelId;
     s16 jointIdx;
     Vec unk4;
-    void (*draw)(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
+    void (*draw)(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
     char *name;
     u8 filler18[0x20-0x18];  // unused?
 };
 
 struct ApeGfxFileInfo
 {
-    char *basename;  // base name of the file (without suffix)
-    struct ApeBodyPart *facePartInfo[4];  // face part info per LOD?
-    /*0x14*/ s16 partCounts[4];  // counts?
+    char *basename;  // base name (without suffix) of the .gma.lz or .tpl.lz file in the /test/ape directory
+    struct BodyPartDesc *bodyPartInfo[4];  // body part info
+    /*0x14*/ s16 partCounts[4];  // lengths of each bodyPartInfo array
     s16 lodModelIDs[2];  // first entry is low poly, second entry is high poly
-    u8 filler20[4];
+    u8 unused20[4];  // not used
 };  // size = 0x24
 
 struct Struct80061BC4_sub

@@ -398,7 +398,7 @@ void monkey_sprite_draw(struct Sprite *sprite)
             if (!(infoWork.flags & 0x40) && ball->lives == 5)
                 apeIconInfo.unk10 = -0x258;
         }
-        else if (ball->flags & 2)
+        else if (ball->flags & BALL_FLAG_TEETER)
         {
             apeIconInfo.emotion = 14;
             if (apeIconInfo.frameNum == 0x78)
@@ -406,7 +406,7 @@ void monkey_sprite_draw(struct Sprite *sprite)
         }
         else if (gameMode != MD_SEL)
         {
-            switch (ball->ape->unk0->unk32)
+            switch (ball->ape->unk0->u_animId)
             {
             case 0xF:
             case 0x10:

@@ -204,7 +204,7 @@ static void u_open_pause_menu(struct Sprite *menuSprite)
     if (menuSprite == NULL)
     {
         hud_show_pause_menu();
-        find_sprite_with_tag(4);
+        find_sprite_with_tag(SPRITE_TAG_PAUSE_MENU);
     }
     else
         menuSprite->userVar = 1;
@@ -499,7 +499,7 @@ static void unkFunc8000AECC(struct Sprite *menuSprite)
 
 void u_menu_input_game_notdebug(void)
 {
-    struct Sprite *menuSprite = find_sprite_with_tag(4);
+    struct Sprite *menuSprite = find_sprite_with_tag(SPRITE_TAG_PAUSE_MENU);
 
     if ((modeCtrl.gameType == GAMETYPE_MAIN_NORMAL || modeCtrl.gameType == GAMETYPE_MAIN_PRACTICE)
      && !(infoWork.flags & INFO_FLAG_08)

@@ -223,6 +223,7 @@ enum
 
 enum
 {
+    SPRITE_TAG_TIMER = 2,
     SPRITE_TAG_LOGO_PLUS = 3,
     SPRITE_TAG_PAUSE_MENU = 4,
     SPRITE_TAG_EIEIPU = 11,

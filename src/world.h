@@ -20,7 +20,7 @@ struct World
     s8 playerId;
     u8 fillerA[0xC-0xA];
     float maxTilt;  // maximum tilt angle (in degrees)
-    Vec unk10;
+    Vec gravityDir;
     float unk1C;
     s16 unk20;
     u8 filler22[0x40-0x22];
@@ -28,7 +28,7 @@ struct World
 
 extern struct World *currentWorld;
 extern struct World worldInfo[];
-extern Vec lbl_80206CF0;
+extern Vec g_gravityDir;
 
 #define WORLD_FOREACH(code) \
     { \

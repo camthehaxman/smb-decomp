@@ -1818,7 +1818,7 @@ void func_80036000(struct Struct8003699C_child_sub *arg0, u16 arg1, u16 arg2)
     if (arg1 != 0)
     {
         arg0->unk8 = arg1;
-        arg0->unkC = u_get_motdat_unk0(arg1);
+        arg0->unkC = u_get_motdat_keyframe_count(arg1);
         func_800366F8(arg0);
     }
     else
@@ -1840,7 +1840,7 @@ void u_animate_ape_hands(struct ApeAnimationThing *arg0)
     phi_r31 = arg0->unk81A4;
     if (phi_r31 != NULL)
     {
-        temp_f26 = arg0->unk3A - (arg0->u_poseNum + arg0->u_timeInKeyframe);
+        temp_f26 = arg0->u_keyframeCount - (arg0->u_currKeyframe + arg0->u_timeInKeyframe);
         if (arg0->unk0 & 4)
         {
             phi_r30 = &arg0->unk4114;
@@ -1853,7 +1853,7 @@ void u_animate_ape_hands(struct ApeAnimationThing *arg0)
         }
         while (phi_r31->unk0 != 0)
         {
-            if (arg0->u_poseNum < phi_r31->unk2)
+            if (arg0->u_currKeyframe < phi_r31->unk2)
                 break;
 
             switch (phi_r31->unk0)
@@ -1867,7 +1867,7 @@ void u_animate_ape_hands(struct ApeAnimationThing *arg0)
                 if (temp_r3 != 0)
                 {
                     phi_r30->unk8 = temp_r3;
-                    phi_r30->unkC = u_get_motdat_unk0(temp_r3);
+                    phi_r30->unkC = u_get_motdat_keyframe_count(temp_r3);
                     func_800366F8(phi_r30);
                 }
                 else
@@ -1890,7 +1890,7 @@ void u_animate_ape_hands(struct ApeAnimationThing *arg0)
                 if (temp_r3 != 0)
                 {
                     phi_r29->unk8 = temp_r3;
-                    phi_r29->unkC = u_get_motdat_unk0(temp_r3);
+                    phi_r29->unkC = u_get_motdat_keyframe_count(temp_r3);
                     func_800366F8(phi_r29);
                 }
                 else
@@ -1913,7 +1913,7 @@ void u_animate_ape_hands(struct ApeAnimationThing *arg0)
                 if (temp_r3 != 0)
                 {
                     phi_r30->unk8 = temp_r3;
-                    phi_r30->unkC = u_get_motdat_unk0(temp_r3);
+                    phi_r30->unkC = u_get_motdat_keyframe_count(temp_r3);
                     func_800366F8(phi_r30);
                 }
                 else
@@ -1934,7 +1934,7 @@ void u_animate_ape_hands(struct ApeAnimationThing *arg0)
                 if (temp_r3 != 0)
                 {
                     phi_r29->unk8 = temp_r3;
-                    phi_r29->unkC = u_get_motdat_unk0(temp_r3);
+                    phi_r29->unkC = u_get_motdat_keyframe_count(temp_r3);
                     func_800366F8(phi_r29);
                 }
                 else
@@ -2067,6 +2067,7 @@ void func_80036720(struct Struct8003699C_child_sub *arg0)
 }
 
 // similar to u_create_joints_from_skeleton, but reads info from hardcoded arrays instead
+// The first joint should always be the root joint
 void u_create_joints_from_hardcoded_arrays(struct AnimJoint *joint, u16 arg1, u16 arg2)
 {
     struct AnimJoint *jointArr = joint;
@@ -2085,7 +2086,7 @@ void u_create_joints_from_hardcoded_arrays(struct AnimJoint *joint, u16 arg1, u1
     while (1)
     {
         joint->flags = *flags;
-        mathutil_mtxA_to_mtx(joint->rotateMtx);
+        mathutil_mtxA_to_mtx(joint->u_motRotation);
         mathutil_mtxA_to_mtx(joint->transformMtx);
         if (joint->flags & JOINT_FLAG_HAS_OTHER_ROTATION_MTX)
         {

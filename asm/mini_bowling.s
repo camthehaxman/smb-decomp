@@ -7169,7 +7169,7 @@ lbl_0000681C:
 /* 00006848 FFE00890 */ fmr f31, f1
 lbl_0000684C:
 /* 0000684C 7FA3EB78 */ mr r3, r29
-/* 00006850 4BFF9911 */ bl func_80036EB8
+/* 00006850 4BFF9911 */ bl check_ball_teeter
 /* 00006854 387D0060 */ addi r3, r29, 0x60
 /* 00006858 4BFF9909 */ bl mathutil_mtxA_to_quat
 /* 0000685C 7FA3EB78 */ mr r3, r29

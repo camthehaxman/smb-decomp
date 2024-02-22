@@ -4236,7 +4236,7 @@ lbl_00003E0C:
 /* 00003E18 38800001 */ li r4, 1
 /* 00003E1C 38A00000 */ li r5, 0
 /* 00003E20 807B0064 */ lwz r3, 0x64(r27)
-/* 00003E24 4BFFC311 */ bl mot_ape_8008BA2C
+/* 00003E24 4BFFC311 */ bl u_start_indexed_anim
 /* 00003E28 807B0064 */ lwz r3, 0x64(r27)
 /* 00003E2C 7F200774 */ extsb r0, r25
 /* 00003E30 28190001 */ cmplwi r25, 1
@@ -4291,7 +4291,7 @@ lbl_00003ED0:
 /* 00003EE0 38800001 */ li r4, 1
 /* 00003EE4 38A00000 */ li r5, 0
 /* 00003EE8 80790064 */ lwz r3, 0x64(r25)
-/* 00003EEC 4BFFC249 */ bl mot_ape_8008BA2C
+/* 00003EEC 4BFFC249 */ bl u_start_indexed_anim
 /* 00003EF0 80990064 */ lwz r4, 0x64(r25)
 /* 00003EF4 7F600774 */ extsb r0, r27
 /* 00003EF8 38780000 */ addi r3, r24, 0
@@ -16460,7 +16460,7 @@ lbl_0000F194:
 /* 0000F1F8 40800014 */ bge lbl_0000F20C
 /* 0000F1FC 80770064 */ lwz r3, 0x64(r23)
 /* 0000F200 38800000 */ li r4, 0
-/* 0000F204 4BFF0F31 */ bl u_switch_ape_character_lod_maybe
+/* 0000F204 4BFF0F31 */ bl set_ape_model_lod
 /* 0000F208 4800001C */ b lbl_0000F224
 lbl_0000F20C:
 /* 0000F20C C01F3774 */ lfs f0, 0x3774(r31)
@@ -16468,7 +16468,7 @@ lbl_0000F20C:
 /* 0000F214 40810010 */ ble lbl_0000F224
 /* 0000F218 80770064 */ lwz r3, 0x64(r23)
 /* 0000F21C 38800001 */ li r4, 1
-/* 0000F220 4BFF0F15 */ bl u_switch_ape_character_lod_maybe
+/* 0000F220 4BFF0F15 */ bl set_ape_model_lod
 lbl_0000F224:
 /* 0000F224 88150000 */ lbz r0, 0(r21)
 /* 0000F228 7C000775 */ extsb. r0, r0

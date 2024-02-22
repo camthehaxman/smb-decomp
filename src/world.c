@@ -20,7 +20,7 @@
 
 struct World *currentWorld;
 struct World worldInfo[MAX_PLAYERS];
-Vec lbl_80206CF0;
+Vec g_gravityDir;
 
 struct Spline tutorialStickInputs[] =
 {
@@ -191,9 +191,9 @@ void ev_world_init(void)
         world_clear(world);
         world->playerId = i;
     }
-    lbl_80206CF0.x = 0.0f;
-    lbl_80206CF0.y = -1.0f;
-    lbl_80206CF0.z = 0.0f;
+    g_gravityDir.x = 0.0f;
+    g_gravityDir.y = -1.0f;
+    g_gravityDir.z = 0.0f;
 }
 
 void ev_world_main(void)
@@ -201,7 +201,7 @@ void ev_world_main(void)
     struct World *world = worldInfo;
     s8 *status = g_poolInfo.playerPool.statusList;
     int i;
-    Vec sp8;
+    Vec combinedGravity;
 
     for (i = 0; i < g_poolInfo.playerPool.count; i++, world++, status++)
     {
@@ -244,33 +244,33 @@ void ev_world_main(void)
     case GAMETYPE_MAIN_COMPETITION:
     case GAMETYPE_MINI_RACE:
     case GAMETYPE_MINI_FIGHT:
-        sp8.x = 0.0f;
-        sp8.y = 0.0f;
-        sp8.z = 0.0f;
+        combinedGravity.x = 0.0f;
+        combinedGravity.y = 0.0f;
+        combinedGravity.z = 0.0f;
         status = g_poolInfo.playerPool.statusList;
         world = worldInfo;
         for (i = g_poolInfo.playerPool.count; i > 0; i--, world++, status++)
         {
             if (*status == STAT_NULL || *status == STAT_FREEZE)
                 continue;
-            sp8.x += world->unk10.x;
-            sp8.y += world->unk10.y;
-            sp8.z += world->unk10.z;
+            combinedGravity.x += world->gravityDir.x;
+            combinedGravity.y += world->gravityDir.y;
+            combinedGravity.z += world->gravityDir.z;
         }
-        if (sp8.x != 0.0f || sp8.y != 0.0f || sp8.z != 0.0f)
+        if (combinedGravity.x != 0.0f || combinedGravity.y != 0.0f || combinedGravity.z != 0.0f)
         {
-            lbl_80206CF0 = sp8;
-            mathutil_vec_normalize_len(&lbl_80206CF0);
+            g_gravityDir = combinedGravity;
+            mathutil_vec_normalize_len(&g_gravityDir);
         }
         else
         {
-            lbl_80206CF0.x = 0.0f;
-            lbl_80206CF0.y = 0.0f;
-            lbl_80206CF0.z = 0.0f;
+            g_gravityDir.x = 0.0f;
+            g_gravityDir.y = 0.0f;
+            g_gravityDir.z = 0.0f;
         }
         break;
     default:
-        lbl_80206CF0 = worldInfo[modeCtrl.currPlayer].unk10;
+        g_gravityDir = worldInfo[modeCtrl.currPlayer].gravityDir;
         break;
     }
 }
@@ -279,18 +279,18 @@ void ev_world_dest(void)
 {
     WORLD_FOREACH(
         memset(world, 0, sizeof(*world));
-        world->unk10.y = -1.0f;
+        world->gravityDir.y = -1.0f;
         world->unk1C = 1.0f;
     )
-    lbl_80206CF0.x = 0.0f;
-    lbl_80206CF0.y = -1.0f;
-    lbl_80206CF0.z = 0.0f;
+    g_gravityDir.x = 0.0f;
+    g_gravityDir.y = -1.0f;
+    g_gravityDir.z = 0.0f;
 }
 
 void world_clear(struct World *world)
 {
     memset(world, 0, sizeof(*world));
-    world->unk10.y = -1.0f;
+    world->gravityDir.y = -1.0f;
     world->unk1C = 1.0f;
 }
 
@@ -417,7 +417,7 @@ void world_sub_input_main(struct World *world)
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_x(world->xrot);
     mathutil_mtxA_rotate_z(world->zrot);
-    mathutil_mtxA_rigid_inv_tf_vec(&spC, &world->unk10);
+    mathutil_mtxA_rigid_inv_tf_vec(&spC, &world->gravityDir);
 }
 
 void world_sub_6(struct World *world)
@@ -448,10 +448,10 @@ void world_sub_7(struct World *world)
         mathutil_mtxA_from_identity();
         mathutil_mtxA_rotate_x(spC.rotX);
         mathutil_mtxA_rotate_z(spC.rotZ);
-        mathutil_mtxA_rigid_inv_tf_vec(&sp10, &world->unk10);
+        mathutil_mtxA_rigid_inv_tf_vec(&sp10, &world->gravityDir);
     }
     else
-        world->unk10 = sp10;
+        world->gravityDir = sp10;
 }
 
 void world_sub_8(struct World *world)
@@ -480,7 +480,7 @@ void world_sub_9(struct World *world)
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_x(world->xrot);
     mathutil_mtxA_rotate_z(world->zrot);
-    mathutil_mtxA_rigid_inv_tf_vec(&sp10, &world->unk10);
+    mathutil_mtxA_rigid_inv_tf_vec(&sp10, &world->gravityDir);
 }
 
 void world_sub_10(struct World *world)
@@ -512,5 +512,5 @@ void world_sub_11(struct World *world)
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_z(world->zrot);
     mathutil_mtxA_rotate_x(world->xrot);
-    mathutil_mtxA_rigid_inv_tf_vec(&spC, &world->unk10);
+    mathutil_mtxA_rigid_inv_tf_vec(&spC, &world->gravityDir);
 }

@@ -1235,7 +1235,7 @@ lbl_00001288:
 /* 000012B4 38800001 */ li r4, 1
 /* 000012B8 38A00000 */ li r5, 0
 /* 000012BC 807B00FC */ lwz r3, 0xfc(r27)
-/* 000012C0 4BFFEE8D */ bl mot_ape_8008BA2C
+/* 000012C0 4BFFEE8D */ bl u_start_indexed_anim
 lbl_000012C4:
 /* 000012C4 3B390001 */ addi r25, r25, 1
 /* 000012C8 2C190004 */ cmpwi r25, 4
@@ -5671,7 +5671,7 @@ lbl_0000537C:
 /* 00005384 2C00000C */ cmpwi r0, 0xc
 /* 00005388 40820010 */ bne lbl_00005398
 /* 0000538C 7FA3EB78 */ mr r3, r29
-/* 00005390 4BFFADBD */ bl func_80036EB8
+/* 00005390 4BFFADBD */ bl check_ball_teeter
 /* 00005394 48000010 */ b lbl_000053A4
 lbl_00005398:
 /* 00005398 801E0094 */ lwz r0, 0x94(r30)
@@ -5862,7 +5862,7 @@ lbl_00005614:
 /* 00005624 3BE00001 */ li r31, 1
 /* 00005628 3BA00006 */ li r29, 6
 /* 0000562C 38800000 */ li r4, 0
-/* 00005630 4BFFAB1D */ bl u_switch_ape_character_lod_maybe
+/* 00005630 4BFFAB1D */ bl set_ape_model_lod
 /* 00005634 4800017C */ b lbl_000057B0
 lbl_00005638:
 /* 00005638 54A00529 */ rlwinm. r0, r5, 0, 0x14, 0x14

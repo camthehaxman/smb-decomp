@@ -2582,7 +2582,7 @@ lbl_00002538:
 /* 00002574 7C7B0214 */ add r3, r27, r0
 /* 00002578 806300FC */ lwz r3, 0xfc(r3)
 /* 0000257C 38A00000 */ li r5, 0
-/* 00002580 4BFFDC51 */ bl mot_ape_8008BA2C
+/* 00002580 4BFFDC51 */ bl u_start_indexed_anim
 /* 00002584 801A002C */ lwz r0, 0x2c(r26)
 /* 00002588 1C0001A4 */ mulli r0, r0, 0x1a4
 /* 0000258C 7C7B0214 */ add r3, r27, r0
@@ -2863,7 +2863,7 @@ lbl_00002984:
 /* 000029A8 1C0001A4 */ mulli r0, r0, 0x1a4
 /* 000029AC 7C7B0214 */ add r3, r27, r0
 /* 000029B0 806300FC */ lwz r3, 0xfc(r3)
-/* 000029B4 4BFFD81D */ bl mot_ape_8008BA2C
+/* 000029B4 4BFFD81D */ bl u_start_indexed_anim
 /* 000029B8 801A002C */ lwz r0, 0x2c(r26)
 /* 000029BC 38800000 */ li r4, 0
 /* 000029C0 1C0001A4 */ mulli r0, r0, 0x1a4
@@ -17130,7 +17130,7 @@ lbl_0000FD64:
 /* 0000FD8C 38A00000 */ li r5, 0
 /* 0000FD90 4BFF0441 */ bl update_ball_ape_transform
 /* 0000FD94 807D00FC */ lwz r3, 0xfc(r29)
-/* 0000FD98 4BFF0439 */ bl func_80036EB8
+/* 0000FD98 4BFF0439 */ bl check_ball_teeter
 /* 0000FD9C 801D0094 */ lwz r0, 0x94(r29)
 /* 0000FDA0 5400077B */ rlwinm. r0, r0, 0, 0x1d, 0x1d
 /* 0000FDA4 41820068 */ beq lbl_0000FE0C

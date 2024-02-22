@@ -56,8 +56,8 @@ struct Stobj
     /*0xA0*/ s8 animGroupId;
     /*0xA4*/ void *extraData;  // pointer to a GoalTape or GoalBag struct
     Vec unkA8;
-    /*0xB4*/ Vec u_local_pos;  // OFS
-    /*0xC0*/ Vec u_local_vel;  // OFS SPD
+    /*0xB4*/ Vec offsetPos;  // offset from its set position (for jamabars and goalbags)
+    /*0xC0*/ Vec offsetVel;  // offset velocity (for jamabars and goalbags)
 };  // size = 0xCC
 
 struct Struct8028C0B0
@@ -95,7 +95,7 @@ void stobj_goalbag_exmaster_draw(struct Stobj *);
 void stobj_goalbag_exmaster_coli(struct Stobj *, struct PhysicsBall *);
 void stobj_goalbag_exmaster_destroy(struct Stobj *);
 void stobj_goalbag_exmaster_debug(struct Stobj *);
-void u_break_goal_tape(int, struct PhysicsBall *);
-void stobj_goal_8006F5F0(int);
+void break_goaltape(int, struct PhysicsBall *);
+void relink_goaltape(int);
 
 #endif

@@ -155,7 +155,7 @@ void ev_info_main(void)
             init_physball_from_ball(ball, &sp6C);
             if (sp64 != sp6C.animGroupId)
                 tf_physball_to_anim_group_space(&sp6C, sp64);
-            u_break_goal_tape(goalId, &sp6C);
+            break_goaltape(goalId, &sp6C);
             ball->unk12A = infoWork.timerCurr;
             func_80024860(ball);
             break;
@@ -186,7 +186,7 @@ void ev_info_main(void)
             init_physball_from_ball(ball, &sp6C);
             if (sp64 != sp6C.animGroupId)
                 tf_physball_to_anim_group_space(&sp6C, sp64);
-            u_break_goal_tape(goalId, &sp6C);
+            break_goaltape(goalId, &sp6C);
             ball->unk12A = infoWork.timerCurr;
             func_80024860(ball);
             break;
@@ -298,7 +298,7 @@ void ev_info_main(void)
             struct PhysicsBall sp8;
 
             init_physball_from_ball(&ballInfo[0], &sp8);
-            u_break_goal_tape(infoWork.goalEntered, &sp8);
+            break_goaltape(infoWork.goalEntered, &sp8);
             ball->unk12A = infoWork.timerCurr;
             u_play_sound_0(0x16);
         }

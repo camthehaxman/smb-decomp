@@ -8,12 +8,12 @@ struct PhysicsBall;
 
 enum
 {
-    BALL_FLAG_00 = 1 << 0,
-    BALL_FLAG_01 = 1 << 1,
-    BALL_FLAG_02 = 1 << 2,
+    BALL_FLAG_00 = 1 << 0,  // touching ground?
+    BALL_FLAG_TEETER = 1 << 1,  // ball is teetering on an edge
+    BALL_FLAG_02 = 1 << 2,  // soft bonk?
     BALL_FLAG_03 = 1 << 3,
     BALL_FLAG_INVISIBLE = 1 << 4,
-    BALL_FLAG_05 = 1 << 5,
+    BALL_FLAG_05 = 1 << 5,  // hard bonk?
     BALL_FLAG_06 = 1 << 6,
     BALL_FLAG_07 = 1 << 7,
     BALL_FLAG_08 = 1 << 8,
@@ -39,7 +39,7 @@ enum
     BALL_FLAG_28 = 1 << 28,
     BALL_FLAG_29 = 1 << 29,
     BALL_FLAG_30 = 1 << 30,
-    BALL_FLAG_31 = 1 << 31,
+    BALL_FLAG_31 = 1 << 31,  // soft bonk?
 };
 
 enum
@@ -48,7 +48,7 @@ enum
     BALL_STATE_1,
     BALL_STATE_READY_MAIN = 2,
     BALL_STATE_3,
-    BALL_STATE_4,
+    BALL_STATE_4,  // normal?
     BALL_STATE_GOAL_INIT = 5,  // ball slows to a stop after entering the goal
     BALL_STATE_GOAL_MAIN = 6,
     BALL_STATE_REPLAY_INIT_1,
@@ -121,7 +121,7 @@ struct Ball
     float speed;
     /*0xFC*/ struct Ape *ape;
     u32 unk100;
-    Vec unk104;
+    Vec unk104;  // some point or direction the monkey should look at
     float unk110;
     Vec unk114;
     u32 unk120;
@@ -182,7 +182,7 @@ extern s16 coloredBallPartModelIDs[][9];
 
 void func_8003699C(struct Ape *a);
 float func_80036CAC(struct Ape *a);
-void func_80036EB8(struct Ape *a);
+void check_ball_teeter(struct Ape *a);
 // ? func_80037098();
 void u_choose_ape_anim(struct Ape *a, float b);
 void func_8003765C(struct Ape *a);

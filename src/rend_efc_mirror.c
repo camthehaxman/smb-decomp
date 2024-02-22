@@ -33,11 +33,12 @@ struct RenderEffectFlatMirror
     u8 unk60;
 };
 
-void func_800976FC(int unused, struct RenderEffect *rendEfc);
-void func_80097E80(int unused, struct RenderEffect *rendEfc);
-void func_80098484(int unused, struct RenderEffect *rendEfc);
-void func_80098B50(int arg0, struct RenderEffect *rendEfc);
-void func_80098EB4(int arg0, struct RenderEffect *rendEfc);
+static void make_flat_mirror_texture(int unused, struct RenderEffect *rendEfc);
+static void func_80097E80(int unused, struct RenderEffect *rendEfc);
+static u32 lbl_8009825C();
+static void make_wavy_mirror_texture(int unused, struct RenderEffect *rendEfc);
+static void func_80098B50(int arg0, struct RenderEffect *rendEfc);
+static void func_80098EB4(int arg0, struct RenderEffect *rendEfc);
 
 void rend_efc_mirror_enable(void)
 {
@@ -197,7 +198,7 @@ void rend_efc_flat_mirror_draw(int arg0, struct RenderEffect *rendEfc)
     switch (arg0)
     {
     case 1:
-        func_800976FC(arg0, rendEfc);
+        make_flat_mirror_texture(arg0, rendEfc);
         return;
     case 16:
         func_80097E80(arg0, rendEfc);
@@ -205,7 +206,7 @@ void rend_efc_flat_mirror_draw(int arg0, struct RenderEffect *rendEfc)
     }
 }
 
-void func_800976FC(int unused, struct RenderEffect *rendEfc)
+static void make_flat_mirror_texture(int unused, struct RenderEffect *rendEfc)
 {
     struct Camera cameraBackup;
     struct RenderEffectFlatMirror *work;
@@ -231,6 +232,8 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
         break;
     case ST_110_CURL_PIPE:
         mathutil_mtxA_from_identity();
+        // This stage has two mirrors at different heights. We select
+        // which one to draw based on the height of the camera
         if (camera->eye.y >= -9.0)
             mathutil_mtxA_translate_xyz(0.0f, -9.0f, 0.0f);
         else
@@ -239,6 +242,7 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
         break;
     }
 
+    // Set up reflected camera view
     {
         Vec basisI = {1, 0, 0};
         Vec basisJ = {0, 1, 0};
@@ -333,6 +337,7 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
         mathutil_mtxA_tf_vec(&polyDisp.unk10, &polyDisp.unk40);
     }
 
+    // Render the scene
     if (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
     {
         if (!(polyDisp.flags & 0x10))
@@ -358,22 +363,24 @@ void func_800976FC(int unused, struct RenderEffect *rendEfc)
         ord_tbl_draw_nodes();
     }
     else
-        func_800A5F28();
+        view_draw_simple();
+
     polyDisp.flags &= 0xFFFFFFFB;
+
+    // Copy the EFB to a texture
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);
     GXCopyTex(work->imageBuf, 1);
     GXInitTexObj(&work->texObj, work->imageBuf, work->xres, work->yres, work->format, GX_CLAMP, GX_CLAMP, 0U);
+
     *camera = cameraBackup;  // restore camera
     set_current_camera(modeCtrl.currPlayer);
     pop_light_group();
     set_current_camera(modeCtrl.currPlayer);
 }
 
-u32 lbl_8009825C();
-
-void func_80097E80(int unused, struct RenderEffect *rendEfc)
+static void func_80097E80(int unused, struct RenderEffect *rendEfc)
 {
     struct RenderEffectFlatMirror *work;
     f32 temp_f1;
@@ -450,12 +457,12 @@ void func_80097E80(int unused, struct RenderEffect *rendEfc)
     u_avdisp_set_some_func_2(r28);
 }
 
-u32 lbl_8009825C()
+static u32 lbl_8009825C()
 {
     return 1;
 }
 
-int lbl_80098264()
+static int lbl_80098264()
 {
     return 1;
 }
@@ -533,7 +540,7 @@ void rend_efc_wavy_mirror_draw(int arg0, struct RenderEffect *rendEfc)
     switch (arg0)
     {
     case 1:
-        func_80098484(arg0, rendEfc);
+        make_wavy_mirror_texture(arg0, rendEfc);
         func_80098B50(arg0, rendEfc);
         return;
     case 16:
@@ -542,7 +549,7 @@ void rend_efc_wavy_mirror_draw(int arg0, struct RenderEffect *rendEfc)
     }
 }
 
-void func_80098484(int unused, struct RenderEffect *rendEfc)
+static void make_wavy_mirror_texture(int unused, struct RenderEffect *rendEfc)
 {
     struct Camera cameraBackup;
     struct RenderEffectWavyMirror *work;
@@ -560,6 +567,7 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
     mathutil_mtxA_to_mtx(work->unk2C);
     mathutil_mtxA_to_mtx(work->unk5C);
 
+    // Set up reflected camera view
     {
         Vec basisI = {1, 0, 0};
         Vec basisJ = {0, 1, 0};
@@ -650,6 +658,7 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
         mathutil_mtxA_tf_vec(&polyDisp.unk10, &polyDisp.unk40);
     }
 
+    // Render the scene
     if (eventInfo[EVENT_VIEW].state != EV_STATE_RUNNING)
     {
         if (!(polyDisp.flags & 0x10))
@@ -673,19 +682,23 @@ void func_80098484(int unused, struct RenderEffect *rendEfc)
         ord_tbl_draw_nodes();
     }
     else
-        func_800A5F28();
+        view_draw_simple();
+
     polyDisp.flags &= 0xFFFFFFFB;
+
+    // Copy the EFB to a texture
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, work->xres, work->yres);
     GXSetTexCopyDst(work->xres, work->yres, work->format, 0);
     GXCopyTex(work->unk28, 1);
     GXInitTexObj(&work->unk0, work->unk28, work->xres, work->yres, work->format, GX_CLAMP, GX_CLAMP, 0U);
+
     *camera = cameraBackup;  // restore camera
     set_current_camera(modeCtrl.currPlayer);
     pop_light_group();
 }
 
-void func_80098B50(int arg0, struct RenderEffect *rendEfc)
+static void func_80098B50(int arg0, struct RenderEffect *rendEfc)
 {    
     struct RenderEffectWavyMirror *work = rendEfc->work;
     Mtx sp10;
@@ -740,7 +753,7 @@ void func_80098B50(int arg0, struct RenderEffect *rendEfc)
     set_current_camera(modeCtrl.currPlayer);
 }
 
-void func_80098EB4(int arg0, struct RenderEffect *rendEfc)
+static void func_80098EB4(int arg0, struct RenderEffect *rendEfc)
 {
     GXColor color;
     Mtx spA4;

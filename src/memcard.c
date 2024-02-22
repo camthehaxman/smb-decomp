@@ -3548,7 +3548,7 @@ static void func_800A4E70(void)
     memcardContents->gameData.unk4E = lbl_802F21A8;
     save_input_data(memcardContents);
     u_store_gamedata(memcardContents);
-    func_8002DB10(memcardContents);
+    store_sound_settings(memcardContents);
     save_course_completion_data(memcardContents);
     memcardContents->gameData.unkAC = modeCtrl.splitscreenMode;
     memcpy(memcardContents->gameData.unkB0, lbl_801D5A20, sizeof(memcardContents->gameData.unkB0));
@@ -3562,7 +3562,7 @@ static void func_800A4F04(void)
     lbl_802F21A8 = memcardContents->gameData.unk4E;
     load_input_data(memcardContents);
     u_load_gamedata(memcardContents);
-    func_8002DB24(memcardContents);
+    load_sound_settings(memcardContents);
     load_course_completion_data(memcardContents);
     modeCtrl.splitscreenMode = memcardContents->gameData.unkAC;
     memcpy(lbl_801D5A20, memcardContents->gameData.unkB0, sizeof(memcardContents->gameData.unkB0));

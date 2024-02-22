@@ -18377,7 +18377,7 @@ lbl_000111C8:
 /* 000111F4 FFE00890 */ fmr f31, f1
 lbl_000111F8:
 /* 000111F8 7FA3EB78 */ mr r3, r29
-/* 000111FC 4BFEEF69 */ bl func_80036EB8
+/* 000111FC 4BFEEF69 */ bl check_ball_teeter
 /* 00011200 387D0060 */ addi r3, r29, 0x60
 /* 00011204 4BFEEF61 */ bl mathutil_mtxA_to_quat
 /* 00011208 7FA3EB78 */ mr r3, r29
@@ -18503,7 +18503,7 @@ lbl_000113B4:
 /* 000113C4 3BE00001 */ li r31, 1
 /* 000113C8 3BA00006 */ li r29, 6
 /* 000113CC 38800000 */ li r4, 0
-/* 000113D0 4BFEED95 */ bl u_switch_ape_character_lod_maybe
+/* 000113D0 4BFEED95 */ bl set_ape_model_lod
 /* 000113D4 48000254 */ b lbl_00011628
 lbl_000113D8:
 /* 000113D8 54E00529 */ rlwinm. r0, r7, 0, 0x14, 0x14

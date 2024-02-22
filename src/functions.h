@@ -59,14 +59,14 @@ void adjust_motdat_pointers(struct MotDat *);
 void adjust_motlabel_pointers(u32 *);
 void adjust_motskl_pointers(struct SkeletonFileData *);
 void adjust_motinfo_pointers(struct MotInfo *);
-u16 u_get_motdat_unk0(u16 index);
+u16 u_get_motdat_keyframe_count(u16 index);
 
 // motload_2.c
 void u_interpolate_joint_motion(struct AnimJoint *a, const struct JointRotationSomething *b, const struct JointPositionSomething *c, float e, u32 d);
-void mot_joint_800355B8(struct ApeAnimationThing *);
+void u_mot_joint_start_anim(struct ApeAnimationThing *);
 void mot_joint_800355FC(struct ApeAnimationThing *);
 
-void func_80035648(struct ApeAnimationThing *);
+void u_update_skel_anim(struct ApeAnimationThing *);
 void u_joint_tree_calc_some_matrix();
 // ? u_joint_tree_calc_some_other_matrix();
 // ? calc_some_rotation_mtx_from_vec();
@@ -109,7 +109,7 @@ void help_sprite_main(s8 *, struct Sprite *);
 
 // ? set_ambient_light();
 // ? draw_aiai_hair();
-void func_80085DB0(struct Ape *);
+void u_something_with_eyes_blinking(struct Ape *);
 // ? draw_eye();
 // ? draw_baby_hand();
 // ? draw_left_hand();
@@ -260,7 +260,7 @@ void ev_view_init(void);
 void ev_view_main(void);
 void ev_view_dest(void);
 void view_draw(void);
-void func_800A5F28(void);
+void view_draw_simple(void);
 void view_create_text_sprites(void);
 void view_destroy_text_sprites(void);
 void view_init_stage_anim(void);

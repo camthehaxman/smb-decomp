@@ -713,9 +713,9 @@ static void ending_state_advanced_intro_main(void)
     case 75:
     case 64:
     case 57:
-        if (chara->ape->unk0->u_poseNum == (chara->ape->unk0->unk3A >> 1))
+        if (chara->ape->unk0->u_currKeyframe == (chara->ape->unk0->u_keyframeCount >> 1))
             SoundReq(lbl_802F18D8[playerCharacterSelection[modeCtrl.currPlayer]]);
-        if (chara->ape->unk0->u_poseNum > chara->ape->unk0->unk3A - 0x10)
+        if (chara->ape->unk0->u_currKeyframe > chara->ape->unk0->u_keyframeCount - 0x10)
         {
             memset(&effect, 0, sizeof(effect));
             effect.type = ET_ENDING_BALLFRAG;
@@ -762,7 +762,7 @@ static void ending_state_advanced_intro_main(void)
     case 74:
     case 63:
     case 56:
-        if (chara->ape->unk0->u_poseNum != chara->ape->unk0->unk3A - 1)
+        if (chara->ape->unk0->u_currKeyframe != chara->ape->unk0->u_keyframeCount - 1)
             modeCtrl.submodeTimer++;
         else
         {
@@ -921,7 +921,7 @@ void ending_state_advanced_end_main(void)
         }
         break;
     case 538:
-        if (chara->ape->unk0->u_poseNum > chara->ape->unk0->unk3A - 8)
+        if (chara->ape->unk0->u_currKeyframe > chara->ape->unk0->u_keyframeCount - 8)
         {
             chara->state = 8;
             chara->timer = modeCtrl.submodeTimer - 420;
@@ -1529,7 +1529,7 @@ static void ending_state_expert_breakin_init(void)
 static void ending_state_expert_breakin_main(void)
 {
     struct EndingSceneCharacter *chara = &endingInfo.work->characters[3];
-    int temp_r28 = chara->ape->unk0->u_poseNum;
+    int temp_r28 = chara->ape->unk0->u_currKeyframe;
 
     if (chara->ape->unk9C == 8 && temp_r28 == 0x2A)
         SoundReq(0x181U);
@@ -2670,34 +2670,34 @@ static void ending_ape_thread(struct Ape *ape, int status)
         switch (chara->unk8)
         {
         case 9:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 8;
             break;
         case 8:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 0xA;
             break;
         case 10:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 0xE;
             break;
         case 14:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 0xB;
             break;
         case 11:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 0xF;
             break;
         case 15:
-            if (chara->unkA != -1 && ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (chara->unkA != -1 && ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
             {
                 chara->unk8 = chara->unkA;
                 chara->unkA = -1;
             }
             break;
         case 17:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 0x10;
             break;
         default:
@@ -2713,11 +2713,11 @@ static void ending_ape_thread(struct Ape *ape, int status)
         switch (chara->unk8)
         {
         case 14:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 0xF;
             break;
         case 15:
-            if (ape->unk0->u_poseNum == ape->unk0->unk3A - 1)
+            if (ape->unk0->u_currKeyframe == ape->unk0->u_keyframeCount - 1)
                 chara->unk8 = 0xE;
             if (chara->unkA != -1)
             {
@@ -2770,9 +2770,9 @@ static void ending_ape_thread(struct Ape *ape, int status)
         case 14:
             if (endingInfo.flags & 0x10)
             {
-                if (ape->unk0->u_poseNum == 0x16)
+                if (ape->unk0->u_currKeyframe == 0x16)
                     SoundReq(0xB3U);
-                else if (ape->unk0->u_poseNum == 0x44)
+                else if (ape->unk0->u_currKeyframe == 0x44)
                     SoundReq(0xE8U);
             }
             break;
@@ -2784,16 +2784,16 @@ static void ending_ape_thread(struct Ape *ape, int status)
         case 15:
             if (endingInfo.flags & 0x10)
             {
-                if (ape->unk0->u_poseNum == 0xC)
+                if (ape->unk0->u_currKeyframe == 0xC)
                     SoundReq(0x105U);
-                else if (ape->unk0->u_poseNum == 0x50 || ape->unk0->u_poseNum == 0x66)
+                else if (ape->unk0->u_currKeyframe == 0x50 || ape->unk0->u_currKeyframe == 0x66)
                     SoundReq(0x12FU);
-                else if (ape->unk0->u_poseNum == 0x76)
+                else if (ape->unk0->u_currKeyframe == 0x76)
                     u_play_sound_0(0x1FF);
             }
             break;
         case 14:
-            if ((endingInfo.flags & 0x10) && ape->unk0->u_poseNum == 0x12)
+            if ((endingInfo.flags & 0x10) && ape->unk0->u_currKeyframe == 0x12)
                 SoundReq(0xFCU);
             break;
         }
@@ -2802,7 +2802,7 @@ static void ending_ape_thread(struct Ape *ape, int status)
         switch (ape->unk9C)
         {
         case 14:
-            if ((endingInfo.flags & 0x10) && ape->unk0->u_poseNum == 0x24)
+            if ((endingInfo.flags & 0x10) && ape->unk0->u_currKeyframe == 0x24)
                 SoundReq(0x16BU);
             break;
         }

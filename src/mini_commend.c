@@ -770,7 +770,7 @@ static void func_8009C5E4(s8 *arg0, s8 *arg1)
             mathutil_mtxA_rotate_y(-0x4000);
             mathutil_mtxA_to_quat(&temp_r3_4->unk60);
             func_8009D7FC(var_r22, &temp_r3_4->pos);
-            mot_ape_8008BA2C(temp_r3_4, 10, (u8)temp_r3_4->unk74);
+            u_start_indexed_anim(temp_r3_4, 10, (u8)temp_r3_4->unk74);
             miniCommendInfo.apePtrs[var_r22] = temp_r3_4;
         }
     }
@@ -802,7 +802,7 @@ static void func_8009CAE0(s8 *arg0, s8 *arg1, s8 arg2)
         ape->pos.x = -0.5f;
         ape->pos.y = lbl_80171B60[0];
         ape->pos.z = 1.0f;
-        mot_ape_8008BA2C(ape, 10, (u8)ape->unk74);
+        u_start_indexed_anim(ape, 10, (u8)ape->unk74);
         miniCommendInfo.unk6C = ape;
         miniCommendInfo.unk74 = arg2;
         miniCommendInfo.unk0 |= 8;
@@ -1069,22 +1069,22 @@ static void func_8009D3AC(struct Ape *ape, int status)
     temp_r0 = 1 << (u8)(ape->unk74 >> 8);
     if (temp_r3_2 == temp_r0 || ((temp_r3_2 & temp_r0) && (rand() & 0x7FFF) % 3 == 0))
     {
-        switch (ape->unk0->unk32)
+        switch (ape->unk0->u_animId)
         {
         case 0x172:
-            var_r0 = ape->unk0->u_poseNum == 0x60;
+            var_r0 = ape->unk0->u_currKeyframe == 0x60;
             break;
         case 0x173:
-            var_r0 = ape->unk0->u_poseNum == 0x4D;
+            var_r0 = ape->unk0->u_currKeyframe == 0x4D;
             break;
         case 0x14F:
-            var_r0 = ape->unk0->u_poseNum == 0x1B;
+            var_r0 = ape->unk0->u_currKeyframe == 0x1B;
             break;
         case 0x174:
-            var_r0 = ape->unk0->u_poseNum == 0x58;
+            var_r0 = ape->unk0->u_currKeyframe == 0x58;
             break;
         default:
-            var_r0 = ape->unk0->u_poseNum == 1;
+            var_r0 = ape->unk0->u_currKeyframe == 1;
             break;
         }
         if (var_r0)

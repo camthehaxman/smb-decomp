@@ -795,9 +795,9 @@ static void effect_paperfrag_main(struct Effect *effect)
     s16 temp_r31;
     struct World *world = currentWorld;
 
-    effect->vel.x += 0.004 * world->unk10.x;
-    effect->vel.y += 0.004 * world->unk10.y;
-    effect->vel.z += 0.004 * world->unk10.z;
+    effect->vel.x += 0.004 * world->gravityDir.x;
+    effect->vel.y += 0.004 * world->gravityDir.y;
+    effect->vel.z += 0.004 * world->gravityDir.z;
     mathutil_mtxA_from_rotate_y(effect->rotY);
     mathutil_mtxA_rotate_x(effect->rotX);
     mathutil_mtxA_rotate_z(effect->rotZ);
@@ -1052,9 +1052,9 @@ static void effect_coli_particle_main(struct Effect *effect)
     float temp_f31;
     struct World *world = currentWorld;
 
-    effect->vel.x += 0.008f * world->unk10.x;
-    effect->vel.y += 0.008f * world->unk10.y;
-    effect->vel.z += 0.008f * world->unk10.z;
+    effect->vel.x += 0.008f * world->gravityDir.x;
+    effect->vel.y += 0.008f * world->gravityDir.y;
+    effect->vel.z += 0.008f * world->gravityDir.z;
     effect->vel.x *= 0.992f;
     effect->vel.y *= 0.992f;
     effect->vel.z *= 0.992f;
@@ -1210,7 +1210,7 @@ static void effect_rotate_bg_main(struct Effect *effect)
 {
     struct Ball *ball = currentBall;
 
-    if (gameSubmode != MD_GAME || !(ball->flags & 8))
+    if (gameSubmode != MD_GAME || !(ball->flags & BALL_FLAG_03))
     {
         effect->rotX += effect->unk52;
         effect->rotY += effect->unk54;
@@ -1811,7 +1811,7 @@ static void effect_ball_glow_init(struct Effect *effect)
 
 static void effect_ball_glow_main(struct Effect *effect)
 {
-    if (!(currentBall->flags & 0x10))
+    if (!(currentBall->flags & BALL_FLAG_INVISIBLE))
     {
         effect->unk18 += 0.10 * (1.0 - effect->unk18);
         effect->unk1C += 0.12 * (1.0 - effect->unk1C);
@@ -1831,7 +1831,7 @@ static void effect_ball_glow_draw(struct Effect *effect)
     Vec spC;
     float scale;
 
-    if (!(ball->flags & 0x10))
+    if (!(ball->flags & BALL_FLAG_INVISIBLE))
     {
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_mult_right(ball->unk30);
@@ -2012,9 +2012,9 @@ static void effect_colistar_particle_main(struct Effect *effect)
     float temp_f31;
     struct World *world = &currentWorld[effect->playerId];
 
-    effect->vel.x += 0.004f * world->unk10.x;
-    effect->vel.y += 0.004f * world->unk10.y;
-    effect->vel.z += 0.004f * world->unk10.z;
+    effect->vel.x += 0.004f * world->gravityDir.x;
+    effect->vel.y += 0.004f * world->gravityDir.y;
+    effect->vel.z += 0.004f * world->gravityDir.z;
     effect->vel.x *= 0.985f;
     effect->vel.y *= 0.985f;
     effect->vel.z *= 0.985f;

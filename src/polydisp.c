@@ -1086,7 +1086,7 @@ static void draw_timer_bomb_fuse(void)
     if (eventInfo[EVENT_VIEW].state == EV_STATE_RUNNING || infoWork.timerCurr <= 0)
         return;
 
-    sprite = find_sprite_with_tag(2);
+    sprite = find_sprite_with_tag(SPRITE_TAG_TIMER);
     if (sprite == NULL)
     {
         x = 0.0f;

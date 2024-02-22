@@ -1346,7 +1346,7 @@ void get_curr_stage_fly_in_position(struct Sphere *sphere)
 
 void camera_func_0(struct Camera *camera, struct Ball *ball)
 {
-    Vec sp10;
+    Vec vec;
 
     camera_clear(camera);
     camera->unk26 = 0;
@@ -1355,20 +1355,23 @@ void camera_func_0(struct Camera *camera, struct Ball *ball)
     camera->lookAt.z = ball->pos.z;
     mathutil_mtxA_from_translate(&camera->lookAt);
     mathutil_mtxA_rotate_y(decodedStageLzPtr->startPos->yrot);
-    sp10.x = 0.0f;
-    sp10.y = 1.0f;
-    sp10.z = 3.0f;
-    mathutil_mtxA_tf_point(&sp10, &camera->eye);
-    sp10.x = 0.0f;
-    sp10.y = 0.0f;
-    sp10.z = 3.0f;
-    mathutil_mtxA_tf_point(&sp10, &camera->unkAC);
 
-    sp10.x = camera->lookAt.x - camera->eye.x;
-    sp10.y = camera->lookAt.y - camera->eye.y;
-    sp10.z = camera->lookAt.z - camera->eye.z;
+    // Set the initial eye position (1 unit above, and 3 units behind the top of the ball)
+    vec.x = 0.0f;
+    vec.y = 1.0f;
+    vec.z = 3.0f;
+    mathutil_mtxA_tf_point(&vec, &camera->eye);
 
-    camera_face_direction(camera, &sp10);
+    vec.x = 0.0f;
+    vec.y = 0.0f;
+    vec.z = 3.0f;
+    mathutil_mtxA_tf_point(&vec, &camera->unkAC);
+
+    vec.x = camera->lookAt.x - camera->eye.x;
+    vec.y = camera->lookAt.y - camera->eye.y;
+    vec.z = camera->lookAt.z - camera->eye.z;
+
+    camera_face_direction(camera, &vec);
 
     camera->state = CAMERA_STATE_LEVEL_MAIN;
 }
@@ -1381,8 +1384,8 @@ void camera_func_level_main(struct Camera *camera, struct Ball *ball)
     Vec sp28;
     Vec prevEyePos;
     Vec prevLookAt;
-    float f1;
-    int r3;
+    float distFromBall;
+    int yawDiff;
     int r4;
 
     if (debugFlags & 0xA)
@@ -1400,13 +1403,13 @@ void camera_func_level_main(struct Camera *camera, struct Ball *ball)
     sp28.y = camera->unkAC.y - camera->lookAt.y;
     sp28.z = camera->unkAC.z - camera->lookAt.z;
 
-    f1 = mathutil_sum_of_sq_3(sp28.x, sp28.y, sp28.z);
-    if (f1 > FLT_EPSILON)
+    distFromBall = mathutil_sum_of_sq_3(sp28.x, sp28.y, sp28.z);
+    if (distFromBall > FLT_EPSILON)
     {
-        f1 = mathutil_rsqrt(f1);
-        sp28.x *= f1;
-        sp28.y *= f1;
-        sp28.z *= f1;
+        distFromBall = mathutil_rsqrt(distFromBall);
+        sp28.x *= distFromBall;
+        sp28.y *= distFromBall;
+        sp28.z *= distFromBall;
     }
     else
     {
@@ -1419,6 +1422,7 @@ void camera_func_level_main(struct Camera *camera, struct Ball *ball)
     sp28.y = sp28.y * 0.75 + camera->lookAt.y;
     sp28.z = sp28.z * 0.75 + camera->lookAt.z;
 
+    // look at top of ball
     camera->lookAt.x = ball->pos.x;
     camera->lookAt.y = ball->pos.y + 0.5;
     camera->lookAt.z = ball->pos.z;
@@ -1433,41 +1437,41 @@ void camera_func_level_main(struct Camera *camera, struct Ball *ball)
         r31 = mathutil_atan2(sp28.y, mathutil_sqrt(mathutil_sum_of_sq_2(sp28.x, sp28.z)));
 
     yaw = mathutil_atan2(sp28.x, sp28.z) - 32768;
-    r3 = (s16)(yaw - camera->rotY);
-    yaw = camera->rotY + CLAMP(r3, -512, 512);
+    yawDiff = (s16)(yaw - camera->rotY);
+    yaw = camera->rotY + CLAMP(yawDiff, -512, 512);
     if (!(camera->flags & (1 << 1)) && !(ball->flags & BALL_FLAG_GOAL))
     {
-        r3 = (s16)(ball->unk92 - yaw);
-        if (r3 > 0x800)
-            r3 -= 0x800;
-        else if (r3 < -0x800)
-            r3 += 0x800;
+        yawDiff = (s16)(ball->unk92 - yaw);
+        if (yawDiff > 0x800)
+            yawDiff -= 0x800;
+        else if (yawDiff < -0x800)
+            yawDiff += 0x800;
         else
-            r3 = 0;
-        r3 >>= 7;
+            yawDiff = 0;
+        yawDiff >>= 7;
         r4 = camera->unk10C;
-        if (r3 == 0)
+        if (yawDiff == 0)
             r4 = 0;
-        else if ((r4 < 0 && r3 > 0) || (r4 > 0 && r3 < 0))
+        else if ((r4 < 0 && yawDiff > 0) || (r4 > 0 && yawDiff < 0))
             r4 = 0;
-        else if (r3 < 0)
+        else if (yawDiff < 0)
         {
-            if (r3 < r4 - 4)
+            if (yawDiff < r4 - 4)
                 r4 -= 4;
             else
-                r4 = r3;
+                r4 = yawDiff;
         }
         else
         {
-            if (r3 > r4 + 4)
+            if (yawDiff > r4 + 4)
                 r4 += 4;
             else
-                r4 = r3;
+                r4 = yawDiff;
         }
 
         yaw += r4;
-        r3 = CLAMP((s16)(yaw - camera->rotY), -768, 768);
-        yaw = camera->rotY + r3;
+        yawDiff = CLAMP((s16)(yaw - camera->rotY), -768, 768);
+        yaw = camera->rotY + yawDiff;
     }
 
     if (r31 < -6144)
@@ -1487,6 +1491,7 @@ void camera_func_level_main(struct Camera *camera, struct Ball *ball)
     camera->unk10C = yaw - camera->rotY;
     camera->rotY = yaw;
     camera->rotX = r29 + 62208;
+
     mathutil_mtxA_from_translate(&camera->lookAt);
     mathutil_mtxA_rotate_y(camera->rotY);
     mathutil_mtxA_rotate_x(camera->rotX);

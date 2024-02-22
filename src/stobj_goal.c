@@ -27,7 +27,7 @@
 
 #define MAX_GOALS 8
 
-struct GoalTape_sub
+struct GoalTapeSegment
 {
     Vec unk0;
     Vec unkC;
@@ -45,7 +45,7 @@ struct GoalTape
     float unkC;
     s32 u_breakTime;  // time tape was broken?
     struct Stobj *stobj;
-    struct GoalTape_sub unk18[8];
+    struct GoalTapeSegment unk18[8];
 };  // size = 0x198
 
 static struct GoalTape goalTapes[MAX_GOALS];
@@ -90,9 +90,9 @@ static s16 largeLCDModelIDs[] =
     NLMODEL_common_L_LCD_9,
 };
 
-static void func_8006DDA0(struct GoalTape_sub *arg0, int arg1, struct NlModel *arg2, struct NlModel *arg3);
-static void open_goal_bag(int goalId, struct PhysicsBall *arg1);
-static void func_8006FB20(int arg0);
+static void deform_goaltape_model(struct GoalTapeSegment *arg0, int arg1, struct NlModel *arg2, struct NlModel *arg3);
+static void open_goalbag(int goalId, struct PhysicsBall *arg1);
+static void close_goalbag(int arg0);
 static float func_8006FCD0(Point3d *, float);
 static void func_8006FD44(struct GoalTape *tape);
 
@@ -192,7 +192,7 @@ void stobj_goaltape_init(struct Stobj *stobj)
     float temp_f11;
     int i;
     int j;
-    struct GoalTape_sub *var_r7;
+    struct GoalTapeSegment *var_r7;
     struct GoalTape *temp_r31;
     Point3d sp28;
     struct RaycastHit spC;
@@ -268,8 +268,8 @@ void stobj_goaltape_main(struct Stobj *stobj)
     float temp_f1_2;
     int i;
     struct GoalTape *tape;
-    struct GoalTape_sub *var_r28;
-    struct GoalTape_sub *temp_r27_2;
+    struct GoalTapeSegment *var_r28;
+    struct GoalTapeSegment *temp_r27_2;
     struct AnimGroupInfo *temp_r27;
     u32 var_r30;
 
@@ -339,9 +339,9 @@ void stobj_goaltape_main(struct Stobj *stobj)
     mathutil_mtxA_rotate_z(stobj->rotZ);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_x(stobj->rotX);
-    sp18.x = 0.004 * lbl_80206CF0.x;
-    sp18.y = 0.004 * lbl_80206CF0.y;
-    sp18.z = 0.004 * lbl_80206CF0.z;
+    sp18.x = 0.004 * g_gravityDir.x;
+    sp18.y = 0.004 * g_gravityDir.y;
+    sp18.z = 0.004 * g_gravityDir.z;
     mathutil_mtxA_rigid_inv_tf_vec(&sp18, &sp18);
 
     var_r28 = tape->unk18;
@@ -448,9 +448,9 @@ void stobj_goaltape_main(struct Stobj *stobj)
         {
             if (var_r30 && ((var_r28->unk28 & 6) != 6))
             {
-                var_r28->unk1C.x += 0.15000000000000002 * (spC.x - var_r28->unk1C.x);
-                var_r28->unk1C.y += 0.15000000000000002 * (spC.y - var_r28->unk1C.y);
-                var_r28->unk1C.z += 0.15000000000000002 * (spC.z - var_r28->unk1C.z);
+                var_r28->unk1C.x += (1.0 - 0.85) * (spC.x - var_r28->unk1C.x);
+                var_r28->unk1C.y += (1.0 - 0.85) * (spC.y - var_r28->unk1C.y);
+                var_r28->unk1C.z += (1.0 - 0.85) * (spC.z - var_r28->unk1C.z);
             }
             else
             {
@@ -477,8 +477,8 @@ void stobj_goaltape_main(struct Stobj *stobj)
 void stobj_goaltape_draw(struct Stobj *stobj)
 {
     int i;
-    struct GoalTape_sub *var_r31;
-    struct GoalTape_sub *temp_r28;
+    struct GoalTapeSegment *var_r31;
+    struct GoalTapeSegment *temp_r28;
     int var_r27;
     int temp_r0;
     int temp_r5;
@@ -507,7 +507,7 @@ void stobj_goaltape_draw(struct Stobj *stobj)
         if (var_r27 > 1)
         {
             mathutil_mtxA_push();
-            func_8006DDA0(temp_r28, var_r27, (void *)stobj->model, lbl_802F1B4C);
+            deform_goaltape_model(temp_r28, var_r27, (void *)stobj->model, lbl_802F1B4C);
             mathutil_mtxA_pop();
             nl2ngc_draw_model_sort_none_alt2(lbl_802F1B4C);
         }
@@ -578,7 +578,7 @@ void stobj_goaltape_coli(struct Stobj *stobj, struct PhysicsBall *ball)
     float radius;
     float radiusSq;
     int i;
-    struct GoalTape_sub *var_r29;
+    struct GoalTapeSegment *var_r29;
     u32 var_r28 = 0;
 
     sp1C.x = 0.0f;
@@ -658,7 +658,7 @@ void stobj_goaltape_destroy(struct Stobj *stobj) {}
 
 void stobj_goaltape_debug(struct Stobj *stobj) {}
 
-static void func_8006DDA0(struct GoalTape_sub *arg0, int faceCount, struct NlModel *model1, struct NlModel *model2)
+static void deform_goaltape_model(struct GoalTapeSegment *arg0, int faceCount, struct NlModel *model1, struct NlModel *model2)
 {
     Point3d sp24;
     Point3d sp18;
@@ -736,13 +736,13 @@ void stobj_goalbag_init(struct Stobj *stobj)
     stobj->boundSphereRadius = stobj->model->boundSphereRadius;
     stobj->u_model_origin = stobj->model->boundSphereCenter;
     stobj->u_some_pos = stobj->unkA8;
-    stobj->u_local_pos.x = 0.0f;
-    stobj->u_local_pos.y = -1.0f;
-    stobj->u_local_pos.z = 0.1f;
-    mathutil_vec_normalize_len(&stobj->u_local_pos);
-    stobj->u_local_vel.x = 0.0f;
-    stobj->u_local_vel.y = 0.0f;
-    stobj->u_local_vel.z = 0.0f;
+    stobj->offsetPos.x = 0.0f;
+    stobj->offsetPos.y = -1.0f;
+    stobj->offsetPos.z = 0.1f;
+    mathutil_vec_normalize_len(&stobj->offsetPos);
+    stobj->offsetVel.x = 0.0f;
+    stobj->offsetVel.y = 0.0f;
+    stobj->offsetVel.z = 0.0f;
     bag = stobj->extraData;
     bag->stobj = stobj;
     bag->u_openTime = -1;
@@ -853,17 +853,17 @@ void stobj_goalbag_main(struct Stobj *stobj)
         break;
     }
 
-    sp3C.x = 0.008f * lbl_80206CF0.x;
-    sp3C.y = 0.008f * lbl_80206CF0.y;
-    sp3C.z = 0.008f * lbl_80206CF0.z;
+    sp3C.x = 0.008f * g_gravityDir.x;
+    sp3C.y = 0.008f * g_gravityDir.y;
+    sp3C.z = 0.008f * g_gravityDir.z;
     if (stobj->animGroupId > 0)
     {
         mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].transform);
         mathutil_mtxA_rigid_inv_tf_vec(&sp3C, &sp3C);
     }
-    stobj->u_local_vel.x += sp3C.x;
-    stobj->u_local_vel.y += sp3C.y;
-    stobj->u_local_vel.z += sp3C.z;
+    stobj->offsetVel.x += sp3C.x;
+    stobj->offsetVel.y += sp3C.y;
+    stobj->offsetVel.z += sp3C.z;
     if (stobj->animGroupId > 0)
     {
         temp_r29 = &animGroups[stobj->animGroupId];
@@ -875,15 +875,15 @@ void stobj_goalbag_main(struct Stobj *stobj)
         sp3C.y -= sp48.y;
         sp3C.z -= sp48.z;
         mathutil_mtxA_rigid_inv_tf_vec(&sp3C, &sp3C);
-        stobj->u_local_vel.x += (1.0 - 0.98) * (sp3C.x - stobj->u_local_vel.x);
-        stobj->u_local_vel.y += (1.0 - 0.98) * (sp3C.y - stobj->u_local_vel.y);
-        stobj->u_local_vel.z += (1.0 - 0.98) * (sp3C.z - stobj->u_local_vel.z);
+        stobj->offsetVel.x += (1.0 - 0.98) * (sp3C.x - stobj->offsetVel.x);
+        stobj->offsetVel.y += (1.0 - 0.98) * (sp3C.y - stobj->offsetVel.y);
+        stobj->offsetVel.z += (1.0 - 0.98) * (sp3C.z - stobj->offsetVel.z);
     }
     else
     {
-        stobj->u_local_vel.x *= 0.98;
-        stobj->u_local_vel.y *= 0.98;
-        stobj->u_local_vel.z *= 0.98;
+        stobj->offsetVel.x *= 0.98;
+        stobj->offsetVel.y *= 0.98;
+        stobj->offsetVel.z *= 0.98;
     }
     sp30 = lbl_80117A58;
     sp24 = lbl_80117A64;
@@ -894,9 +894,9 @@ void stobj_goalbag_main(struct Stobj *stobj)
     mathutil_mtxA_tf_point(&sp30, &sp30);
     mathutil_mtxA_tf_vec(&sp24, &sp24);
     temp_f31 = stobj->boundSphereRadius;
-    sp18.x = stobj->u_some_pos.x + (temp_f31 * stobj->u_local_pos.x);
-    sp18.y = stobj->u_some_pos.y + (temp_f31 * stobj->u_local_pos.y);
-    sp18.z = stobj->u_some_pos.z + (temp_f31 * stobj->u_local_pos.z);
+    sp18.x = stobj->u_some_pos.x + (temp_f31 * stobj->offsetPos.x);
+    sp18.y = stobj->u_some_pos.y + (temp_f31 * stobj->offsetPos.y);
+    sp18.z = stobj->u_some_pos.z + (temp_f31 * stobj->offsetPos.z);
     sp3C.x = sp18.x - sp30.x;
     sp3C.y = sp18.y - sp30.y;
     sp3C.z = sp18.z - sp30.z;
@@ -911,30 +911,30 @@ void stobj_goalbag_main(struct Stobj *stobj)
         spC.y = sp18.y - sp3C.y;
         spC.z = sp18.z - sp3C.z;
         mathutil_vec_normalize_len(&spC);
-        stobj->u_local_pos.x = sp3C.x + spC.x * temp_f31 - stobj->u_some_pos.x;
-        stobj->u_local_pos.y = sp3C.y + spC.y * temp_f31 - stobj->u_some_pos.y;
-        stobj->u_local_pos.z = sp3C.z + spC.z * temp_f31 - stobj->u_some_pos.z;
-        mathutil_vec_normalize_len(&stobj->u_local_pos);
-        temp_f2_4 = spC.x * stobj->u_local_vel.x + spC.y * stobj->u_local_vel.y + spC.z * stobj->u_local_vel.z;
+        stobj->offsetPos.x = sp3C.x + spC.x * temp_f31 - stobj->u_some_pos.x;
+        stobj->offsetPos.y = sp3C.y + spC.y * temp_f31 - stobj->u_some_pos.y;
+        stobj->offsetPos.z = sp3C.z + spC.z * temp_f31 - stobj->u_some_pos.z;
+        mathutil_vec_normalize_len(&stobj->offsetPos);
+        temp_f2_4 = spC.x * stobj->offsetVel.x + spC.y * stobj->offsetVel.y + spC.z * stobj->offsetVel.z;
         if (temp_f2_4 < 0.0)
         {
             temp_f2_4 *= -1.5;
-            stobj->u_local_vel.x += temp_f2_4 * spC.x;
-            stobj->u_local_vel.y += temp_f2_4 * spC.y;
-            stobj->u_local_vel.z += temp_f2_4 * spC.z;
+            stobj->offsetVel.x += temp_f2_4 * spC.x;
+            stobj->offsetVel.y += temp_f2_4 * spC.y;
+            stobj->offsetVel.z += temp_f2_4 * spC.z;
         }
     }
-    temp_f2_6 = -mathutil_vec_dot_prod(&stobj->u_local_pos, &stobj->u_local_vel);
-    stobj->u_local_vel.x += temp_f2_6 * stobj->u_local_pos.x;
-    stobj->u_local_vel.y += temp_f2_6 * stobj->u_local_pos.y;
-    stobj->u_local_vel.z += temp_f2_6 * stobj->u_local_pos.z;
-    stobj->u_local_pos.x += stobj->u_local_vel.x;
-    stobj->u_local_pos.y += stobj->u_local_vel.y;
-    stobj->u_local_pos.z += stobj->u_local_vel.z;
-    mathutil_vec_normalize_len(&stobj->u_local_pos);
+    temp_f2_6 = -mathutil_vec_dot_prod(&stobj->offsetPos, &stobj->offsetVel);
+    stobj->offsetVel.x += temp_f2_6 * stobj->offsetPos.x;
+    stobj->offsetVel.y += temp_f2_6 * stobj->offsetPos.y;
+    stobj->offsetVel.z += temp_f2_6 * stobj->offsetPos.z;
+    stobj->offsetPos.x += stobj->offsetVel.x;
+    stobj->offsetPos.y += stobj->offsetVel.y;
+    stobj->offsetPos.z += stobj->offsetVel.z;
+    mathutil_vec_normalize_len(&stobj->offsetPos);
     mathutil_mtxA_from_rotate_y(-stobj->rotY);
     mathutil_mtxA_rotate_x(0);
-    mathutil_mtxA_tf_vec(&stobj->u_local_pos, &sp48);
+    mathutil_mtxA_tf_vec(&stobj->offsetPos, &sp48);
     stobj->rotX = mathutil_atan2(sp48.z, sp48.y) - 0x8000;
     stobj->rotZ = mathutil_atan2(sp48.x, mathutil_sqrt(mathutil_sum_of_sq_2(sp48.z, sp48.y)));
     sp48.x = 2.0 * stobj->position.x - stobj->u_some_pos.x;
@@ -1079,32 +1079,32 @@ void stobj_goalbag_coli(struct Stobj *stobj, struct PhysicsBall *ball)
     ball->pos.x += spE0.x;
     ball->pos.y += spE0.y;
     ball->pos.z += spE0.z;
-    temp_f0 = -mathutil_vec_dot_prod(&sp110, &stobj->u_local_pos);
-    sp110.x += temp_f0 * stobj->u_local_pos.x;
-    sp110.y += temp_f0 * stobj->u_local_pos.y;
-    sp110.z += temp_f0 * stobj->u_local_pos.z;
+    temp_f0 = -mathutil_vec_dot_prod(&sp110, &stobj->offsetPos);
+    sp110.x += temp_f0 * stobj->offsetPos.x;
+    sp110.y += temp_f0 * stobj->offsetPos.y;
+    sp110.z += temp_f0 * stobj->offsetPos.z;
     mathutil_vec_normalize_len(&sp110);
-    spF8.x = sp104.x + stobj->u_local_vel.x - spEC.x;
-    spF8.y = sp104.y + stobj->u_local_vel.y - spEC.y;
-    spF8.z = sp104.z + stobj->u_local_vel.z - spEC.z;
+    spF8.x = sp104.x + stobj->offsetVel.x - spEC.x;
+    spF8.y = sp104.y + stobj->offsetVel.y - spEC.y;
+    spF8.z = sp104.z + stobj->offsetVel.z - spEC.z;
     temp_f0 = -2.0 * mathutil_vec_dot_prod(&sp110, &spF8);
     if (temp_f0 < 0.0)
     {
         spF8.x += temp_f0 * sp110.x;
         spF8.y += temp_f0 * sp110.y;
         spF8.z += temp_f0 * sp110.z;
-        stobj->u_local_vel.x = spEC.x + (spF8.x - sp104.x);
-        stobj->u_local_vel.y = spEC.y + (spF8.y - sp104.y);
-        stobj->u_local_vel.z = spEC.z + (spF8.z - sp104.z);
+        stobj->offsetVel.x = spEC.x + (spF8.x - sp104.x);
+        stobj->offsetVel.y = spEC.y + (spF8.y - sp104.y);
+        stobj->offsetVel.z = spEC.z + (spF8.z - sp104.z);
     }
-    temp_f0 = -mathutil_vec_dot_prod(&stobj->u_local_pos, &stobj->u_local_vel);
-    stobj->u_local_vel.x += temp_f0 * stobj->u_local_pos.x;
-    stobj->u_local_vel.y += temp_f0 * stobj->u_local_pos.y;
-    stobj->u_local_vel.z += temp_f0 * stobj->u_local_pos.z;
+    temp_f0 = -mathutil_vec_dot_prod(&stobj->offsetPos, &stobj->offsetVel);
+    stobj->offsetVel.x += temp_f0 * stobj->offsetPos.x;
+    stobj->offsetVel.y += temp_f0 * stobj->offsetPos.y;
+    stobj->offsetVel.z += temp_f0 * stobj->offsetPos.z;
     bag = stobj->extraData;
     if (bag->u_flags != 0)
     {
-        temp_f0 = -2.0 * mathutil_vec_dot_prod(&stobj->u_local_pos, &spEC);
+        temp_f0 = -2.0 * mathutil_vec_dot_prod(&stobj->offsetPos, &spEC);
         if (temp_f0 < 0.0)
             bag->unk8 += temp_f0;
     }
@@ -1216,7 +1216,7 @@ void stobj_goalbag_exmaster_destroy(struct Stobj *stobj) {}
 
 void stobj_goalbag_exmaster_debug(struct Stobj *stobj) {}
 
-void u_break_goal_tape(int goalId, struct PhysicsBall *arg1)
+void break_goaltape(int goalId, struct PhysicsBall *arg1)
 {
     Vec sp1C;
     Vec sp10;
@@ -1224,12 +1224,12 @@ void u_break_goal_tape(int goalId, struct PhysicsBall *arg1)
     float var_f31;
     int i;
     struct GoalTape *tape;
-    struct GoalTape_sub *var_r29;
+    struct GoalTapeSegment *var_r29;
     int var_r28;
     struct Stobj *stobj;
 
-    open_goal_bag(goalId, arg1);
-    if (goalId < 8)
+    open_goalbag(goalId, arg1);
+    if (goalId < ARRAY_COUNT(goalTapes))
     {
         tape = &goalTapes[goalId];
         if (tape->u_flags == 0)
@@ -1277,32 +1277,32 @@ void u_break_goal_tape(int goalId, struct PhysicsBall *arg1)
     }
 }
 
-void stobj_goal_8006F5F0(int time)
+void relink_goaltape(int time)
 {
     int i;
     int j;
     struct GoalTape *tape;
-    struct GoalTape_sub *var_r26;
+    struct GoalTapeSegment *seg;
     u8 dummy[8];
 
-    func_8006FB20(time);
+    close_goalbag(time);
     tape = goalTapes;
     for (i = ARRAY_COUNT(goalTapes); i > 0; i--, tape++)
     {
         if (tape->u_breakTime <= time && tape->u_flags != 0)
         {
             tape->u_flags = 0;
-            var_r26 = tape->unk18;
-            for (j = 8; j > 0; j--, var_r26++)
+            seg = tape->unk18;
+            for (j = 8; j > 0; j--, seg++)
             {
-                var_r26->unk0.x = 1.75 * ((j - 1) / 7.0f) - 0.875;
-                var_r26->unk0.y = tape->stobj->u_model_origin.y;
-                var_r26->unk0.z = 0.0f;
-                var_r26->unkC.x *= 0.25;
-                var_r26->unkC.y *= 0.25;
-                var_r26->unkC.z = 0.75 + 0.25 * var_r26->unkC.z;
-                mathutil_vec_normalize_len(&var_r26->unkC);
-                var_r26->unk28 |= 6;
+                seg->unk0.x = 1.75 * ((j - 1) / 7.0f) - 0.875;
+                seg->unk0.y = tape->stobj->u_model_origin.y;
+                seg->unk0.z = 0.0f;
+                seg->unkC.x *= 0.25;
+                seg->unkC.y *= 0.25;
+                seg->unkC.z = 0.75 + 0.25 * seg->unkC.z;
+                mathutil_vec_normalize_len(&seg->unkC);
+                seg->unk28 |= 6;
             }
             tape->unk18[0].unk28 &= 0xFFFFFFFD;
             tape->unk18[7].unk28 &= 0xFFFFFFFB;
@@ -1310,7 +1310,7 @@ void stobj_goal_8006F5F0(int time)
     }
 }
 
-static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
+static void open_goalbag(int goalId, struct PhysicsBall *arg1)
 {
     struct Effect effect;
     Point3d sp28;
@@ -1335,9 +1335,9 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
             stobj->u_model_origin.x *= 0.5;
             stobj->u_model_origin.y *= 0.5;
             stobj->u_model_origin.z *= 0.5;
-            stobj->u_local_vel.x += 0.5 * arg1->vel.x;
-            stobj->u_local_vel.y += 0.5 * arg1->vel.y;
-            stobj->u_local_vel.z += 0.5 * arg1->vel.z;
+            stobj->offsetVel.x += 0.5 * arg1->vel.x;
+            stobj->offsetVel.y += 0.5 * arg1->vel.y;
+            stobj->offsetVel.z += 0.5 * arg1->vel.z;
             u_play_sound_0(0x16);
             u_play_sound_0(0x127);
             if (bag->u_openTime < 0)
@@ -1400,7 +1400,7 @@ static void open_goal_bag(int goalId, struct PhysicsBall *arg1)
     }
 }
 
-static void func_8006FB20(int time)
+static void close_goalbag(int time)
 {
     int i;
     struct GoalBag *bag;
@@ -1441,7 +1441,7 @@ static float func_8006FCD0(Point3d *arg0, float arg8)
 static void func_8006FD44(struct GoalTape *tape)
 {
     int i;
-    struct GoalTape_sub *var_r29;
+    struct GoalTapeSegment *var_r29;
     float y;
     u8 unused[8];
 

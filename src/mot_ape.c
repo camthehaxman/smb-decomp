@@ -22,7 +22,7 @@
 #include "thread.h"
 #include "window.h"
 
-static struct Ape_child lbl_801C7A70 =
+static struct SomeMotInfoStruct lbl_801C7A70 =
 {
     0.0f,
     0,
@@ -45,8 +45,8 @@ static void ape_dummy_1(struct Ape *);
 static void ape_dummy_2(struct Ape *);
 static void ape_dummy_3(struct Ape *);
 static void ape_dummy_4(struct Ape *);
-static void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *model1, struct GMAModel *model2);
-static void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused);
+static void find_shirt_materials_in_gma(enum Character charaId, int lod, struct GMAModel *model1, struct GMAModel *model2);
+static void recolor_ape_shirt(struct Ape *ape, struct GMAModel *unused);
 static void mot_ape_8008CAAC(struct Ape *, float);
 
 // none of these functions actually do anything
@@ -70,18 +70,18 @@ static u32 uselessArray[0x20];
 static struct Ape apeStructs[16];
 static struct Ape *apeStructPtrs[16];
 
-struct GMA *charaGMAs[8];
-struct TPL *charaTPLs[8];
-u32 charaTplSizes[8];
-u32 charaTplAramAddrs[8];
-u32 charaGmaSizes[8];
-u32 charaGmaAramAddrs[8];
-u32 lbl_802B47B0[4];
-u32 lbl_802B47C0[4];
-struct TPL *lbl_802B47D0[4];
-GXTexObj *lbl_802B47E0[4];
+struct GMA *charaGMAs[8];  // GMAs for each character and LOD
+struct TPL *charaTPLs[8];  // TPLs associated with the GMAs
+u32 charaTplSizes[8];  // TPL sizes for each character and LOD
+u32 charaTplAramAddrs[8];  // TPL addresses for each character and LOD
+u32 charaGmaSizes[8];  // GMA sizes for each character and LOD
+u32 charaGmaAramAddrs[8];  // GMA addresses for each character and LOD
+u32 shirtTplSizes[4];
+u32 shirtTplAramAddrs[4];
+struct TPL *shirtTPLs[4];
+GXTexObj *shirtTexObjs[4];
 struct GMAShape *lbl_802B47F0[4];
-struct GMATevLayer *u_apeMaterials[8];
+struct GMATevLayer *apeShirtMaterials[8];  // pointers to shirt materials in the GMA for each character and LOD
 Mtx lbl_802B4820;
 Mtx lbl_802B4850[15];
 u8 unused802B4B20[0x2D0];
@@ -91,7 +91,7 @@ u32 *motLabel;
 s32 u_motAnimCount;
 struct SkeletonFileData *motsklFileData;
 struct MotInfo *motInfo;
-u8 lbl_802F209C[8];
+u8 charaModelLoaded[8];
 u8 lbl_802F2094[8];
 int lbl_802F2090;
 u8 lbl_802F208C;
@@ -127,7 +127,7 @@ static void load_character_resources(void)
         "GOR_H",
         "GOR_L",
     };
-    char *sp8[] =
+    char *shirtTplNames[] =
     {
         "boy_ch.tpl.lz",
         NULL,
@@ -160,14 +160,17 @@ static void load_character_resources(void)
             u32 index = i * 2 + j;
             int fileSize;
 
+            // not loaded yet
             charaGMAs[index] = NULL;
             charaTPLs[index] = NULL;
-            lbl_802F209C[index] = 0;
+            charaModelLoaded[index] = 0;
             lbl_802F2094[index] = 0;
+
             baseLen = strlen(apeGfxFileInfo[index].basename);
             strcpy(filename, apeGfxFileInfo[index].basename);
             suffix = filename + baseLen;
 
+            // Load the TPL file into ARAM
             strcpy(suffix, ".tpl.lz");
             if (file_open(filename, &file) == 0)
             {
@@ -201,6 +204,7 @@ static void load_character_resources(void)
                 ;
             file_close(&file);
 
+            // Load the GMA file into ARAM
             strcpy(suffix, ".gma.lz");
             if (file_open(filename, &file) == 0)
             {
@@ -245,19 +249,19 @@ static void load_character_resources(void)
         int fileSize;
         void *compressed;
 
-        if (sp8[i] != NULL)
+        if (shirtTplNames[i] != NULL)
         {
-            file_open(sp8[i], &file);
+            file_open(shirtTplNames[i], &file);
             fileSize = OSRoundUp32B(file_size(&file));
             compressed = OSAllocFromHeap(mainHeap, fileSize);
             if (compressed == NULL)
                 OSPanic("mot_ape.c", 311, "cannot OSAlloc");
             file_read(&file, compressed, fileSize, 0);
-            lbl_802B47B0[i] = __lwbrx(compressed, 4);
-            aramTop -= lbl_802B47B0[i];
-            lbl_802B47C0[i] = aramTop;
+            shirtTplSizes[i] = __lwbrx(compressed, 4);
+            aramTop -= shirtTplSizes[i];
+            shirtTplAramAddrs[i] = aramTop;
             lzs_decompress(compressed, work);
-            DCStoreRange(work, lbl_802B47B0[i]);
+            DCStoreRange(work, shirtTplSizes[i]);
             OSFreeToHeap(mainHeap, compressed);
             transferInProgress = 1;
             ARQPostRequest(
@@ -267,21 +271,21 @@ static void load_character_resources(void)
                 ARQ_PRIORITY_HIGH,
                 (uintptr_t)work,
                 aramTop,
-                (((lbl_802B47B0[i] - 1) >> 2) + 1) << 2,
+                (((shirtTplSizes[i] - 1) >> 2) + 1) << 2,
                 aram_transfer_callback);
             while (transferInProgress != 0)
                 ;
             file_close(&file);
             if (debugFlags & (1 << 2))
                 printf("change texture load. %s [ %x ]\n",
-                    sp8[i], lbl_802B47B0[i]);
+                    shirtTplNames[i], shirtTplSizes[i]);
         }
         else
         {
-            lbl_802B47B0[i] = 0;
-            lbl_802B47C0[i] = 0;
+            shirtTplSizes[i] = 0;
+            shirtTplAramAddrs[i] = 0;
         }
-        lbl_802B47D0[i] = NULL;
+        shirtTPLs[i] = NULL;
     }
     DVDChangeDir("..");
     if (debugFlags & (1 << 2))
@@ -299,7 +303,7 @@ static void u_find_ape_face_part(const struct ApeGfxFileInfo *filesInfo, int b, 
 
     for (i = 0; i < thisFile->partCounts[b & 1]; i++)
     {
-        struct ApeBodyPart *parts = thisFile->facePartInfo[b & 1];
+        struct BodyPartDesc *parts = thisFile->bodyPartInfo[b & 1];
 
         if (strcmp(parts[i].name, c->names[b]) == 0)
         {
@@ -327,11 +331,11 @@ static struct ApeAnimationThing *u_create_joints_probably(struct Skeleton *skel)
     }
     if (r30 == NULL)
         OSPanic("mot_ape.c", 396, "rob init Heap Over.\n");
-    r30->unk32 = 1;
-    r30->u_poseNum = 1;
+    r30->u_animId = 1;
+    r30->u_currKeyframe = 1;
     r30->unk36 = 0;
     r30->unk0 = 0;
-    r30->unk34 = 0xFFFF;
+    r30->u_nextAnimId = 0xFFFF;
     r30->u_someDeltaTime = 1.0f;
     r30->u_timeInKeyframe = 0.0f;
     r30->unk2C = 0x4000;
@@ -340,7 +344,7 @@ static struct ApeAnimationThing *u_create_joints_probably(struct Skeleton *skel)
     r30->unk28 = 0;
     u_create_joints_from_skeleton(r30->joints, skel, r30->unk36);
     func_80035FDC(r30);
-    mot_joint_800355B8(r30);
+    u_mot_joint_start_anim(r30);
     mot_joint_800355FC(r30);
     return r30;
 }
@@ -402,22 +406,22 @@ static inline void func_80089CF4_inline(struct Ape *ape)
 {
     int i;
 
-    for (i = 0; i < ape->unk94; i++)
+    for (i = 0; i < ape->u_bodyPartCount; i++)
     {
         struct Struct80089A04 *r24 = &lbl_801C63B0[ape->charaId][i];
 
-        if (ape->unk98[i].unkC == NULL)
-            ape->unk98[i].unkC = func_80089CBC(ape->unk98, i, ape->unk1C->unk1C);
-        ape->unk98[i].unk14[0] = r24->unk30[0];
-        ape->unk98[i].unk14[1] = r24->unk30[1];
-        ape->unk98[i].unk14[2] = r24->unk30[2];
+        if (ape->u_bodyParts[i].unkC == NULL)
+            ape->u_bodyParts[i].unkC = func_80089CBC(ape->u_bodyParts, i, ape->unk1C->unk1C);
+        ape->u_bodyParts[i].unk14[0] = r24->unk30[0];
+        ape->u_bodyParts[i].unk14[1] = r24->unk30[1];
+        ape->u_bodyParts[i].unk14[2] = r24->unk30[2];
     }
 }
 
-static void func_80089CF4(struct Ape *ape, int r29)
+static void u_start_new_anim_maybe(struct Ape *ape, int animId)
 {
     struct ApeAnimationThing *r6 = ape->unk0;
-    float f31 = (float)r6->u_poseNum / (float)r6->unk3A;
+    float f31 = (float)r6->u_currKeyframe / (float)r6->u_keyframeCount;
     struct ApeAnimationThing *r28;
     struct ApeAnimationThing *r27;
     u32 i;
@@ -431,7 +435,7 @@ static void func_80089CF4(struct Ape *ape, int r29)
     {
         ape->unk1C = ape->unk20;
         ape->unk20 = NULL;
-        r29 = ape->unk1C->unk10;
+        animId = ape->unk1C->animId;
     }
     if (ape->flags & (1 << 9))
     {
@@ -453,53 +457,53 @@ static void func_80089CF4(struct Ape *ape, int r29)
         ape->animTimerMax = ape->unk1C->unk14;
     else
         ape->animTimerMax = 0.0f;
-    r27->unk32 = r29;
-    r27->u_poseNum = 1;
+    r27->u_animId = animId;
+    r27->u_currKeyframe = 1;
     ape->unk24 = ape->unk28;
     ape->unk9C = ape->unkB0;
     ape->unk18 = ape->animTimerMax + 1.0f;
     r27->u_timeInKeyframe = 0.0f;
     func_80035FDC(r27);
-    if (r27->unk32 == 0)
-        r27->unk32 = 1;
-    mot_joint_800355B8(r27);
+    if (r27->u_animId == 0)
+        r27->u_animId = 1;
+    u_mot_joint_start_anim(r27);
     if (ape->animTimerMax > 9.9999999392252903e-09f && (ape->flags & (1 << 9)))
     {
-        float f4 = ((float)r28->unk3A / r28->u_someDeltaTime);
+        float f4 = ((float)r28->u_keyframeCount / r28->u_someDeltaTime);
 
-        f4 /= ((float)r27->unk3A / r27->u_someDeltaTime);
+        f4 /= ((float)r27->u_keyframeCount / r27->u_someDeltaTime);
 
         if (f4 < 1.0f)
         {
             r28->u_someDeltaTime *= f4;
-            r27->u_someDeltaTime = ape->unk1C->unk18;
+            r27->u_someDeltaTime = ape->unk1C->u_maybeSpeed;
         }
         else
-            r27->u_someDeltaTime = ape->unk1C->unk18 / f4;
+            r27->u_someDeltaTime = ape->unk1C->u_maybeSpeed / f4;
     }
     else
-        r27->u_someDeltaTime = ape->unk1C->unk18;
+        r27->u_someDeltaTime = ape->unk1C->u_maybeSpeed;
     if (ape->unk1C->unkC & (1 << 3))
     {
-        r27->u_poseNum = f31 * r27->unk3A;
-        if (r27->u_poseNum >= r27->unk3A)
-            r27->u_poseNum = 1;
+        r27->u_currKeyframe = f31 * r27->u_keyframeCount;
+        if (r27->u_currKeyframe >= r27->u_keyframeCount)
+            r27->u_currKeyframe = 1;
     }
-    for (i = 0; i < ape->unk94; i++)
+    for (i = 0; i < ape->u_bodyPartCount; i++)
     {
-        struct BodyPartThing *var = &ape->unk98[i];
+        struct BodyPartThing *var = &ape->u_bodyParts[i];
 
         var->unkC = 0;
         var->unk14[3] = 0;
     }
     func_80089CF4_inline(ape);
-    for (i = 0; i < ape->unk94; i++)
+    for (i = 0; i < ape->u_bodyPartCount; i++)
     {
-        struct BodyPartThing *r28 = &ape->unk98[i];
+        struct BodyPartThing *r28 = &ape->u_bodyParts[i];
 
         if (r28->unkC != NULL)
             r28->unk10 = 0.0f;
-        mot_ape_8008A55C(ape->charaId, r28, r27->unk3A, 1);
+        mot_ape_8008A55C(ape->charaId, r28, r27->u_keyframeCount, 1);
         if (r28->unkC == NULL)
         {
             if (r28->unk4 > 0.0f)
@@ -752,24 +756,24 @@ static void func_8008A7F0_inline(struct Ape *ape, struct ApeAnimationThing *b)
 {
     struct BodyPartThing *r28;
     int i;
-    r28 = ape->unk98;
+    r28 = ape->u_bodyParts;
 
-    for (i = 0; i < ape->unk94; i++)
-        mot_ape_8008A55C(ape->charaId, r28++, b->unk3A, b->u_poseNum);
+    for (i = 0; i < ape->u_bodyPartCount; i++)
+        mot_ape_8008A55C(ape->charaId, r28++, b->u_keyframeCount, b->u_currKeyframe);
 }
 
-static void mot_ape_8008A7F0(struct Ape *ape, struct ApeAnimationThing *b)
+static void u_advance_ape_anim(struct Ape *ape, struct ApeAnimationThing *b)
 {
     u8 dummy[16];
 
-    // advance to next pose if this one is over?
+    // advance to next keyframe if this one is over?
     if (b->u_timeInKeyframe >= 1.0f)
     {
         if (!(ape->flags & (1 << 13)))
         {
             do
             {
-                b->u_poseNum++;
+                b->u_currKeyframe++;
                 b->u_timeInKeyframe -= 1.0f;
             } while (b->u_timeInKeyframe >= 1.0f);
         }
@@ -778,25 +782,26 @@ static void mot_ape_8008A7F0(struct Ape *ape, struct ApeAnimationThing *b)
         func_8008A7F0_inline(ape, b);
     }
 
-    if (b->u_poseNum >= b->unk3A)
+    // advance to the next animation if this one is over
+    if (b->u_currKeyframe >= b->u_keyframeCount)
     {
         if (!(ape->flags & (1 << 12)))
         {
             if (ape->unk1C->unkC & (1 << 4))
-                b->u_poseNum = ape->unk1C->unk8;
+                b->u_currKeyframe = ape->unk1C->unk8;
             else
-                b->u_poseNum = 1;
+                b->u_currKeyframe = 1;
             ape->unkC2++;
-            if (b->unk34 != 0xFFFF)
+            if (b->u_nextAnimId != 0xFFFF)
             {
-                b->unk32 = b->unk34;
-                b->unk34 = 0xFFFF;
-                func_80089CF4(ape, b->unk32);
+                b->u_animId = b->u_nextAnimId;
+                b->u_nextAnimId = 0xFFFF;
+                u_start_new_anim_maybe(ape, b->u_animId);
             }
             else
             {
                 func_80035FDC(b);
-                mot_joint_800355B8(b);
+                u_mot_joint_start_anim(b);
                 func_80089CF4_inline(ape);
                 func_8008A7F0_inline(ape, b);
             }
@@ -804,17 +809,20 @@ static void mot_ape_8008A7F0(struct Ape *ape, struct ApeAnimationThing *b)
         else
         {
             ape->flags |= 0x2000;
-            if (b->unk34 != 0xFFFF)
+            if (b->u_nextAnimId != 0xFFFF)
             {
-                b->unk32 = b->unk34;
-                b->unk34 = 0xFFFF;
-                func_80089CF4(ape, b->unk32);
+                b->u_animId = b->u_nextAnimId;
+                b->u_nextAnimId = 0xFFFF;
+                u_start_new_anim_maybe(ape, b->u_animId);
             }
         }
     }
     mot_joint_800355FC(b);
 }
 
+// Frees either the high poly or low poly GMA and TPL for the character
+// If lod is 0, the high poly resources are freed
+// If lod is 1, the low poly resources are freed
 static void u_free_character_graphics(int chara, int lod)
 {
     int index = chara * 2;
@@ -824,12 +832,12 @@ static void u_free_character_graphics(int chara, int lod)
         lod = 1;
     index += lod;
 
-    if (lbl_802F209C[index] == 0)
+    if (charaModelLoaded[index] == 0)
     {
         printf("\nchara model is already free.\n");
         return;
     }
-    lbl_802F209C[index]--;
+    charaModelLoaded[index]--;
 
     if (lbl_802F208C != 0)
         lbl_802F208C--;
@@ -854,15 +862,15 @@ static void u_free_character_graphics(int chara, int lod)
     }
     if (lbl_802F2090 != 0)
     {
-        if (lbl_802B47D0[chara] != NULL)
+        if (shirtTPLs[chara] != NULL)
         {
-            free_tpl(lbl_802B47D0[chara]);
-            lbl_802B47D0[chara] = NULL;
+            free_tpl(shirtTPLs[chara]);
+            shirtTPLs[chara] = NULL;
         }
-        if (lbl_802B47E0[chara] != NULL)
+        if (shirtTexObjs[chara] != NULL)
         {
-            OSFree(lbl_802B47E0[chara]);
-            lbl_802B47E0[chara] = NULL;
+            OSFree(shirtTexObjs[chara]);
+            shirtTexObjs[chara] = NULL;
         }
     }
     lbl_802F2090 = 1;
@@ -886,6 +894,9 @@ static void *u_find_some_mesh_with_red(struct GMAModel *model)
     return NULL;
 }
 
+// Loads the GMA and TPL for the character model
+// If lod is 0, the high poly model is loaded
+// If lod is 1, the low poly model is loaded
 static void u_load_character_graphics(enum Character chara, int lod)
 {
     OSHeapHandle oldHeap;
@@ -895,10 +906,10 @@ static void u_load_character_graphics(enum Character chara, int lod)
         lod = 1;
     index += lod;
 
-    if (lbl_802F209C[index] != 0)
+    if (charaModelLoaded[index] != 0)
     {
         // already loaded
-        lbl_802F209C[index]++;
+        charaModelLoaded[index]++;
         return;
     }
 
@@ -922,17 +933,18 @@ static void u_load_character_graphics(enum Character chara, int lod)
         oldHeap = OSSetCurrentHeap(charaHeap);
     }
 
-    if (lbl_802B47C0[chara] != 0)
+    if (shirtTplAramAddrs[chara] != NULL)
     {
-        lbl_802B47D0[chara] = load_tpl_from_aram(lbl_802B47C0[chara], lbl_802B47B0[chara]);
-        lbl_802B47E0[chara] = create_tpl_tex_objs(lbl_802B47D0[chara]);
+        shirtTPLs[chara] = load_tpl_from_aram(shirtTplAramAddrs[chara], shirtTplSizes[chara]);
+        shirtTexObjs[chara] = create_tpl_tex_objs(shirtTPLs[chara]);
     }
 
     charaTPLs[index] = load_tpl_from_aram(charaTplAramAddrs[index], charaTplSizes[index]);
     charaGMAs[index] = load_gma_from_aram(charaGmaAramAddrs[index], charaGmaSizes[index], charaTPLs[index]);
-    lbl_802F209C[index]++;
+    charaModelLoaded[index]++;
     OSSetCurrentHeap(oldHeap);
-    if (chara == 1)
+
+    if (chara == CHARACTER_MEEMEE)
     {
         struct GMAModel *model;
         int i;
@@ -942,15 +954,15 @@ static void u_load_character_graphics(enum Character chara, int lod)
             model = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].lodModelIDs[i]].model;
             lbl_802B47F0[lod * 2 + i] = u_find_some_mesh_with_red(model);
         }
-        u_apeMaterials[index + 0] = NULL;
-        u_apeMaterials[index + 1] = NULL;
+        apeShirtMaterials[index + 0] = NULL;
+        apeShirtMaterials[index + 1] = NULL;
     }
     else
     {
         struct GMAModel *lowPolyModel = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].lodModelIDs[0]].model;
         struct GMAModel *highPolyModel = charaGMAs[index]->modelEntries[apeGfxFileInfo[index].lodModelIDs[1]].model;
 
-        u_init_ape_materials(chara, lod, lowPolyModel, highPolyModel);
+        find_shirt_materials_in_gma(chara, lod, lowPolyModel, highPolyModel);
     }
 }
 
@@ -1061,9 +1073,9 @@ void ape_destroy(struct Ape *ape)
         OSFreeToHeap(subHeap, ape->unk0);
         OSFreeToHeap(subHeap, ape->unk4);
     }
-    OSFreeToHeap(subHeap, ape->unk98);
+    OSFreeToHeap(subHeap, ape->u_bodyParts);
     apeStructPtrs[--nextApeIndex] = ape;
-    u_free_character_graphics(ape->charaId, (ape->u_lodGma >= 2));
+    u_free_character_graphics(ape->charaId, (ape->lod >= 2));
 }
 
 static u8 lbl_802F12D8[8] = {0, 0, 2, 4, 6, 0, 0, 0};
@@ -1082,7 +1094,7 @@ static void u_make_ape_inline(struct Ape *ape)
         for (j = 0; j < 4; j++)
         {
             u_find_ape_face_part(&apeGfxFileInfo[index], j, r19);
-            ape->unk98[i].unk14[j] = r19->unk30[j];
+            ape->u_bodyParts[i].unk14[j] = r19->unk30[j];
         }
     }
 }
@@ -1150,14 +1162,14 @@ static struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
     r24 = u_create_joints_probably(skel);
     r31 = u_create_joints_probably(skel);
 
-    ape->unk94 = 5;
-    ape->unk98 = OSAllocFromHeap(subHeap, ape->unk94 * sizeof(*ape->unk98));
-    if (ape->unk98 == NULL)
+    ape->u_bodyPartCount = 5;
+    ape->u_bodyParts = OSAllocFromHeap(subHeap, ape->u_bodyPartCount * sizeof(*ape->u_bodyParts));
+    if (ape->u_bodyParts == NULL)
         OSPanic("mot_ape.c", 1494, "cannot OSAlloc\n");
 
-    for (i = 0; i < ape->unk94; i++)
+    for (i = 0; i < ape->u_bodyPartCount; i++)
     {
-        struct BodyPartThing *var = &ape->unk98[i];
+        struct BodyPartThing *var = &ape->u_bodyParts[i];
 
         var->type = 0x7FFFFFFF;
         var->unk4 = -1.0f;
@@ -1191,7 +1203,7 @@ static struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
     ape->modelScale = 1.0f;
     { static const Quaternion q = {0, 0, 0, 1}; Quaternion q_; ape->unk60 = q_ = q; } //0x70
     ape->colorId = 0;
-    ape->u_lodGma = lbl_802F207C;
+    ape->lod = lbl_802F207C;
 
     {u8 stackpad[0x10];}
 
@@ -1208,19 +1220,6 @@ static struct Ape *u_make_ape_sub(char *skelName, char *modelName /*unused*/)
     return ape;
 }
 
-struct MotInfo2_child
-{
-    u8 filler0[0x180];
-    struct Ape_child unk180;
-};
-
-struct MotInfo2
-{
-    u8 filler0[0x38];
-    struct MotInfo2_child *unk38;
-    u8 filler3C[0xB4-0x3C];
-};
-
 float force_lbl_802F56D4() { return 60.0f; }
 const double lbl_802F56D8 = 0.0000000099999999392252903;
 
@@ -1231,14 +1230,14 @@ struct Ape *u_make_ape(enum Character charaId)
 
     ape = u_make_ape_sub(motInfo[charaId].skelName, motInfo[charaId].modelName);
     ape->charaId = charaId & 3;
-    ape->unk20 = &((struct MotInfo2 *)&motInfo[charaId])->unk38->unk180;
+    ape->unk20 = &((struct MotInfo *)&motInfo[charaId])->unk30[2]->unk180;
     ape->unk28 = 1;
 
     u_make_ape_inline(ape);
 
     ape->unkB0 = 0;
     u_load_character_graphics(charaId, lbl_802F207C >> 1);
-    func_80089CF4(ape, ((struct MotInfo2 *)&motInfo[charaId])->unk38->unk180.unk10);
+    u_start_new_anim_maybe(ape, ((struct MotInfo *)&motInfo[charaId])->unk30[2]->unk180.animId);
     mot_joint_800355FC(ape->unk0);
 
     r5 = &ape->unk0->joints[0];
@@ -1259,9 +1258,9 @@ void func_8008B9DC(struct Ape *ape, int b)
     if (ape->unk18 <= 0)
     {
         if (ape->unk1C->unkC & (1 << 1))
-            ape->unk0->unk34 = b;
+            ape->unk0->u_nextAnimId = b;
         else
-            func_80089CF4(ape, b);
+            u_start_new_anim_maybe(ape, b);
     }
 }
 #pragma force_active reset
@@ -1271,15 +1270,15 @@ void mot_ape_set_some_var_1(int a)
     lbl_802F206C = a;
 }
 
-void mot_ape_8008BA2C(struct Ape *ape, int b, int c)
+void u_start_indexed_anim(struct Ape *ape, int b, int index)
 {
-    struct Ape_child *r6 = ((struct Ape_child *)(((struct MotInfo *)&motInfo[ape->charaId])->unk30[b]));
+    struct SomeMotInfoStruct *r6 = ((struct SomeMotInfoStruct *)(((struct MotInfo *)&motInfo[ape->charaId])->unk30[b]));
 
-    ape->unk20 = &r6[c];
+    ape->unk20 = &r6[index];
     ape->unk28 = b;
-    ape->unkB0 = c;
+    ape->unkB0 = index;
     ape->unk18 = 0;
-    func_80089CF4(ape, r6[c].unk10);
+    u_start_new_anim_maybe(ape, r6[index].animId);
     mot_joint_800355FC(ape->unk0);
     ape->animTimerMax = 0.0f;
 }
@@ -1308,11 +1307,11 @@ void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
 {
     struct MotInfo *r30;
     struct ApeAnimationThing *r7;
-    struct Ape_child *r8;
+    struct SomeMotInfoStruct *r8;
     int r9;
     u32 r10;
     int i;
-    struct Ape_child *r5;
+    struct SomeMotInfoStruct *r5;
 
     r10 = 0xFFFFFFFF;
     r9 = 0;
@@ -1352,9 +1351,9 @@ void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
                     break;
             }
             r5 = &r8[r9];
-            if (r8[r9].unk4 == 1 && r7->unk32 != r8[r9].unk10)
+            if (r8[r9].unk4 == 1 && r7->u_animId != r8[r9].animId)
             {
-                if (r7->unk32 != r8[r9 + 1].unk10 || r7->u_poseNum < r7->unk3A - r5->unk14)
+                if (r7->u_animId != r8[r9 + 1].animId || r7->u_currKeyframe < r7->u_keyframeCount - r5->unk14)
                     r9++;
             }
         }
@@ -1403,41 +1402,45 @@ void new_ape_stat_motion(struct Ape *ape, int b, int c, int d, float speed)
             ape->unkB0 = r10;
         else
             ape->unkB0 = r9;
-        func_8008B9DC(ape, r8->unk10);
+        func_8008B9DC(ape, r8->animId);
     }
 }
 
-void mot_ape_set_some_var_2(int a)
+void mot_ape_set_default_lod(int a)
 {
     lbl_802F207C = a;
 }
 
-void u_switch_ape_character_lod_maybe(struct Ape *ape, int b)
+// Changes which level of detail model to use (0-3) with 0 being
+// the most detailed and 3 being the least detailed
+void set_ape_model_lod(struct Ape *ape, int lod)
 {
-    int unk;
+    int prevLod;
 
-    if (b >= 4 || b < 0)
+    if (lod >= 4 || lod < 0)
         return;
-    unk = ape->u_lodGma;
-    if (unk >= 2 && b <= 1)
+    prevLod = ape->lod;
+    if (prevLod >= 2 && lod <= 1)
     {
         lbl_802F2090 = 0;
+        // Free the low poly GMA and load the high poly one
         u_free_character_graphics(ape->charaId, 1);
         u_load_character_graphics(ape->charaId, 0);
     }
-    else if (b >= 2 && unk <= 1)
+    else if (lod >= 2 && prevLod <= 1)
     {
         lbl_802F2090 = 0;
+        // Free the high poly GMA and load the low poly one
         u_free_character_graphics(ape->charaId, 0);
         u_load_character_graphics(ape->charaId, 1);
     }
-    ape->u_lodGma = b;
+    ape->lod = lod;
 }
 
 void mot_ape_8008BFB4(struct Ape *ape, int b, int *c, float *d)
 {
-    *c = ape->unk98[b].type;
-    *d = ape->unk98[b].unk4;
+    *c = ape->u_bodyParts[b].type;
+    *d = ape->u_bodyParts[b].unk4;
 }
 
 #pragma force_active on
@@ -1452,7 +1455,7 @@ void mot_ape_8008BFDC(struct Ape *ape, u16 b, u16 c)
 
     if ((debugFlags & 0xA) || (ape->flags & (1 << 3)))
         return;
-    r31 = &r30[5];
+    r31 = &r30[5];  // head?
     mathutil_mtxA_from_mtx(r30[1].transformMtx);
     mathutil_mtxA_invert();
     mathutil_mtxA_mult_right(r31->transformMtx);
@@ -1464,14 +1467,14 @@ void mot_ape_8008BFDC(struct Ape *ape, u16 b, u16 c)
     mathutil_mtxA_to_mtx(r31->transformMtx);
 }
 
-// something related to animation of the head
+// Makes the ape's head turn and look at something (such as the goal)
 void ape_face_dir(struct Ape *ape, Vec *b)
 {
-    struct AnimJoint *r27 = ape->unk0->joints;
+    struct AnimJoint *joint = ape->unk0->joints;
     Vec sp2C;
     int r3;
     int r27_;
-    struct AnimJoint *r30;
+    struct AnimJoint *r30;  // head joint?
     float f1;
     Vec sp20;
     Quaternion sp10;
@@ -1481,11 +1484,11 @@ void ape_face_dir(struct Ape *ape, Vec *b)
     if (!(ape->unk1C->unkC & 1) && (ape->flags & (1 << 6)))
         return;
 
-    r27++;
+    joint++;
     mathutil_mtxA_from_quat(&ape->unk60);
     mathutil_mtxA_to_mtx(workMatrix);
-    mathutil_mtxA_mult_right(r27->transformMtx);
-    if (ape->charaId == 2 && (ape->flags & (1 << 22)))
+    mathutil_mtxA_mult_right(joint->transformMtx);
+    if (ape->charaId == CHARACTER_BABY && (ape->flags & (1 << 22)))
         mathutil_mtxA_rotate_z(-5461);
     else
         mathutil_mtxA_rotate_z(-16384);
@@ -1495,7 +1498,7 @@ void ape_face_dir(struct Ape *ape, Vec *b)
     mathutil_mtxA_rigid_inv_tf_vec(&sp2C, &sp2C);
     mathutil_vec_normalize_len(&sp2C);
     r27_ = (ape->unk1C->unkC & 1) == 0;
-    r30 = r27 + 4;
+    r30 = joint + 4;
     r3 = sp2C.x < -0.8f;
     if (!r27_)
         ape->flags &= ~(1 << 6);
@@ -1585,9 +1588,9 @@ void ape_skel_anim_main(struct Ape *ape)
 
     ape->unk18--;
     ape->flags &= ~(1 << 16);
-    func_80085DB0(ape);
+    u_something_with_eyes_blinking(ape);
     r31->u_timeInKeyframe += r31->u_someDeltaTime * u_globalAnimSpeedScale;
-    mot_ape_8008A7F0(ape, r31);
+    u_advance_ape_anim(ape, r31);
     if (ape->animTimerMax > 9.9999999392252903e-09f)
     {
         r29 = ape->unk4;
@@ -1597,16 +1600,16 @@ void ape_skel_anim_main(struct Ape *ape)
             r29->u_timeInKeyframe += r29->u_someDeltaTime;
             if (r29->u_timeInKeyframe >= 1.0f)
             {
-                r29->u_poseNum++;
+                r29->u_currKeyframe++;
                 r29->u_timeInKeyframe -= 1.0f;
             }
-            if (r29->u_poseNum >= r29->unk3A)
+            if (r29->u_currKeyframe >= r29->u_keyframeCount)
             {
                 if (ape->unk1C->unkC & (1 << 4))
-                    r29->u_poseNum = ape->unk1C->unk8;
+                    r29->u_currKeyframe = ape->unk1C->unk8;
                 else
-                    r29->u_poseNum = 1;
-                mot_joint_800355B8(r29);
+                    r29->u_currKeyframe = 1;
+                u_mot_joint_start_anim(r29);
             }
             mot_joint_800355FC(r29);
             u_iter_joints_8008A2C4(r31->joints);
@@ -1619,7 +1622,7 @@ void ape_skel_anim_main(struct Ape *ape)
         if (ape->animTimerCurr > ape->animTimerMax)
         {
             ape->animTimerMax = 0.0f;
-            r31->u_someDeltaTime = ape->unk1C->unk18;
+            r31->u_someDeltaTime = ape->unk1C->u_maybeSpeed;
         }
     }
     u_animate_ape_hands(r31);
@@ -1628,9 +1631,10 @@ void ape_skel_anim_main(struct Ape *ape)
 static void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
 {
     int i;
-    u32 gmaIndex = (ape->u_lodGma >> 1) + (ape->charaId * 2);
+    // LODs 0 and 1 are in one GMA, while LODS 2 and 3 are in the other
+    u32 gmaIndex = (ape->lod >> 1) + (ape->charaId * 2);
     struct ApeGfxFileInfo *gfxInfo = &apeGfxFileInfo[gmaIndex];
-    struct ApeBodyPart *r29 = gfxInfo->facePartInfo[ape->u_lodGma & 1];
+    struct BodyPartDesc *r29 = gfxInfo->bodyPartInfo[ape->lod & 1];
     struct GMAModel *model;
     struct BodyPartThing *sp18[10];
     struct BodyPartThing *r6;
@@ -1638,19 +1642,19 @@ static void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
     u8 dummy[8];
 
     ptr = sp18;
-    for (i = 0; i < gfxInfo->partCounts[ape->u_lodGma & 1]; ptr++, i++)
+    for (i = 0; i < gfxInfo->partCounts[ape->lod & 1]; ptr++, i++)
         *ptr = NULL;
 
-    r6 = ape->unk98;
-    for (i = 0; i < ape->unk94; r6++, i++)
+    r6 = ape->u_bodyParts;
+    for (i = 0; i < ape->u_bodyPartCount; r6++, i++)
     {
-        if (r6->unk14[ape->u_lodGma] != -1)
-           sp18[r6->unk14[ape->u_lodGma]] = r6;
+        if (r6->unk14[ape->lod] != -1)
+           sp18[r6->unk14[ape->lod]] = r6;
     }
 
     // Draw head and hands?
     ptr = sp18;
-    for (i = 0; i < gfxInfo->partCounts[ape->u_lodGma & 1]; r29++, ptr++, i++)
+    for (i = 0; i < gfxInfo->partCounts[ape->lod & 1]; r29++, ptr++, i++)
     {
         struct AnimJoint *joint = &joints[r29->jointIdx];
         struct GMAModel *model = charaGMAs[gmaIndex]->modelEntries[r29->modelId].model;
@@ -1693,8 +1697,8 @@ static void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
             u_animTransformMatrices[i] = &joint->transformMtx;
     }
 
-    model = charaGMAs[gmaIndex]->modelEntries[gfxInfo->lodModelIDs[ape->u_lodGma & 1]].model;
-    u_init_ape_materials_maybe_with_colors(ape, model);
+    model = charaGMAs[gmaIndex]->modelEntries[gfxInfo->lodModelIDs[ape->lod & 1]].model;
+    recolor_ape_shirt(ape, model);
     avdisp_draw_model_unculled_sort_none(model);  // Draw body, limbs, and hair
 }
 
@@ -1710,10 +1714,10 @@ static void ape_draw_callback(struct ApeDrawNode *);
 
 void mot_ape_thread(struct Ape *ape, int status)
 {
-    int r3 = (status == THREAD_STATUS_KILLED || (ape->flags & (1 << 5)));
+    BOOL dontDraw = (status == THREAD_STATUS_KILLED || (ape->flags & APE_FLAG_INVISIBLE));
     u8 dummy[16];
 
-    if (r3)
+    if (dontDraw)
         return;
     if (ape->unkC1 & (1 << currentCamera->unk204))
         return;
@@ -1749,8 +1753,8 @@ static void ape_draw_callback(struct ApeDrawNode *node)
 
 static void mot_ape_8008CAAC(struct Ape *ape, float opacity)
 {
-    int r30 = ape->charaId;
-    struct AnimJoint *r29 = ape->unk0->joints;
+    int charaId = ape->charaId;
+    struct AnimJoint *joints = ape->unk0->joints;
     u8 dummy[8];
     Vec sp10;
 
@@ -1772,8 +1776,8 @@ static void mot_ape_8008CAAC(struct Ape *ape, float opacity)
     sp10.z = ape->unk0->joints[0].transformMtx[2][3];
     if (test_scaled_sphere_in_frustum(&sp10, ape->modelScale * 0.5f, ape->modelScale) != 0)
     {
-        apeDummyFuncs[r30](ape);
-        u_draw_ape_transformed(ape, r29);
+        apeDummyFuncs[charaId](ape);
+        u_draw_ape_transformed(ape, joints);
     }
     fade_color_base_default();
 }
@@ -1785,7 +1789,8 @@ u16 lbl_801C7D98[] = { 7, 1, 3, 2 };
 u16 lbl_801C7DA0[] = { 10, 1, 3, 2 };
 u16 lbl_801C7DA8[] = { 4, 9, 11, 10 };
 
-static u16 *lbl_801C7DB0[] =
+// indexes of the texture for each shirt color in the character GMAs?
+static u16 *shirtTexIndexes[] =
 {
     lbl_801C7D80,
     lbl_801C7D88,
@@ -1797,14 +1802,15 @@ static u16 *lbl_801C7DB0[] =
     lbl_801C7D98,
 };
 
-static struct GMATevLayer *find_material(struct GMAModel *model, u32 id)
+// Finds the material with the specified texture index
+static struct GMATevLayer *find_material(struct GMAModel *model, u32 texIndex)
 {
     struct GMATevLayer *materials = model->tevLayers;
     int i;
 
     for (i = 0; i < model->tevLayerCount; i++)
     {
-        if (id == materials[i].texIndex)
+        if (texIndex == materials[i].texIndex)
         {
             materials[i].texObj = &model->texObjs[i];
             materials[i].flags &= ~(1 << 16);
@@ -1816,7 +1822,7 @@ static struct GMATevLayer *find_material(struct GMAModel *model, u32 id)
 
 FORCE_BSS_ORDER(unused802B4B20)
 
-static void u_init_ape_materials(enum Character charaId, int lod, struct GMAModel *lowPolyModel, struct GMAModel *highPolyModel)
+static void find_shirt_materials_in_gma(enum Character charaId, int lod, struct GMAModel *lowPolyModel, struct GMAModel *highPolyModel)
 {
     int i;
     struct GMAModel *models[2];
@@ -1827,29 +1833,30 @@ static void u_init_ape_materials(enum Character charaId, int lod, struct GMAMode
     models[1] = highPolyModel;
     for (i = 0; i < 2; i++)
     {
-        struct GMATevLayer *mtrl = find_material(models[i], lbl_801C7DB0[var + lod][0]);
+        struct GMATevLayer *mtrl = find_material(models[i], shirtTexIndexes[var + lod][0]);
 
         u_apeTextures[var + i] = mtrl->texObj;
-        u_apeMaterials[var + i] = mtrl;
+        apeShirtMaterials[var + i] = mtrl;
     }
 }
 
-static void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAModel *unused)
+// Re-colors the shirt by assigning a different texture object to the shirt material
+static void recolor_ape_shirt(struct Ape *ape, struct GMAModel *unused)
 {
-    u32 index = (ape->charaId * 2) + (ape->u_lodGma & 1);
+    u32 index = (ape->charaId * 2) + (ape->lod & 1);
 
-    if (u_apeMaterials[index] != NULL)
+    if (apeShirtMaterials[index] != NULL)
     {
-        struct GMATevLayer *mtrl = u_apeMaterials[index];
-        u16 *r7 = lbl_801C7DB0[(ape->charaId * 2) + (ape->u_lodGma >> 1)];
+        struct GMATevLayer *mtrl = apeShirtMaterials[index];
+        u16 *indexes = shirtTexIndexes[(ape->charaId * 2) + (ape->lod >> 1)];
 
-        if (ape->colorId != 0)
-            mtrl->texObj = &lbl_802B47E0[ape->charaId][r7[ape->colorId]];
+        if (ape->colorId != 0)  // non-default shirt color
+            mtrl->texObj = &shirtTexObjs[ape->charaId][indexes[ape->colorId]];
         else
             mtrl->texObj = u_apeTextures[index];
         mtrl->flags |= (1 << 16);
     }
-    else
+    else  // for MeeMee?
     {
         GXColor colors[] =
         {
@@ -1859,7 +1866,7 @@ static void u_init_ape_materials_maybe_with_colors(struct Ape *ape, struct GMAMo
             {0x4C, 0xB2, 0x4C, 0xFF},  // green
         };
 
-        lbl_802B47F0[ape->u_lodGma]->materialColor = colors[ape->colorId];
-        lbl_802B47F0[ape->u_lodGma]->ambientColor = colors[ape->colorId];
+        lbl_802B47F0[ape->lod]->materialColor = colors[ape->colorId];
+        lbl_802B47F0[ape->lod]->ambientColor = colors[ape->colorId];
     }
 }

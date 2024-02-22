@@ -500,7 +500,7 @@ void submode_game_goal_replay_init_func(void)
     animate_anim_groups(recplay_get_stage_timer(g_recplayInfo.u_timeOffset, g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId]));
     r31 = recplay_get_info_timer(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], g_recplayInfo.u_timeOffset);
     release_captured_item(r31);
-    stobj_goal_8006F5F0(r31);
+    relink_goaltape(r31);
     hud_show_replay_text(modeCtrl.submodeTimer);
     if (!(infoWork.flags & INFO_FLAG_BONUS_STAGE) && modeCtrl.gameType != GAMETYPE_MAIN_COMPETITION)
         u_give_points(2, 0);

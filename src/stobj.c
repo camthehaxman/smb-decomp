@@ -750,43 +750,52 @@ static void stobj_bumper_draw(struct Stobj *stobj)
     }
 }
 
-static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *arg1)
+static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *physBall)
 {
-    Vec sp30;
-    Vec sp24;
+    Vec bumperPos;
+    Vec dist;
     float temp_f1;
-    float temp_f2;
+    float dotRefl;
     struct Ball *ball;
     BOOL rumble;
 
     ball = currentBall;
     stobj->state = 1;
-    sp30 = stobj->position;
-    func_8006AAEC(&arg1->prevPos, &arg1->pos, &stobj->position_2, &sp30, arg1->radius, stobj->model->boundSphereRadius);
-    sp24 = arg1->pos;
-    sp24.x -= stobj->position.x;
-    sp24.y -= stobj->position.y;
-    sp24.z -= stobj->position.z;
-    mathutil_vec_normalize_len(&sp24);
-    temp_f2 = -1.5 * (sp24.x * arg1->vel.x + sp24.y * arg1->vel.y + sp24.z * arg1->vel.z);
-    if (temp_f2 > 0.0)
+    bumperPos = stobj->position;
+    func_8006AAEC(&physBall->prevPos, &physBall->pos, &stobj->position_2, &bumperPos, physBall->radius, stobj->model->boundSphereRadius);
+
+    // Get normalized direction from bumper to ball
+    dist = physBall->pos;
+    dist.x -= stobj->position.x;
+    dist.y -= stobj->position.y;
+    dist.z -= stobj->position.z;
+    mathutil_vec_normalize_len(&dist);
+
+    // Reflect the ball's velocity off the bumper
+    dotRefl = -1.5 * (dist.x * physBall->vel.x + dist.y * physBall->vel.y + dist.z * physBall->vel.z);
+    if (dotRefl > 0.0)
     {
-        arg1->vel.x += temp_f2 * sp24.x;
-        arg1->vel.y += temp_f2 * sp24.y;
-        arg1->vel.z += temp_f2 * sp24.z;
+        physBall->vel.x += dotRefl * dist.x;
+        physBall->vel.y += dotRefl * dist.y;
+        physBall->vel.z += dotRefl * dist.z;
     }
-    arg1->vel.x += 0.05 * sp24.x;
-    arg1->vel.y += 0.05 * sp24.y;
-    arg1->vel.z += 0.05 * sp24.z;
-    temp_f1 = stobj->boundSphereRadius + arg1->radius + 0.01;
-    sp24.x *= temp_f1;
-    sp24.y *= temp_f1;
-    sp24.z *= temp_f1;
-    arg1->pos.x = stobj->position.x + sp24.x;
-    arg1->pos.y = stobj->position.y + sp24.y;
-    arg1->pos.z = stobj->position.z + sp24.z;
+
+    // add some additional force?
+    physBall->vel.x += 0.05 * dist.x;
+    physBall->vel.y += 0.05 * dist.y;
+    physBall->vel.z += 0.05 * dist.z;
+
+    // Adjust ball to be outside of the bumper
+    temp_f1 = stobj->boundSphereRadius + physBall->radius + 0.01;
+    dist.x *= temp_f1;
+    dist.y *= temp_f1;
+    dist.z *= temp_f1;
+    physBall->pos.x = stobj->position.x + dist.x;
+    physBall->pos.y = stobj->position.y + dist.y;
+    physBall->pos.z = stobj->position.z + dist.z;
+
     u_play_sound_0(0x5011);
-    ball->flags |= 0x20;
+    ball->flags |= BALL_FLAG_05;
 
     {
         s16 sp14[] =
@@ -962,25 +971,25 @@ static void stobj_jamabar_main(struct Stobj *stobj)
     mathutil_mtxA_rotate_x(stobj->rotX);
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(animGroups[stobj->animGroupId].transform);
-    mathutil_mtxA_rigid_inv_tf_vec(&lbl_80206CF0, &spC);
+    mathutil_mtxA_rigid_inv_tf_vec(&g_gravityDir, &spC);
     mathutil_mtxA_pop();
     spC.z *= 0.016;
-    stobj->u_local_vel.z += spC.z;
-    stobj->u_local_vel.z *= 0.97;
-    stobj->u_local_pos.z += stobj->u_local_vel.z;
-    if (stobj->u_local_pos.z < -2.5)
+    stobj->offsetVel.z += spC.z;
+    stobj->offsetVel.z *= 0.97;
+    stobj->offsetPos.z += stobj->offsetVel.z;
+    if (stobj->offsetPos.z < -2.5)
     {
-        stobj->u_local_pos.z = -2.5f;
-        if (stobj->u_local_vel.z < 0.0)
-            stobj->u_local_vel.z = -stobj->u_local_vel.z;
+        stobj->offsetPos.z = -2.5f;
+        if (stobj->offsetVel.z < 0.0)
+            stobj->offsetVel.z = -stobj->offsetVel.z;
     }
-    else if (stobj->u_local_pos.z > 0.0)
+    else if (stobj->offsetPos.z > 0.0)
     {
-        stobj->u_local_pos.z = 0.0f;
-        if (stobj->u_local_vel.z > 0.0)
-            stobj->u_local_vel.z = -stobj->u_local_vel.z;
+        stobj->offsetPos.z = 0.0f;
+        if (stobj->offsetVel.z > 0.0)
+            stobj->offsetVel.z = -stobj->offsetVel.z;
     }
-    mathutil_mtxA_tf_point(&stobj->u_local_pos, &stobj->u_some_pos);
+    mathutil_mtxA_tf_point(&stobj->offsetPos, &stobj->u_some_pos);
     stobj->unk64.x = stobj->u_some_pos.x - stobj->unk7C.x;
     stobj->unk64.y = stobj->u_some_pos.y - stobj->unk7C.y;
     stobj->unk64.z = stobj->u_some_pos.z - stobj->unk7C.z;
@@ -1013,13 +1022,13 @@ static void stobj_jamabar_destroy(struct Stobj *stobj) {}
 static void stobj_jamabar_debug(struct Stobj *stobj)
 {
     window_printf(2, lbl_801BE25C);
-    window_printf(2, "OFS: X,%7.3f\n", stobj->u_local_pos.x);
-    window_printf(2, string______Y__7_3f_n_2, stobj->u_local_pos.y);
-    window_printf(2, string______Z__7_3f_n_2, stobj->u_local_pos.z);
+    window_printf(2, "OFS: X,%7.3f\n", stobj->offsetPos.x);
+    window_printf(2, string______Y__7_3f_n_2, stobj->offsetPos.y);
+    window_printf(2, string______Z__7_3f_n_2, stobj->offsetPos.z);
     u_set_window_text(2, lbl_802F0B40);
-    window_printf(2, "OFS SPD: X,%7.3f\n", stobj->u_local_vel.x);
-    window_printf(2, "         Y,%7.3f\n", stobj->u_local_vel.y);
-    window_printf(2, "         Z,%7.3f\n", stobj->u_local_vel.z);
+    window_printf(2, "OFS SPD: X,%7.3f\n", stobj->offsetVel.x);
+    window_printf(2, "         Y,%7.3f\n", stobj->offsetVel.y);
+    window_printf(2, "         Z,%7.3f\n", stobj->offsetVel.z);
     u_set_window_text(2, lbl_802F0B40);
 }
 

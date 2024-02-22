@@ -1860,8 +1860,8 @@ lbl_00001AAC:
 /* 00001AB8 4BFFE6A5 */ bl u_change_sound_mode
 /* 00001ABC 480000A8 */ b lbl_00001B64
 lbl_00001AC0:
-/* 00001AC0 3C600000 */ lis r3, lbl_802F1DF5@ha
-/* 00001AC4 38630000 */ addi r3, r3, lbl_802F1DF5@l
+/* 00001AC0 3C600000 */ lis r3, g_soundSEVol@ha
+/* 00001AC4 38630000 */ addi r3, r3, g_soundSEVol@l
 /* 00001AC8 88630000 */ lbz r3, 0(r3)
 /* 00001ACC 548006B5 */ rlwinm. r0, r4, 0, 0x1a, 0x1a
 /* 00001AD0 38A30000 */ addi r5, r3, 0
@@ -1882,12 +1882,12 @@ lbl_00001AF4:
 lbl_00001B00:
 /* 00001B00 7C051800 */ cmpw r5, r3
 /* 00001B04 41820060 */ beq lbl_00001B64
-/* 00001B08 3C600000 */ lis r3, lbl_802F1DF5@ha
-/* 00001B0C 98A30000 */ stb r5, lbl_802F1DF5@l(r3)
+/* 00001B08 3C600000 */ lis r3, g_soundSEVol@ha
+/* 00001B0C 98A30000 */ stb r5, g_soundSEVol@l(r3)
 /* 00001B10 48000054 */ b lbl_00001B64
 lbl_00001B14:
-/* 00001B14 3C600000 */ lis r3, u_volumeRelated1@ha
-/* 00001B18 38630000 */ addi r3, r3, u_volumeRelated1@l
+/* 00001B14 3C600000 */ lis r3, g_soundBGMVol@ha
+/* 00001B18 38630000 */ addi r3, r3, g_soundBGMVol@l
 /* 00001B1C 88630000 */ lbz r3, 0(r3)
 /* 00001B20 548006B5 */ rlwinm. r0, r4, 0, 0x1a, 0x1a
 /* 00001B24 38A30000 */ addi r5, r3, 0
@@ -1908,8 +1908,8 @@ lbl_00001B48:
 lbl_00001B54:
 /* 00001B54 7C051800 */ cmpw r5, r3
 /* 00001B58 4182000C */ beq lbl_00001B64
-/* 00001B5C 3C600000 */ lis r3, u_volumeRelated1@ha
-/* 00001B60 98A30000 */ stb r5, u_volumeRelated1@l(r3)
+/* 00001B5C 3C600000 */ lis r3, g_soundBGMVol@ha
+/* 00001B60 98A30000 */ stb r5, g_soundBGMVol@l(r3)
 lbl_00001B64:
 /* 00001B64 BB61005C */ lmw r27, 0x5c(r1)
 /* 00001B68 80010074 */ lwz r0, 0x74(r1)
@@ -2138,14 +2138,14 @@ lbl_00001EA0:
 /* 00001EB0 8083072C */ lwz r4, 0x72c(r3)
 /* 00001EB4 387F08B4 */ addi r3, r31, 0x8b4
 /* 00001EB8 4BFFE2A5 */ bl window_printf_2
-/* 00001EBC 3C600000 */ lis r3, lbl_802F1DF5@ha
+/* 00001EBC 3C600000 */ lis r3, g_soundSEVol@ha
 /* 00001EC0 4CC63182 */ crclr 6
-/* 00001EC4 88830000 */ lbz r4, lbl_802F1DF5@l(r3)
+/* 00001EC4 88830000 */ lbz r4, g_soundSEVol@l(r3)
 /* 00001EC8 387F08C0 */ addi r3, r31, 0x8c0
 /* 00001ECC 4BFFE291 */ bl window_printf_2
-/* 00001ED0 3C600000 */ lis r3, u_volumeRelated1@ha
+/* 00001ED0 3C600000 */ lis r3, g_soundBGMVol@ha
 /* 00001ED4 4CC63182 */ crclr 6
-/* 00001ED8 88830000 */ lbz r4, u_volumeRelated1@l(r3)
+/* 00001ED8 88830000 */ lbz r4, g_soundBGMVol@l(r3)
 /* 00001EDC 387F08D0 */ addi r3, r31, 0x8d0
 /* 00001EE0 4BFFE27D */ bl window_printf_2
 /* 00001EE4 809E003C */ lwz r4, 0x3c(r30)
@@ -5298,7 +5298,7 @@ lbl_00004C4C:
 /* 00004C4C 809E0090 */ lwz r4, 0x90(r30)
 /* 00004C50 387E0000 */ addi r3, r30, 0
 /* 00004C54 3884FFFF */ addi r4, r4, -1  ;# fixed addi
-/* 00004C58 4BFFB505 */ bl u_switch_ape_character_lod_maybe
+/* 00004C58 4BFFB505 */ bl set_ape_model_lod
 /* 00004C5C 4800037C */ b lbl_00004FD8
 lbl_00004C60:
 /* 00004C60 548007BD */ rlwinm. r0, r4, 0, 0x1e, 0x1e
@@ -5317,7 +5317,7 @@ lbl_00004C80:
 /* 00004C90 38800000 */ li r4, 0
 lbl_00004C94:
 /* 00004C94 7FC3F378 */ mr r3, r30
-/* 00004C98 4BFFB4C5 */ bl u_switch_ape_character_lod_maybe
+/* 00004C98 4BFFB4C5 */ bl set_ape_model_lod
 /* 00004C9C 4800033C */ b lbl_00004FD8
 lbl_00004CA0:
 /* 00004CA0 A0750000 */ lhz r3, 0(r21)

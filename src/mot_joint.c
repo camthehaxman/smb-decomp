@@ -22,13 +22,13 @@ static void read_channel_keyframe_values(struct MotionChannel *, float *, float 
 static void seek_channel_next_keyframe(struct MotionChannel *);
 static void seek_channel_prev_keyframe(struct MotionChannel *);
 
-void u_interpolate_joint_motion(struct AnimJoint *joints, const struct JointRotationSomething *rotInfo, const struct JointPositionSomething *posInfo, float t, u32 d)
+void u_interpolate_joint_motion(struct AnimJoint *joints, const struct JointRotationSomething *rotInfo, const struct JointPositionSomething *posInfo, float t, u32 xflip)
 {
     u32 flags;
     struct AnimJoint *joint = joints;
 
     if (rotInfo == NULL || posInfo == NULL)
-        d = 0;
+        xflip = 0;
 
     flags = joint->flags;
     while (flags != 0)
@@ -37,18 +37,18 @@ void u_interpolate_joint_motion(struct AnimJoint *joints, const struct JointRota
         joint->flags = flags;
         if (flags & (1 << 2))
         {
-            if (d != 0)
-                u_interp_pos_motion(joint, &joints[posInfo->jointIdx], d, t);
+            if (xflip)
+                u_interp_pos_motion(joint, &joints[posInfo->jointIdx], xflip, t);
             else
-                u_interp_pos_motion(joint, joint, d, t);
+                u_interp_pos_motion(joint, joint, xflip, t);
             posInfo++;
         }
         if (flags & JOINT_FLAG_HAS_ROTATION_MTX)
         {
-            if (d != 0)
-                u_interp_rot_motion(joint, &joints[rotInfo->jointIdx], rotInfo, d, t);
+            if (xflip)
+                u_interp_rot_motion(joint, &joints[rotInfo->jointIdx], rotInfo, xflip, t);
             else
-                u_interp_rot_motion(joint, joint, rotInfo, d, t);
+                u_interp_rot_motion(joint, joint, rotInfo, xflip, t);
             rotInfo++;
         }
         joint++;
@@ -56,34 +56,40 @@ void u_interpolate_joint_motion(struct AnimJoint *joints, const struct JointRota
     }
 }
 
-static void u_interp_pos_motion(struct AnimJoint *joint1, struct AnimJoint *b, u32 c, float t)
+// updates joint2's position using joint1's channels
+static void u_interp_pos_motion(struct AnimJoint *joint1, struct AnimJoint *joint2, u32 xflip, float t)
 {
-    struct MotionChannel *chan = &joint1->channels[0];
+    struct MotionChannel *chan;
     int unused;
 
+    // x channel
+    chan = &joint1->channels[0];
     if (chan->keyframeCount != 0)
     {
-        b->unk1C0.x = interpolate_channel_keyframes(chan, t);
-        if (c != 0)
-            b->unk1C0.x = -b->unk1C0.x;
+        joint2->u_motionPos.x = interpolate_channel_keyframes(chan, t);
+        if (xflip)
+            joint2->u_motionPos.x = -joint2->u_motionPos.x;
     }
     else
-        b->unk1C0.x = 0.0f;
-    chan++;
+        joint2->u_motionPos.x = 0.0f;
 
-    if (chan->keyframeCount != 0)
-        b->unk1C0.y = interpolate_channel_keyframes(chan, t);
-    else
-        b->unk1C0.y = 0.0f;
+    // y channel
     chan++;
-
     if (chan->keyframeCount != 0)
-        b->unk1C0.z = interpolate_channel_keyframes(chan, t);
+        joint2->u_motionPos.y = interpolate_channel_keyframes(chan, t);
     else
-        b->unk1C0.z = 0.0f;
+        joint2->u_motionPos.y = 0.0f;
+
+    // z channel
+    chan++;
+    if (chan->keyframeCount != 0)
+        joint2->u_motionPos.z = interpolate_channel_keyframes(chan, t);
+    else
+        joint2->u_motionPos.z = 0.0f;
 
 }
 
+// updates joint2's rotation using joint1's channels
 static void u_interp_rot_motion(struct AnimJoint *joint1, struct AnimJoint *joint2, const struct JointRotationSomething *c, u32 d, float t)
 {
     float radToS16;
@@ -92,6 +98,7 @@ static void u_interp_rot_motion(struct AnimJoint *joint1, struct AnimJoint *join
     mathutil_mtxA_from_identity();
     radToS16 = 10430.3779296875f;
 
+    // z rotation channel
     chan = &joint1->channels[5];
     if (chan->keyframeCount != 0)
     {
@@ -101,6 +108,7 @@ static void u_interp_rot_motion(struct AnimJoint *joint1, struct AnimJoint *join
         mathutil_mtxA_rotate_z((s16)(radToS16 * val));
     }
 
+    // y rotation channel
     chan--;
     if (chan->keyframeCount != 0)
     {
@@ -110,6 +118,7 @@ static void u_interp_rot_motion(struct AnimJoint *joint1, struct AnimJoint *join
         mathutil_mtxA_rotate_y((s16)(radToS16 * val));
     }
 
+    // x rotation channel
     chan--;
     if (chan->keyframeCount != 0)
     {
@@ -119,9 +128,10 @@ static void u_interp_rot_motion(struct AnimJoint *joint1, struct AnimJoint *join
         mathutil_mtxA_rotate_x((s16)(radToS16 * val));
     }
 
-    mathutil_mtxA_sq_to_mtx(joint2->rotateMtx);
+    mathutil_mtxA_sq_to_mtx(joint2->u_motRotation);
 }
 
+// Gets the value of the channel at time t
 static float interpolate_channel_keyframes(struct MotionChannel *chan, float t)
 {
     float ret;
@@ -201,6 +211,7 @@ static float u_crazy_interpolation_stuff(struct InterpolateStuff *a, struct Inte
          + dt * (f5 * (z1 + b->val2) - z1 * f0);
 }
 
+// Reads up to 3 values from the motion channel
 static void read_channel_keyframe_values(struct MotionChannel *chan, float *val1, float *val2, float *val3)
 {
     switch (*chan->valueCounts)
@@ -241,10 +252,10 @@ static void seek_channel_prev_keyframe(struct MotionChannel *chan)
     chan->values -= *chan->valueCounts;
 }
 
-void mot_joint_800355B8(struct ApeAnimationThing *a)
+void u_mot_joint_start_anim(struct ApeAnimationThing *a)
 {
-    a->unk3A = u_get_motdat_unk0(a->unk32);
-    u_load_new_anim_into_joints(a->joints, a->unk32);
+    a->u_keyframeCount = u_get_motdat_keyframe_count(a->u_animId);
+    u_load_new_anim_into_joints(a->joints, a->u_animId);
 }
 
 void mot_joint_800355FC(struct ApeAnimationThing *a)
@@ -253,7 +264,7 @@ void mot_joint_800355FC(struct ApeAnimationThing *a)
 
     mathutil_mtxA_from_identity();
     mathutil_mtxA_to_mtx(a->unk54);
-    func_80035648(a);
+    u_update_skel_anim(a);
     joints = a->joints;
     u_joint_tree_calc_some_matrix(joints, joints);
 }

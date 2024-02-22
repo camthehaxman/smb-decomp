@@ -16,18 +16,18 @@ static s8 lbl_802F2060;
 u8 lbl_802B2E70[0x900];
 FORCE_BSS_ORDER(lbl_802B2E70)
 s32 lbl_802B3770[0x10];
-u32 lbl_802B37B0[0x10];
+u32 u_blinkRelated[0x10];
 
-static void draw_aiai_hair(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
-static void draw_eye(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
-static void draw_baby_hand(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
-static void draw_left_hand(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
-static void draw_right_hand(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
+static void draw_aiai_hair(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
+static void draw_eye(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
+static void draw_baby_hand(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
+static void draw_left_hand(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
+static void draw_right_hand(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
 static void func_80086434(int arg0, struct GMAModel *arg1);
 static struct GMAShape *func_80086538(struct GMAShape *);
-static void draw_baby_head(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2);
-static void draw_head(struct Ape *, struct ApeBodyPart *, struct BodyPartThing *);
-static void draw_ear(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *arg2);
+static void draw_baby_head(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2);
+static void draw_head(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
+static void draw_ear(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *arg2);
 
 static GXColor lbl_801C57E0[] =
 {
@@ -501,7 +501,7 @@ u32 asdf[] =
 };
 #pragma force_active reset
 
-static u32 lbl_801C6648[][16] =
+static u32 s_eyeModelIDs[][16] =
 {
     { 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0D, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07, 0x06 },
     { 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0D, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07, 0x06 },
@@ -816,7 +816,7 @@ static u32 *lbl_801C6B7C[] =
     lbl_801C6B3C,
 };
 
-static struct ApeBodyPart lbl_801C6BA4[] =
+static struct BodyPartDesc aiaiBodyPartDescLOD0[] =
 {
     {
         60,
@@ -869,7 +869,7 @@ static struct ApeBodyPart lbl_801C6BA4[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C6C9C[] =
+static struct BodyPartDesc aiaiBodyPartDescLOD1[] =
 {
     {
         60,
@@ -922,7 +922,7 @@ static struct ApeBodyPart lbl_801C6C9C[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C6D88[] =
+static struct BodyPartDesc aiaiBodyPartDescLOD2[] =
 {
     {
         19,
@@ -968,7 +968,7 @@ static struct ApeBodyPart lbl_801C6D88[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C6E48[] =
+static struct BodyPartDesc aiaiBodyPartDescLOD3[] =
 {
     {
         7,
@@ -1007,7 +1007,7 @@ static struct ApeBodyPart lbl_801C6E48[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C6EF4[] =
+static struct BodyPartDesc meemeeBodyPartDescLOD0[] =
 {
     {
         15,
@@ -1053,7 +1053,7 @@ static struct ApeBodyPart lbl_801C6EF4[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C6FC0[] =
+static struct BodyPartDesc meemeeBodyPartDescLOD1[] =
 {
     {
         15,
@@ -1099,7 +1099,7 @@ static struct ApeBodyPart lbl_801C6FC0[] =
     },
 };
 
-struct ApeBodyPart lbl_801C708C[] =
+struct BodyPartDesc meemeeBodyPartDescLOD2[] =
 {
     {
         18,
@@ -1145,7 +1145,7 @@ struct ApeBodyPart lbl_801C708C[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C714C[] =
+static struct BodyPartDesc meemeeBodyPartDescLOD3[] =
 {
     {
         7,
@@ -1184,7 +1184,7 @@ static struct ApeBodyPart lbl_801C714C[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C71F8[] =
+static struct BodyPartDesc babyBodyPartDescLOD0[] =
 {
     {
         15,
@@ -1230,7 +1230,7 @@ static struct ApeBodyPart lbl_801C71F8[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C72C4[] =
+static struct BodyPartDesc babyBodyPartDescLOD1[] =
 {
     {
         15,
@@ -1276,7 +1276,7 @@ static struct ApeBodyPart lbl_801C72C4[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C73A0[] =
+static struct BodyPartDesc babyBodyPartDescLOD2[] =
 {
     {
         19,
@@ -1329,7 +1329,7 @@ static struct ApeBodyPart lbl_801C73A0[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C7480[] =
+static struct BodyPartDesc babyBodyPartDescLOD3[] =
 {
     {
         11,
@@ -1368,7 +1368,7 @@ static struct ApeBodyPart lbl_801C7480[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C752C[] =
+static struct BodyPartDesc gongonBodyPartDescLOD0[] =
 {
     {
         5,
@@ -1414,7 +1414,7 @@ static struct ApeBodyPart lbl_801C752C[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C75F8[] =
+static struct BodyPartDesc gongonBodyPartDescLOD1[] =
 {
     {
         5,
@@ -1460,7 +1460,7 @@ static struct ApeBodyPart lbl_801C75F8[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C76C4[] =
+static struct BodyPartDesc gongonBodyPartDescLOD2[] =
 {
     {
         4,
@@ -1506,7 +1506,7 @@ static struct ApeBodyPart lbl_801C76C4[] =
     },
 };
 
-static struct ApeBodyPart lbl_801C7784[] =
+static struct BodyPartDesc gongonBodyPartDescLOD3[] =
 {
     {
         17,
@@ -1547,54 +1547,14 @@ static struct ApeBodyPart lbl_801C7784[] =
 
 struct ApeGfxFileInfo apeGfxFileInfo[] =
 {
-    {
-        "boy_h",
-        {lbl_801C6BA4,              lbl_801C6C9C,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C6BA4), ARRAY_COUNT(lbl_801C6C9C), 0,    0},
-        {1, 0},
-    },
-    {
-        "boy_l",
-        {lbl_801C6D88,              lbl_801C6E48,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C6D88), ARRAY_COUNT(lbl_801C6E48), 0,    0},
-        {0, 4},
-    },
-    {
-        "gal_h",
-        {lbl_801C6EF4,              lbl_801C6FC0,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C6EF4), ARRAY_COUNT(lbl_801C6FC0), 0,    0},
-        {3, 2},
-    },
-    {
-        "gal_l",
-        {lbl_801C708C,              lbl_801C714C,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C708C), ARRAY_COUNT(lbl_801C714C), 0,    0},
-        {0, 4},
-    },
-    {
-        "kid_h",
-        {lbl_801C71F8,              lbl_801C72C4,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C71F8), ARRAY_COUNT(lbl_801C72C4), 0,    0},
-        {9, 8},
-    },
-    {
-        "kid_l",
-        {lbl_801C73A0,              lbl_801C7480,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C73A0), ARRAY_COUNT(lbl_801C7480), 0,    0},
-        {0, 4},
-    },
-    {
-        "gor_h",
-        {lbl_801C752C,              lbl_801C75F8,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C752C), ARRAY_COUNT(lbl_801C75F8), 0,    0},
-        {4, 24},
-    },
-    {
-        "gor_l",
-        {lbl_801C76C4,              lbl_801C7784,              NULL, NULL},
-        {ARRAY_COUNT(lbl_801C76C4), ARRAY_COUNT(lbl_801C7784), 0,    0},
-        {0, 5},
-    },
+    { "boy_h", {aiaiBodyPartDescLOD0,   aiaiBodyPartDescLOD1   }, {ARRAY_COUNT(aiaiBodyPartDescLOD0),   ARRAY_COUNT(aiaiBodyPartDescLOD1)   }, {1,  0} },
+    { "boy_l", {aiaiBodyPartDescLOD2,   aiaiBodyPartDescLOD3   }, {ARRAY_COUNT(aiaiBodyPartDescLOD2),   ARRAY_COUNT(aiaiBodyPartDescLOD3)   }, {0,  4} },
+    { "gal_h", {meemeeBodyPartDescLOD0, meemeeBodyPartDescLOD1 }, {ARRAY_COUNT(meemeeBodyPartDescLOD0), ARRAY_COUNT(meemeeBodyPartDescLOD1) }, {3,  2} },
+    { "gal_l", {meemeeBodyPartDescLOD2, meemeeBodyPartDescLOD3 }, {ARRAY_COUNT(meemeeBodyPartDescLOD2), ARRAY_COUNT(meemeeBodyPartDescLOD3) }, {0,  4} },
+    { "kid_h", {babyBodyPartDescLOD0,   babyBodyPartDescLOD1   }, {ARRAY_COUNT(babyBodyPartDescLOD0),   ARRAY_COUNT(babyBodyPartDescLOD1)   }, {9,  8} },
+    { "kid_l", {babyBodyPartDescLOD2,   babyBodyPartDescLOD3   }, {ARRAY_COUNT(babyBodyPartDescLOD2),   ARRAY_COUNT(babyBodyPartDescLOD3)   }, {0,  4} },
+    { "gor_h", {gongonBodyPartDescLOD0, gongonBodyPartDescLOD1 }, {ARRAY_COUNT(gongonBodyPartDescLOD0), ARRAY_COUNT(gongonBodyPartDescLOD1) }, {4, 24} },
+    { "gor_l", {gongonBodyPartDescLOD2, gongonBodyPartDescLOD3 }, {ARRAY_COUNT(gongonBodyPartDescLOD2), ARRAY_COUNT(gongonBodyPartDescLOD3) }, {0,  5} },
 };
 
 void set_ambient_light(int arg0)
@@ -1616,13 +1576,13 @@ void set_ambient_light(int arg0)
     }
 }
 
-static void draw_aiai_hair(struct Ape *ape, struct ApeBodyPart *unused1, struct BodyPartThing *unused2)
+static void draw_aiai_hair(struct Ape *ape, struct BodyPartDesc *unused1, struct BodyPartThing *unused2)
 {
     int var_r6;
     int r0;
     struct GMAModel *model;
 
-    var_r6 = ape->u_lodGma >> 1;
+    var_r6 = ape->lod >> 1;
     r0 = var_r6 + (ape->charaId << 1);
     if (ape->flags & 0x8000)
     {
@@ -1646,53 +1606,53 @@ static void draw_aiai_hair(struct Ape *ape, struct ApeBodyPart *unused1, struct 
     avdisp_draw_model_unculled_sort_none(model);
 }
 
-void func_80085DB0(struct Ape *ape)
+void u_something_with_eyes_blinking(struct Ape *ape)
 {
-    if (!(debugFlags & 0xA) && (ape->flags & 0x80))
+    if (!(debugFlags & 0xA) && (ape->flags & APE_FLAG_BLINK))
     {
-        lbl_802B37B0[ape->unk70]++;
+        u_blinkRelated[ape->unk70]++;
         return;
     }
     if (!(advDemoInfo.flags & 0x100) && (rand() & 0xFF) > 0xFA)
-        ape->flags |= 0x80;
+        ape->flags |= APE_FLAG_BLINK;
 }
 
-static void draw_eye(struct Ape *ape, struct ApeBodyPart *unused1, struct BodyPartThing *unused2)
+static void draw_eye(struct Ape *ape, struct BodyPartDesc *unused1, struct BodyPartThing *unused2)
 {
-    s32 var_r8;
+    s32 blinkIndex;
     int var_r7;
     struct GMAModel *model;
-    int r0;
+    int gmaIndex;
 
-    r0 = (ape->u_lodGma >> 1) + (ape->charaId << 1);
+    gmaIndex = (ape->lod >> 1) + (ape->charaId << 1);
     if (!(ape->flags & 0x10000))
     {
-        if (ape->flags & 0x80)
+        if (ape->flags & APE_FLAG_BLINK)
         {
-            int temp_r4 = lbl_802B37B0[ape->unk70] % 64;
-            var_r8 = temp_r4;
+            int temp_r4 = u_blinkRelated[ape->unk70] % 64;
+            blinkIndex = temp_r4;
             if (temp_r4 > 15)
             {
-                if (var_r8 > 60)
-                    ape->flags &= 0xFFFFFF7F;
-                var_r8 = 0;
+                if (blinkIndex > 60)
+                    ape->flags &= ~APE_FLAG_BLINK;
+                blinkIndex = 0;
             }
         }
         else
         {
             if (advDemoInfo.flags & 0x100)
             {
-                if (ape->charaId == 2)
-                    var_r7 = 0xB4;
+                if (ape->charaId == CHARACTER_BABY)  // baby blinks faster in the intro
+                    var_r7 = 180;
                 else
-                    var_r7 = 0xF0;
+                    var_r7 = 240;
                 if (advDemoInfo.unk8 % var_r7 == ape->charaId * 80)
-                    ape->flags |= 0x80;
+                    ape->flags |= APE_FLAG_BLINK;
             }
-            lbl_802B37B0[ape->unk70] = 0;
-            var_r8 = 0;
+            u_blinkRelated[ape->unk70] = 0;
+            blinkIndex = 0;
         }
-        model = charaGMAs[r0]->modelEntries[lbl_801C6648[((ape->u_lodGma >> 1) * 4 + ape->charaId)][var_r8]].model;
+        model = charaGMAs[gmaIndex]->modelEntries[s_eyeModelIDs[((ape->lod >> 1) * 4 + ape->charaId)][blinkIndex]].model;
         avdisp_draw_model_unculled_sort_none(model);
     }
 }
@@ -1711,7 +1671,7 @@ static inline void func_80085F94_sub(struct GMAModel *temp_r31, int temp_r10)
         {
             if (temp_r10 != 0)
             {
-                var_r7->texObj = &lbl_802B47E0[2][arr[temp_r10]];
+                var_r7->texObj = &shirtTexObjs[2][arr[temp_r10]];
                 var_r7->flags |= 0x10000;
             }
             else
@@ -1719,20 +1679,20 @@ static inline void func_80085F94_sub(struct GMAModel *temp_r31, int temp_r10)
                 var_r7->texObj = &temp_r31->texObjs[var_r6];
                 var_r7->flags &= 0xFFFEFFFF;
             }
-            var_r7->texObj = &lbl_802B47E0[2][arr[1]];
+            var_r7->texObj = &shirtTexObjs[2][arr[1]];
         }
         var_r7++;
     }
 }
 
-static void draw_baby_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
+static void draw_baby_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
 {
     u8 unused3[8];
     struct Color3f sp18;
     u8 unused4[4];
     struct GMAModel *temp_r31;
 
-    temp_r31 = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    temp_r31 = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     if (lbl_802F2060 == 0)
     {
         get_curr_light_group_ambient(&sp18);
@@ -1744,10 +1704,10 @@ static void draw_baby_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct Bod
         apply_curr_light_group_ambient();
 }
 
-static void draw_left_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
+static void draw_left_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
 {
     u8 unused[8];
-    struct GMAModel *model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    struct GMAModel *model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     struct Struct8003699C_child_sub *temp_r29 = &ape->unk0->unk4114;
     struct AnimJoint *joints = temp_r29->joints;
     s16 *var_r4;
@@ -1774,10 +1734,10 @@ static void draw_left_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct Bod
     avdisp_draw_model_unculled_sort_none(model);
 }
 
-static void draw_right_hand(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
+static void draw_right_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
 {
     u8 unused[8];
-    struct GMAModel *model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    struct GMAModel *model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     struct Struct8003699C_child_sub *temp_r29 = &ape->unk0->unk84;
     struct AnimJoint *joints = temp_r29->joints;
     s16 *var_r4;
@@ -1962,13 +1922,13 @@ static struct GMAShape *func_80086538(struct GMAShape *shape)
     return (struct GMAShape *)ptr;
 }
 
-static void draw_baby_head(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *unused2)
+static void draw_baby_head(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
 {
     u8 unused3[8];
     struct Color3f sp14;
     struct GMAModel *model;
 
-    model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     if (lbl_802F2060 == 0)
     {
         get_curr_light_group_ambient(&sp14);
@@ -2033,7 +1993,7 @@ static void func_80086794_sub2(int temp_r27, struct Ape *ape)
 
     if (temp_r28_4 != NULL)
     {
-        lbl_802B37B0[ape->unk70] = 0;
+        u_blinkRelated[ape->unk70] = 0;
         ape->flags |= 0x10000;
         set_ambient_light(0);
         avdisp_draw_model_unculled_sort_none(charaGMAs[ape->charaId << 1]->modelEntries[temp_r28_4[temp_r27]].model);
@@ -2042,8 +2002,8 @@ static void func_80086794_sub2(int temp_r27, struct Ape *ape)
     }
 }
 
-// Draws the head (used for every character)
-static void draw_head(struct Ape *ape, struct ApeBodyPart *part, struct BodyPartThing *arg2)
+// Draws the head (used for every character except for Baby)
+static void draw_head(struct Ape *ape, struct BodyPartDesc *part, struct BodyPartThing *arg2)
 {
     struct NlModel *nlModel;
     struct GMAModel *gmaModel;
@@ -2065,7 +2025,7 @@ static void draw_head(struct Ape *ape, struct ApeBodyPart *part, struct BodyPart
     ape->flags &= 0xFFFEFFFF;
     if (arg2 != NULL && arg2->unk4 != 0.0f)
     {
-        if (ape->u_lodGma >= 2)
+        if (ape->lod >= 2)
             var_r29 += 4;
         switch (arg2->type)
         {
@@ -2076,7 +2036,7 @@ static void draw_head(struct Ape *ape, struct ApeBodyPart *part, struct BodyPart
         case 6:
             if (var_r29 == 2)
             {
-                gmaModel = charaGMAs[(ape->u_lodGma >> 1) + (var_r29 << 1)]->modelEntries[part->modelId].model;
+                gmaModel = charaGMAs[(ape->lod >> 1) + (var_r29 << 1)]->modelEntries[part->modelId].model;
                 if (lbl_802F2060 == 0)
                 {
                     get_curr_light_group_ambient(&sp30);
@@ -2131,7 +2091,7 @@ static void draw_head(struct Ape *ape, struct ApeBodyPart *part, struct BodyPart
             get_curr_light_group_ambient(&sp24);
             nlLightAmbRGB(1.35f * sp24.r, 1.35f * sp24.g, 1.35f * sp24.b);
         }
-        if (var_r29 == 2 && ape->u_lodGma < 2)
+        if (var_r29 == 2 && ape->lod < 2)
         {
             struct NlMesh_sub *sub;
             struct NlMesh *var_r5;
@@ -2165,7 +2125,7 @@ static void draw_head(struct Ape *ape, struct ApeBodyPart *part, struct BodyPart
     }
 
 block_50:
-    temp_r27_3 = (ape->u_lodGma >> 1) + (ape->charaId << 1);
+    temp_r27_3 = (ape->lod >> 1) + (ape->charaId << 1);
     gmaModel = charaGMAs[temp_r27_3]->modelEntries[part->modelId].model;
     if (lbl_802F2060 == 0)
     {
@@ -2237,13 +2197,13 @@ void func_80086D20(struct Ape *ape, int arg1, int arg2)
 }
 #pragma force_active reset
 
-static void draw_ear(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartThing *arg2)
+static void draw_ear(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *arg2)
 {
     u8 unused[8];
     struct Color3f sp14;
     struct GMAModel *model;
 
-    model = charaGMAs[(ape->u_lodGma >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
     if (lbl_802F2060 == 0)
     {
         get_curr_light_group_ambient(&sp14);
@@ -2251,18 +2211,19 @@ static void draw_ear(struct Ape *ape, struct ApeBodyPart *arg1, struct BodyPartT
     }
     if ((ape->unk24 == 1 && ape->unk9C != 5) || ape->unk24 == 0)
     {
+        // ear twitch
         if (((globalAnimTimer << 12) & 0x30000) == 0)
         {
-            float var_f1 = mathutil_sin(globalAnimTimer << 12);
+            float angle = mathutil_sin(globalAnimTimer << 12);
             if (arg1->unk4.y < 0.0f)
-                var_f1 = -var_f1;
-            mathutil_mtxA_rotate_z(DEGREES_TO_S16(10.0f * var_f1));
+                angle = -angle;
+            mathutil_mtxA_rotate_z(DEGREES_TO_S16(10.0f * angle));
         }
     }
     else if (arg2 != NULL)
         mathutil_mtxA_rotate_z(DEGREES_TO_S16(arg2->unk4));
     u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
-    if (ape->charaId == 2)
+    if (ape->charaId == CHARACTER_BABY)
         func_800865A4_sub(ape->colorId, model);
     avdisp_draw_model_unculled_sort_none(model);
     if (lbl_802F2060 == 0)

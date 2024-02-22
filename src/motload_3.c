@@ -142,14 +142,14 @@ const struct JointPositionSomething *const lbl_80114DE0[] =
     lbl_80114DBC,
 };
 
-void func_80035648(struct ApeAnimationThing *a)
+void u_update_skel_anim(struct ApeAnimationThing *a)
 {
     u32 flags;
     struct AnimJoint *joints = a->joints;
     struct AnimJoint *currJoint;
     const struct JointRotationSomething *r4 = lbl_80114DD0[a->unk36];
     const struct JointPositionSomething *r5 = lbl_80114DE0[a->unk36];
-    float t = a->u_poseNum + a->u_timeInKeyframe;
+    float t = a->u_currKeyframe + a->u_timeInKeyframe;
     u32 r6 = a->unk0 & (1 << 2);
 
     u_interpolate_joint_motion(joints, r4, r5, t, r6);
@@ -163,7 +163,7 @@ void func_80035648(struct ApeAnimationThing *a)
     {
         if (flags & (1 << 2))
         {
-            currJoint->unk1CC = currJoint->unk1C0;
+            currJoint->unk1CC = currJoint->u_motionPos;
             mathutil_mtxA_from_mtx(joints->unk168);
             mathutil_mtxA_tf_point(&currJoint->unk1CC, &currJoint->unk1CC);
         }
@@ -188,7 +188,7 @@ void u_joint_tree_calc_some_matrix(struct AnimJoint *jointArr, struct AnimJoint 
         mathutil_mtxA_set_translate(&joint->unk1CC);
         mathutil_mtxA_sq_from_mtx(jointArr[0].unk168);
         if (flags & JOINT_FLAG_HAS_ROTATION_MTX)
-            mathutil_mtxA_mult_right(joint->rotateMtx);
+            mathutil_mtxA_mult_right(joint->u_motRotation);
         mathutil_mtxA_to_mtx(joint->transformMtx);
         break;
     case 0x100:
@@ -208,7 +208,7 @@ void u_joint_tree_calc_some_matrix(struct AnimJoint *jointArr, struct AnimJoint 
         else
         {
             if (flags & 8)
-                mathutil_mtxA_mult_right(joint->rotateMtx);
+                mathutil_mtxA_mult_right(joint->u_motRotation);
             mathutil_mtxA_rigid_inv_tf_point(&joint[1].unk1CC, &joint->unk1CC);
             calc_some_rotation_mtx_from_vec(&joint->unk1CC);
             mathutil_mtxA_to_mtx(joint->transformMtx);
@@ -265,7 +265,7 @@ void u_joint_tree_calc_some_matrix(struct AnimJoint *jointArr, struct AnimJoint 
             mathutil_mtxA_translate(&joint->unk10);
         }
         if (flags & JOINT_FLAG_HAS_ROTATION_MTX)
-            mathutil_mtxA_mult_right(joint->rotateMtx);
+            mathutil_mtxA_mult_right(joint->u_motRotation);
         else if (flags & JOINT_FLAG_HAS_OTHER_ROTATION_MTX)
             mathutil_mtxA_mult_right(joint->otherRotateMtx);
         if (flags & 1)
@@ -283,7 +283,7 @@ void u_joint_tree_calc_some_matrix(struct AnimJoint *jointArr, struct AnimJoint 
             mathutil_mtxA_translate((Point3d *) &joint->unk10);
         }
         if (flags & 8)
-            mathutil_mtxA_mult_right(joint->rotateMtx);
+            mathutil_mtxA_mult_right(joint->u_motRotation);
         if (flags & JOINT_FLAG_HAS_OTHER_ROTATION_MTX)
             mathutil_mtxA_mult_right(joint->otherRotateMtx);
         if (flags & 1)
@@ -327,7 +327,7 @@ void u_joint_tree_calc_some_other_matrix(struct AnimJoint *jointArr, struct Anim
     case 0x100:
         if (flags & 2)
             mathutil_mtxA_translate(&joint->unk4);
-        mathutil_mtxA_mult_right(joint->rotateMtx);
+        mathutil_mtxA_mult_right(joint->u_motRotation);
         mathutil_mtxA_rigid_inv_tf_point(&joint[1].unk1CC, &joint->unk1CC);
         calc_some_rotation_mtx_from_vec(&joint->unk1CC);
         mathutil_mtxA_sq_to_mtx(joint->transformMtx);
@@ -335,7 +335,7 @@ void u_joint_tree_calc_some_other_matrix(struct AnimJoint *jointArr, struct Anim
     case 0x200:
         if (flags & 2)
             mathutil_mtxA_translate(&joint->unk4);
-        mathutil_mtxA_mult_right(joint->rotateMtx);
+        mathutil_mtxA_mult_right(joint->u_motRotation);
         temp_r27 = joint + 2;
         temp_r28 = joint + 1;
         mathutil_mtxA_rigid_inv_tf_point(&temp_r27->unk1CC, &joint->unk1CC);
@@ -370,7 +370,7 @@ void u_joint_tree_calc_some_other_matrix(struct AnimJoint *jointArr, struct Anim
         if (flags & 2)
             mathutil_mtxA_translate(&joint->unk4);
         if (flags & 8)
-            mathutil_mtxA_mult_right(joint->rotateMtx);
+            mathutil_mtxA_mult_right(joint->u_motRotation);
         else if (flags & 0x40)
             mathutil_mtxA_mult_right(joint->otherRotateMtx);
         break;
@@ -378,7 +378,7 @@ void u_joint_tree_calc_some_other_matrix(struct AnimJoint *jointArr, struct Anim
         if (flags & 2)
             mathutil_mtxA_translate(&joint->unk4);
         if (flags & 8)
-            mathutil_mtxA_mult_right(joint->rotateMtx);
+            mathutil_mtxA_mult_right(joint->u_motRotation);
         if (flags & 0x40)
             mathutil_mtxA_mult_right(joint->otherRotateMtx);
         break;
@@ -454,7 +454,7 @@ void u_init_something_joints_from_something(struct Struct8003699C_child_sub *arg
 
 void func_80035FDC(struct ApeAnimationThing *arg0)
 {
-    arg0->unk81A4 = lbl_80116634[arg0->unk32];
+    arg0->unk81A4 = lbl_80116634[arg0->u_animId];
 }
 
 const u32 lbl_80114DF0[] =

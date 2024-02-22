@@ -83,7 +83,7 @@ struct Camera
     s32 angleZEnd;
     Vec eyeVel;
     Vec lookAtVel;
-    Vec unkAC;
+    Vec unkAC;  // like eye, but same y coord as top of ball?
     s16 unkB8;
     u8 fillerBA[2];
     Vec unkBC;

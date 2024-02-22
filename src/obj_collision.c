@@ -62,7 +62,7 @@ static void do_object_collision(void)
                     }
                 }
             }
-            if (!(ball->flags & 0x100000) && eventInfo[EVENT_ITEM].state == EV_STATE_RUNNING)
+            if (!(ball->flags & BALL_FLAG_20) && eventInfo[EVENT_ITEM].state == EV_STATE_RUNNING)
             {
                 s8 *phi_r29_2 = g_poolInfo.itemPool.statusList;
                 int j;
@@ -119,33 +119,39 @@ static void do_object_collision(void)
     currentBall = ballBackup;
 }
 
-u32 func_8006A9B8(Point3d *arg0, Point3d *arg1, Point3d *arg2, Point3d *arg3, float arg4, float arg5)
+u32 func_8006A9B8(Point3d *start1, Point3d *end1, Point3d *start2, Point3d *end2, float radius1, float radius2)
 {
-    float temp_f6 = arg0->x - arg2->x;
-    float temp_f7 = arg0->y - arg2->y;
-    float temp_f8 = arg0->z - arg2->z;
+    // difference between starting points
+    float start_dx = start1->x - start2->x;
+    float start_dy = start1->y - start2->y;
+    float start_dz = start1->z - start2->z;
+
     float temp_f10;
-    float temp_f11 = (arg1->x - arg3->x) - temp_f6;
-    float temp_f12 = (arg1->y - arg3->y) - temp_f7;
-    float temp_f13 = (arg1->z - arg3->z) - temp_f8;
-    float temp_f9 = (temp_f11 * temp_f11) + (temp_f12 * temp_f12) + (temp_f13 * temp_f13);
-    float temp_f3;
+
+    // difference between ending points if the second segment was translated into the first segment's coordinate space
+    float end_dx = (end1->x - end2->x) - start_dx;
+    float end_dy = (end1->y - end2->y) - start_dy;
+    float end_dz = (end1->z - end2->z) - start_dz;
+
+    float endDistSquared = (end_dx * end_dx) + (end_dy * end_dy) + (end_dz * end_dz);
+    float dot;
     float temp_f2;
 
-    if (temp_f9 == 0.0f)
+    if (endDistSquared == 0.0f)  // lines are parallel with same length
         return 0;
-    temp_f10 = arg4 + arg5;
-    temp_f3 = (temp_f6 * temp_f11) + (temp_f7 * temp_f12) + (temp_f8 * temp_f13);
-    temp_f2 = (temp_f6 * temp_f6) + (temp_f7 * temp_f7) + (temp_f8 * temp_f8) - (temp_f10 * temp_f10);
-    if (0.0f > (temp_f3 * temp_f3) - (temp_f9 * temp_f2))
+
+    temp_f10 = radius1 + radius2;
+    dot = (start_dx * end_dx) + (start_dy * end_dy) + (start_dz * end_dz);
+    temp_f2 = (start_dx * start_dx) + (start_dy * start_dy) + (start_dz * start_dz) - (temp_f10 * temp_f10);
+    if (0.0f > (dot * dot) - (endDistSquared * temp_f2))
         return 0;
     if (0.0f >= temp_f2)
         return 1;
-    if (0.0f >= temp_f9 + temp_f3 + temp_f3 + temp_f2)
+    if (0.0f >= endDistSquared + dot + dot + temp_f2)
         return 1;
-    if (0.0f <= temp_f3)
+    if (0.0f <= dot)
         return 0;
-    if (-temp_f3 >= temp_f9)
+    if (-dot >= endDistSquared)
         return 0;
     return 1;
 }

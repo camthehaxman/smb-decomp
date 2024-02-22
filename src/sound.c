@@ -1369,15 +1369,15 @@ static s32 s_loadedSoundGroupIDs[8];
 s32 g_loadedSoundGroupsCount;
 s32 lbl_802F1DFC;
 int u_somePlayerId;
-u8 lbl_802F1DF5;
+u8 g_soundSEVol;
 u8 lbl_802F1DF4;
 u32 g_soundAramTop;
 u32 g_soundTotalBytesLoaded;
-s32 lbl_802F1DE8;
-s32 lbl_802F1DE4;
-const char *lbl_802F1DE0;
-const char *lbl_802F1DDC;
-u8 u_volumeRelated1;
+s32 u_someSoundId;  // always 1
+s32 u_someSoundGroupId;  // always 0
+const char *u_someSoundName;
+const char *u_someSoundGroupName;
+u8 g_soundBGMVol;
 u8 u_volumeRelated2;
 s32 g_soundMuted;
 u32 lbl_802F1DD0;
@@ -1407,7 +1407,7 @@ static void queue_dtk_tracks(s32 arg0, s32 mode)
 
     switch (mode)
     {
-    case 0:
+    case SND_OUTPUTMODE_MONO:
         sndOutputMode(SND_OUTPUTMODE_MONO);
         if (arg0 == 0)
         {
@@ -1421,9 +1421,9 @@ static void queue_dtk_tracks(s32 arg0, s32 mode)
             DTKQueueTrack(fileName, &s_dtkTracks[r0], 0, 0);
         }
         break;
-    case 1:
+    case SND_OUTPUTMODE_STEREO:
         break;
-    case 2:
+    case SND_OUTPUTMODE_SURROUND:
         sndOutputMode(SND_OUTPUTMODE_SURROUND);
         if (arg0 == 0)
         {
@@ -1762,12 +1762,12 @@ void sound_init(void)
     AISetStreamSampleRate(AI_SAMPLERATE_48KHZ);
     sndSetHooks(&hooks);
     sndActive(0x30, 0x30, 0x30, 0, 0x700000);
-    lbl_802F1DF5 = 0x5A;
+    g_soundSEVol = 0x5A;
     lbl_802F1DF4 = 0x5A;
-    sndVolume(0.01f * (127.0f * lbl_802F1DF5), 0, 0xFF);
-    u_volumeRelated1 = 0x50;
+    sndVolume(0.01f * (127.0f * g_soundSEVol), 0, 0xFF);
+    g_soundBGMVol = 0x50;
     u_volumeRelated2 = 0x50;
-    DTKSetVolume(u_volumeRelated3 * (0.01f * u_volumeRelated1), u_volumeRelated3 * (0.01f * u_volumeRelated1));
+    DTKSetVolume(u_volumeRelated3 * (0.01f * g_soundBGMVol), u_volumeRelated3 * (0.01f * g_soundBGMVol));
     lbl_802F1D58 = 0;
     lbl_802F1D40 = 1.0f;
     lbl_802F1D44 = 1.0f;
@@ -1813,7 +1813,7 @@ void sound_init(void)
     sndEfcRev = 0;
     sndEfcCho = 0;
     sndMasterVolume(0x7F, 0, 1, 1);
-    sndVolume(0.01f * (127.0f * lbl_802F1DF5), 0, 0xFF);
+    sndVolume(0.01f * (127.0f * g_soundSEVol), 0, 0xFF);
 
     for (i2 = 0; i2 < 4; i2++)
     {
@@ -1829,9 +1829,9 @@ void sound_init(void)
     AISetStreamSampleRate(AI_SAMPLERATE_48KHZ);
     DTKInit();
     if (OSGetSoundMode() == OS_SOUND_MODE_MONO)
-        queue_dtk_tracks(1, 0);
+        queue_dtk_tracks(1, SND_OUTPUTMODE_MONO);
     else
-        queue_dtk_tracks(1, 2);
+        queue_dtk_tracks(1, SND_OUTPUTMODE_SURROUND);
     DTKSetRepeatMode(DTK_MODE_REPEAT1);
     lbl_802F1D64 = 0;
     lbl_802F1D68 = 0;
@@ -1840,8 +1840,8 @@ void sound_init(void)
     lbl_802F1D74 = 1;
     lbl_802014E0.unk0 = -1;
     lbl_802F1DBC = 0;
-    lbl_802F1DE4 = 0;
-    lbl_802F1DE8 = 1;
+    u_someSoundGroupId = 0;
+    u_someSoundId = 1;
 }
 
 void sound_main(void)
@@ -1960,8 +1960,8 @@ void sound_main(void)
     }
     if (lbl_802014E0.unk0 != -1 && lbl_802014E0.dtkState == DTK_STATE_RUN)
         lbl_802014E0.unk4++;
-    lbl_802F1DDC = g_soundGroupDesc[lbl_802F1DE4].groupName;
-    lbl_802F1DE0 = g_soundDesc[lbl_802F1DE8].name;
+    u_someSoundGroupName = g_soundGroupDesc[u_someSoundGroupId].groupName;
+    u_someSoundName = g_soundDesc[u_someSoundId].name;
 }
 
 void SoundGroupLoad(int groupId)
@@ -2226,17 +2226,17 @@ void ev_sound_main(void)
 
     if (lbl_802F1D48 != 0)
         lbl_802F1D48 = 0;
-    if (lbl_802F1DF5 != lbl_802F1DF4)
+    if (g_soundSEVol != lbl_802F1DF4)
     {
-        sndVolume(0.01f * (127.0f * lbl_802F1DF5), 0, 0xFF);
-        lbl_802F1DF4 = lbl_802F1DF5;
+        sndVolume(0.01f * (127.0f * g_soundSEVol), 0, 0xFF);
+        lbl_802F1DF4 = g_soundSEVol;
     }
-    if (u_volumeRelated1 != u_volumeRelated2)
+    if (g_soundBGMVol != u_volumeRelated2)
     {
         DTKSetVolume(
-            u_volumeRelated3 * (0.01f * u_volumeRelated1),
-            u_volumeRelated3 * (0.01f * u_volumeRelated1));
-        u_volumeRelated2 = u_volumeRelated1;
+            u_volumeRelated3 * (0.01f * g_soundBGMVol),
+            u_volumeRelated3 * (0.01f * g_soundBGMVol));
+        u_volumeRelated2 = g_soundBGMVol;
     }
     if (!(debugFlags & 0xA))
     {
@@ -3313,7 +3313,7 @@ static void func_8002CEB8(int arg0)
     u8 temp_f2;
 
     temp_f2 = (g_soundMuted != 0) ? 0 : arg0;
-    temp_f0 = temp_f2 * (0.01f * u_volumeRelated1);
+    temp_f0 = temp_f2 * (0.01f * g_soundBGMVol);
     DTKSetVolume(temp_f0, temp_f0);
 }
 
@@ -3366,7 +3366,7 @@ void u_play_music(u32 arg0, s8 arg1)
         var_r3 = lo * lbl_802F1D4C;
         if (g_soundMuted != 0)
             var_r3 = 0;
-        vol = var_r3 * (0.01f * u_volumeRelated1);
+        vol = var_r3 * (0.01f * g_soundBGMVol);
         DTKSetVolume(vol, vol);
         break;
     case 6:
@@ -3403,7 +3403,7 @@ void u_play_music(u32 arg0, s8 arg1)
         var_r3 = lbl_802F1D4C * (u_volumeRelated3 * *(float *)&lbl_802F1D40);
         if (g_soundMuted != 0)
             var_r3 = 0;
-        vol = var_r3 * (0.01f * u_volumeRelated1);
+        vol = var_r3 * (0.01f * g_soundBGMVol);
         DTKSetVolume(vol, vol);
         break;
     case 11:
@@ -3413,7 +3413,7 @@ void u_play_music(u32 arg0, s8 arg1)
         var_r3 = (u_volumeRelated3 * lbl_802F1D4C);
         if (g_soundMuted != 0)
             var_r3 = 0;
-        vol = var_r3 * (0.01f * u_volumeRelated1);
+        vol = var_r3 * (0.01f * g_soundBGMVol);
         DTKSetVolume(vol, vol);
         break;
     }
@@ -3602,23 +3602,23 @@ void u_change_sound_mode(u32 mode)
     {
         OSSetSoundMode(mode);
         if (mode == OS_SOUND_MODE_MONO)
-            queue_dtk_tracks(0, 0);
+            queue_dtk_tracks(0, SND_OUTPUTMODE_MONO);
         else
-            queue_dtk_tracks(0, 2);
+            queue_dtk_tracks(0, SND_OUTPUTMODE_SURROUND);
     }
 }
 #pragma force_active reset
 
-void func_8002DB10(struct MemcardContents *mc)
+void store_sound_settings(struct MemcardContents *mc)
 {
-    mc->gameData.unk4C = u_volumeRelated1;
-    mc->gameData.unk4D = lbl_802F1DF5;
+    mc->gameData.bgmVolume = g_soundBGMVol;
+    mc->gameData.seVolume  = g_soundSEVol;
 }
 
-void func_8002DB24(struct MemcardContents *mc)
+void load_sound_settings(struct MemcardContents *mc)
 {
-    u_volumeRelated1 = mc->gameData.unk4C;
-    lbl_802F1DF5 = mc->gameData.unk4D;
+    g_soundBGMVol = mc->gameData.bgmVolume;
+    g_soundSEVol  = mc->gameData.seVolume;
 }
 
 void func_8002DB38(void)

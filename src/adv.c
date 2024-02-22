@@ -1008,6 +1008,7 @@ void adv_ape_thread(struct Ape *ape, int status)
     }
     if (advDemoInfo.flags & (1 << 5))
     {
+        float speed;
         struct Ball *ball = &ballInfo[ape->ballId];
 
         if (debugFlags & 0xA)
@@ -1026,20 +1027,20 @@ void adv_ape_thread(struct Ape *ape, int status)
         r28 |= !(ape->flags & 3);
         func_8003699C(ape);
         if (r28)
-            f31 = func_80036CAC(ape);
+            speed = func_80036CAC(ape);
         else
         {
-            f31 = 0.0f;
+            speed = 0.0f;
             mathutil_mtxA_from_quat(&ape->unk60);
             mathutil_mtxA_normalize_basis();
             if (ape->flags & (1 << 1))
                 func_80037718(ape);
         }
         if (ball->flags & BALL_FLAG_05)
-            f31 = mathutil_vec_len(&ball->vel);
-        func_80036EB8(ape);
+            speed = mathutil_vec_len(&ball->vel);
+        check_ball_teeter(ape);
         mathutil_mtxA_to_quat(&ape->unk60);
-        u_choose_ape_anim(ape, f31);
+        u_choose_ape_anim(ape, speed);
         ape_skel_anim_main(ape);
         if (!(ape->flags & (1 << 3)))
             func_8003765C(ape);
@@ -1187,15 +1188,15 @@ static void func_8000FEC8(int a)
     textbox_set_properties(2, TEXTBOX_STATE_FADEOUT, NULL);
     textbox_set_properties(3, TEXTBOX_STATE_FADEOUT, NULL);
 
-    sprite = find_sprite_with_tag(30);
+    sprite = find_sprite_with_tag(SPRITE_TAG_ADV_DEMO_BANANA_1);
     if (sprite != NULL)
         sprite->counter = -1;
 
-    sprite = find_sprite_with_tag(31);
+    sprite = find_sprite_with_tag(SPRITE_TAG_ADV_DEMO_BANANA_2);
     if (sprite != NULL)
         sprite->counter = -1;
 
-    sprite = find_sprite_with_tag(32);
+    sprite = find_sprite_with_tag(SPRITE_TAG_ADV_DEMO_BANANA_3);
     if (sprite != NULL)
         sprite->counter = -1;
 
@@ -1888,23 +1889,23 @@ void submode_adv_ranking_main_func(void)
         break;
     }
 
-    if (ball->state == 4)
+    if (ball->state == BALL_STATE_4)
     {
         struct ReplayHeader replayHdr;
 
         recplay_get_header(g_recplayInfo.u_replayIndexes[g_recplayInfo.u_playerId], &replayHdr);
-        if (replayHdr.flags & (1 << 7))
+        if (replayHdr.flags & REPLAY_FLAG_BONUS_CLEAR)
         {
-            ball->state = 5;
-            ball->flags |= 0x3500;
+            ball->state = BALL_STATE_GOAL_INIT;
+            ball->flags |= BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY|BALL_FLAG_GOAL|BALL_FLAG_13;
         }
     }
-    if (ball->state == 4 || ball->state == 6)
+    if (ball->state == BALL_STATE_4 || ball->state == BALL_STATE_GOAL_MAIN)
         infoWork.flags &= ~(INFO_FLAG_REPLAY|INFO_FLAG_11);
-    if (ball->state != 10)
+    if (ball->state != BALL_STATE_REPLAY_MAIN_2)
         modeCtrl.unk18--;
     if (modeCtrl.unk18 < 0
-     && (ball->state == 6 || ball->state == 4)
+     && (ball->state == BALL_STATE_GOAL_MAIN || ball->state == BALL_STATE_4)
      && ((modeCtrl.submodeTimer & 0x1F) == 0 || !(infoWork.flags & INFO_FLAG_05)))
     {
         if (modeCtrl.submodeTimer > 180.0)
@@ -1995,10 +1996,11 @@ void submode_adv_ranking_main_func(void)
     }
 
     BALL_FOREACH(
-        if (!(ball->flags & (1 << 9)) && (ball->ape->flags & (1 << 14)))
+        if (!(ball->flags & BALL_FLAG_REVERSE_GRAVITY)
+         && (ball->ape->flags & APE_FLAG_14))
         {
-            ball->flags &= ~0x500;
-            ball->flags |= 0x200;
+            ball->flags &= ~(BALL_FLAG_08|BALL_FLAG_IGNORE_GRAVITY);
+            ball->flags |= BALL_FLAG_REVERSE_GRAVITY;
             u_play_sound_0(0x126);
         }
     )

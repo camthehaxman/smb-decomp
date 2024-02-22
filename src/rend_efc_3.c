@@ -335,7 +335,7 @@ void func_800999CC(int arg0, struct RenderEffect *arg1)
         ord_tbl_draw_nodes();
     }
     else
-        func_800A5F28();
+        view_draw_simple();
     polyDisp.flags &= 0xFFFFFFFB;
     GXSetZMode_cached(1U, GX_LEQUAL, 1U);
     GXSetTexCopySrc(0, 0, temp_r30->unk28, temp_r30->unk2A);

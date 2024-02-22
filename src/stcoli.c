@@ -275,7 +275,6 @@ void collide_ball_with_tri_edge(struct PhysicsBall *ball, Point3d *ballPos_rt_tr
     mathutil_mtxA_rigid_inv_tf_point(ballPos_rt_tri, &ballPos_rt_edge);
     mathutil_mtxA_rigid_inv_tf_point(ballPrevPos_rt_tri, &ballPrevPos_rt_edge);
 
-    // radius = physBall->radius;
     someY = ballPos_rt_edge.y;
     if (fabs(someY) > ball->radius)
     {
@@ -1076,13 +1075,13 @@ void collide_ball_with_jamabar(struct PhysicsBall *ball, struct Stobj *stobj)
         collide_ball_with_rect(ball, coliRect);
 
     temp_f1 = 0.75 * (ball->pos.z - ballPos.z);
-    stobj->u_local_pos.z -= temp_f1;
+    stobj->offsetPos.z -= temp_f1;
     ball->pos.z += temp_f1;
-    temp_f2 = stobj->u_local_vel.z;
+    temp_f2 = stobj->offsetVel.z;
     if ((temp_f1 * temp_f2) > 0.0)
     {
-        stobj->u_local_vel.z *= 0.5;
-        ball->vel.z = ball->vel.z + (2.5 * (temp_f2 - stobj->u_local_vel.z));
+        stobj->offsetVel.z *= 0.5;
+        ball->vel.z = ball->vel.z + (2.5 * (temp_f2 - stobj->offsetVel.z));
     }
     mathutil_mtxA_from_translate(&stobj->u_some_pos);
     mathutil_mtxA_rotate_x(stobj->rotX);
@@ -1091,6 +1090,7 @@ void collide_ball_with_jamabar(struct PhysicsBall *ball, struct Stobj *stobj)
     stcoli_sub30(ball, ball);
 }
 
+// Finds the point on the stage that is directly below rayOrigin
 int raycast_stage_down(Point3d *rayOrigin, struct RaycastHit *outHit, Vec *outVelAtPoint)
 {
     Point3d rayOrigin_rt_ig;
@@ -1426,33 +1426,21 @@ u32 raycast_sphere(Point3d *rayOrigin, Vec *rayDir, struct StageColiSphere *sphe
     delta_sp28.x = rayOrigin->x - sphere->pos.x;
     delta_sp28.y = rayOrigin->y - sphere->pos.y;
     delta_sp28.z = rayOrigin->z - sphere->pos.z;
-    // temp_f31 = (rayDir_sp1c.z * rayDir_sp1c.z) + ((rayDir_sp1c.y * rayDir_sp1c.y) +
-    // (rayDir_sp1c.x * rayDir_sp1c.x));
     temp_f31 = mathutil_sum_of_sq_3(rayDir_sp1c.x, rayDir_sp1c.y, rayDir_sp1c.z);
     if (temp_f31 < FLT_EPSILON)
-    {
         return 0U;
-    }
     dot = (rayDir_sp1c.z * delta_sp28.z) +
           ((rayDir_sp1c.x * delta_sp28.x) + (rayDir_sp1c.y * delta_sp28.y));
-    // temp_f2 = ((delta_sp28.z * delta_sp28.z) + ((delta_sp28.y * delta_sp28.y) + (delta_sp28.x *
-    // delta_sp28.x))) - (sphere->radius * sphere->radius);
     temp_f2 = mathutil_sum_of_sq_3(delta_sp28.x, delta_sp28.y, delta_sp28.z) -
               sphere->radius * sphere->radius;
     temp_f1 = (dot * dot) - (temp_f31 * temp_f2);
     if (temp_f1 < FLT_EPSILON)
-    {
         return 0U;
-    }
     if (temp_f2 < 0.0f)
-    {
         return 0U;
-    }
     if (dot > 0.0f)
-    {
         return 0U;
-    }
-    temp_f2_2 = -(dot + mathutil_sqrt((f64)temp_f1)) / temp_f31;
+    temp_f2_2 = -(dot + mathutil_sqrt(temp_f1)) / temp_f31;
     outHitPos->x = rayOrigin->x + (rayDir_sp1c.x * temp_f2_2);
     outHitPos->y = rayOrigin->y + (rayDir_sp1c.y * temp_f2_2);
     outHitPos->z = rayOrigin->z + (rayDir_sp1c.z * temp_f2_2);
@@ -1461,37 +1449,19 @@ u32 raycast_sphere(Point3d *rayOrigin, Vec *rayDir, struct StageColiSphere *sphe
     outHitNormal->z = (outHitPos->z - sphere->pos.z) / sphere->radius;
     return 1U;
 }
-
-// OK on decomp.me: https://decomp.me/scratch/FcfFZ
 u32 raycast_cylinder(Point3d *rayOrigin, Point3d *rayDir, struct StageColiCylinder *cylinder,
                      Point3d *outHitPos, Point3d *outHitNormal)
 {
     Vec vec_sp34;
     Point3d sp28;
     Point3d sp1C;
-    // f32 cylinder->radius;
-    // f32 0.0f;
-    // f32 temp_f0_3;
-    // f32 FLT_EPSILON;
-    // f32 temp_f0_5;
-    // f32 cylinder->radius;
-    // f32 temp_f0_7;
-    // f32 cylinder->radius;
     f32 temp_f1;
-    // f32 0.0f;
-    // f32 0.0f;
     f32 temp_f2;
     f32 temp_f30;
     f32 temp_f31;
-    // f32 temp_f3;
-    // f32 sp28.x;
-    // f32 FLT_EPSILON;
     f32 halfHeight;
     f32 negHalfHeight;
-    // f32 sp1C.x;
     f32 temp_f7;
-    // f32 temp_f7;
-    // f32 temp_f7;
 
     mathutil_mtxA_from_translate(&cylinder->pos);
     mathutil_mtxA_rotate_z((s32)cylinder->rot.z);
@@ -1499,13 +1469,9 @@ u32 raycast_cylinder(Point3d *rayOrigin, Point3d *rayDir, struct StageColiCylind
     mathutil_mtxA_rotate_x((s32)cylinder->rot.x);
     mathutil_mtxA_rigid_inv_tf_point(rayOrigin, &sp28);
     mathutil_mtxA_rigid_inv_tf_vec(rayDir, &sp1C);
-    // sp1C.x = sp1C.x;
-    // FLT_EPSILON = FLT_EPSILON;
     temp_f31 = (sp1C.x * sp1C.x) + (sp1C.z * sp1C.z);
     if (!(temp_f31 < FLT_EPSILON))
     {
-        // sp28.x = sp28.x;
-        // cylinder->radius = cylinder->radius;
         temp_f30 = (sp1C.x * sp28.x) + (sp1C.z * sp28.z);
         temp_f2 = ((sp28.x * sp28.x) + (sp28.z * sp28.z)) - (cylinder->radius * cylinder->radius);
         temp_f1 = (temp_f30 * temp_f30) - (temp_f31 * temp_f2);
@@ -1538,22 +1504,16 @@ u32 raycast_cylinder(Point3d *rayOrigin, Point3d *rayDir, struct StageColiCylind
         }
     }
 
-    // FLT_EPSILON = FLT_EPSILON;
     if (sp1C.y < FLT_EPSILON)
     {
         halfHeight = 0.5 * cylinder->height;
         temp_f7 = (halfHeight - sp28.y) / sp1C.y;
-        // temp_f0_5 = ;
         vec_sp34.x = sp28.x + (sp1C.x * temp_f7);
         vec_sp34.y = halfHeight;
         vec_sp34.z = sp28.z + (sp1C.z * temp_f7);
-        // cylinder->radius = cylinder->radius;
         if ((mathutil_sum_of_sq_2(vec_sp34.x, vec_sp34.z)) > (cylinder->radius * cylinder->radius))
-        {
             return 0U;
-        }
         mathutil_mtxA_tf_point((Point3d *)&vec_sp34.x, outHitPos);
-        // 0.0f = 0.0f;
         outHitNormal->x = 0.0f;
         outHitNormal->y = 1.0f;
         outHitNormal->z = 0.0f;
@@ -1564,17 +1524,12 @@ u32 raycast_cylinder(Point3d *rayOrigin, Point3d *rayDir, struct StageColiCylind
     {
         negHalfHeight = 0.5 * -cylinder->height;
         temp_f7 = (negHalfHeight - sp28.y) / sp1C.y;
-        // temp_f0_7 = ;
         vec_sp34.x = sp28.x + (sp1C.x * temp_f7);
         vec_sp34.y = negHalfHeight;
         vec_sp34.z = sp28.z + (sp1C.z * temp_f7);
-        // cylinder->radius = cylinder->radius;
         if ((mathutil_sum_of_sq_2(vec_sp34.x, vec_sp34.z)) > (cylinder->radius * cylinder->radius))
-        {
             return 0U;
-        }
         mathutil_mtxA_tf_point((Point3d *)&vec_sp34.x, outHitPos);
-        // 0.0f = 0.0f;
         outHitNormal->x = 0.0f;
         outHitNormal->y = 1.0f;
         outHitNormal->z = 0.0f;
