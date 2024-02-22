@@ -208,7 +208,7 @@ void bg_master_main(void)
     }
     work->unkB18.x += work->unkB24.x;
     work->unkB18.y += work->unkB24.y;
-    temp_f1_4 = 1.0f + (0.05f * mathutil_sin(backgroundInfo.unkA4 << 8));
+    temp_f1_4 = 1.0f + (0.05f * mathutil_sin(backgroundInfo.u_otherSeed << 8));
     work->unkB3C.x = work->unkB30.x * temp_f1_4;
     work->unkB3C.y = work->unkB30.y * temp_f1_4;
     work->unkB3C.z = 1.0f;
@@ -313,11 +313,11 @@ static void lbl_80063AD8(struct GCMMatState_Unit *arg0)
     GXLoadTexObj_cached(work->waterTex, sp2C.u_texMapId);
     GXLoadTexObj_cached(work->stgCloudTex, sp2C.u_texMapId + 1);
     texMtx[0][0] = 0.0f;
-    texMtx[0][1] = 0.8f * mathutil_sin(backgroundInfo.unkA4 << 8);
+    texMtx[0][1] = 0.8f * mathutil_sin(backgroundInfo.u_otherSeed << 8);
     texMtx[0][2] = 0.0f;
     texMtx[1][0] = 0.0f;
     texMtx[1][1] = 0.0f;
-    texMtx[1][2] = 0.8f * mathutil_cos(backgroundInfo.unkA4 << 8);
+    texMtx[1][2] = 0.8f * mathutil_cos(backgroundInfo.u_otherSeed << 8);
     GXSetIndTexMtx(sp2C.unk1C, texMtx, 0);
     mathutil_mtxA_push();
     mathutil_mtxA_from_mtx(work->unkB60);

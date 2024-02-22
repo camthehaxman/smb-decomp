@@ -7137,11 +7137,11 @@ lbl_000067C8:
 /* 000067D0 540007BE */ clrlwi r0, r0, 0x1e
 /* 000067D4 7C000034 */ cntlzw r0, r0
 /* 000067D8 541CD97E */ srwi r28, r0, 5
-/* 000067DC 4BFF9985 */ bl func_8003699C
+/* 000067DC 4BFF9985 */ bl u_ball_something_with_ape_rotation
 /* 000067E0 2C1C0000 */ cmpwi r28, 0
 /* 000067E4 41820014 */ beq lbl_000067F8
 /* 000067E8 7FA3EB78 */ mr r3, r29
-/* 000067EC 4BFF9975 */ bl func_80036CAC
+/* 000067EC 4BFF9975 */ bl u_ball_something_with_walking_speed
 /* 000067F0 FFE00890 */ fmr f31, f1
 /* 000067F4 48000028 */ b lbl_0000681C
 lbl_000067F8:

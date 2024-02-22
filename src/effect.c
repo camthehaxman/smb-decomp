@@ -1902,7 +1902,7 @@ static void effect_exm_guide_light_main(struct Effect *effect)
         spawn_effect(&lightTail);
     }
     if (effect->colorFactor > 0.0)
-        set_ball_target(5, &effect->pos, effect->colorFactor * (temp_f1 * temp_f1));
+        set_ball_look_point(5, &effect->pos, effect->colorFactor * (temp_f1 * temp_f1));
 }
 
 static void effect_exm_guide_light_draw(struct Effect *effect)

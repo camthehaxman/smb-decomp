@@ -5856,9 +5856,9 @@ lbl_000058A0:
 /* 000058E8 4BFFA87D */ bl mathutil_mtxA_rotate_x
 /* 000058EC A8780074 */ lha r3, 0x74(r24)
 /* 000058F0 4BFFA875 */ bl mathutil_mtxA_rotate_z
-/* 000058F4 3C600000 */ lis r3, stobjInfo@ha
+/* 000058F4 3C600000 */ lis r3, g_stobjInfo@ha
 /* 000058F8 C01F0040 */ lfs f0, 0x40(r31)
-/* 000058FC 38630000 */ addi r3, r3, stobjInfo@l
+/* 000058FC 38630000 */ addi r3, r3, g_stobjInfo@l
 /* 00005900 C03F0008 */ lfs f1, 8(r31)
 /* 00005904 C3E30034 */ lfs f31, 0x34(r3)
 /* 00005908 3C600000 */ lis r3, lbl_1000008C@ha
@@ -18345,11 +18345,11 @@ lbl_0001115C:
 /* 0001117C 7F842910 */ subfe r28, r4, r5
 /* 00011180 5400D97E */ srwi r0, r0, 5
 /* 00011184 7F9C0378 */ or r28, r28, r0
-/* 00011188 4BFEEFDD */ bl func_8003699C
+/* 00011188 4BFEEFDD */ bl u_ball_something_with_ape_rotation
 /* 0001118C 2C1C0000 */ cmpwi r28, 0
 /* 00011190 41820014 */ beq lbl_000111A4
 /* 00011194 7FA3EB78 */ mr r3, r29
-/* 00011198 4BFEEFCD */ bl func_80036CAC
+/* 00011198 4BFEEFCD */ bl u_ball_something_with_walking_speed
 /* 0001119C FFE00890 */ fmr f31, f1
 /* 000111A0 48000028 */ b lbl_000111C8
 lbl_000111A4:
@@ -21968,7 +21968,7 @@ lbl_0001471C:
 /* 00014758 C03F0010 */ lfs f1, 0x10(r31)
 /* 0001475C 389E0020 */ addi r4, r30, 0x20
 /* 00014760 38600002 */ li r3, 2
-/* 00014764 4BFEBA01 */ bl set_ball_target
+/* 00014764 4BFEBA01 */ bl set_ball_look_point
 /* 00014768 4800003C */ b lbl_000147A4
 lbl_0001476C:
 /* 0001476C 7C600774 */ extsb r0, r3
@@ -21984,7 +21984,7 @@ lbl_0001476C:
 /* 00014794 C03F0010 */ lfs f1, 0x10(r31)
 /* 00014798 3881000C */ addi r4, r1, 0xc
 /* 0001479C 38600002 */ li r3, 2
-/* 000147A0 4BFEB9C5 */ bl set_ball_target
+/* 000147A0 4BFEB9C5 */ bl set_ball_look_point
 lbl_000147A4:
 /* 000147A4 A81E003A */ lha r0, 0x3a(r30)
 /* 000147A8 7C0000D0 */ neg r0, r0
@@ -22530,7 +22530,7 @@ lbl_00014F64:
 /* 00014FA0 C03F001C */ lfs f1, 0x1c(r31)
 /* 00014FA4 389E0020 */ addi r4, r30, 0x20
 /* 00014FA8 38600002 */ li r3, 2
-/* 00014FAC 4BFEB1B9 */ bl set_ball_target
+/* 00014FAC 4BFEB1B9 */ bl set_ball_look_point
 /* 00014FB0 4800003C */ b lbl_00014FEC
 lbl_00014FB4:
 /* 00014FB4 7C600774 */ extsb r0, r3
@@ -22546,7 +22546,7 @@ lbl_00014FB4:
 /* 00014FDC C03F001C */ lfs f1, 0x1c(r31)
 /* 00014FE0 3881000C */ addi r4, r1, 0xc
 /* 00014FE4 38600002 */ li r3, 2
-/* 00014FE8 4BFEB17D */ bl set_ball_target
+/* 00014FE8 4BFEB17D */ bl set_ball_look_point
 lbl_00014FEC:
 /* 00014FEC A81E003A */ lha r0, 0x3a(r30)
 /* 00014FF0 7C0000D0 */ neg r0, r0
@@ -28623,9 +28623,9 @@ lbl_0001A9A0:
 /* 0001AA8C D0010090 */ stfs f0, 0x90(r1)
 lbl_0001AA90:
 /* 0001AA90 C0410094 */ lfs f2, 0x94(r1)
-/* 0001AA94 3C600000 */ lis r3, itemPool@ha
+/* 0001AA94 3C600000 */ lis r3, g_itemInfo@ha
 /* 0001AA98 C0010088 */ lfs f0, 0x88(r1)
-/* 0001AA9C 38030000 */ addi r0, r3, itemPool@l
+/* 0001AA9C 38030000 */ addi r0, r3, g_itemInfo@l
 /* 0001AAA0 C021009C */ lfs f1, 0x9c(r1)
 /* 0001AAA4 EC620028 */ fsubs f3, f2, f0
 /* 0001AAA8 C0010090 */ lfs f0, 0x90(r1)
@@ -29092,9 +29092,9 @@ lbl_0001B1A8:
 /* 0001B1A8 2C1E0000 */ cmpwi r30, 0
 /* 0001B1AC 4181FE48 */ bgt lbl_0001AFF4
 /* 0001B1B0 C03A0024 */ lfs f1, 0x24(r26)
-/* 0001B1B4 3C600000 */ lis r3, itemPool@ha
+/* 0001B1B4 3C600000 */ lis r3, g_itemInfo@ha
 /* 0001B1B8 C0010104 */ lfs f0, 0x104(r1)
-/* 0001B1BC 38030000 */ addi r0, r3, itemPool@l
+/* 0001B1BC 38030000 */ addi r0, r3, g_itemInfo@l
 /* 0001B1C0 3C800000 */ lis r4, g_poolInfo@ha
 /* 0001B1C4 EC410032 */ fmuls f2, f1, f0
 /* 0001B1C8 C06100F8 */ lfs f3, 0xf8(r1)

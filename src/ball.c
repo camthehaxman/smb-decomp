@@ -49,12 +49,12 @@ static u32 lbl_802F1F08;
 static u32 s_someLodMask;  // set, but not used
 static void (*lbl_802F1F10)(void);
 static float lbl_80205E20[4];
-static Mtx lbl_80205E30;
+static Mtx s_workMatrix;
 
 static void func_8003C38C(struct Ball *ball);
 static void clear_some_ball_flags(struct Ball *);
 
-void func_8003699C(struct Ape *ape)
+void u_ball_something_with_ape_rotation(struct Ape *ape)
 {
     struct Ball *ball = &ballInfo[ape->ballId];
     Quaternion quat;
@@ -69,10 +69,10 @@ void func_8003699C(struct Ape *ape)
 
     mathutil_quat_normalize(&ball->unkA8);
     mathutil_mtxA_from_quat(&ball->unkA8);
-    mathutil_mtxA_to_mtx(lbl_80205E30);
+    mathutil_mtxA_to_mtx(s_workMatrix);
     mathutil_mtxA_from_quat(&ape->unk60);
     mathutil_mtxA_normalize_basis();
-    mathutil_mtxA_mult_left(lbl_80205E30);
+    mathutil_mtxA_mult_left(s_workMatrix);
     mathutil_mtxA_normalize_basis();
 
     if (!(ball->flags & BALL_FLAG_05))
@@ -92,7 +92,7 @@ void func_8003699C(struct Ape *ape)
     if (!(ape->flags & (1 << 17)) && ball->unkA8.w < 0.9941f)
         return;
 
-    mathutil_mtxA_to_mtx(lbl_80205E30);
+    mathutil_mtxA_to_mtx(s_workMatrix);
 
     sp48 = (Vec){0.0f, 1.0f, 0.0f};
     mathutil_mtxA_rigid_inv_tf_vec(&sp48, &sp48);
@@ -115,29 +115,30 @@ void func_8003699C(struct Ape *ape)
     mathutil_quat_normalize(&quat);
     mathutil_mtxA_from_quat(&quat);
     mathutil_mtxA_normalize_basis();
-    mathutil_mtxA_mult_left(lbl_80205E30);
+    mathutil_mtxA_mult_left(s_workMatrix);
 }
 
-float func_80036CAC(struct Ape *ape)
+// Calculates ball speed for walking animation?
+float u_ball_something_with_walking_speed(const struct Ape *ape)
 {
-    struct Ball *ball = &ballInfo[ape->ballId];
-    Vec sp4C;
+    const struct Ball *ball = &ballInfo[ape->ballId];
+    Vec vel;
     Vec sp40;
     Quaternion sp30;
     float var1;
 
-    sp4C = ball->vel;
-    sp4C.y = 0.0f;
+    vel = ball->vel;
+    vel.y = 0.0f;
 
-    if (mathutil_vec_len(&sp4C) < 0.00027777777f)
+    if (mathutil_vec_len(&vel) < 0.00027777777f)
         return 0.0f;
 
-    mathutil_vec_normalize_len(&sp4C);
-    mathutil_mtxA_rigid_inv_tf_vec(&sp4C, &sp4C);
+    mathutil_vec_normalize_len(&vel);
+    mathutil_mtxA_rigid_inv_tf_vec(&vel, &vel);
 
     sp40 = (Vec){0.0f, 0.0f, 0.0f};
 
-    var1 = sp4C.x;
+    var1 = vel.x;
     if (var1 > -0.992f)
     {
         float one = 1.0f;  // useless; needed to match
@@ -145,7 +146,7 @@ float func_80036CAC(struct Ape *ape)
 
         var1 = 1.0f - var1;
         if (var1 > 9.9999999392252903e-09f)
-            mathutil_vec_cross_prod(&sp24, &sp4C, &sp40);
+            mathutil_vec_cross_prod(&sp24, &vel, &sp40);
         else
         {
             sp40.x = 0.0f;
@@ -156,15 +157,15 @@ float func_80036CAC(struct Ape *ape)
     }
     else
     {
-        mathutil_quat_from_dirs(&sp30, &(Vec){-1.0f, 0.0f, 0.0f}, &sp4C);
+        mathutil_quat_from_dirs(&sp30, &(Vec){-1.0f, 0.0f, 0.0f}, &vel);
     }
 
     mathutil_mtxA_push();
     mathutil_mtxA_from_quat(&sp30);
     mathutil_mtxA_normalize_basis();
-    mathutil_mtxA_to_mtx(lbl_80205E30);
+    mathutil_mtxA_to_mtx(s_workMatrix);
     mathutil_mtxA_pop();
-    mathutil_mtxA_mult_right(lbl_80205E30);
+    mathutil_mtxA_mult_right(s_workMatrix);
     return mathutil_vec_len(&ball->unkB8) * 1.5f;
 }
 
@@ -213,7 +214,7 @@ void check_ball_teeter(struct Ape *ape)
             sp3C.y = ball->pos.y - 1.0;
             sp3C.z = testPoint.z;
             ape->unk54 = i;
-            set_ball_target(3, &sp3C, 0.5f);
+            set_ball_look_point(3, &sp3C, 0.5f);
             break;
         }
     }
@@ -432,7 +433,7 @@ void func_80037718(/* struct Ape *unused */)
     Quaternion sp30;
     Vec sp24;
 
-    mathutil_mtxA_to_mtx(lbl_80205E30);
+    mathutil_mtxA_to_mtx(s_workMatrix);
     mathutil_mtxA_tf_vec_xyz(&sp24, -1.0f, 0.0f, 0.0f);
     if (sp24.y < 0.99f)
     {
@@ -448,7 +449,7 @@ void func_80037718(/* struct Ape *unused */)
     }
     mathutil_mtxA_from_quat(&sp30);
     mathutil_mtxA_normalize_basis();
-    mathutil_mtxA_mult_right(lbl_80205E30);
+    mathutil_mtxA_mult_right(s_workMatrix);
 }
 
 void u_ball_ape_thread(struct Ape *ape, int status)
@@ -477,10 +478,10 @@ void u_ball_ape_thread(struct Ape *ape, int status)
 
     r27 = (ball->flags & BALL_FLAG_GOAL) != 0;
     r27 |= !(ape->flags & 3);
-    func_8003699C(ape);
+    u_ball_something_with_ape_rotation(ape);
     if (r27)
     {
-        speed = func_80036CAC(ape);
+        speed = u_ball_something_with_walking_speed(ape);
     }
     else
     {
@@ -500,9 +501,9 @@ void u_ball_ape_thread(struct Ape *ape, int status)
     ape_skel_anim_main(ape);
     if (!(ape->flags & (1 << 3)))
         func_8003765C(ape);
-    ape_face_dir(ape, &ball->unk104);
+    ape_face_dir(ape, &ball->lookPoint);
     ball->unk100 = 0;
-    ball->unk110 = 0.0f;
+    ball->lookPointPrio = 0.0f;
 }
 
 void func_80037B1C(struct Ball *ball) {}
@@ -791,7 +792,7 @@ GXColor ballShadowColors[] =  // shadow colors
     {0x59, 0x47, 0x5F, 0xFF},  // yellowish-green ball
 };
 
-void (*ballFuncs[])(struct Ball *) =
+static void (*ballFuncs[])(struct Ball *) =
 {
     ball_func_0,
     ball_func_1,
@@ -888,7 +889,7 @@ void ev_ball_main(void)
         ball->unk120 = ball->flags;
         ball->flags &= ~(BALL_FLAG_00|BALL_FLAG_02);
         clear_some_ball_flags(ball);
-        set_ball_target(4, &ball->pos, 0.75f);
+        set_ball_look_point(4, &ball->pos, 0.75f);
         ballFuncs[ball->state](ball);
         if (modeCtrl.gameType != GAMETYPE_MINI_RACE)
             func_80038528(ball);
@@ -1370,7 +1371,10 @@ void give_bananas(int bananas)
     }
 }
 
-void set_ball_target(int a, Vec *target, float priority)
+// Sets a point of interest (such as an item or goal) that the character may turn its head and look
+// at. The higher the priority, the more likely the character will look at the point. Priority is
+// scaled by distance, such that points further away have lower priority than points that are closer.
+void set_ball_look_point(int a, Vec *lookPoint, float priority)
 {
     Vec dir;
     Vec sp44;
@@ -1394,15 +1398,17 @@ void set_ball_target(int a, Vec *target, float priority)
         if (a == 4 && playerId == i)
             continue;
 
-        // Get the distance and direction from ball to target
-        dir.x = target->x - ball->pos.x;
-        dir.y = target->y - ball->pos.y;
-        dir.z = target->z - ball->pos.z;
+        // Get the distance and direction from ball to lookPoint
+        dir.x = lookPoint->x - ball->pos.x;
+        dir.y = lookPoint->y - ball->pos.y;
+        dir.z = lookPoint->z - ball->pos.z;
         distance = mathutil_vec_normalize_len(&dir);
+
+        // Scale the priority inversely with distance
         if (distance > FLT_EPSILON)
             priority /= distance;
 
-        if (ball->unk110 > priority)
+        if (ball->lookPointPrio > priority)
             break;
 
         if (ball->flags & BALL_FLAG_00)
@@ -1422,7 +1428,7 @@ void set_ball_target(int a, Vec *target, float priority)
         }
 
         priority *= (mathutil_vec_dot_prod(&sp44, &dir) + 0.5) * 0.75;
-        if (ball->unk110 > priority)
+        if (ball->lookPointPrio > priority)
             break;
 
         if (ball->ape != NULL)
@@ -1434,11 +1440,11 @@ void set_ball_target(int a, Vec *target, float priority)
         sp44.z = -sp14[2][0];
 
         priority *= mathutil_vec_dot_prod(&sp44, &dir) + 0.5;
-        if (ball->unk110 < priority)
+        if (ball->lookPointPrio < priority)
         {
             ball->unk100 = a;
-            ball->unk104 = *target;
-            ball->unk110 = priority;
+            ball->lookPoint = *lookPoint;
+            ball->lookPointPrio = priority;
         }
     }
 }

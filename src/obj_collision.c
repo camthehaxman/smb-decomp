@@ -44,34 +44,38 @@ static void do_object_collision(void)
             struct PhysicsBall physBall;
 
             init_physball_from_ball(ball, &physBall);
+
+            // Collision with stage objects
             if (eventInfo[EVENT_STOBJ].state == EV_STATE_RUNNING)
             {
                 int j;
-                s8 *phi_r30 = g_poolInfo.stobjPool.statusList;
-                struct Stobj *stobj = stobjInfo;
+                s8 *status = g_poolInfo.stobjPool.statusList;
+                struct Stobj *stobj = g_stobjInfo;
 
-                for (j = g_poolInfo.stobjPool.count; j > 0; j--, stobj++, phi_r30++)
+                for (j = g_poolInfo.stobjPool.count; j > 0; j--, stobj++, status++)
                 {
-                    if (*phi_r30 != STAT_NULL && (stobj->unk8 & 2))
+                    if (*status != STAT_NULL && (stobj->flags & STOBJ_FLAG_TANGIBLE))
                     {
                         s8 temp_r4 = stobj->animGroupId;
                         if (physBall.animGroupId != temp_r4)
                             tf_physball_to_anim_group_space(&physBall, temp_r4);
-                        if (func_8006A9B8(&physBall.prevPos, &physBall.pos, &stobj->position_2, &stobj->position, physBall.radius, stobj->boundSphereRadius) != 0)
+                        if (func_8006A9B8(&physBall.prevPos, &physBall.pos, &stobj->prevPos, &stobj->pos, physBall.radius, stobj->boundSphereRadius) != 0)
                             stobj->coliFunc(stobj, &physBall);
                     }
                 }
             }
+
+            // Collision with items
             if (!(ball->flags & BALL_FLAG_20) && eventInfo[EVENT_ITEM].state == EV_STATE_RUNNING)
             {
-                s8 *phi_r29_2 = g_poolInfo.itemPool.statusList;
+                s8 *status = g_poolInfo.itemPool.statusList;
                 int j;
-                struct Item *item = itemPool;
+                struct Item *item = g_itemInfo;
 
-                for (j = g_poolInfo.itemPool.count; j > 0; j--, item++, phi_r29_2++)
+                for (j = g_poolInfo.itemPool.count; j > 0; j--, item++, status++)
                 {
-                    if (*phi_r29_2 != STAT_NULL
-                     && (item->flags & 2)
+                    if (*status != STAT_NULL
+                     && (item->flags & ITEM_FLAG_TANGIBLE)
                      && item->unkC == 0
                      && (modeCtrl.gameType != GAMETYPE_MINI_TARGET
                       || currStageId != ST_151_TARGET_CIRCLES
@@ -79,21 +83,21 @@ static void do_object_collision(void)
                       || stcoli_sub34(&physBall, item->animGroupId) != 0)
                     )
                     {
-                        u32 (*phi_r12)(Point3d *, Point3d *, Point3d *, Point3d *, float,  float);
+                        u32 (*coliCheck)(Point3d *, Point3d *, Point3d *, Point3d *, float,  float);
 
-                        s8 temp_r4_2 = item->animGroupId;
-                        if (physBall.animGroupId != temp_r4_2)
-                            tf_physball_to_anim_group_space(&physBall, (s32) temp_r4_2);
-                        if (item->flags & 8)
-                            phi_r12 = func_8006AAEC;
+                        s8 animGrpId = item->animGroupId;
+                        if (physBall.animGroupId != animGrpId)
+                            tf_physball_to_anim_group_space(&physBall, animGrpId);
+                        if (item->flags & ITEM_FLAG_3)
+                            coliCheck = func_8006AAEC;
                         else
-                            phi_r12 = func_8006A9B8;
+                            coliCheck = func_8006A9B8;
 
                         sp70 = item->pos;
-                        if (phi_r12(&physBall.prevPos, &physBall.pos, &item->prevPos, (void *)&sp70, physBall.radius, item->unk14) != 0U)
+                        if (coliCheck(&physBall.prevPos, &physBall.pos, &item->prevPos, &sp70, physBall.radius, item->radius) != 0U)
                         {
                             item->unkC = 8;
-                            item->unk58(item, &physBall);
+                            item->coliFunc(item, &physBall);
                             if (item->flags & 0x10)
                             {
                                 Point3d sp8 = sp70;
@@ -119,6 +123,7 @@ static void do_object_collision(void)
     currentBall = ballBackup;
 }
 
+// Checks if two objects crossed paths?
 u32 func_8006A9B8(Point3d *start1, Point3d *end1, Point3d *start2, Point3d *end2, float radius1, float radius2)
 {
     // difference between starting points
@@ -156,6 +161,7 @@ u32 func_8006A9B8(Point3d *start1, Point3d *end1, Point3d *start2, Point3d *end2
     return 1;
 }
 
+// Also checks if two objects crossed paths?
 u32 func_8006AAEC(Point3d *arg0, Point3d *arg1, Point3d *arg2, Point3d *arg3, float arg4, float arg5)
 {
     float temp_f10 = arg0->x - arg2->x;

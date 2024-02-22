@@ -234,6 +234,7 @@ void set_tev_material_ambient_colors(struct GMAShape *shape)
 }
 #endif
 
+// avObjPutInit
 void avdisp_init(void)
 {
     Vec sp8;
@@ -262,6 +263,7 @@ void avdisp_init(void)
     avdisp_set_fog_color(0, 0, 0);
 }
 
+// avObjPutAllocateMatrices
 void *u_avdisp_alloc_matrix_lists(int count)
 {
     u_transformMtxList = OSAlloc(count * sizeof(Mtx));
@@ -269,6 +271,7 @@ void *u_avdisp_alloc_matrix_lists(int count)
 }
 
 #pragma force_active on
+// avObjPutGetMatrices
 void u_get_stitching_model_mtx(struct GMAModel *model, Mtx **dest)
 {
     u8 i;
@@ -954,6 +957,7 @@ void u_avdisp_draw_model_4(struct GMAModel *model)
     s_materialAlpha = 1.0f;
 }
 
+// av_for_tex_get_log2
 int get_texture_max_lod(int width, int height)
 {
     int lod;
@@ -968,6 +972,7 @@ int get_texture_max_lod(int width, int height)
     return lod;
 }
 
+// avobjput_init_texture?
 void init_tev_layer_texobj(struct GMATevLayer *tevLayer, struct TPLTextureHeader *texHdr, struct TPL *tpl)
 {
     u8 maxLOD;
@@ -1211,6 +1216,7 @@ void draw_shape_deferred_callback(struct DrawShapeDeferredNode *node)
     s_materialAlpha = 1.0f;
 }
 
+// ObjPutTexOffset
 u32 avdisp_enable_custom_tex_mtx(u32 a)
 {
     u32 old = s_useCustomTexMtx;
@@ -1218,11 +1224,13 @@ u32 avdisp_enable_custom_tex_mtx(u32 a)
     return old;
 }
 
+// ObjPutSetTexMtx?
 void avdisp_set_custom_tex_mtx(int unused, Mtx mtx)
 {
     mathutil_mtx_copy(mtx, s_customTexMtx);
 }
 
+// ObjPutSetFadeColor
 void avdisp_set_post_mult_color(float r, float g, float b, float a)
 {
     if (r != 1.0f || g != 1.0f || b != 1.0f || a != 1.0f)
@@ -1243,6 +1251,7 @@ void avdisp_set_post_mult_color(float r, float g, float b, float a)
     }
 }
 
+// ObjPutSetOffsetColor
 void avdisp_set_post_add_color(float r, float g, float b, float a)
 {
     if (r != 0.0f || g != 0.0f || b != 0.0f || a != 0.0f)
@@ -1263,11 +1272,13 @@ void avdisp_set_post_add_color(float r, float g, float b, float a)
     }
 }
 
+// ObjPutSetFog
 void avdisp_enable_fog(int a)
 {
     s_fogEnabled = a;
 }
 
+// ObjPutSetFogType
 void avdisp_set_fog_params(int a, float b, float c)
 {
     s_fogType = a;
@@ -1275,6 +1286,7 @@ void avdisp_set_fog_params(int a, float b, float c)
     s_fogEndZ = c;
 }
 
+// ObjPutSetFogColor
 void avdisp_set_fog_color(u8 a, u8 b, u8 c)
 {
     s_fogColor.r = a;

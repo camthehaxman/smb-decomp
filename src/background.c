@@ -301,15 +301,15 @@ char *oldBgFileNames[] =
 
 void ev_background_init(void)
 {
-    s16 r29 = backgroundInfo.bgId;
-    void *r27 = backgroundInfo.work;
-    u32 r26 = backgroundInfo.randSeed;
+    s16 bgId = backgroundInfo.bgId;
+    void *work = backgroundInfo.work;
+    u32 randSeed = backgroundInfo.randSeed;
 
     memset(&backgroundInfo, 0, sizeof(backgroundInfo));
 
-    backgroundInfo.bgId = r29;
-    backgroundInfo.work = r27;
-    backgroundInfo.randSeed = r26;
+    backgroundInfo.bgId = bgId;
+    backgroundInfo.work = work;
+    backgroundInfo.randSeed = randSeed;
 
     backgroundInfo.animTimer = 0.0f;
     backgroundInfo.unk8 = 0;
@@ -322,14 +322,18 @@ void ev_background_init(void)
     backgroundInfo.stageEnvMapFunc = NULL;
     backgroundInfo.bgEnvMapFunc = NULL;
     backgroundInfo.ballEnvMapFunc = NULL;
+
+    // Call the init function with using its seed
     if (backgroundInfo.bgId > 0)
     {
-        int temp = rand();
+        int oldSeed = rand();
+
         srand(backgroundInfo.randSeed);
-        backgroundInfo.unkA4 = rand();
+        backgroundInfo.u_otherSeed = rand();
         bgInitFuncs[backgroundInfo.bgId]();
         backgroundInfo.randSeed = powerOnTimer + rand();
-        srand(temp);
+    
+        srand(oldSeed);
     }
 }
 
@@ -338,7 +342,7 @@ void ev_background_main(void)
     if ((debugFlags & 0xA) == 0)
     {
         backgroundInfo.animTimer += 1.0f;
-        backgroundInfo.unkA4++;
+        backgroundInfo.u_otherSeed++;
     }
     if (backgroundInfo.bgId > 0)
         bgMainFuncs[backgroundInfo.bgId]();
@@ -348,7 +352,7 @@ void ev_background_dest(void)
 {
     if (backgroundInfo.bgId > 0)
         bgFinishFuncs[backgroundInfo.bgId]();
-    backgroundInfo.unk98 = NULL;
+    backgroundInfo.u_lightAssignFunc = NULL;
     backgroundInfo.unk78 = 0;
     backgroundInfo.unk7C = 0;
     backgroundInfo.stageEnvMapFunc = NULL;
@@ -358,8 +362,8 @@ void ev_background_dest(void)
 
 void background_light_assign(void)
 {
-    if (backgroundInfo.unk98 != NULL)
-        backgroundInfo.unk98();
+    if (backgroundInfo.u_lightAssignFunc != NULL)
+        backgroundInfo.u_lightAssignFunc();
 }
 
 void background_draw(void)
@@ -462,7 +466,7 @@ u32 bgWorkSizes[] =
     0,
     sizeof(struct BGStormWork),
     sizeof(struct BGBonusWork),
-    0x1EC,
+    sizeof(struct BGPilotWork),
     0,
     0,
     0,
@@ -471,7 +475,7 @@ u32 bgWorkSizes[] =
     0,
 };
 
-// Define stage backgrounds
+// Define background id for each stage
 u8 stageBackgrounds[] =
 {
 #define DEFINE_STAGE(id, bg) bg,
@@ -687,7 +691,7 @@ void animate_bg_objects(struct StageBgObject *bgObj, int bgObjCount, float timeS
             mathutil_mtxA_rotate_y(bgObj->rotY);
             mathutil_mtxA_rotate_x(bgObj->rotX);
             mathutil_mtxA_tf_point(&bgObj->model->boundSphereCenter, &boundSphereCenter);
-            set_ball_target(5, &boundSphereCenter, 1.0f);
+            set_ball_look_point(5, &boundSphereCenter, 1.0f);
         }
     }
 }

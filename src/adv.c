@@ -1025,9 +1025,9 @@ void adv_ape_thread(struct Ape *ape, int status)
             ball->flags &= ~BALL_FLAG_INVISIBLE;
         r28 = (ball->flags & BALL_FLAG_GOAL) != 0;
         r28 |= !(ape->flags & 3);
-        func_8003699C(ape);
+        u_ball_something_with_ape_rotation(ape);
         if (r28)
-            speed = func_80036CAC(ape);
+            speed = u_ball_something_with_walking_speed(ape);
         else
         {
             speed = 0.0f;
@@ -1045,20 +1045,20 @@ void adv_ape_thread(struct Ape *ape, int status)
         if (!(ape->flags & (1 << 3)))
             func_8003765C(ape);
         if (advDemoInfo.unk8 >= 0x682 && advDemoInfo.unk8 < 0x6CC)
-            ball->unk104 = currentCamera->eye;
+            ball->lookPoint = currentCamera->eye;
         else if (advDemoInfo.unk8 >= 0x51A && advDemoInfo.unk8 < 0x6CC)
         {
-            ball->unk104.x = 9.62f;
-            ball->unk104.y = 0.58f;
-            ball->unk104.z = -4.25f;
+            ball->lookPoint.x = 9.62f;
+            ball->lookPoint.y = 0.58f;
+            ball->lookPoint.z = -4.25f;
         }
         if (advDemoInfo.unk8 >= 0x6CC && advDemoInfo.unk8 < 0x73A && ape->charaId == 2)
-            ball->unk104.x = ape->pos.x + 1.0;
+            ball->lookPoint.x = ape->pos.x + 1.0;
         if (advDemoInfo.unk8 >= 0x73A && advDemoInfo.unk8 < 0x7A2)
-            ball->unk104 = ballInfo[1].ape->pos;
-        ape_face_dir(ape, &ball->unk104);
+            ball->lookPoint = ballInfo[1].ape->pos;
+        ape_face_dir(ape, &ball->lookPoint);
         ball->unk100 = 0;
-        ball->unk110 = 0.0f;
+        ball->lookPointPrio = 0.0f;
     }
     else
     {
@@ -1573,7 +1573,7 @@ void submode_adv_info_main_func(void)
         sp30.x = 1.15f;
         sp30.y = 0.5f;
         sp30.z = 3.8f;
-        set_ball_target(5, &sp30, 1.0f);
+        set_ball_look_point(5, &sp30, 1.0f);
     }
     if (!(modeCtrl.courseFlags & (1 << 13)) && modeCtrl.submodeTimer == 4320)
         hud_show_title_screen_monkey_sprite();

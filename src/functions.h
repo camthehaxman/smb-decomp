@@ -116,10 +116,10 @@ void u_something_with_eyes_blinking(struct Ape *);
 // ? draw_right_hand();
 // ? func_800862F4();
 // ? func_8008638C();
-// ? func_80086434();
-// ? func_80086538();
+// ? assign_shape_colors_1();
+// ? next_shape();
 // ? draw_baby_head();
-// ? func_8008669C();
+// ? u_facial_expression_model_distort();
 // ? draw_head();
 // ? draw_ear();
 

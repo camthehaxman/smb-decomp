@@ -201,7 +201,7 @@ void ev_info_main(void)
     infoWork.bananasLeft = 0;
 
     {
-        struct Item *item = itemPool;
+        struct Item *item = g_itemInfo;
         s8 *status = g_poolInfo.itemPool.statusList;
 
         for (i = 0; i < g_poolInfo.itemPool.count; item++, i++, status++)

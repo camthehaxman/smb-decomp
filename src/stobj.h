@@ -19,26 +19,33 @@ enum
     SOT_NAMEENT_BTN,
 };
 
+enum
+{
+    STOBJ_FLAG_TANGIBLE     = (1 << 1),  // Ball can collide with the object
+    STOBJ_FLAG_LOOKPOINT    = (1 << 3),  // The character may look at the object
+    STOBJ_FLAG_ROTATION_UNK = (1 << 4),  // Something related to rotation
+};
+
 struct Stobj
 {
-    /*0x00*/ s16 id;  // index into stobjInfo array
-    s16 unk2;  // some other id?
+    /*0x00*/ s16 index;  // index into g_stobjInfo array
+    /*0x02*/ s16 uid;  // unique ID
     /*0x04*/ s16 type;
     u8 filler6[2];
-    u32 unk8;
+    /*0x08*/ u32 flags;
     /*0x0C*/ s16 state;
     /*0x0E*/ s16 counter;
     /*0x10*/ Vec u_model_origin;
-    /*0x1C*/ Vec position;
-    /*0x28*/ Vec position_2;
+    /*0x1C*/ Vec pos;  // position (in world space)
+    /*0x28*/ Vec prevPos;  // previous position (in world space)
     /*0x34*/ float boundSphereRadius;
     /*0x38*/ void (*coliFunc)(struct Stobj *, struct PhysicsBall *);
-    Vec unk3C;  // unknown type
+    Vec unk3C;  // scale?
     float unk48;
     float unk4C;
     float unk50;
     /*0x54*/ struct GMAModel *model;  // sometimes also a NlModel
-    /*0x58*/ Vec u_some_pos;  // position within anim group?
+    /*0x58*/ Vec localPos;  // position in anim group space
     Vec unk64;
     /*0x70*/ s16 rotX;
     /*0x72*/ s16 rotY;
@@ -51,12 +58,12 @@ struct Stobj
     s16 unk8A;
     s16 unk8C;
     u8 filler8E[2];
-    Vec unk90;  // yet another position?
-    float unk9C;
+    /*0x90*/ Vec lookPoint;
+    /*0x9C*/ float lookPointPrio;
     /*0xA0*/ s8 animGroupId;
     /*0xA4*/ void *extraData;  // pointer to a GoalTape or GoalBag struct
     Vec unkA8;
-    /*0xB4*/ Vec offsetPos;  // offset from its set position (for jamabars and goalbags)
+    /*0xB4*/ Vec offsetPos;  // offset from its regular position (for jamabars and goalbags)
     /*0xC0*/ Vec offsetVel;  // offset velocity (for jamabars and goalbags)
 };  // size = 0xCC
 
@@ -67,7 +74,7 @@ struct Struct8028C0B0
     struct GMAModel *unk14[4];
 };
 
-extern struct Stobj stobjInfo[128];
+extern struct Stobj g_stobjInfo[MAX_STOBJS];
 extern struct Struct8028C0B0 lbl_8028C0B0;
 
 void ev_stobj_init(void);

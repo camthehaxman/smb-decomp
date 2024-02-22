@@ -259,7 +259,7 @@ static inline float mathutil_unk(register float a, register float b, register fl
 #endif
 }
 
-static inline float mathutil_vec_len(register Vec *v)
+static inline float mathutil_vec_len(register const Vec *v)
 {
 #ifdef C_ONLY
     return mathutil_sqrt(v->x * v->x + v->y * v->y + v->z * v->z);

@@ -20,9 +20,9 @@ static void item_dummy_destroy(struct Item *);
 static void item_dummy_release(struct Item *);
 static void item_dummy_debug(struct Item *);
 
-struct Item itemPool[256];
+struct Item g_itemInfo[MAX_ITEMS];
 
-s16 itemCurrUid;
+static s16 s_currUid;
 
 #pragma force_active on
 char *itemNames[] =
@@ -157,13 +157,13 @@ void ev_item_init(void)
     int i;
     struct Item *item;
 
-    itemCurrUid = 0;
-    memset(itemPool, 0, sizeof(itemPool));
-    item = itemPool;
-    for (i = 0; i < ARRAY_COUNT(itemPool); i++, item++)
+    s_currUid = 0;
+    memset(g_itemInfo, 0, sizeof(g_itemInfo));
+    item = g_itemInfo;
+    for (i = 0; i < ARRAY_COUNT(g_itemInfo); i++, item++)
     {
-        item->id = i;
-        item->unk2 = -1;
+        item->index = i;
+        item->uid = -1;
     }
 
     pool_reset(&g_poolInfo.itemPool);
@@ -195,7 +195,7 @@ void ev_item_main(void)
     if (debugFlags & 0xA)
         return;
     status = g_poolInfo.itemPool.statusList;
-    item = itemPool;
+    item = g_itemInfo;
     for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
         if (*status != STAT_NULL)
@@ -221,7 +221,7 @@ void ev_item_dest(void)
     s8 *status;
 
     status = g_poolInfo.itemPool.statusList;
-    item = itemPool;
+    item = g_itemInfo;
     for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
         if (*status != STAT_NULL)
@@ -242,11 +242,12 @@ void item_draw(void)
 
     mathutil_mtx_copy(mathutilData->mtxB, viewFromWorld);
     status = g_poolInfo.itemPool.statusList;
-    item = itemPool;
+    item = g_itemInfo;
     for (itemCtr = g_poolInfo.itemPool.count; itemCtr > 0; itemCtr--, status++, item++)
     {
         if (*status != STAT_NULL && !(item->flags & ITEM_FLAG_INVISIBLE))
         {
+            // Set up a matrix to transform from anim group space to world space
             if (animGrpId != item->animGroupId)
             {
                 mathutil_mtxA_from_mtx(viewFromWorld);
@@ -254,39 +255,40 @@ void item_draw(void)
                 mathutil_mtxA_to_mtx(mathutilData->mtxB);
                 animGrpId = item->animGroupId;
             }
+            // Draw the item
             itemDrawFuncs[item->type](item);
         }
     }
     mathutil_mtx_copy(viewFromWorld, mathutilData->mtxB);
 }
 
-int item_create(struct Item *a)
+int item_create(struct Item *item)
 {
-    struct Item *r31;
-    int r30 = pool_alloc(&g_poolInfo.itemPool, 1);
+    struct Item *newItem;
+    int index = pool_alloc(&g_poolInfo.itemPool, 1);
 
-    if (r30 < 0)
+    if (index < 0)
         return -1;
-    r31 = &itemPool[r30];
-    memcpy(r31, a, sizeof(struct Item));
-    r31->id = r30;
-    r31->unk5E = -1;
-    itemInitFuncs[r31->type](r31);
-    r31->unkC = 0;
-    if (r31->unk18 <= 0.0)
-        r31->unk18 = 1.0f;
-    r31->prevPos = r31->pos;
-    r31->unk58 = itemCollectFuncs[r31->type];
-    r31->unk2 = itemCurrUid;
-    itemCurrUid++;
-    if (itemCurrUid < 0)
-        itemCurrUid = 0;
-    if (r31->flags & (1 << 5))
+    newItem = &g_itemInfo[index];
+    memcpy(newItem, item, sizeof(struct Item));
+    newItem->index = index;
+    newItem->unk5E = -1;
+    itemInitFuncs[newItem->type](newItem);
+    newItem->unkC = 0;
+    if (newItem->unk18 <= 0.0)
+        newItem->unk18 = 1.0f;
+    newItem->prevPos = newItem->pos;
+    newItem->coliFunc = itemCollectFuncs[newItem->type];
+    newItem->uid = s_currUid;
+    s_currUid++;
+    if (s_currUid < 0)
+        s_currUid = 0;
+    if (newItem->flags & ITEM_FLAG_5)
     {
-        r31->unk64 = 0;
-        r31->unk88 = 0.0f;
+        newItem->unk64 = 0;
+        newItem->unk88 = 0.0f;
     }
-    return r31->unk2;
+    return newItem->uid;
 }
 
 void item_draw_shadows(void)
@@ -304,11 +306,11 @@ void item_draw_shadows(void)
     struct PolyShadowUnit sp8;
 
     status = g_poolInfo.itemPool.statusList;
-    item = itemPool;
+    item = g_itemInfo;
     for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
         if (*status == STAT_NULL
-         || !(item->flags & (1 << 5))
+         || !(item->flags & ITEM_FLAG_5)
          || (item->flags & ITEM_FLAG_INVISIBLE))
             continue;
 
@@ -400,14 +402,14 @@ void release_captured_item(int a)
         return;
 
     status = g_poolInfo.itemPool.statusList;
-    item = itemPool;
+    item = g_itemInfo;
     for (i = g_poolInfo.itemPool.count; i > 0; i--, status++, item++)
     {
         if (*status != STAT_NULL && item->unk5E >= 0 && item->unk5E <= a)
         {
-            id = item->id;
+            id = item->index;
             itemReleaseFuncs[item->type](item);
-            item->id = id;
+            item->index = id;
         }
     }
 }

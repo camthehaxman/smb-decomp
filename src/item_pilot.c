@@ -43,7 +43,7 @@ struct Struct801BDFA0
 {
     struct ModelLOD **lodModelsPtr;
     s16 unk4;
-    float unk8;
+    float radius;  // collision radius
     s16 unkC;
     s16 unkE;
     s16 xrotSpeed;
@@ -89,8 +89,8 @@ void item_pilot_init(struct Item *item)
         item->modelLODs = pilotBananaInfo[item->subType].lodModelsPtr;
     else
         item->modelLODs = minigameGma->modelEntries[pilotBananaInfo[item->subType].unk4].model;
-    item->flags = 0x22;
-    item->unk14 = pilotBananaInfo[item->subType].unk8;
+    item->flags = ITEM_FLAG_TANGIBLE|ITEM_FLAG_5;
+    item->radius = pilotBananaInfo[item->subType].radius;
     item->unk18 = 0.25f;
     item->rotVelX = pilotBananaInfo[item->subType].xrotSpeed;
     item->rotVelY = pilotBananaInfo[item->subType].yrotSpeed;
@@ -99,9 +99,9 @@ void item_pilot_init(struct Item *item)
     item->shadowColor.r = 0x46;
     item->shadowColor.g = 0x47;
     item->shadowColor.b = 0x5F;
-    item->unk7C.x = item->unk14;
-    item->unk7C.y = item->unk14 * 0.8f;
-    item->unk7C.z = item->unk14;
+    item->unk7C.x = item->radius;
+    item->unk7C.y = item->radius * 0.8f;
+    item->unk7C.z = item->radius;
 }
 
 void item_pilot_main(struct Item *item)
@@ -186,12 +186,12 @@ void item_pilot_main(struct Item *item)
             item->state = 6;
         break;
     case 6:
-        item->unk14 -= 0.033333333333333333;
-        if (item->unk14 < 1.1920928955078125e-07f)
+        item->radius -= 0.033333333333333333;
+        if (item->radius < 1.1920928955078125e-07f)
         {
             item->state = 0;
             item->flags |= ITEM_FLAG_INVISIBLE;
-            item->unk14 = 1.1920928955078125e-07f;
+            item->radius = 1.1920928955078125e-07f;
         }
         break;
     }
@@ -211,24 +211,24 @@ void item_pilot_main(struct Item *item)
     item->rotZ += item->rotVelZ;
 
     if (item->animGroupId == 0)
-        set_ball_target(2, &item->pos, 1.0f);
+        set_ball_look_point(2, &item->pos, 1.0f);
     else
     {
         Vec spC;
 
         mathutil_mtxA_from_mtx(animGroups[item->animGroupId].transform);
         mathutil_mtxA_tf_point(&item->pos, &spC);
-        set_ball_target(2, &spC, 1.0f);
+        set_ball_look_point(2, &spC, 1.0f);
     }
-    if (item->pos.y - f31 < item->unk14)
+    if (item->pos.y - f31 < item->radius)
     {
-        item->pos.y = f31 + item->unk14;
+        item->pos.y = f31 + item->radius;
         if (item->vel.y < 0.0f)
             item->vel.y *= -0.4f;
     }
     item->unk6C.z = -item->rotY;
-    item->unk7C.x = item->unk14;
-    item->unk7C.y = item->unk14 * 0.7f;
+    item->unk7C.x = item->radius;
+    item->unk7C.y = item->radius * 0.7f;
 }
 
 void item_pilot_draw(struct Item *item)
@@ -240,7 +240,7 @@ void item_pilot_draw(struct Item *item)
 
     if (polyDisp.flags & (1 << 2))
         return;
-    f30 = item->unk14;
+    f30 = item->radius;
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_translate(&item->pos);
     mathutil_mtxA_sq_from_mtx(userWork->matrices[2]);
@@ -340,7 +340,7 @@ void item_pilot_draw(struct Item *item)
                 f3 = 0.0f;
                 break;
             }
-            f30 = 1.0 + (((globalAnimTimer + item->unk2 * 10) % 60) * 0.033333333333333333);
+            f30 = 1.0 + (((globalAnimTimer + item->uid * 10) % 60) * 0.033333333333333333);
             avdisp_set_post_mult_color(f1, f2, f3, 1.0f);
             mathutil_mtxA_sq_from_identity();
             mathutil_mtxA_scale_s(f30);
@@ -353,9 +353,9 @@ void item_pilot_draw(struct Item *item)
 
 void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
 {
-    item->flags &= ~(1 << 1);
+    item->flags &= ~ITEM_FLAG_TANGIBLE;
     item->state = 3;
-    item->vel.y += item->unk14 * 0.1875;
+    item->vel.y += item->radius * 0.1875;
     item->rotVelY <<= 2;
     item->vel.x += ball->vel.x * 0.25;
     item->vel.y += ball->vel.y * 0.25;
@@ -376,7 +376,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
             }
             item->state = 0;
             item->flags |= ITEM_FLAG_INVISIBLE;
-            item->flags &= ~(1 << 1);
+            item->flags &= ~ITEM_FLAG_TANGIBLE;
             memset(&effect, 0, sizeof(effect));
             effect.type = ET_HOLDING_BANANA;
             effect.playerId = currentBall->playerId;
@@ -387,7 +387,7 @@ void item_pilot_collect(struct Item *item, struct PhysicsBall *ball)
             effect.rotY = item->rotY;
             effect.rotZ = item->rotZ;
             effect.model = get_lod(item->modelLODs);
-            effect.scale.x = (item->unk14 / effect.model->boundSphereRadius) * 1.5;
+            effect.scale.x = (item->radius / effect.model->boundSphereRadius) * 1.5;
             effect.scale.y = effect.scale.x;
             effect.scale.z = effect.scale.y;
             spawn_effect(&effect);

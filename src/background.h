@@ -71,10 +71,10 @@ struct BackgroundInfo  // size = 0xA8
     /*0x9C*/ EnvMapFunc stageEnvMapFunc;
     /*0x90*/ EnvMapFunc bgEnvMapFunc;
     /*0x94*/ EnvMapFunc ballEnvMapFunc;
-    void (*unk98)(void);
+    void (*u_lightAssignFunc)(void);
     void *work;
     u32 randSeed;
-    u32 unkA4;
+    u32 u_otherSeed;
 };
 
 enum

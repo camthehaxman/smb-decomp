@@ -48,7 +48,7 @@ void bg_bonus_init(void)
 
     bg_default_init();
     backgroundInfo.ballEnvMapFunc = bg_bonus_envmap_ball;
-    backgroundInfo.unk98 = lbl_80061B58;
+    backgroundInfo.u_lightAssignFunc = lbl_80061B58;
 
     // find models
     if (!work->initialized)

@@ -6,7 +6,7 @@ extern GXTexObj *shirtTexObjs[4];
 
 extern Mtx **u_animTransformMatrices;
 
-void mot_ape_8008A55C(u32 a, struct BodyPartThing *b, int c, int d);
+void mot_ape_8008A55C(u32 a, struct BodyPart *b, int c, int d);
 // ? u_advance_ape_anim();
 // ? u_free_character_graphics();
 // ? u_load_character_graphics();

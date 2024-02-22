@@ -11,23 +11,23 @@
 #include "nl2ngc.h"
 #include "window.h"
 
-static s8 lbl_802F2060;
+static s8 s_somethingLightRelated;
 
 u8 lbl_802B2E70[0x900];
 FORCE_BSS_ORDER(lbl_802B2E70)
-s32 lbl_802B3770[0x10];
+s32 u_hairRelated[0x10];
 u32 u_blinkRelated[0x10];
 
-static void draw_aiai_hair(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
-static void draw_eye(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
-static void draw_baby_hand(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
-static void draw_left_hand(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
-static void draw_right_hand(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
-static void func_80086434(int arg0, struct GMAModel *arg1);
-static struct GMAShape *func_80086538(struct GMAShape *);
-static void draw_baby_head(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2);
-static void draw_head(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
-static void draw_ear(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *arg2);
+static void draw_aiai_hair(struct Ape *, struct BodyPartDesc *, struct BodyPart *);
+static void draw_eye(struct Ape *, struct BodyPartDesc *, struct BodyPart *);
+static void draw_baby_hand(struct Ape *, struct BodyPartDesc *, struct BodyPart *);
+static void draw_left_hand(struct Ape *, struct BodyPartDesc *, struct BodyPart *);
+static void draw_right_hand(struct Ape *, struct BodyPartDesc *, struct BodyPart *);
+static void assign_shape_colors_1(int arg0, struct GMAModel *arg1);
+static struct GMAShape *next_shape(struct GMAShape *);
+static void draw_baby_head(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPart *unused2);
+static void draw_head(struct Ape *, struct BodyPartDesc *, struct BodyPart *);
+static void draw_ear(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPart *arg2);
 
 static GXColor lbl_801C57E0[] =
 {
@@ -133,7 +133,7 @@ struct Struct80086794
     float unk4;
 };
 
-static struct Struct80089A04 lbl_801C5A90[] =
+static struct BodyPartNameInfo lbl_801C5A90[] =
 {
     {
         "MDL_APE",
@@ -187,7 +187,7 @@ static struct Struct80089A04 lbl_801C5A90[] =
     },
 };
 
-static struct Struct80089A04 lbl_801C5D30[] =
+static struct BodyPartNameInfo lbl_801C5D30[] =
 {
     {
         "MDL_GAL",
@@ -241,7 +241,7 @@ static struct Struct80089A04 lbl_801C5D30[] =
     },
 };
 
-static struct Struct80089A04 lbl_801C5FD0[] =
+static struct BodyPartNameInfo lbl_801C5FD0[] =
 {
     {
         "MDL_KID",
@@ -295,7 +295,7 @@ static struct Struct80089A04 lbl_801C5FD0[] =
     },
 };
 
-static struct Struct80089A04 lbl_801C6270[] =
+static struct BodyPartNameInfo lbl_801C6270[] =
 {
     {
         "MDL_GOR",
@@ -349,7 +349,7 @@ static struct Struct80089A04 lbl_801C6270[] =
     },
 };
 
-struct Struct80089A04 *lbl_801C63B0[] =
+struct BodyPartNameInfo *lbl_801C63B0[] =
 {
     lbl_801C5A90,
     lbl_801C5D30,
@@ -357,7 +357,8 @@ struct Struct80089A04 *lbl_801C63B0[] =
     lbl_801C6270,
 };
 
-s32 lbl_801C63C0[] = { 5, 5, 5, 5 };
+// number of body parts each character has
+s32 g_bodyPartCountsPerCharacter[] = { 5, 5, 5, 5 };
 
 #pragma force_active on
 char *lbl_801C6420[] =
@@ -513,7 +514,7 @@ static u32 s_eyeModelIDs[][16] =
     { 0x03, 0x0B, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x0B, 0x03 },
 };
 
-static u32 lbl_801C6848[] =
+static u32 s_aiaiHairModelIDs[] =
 {
     0x0F,
     0x10,
@@ -585,38 +586,38 @@ static u32 lbl_801C693C[] =
     0x23,
 };
 
-extern const struct Struct8008669C lbl_80130AEC[];
-extern const struct Struct8008669C lbl_8013FBD4[];
-extern const struct Struct8008669C lbl_8015D1DC[];
-extern const struct Struct8008669C lbl_80153A54[];
-extern const struct Struct8008669C lbl_80162D44[];
-extern const struct Struct8008669C lbl_80169884[];
-extern const struct Struct8008669C lbl_8016FCDC[];
-extern const struct Struct8008669C lbl_8016DD94[];
-extern const struct Struct8008669C lbl_8012C234[];
-extern const struct Struct8008669C lbl_8013EB94[];
-extern const struct Struct8008669C lbl_8014D184[];
-extern const struct Struct8008669C lbl_80161684[];
-extern const struct Struct8008669C lbl_80168C54[];
-extern const struct Struct8008669C lbl_8016CEF4[];
-extern const struct Struct8008669C lbl_8012346C[];
-extern const struct Struct8008669C lbl_8013B65C[];
-extern const struct Struct8008669C lbl_8015A11C[];
-extern const struct Struct8008669C lbl_80146F9C[];
-extern const struct Struct8008669C lbl_801649B4[];
-extern const struct Struct8008669C lbl_801683CC[];
-extern const struct Struct8008669C lbl_8016F454[];
-extern const struct Struct8008669C lbl_8016BF84[];
-extern const struct Struct8008669C lbl_80118D0C[];
-extern const struct Struct8008669C lbl_80137A3C[];
-extern const struct Struct8008669C lbl_80157BBC[];
-extern const struct Struct8008669C lbl_80142D64[];
-extern const struct Struct8008669C lbl_8015F80C[];
-extern const struct Struct8008669C lbl_8016682C[];
-extern const struct Struct8008669C lbl_8016EBCC[];
-extern const struct Struct8008669C lbl_8016AEDC[];
+extern const struct FacialAnimationSomething lbl_80130AEC[];
+extern const struct FacialAnimationSomething lbl_8013FBD4[];
+extern const struct FacialAnimationSomething lbl_8015D1DC[];
+extern const struct FacialAnimationSomething lbl_80153A54[];
+extern const struct FacialAnimationSomething lbl_80162D44[];
+extern const struct FacialAnimationSomething lbl_80169884[];
+extern const struct FacialAnimationSomething lbl_8016FCDC[];
+extern const struct FacialAnimationSomething lbl_8016DD94[];
+extern const struct FacialAnimationSomething lbl_8012C234[];
+extern const struct FacialAnimationSomething lbl_8013EB94[];
+extern const struct FacialAnimationSomething lbl_8014D184[];
+extern const struct FacialAnimationSomething lbl_80161684[];
+extern const struct FacialAnimationSomething lbl_80168C54[];
+extern const struct FacialAnimationSomething lbl_8016CEF4[];
+extern const struct FacialAnimationSomething lbl_8012346C[];
+extern const struct FacialAnimationSomething lbl_8013B65C[];
+extern const struct FacialAnimationSomething lbl_8015A11C[];
+extern const struct FacialAnimationSomething lbl_80146F9C[];
+extern const struct FacialAnimationSomething lbl_801649B4[];
+extern const struct FacialAnimationSomething lbl_801683CC[];
+extern const struct FacialAnimationSomething lbl_8016F454[];
+extern const struct FacialAnimationSomething lbl_8016BF84[];
+extern const struct FacialAnimationSomething lbl_80118D0C[];
+extern const struct FacialAnimationSomething lbl_80137A3C[];
+extern const struct FacialAnimationSomething lbl_80157BBC[];
+extern const struct FacialAnimationSomething lbl_80142D64[];
+extern const struct FacialAnimationSomething lbl_8015F80C[];
+extern const struct FacialAnimationSomething lbl_8016682C[];
+extern const struct FacialAnimationSomething lbl_8016EBCC[];
+extern const struct FacialAnimationSomething lbl_8016AEDC[];
 
-static const struct Struct8008669C *lbl_801C695C[] =
+static const struct FacialAnimationSomething *lbl_801C695C[] =
 {
     lbl_80130AEC,
     lbl_8013FBD4,
@@ -652,7 +653,7 @@ static u32 lbl_801C699C[] =
     0x00000024,
 };
 
-static const struct Struct8008669C *lbl_801C69BC[] =
+static const struct FacialAnimationSomething *lbl_801C69BC[] =
 {
     lbl_8012C234,
     lbl_8013EB94,
@@ -688,7 +689,7 @@ static u32 lbl_801C69FC[] =
     0x00000026,
 };
 
-static const struct Struct8008669C *lbl_801C6A1C[] =
+static const struct FacialAnimationSomething *lbl_801C6A1C[] =
 {
     lbl_8012346C,
     lbl_8013B65C,
@@ -724,7 +725,7 @@ static u32 lbl_801C6A5C[] =
     0x00000029,
 };
 
-static const struct Struct8008669C *lbl_801C6A7C[] =
+static const struct FacialAnimationSomething *lbl_801C6A7C[] =
 {
     lbl_80118D0C,
     lbl_80137A3C,
@@ -818,731 +819,161 @@ static u32 *lbl_801C6B7C[] =
 
 static struct BodyPartDesc aiaiBodyPartDescLOD0[] =
 {
-    {
-        60,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_H_APE_KUBI",
-    },
-    {
-        6,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "H_APE_EYE",
-    },
-    {
-        14,
-        5,
-        {  0,   0,   0},
-        draw_aiai_hair,
-        "H_APE_HAIR",
-    },
-    {
-        62,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_H_APE_TE_L",
-    },
-    {
-        65,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_H_APE_TE_R",
-    },
-    {
-        2,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_H_APE_KUBI_EAR_L",
-    },
-    {
-        4,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_H_APE_KUBI_EAR_R",
-    },
+    {60,  5, {  0,   0,   0}, draw_head, "obj_H_APE_KUBI"},
+    { 6,  5, {  0,   0,   0}, draw_eye,  "H_APE_EYE" },
+    {14,  5, {  0,   0,   0}, draw_aiai_hair, "H_APE_HAIR" },
+    {62, 10, {  0,   0,   0}, draw_left_hand, "obj_H_APE_TE_L" },
+    {65, 15, {  0,   0,   0}, draw_right_hand, "obj_H_APE_TE_R" },
+    { 2,  5, {-0.029999999, 0.12, 0.1}, draw_ear, "obj_H_APE_KUBI_EAR_L"},
+    { 4,  5, {-0.029999999, -0.12, 0.1}, draw_ear, "obj_H_APE_KUBI_EAR_R" },
 };
 
 static struct BodyPartDesc aiaiBodyPartDescLOD1[] =
 {
-    {
-        60,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_M_APE_KUBI",
-    },
-    {
-        6,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "M_APE_EYE",
-    },
-    {
-        14,
-        5,
-        {  0,   0,   0},
-        draw_aiai_hair,
-        "M_APE_HAIR",
-    },
-    {
-        62,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_M_APE_MT_L",
-    },
-    {
-        65,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_M_APE_MT_R",
-    },
-    {
-        3,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_M_APE_KUBI_EAR_L",
-    },
-    {
-        5,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_M_APE_KUBI_EAR_R",
-    },
+    {60,  5, {  0,   0,   0},            draw_head,       "obj_M_APE_KUBI"},    
+    { 6,  5, {  0,   0,   0},            draw_eye,        "M_APE_EYE"},    
+    {14,  5, {  0,   0,   0},            draw_aiai_hair,  "M_APE_HAIR"},    
+    {62, 10, {  0,   0,   0},            draw_left_hand,  "obj_M_APE_MT_L"},    
+    {65, 15, {  0,   0,   0},            draw_right_hand, "obj_M_APE_MT_R"},    
+    { 3,  5, {-0.029999999, 0.12, 0.1},  draw_ear,        "obj_M_APE_KUBI_EAR_L"},    
+    { 5,  5, {-0.029999999, -0.12, 0.1}, draw_ear,        "obj_M_APE_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc aiaiBodyPartDescLOD2[] =
 {
-    {
-        19,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_L_APE_KUBI",
-    },
-    {
-        18,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "L_APE_EYE",
-    },
-    {
-        20,
-        10,
-        {  0,   0,   0},
-        NULL,
-        "obj_L_APE_MT_L",
-    },
-    {
-        22,
-        15,
-        {  0,   0,   0},
-        NULL,
-        "obj_L_APE_MT_R",
-    },
-    {
-        1,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_L_APE_KUBI_EAR_L",
-    },
-    {
-        2,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_L_APE_KUBI_EAR_R",
-    },
+    { 19, 5, {  0,   0,   0}, draw_head, "obj_L_APE_KUBI" },
+    { 18, 5, {  0,   0,   0}, draw_eye, "L_APE_EYE" },
+    { 20, 10, {  0,   0,   0}, NULL, "obj_L_APE_MT_L" },
+    { 22, 15, {  0,   0,   0}, NULL, "obj_L_APE_MT_R" },
+    { 1, 5, {-0.029999999, 0.12, 0.1}, draw_ear, "obj_L_APE_KUBI_EAR_L" },
+    { 2, 5, {-0.029999999, -0.12, 0.1}, draw_ear, "obj_L_APE_KUBI_EAR_R" },
 };
 
 static struct BodyPartDesc aiaiBodyPartDescLOD3[] =
 {
-    {
-        7,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_S_APE_KUBI",
-    },
-    {
-        13,
-        10,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_APE_MT_L",
-    },
-    {
-        15,
-        15,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_APE_MT_R",
-    },
-    {
-        5,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_S_APE_KUBI_EAR_L",
-    },
-    {
-        6,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_S_APE_KUBI_EAR_R",
-    },
+    { 7, 5, {  0,   0,   0}, draw_head, "obj_S_APE_KUBI"},
+    { 13, 10, {  0,   0,   0}, NULL, "obj_S_APE_MT_L"},
+    { 15, 15, {  0,   0,   0}, NULL, "obj_S_APE_MT_R"},
+    { 5, 5, {-0.029999999, 0.12, 0.1}, draw_ear, "obj_S_APE_KUBI_EAR_L"},
+    { 6, 5, {-0.029999999, -0.12, 0.1}, draw_ear, "obj_S_APE_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc meemeeBodyPartDescLOD0[] =
 {
-    {
-        15,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_H_GAL_KUBI",
-    },
-    {
-        6,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "H_GAL_EYE",
-    },
-    {
-        17,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_M_GAL_MT_L",
-    },
-    {
-        20,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_M_GAL_MT_R",
-    },
-    {
-        16,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_H_GAL_KUBI_EAR_L",
-    },
-    {
-        18,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_H_GAL_KUBI_EAR_R",
-    },
+    { 15, 5, {  0,   0,   0}, draw_head, "obj_H_GAL_KUBI"},
+    { 6, 5, {  0,   0,   0}, draw_eye, "H_GAL_EYE"},
+    { 17, 10, {  0,   0,   0}, draw_left_hand, "obj_M_GAL_MT_L"},
+    { 20, 15, {  0,   0,   0}, draw_right_hand, "obj_M_GAL_MT_R"},
+    { 16, 5, {-0.029999999, 0.12, 0.1}, draw_ear, "obj_H_GAL_KUBI_EAR_L"},
+    { 18, 5, {-0.029999999, -0.12, 0.1}, draw_ear, "obj_H_GAL_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc meemeeBodyPartDescLOD1[] =
 {
-    {
-        15,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_M_GAL_KUBI",
-    },
-    {
-        6,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "M_GAL_EYE",
-    },
-    {
-        17,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_M_GAL_MT_L",
-    },
-    {
-        20,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_M_GAL_MT_R",
-    },
-    {
-        4,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_M_GAL_KUBI_EAR_L",
-    },
-    {
-        5,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_M_GAL_KUBI_EAR_R",
-    },
+    { 15, 5, {  0,   0,   0}, draw_head, "obj_M_GAL_KUBI"},
+    { 6, 5, {  0,   0,   0}, draw_eye, "M_GAL_EYE"},
+    { 17, 10, {  0,   0,   0}, draw_left_hand, "obj_M_GAL_MT_L"},
+    { 20, 15, {  0,   0,   0}, draw_right_hand, "obj_M_GAL_MT_R"},
+    { 4, 5, {-0.029999999, 0.12, 0.1}, draw_ear, "obj_M_GAL_KUBI_EAR_L"},
+    { 5, 5, {-0.029999999, -0.12, 0.1}, draw_ear, "obj_M_GAL_KUBI_EAR_R"},
 };
 
 struct BodyPartDesc meemeeBodyPartDescLOD2[] =
 {
-    {
-        18,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_L_GAL_KUBI",
-    },
-    {
-        16,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "L_GAL_EYE",
-    },
-    {
-        19,
-        10,
-        {  0,   0,   0},
-        NULL,
-        "obj_L_GAL_MT_L",
-    },
-    {
-        22,
-        15,
-        {  0,   0,   0},
-        NULL,
-        "obj_L_GAL_MT_R",
-    },
-    {
-        1,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_L_GAL_KUBI_EAR_L",
-    },
-    {
-        2,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_L_GAL_KUBI_EAR_R",
-    },
+    { 18, 5, {  0,   0,   0}, draw_head, "obj_L_GAL_KUBI"},
+    { 16, 5, {  0,   0,   0}, draw_eye, "L_GAL_EYE"},
+    { 19, 10, {  0,   0,   0}, NULL, "obj_L_GAL_MT_L"},
+    { 22, 15, {  0,   0,   0}, NULL, "obj_L_GAL_MT_R"},
+    { 1, 5, {-0.029999999, 0.12, 0.1}, draw_ear, "obj_L_GAL_KUBI_EAR_L"},
+    { 2, 5, {-0.029999999, -0.12, 0.1}, draw_ear, "obj_L_GAL_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc meemeeBodyPartDescLOD3[] =
 {
-    {
-        7,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_S_GAL_KUBI",
-    },
-    {
-        13,
-        10,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_GAL_MT_L",
-    },
-    {
-        15,
-        15,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_GAL_MT_R",
-    },
-    {
-        5,
-        5,
-        {-0.029999999, 0.12, 0.1},
-        draw_ear,
-        "obj_S_GAL_KUBI_EAR_L",
-    },
-    {
-        6,
-        5,
-        {-0.029999999, -0.12, 0.1},
-        draw_ear,
-        "obj_S_GAL_KUBI_EAR_R",
-    },
+    { 7, 5, {  0,   0,   0}, draw_head, "obj_S_GAL_KUBI"},
+    { 13, 10, {  0,   0,   0}, NULL, "obj_S_GAL_MT_L"},
+    { 15, 15, {  0,   0,   0}, NULL, "obj_S_GAL_MT_R"},
+    { 5, 5, {-0.029999999, 0.12, 0.1}, draw_ear, "obj_S_GAL_KUBI_EAR_L"},
+    { 6, 5, {-0.029999999, -0.12, 0.1}, draw_ear, "obj_S_GAL_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc babyBodyPartDescLOD0[] =
 {
-    {
-        15,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_H_KID_KUBI",
-    },
-    {
-        14,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "H_KID_EYE",
-    },
-    {
-        17,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_M_KID_MT_L",
-    },
-    {
-        20,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_M_KID_MT_R",
-    },
-    {
-        10,
-        5,
-        {-0.0020000001, 0.090000004, 0.078000002},
-        draw_ear,
-        "obj_H_KID_KUBI_EAR_L",
-    },
-    {
-        12,
-        5,
-        {-0.0020000001, -0.090000004, 0.078000002},
-        draw_ear,
-        "obj_H_KID_KUBI_EAR_R",
-    },
+    { 15, 5, {  0,   0,   0}, draw_head, "obj_H_KID_KUBI"},
+    { 14, 5, {  0,   0,   0}, draw_eye, "H_KID_EYE"},
+    { 17, 10, {  0,   0,   0}, draw_left_hand, "obj_M_KID_MT_L"},
+    { 20, 15, {  0,   0,   0}, draw_right_hand, "obj_M_KID_MT_R"},
+    { 10, 5, {-0.0020000001, 0.090000004, 0.078000002}, draw_ear, "obj_H_KID_KUBI_EAR_L"},
+    { 12, 5, {-0.0020000001, -0.090000004, 0.078000002}, draw_ear, "obj_H_KID_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc babyBodyPartDescLOD1[] =
 {
-    {
-        15,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_M_KID_KUBI",
-    },
-    {
-        14,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "M_KID_EYE",
-    },
-    {
-        17,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_M_KID_MT_L",
-    },
-    {
-        20,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_M_KID_MT_R",
-    },
-    {
-        11,
-        5,
-        {-0.0020000001, 0.090000004, 0.078000002},
-        draw_ear,
-        "obj_M_KID_KUBI_EAR_L",
-    },
-    {
-        13,
-        5,
-        {-0.0020000001, -0.090000004, 0.078000002},
-        draw_ear,
-        "obj_M_KID_KUBI_EAR_R",
-    },
+    { 15, 5, {  0,   0,   0}, draw_head, "obj_M_KID_KUBI"},
+    { 14, 5, {  0,   0,   0}, draw_eye, "M_KID_EYE"},
+    { 17, 10, {  0,   0,   0}, draw_left_hand, "obj_M_KID_MT_L"},
+    { 20, 15, {  0,   0,   0}, draw_right_hand, "obj_M_KID_MT_R"},
+    { 11, 5, {-0.0020000001, 0.090000004, 0.078000002}, draw_ear, "obj_M_KID_KUBI_EAR_L"},
+    { 13, 5, {-0.0020000001, -0.090000004, 0.078000002}, draw_ear, "obj_M_KID_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc babyBodyPartDescLOD2[] =
 {
-    {
-        19,
-        5,
-        {  0,   0,   0},
-        draw_baby_head,
-        "obj_L_KID_KUBI",
-    },
-    {
-        26,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_L_KID_FACE",
-    },
-    {
-        16,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "L_KID_EYE",
-    },
-    {
-        20,
-        10,
-        {  0,   0,   0},
-        draw_baby_hand,
-        "obj_L_KID_MT_L",
-    },
-    {
-        23,
-        15,
-        {  0,   0,   0},
-        draw_baby_hand,
-        "obj_L_KID_MT_R",
-    },
-    {
-        1,
-        5,
-        {-0.0020000001, 0.090000004, 0.078000002},
-        draw_ear,
-        "obj_L_KID_KUBI_EAR_L",
-    },
-    {
-        2,
-        5,
-        {-0.0020000001, -0.090000004, 0.078000002},
-        draw_ear,
-        "obj_L_KID_KUBI_EAR_R",
-    },
+    { 19, 5, {  0,   0,   0}, draw_baby_head, "obj_L_KID_KUBI"},
+    { 26, 5, {  0,   0,   0}, draw_head, "obj_L_KID_FACE"},
+    { 16, 5, {  0,   0,   0}, draw_eye, "L_KID_EYE"},
+    { 20, 10, {  0,   0,   0}, draw_baby_hand, "obj_L_KID_MT_L"},
+    { 23, 15, {  0,   0,   0}, draw_baby_hand, "obj_L_KID_MT_R"},
+    { 1, 5, {-0.0020000001, 0.090000004, 0.078000002}, draw_ear, "obj_L_KID_KUBI_EAR_L"},
+    { 2, 5, {-0.0020000001, -0.090000004, 0.078000002}, draw_ear, "obj_L_KID_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc babyBodyPartDescLOD3[] =
 {
-    {
-        11,
-        5,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_KID_KUBI",
-    },
-    {
-        13,
-        10,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_KID_MT_L",
-    },
-    {
-        15,
-        15,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_KID_MT_R",
-    },
-    {
-        5,
-        5,
-        {-0.0020000001, 0.090000004, 0.078000002},
-        draw_ear,
-        "obj_S_KID_KUBI_EAR_L",
-    },
-    {
-        10,
-        5,
-        {-0.0020000001, -0.090000004, 0.078000002},
-        draw_ear,
-        "obj_S_KID_KUBI_EAR_R",
-    },
+    { 11, 5, {  0,   0,   0}, NULL, "obj_S_KID_KUBI"},
+    { 13, 10, {  0,   0,   0}, NULL, "obj_S_KID_MT_L"},
+    { 15, 15, {  0,   0,   0}, NULL, "obj_S_KID_MT_R"},
+    { 5, 5, {-0.0020000001, 0.090000004, 0.078000002}, draw_ear, "obj_S_KID_KUBI_EAR_L"},
+    { 10, 5, {-0.0020000001, -0.090000004, 0.078000002}, draw_ear, "obj_S_KID_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc gongonBodyPartDescLOD0[] =
 {
-    {
-        5,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_H_GOR_KUBI",
-    },
-    {
-        2,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "H_GOR_EYE",
-    },
-    {
-        6,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_M_GOR_MT_L",
-    },
-    {
-        7,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_M_GOR_MT_R",
-    },
-    {
-        0,
-        5,
-        {  0, 0.19, 0.15000001},
-        draw_ear,
-        "obj_H_GOR_KUBI_EAR_L",
-    },
-    {
-        1,
-        5,
-        {  0, -0.19, 0.15000001},
-        draw_ear,
-        "obj_H_GOR_KUBI_EAR_R",
-    },
+    { 5, 5, {  0,   0,   0}, draw_head, "obj_H_GOR_KUBI"},
+    { 2, 5, {  0,   0,   0}, draw_eye, "H_GOR_EYE"},
+    { 6, 10, {  0,   0,   0}, draw_left_hand, "obj_M_GOR_MT_L"},
+    { 7, 15, {  0,   0,   0}, draw_right_hand, "obj_M_GOR_MT_R"},
+    { 0, 5, {  0, 0.19, 0.15000001}, draw_ear, "obj_H_GOR_KUBI_EAR_L"},
+    { 1, 5, {  0, -0.19, 0.15000001}, draw_ear, "obj_H_GOR_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc gongonBodyPartDescLOD1[] =
 {
-    {
-        5,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_M_GOR_KUBI",
-    },
-    {
-        2,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "M_GOR_EYE",
-    },
-    {
-        6,
-        10,
-        {  0,   0,   0},
-        draw_left_hand,
-        "obj_M_GOR_MT_L",
-    },
-    {
-        7,
-        15,
-        {  0,   0,   0},
-        draw_right_hand,
-        "obj_M_GOR_MT_R",
-    },
-    {
-        25,
-        5,
-        {  0, 0.19, 0.15000001},
-        draw_ear,
-        "obj_M_GOR_KUBI_EAR_L",
-    },
-    {
-        26,
-        5,
-        {  0, -0.19, 0.15000001},
-        draw_ear,
-        "obj_M_GOR_KUBI_EAR_R",
-    },
+    { 5, 5, {  0,   0,   0}, draw_head, "obj_M_GOR_KUBI"},
+    { 2, 5, {  0,   0,   0}, draw_eye, "M_GOR_EYE"},
+    { 6, 10, {  0,   0,   0}, draw_left_hand, "obj_M_GOR_MT_L"},
+    { 7, 15, {  0,   0,   0}, draw_right_hand, "obj_M_GOR_MT_R"},
+    { 25, 5, {  0, 0.19, 0.15000001}, draw_ear, "obj_M_GOR_KUBI_EAR_L"},
+    { 26, 5, {  0, -0.19, 0.15000001}, draw_ear, "obj_M_GOR_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc gongonBodyPartDescLOD2[] =
 {
-    {
-        4,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_L_GOR_KUBI",
-    },
-    {
-        3,
-        5,
-        {  0,   0,   0},
-        draw_eye,
-        "L_GOR_EYE",
-    },
-    {
-        7,
-        10,
-        {  0,   0,   0},
-        NULL,
-        "obj_L_GOR_MT_L",
-    },
-    {
-        9,
-        15,
-        {  0,   0,   0},
-        NULL,
-        "obj_L_GOR_MT_R",
-    },
-    {
-        1,
-        5,
-        {  0, 0.19, 0.15000001},
-        draw_ear,
-        "obj_L_GOR_KUBI_EAR_L",
-    },
-    {
-        2,
-        5,
-        {  0, -0.19, 0.15000001},
-        draw_ear,
-        "obj_L_GOR_KUBI_EAR_R",
-    },
+    { 4, 5, {  0,   0,   0}, draw_head, "obj_L_GOR_KUBI"},
+    { 3, 5, {  0,   0,   0}, draw_eye, "L_GOR_EYE"},
+    { 7, 10, {  0,   0,   0}, NULL, "obj_L_GOR_MT_L"},
+    { 9, 15, {  0,   0,   0}, NULL, "obj_L_GOR_MT_R"},
+    { 1, 5, {  0, 0.19, 0.15000001}, draw_ear, "obj_L_GOR_KUBI_EAR_L"},
+    { 2, 5, {  0, -0.19, 0.15000001}, draw_ear, "obj_L_GOR_KUBI_EAR_R"},
 };
 
 static struct BodyPartDesc gongonBodyPartDescLOD3[] =
 {
-    {
-        17,
-        5,
-        {  0,   0,   0},
-        draw_head,
-        "obj_S_GOR_KUBI",
-    },
-    {
-        24,
-        10,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_GOR_MT_L",
-    },
-    {
-        26,
-        15,
-        {  0,   0,   0},
-        NULL,
-        "obj_S_GOR_MT_R",
-    },
-    {
-        6,
-        5,
-        {  0, 0.19, 0.15000001},
-        draw_ear,
-        "obj_S_GOR_KUBI_EAR_L",
-    },
-    {
-        16,
-        5,
-        {  0, -0.19, 0.15000001},
-        draw_ear,
-        "obj_S_GOR_KUBI_EAR_R",
-    },
+    { 17, 5, {  0,   0,   0}, draw_head, "obj_S_GOR_KUBI"},
+    { 24, 10, {  0,   0,   0}, NULL, "obj_S_GOR_MT_L"},
+    { 26, 15, {  0,   0,   0}, NULL, "obj_S_GOR_MT_R"},
+    { 6, 5, {  0, 0.19, 0.15000001}, draw_ear, "obj_S_GOR_KUBI_EAR_L"},
+    { 16, 5, {  0, -0.19, 0.15000001}, draw_ear, "obj_S_GOR_KUBI_EAR_R"},
 };
 
 struct ApeGfxFileInfo apeGfxFileInfo[] =
@@ -1561,7 +992,7 @@ void set_ambient_light(int arg0)
 {
     struct Color3f ambient;
 
-    if (lbl_802F2060 == 0)
+    if (s_somethingLightRelated == 0)
     {
         get_curr_light_group_ambient(&ambient);
         switch (arg0)
@@ -1576,7 +1007,7 @@ void set_ambient_light(int arg0)
     }
 }
 
-static void draw_aiai_hair(struct Ape *ape, struct BodyPartDesc *unused1, struct BodyPartThing *unused2)
+static void draw_aiai_hair(struct Ape *ape, struct BodyPartDesc *unused1, struct BodyPart *unused2)
 {
     int var_r6;
     int r0;
@@ -1589,8 +1020,8 @@ static void draw_aiai_hair(struct Ape *ape, struct BodyPartDesc *unused1, struct
         int r4;
 
         if (!(debugFlags & 0xA))
-            lbl_802B3770[ape->unk70]++;
-        r4 = lbl_802B3770[ape->unk70] % 45;
+            u_hairRelated[ape->unk70]++;
+        r4 = u_hairRelated[ape->unk70] % 45;
         var_r6 = r4;
         if (r4 == 44)
             ape->flags &= 0xFFFF7FFF;
@@ -1600,9 +1031,9 @@ static void draw_aiai_hair(struct Ape *ape, struct BodyPartDesc *unused1, struct
         if (ape->unk24 != 0)
             ape->flags |= 0x8000;
         var_r6 = 0;
-        lbl_802B3770[ape->unk70] = 0;
+        u_hairRelated[ape->unk70] = 0;
     }
-    model = charaGMAs[r0]->modelEntries[lbl_801C6848[var_r6]].model;
+    model = charaGMAs[r0]->modelEntries[s_aiaiHairModelIDs[var_r6]].model;
     avdisp_draw_model_unculled_sort_none(model);
 }
 
@@ -1617,7 +1048,7 @@ void u_something_with_eyes_blinking(struct Ape *ape)
         ape->flags |= APE_FLAG_BLINK;
 }
 
-static void draw_eye(struct Ape *ape, struct BodyPartDesc *unused1, struct BodyPartThing *unused2)
+static void draw_eye(struct Ape *ape, struct BodyPartDesc *unused1, struct BodyPart *unused2)
 {
     s32 blinkIndex;
     int var_r7;
@@ -1685,7 +1116,7 @@ static inline void func_80085F94_sub(struct GMAModel *temp_r31, int temp_r10)
     }
 }
 
-static void draw_baby_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
+static void draw_baby_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPart *unused2)
 {
     u8 unused3[8];
     struct Color3f sp18;
@@ -1693,18 +1124,18 @@ static void draw_baby_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct Bo
     struct GMAModel *temp_r31;
 
     temp_r31 = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
-    if (lbl_802F2060 == 0)
+    if (s_somethingLightRelated == 0)
     {
         get_curr_light_group_ambient(&sp18);
         avdisp_set_ambient(sp18.r, sp18.g, sp18.b);
     }
     func_80085F94_sub(temp_r31, ape->colorId);
     avdisp_draw_model_unculled_sort_none(temp_r31);
-    if (lbl_802F2060 == 0)
+    if (s_somethingLightRelated == 0)
         apply_curr_light_group_ambient();
 }
 
-static void draw_left_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
+static void draw_left_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPart *unused2)
 {
     u8 unused[8];
     struct GMAModel *model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
@@ -1729,15 +1160,15 @@ static void draw_left_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct Bo
         var_r5++;
     }
 
-    if (ape->charaId == 2)
-        func_80086434(ape->colorId, model);
+    if (ape->charaId == CHARACTER_BABY)
+        assign_shape_colors_1(ape->colorId, model);
     avdisp_draw_model_unculled_sort_none(model);
 }
 
-static void draw_right_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
+static void draw_right_hand(struct Ape *ape, struct BodyPartDesc *partDesc, struct BodyPart *unused2)
 {
     u8 unused[8];
-    struct GMAModel *model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
+    struct GMAModel *model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[partDesc->modelId].model;
     struct Struct8003699C_child_sub *temp_r29 = &ape->unk0->unk84;
     struct AnimJoint *joints = temp_r29->joints;
     s16 *var_r4;
@@ -1759,8 +1190,8 @@ static void draw_right_hand(struct Ape *ape, struct BodyPartDesc *arg1, struct B
         var_r5++;
     }
 
-    if (ape->charaId == 2)
-        func_80086434(ape->colorId, model);
+    if (ape->charaId == CHARACTER_BABY)
+        assign_shape_colors_1(ape->colorId, model);
     avdisp_draw_model_unculled_sort_none(model);
 }
 
@@ -1835,7 +1266,7 @@ static struct GMAShape *func_8008638C(struct GMAModel *model)
     return NULL;
 }
 
-static struct GMAShape *func_80086434_sub1(struct GMAModel *model)
+static struct GMAShape *u_get_shape_with_no_material(struct GMAModel *model)
 {
     int i;
     struct GMAShape *shape;
@@ -1845,7 +1276,7 @@ static struct GMAShape *func_80086434_sub1(struct GMAModel *model)
     {
         if (shape->tevLayerCount == 0)
             return shape;
-        shape = func_80086538(shape);
+        shape = next_shape(shape);
     }
     return NULL;
 }
@@ -1866,16 +1297,16 @@ static struct GMAShape *func_80086434_sub2(struct GMAModel *model)
                 return shape;
             var_r30_2 = 1;
         }
-        shape = func_80086538(shape);
+        shape = next_shape(shape);
     }
     return NULL;
 }
 
-static void func_80086434(int colorId, struct GMAModel *model)
+static void assign_shape_colors_1(int colorId, struct GMAModel *model)
 {
     struct GMAShape *shape;
 
-    if ((shape = func_80086434_sub1(model)) == NULL)
+    if ((shape = u_get_shape_with_no_material(model)) == NULL)
         return;
     shape->materialColor = lbl_801C692C[colorId];
     shape->ambientColor = lbl_801C692C[colorId];
@@ -1886,7 +1317,7 @@ static void func_80086434(int colorId, struct GMAModel *model)
     shape->ambientColor = lbl_801C692C[colorId];
 }
 
-static void func_800865A4_sub(int colorId, struct GMAModel *model)
+static void assign_shape_colors_2(int colorId, struct GMAModel *model)
 {
     struct GMAShape *shape;
 
@@ -1901,7 +1332,7 @@ static void func_800865A4_sub(int colorId, struct GMAModel *model)
     shape->ambientColor = lbl_801C692C[colorId];
 }
 
-static struct GMAShape *func_80086538(struct GMAShape *shape)
+static struct GMAShape *next_shape(struct GMAShape *shape)
 {
     int i;
     u8 *ptr = shape->dispLists;
@@ -1922,29 +1353,29 @@ static struct GMAShape *func_80086538(struct GMAShape *shape)
     return (struct GMAShape *)ptr;
 }
 
-static void draw_baby_head(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *unused2)
+static void draw_baby_head(struct Ape *ape, struct BodyPartDesc *partDesc, struct BodyPart *part)
 {
     u8 unused3[8];
-    struct Color3f sp14;
+    struct Color3f ambient;
     struct GMAModel *model;
 
-    model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
-    if (lbl_802F2060 == 0)
+    model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[partDesc->modelId].model;
+    if (s_somethingLightRelated == 0)
     {
-        get_curr_light_group_ambient(&sp14);
-        avdisp_set_ambient(sp14.r, sp14.g, sp14.b);
+        get_curr_light_group_ambient(&ambient);
+        avdisp_set_ambient(ambient.r, ambient.g, ambient.b);
     }
-    func_800865A4_sub(ape->colorId, model);
+    assign_shape_colors_2(ape->colorId, model);
     avdisp_draw_model_unculled_sort_none(model);
-    if (lbl_802F2060 == 0)
+    if (s_somethingLightRelated == 0)
         apply_curr_light_group_ambient();
 }
 
-static void func_8008669C(u32 *arg0, const struct Struct8008669C *arg1, int arg2, float arg8)
+static void u_facial_expression_model_distort(u32 *model, const struct FacialAnimationSomething *arg1, int arg2, float arg8)
 {
     int i;
     int j;
-    u32 *temp_r21;
+    u32 *ptr;
     Vec sp2C;
     Vec sp20;
     u32 r29, r28, r27;
@@ -1963,17 +1394,17 @@ static void func_8008669C(u32 *arg0, const struct Struct8008669C *arg1, int arg2
             if (arg1[i].unk60[j] == -1)
                 break;
             r0 = arg1[i].unk60[j] >> 2;
-            temp_r21 = &arg0[r0];
-            temp_r21[0] = r29;
-            temp_r21[1] = r28;
-            temp_r21[2] = r27;
+            ptr = &model[r0];
+            ptr[0] = r29;
+            ptr[1] = r28;
+            ptr[2] = r27;
             mathutil_scale_ray(&arg1[i].unk18[j].unk0, &arg1[i].unk18[j].unkC, &sp20, arg8);
             x = *(u32 *)&sp20.x | 1;
             y = *(u32 *)&sp20.y;
             z = *(u32 *)&sp20.z;
-            temp_r21[3] = x;
-            temp_r21[4] = y;
-            temp_r21[5] = z;
+            ptr[3] = x;
+            ptr[4] = y;
+            ptr[5] = z;
         }
     }
 }
@@ -1997,21 +1428,21 @@ static void func_80086794_sub2(int temp_r27, struct Ape *ape)
         ape->flags |= 0x10000;
         set_ambient_light(0);
         avdisp_draw_model_unculled_sort_none(charaGMAs[ape->charaId << 1]->modelEntries[temp_r28_4[temp_r27]].model);
-        if (lbl_802F2060 == 0)
+        if (s_somethingLightRelated == 0)
             apply_curr_light_group_ambient();
     }
 }
 
 // Draws the head (used for every character except for Baby)
-static void draw_head(struct Ape *ape, struct BodyPartDesc *part, struct BodyPartThing *arg2)
+static void draw_head(struct Ape *ape, struct BodyPartDesc *partDesc, struct BodyPart *part)
 {
     struct NlModel *nlModel;
     struct GMAModel *gmaModel;
-    int var_r29;
+    int someIndex;
     int var_r28;
     int temp_r27_3;
     int temp_r0;
-    const struct Struct8008669C *r4;
+    const struct FacialAnimationSomething *r4;
     int r5;
     float one = 1.0f;
     float f0;
@@ -2021,77 +1452,77 @@ static void draw_head(struct Ape *ape, struct BodyPartDesc *part, struct BodyPar
     struct Color3f sp14;
 
     var_r28 = 0;
-    var_r29 = ape->charaId;
+    someIndex = ape->charaId;
     ape->flags &= 0xFFFEFFFF;
-    if (arg2 != NULL && arg2->unk4 != 0.0f)
+    if (part != NULL && part->unk4 != 0.0f)
     {
         if (ape->lod >= 2)
-            var_r29 += 4;
-        switch (arg2->type)
+            someIndex += 4;
+        switch (part->type)
         {
         case 0:
-            if (var_r29 == 1 || var_r29 == 3)
+            if (someIndex == 1 || someIndex == 3)
                 var_r28 = 1;
             // fall through
         case 6:
-            if (var_r29 == 2)
+            if (someIndex == 2)
             {
-                gmaModel = charaGMAs[(ape->lod >> 1) + (var_r29 << 1)]->modelEntries[part->modelId].model;
-                if (lbl_802F2060 == 0)
+                gmaModel = charaGMAs[(ape->lod >> 1) + (someIndex << 1)]->modelEntries[partDesc->modelId].model;
+                if (s_somethingLightRelated == 0)
                 {
                     get_curr_light_group_ambient(&sp30);
                     avdisp_set_ambient(sp30.r, sp30.g, sp30.b);
                 }
-                func_800865A4_sub(ape->colorId, gmaModel);
+                assign_shape_colors_2(ape->colorId, gmaModel);
                 avdisp_draw_model_unculled_sort_none(gmaModel);
-                func_80086794_sub2(arg2->unk4, ape);
-                if (lbl_802F2060 == 0)
+                func_80086794_sub2(part->unk4, ape);
+                if (s_somethingLightRelated == 0)
                     apply_curr_light_group_ambient();
                 return;
             }
-            temp_r0 = lbl_801C69DC[var_r29];
+            temp_r0 = lbl_801C69DC[someIndex];
             if (temp_r0 == -1)
                 goto block_50;
-            r5 = lbl_801C699C[var_r29];
-            r4 = lbl_801C69BC[var_r29];
+            r5 = lbl_801C699C[someIndex];
+            r4 = lbl_801C69BC[someIndex];
             nlModel = apeFaceObj->models[temp_r0];
             break;
         case 5:
-            temp_r0 = lbl_801C6A9C[var_r29];
+            temp_r0 = lbl_801C6A9C[someIndex];
             if (temp_r0 == -1)
                 goto block_50;
-            r5 = lbl_801C6A5C[var_r29];
-            r4 = lbl_801C6A7C[var_r29];
+            r5 = lbl_801C6A5C[someIndex];
+            r4 = lbl_801C6A7C[someIndex];
             nlModel = apeFaceObj->models[temp_r0];
             break;
         case 1:
-            temp_r0 = lbl_801C6A3C[var_r29];
+            temp_r0 = lbl_801C6A3C[someIndex];
             if (temp_r0 == -1)
                 goto block_50;
-            r5 = lbl_801C69FC[var_r29];
-            r4 = lbl_801C6A1C[var_r29];
+            r5 = lbl_801C69FC[someIndex];
+            r4 = lbl_801C6A1C[someIndex];
             nlModel = apeFaceObj->models[temp_r0];
             break;
         default:
-            temp_r0 = lbl_801C697C[var_r29];
+            temp_r0 = lbl_801C697C[someIndex];
             if (temp_r0 == -1)
                 goto block_50;
-            r5 = lbl_801C693C[var_r29];
-            r4 = lbl_801C695C[var_r29];
+            r5 = lbl_801C693C[someIndex];
+            r4 = lbl_801C695C[someIndex];
             nlModel = apeFaceObj->models[temp_r0];
             break;
         }
-        f0 = arg2->unk4;
+        f0 = part->unk4;
         f0 *= 0.0625f;
-        func_8008669C((void *)nlModel, r4, r5, 1.0f - f0 * one);
+        u_facial_expression_model_distort((void *)nlModel, r4, r5, 1.0f - f0 * one);
         mathutil_mtxA_push();
         mathutil_mtxA_scale_s(0.1f);
-        if (lbl_802F2060 == 0)
+        if (s_somethingLightRelated == 0)
         {
             get_curr_light_group_ambient(&sp24);
             nlLightAmbRGB(1.35f * sp24.r, 1.35f * sp24.g, 1.35f * sp24.b);
         }
-        if (var_r29 == 2 && ape->lod < 2)
+        if (someIndex == 2 && ape->lod < 2)
         {
             struct NlMesh_sub *sub;
             struct NlMesh *var_r5;
@@ -2118,24 +1549,24 @@ static void draw_head(struct Ape *ape, struct BodyPartDesc *part, struct BodyPar
         mathutil_mtxA_pop();
         u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
         if (var_r28 != 0)
-            func_80086794_sub2(arg2->unk4, ape);
-        if (lbl_802F2060 == 0)
+            func_80086794_sub2(part->unk4, ape);
+        if (s_somethingLightRelated == 0)
             apply_curr_light_group_ambient();
         return;
     }
 
 block_50:
     temp_r27_3 = (ape->lod >> 1) + (ape->charaId << 1);
-    gmaModel = charaGMAs[temp_r27_3]->modelEntries[part->modelId].model;
-    if (lbl_802F2060 == 0)
+    gmaModel = charaGMAs[temp_r27_3]->modelEntries[partDesc->modelId].model;
+    if (s_somethingLightRelated == 0)
     {
         get_curr_light_group_ambient(&sp14);
         avdisp_set_ambient(sp14.r, sp14.g, sp14.b);
     }
     if (temp_r27_3 == 4)
-        func_800865A4_sub(ape->colorId, gmaModel);
+        assign_shape_colors_2(ape->colorId, gmaModel);
     avdisp_draw_model_unculled_sort_none(gmaModel);
-    if (lbl_802F2060 == 0)
+    if (s_somethingLightRelated == 0)
         apply_curr_light_group_ambient();
 }
 
@@ -2145,7 +1576,7 @@ void func_80086D20(struct Ape *ape, int arg1, int arg2)
     int temp_r0;
     int temp_r29;
     struct NlModel *nlModel;
-    const struct Struct8008669C *r4;
+    const struct FacialAnimationSomething *r4;
     int r5;
 
     temp_r29 = ape->charaId;
@@ -2191,20 +1622,20 @@ void func_80086D20(struct Ape *ape, int arg1, int arg2)
         break;
     }
 
-    func_8008669C((void *)nlModel, r4, r5, 1.0f - (arg2 / 16.0f));
+    u_facial_expression_model_distort((void *)nlModel, r4, r5, 1.0f - (arg2 / 16.0f));
     mathutil_mtxA_scale_s(0.1f);
     nlObjPut(nlModel);
 }
 #pragma force_active reset
 
-static void draw_ear(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPartThing *arg2)
+static void draw_ear(struct Ape *ape, struct BodyPartDesc *partDesc, struct BodyPart *part)
 {
     u8 unused[8];
     struct Color3f sp14;
     struct GMAModel *model;
 
-    model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[arg1->modelId].model;
-    if (lbl_802F2060 == 0)
+    model = charaGMAs[(ape->lod >> 1) + (ape->charaId << 1)]->modelEntries[partDesc->modelId].model;
+    if (s_somethingLightRelated == 0)
     {
         get_curr_light_group_ambient(&sp14);
         avdisp_set_ambient(sp14.r, sp14.g, sp14.b);
@@ -2215,17 +1646,17 @@ static void draw_ear(struct Ape *ape, struct BodyPartDesc *arg1, struct BodyPart
         if (((globalAnimTimer << 12) & 0x30000) == 0)
         {
             float angle = mathutil_sin(globalAnimTimer << 12);
-            if (arg1->unk4.y < 0.0f)
+            if (partDesc->offset.y < 0.0f)
                 angle = -angle;
             mathutil_mtxA_rotate_z(DEGREES_TO_S16(10.0f * angle));
         }
     }
-    else if (arg2 != NULL)
-        mathutil_mtxA_rotate_z(DEGREES_TO_S16(arg2->unk4));
+    else if (part != NULL)
+        mathutil_mtxA_rotate_z(DEGREES_TO_S16(part->unk4));
     u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
     if (ape->charaId == CHARACTER_BABY)
-        func_800865A4_sub(ape->colorId, model);
+        assign_shape_colors_2(ape->colorId, model);
     avdisp_draw_model_unculled_sort_none(model);
-    if (lbl_802F2060 == 0)
+    if (s_somethingLightRelated == 0)
         apply_curr_light_group_ambient();
 }

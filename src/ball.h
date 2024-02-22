@@ -121,8 +121,8 @@ struct Ball
     float speed;
     /*0xFC*/ struct Ape *ape;
     u32 unk100;
-    Vec unk104;  // some point or direction the monkey should look at
-    float unk110;
+    /*0x104*/ Vec lookPoint;  // point of interest that the monkey should look at
+    /*0x110*/ float lookPointPrio;  // priority of the current lookPoint
     Vec unk114;
     u32 unk120;
     s16 unk124;
@@ -180,8 +180,8 @@ extern s16 clearHemisphereOutsideParts[];
 extern s16 clearHemisphereInsideParts[];
 extern s16 coloredBallPartModelIDs[][9];
 
-void func_8003699C(struct Ape *a);
-float func_80036CAC(struct Ape *a);
+void u_ball_something_with_ape_rotation(struct Ape *a);
+float u_ball_something_with_walking_speed(const struct Ape *a);
 void check_ball_teeter(struct Ape *a);
 // ? func_80037098();
 void u_choose_ape_anim(struct Ape *a, float b);
@@ -198,7 +198,7 @@ void ball_draw(void);
 void u_ball_shadow_something_1(void);
 void u_ball_shadow_something_2(void);
 void give_bananas(int bananas);
-void set_ball_target(int, Vec *, float);
+void set_ball_look_point(int, Vec *, float);
 // ? u_ball_init_1();
 void u_ball_init_2(struct Ball *);
 void ball_func_0(struct Ball *);

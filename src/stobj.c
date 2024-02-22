@@ -25,9 +25,9 @@
 #include "../data/bg_stm.gma.h"
 #include "../data/common.gma.h"
 
-struct Stobj stobjInfo[MAX_STOBJS];
+struct Stobj g_stobjInfo[MAX_STOBJS];
 
-static s16 spawnedObjCount;
+static s16 s_nextUid;
 struct GMAModel *jamabarModel;
 
 static void func_8006B518(struct Stobj *);
@@ -64,13 +64,13 @@ void ev_stobj_init(void)
     int i;
     struct Stobj *stobj;
 
-    spawnedObjCount = 0;
-    memset(stobjInfo, 0, sizeof(stobjInfo));
-    stobj = stobjInfo;
-    for (i = 0; i < ARRAY_COUNT(stobjInfo); i++, stobj++)
+    s_nextUid = 0;
+    memset(g_stobjInfo, 0, sizeof(g_stobjInfo));
+    stobj = g_stobjInfo;
+    for (i = 0; i < ARRAY_COUNT(g_stobjInfo); i++, stobj++)
     {
-        stobj->id = i;
-        stobj->unk2 = -1;
+        stobj->index = i;
+        stobj->uid = -1;
     }
     pool_reset(&g_poolInfo.stobjPool);
     find_jamabar_and_bumper_models();
@@ -232,7 +232,7 @@ void ev_stobj_main(void)
         return;
 
     status = g_poolInfo.stobjPool.statusList;
-    stobj = stobjInfo;
+    stobj = g_stobjInfo;
     for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
         if (*status != STAT_NULL)
@@ -244,25 +244,27 @@ void ev_stobj_main(void)
             }
             else
             {
-                stobj->unk7C = stobj->u_some_pos;
+                stobj->unk7C = stobj->localPos;
                 stobj->unk88 = stobj->rotX;
                 stobj->unk8A = stobj->rotY;
                 stobj->unk8C = stobj->rotZ;
                 stobjMainFuncs[stobj->type](stobj);
-                stobj->position_2 = stobj->position;
+                stobj->prevPos = stobj->pos;
                 func_8006B518(stobj);
-                if (stobj->unk8 & 8)
+
+                // Set a look point for the object
+                if (stobj->flags & STOBJ_FLAG_LOOKPOINT)
                 {
-                    Point3d sp8;
+                    Point3d pos;
 
                     if (stobj->animGroupId != 0)
                     {
                         mathutil_mtxA_from_mtx(animGroups[stobj->animGroupId].transform);
-                        mathutil_mtxA_translate(&stobj->u_some_pos);
+                        mathutil_mtxA_translate(&stobj->localPos);
                     }
                     else
-                        mathutil_mtxA_from_translate(&stobj->u_some_pos);
-                    if (stobj->unk8 & 0x10)
+                        mathutil_mtxA_from_translate(&stobj->localPos);
+                    if (stobj->flags & STOBJ_FLAG_ROTATION_UNK)
                     {
                         mathutil_mtxA_rotate_y(stobj->rotY);
                         mathutil_mtxA_rotate_x(stobj->rotX);
@@ -274,8 +276,8 @@ void ev_stobj_main(void)
                         mathutil_mtxA_rotate_y(stobj->rotY);
                         mathutil_mtxA_rotate_x(stobj->rotX);
                     }
-                    mathutil_mtxA_tf_point(&stobj->unk90, &sp8);
-                    set_ball_target(5, &sp8, stobj->unk9C);
+                    mathutil_mtxA_tf_point(&stobj->lookPoint, &pos);
+                    set_ball_look_point(5, &pos, stobj->lookPointPrio);
                 }
             }
         }
@@ -289,7 +291,7 @@ void ev_stobj_dest(void)
     s8 *status;
 
     status = g_poolInfo.stobjPool.statusList;
-    stobj = stobjInfo;
+    stobj = g_stobjInfo;
     for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
         if (*status != STAT_NULL)
@@ -306,7 +308,7 @@ void stobj_draw(void)
     struct Stobj *stobj;
     s8 *status;
     EnvMapFunc func;
-    int phi_r25;
+    int animGrpId;
     Mtx mtx;
 
     func = backgroundInfo.stageEnvMapFunc;
@@ -315,19 +317,21 @@ void stobj_draw(void)
     mathutil_mtx_copy(mathutilData->mtxB, mtx);
 
     status = g_poolInfo.stobjPool.statusList;
-    phi_r25 = 0;
-    stobj = stobjInfo;
+    animGrpId = 0;
+    stobj = g_stobjInfo;
     for (i = g_poolInfo.stobjPool.count; i > 0; i--, status++, stobj++)
     {
         if (*status != STAT_NULL)
         {
-            if (phi_r25 != stobj->animGroupId)
+            // Set up a matrix to transform from anim group space to world space
+            if (animGrpId != stobj->animGroupId)
             {
                 mathutil_mtxA_from_mtx(mtx);
                 mathutil_mtxA_mult_right(animGroups[stobj->animGroupId].transform);
                 mathutil_mtxA_to_mtx(mathutilData->mtxB);
-                phi_r25 = stobj->animGroupId;
+                animGrpId = stobj->animGroupId;
             }
+            // Draw the object
             stobjDrawFuncs[stobj->type](stobj);
         }
     }
@@ -336,28 +340,28 @@ void stobj_draw(void)
         u_avdisp_set_some_func_1(NULL);
 }
 
-s16 spawn_stobj(struct Stobj *arg0)
+s16 spawn_stobj(struct Stobj *stobj)
 {
-    int temp_r3;
-    struct Stobj *temp_r31;
+    int index;
+    struct Stobj *newStobj;
 
-    temp_r3 = pool_alloc(&g_poolInfo.stobjPool, 1);
-    if (temp_r3 < 0)
+    index = pool_alloc(&g_poolInfo.stobjPool, 1);
+    if (index < 0)
         return -1;
 
-    temp_r31 = &stobjInfo[temp_r3];
-    memcpy(temp_r31, arg0, sizeof(*temp_r31));
-    temp_r31->id = temp_r3;
-    stobjInitFuncs[temp_r31->type](temp_r31);
-    temp_r31->unk7C = temp_r31->u_some_pos;
-    func_8006B518(temp_r31);
-    temp_r31->position_2 = temp_r31->position;
-    temp_r31->coliFunc = stobjCollisionFuncs[temp_r31->type];
-    temp_r31->unk2 = spawnedObjCount;
-    spawnedObjCount++;
-    if (spawnedObjCount < 0)
-        spawnedObjCount = 0;
-    return temp_r31->unk2;
+    newStobj = &g_stobjInfo[index];
+    memcpy(newStobj, stobj, sizeof(*newStobj));
+    newStobj->index = index;
+    stobjInitFuncs[newStobj->type](newStobj);
+    newStobj->unk7C = newStobj->localPos;
+    func_8006B518(newStobj);
+    newStobj->prevPos = newStobj->pos;
+    newStobj->coliFunc = stobjCollisionFuncs[newStobj->type];
+    newStobj->uid = s_nextUid;
+    s_nextUid++;
+    if (s_nextUid < 0)
+        s_nextUid = 0;
+    return newStobj->uid;
 }
 
 struct StobjFuncs
@@ -415,8 +419,8 @@ void func_8006B3E8(s32 arg0, struct StobjFuncs *arg1)
 
 static void func_8006B518(struct Stobj *stobj)
 {
-    mathutil_mtxA_from_translate(&stobj->u_some_pos);
-    if (stobj->unk8 & 0x10)
+    mathutil_mtxA_from_translate(&stobj->localPos);
+    if (stobj->flags & STOBJ_FLAG_ROTATION_UNK)
     {
         mathutil_mtxA_rotate_y(stobj->rotY);
         mathutil_mtxA_rotate_x(stobj->rotX);
@@ -428,7 +432,7 @@ static void func_8006B518(struct Stobj *stobj)
         mathutil_mtxA_rotate_y(stobj->rotY);
         mathutil_mtxA_rotate_x(stobj->rotX);
     }
-    mathutil_mtxA_tf_point(&stobj->u_model_origin, &stobj->position);
+    mathutil_mtxA_tf_point(&stobj->u_model_origin, &stobj->pos);
 }
 
 struct Struct8028C0B0 lbl_8028C0B0;
@@ -596,7 +600,7 @@ void spawn_bumpers(struct StageAnimGroup *arg0, int arg1)
 
         for (j = 0; j < arg0->bumperCount; j++, bumper++)
         {
-            stobj.u_some_pos = bumper->pos;
+            stobj.localPos = bumper->pos;
             stobj.rotX = bumper->rotX;
             stobj.rotY = bumper->rotY;
             stobj.rotZ = bumper->rotZ;
@@ -635,7 +639,7 @@ void spawn_jamabars(struct StageAnimGroup *arg0, int arg1)
 static void stobj_bumper_init(struct Stobj *stobj)
 {
     stobj->state = 0;
-    stobj->unk8 |= 0xA;
+    stobj->flags |= STOBJ_FLAG_TANGIBLE|STOBJ_FLAG_LOOKPOINT;
     stobj->model = lbl_8028C0B0.unk14[0];
     stobj->boundSphereRadius = 0.75f * stobj->model->boundSphereRadius;
     stobj->u_model_origin = stobj->model->boundSphereCenter;
@@ -643,15 +647,15 @@ static void stobj_bumper_init(struct Stobj *stobj)
     stobj->unk4C = 1.0f;
     stobj->unk50 = 1.0f;
     stobj->unk76 = 0;
-    stobj->unk9C = 0.75f;
-    stobj->unk90 = stobj->u_model_origin;
+    stobj->lookPointPrio = 0.75f;
+    stobj->lookPoint = stobj->u_model_origin;
 }
 
 static void stobj_bumper_main(struct Stobj *stobj)
 {
     switch (stobj->state)
     {
-    case 0:
+    case 0:  // idle
         stobj->unk78 += (0x100 - stobj->unk78) >> 6;
         if (stobj->unk48 > 1.0)
         {
@@ -661,7 +665,7 @@ static void stobj_bumper_main(struct Stobj *stobj)
             stobj->unk50 = stobj->unk48;
         }
         break;
-    case 1:
+    case 1:  // collided
         stobj->state = 2;
         stobj->counter = 7;
         // fall through
@@ -685,7 +689,7 @@ static void stobj_bumper_draw(struct Stobj *stobj)
     float radius;
 
     mathutil_mtxA_from_mtxB();
-    mathutil_mtxA_translate(&stobj->u_some_pos);
+    mathutil_mtxA_translate(&stobj->localPos);
     mathutil_mtxA_rotate_z(stobj->rotZ);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_x(stobj->rotX);
@@ -734,7 +738,7 @@ static void stobj_bumper_draw(struct Stobj *stobj)
         float phi_f30;
 
         mathutil_mtxA_from_mtxB();
-        mathutil_mtxA_translate_xyz(stobj->u_some_pos.x, 0.05f + stobj->u_some_pos.y, stobj->u_some_pos.z);
+        mathutil_mtxA_translate_xyz(stobj->localPos.x, 0.05f + stobj->localPos.y, stobj->localPos.z);
         mathutil_mtxA_rotate_z(stobj->rotZ);
         mathutil_mtxA_rotate_y(stobj->rotY);
         mathutil_mtxA_rotate_x(stobj->rotX - 0x4000);
@@ -761,14 +765,14 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *physBall)
 
     ball = currentBall;
     stobj->state = 1;
-    bumperPos = stobj->position;
-    func_8006AAEC(&physBall->prevPos, &physBall->pos, &stobj->position_2, &bumperPos, physBall->radius, stobj->model->boundSphereRadius);
+    bumperPos = stobj->pos;
+    func_8006AAEC(&physBall->prevPos, &physBall->pos, &stobj->prevPos, &bumperPos, physBall->radius, stobj->model->boundSphereRadius);
 
     // Get normalized direction from bumper to ball
     dist = physBall->pos;
-    dist.x -= stobj->position.x;
-    dist.y -= stobj->position.y;
-    dist.z -= stobj->position.z;
+    dist.x -= stobj->pos.x;
+    dist.y -= stobj->pos.y;
+    dist.z -= stobj->pos.z;
     mathutil_vec_normalize_len(&dist);
 
     // Reflect the ball's velocity off the bumper
@@ -790,9 +794,9 @@ static void stobj_bumper_coli(struct Stobj *stobj, struct PhysicsBall *physBall)
     dist.x *= temp_f1;
     dist.y *= temp_f1;
     dist.z *= temp_f1;
-    physBall->pos.x = stobj->position.x + dist.x;
-    physBall->pos.y = stobj->position.y + dist.y;
-    physBall->pos.z = stobj->position.z + dist.z;
+    physBall->pos.x = stobj->pos.x + dist.x;
+    physBall->pos.y = stobj->pos.y + dist.y;
+    physBall->pos.z = stobj->pos.z + dist.z;
 
     u_play_sound_0(0x5011);
     ball->flags |= BALL_FLAG_05;
@@ -827,7 +831,7 @@ static void stobj_bumper_debug(struct Stobj *stobj) {}
 static void stobj_bumper_bgspecial_init(struct Stobj *stobj)
 {
     stobj->state = 0;
-    stobj->unk8 |= 0xA;
+    stobj->flags |= STOBJ_FLAG_TANGIBLE|STOBJ_FLAG_LOOKPOINT;
     stobj->model = lbl_8028C0B0.unk14[0];
     stobj->boundSphereRadius = 0.75f * stobj->model->boundSphereRadius;
     stobj->u_model_origin = stobj->model->boundSphereCenter;
@@ -835,8 +839,8 @@ static void stobj_bumper_bgspecial_init(struct Stobj *stobj)
     stobj->unk4C = 1.0f;
     stobj->unk50 = 1.0f;
     stobj->unk76 = 0;
-    stobj->unk9C = 0.75f;
-    stobj->unk90 = stobj->u_model_origin;
+    stobj->lookPointPrio = 0.75f;
+    stobj->lookPoint = stobj->u_model_origin;
 }
 
 static void stobj_bumper_bgspecial_main(struct Stobj *stobj)
@@ -905,11 +909,11 @@ static void stobj_bumper_bgspecial_draw(struct Stobj *stobj)
             if (var_f1 > 1.0f)
                 var_f1 = 1.0f;
             birdY = stobj->model->boundSphereRadius + stobj->model->boundSphereRadius * mathutil_sin(16384.0f * var_f1);
-            mathutil_mtxA_from_mtxB_translate(&stobj->u_some_pos);
+            mathutil_mtxA_from_mtxB_translate(&stobj->localPos);
             mathutil_mtxA_rotate_z(stobj->rotZ);
             mathutil_mtxA_rotate_y(stobj->rotY);
             mathutil_mtxA_rotate_x(stobj->rotX);
-            mathutil_mtxA_rotate_y(stobj->id << 11);
+            mathutil_mtxA_rotate_y(stobj->index << 11);
             mathutil_mtxA_translate_xyz(0.0f, birdY, 0.0f);
             GXLoadPosMtxImm(mathutilData->mtxA, 0);
             GXLoadNrmMtxImm(mathutilData->mtxA, 0);
@@ -920,7 +924,7 @@ static void stobj_bumper_bgspecial_draw(struct Stobj *stobj)
         // Draw animated flame
         modelId = stmFireModelIDs[globalAnimTimer & 0x1F];
         flameModel = decodedBgGma->modelEntries[modelId].model;
-        mathutil_mtxA_from_mtxB_translate(&stobj->u_some_pos);
+        mathutil_mtxA_from_mtxB_translate(&stobj->localPos);
         mathutil_mtxA_get_translate_alt(&spC);
         temp_f31_2 = spC.z + (8.0f * currentCamera->sub28.unk3C * currentCamera->sub28.vp.height);
         if (temp_f31_2 > 0.0f)
@@ -950,15 +954,15 @@ static void stobj_bumper_bgspecial_debug(struct Stobj *stobj) {}
 static void stobj_jamabar_init(struct Stobj *stobj)
 {
     stobj->state = 0;
-    stobj->unk8 |= 0xA;
+    stobj->flags |= STOBJ_FLAG_TANGIBLE|STOBJ_FLAG_LOOKPOINT;
     stobj->model = jamabarModel;
     stobj->boundSphereRadius = stobj->model->boundSphereRadius * stobj->unk3C.x;
     stobj->u_model_origin = stobj->model->boundSphereCenter;
-    stobj->u_some_pos = stobj->unkA8;
-    stobj->unk90.x = 0.0f;
-    stobj->unk90.y = 0.5f;
-    stobj->unk90.z = 1.75f;
-    stobj->unk9C = 1.0f;
+    stobj->localPos = stobj->unkA8;
+    stobj->lookPoint.x = 0.0f;
+    stobj->lookPoint.y = 0.5f;
+    stobj->lookPoint.z = 1.75f;
+    stobj->lookPointPrio = 1.0f;
 }
 
 static void stobj_jamabar_main(struct Stobj *stobj)
@@ -989,10 +993,10 @@ static void stobj_jamabar_main(struct Stobj *stobj)
         if (stobj->offsetVel.z > 0.0)
             stobj->offsetVel.z = -stobj->offsetVel.z;
     }
-    mathutil_mtxA_tf_point(&stobj->offsetPos, &stobj->u_some_pos);
-    stobj->unk64.x = stobj->u_some_pos.x - stobj->unk7C.x;
-    stobj->unk64.y = stobj->u_some_pos.y - stobj->unk7C.y;
-    stobj->unk64.z = stobj->u_some_pos.z - stobj->unk7C.z;
+    mathutil_mtxA_tf_point(&stobj->offsetPos, &stobj->localPos);
+    stobj->unk64.x = stobj->localPos.x - stobj->unk7C.x;
+    stobj->unk64.y = stobj->localPos.y - stobj->unk7C.y;
+    stobj->unk64.z = stobj->localPos.z - stobj->unk7C.z;
 }
 
 static void stobj_jamabar_draw(struct Stobj *stobj)
@@ -1000,7 +1004,7 @@ static void stobj_jamabar_draw(struct Stobj *stobj)
     Vec spC;
 
     mathutil_mtxA_from_mtxB();
-    mathutil_mtxA_translate(&stobj->u_some_pos);
+    mathutil_mtxA_translate(&stobj->localPos);
     mathutil_mtxA_rotate_z(stobj->rotZ);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_x(stobj->rotX);

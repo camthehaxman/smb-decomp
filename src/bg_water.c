@@ -103,7 +103,7 @@ void bg_water_init(void)
     work->unk1E = 1;
     work->unk1C = 60;
     work->unk20 = 0.5f;
-    backgroundInfo.unk98 = lbl_8005E914;
+    backgroundInfo.u_lightAssignFunc = lbl_8005E914;
 }
 
 void bg_water_main(void)
@@ -397,12 +397,12 @@ static void lbl_8005F520(struct GCMMatState_Unit *arg0)
     mathutil_mtxA_push();
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_x(0x4000);
-    mathutil_mtxA_rotate_y(backgroundInfo.unkA4);
+    mathutil_mtxA_rotate_y(backgroundInfo.u_otherSeed);
     mathutil_mtxA_translate_xyz(
         backgroundInfo.animTimer / 2160.0f,
         backgroundInfo.animTimer / 2160.0f,
         backgroundInfo.animTimer / -5280.0f);
-    mathutil_mtxA_scale_s(1.0f / (214.0f + (20.0f * mathutil_sin(backgroundInfo.unkA4 << 6))));
+    mathutil_mtxA_scale_s(1.0f / (214.0f + (20.0f * mathutil_sin(backgroundInfo.u_otherSeed << 6))));
     GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8, GX_MTX3x4);
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_x(0x4000);
@@ -411,7 +411,7 @@ static void lbl_8005F520(struct GCMMatState_Unit *arg0)
         backgroundInfo.animTimer / 360.0f,
         backgroundInfo.animTimer / 360.0f,
         backgroundInfo.animTimer / 360.0f);
-    mathutil_mtxA_scale_s(0.005f * (1.0f + (0.25f * mathutil_sin(backgroundInfo.unkA4 << 5))));
+    mathutil_mtxA_scale_s(0.005f * (1.0f + (0.25f * mathutil_sin(backgroundInfo.u_otherSeed << 5))));
     GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 3, GX_MTX3x4);
     mathutil_mtxA_pop();
     sp14[0][0] = 0.6f;

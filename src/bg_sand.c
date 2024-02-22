@@ -806,7 +806,7 @@ static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
     mathutil_mtxA_push();
     mathutil_mtxA_from_translate_xyz(0.0016666667f * backgroundInfo.animTimer, 0.0f, 0.0f);
     mathutil_mtxA_scale_xyz(0.1f, -0.025f, 1.0f);
-    mathutil_mtxA_rotate_y(backgroundInfo.unkA4 << 7);
+    mathutil_mtxA_rotate_y(backgroundInfo.u_otherSeed << 7);
     mathutil_mtxA_rotate_x(0x400);
     mathutil_mtxA_translate_xyz(0.0f, 10.0f, 0.0f);
     GXLoadTexMtxImm(mathutilData->mtxA, r27_5, GX_MTX2x4);

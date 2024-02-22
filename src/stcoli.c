@@ -1063,7 +1063,7 @@ void collide_ball_with_jamabar(struct PhysicsBall *ball, struct Stobj *stobj)
     struct ColiRect *coliRect;
     s32 i;
 
-    mathutil_mtxA_from_translate(&stobj->u_some_pos);
+    mathutil_mtxA_from_translate(&stobj->localPos);
     mathutil_mtxA_rotate_x(stobj->rotX);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_z(stobj->rotZ);
@@ -1083,7 +1083,7 @@ void collide_ball_with_jamabar(struct PhysicsBall *ball, struct Stobj *stobj)
         stobj->offsetVel.z *= 0.5;
         ball->vel.z = ball->vel.z + (2.5 * (temp_f2 - stobj->offsetVel.z));
     }
-    mathutil_mtxA_from_translate(&stobj->u_some_pos);
+    mathutil_mtxA_from_translate(&stobj->localPos);
     mathutil_mtxA_rotate_x(stobj->rotX);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_z(stobj->rotZ);

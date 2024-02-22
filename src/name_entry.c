@@ -200,12 +200,12 @@ void ev_name_entry_init(void)
             stobj.model = buttonModel;
             i = (s16)((-65536.0f * (0.5f + i2)) / (float)NUM_BUTTONS);
             stobj.rotY = i;
-            stobj.u_some_pos.x = 0.0f;
-            stobj.u_some_pos.y = 0.0f;
-            stobj.u_some_pos.z = -17.5f;
+            stobj.localPos.x = 0.0f;
+            stobj.localPos.y = 0.0f;
+            stobj.localPos.z = -17.5f;
             mathutil_mtxA_from_identity();
             mathutil_mtxA_rotate_y(i);
-            mathutil_mtxA_tf_vec(&stobj.u_some_pos, &stobj.u_some_pos);
+            mathutil_mtxA_tf_vec(&stobj.localPos, &stobj.localPos);
             stobj.extraData = button;
             spawn_stobj(&stobj);
         }
@@ -566,7 +566,7 @@ void ev_name_entry_main(void)
     }
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_rigid_inv_tf_tl(&sp8);
-    set_ball_target(5, &sp8, 0.5f);
+    set_ball_look_point(5, &sp8, 0.5f);
 }
 
 void ev_name_entry_dest(void)
@@ -1093,10 +1093,10 @@ void effect_get_nameent_code_destroy(struct Effect *effect) {}
 void stobj_nameent_btn_init(struct Stobj *stobj)
 {
     stobj->state = 0;
-    stobj->unk8 |= 0x12;
+    stobj->flags |= STOBJ_FLAG_TANGIBLE|STOBJ_FLAG_ROTATION_UNK;
     stobj->boundSphereRadius = 0.75 * stobj->model->boundSphereRadius;
     stobj->u_model_origin = stobj->model->boundSphereCenter;
-    stobj->unkA8 = stobj->u_some_pos;
+    stobj->unkA8 = stobj->localPos;
 }
 
 void stobj_nameent_btn_main(struct Stobj *stobj)
@@ -1112,19 +1112,19 @@ void stobj_nameent_btn_main(struct Stobj *stobj)
     case 2:
         stobj->counter--;
         if (stobj->counter < 0)
-            stobj->unk8 |= 2;
+            stobj->flags |= STOBJ_FLAG_TANGIBLE;
         break;
     }
 
-    stobj->unk64.x += 0.1 * (stobj->unkA8.x - stobj->u_some_pos.x);
-    stobj->unk64.y += 0.1 * (stobj->unkA8.y - stobj->u_some_pos.y);
-    stobj->unk64.z += 0.1 * (stobj->unkA8.z - stobj->u_some_pos.z);
+    stobj->unk64.x += 0.1 * (stobj->unkA8.x - stobj->localPos.x);
+    stobj->unk64.y += 0.1 * (stobj->unkA8.y - stobj->localPos.y);
+    stobj->unk64.z += 0.1 * (stobj->unkA8.z - stobj->localPos.z);
     stobj->unk64.x *= 0.9;
     stobj->unk64.y *= 0.9;
     stobj->unk64.z *= 0.9;
-    stobj->u_some_pos.x += stobj->unk64.x;
-    stobj->u_some_pos.y += stobj->unk64.y;
-    stobj->u_some_pos.z += stobj->unk64.z;
+    stobj->localPos.x += stobj->unk64.x;
+    stobj->localPos.y += stobj->unk64.y;
+    stobj->localPos.z += stobj->unk64.z;
 }
 
 void stobj_nameent_btn_draw(struct Stobj *stobj)
@@ -1145,7 +1145,7 @@ void stobj_nameent_btn_draw(struct Stobj *stobj)
     if (color.b > 1.0)
         color.b = 1.0f;
     avdisp_set_post_mult_color(color.r, color.g, color.b, 1.0f);
-    mathutil_mtxA_from_mtxB_translate(&stobj->u_some_pos);
+    mathutil_mtxA_from_mtxB_translate(&stobj->localPos);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_x(stobj->rotX);
     GXLoadPosMtxImm(mathutilData->mtxA, 0);
@@ -1177,7 +1177,7 @@ void stobj_nameent_btn_coli(struct Stobj *stobj, struct PhysicsBall *ball)
     float temp_f2;
     struct NameEntryButton *button;
 
-    mathutil_mtxA_from_translate(&stobj->position);
+    mathutil_mtxA_from_translate(&stobj->pos);
     mathutil_mtxA_rotate_y(stobj->rotY);
     mathutil_mtxA_rotate_x(stobj->rotX);
     stcoli_sub31(ball, &sp10);
@@ -1192,15 +1192,15 @@ void stobj_nameent_btn_coli(struct Stobj *stobj, struct PhysicsBall *ball)
         sp10.vel.z += -0.05 * sp6C.z;
     }
     mathutil_mtxA_tf_vec(&sp6C, &sp6C);
-    stobj->u_some_pos.x += sp6C.x;
-    stobj->u_some_pos.y += sp6C.y;
-    stobj->u_some_pos.z += sp6C.z;
-    stobj->unk64.x = stobj->u_some_pos.x - stobj->unk7C.x;
-    stobj->unk64.y = stobj->u_some_pos.y - stobj->unk7C.y;
-    stobj->unk64.z = stobj->u_some_pos.z - stobj->unk7C.z;
+    stobj->localPos.x += sp6C.x;
+    stobj->localPos.y += sp6C.y;
+    stobj->localPos.z += sp6C.z;
+    stobj->unk64.x = stobj->localPos.x - stobj->unk7C.x;
+    stobj->unk64.y = stobj->localPos.y - stobj->unk7C.y;
+    stobj->unk64.z = stobj->localPos.z - stobj->unk7C.z;
     if (s_pushedButton == NULL)
     {
-        if (mathutil_vec_distance(&stobj->unkA8, &stobj->u_some_pos) > 1.0)
+        if (mathutil_vec_distance(&stobj->unkA8, &stobj->localPos) > 1.0)
         {
             button = stobj->extraData;
             s_pushedButton = button;
@@ -1208,7 +1208,7 @@ void stobj_nameent_btn_coli(struct Stobj *stobj, struct PhysicsBall *ball)
             button->color.g += 1.0;
             button->color.b += 1.0;
             stobj->state = 1;
-            stobj->unk8 &= 0xFFFFFFFD;
+            stobj->flags &= ~STOBJ_FLAG_TANGIBLE;
             if (sp10.vel.z < 0.25)
                 sp10.vel.z = 0.25f;
             sp10.vel.y += 0.125;

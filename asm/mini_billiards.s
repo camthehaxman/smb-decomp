@@ -18017,7 +18017,7 @@ lbl_000108B8:
 /* 000108C4 3C800000 */ lis r4, mathutilData@ha
 /* 000108C8 3C600000 */ lis r3, minigameGma@ha
 /* 000108CC 3D200000 */ lis r9, lbl_10009878@ha
-/* 000108D0 3D000000 */ lis r8, lbl_802F2060@ha
+/* 000108D0 3D000000 */ lis r8, s_somethingLightRelated@ha
 /* 000108D4 3D400000 */ lis r10, lbl_10000004@ha
 /* 000108D8 3D800000 */ lis r12, lbl_1000000A@ha
 /* 000108DC 3D600000 */ lis r11, lbl_10000064@ha
@@ -18027,7 +18027,7 @@ lbl_000108B8:
 /* 000108EC 3B440000 */ addi r26, r4, mathutilData@l
 /* 000108F0 3B630000 */ addi r27, r3, minigameGma@l
 /* 000108F4 3A890000 */ addi r20, r9, lbl_10009878@l
-/* 000108F8 3AC80000 */ addi r22, r8, lbl_802F2060@l
+/* 000108F8 3AC80000 */ addi r22, r8, s_somethingLightRelated@l
 /* 000108FC 3A6A0000 */ addi r19, r10, lbl_10000004@l
 /* 00010900 3A2C0000 */ addi r17, r12, lbl_1000000A@l
 /* 00010904 3A4B0000 */ addi r18, r11, lbl_10000064@l
@@ -18305,10 +18305,10 @@ lbl_00010CA4:
 /* 00010D04 80630008 */ lwz r3, 8(r3)
 /* 00010D08 4BFEF42D */ bl avdisp_draw_model_unculled_sort_translucent
 /* 00010D0C 3C800000 */ lis r4, lbl_10009878@ha
-/* 00010D10 3C600000 */ lis r3, lbl_802F2060@ha
+/* 00010D10 3C600000 */ lis r3, s_somethingLightRelated@ha
 /* 00010D14 3CA00000 */ lis r5, lbl_10000064@ha
 /* 00010D18 39E40000 */ addi r15, r4, lbl_10009878@l
-/* 00010D1C 39C30000 */ addi r14, r3, lbl_802F2060@l
+/* 00010D1C 39C30000 */ addi r14, r3, s_somethingLightRelated@l
 /* 00010D20 3A250000 */ addi r17, r5, lbl_10000064@l
 /* 00010D24 3A000000 */ li r16, 0
 /* 00010D28 3AA00000 */ li r21, 0

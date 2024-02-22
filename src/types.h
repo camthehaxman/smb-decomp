@@ -254,7 +254,7 @@ struct Ape
     u8 filler78[0x90-0x78];
     /*0x90*/ s32 lod;  // level of detail (from 0 to 3) of the character model, with 0 being the most detailed and 1 being the least detailed
     /*0x94*/ u32 u_bodyPartCount;  // number of elements in u_bodyParts
-    /*0x98*/ struct BodyPartThing *u_bodyParts;  // some array of structs related to body parts (only used in mot_ape.c)
+    /*0x98*/ struct BodyPart *u_bodyParts;  // some array of structs related to body parts (only used in mot_ape.c)
     u32 unk9C;
     // Sometimes treated as a Vec, sometimes treated as a Quaternion
     Vec unkA0;
@@ -633,36 +633,45 @@ struct Struct80089CBC
     u8 filler18[0x20-0x18];
 };  // size = 0x20
 
-// something related to body parts
-struct BodyPartThing
+struct BodyPartNameInfo
+{
+    char *unk0;
+    char *names[4];
+    u32 unk14;
+    u32 filler18[6];  // unused padding
+    s32 u_someLodRelatedIndexes[4];  // some LOD related stuff, set at runtime
+};
+
+// contains some runtime state for a body part
+struct BodyPart
 {
     u32 type;
     float unk4;
     s32 unk8;
-    struct Struct80089CBC *unkC;
+    struct Struct80089CBC *unkC;  // ptr to something in motinfo
     float unk10;
-    s32 unk14[4];
+    /*0x14*/ s32 u_someLodRelatedIndexes[4];
 };  // size = 0x24
 
-// info on some part of the ape that can be animated
-// this does not include the main body and limbs, but does include the head and hands
+// Defines an ape body part (such as head, ears, hands, but not the main body) that can be animated
 struct BodyPartDesc
 {
-    s16 modelId;
-    s16 jointIdx;
-    Vec unk4;
-    void (*draw)(struct Ape *, struct BodyPartDesc *, struct BodyPartThing *);
+    s16 modelId;  // model ID of the body part in the GMA
+    s16 jointIdx;  // index of joint that this part is attached to
+    Vec offset;  // position offset
+    void (*draw)(struct Ape *, struct BodyPartDesc *, struct BodyPart *);
     char *name;
     u8 filler18[0x20-0x18];  // unused?
 };
 
+// Defines graphics files for body parts
 struct ApeGfxFileInfo
 {
     char *basename;  // base name (without suffix) of the .gma.lz or .tpl.lz file in the /test/ape directory
-    struct BodyPartDesc *bodyPartInfo[4];  // body part info
+    struct BodyPartDesc *bodyPartInfo[4];  // body part info (the last two elements of this array are always NULL)
     /*0x14*/ s16 partCounts[4];  // lengths of each bodyPartInfo array
-    s16 lodModelIDs[2];  // first entry is low poly, second entry is high poly
-    u8 unused20[4];  // not used
+    s16 mainBodyModelIDs[2];  // model IDs (low poly, high poly) in GMA for the main body
+    u8 unused20[4];  // unused padding?
 };  // size = 0x24
 
 struct Struct80061BC4_sub
@@ -767,15 +776,6 @@ enum
 
 struct Stobj;
 
-struct Struct80089A04
-{
-    char *unk0;
-    char *names[4];
-    u32 unk14;
-    u32 filler18[6];
-    s32 unk30[4];
-};
-
 struct Struct801EEDA8
 {
     u8 filler0[0x100];
@@ -851,12 +851,12 @@ struct Struct8008669C_sub
     Vec unkC;
 };
 
-struct Struct8008669C
+struct FacialAnimationSomething
 {
     Vec unk0;
     Vec unkC;
     struct Struct8008669C_sub unk18[3];
-    s16 unk60[4];
+    s16 unk60[4];  // offsets into a NlModel
 };
 
 struct Effect;

@@ -18239,11 +18239,11 @@ lbl_00010CB8:
 /* 00010CD8 7F842910 */ subfe r28, r4, r5
 /* 00010CDC 5400D97E */ srwi r0, r0, 5
 /* 00010CE0 7F9C0378 */ or r28, r28, r0
-/* 00010CE4 4BFEF499 */ bl func_8003699C
+/* 00010CE4 4BFEF499 */ bl u_ball_something_with_ape_rotation
 /* 00010CE8 2C1C0000 */ cmpwi r28, 0
 /* 00010CEC 41820014 */ beq lbl_00010D00
 /* 00010CF0 7FA3EB78 */ mr r3, r29
-/* 00010CF4 4BFEF489 */ bl func_80036CAC
+/* 00010CF4 4BFEF489 */ bl u_ball_something_with_walking_speed
 /* 00010CF8 FFE00890 */ fmr f31, f1
 /* 00010CFC 48000028 */ b lbl_00010D24
 lbl_00010D00:
