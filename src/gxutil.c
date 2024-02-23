@@ -1,6 +1,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "background.h"
 #include "gxcache.h"
 #include "gxutil.h"

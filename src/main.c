@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "ball.h"
 #include "bitmap.h"
 #include "camera.h"

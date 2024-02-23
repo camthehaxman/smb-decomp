@@ -7,6 +7,7 @@
 
 #include "global.h"
 #include "adv.h"
+#include "avdisp.h"
 #include "background.h"
 #include "ball.h"
 #include "camera.h"

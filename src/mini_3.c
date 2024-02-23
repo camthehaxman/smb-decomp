@@ -1,6 +1,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "camera.h"
 #include "gma.h"
 #include "mathutil.h"

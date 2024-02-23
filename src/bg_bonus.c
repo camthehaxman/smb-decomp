@@ -7,6 +7,7 @@
 #include <dolphin/gx/GXEnum.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "background.h"
 #include "ball.h"
 #include "camera.h"

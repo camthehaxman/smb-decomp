@@ -1,3 +1,6 @@
+/**
+ * avdisp.c - routines for loading and displaying Amusement Vision's GMA models
+ */
 #include <stdio.h>
 #include <string.h>
 #include <dolphin.h>
@@ -11,6 +14,7 @@
 #include <ppcintrinsic.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "gma.h"
 #include "gxcache.h"
 #include "gxutil.h"
@@ -62,7 +66,7 @@ enum
 
 struct TevMaterialCache
 {
-    u8 unk0;  // 0x6c
+    u8 unk0;
     s8 tevStageCount;
     u8 chanConfig; // How lighting channel is configured (I think only COLOR0A0 is used)
     s8 num_tev_stages;
@@ -71,21 +75,21 @@ struct TevMaterialCache
     u8 filler6[2];
     s32 postMultiplyTevStageIdx;
     s32 postAddTevStageIdx;
-    GXColor materialColor;  // 0x7C
+    GXColor materialColor;
     GXColor ambientColor;
     GXColor specularColor;
     s32 colorIn;
     s32 alphaIn;
     GXBlendFactor blendSrcFactor;
     GXBlendFactor blendDstFactor;
-    u32 tevLayerFlags[3]; // 0x98  array?
-    u32 unk38;  // 0xA4
-    u16 tevLayerIdxs[3];  // 0xA8
-    s32 unk44;  // 0xB0
-    s32 unk48;  // 0xB4
-    s32 unk4C;  // 0xB8
-    s32 viewSpecularColorValid;  // 0xBC
-    s32 worldSpecularColorValid;  // 0xC0
+    u32 tevLayerFlags[3];
+    u32 unk38;
+    u16 tevLayerIdxs[3];
+    s32 unk44;
+    s32 unk48;
+    s32 unk4C;
+    s32 viewSpecularColorValid;
+    s32 worldSpecularColorValid;
     Vec modelDir_rt_view; // Direction towards front of model (on bounding sphere) in view space
 };
 
@@ -96,19 +100,36 @@ static Mtx s_identityTexMtx;
 static struct TevMaterialCache s_materialCache;
 static GXTexObj unknownTexObj;
 static u8 filler_802B4F50[0x10];
-static u8 lzssHeader[32] __attribute__((aligned(32)));
+static u8 lzssHeader[32] ATTRIBUTE_ALIGN(32);
 static u8 unknownTexImg[64];
 
-FORCE_BSS_ORDER(lbl_802B4E60)
-FORCE_BSS_ORDER(s_customTexMtx)
-FORCE_BSS_ORDER(s_identityTexMtx)
-FORCE_BSS_ORDER(s_materialCache)
-FORCE_BSS_ORDER(unknownTexObj)
-FORCE_BSS_ORDER(filler_802B4F50)
-FORCE_BSS_ORDER(lzssHeader)
-FORCE_BSS_ORDER(unknownTexImg)
-
+static int get_texture_max_lod(int width, int height);
+static GXTexObj *init_model(struct GMAModel *a, struct TPL *b, GXTexObj *c);
+static void u_iteratively_multiply_model_matrices(struct GMAModel *a);
+static void draw_shape_deferred_callback(struct DrawShapeDeferredNode *a);
+static void u_set_transform_matrices(u8 *a);
+static struct GMAShape *draw_shape(struct GMAModel *model, struct GMAShape *mesh, struct GMATevLayer *c);
+static void draw_indexed_model(struct GMAModel *model, struct GMAShape *b, struct GMATevLayer *mtrl);
+static void init_tev_material_cache(struct GMAModel *model, struct GMAShape *b);
+static void init_some_texture(void);
 static void build_tev_material(struct GMAShape *a, struct GMATevLayer *b);
+static void build_post_multiply_tev_stage(GXTevStageID a);
+static void build_post_add_tev_stage(GXTevStageID a);
+static void build_diffuse_layer_uncached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg, GXTexGenSrc texGenSrc);
+static void build_diffuse_layer_cached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg);
+static void diffuse_layer_next(struct TevStageInfo *a);
+static void build_alpha_blend_layer_uncached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg, GXTexGenSrc texGenSrc);
+static void build_alpha_blend_layer_cached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg);
+static void alpha_blend_layer_next(struct TevStageInfo *a);
+static void build_view_specular_layer_uncached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg, u32 d);
+static void build_view_specular_layer_cached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg);
+static void view_specular_layer_next(struct TevStageInfo *a);
+static void build_world_specular_layer_uncached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg, u32 d);
+static void build_world_specular_layer_cached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg);
+static void world_specular_layer_next(struct TevStageInfo *a);
+static void build_unk3_layer_uncached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg, GXTexGenSrc texGenSrc);
+static void build_unk3_layer_cached(struct TevStageInfo *a, GXTevColorArg colorArg, GXTevAlphaArg alphaArg);
+static void unk3_layer_next(struct TevStageInfo *a);
 
 #ifdef __MWERKS__
 asm void func_8008D6BC(register u32 arg)
@@ -958,7 +979,7 @@ void u_avdisp_draw_model_4(struct GMAModel *model)
 }
 
 // av_for_tex_get_log2
-int get_texture_max_lod(int width, int height)
+static int get_texture_max_lod(int width, int height)
 {
     int lod;
     if (width > height)
@@ -973,7 +994,7 @@ int get_texture_max_lod(int width, int height)
 }
 
 // avobjput_init_texture?
-void init_tev_layer_texobj(struct GMATevLayer *tevLayer, struct TPLTextureHeader *texHdr, struct TPL *tpl)
+static void init_tev_layer_texobj(struct GMATevLayer *tevLayer, struct TPLTextureHeader *texHdr, struct TPL *tpl)
 {
     u8 maxLOD;
     int wrapS;
@@ -1068,7 +1089,7 @@ static inline struct GMAShape *init_shape_render_flags(struct GMAShape *shape)
     return next_shape(shape);
 }
 
-GXTexObj *init_model(struct GMAModel *model, struct TPL *tpl, GXTexObj *texObj)
+static GXTexObj *init_model(struct GMAModel *model, struct TPL *tpl, GXTexObj *texObj)
 {
     struct GMATevLayer *modelSamplers;
     struct GMAShape *shape;
@@ -1136,7 +1157,7 @@ GXTexObj *init_model(struct GMAModel *model, struct TPL *tpl, GXTexObj *texObj)
     return texObj;
 }
 
-void u_iteratively_multiply_model_matrices(struct GMAModel *model)
+static void u_iteratively_multiply_model_matrices(struct GMAModel *model)
 {
     unsigned int i;
 
@@ -1146,7 +1167,7 @@ void u_iteratively_multiply_model_matrices(struct GMAModel *model)
     u_set_transform_matrices(model->mtxIndexes);
 }
 
-void draw_shape_deferred_callback(struct DrawShapeDeferredNode *node)
+static void draw_shape_deferred_callback(struct DrawShapeDeferredNode *node)
 {
     EnvMapFunc r31;
     Func802F20F0 r30;
@@ -1295,7 +1316,7 @@ void avdisp_set_fog_color(u8 a, u8 b, u8 c)
 }
 
 // sets the transform matrices used with the GX_VA_PNMTXIDX vertex attribute
-void u_set_transform_matrices(u8 *mtxIndexes)
+static void u_set_transform_matrices(u8 *mtxIndexes)
 {
     int i;
     for (i = 0; i < 8; i++)
@@ -1306,7 +1327,7 @@ void u_set_transform_matrices(u8 *mtxIndexes)
 }
 
 // Returns pointer to shape that follows this one
-struct GMAShape *draw_shape(struct GMAModel *model, struct GMAShape *shape, struct GMATevLayer *modelTevs)
+static struct GMAShape *draw_shape(struct GMAModel *model, struct GMAShape *shape, struct GMATevLayer *modelTevs)
 {
     int i;
     u8 *dlist;
@@ -1377,12 +1398,12 @@ struct GMAShape *draw_shape(struct GMAModel *model, struct GMAShape *shape, stru
 }
 
 #ifdef C_ONLY
-void func_8008FBB0(register u32 _flags, register void *_base, void *c, u32 d)
+static void func_8008FBB0(register u32 _flags, register void *_base, void *c, u32 d)
 {
     // TODO
 }
 #else
-asm void func_8008FBB0(register u32 _flags, register void *_base, void *c, u32 d)
+static asm void func_8008FBB0(register u32 _flags, register void *_base, void *c, u32 d)
 {
     nofralloc
     lis r9, GXWGFifo@h
@@ -1445,7 +1466,7 @@ struct UnkStruct29
     u32 unk8;
 };
 
-void *draw_shape_reflection_maybe(struct GMAShape *shape, void *modelSamplers, struct UnkStruct29 *c, u8 *d)
+static void *draw_shape_reflection_maybe(struct GMAShape *shape, void *modelSamplers, struct UnkStruct29 *c, u8 *d)
 {
     int i;
     GXCullMode cullMode;
@@ -1496,7 +1517,7 @@ void *draw_shape_reflection_maybe(struct GMAShape *shape, void *modelSamplers, s
     return d;
 }
 
-void draw_indexed_model(struct GMAModel *model, struct GMAShape *b, struct GMATevLayer *modelTevLayers)
+static void draw_indexed_model(struct GMAModel *model, struct GMAShape *b, struct GMATevLayer *modelTevLayers)
 {
     int i;  // r31
     u8 *r30 = b->mtxIndices;
@@ -1515,7 +1536,7 @@ void draw_indexed_model(struct GMAModel *model, struct GMAShape *b, struct GMATe
     }
 }
 
-void init_tev_material_cache(struct GMAModel *model, struct GMAShape *shape)
+static void init_tev_material_cache(struct GMAModel *model, struct GMAShape *shape)
 {
     s_materialCache.unk0 = 1;
     if (model->flags & (GCMF_SKIN|GCMF_EFFECTIVE))
@@ -1588,7 +1609,7 @@ void init_tev_material_cache(struct GMAModel *model, struct GMAShape *shape)
     mathutil_vec_normalize_len(&s_materialCache.modelDir_rt_view);
 }
 
-void u_compute_texmtx0(void)
+static void u_compute_texmtx0(void)
 {
     Point3d cameraPos = {0.0f, 0.0f, 0.0f};
     Vec cameraUp = {0.0f, 1.0f, 0.0f};
@@ -1611,7 +1632,7 @@ void u_compute_texmtx0(void)
     mathutil_mtxA_pop();
 }
 
-void u_compute_texmtx1and2(void)
+static void u_compute_texmtx1and2(void)
 {
     Point3d cameraPos = {0.0f, 0.0f, 0.0f};
     Point3d target;
@@ -1656,7 +1677,7 @@ void u_compute_texmtx1and2(void)
     mathutil_mtxA_pop();
 }
 
-void init_some_texture(void)
+static void init_some_texture(void)
 {
     u8 *imagePtr = unknownTexImg;
     memset(imagePtr,      0xFF, 32);
@@ -2142,7 +2163,7 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
 }
 
 // Optionally multiply a color/alpha with tev end result
-void build_post_multiply_tev_stage(GXTevStageID tevStage)
+static void build_post_multiply_tev_stage(GXTevStageID tevStage)
 {
     GXSetTevKColorSel_cached(tevStage, GX_TEV_KCSEL_K2);
     GXSetTevKAlphaSel_cached(tevStage, GX_TEV_KASEL_K2_A);
@@ -2155,7 +2176,7 @@ void build_post_multiply_tev_stage(GXTevStageID tevStage)
 }
 
 // Optionally add a color/alpha to tev end result
-void build_post_add_tev_stage(GXTevStageID tevStage)
+static void build_post_add_tev_stage(GXTevStageID tevStage)
 {
     GXSetTevKColorSel_cached(tevStage, GX_TEV_KCSEL_K3);
     GXSetTevKAlphaSel_cached(tevStage, GX_TEV_KASEL_K3_A);
@@ -2167,7 +2188,7 @@ void build_post_add_tev_stage(GXTevStageID tevStage)
     GXSetTevAlphaOp_cached(tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
 }
 
-void build_diffuse_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, GXTexGenSrc texGenSrc)
+static void build_diffuse_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, GXTexGenSrc texGenSrc)
 {
     GXSetTevDirect(info->tevStage);
     GXSetTevSwapMode_cached(info->tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
@@ -2179,19 +2200,19 @@ void build_diffuse_layer_uncached(struct TevStageInfo *info, GXTevColorArg color
     GXSetTevAlphaOp_cached(info->tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
 }
 
-void build_diffuse_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
+static void build_diffuse_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
 {
     GXSetTevColorIn_cached(info->tevStage, GX_CC_ZERO, GX_CC_TEXC, colorIn, GX_CC_ZERO);
     GXSetTevAlphaIn_cached(info->tevStage, GX_CA_ZERO, GX_CA_TEXA, alphaIn, GX_CA_ZERO);
 }
 
-void diffuse_layer_next(struct TevStageInfo *a)
+static void diffuse_layer_next(struct TevStageInfo *a)
 {
     a->tevStage++;
     a->texCoordId++;
 }
 
-void build_alpha_blend_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, GXTexGenSrc texGenSrc)
+static void build_alpha_blend_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, GXTexGenSrc texGenSrc)
 {
     GXSetTevDirect(info->tevStage);
     GXSetTexCoordGen(info->texCoordId, GX_TG_MTX2x4, texGenSrc, GX_TEXMTX1);
@@ -2209,13 +2230,13 @@ void build_alpha_blend_layer_cached(struct TevStageInfo *info, GXTevColorArg col
     GXSetTevAlphaIn_cached(info->tevStage, GX_CA_ZERO, GX_CA_TEXA, alphaIn, GX_CA_ZERO);
 }
 
-void alpha_blend_layer_next(struct TevStageInfo *a)
+static void alpha_blend_layer_next(struct TevStageInfo *a)
 {
     a->tevStage++;
     a->texCoordId++;
 }
 
-void build_view_specular_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, u32 d)
+static void build_view_specular_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, u32 d)
 {
     GXSetTevDirect(info->tevStage);
     GXSetTevSwapMode_cached(info->tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
@@ -2243,19 +2264,19 @@ void build_view_specular_layer_uncached(struct TevStageInfo *info, GXTevColorArg
     GXSetTevAlphaOp_cached(info->tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
 }
 
-void build_view_specular_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
+static void build_view_specular_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
 {
     GXSetTevColorIn_cached(info->tevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_KONST, colorIn);
     GXSetTevAlphaIn_cached(info->tevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, alphaIn);
 }
 
-void view_specular_layer_next(struct TevStageInfo *a)
+static void view_specular_layer_next(struct TevStageInfo *a)
 {
     a->tevStage++;
     a->texCoordId++;
 }
 
-void build_world_specular_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, u32 d)
+static void build_world_specular_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, u32 d)
 {
     u32 tevStage;
 
@@ -2298,13 +2319,13 @@ void build_world_specular_layer_uncached(struct TevStageInfo *info, GXTevColorAr
     GXSetTevAlphaOp_cached(tevStage + 1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
 }
 
-void build_world_specular_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
+static void build_world_specular_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
 {
     GXSetTevColorIn_cached(info->tevStage + 1, GX_CC_ZERO, GX_CC_TEXC, GX_CC_C2, colorIn);
     GXSetTevAlphaIn_cached(info->tevStage + 1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, alphaIn);
 }
 
-void world_specular_layer_next(struct TevStageInfo *info)
+static void world_specular_layer_next(struct TevStageInfo *info)
 {
     info->tevStage += 2;
     info->texCoordId += 2;
@@ -2312,7 +2333,7 @@ void world_specular_layer_next(struct TevStageInfo *info)
 
 // Type 3 seems unused/unreachable
 
-void build_unk3_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, GXTexGenSrc texGenSrc)
+static void build_unk3_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn, GXTexGenSrc texGenSrc)
 {
     GXSetTevDirect(info->tevStage);
     GXSetTexCoordGen(info->texCoordId, GX_TG_MTX2x4, texGenSrc, GX_TEXMTX1);
@@ -2326,13 +2347,13 @@ void build_unk3_layer_uncached(struct TevStageInfo *info, GXTevColorArg colorIn,
     info->u_someTexmapId2 = info->texMapId;
 }
 
-void build_unk3_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
+static void build_unk3_layer_cached(struct TevStageInfo *info, GXTevColorArg colorIn, GXTevAlphaArg alphaIn)
 {
     GXSetTevColorIn_cached(info->tevStage, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, colorIn);
     GXSetTevAlphaIn_cached(info->tevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, alphaIn);
 }
 
-void unk3_layer_next(struct TevStageInfo *info)
+static void unk3_layer_next(struct TevStageInfo *info)
 {
     info->tevStage++;
     info->texCoordId++;

@@ -2,6 +2,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "mt_effect.h"
 #include "nl2ngc.h"
 

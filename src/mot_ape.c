@@ -7,6 +7,7 @@
 #include <ppcintrinsic.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "ball.h"
 #include "camera.h"
 #include "gma.h"

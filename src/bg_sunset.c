@@ -5,6 +5,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "background.h"
 #include "info.h"
 #include "mathutil.h"

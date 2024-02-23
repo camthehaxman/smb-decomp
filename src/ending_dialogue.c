@@ -3,6 +3,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "ball.h"
 #include "course.h"
 #include "effect.h"

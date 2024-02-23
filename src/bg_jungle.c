@@ -6,6 +6,7 @@
 #include <dolphin/gx/GXEnum.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "background.h"
 #include "info.h"
 #include "lens_flare.h"

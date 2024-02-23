@@ -5,6 +5,7 @@
 
 #include "global.h"
 #include "ape_icon.h"
+#include "avdisp.h"
 #include "ball.h"
 #include "bitmap.h"
 #include "camera.h"

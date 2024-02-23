@@ -4,6 +4,7 @@
 #include <dolphin.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "background.h"
 #include "camera.h"
 #include "ball.h"

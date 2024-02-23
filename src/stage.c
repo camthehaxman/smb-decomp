@@ -4,12 +4,13 @@
 #include <string.h>
 #include <ppcintrinsic.h>
 
+#include "global.h"
+#include "avdisp.h"
 #include "background.h"
 #include "bitmap.h"
 #include "camera.h"
 #include "course.h"
 #include "event.h"
-#include "global.h"
 #include "gma.h"
 #include "gxutil.h"
 #include "info.h"

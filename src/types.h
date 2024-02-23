@@ -674,30 +674,6 @@ struct ApeGfxFileInfo
     u8 unused20[4];  // unused padding?
 };  // size = 0x24
 
-struct TevStageInfo
-{
-    s32 tevStage;
-    GXTexCoordID texCoordId;
-    s32 unk8;
-    /*0x0C*/ GXTexMapID texMapId;
-    s32 tevIndStage;
-    s32 unk14;
-    u32 unk18;
-    s32 unk1C;
-    u32 unk20;
-    GXTexCoordID u_texCoordId2;
-    GXTexMapID u_someTexmapId2;
-};
-
-struct GCMMatState_Unit
-{
-    s32 unk0;
-    void *unk4;
-    void *unk8;
-    struct TevStageInfo unkC;
-};
-
-typedef void (*EnvMapFunc)(struct GCMMatState_Unit *);
 
 struct BgLightInfo
 {
@@ -720,6 +696,10 @@ struct BgLightInfo
 
     s8 **bgLightGroups;
 };
+
+struct GCMMatState_Unit;
+
+typedef void (*EnvMapFunc)(struct GCMMatState_Unit *);
 
 struct Light;
 

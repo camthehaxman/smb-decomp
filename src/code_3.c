@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "adv.h"
+#include "avdisp.h"
 #include "gma.h"
 #include "gxutil.h"
 #include "light.h"

@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "global.h"
+#include "avdisp.h"
 #include "background.h"
 #include "ball.h"
 #include "camera.h"
