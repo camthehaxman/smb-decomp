@@ -133,7 +133,6 @@ SOURCES := \
 	src/motload_3.c \
 	src/motload_4.c \
 	src/ball.c \
-	src/mathutil_vec_cross_prod.c \
 	src/stcoli.c \
 	src/world.c \
 	src/interpolate_keyframes.c \
