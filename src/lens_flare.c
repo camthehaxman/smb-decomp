@@ -4,7 +4,6 @@
 #include "avdisp.h"
 #include "ball.h"
 #include "camera.h"
-#include "gma.h"
 #include "lens_flare.h"
 #include "mathutil.h"
 #include "mode.h"

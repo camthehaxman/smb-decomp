@@ -3,7 +3,6 @@
 #include "global.h"
 #include "avdisp.h"
 #include "camera.h"
-#include "gma.h"
 #include "mathutil.h"
 
 void func_800948F4(void)

@@ -12,7 +12,6 @@
 #include "ball.h"
 #include "camera.h"
 #include "effect.h"
-#include "gma.h"
 #include "gxutil.h"
 #include "hud.h"
 #include "info.h"

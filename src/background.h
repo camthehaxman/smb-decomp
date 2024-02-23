@@ -6,7 +6,6 @@
 #include <dolphin/gx/GXStruct.h>
 
 #include "types.h"
-#include "gma.h"
 
 /*               id                    fname        oldfname song backdropColor (RGBA)*/
 #define BACKGROUND_LIST \
@@ -38,6 +37,7 @@
 /*26*/ DEFINE_BG(BG_TYPE_MST,           "bg_mst",    NULL,    38, 0xFFFFCDFF) \
 /*27*/ DEFINE_BG(BG_TYPE_END,           "bg_ending", NULL,    -1, 0xFFFFFFFF)
 
+struct GMAModelEntry;
 struct StageBgObject;
 struct StageFlipbookAnims;
 

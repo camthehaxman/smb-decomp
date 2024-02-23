@@ -12,7 +12,6 @@
 #include "ball.h"
 #include "camera.h"
 #include "effect.h"
-#include "gma.h"
 #include "gxcache.h"
 #include "gxutil.h"
 #include "mathutil.h"

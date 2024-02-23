@@ -11,7 +11,6 @@
 #include "ball.h"
 #include "camera.h"
 #include "effect.h"
-#include "gma.h"
 #include "info.h"
 #include "item.h"
 #include "mathutil.h"

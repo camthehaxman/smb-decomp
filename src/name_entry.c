@@ -11,7 +11,6 @@
 #include "camera.h"
 #include "effect.h"
 #include "event.h"
-#include "gma.h"
 #include "info.h"
 #include "input.h"
 #include "mathutil.h"

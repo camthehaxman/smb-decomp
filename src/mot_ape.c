@@ -10,7 +10,6 @@
 #include "avdisp.h"
 #include "ball.h"
 #include "camera.h"
-#include "gma.h"
 #include "gxutil.h"
 #include "light.h"
 #include "load.h"

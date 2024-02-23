@@ -12,7 +12,6 @@
 #include "camera.h"
 #include "course.h"
 #include "event.h"
-#include "gma.h"
 #include "gxutil.h"
 #include "input.h"
 #include "mathutil.h"

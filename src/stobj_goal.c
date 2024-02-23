@@ -7,7 +7,6 @@
 #include "avdisp.h"
 #include "ball.h"
 #include "effect.h"
-#include "gma.h"
 #include "info.h"
 #include "light.h"
 #include "mathutil.h"

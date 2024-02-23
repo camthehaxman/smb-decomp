@@ -4,7 +4,6 @@
 #include "global.h"
 #include "avdisp.h"
 #include "camera.h"
-#include "gma.h"
 #include "gxcache.h"
 #include "mathutil.h"
 #include "nl2ngc.h"

@@ -15,7 +15,6 @@
 
 #include "global.h"
 #include "avdisp.h"
-#include "gma.h"
 #include "gxcache.h"
 #include "gxutil.h"
 #include "light.h"

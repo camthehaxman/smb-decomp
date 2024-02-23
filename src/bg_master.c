@@ -7,7 +7,6 @@
 #include "avdisp.h"
 #include "background.h"
 #include "effect.h"
-#include "gma.h"
 #include "gxcache.h"
 #include "info.h"
 #include "mathutil.h"

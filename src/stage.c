@@ -11,7 +11,6 @@
 #include "camera.h"
 #include "course.h"
 #include "event.h"
-#include "gma.h"
 #include "gxutil.h"
 #include "info.h"
 #include "light.h"

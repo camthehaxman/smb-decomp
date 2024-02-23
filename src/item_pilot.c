@@ -9,7 +9,6 @@
 #include "avdisp.h"
 #include "ball.h"
 #include "effect.h"
-#include "gma.h"
 #include "gxutil.h"
 #include "info.h"
 #include "item.h"

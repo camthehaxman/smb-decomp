@@ -8,7 +8,6 @@
 #include "course.h"
 #include "effect.h"
 #include "ending.h"
-#include "gma.h"
 #include "gxutil.h"
 #include "light.h"
 #include "mathutil.h"

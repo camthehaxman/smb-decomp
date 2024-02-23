@@ -8,7 +8,6 @@
 #include "camera.h"
 #include "effect.h"
 #include "event.h"
-#include "gma.h"
 #include "mathutil.h"
 #include "polydisp.h"
 #include "stcoli.h"
