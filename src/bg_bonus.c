@@ -241,45 +241,52 @@ static void lbl_80061B58(void)
 static void bg_bonus_envmap_ball(struct GCMMatState_Unit *a)
 {
     struct BGBonusWork *work = (void *)backgroundInfo.work;
-    struct Struct80061BC4_sub spC = a->unkC;
+    struct TevStageInfo spC = a->unkC;
 
     GXSetBlendMode_cached(GX_BM_BLEND, GX_BL_ONE, GX_BL_ONE, GX_LO_CLEAR);
     fog_gx_set();
-    GXLoadTexObj_cached(work->lightmapTexObjs, spC.u_texMapId);
+    GXLoadTexObj_cached(work->lightmapTexObjs, spC.texMapId);
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unk7AC);
     GXLoadTexMtxImm(mathutilData->mtxA, spC.unk8, GX_MTX3x4);
     mathutil_mtxA_pop();
-    GXSetTexCoordGen(spC.unk4, GX_TG_MTX2x4, GX_TG_POS, spC.unk8);
-    GXSetTevDirect(spC.unk0);
-    GXSetTevOrder_cached(spC.unk0, spC.unk4, spC.u_texMapId, GX_COLOR_NULL);
-    GXSetTevColorIn_cached(spC.unk0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
-    GXSetTevColorOp_cached(spC.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG1);
-    GXSetTevAlphaIn_cached(spC.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-    GXSetTevAlphaOp_cached(spC.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    spC.unk0++;
-    spC.unk4++;
+    GXSetTexCoordGen(spC.texCoordId, GX_TG_MTX2x4, GX_TG_POS, spC.unk8);
+    GXSetTevDirect(spC.tevStage);
+    GXSetTevOrder_cached(spC.tevStage, spC.texCoordId, spC.texMapId, GX_COLOR_NULL);
+
+    // reg1.rgb = texture.rgb
+    GXSetTevColorIn_cached(spC.tevStage, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
+    GXSetTevColorOp_cached(spC.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG1);
+
+    // regprev.a = konst.a
+    GXSetTevAlphaIn_cached(spC.tevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
+    GXSetTevAlphaOp_cached(spC.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+
+    spC.tevStage++;
+    spC.texCoordId++;
     spC.unk8 += 3;
-    spC.u_texMapId++;
+    spC.texMapId++;
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unk7DC);
     mathutil_mtxA_set_translate_xyz(0.0f, 0.0f, 0.0f);
     GXLoadTexMtxImm(mathutilData->mtxA, spC.unk8, GX_MTX3x4);
     mathutil_mtxA_pop();
     GXLoadTexMtxImm(work->unk77C, spC.unk14, GX_MTX3x4);
-    GXLoadTexObj_cached(work->lightmapATexObjs, spC.u_texMapId);
-    GXSetTexCoordGen2(spC.unk4, GX_TG_MTX3x4, GX_TG_NRM, spC.unk8, GX_TRUE, spC.unk14);
-    GXSetTevDirect(spC.unk0);
-    GXSetTevOrder_cached(spC.unk0, spC.unk4, spC.u_texMapId, GX_COLOR_NULL);
-    GXSetTevColorIn_cached(spC.unk0, GX_CC_ZERO, GX_CC_TEXC, GX_CC_C1, GX_CC_ZERO);
-    GXSetTevColorOp_cached(spC.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    GXSetTevAlphaIn_cached(spC.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
-    GXSetTevAlphaOp_cached(spC.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    spC.unk0++;
-    spC.unk4++;
+    GXLoadTexObj_cached(work->lightmapATexObjs, spC.texMapId);
+    GXSetTexCoordGen2(spC.texCoordId, GX_TG_MTX3x4, GX_TG_NRM, spC.unk8, GX_TRUE, spC.unk14);
+    GXSetTevDirect(spC.tevStage);
+    GXSetTevOrder_cached(spC.tevStage, spC.texCoordId, spC.texMapId, GX_COLOR_NULL);
+
+    // GX_CC_TEXC * GX_CC_C1
+    GXSetTevColorIn_cached(spC.tevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_C1, GX_CC_ZERO);
+    GXSetTevColorOp_cached(spC.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(spC.tevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
+    GXSetTevAlphaOp_cached(spC.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    spC.tevStage++;
+    spC.texCoordId++;
     spC.unk8 += 3;
     spC.unk14 += 3;
-    spC.u_texMapId++;
+    spC.texMapId++;
     a->unkC = spC;
 }
 

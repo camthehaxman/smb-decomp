@@ -767,17 +767,17 @@ static void nlObjPut_SetMaterial(struct NlMesh *pmesh)
     }
     else
     {
-        int u_texMapId = s_nlMaterialCache.texMapId;
+        int texMapId = s_nlMaterialCache.texMapId;
 
         if (s_nlMaterialCache.texObj != mesh.texObj)
         {
             s_nlMaterialCache.texObj = mesh.texObj;
-            if (--u_texMapId < 0)
-                u_texMapId = 7;
-            s_nlMaterialCache.texMapId = u_texMapId;
-            GXLoadTexObj_cached(mesh.texObj, u_texMapId);
+            if (--texMapId < 0)
+                texMapId = 7;
+            s_nlMaterialCache.texMapId = texMapId;
+            GXLoadTexObj_cached(mesh.texObj, texMapId);
         }
-        GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD0, u_texMapId, GX_COLOR0A0);
+        GXSetTevOrder_cached(GX_TEVSTAGE0, GX_TEXCOORD0, texMapId, GX_COLOR0A0);
         switch ((mesh.texFlags >> 6) & 3)
         {
         case 0:

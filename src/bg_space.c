@@ -282,40 +282,40 @@ void bg_space_draw(void)
 
 void bg_space_interact(int arg0) {}
 
-static struct Struct80061BC4_sub lbl_8027CC28;
+static struct TevStageInfo lbl_8027CC28;
 
 static void lbl_800609AC(struct GCMMatState_Unit *arg0)
 {
     struct BGSpaceWork *work = backgroundInfo.work;
-    struct Struct80061BC4_sub sp14 = arg0->unkC;
+    struct TevStageInfo sp14 = arg0->unkC;
 
     if (arg0->unk0 == 0
-     && sp14.unk0 == lbl_8027CC28.unk0
-     && sp14.unk4 == lbl_8027CC28.unk4
+     && sp14.tevStage == lbl_8027CC28.tevStage
+     && sp14.texCoordId == lbl_8027CC28.texCoordId
      && sp14.unk8 == lbl_8027CC28.unk8
-     && sp14.u_texMapId == lbl_8027CC28.u_texMapId
-     && sp14.unk10 == lbl_8027CC28.unk10
+     && sp14.texMapId == lbl_8027CC28.texMapId
+     && sp14.tevIndStage == lbl_8027CC28.tevIndStage
      && sp14.unk1C == lbl_8027CC28.unk1C)
     {
-        sp14.unk4 += 1;
+        sp14.texCoordId += 1;
         sp14.unk8 += 3;
-        sp14.u_texMapId += 1;
-        sp14.unk10 += 1;
+        sp14.texMapId += 1;
+        sp14.tevIndStage += 1;
         sp14.unk1C += 1;
         arg0->unkC = sp14;
         return;
     }
     lbl_8027CC28 = sp14;
-    GXLoadTexObj_cached(work->saturnIndMap, sp14.u_texMapId);
-    GXSetTexCoordGen(sp14.unk4, GX_TG_MTX2x4, GX_TG_TEX0, sp14.unk8);
+    GXLoadTexObj_cached(work->saturnIndMap, sp14.texMapId);
+    GXSetTexCoordGen(sp14.texCoordId, GX_TG_MTX2x4, GX_TG_TEX0, sp14.unk8);
     GXLoadTexMtxImm(work->unk64, sp14.unk8, GX_MTX2x4);
-    GXSetIndTexOrder(sp14.unk10, sp14.unk4, sp14.u_texMapId);
-    GXSetTevIndirect(sp14.unk0 - 1, sp14.unk10, GX_ITF_8, GX_ITB_STU, sp14.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetIndTexOrder(sp14.tevIndStage, sp14.texCoordId, sp14.texMapId);
+    GXSetTevIndirect(sp14.tevStage - 1, sp14.tevIndStage, GX_ITF_8, GX_ITB_STU, sp14.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     GXSetIndTexMtx(sp14.unk1C, work->unk94, -3);
-    sp14.unk4 += 1;
+    sp14.texCoordId += 1;
     sp14.unk8 += 3;
-    sp14.u_texMapId += 1;
-    sp14.unk10 += 1;
+    sp14.texMapId += 1;
+    sp14.tevIndStage += 1;
     sp14.unk1C += 1;
     arg0->unkC = sp14;
 }

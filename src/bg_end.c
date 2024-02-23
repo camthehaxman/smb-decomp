@@ -94,11 +94,11 @@ void bg_end_interact(int arg0) {}
 static void lbl_800654F4(struct GCMMatState_Unit *arg0)
 {
     struct BGEndWork *work = backgroundInfo.work;
-    struct Struct80061BC4_sub sp2C = arg0->unkC;
+    struct TevStageInfo sp2C = arg0->unkC;
     float sp14[2][3];
 
-    GXLoadTexObj_cached(work->waterSpecTex, sp2C.u_texMapId);
-    GXLoadTexObj_cached(work->cloudTex, sp2C.u_texMapId + 1);
+    GXLoadTexObj_cached(work->waterSpecTex, sp2C.texMapId);
+    GXLoadTexObj_cached(work->cloudTex, sp2C.texMapId + 1);
     sp14[0][0] = 0.0f;
     sp14[0][1] = 0.5f * mathutil_sin(backgroundInfo.u_otherSeed << 8);
     sp14[0][2] = 0.0f;
@@ -116,34 +116,34 @@ static void lbl_800654F4(struct GCMMatState_Unit *arg0)
     mathutil_mtxA_scale(&work->unk40);
     GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 3, GX_MTX2x4);
     mathutil_mtxA_pop();
-    GXSetTexCoordGen(sp2C.unk4, 1, 1, sp2C.unk8);
-    GXSetTexCoordGen(sp2C.unk4 + 1, 1, 4, sp2C.unk8 + 3);
-    GXSetIndTexOrder(sp2C.unk10, sp2C.unk4 + 1, sp2C.u_texMapId + 1);
-    GXSetTevIndirect(sp2C.unk0, sp2C.unk10, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
-    GXSetTevSwapMode_cached(sp2C.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
-    GXSetTevOrder_cached(sp2C.unk0, sp2C.unk4, sp2C.u_texMapId, GX_COLOR_NULL);
-    GXSetTevColorIn_cached(sp2C.unk0, GX_CC_TEXC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
-    GXSetTevColorOp_cached(sp2C.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    GXSetTevAlphaIn_cached(sp2C.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
-    GXSetTevAlphaOp_cached(sp2C.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    sp2C.unk0 += 1;
-    sp2C.unk10 += 1;
-    sp2C.unk4 += 2;
+    GXSetTexCoordGen(sp2C.texCoordId, 1, 1, sp2C.unk8);
+    GXSetTexCoordGen(sp2C.texCoordId + 1, 1, 4, sp2C.unk8 + 3);
+    GXSetIndTexOrder(sp2C.tevIndStage, sp2C.texCoordId + 1, sp2C.texMapId + 1);
+    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevSwapMode_cached(sp2C.tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
+    GXSetTevOrder_cached(sp2C.tevStage, sp2C.texCoordId, sp2C.texMapId, GX_COLOR_NULL);
+    GXSetTevColorIn_cached(sp2C.tevStage, GX_CC_TEXC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
+    GXSetTevColorOp_cached(sp2C.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(sp2C.tevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
+    GXSetTevAlphaOp_cached(sp2C.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    sp2C.tevStage += 1;
+    sp2C.tevIndStage += 1;
+    sp2C.texCoordId += 2;
     sp2C.unk8 += 6;
     sp2C.unk1C += 1;
-    sp2C.u_texMapId += 2;
+    sp2C.texMapId += 2;
     arg0->unkC = sp2C;
 }
 
 static void lbl_8006582C(struct GCMMatState_Unit *arg0)
 {
     struct BGEndWork *work = backgroundInfo.work;
-    struct Struct80061BC4_sub sp2C = arg0->unkC;
+    struct TevStageInfo sp2C = arg0->unkC;
     float sp14[2][3];
     float temp_f2;
 
-    GXLoadTexObj_cached(work->waterSpecTex, sp2C.u_texMapId);
-    GXLoadTexObj_cached(work->cloudTex, sp2C.u_texMapId + 1);
+    GXLoadTexObj_cached(work->waterSpecTex, sp2C.texMapId);
+    GXLoadTexObj_cached(work->cloudTex, sp2C.texMapId + 1);
     sp14[0][0] = 0.0f;
     sp14[0][1] = 0.5f * mathutil_sin(backgroundInfo.u_otherSeed << 8);
     sp14[0][2] = 0.0f;
@@ -161,22 +161,22 @@ static void lbl_8006582C(struct GCMMatState_Unit *arg0)
     mathutil_mtxA_scale_s(7.0f);
     GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 3, GX_MTX2x4);
     mathutil_mtxA_pop();
-    GXSetTexCoordGen(sp2C.unk4, 1, 1, sp2C.unk8);
-    GXSetTexCoordGen(sp2C.unk4 + 1, 1, 4, sp2C.unk8 + 3);
-    GXSetIndTexOrder(sp2C.unk10, sp2C.unk4 + 1, sp2C.u_texMapId + 1);
-    GXSetTevIndirect(sp2C.unk0, sp2C.unk10, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
-    GXSetTevSwapMode_cached(sp2C.unk0, GX_TEV_SWAP0, GX_TEV_SWAP0);
-    GXSetTevOrder_cached(sp2C.unk0, sp2C.unk4, sp2C.u_texMapId, GX_COLOR_NULL);
-    GXSetTevColorIn_cached(sp2C.unk0, GX_CC_TEXC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
-    GXSetTevColorOp_cached(sp2C.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    GXSetTevAlphaIn_cached(sp2C.unk0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
-    GXSetTevAlphaOp_cached(sp2C.unk0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    sp2C.unk0 += 1;
-    sp2C.unk10 += 1;
-    sp2C.unk4 += 2;
+    GXSetTexCoordGen(sp2C.texCoordId, 1, 1, sp2C.unk8);
+    GXSetTexCoordGen(sp2C.texCoordId + 1, 1, 4, sp2C.unk8 + 3);
+    GXSetIndTexOrder(sp2C.tevIndStage, sp2C.texCoordId + 1, sp2C.texMapId + 1);
+    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevSwapMode_cached(sp2C.tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
+    GXSetTevOrder_cached(sp2C.tevStage, sp2C.texCoordId, sp2C.texMapId, GX_COLOR_NULL);
+    GXSetTevColorIn_cached(sp2C.tevStage, GX_CC_TEXC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
+    GXSetTevColorOp_cached(sp2C.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn_cached(sp2C.tevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
+    GXSetTevAlphaOp_cached(sp2C.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    sp2C.tevStage += 1;
+    sp2C.tevIndStage += 1;
+    sp2C.texCoordId += 2;
     sp2C.unk8 += 6;
     sp2C.unk1C += 1;
-    sp2C.u_texMapId += 2;
+    sp2C.texMapId += 2;
     arg0->unkC = sp2C;
 }
 

@@ -674,26 +674,27 @@ struct ApeGfxFileInfo
     u8 unused20[4];  // unused padding?
 };  // size = 0x24
 
-struct Struct80061BC4_sub
+struct TevStageInfo
 {
-    s32 unk0;
-    int unk4;
+    s32 tevStage;
+    GXTexCoordID texCoordId;
     s32 unk8;
-    /*0x0C*/ GXTexMapID u_texMapId;
-    s32 unk10;
+    /*0x0C*/ GXTexMapID texMapId;
+    s32 tevIndStage;
     s32 unk14;
     u32 unk18;
     s32 unk1C;
     u32 unk20;
-    u8 filler24[0x2C-0x24];
+    GXTexCoordID u_texCoordId2;
+    GXTexMapID u_someTexmapId2;
 };
 
 struct GCMMatState_Unit
 {
     s32 unk0;
-    u8 filler4[0xC-0x4];
-    struct Struct80061BC4_sub unkC;
-    u32 unk2C;
+    void *unk4;
+    void *unk8;
+    struct TevStageInfo unkC;
 };
 
 typedef void (*EnvMapFunc)(struct GCMMatState_Unit *);
