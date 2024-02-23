@@ -30,7 +30,7 @@ struct GCMMatState_Unit
 
 void avdisp_init(void);
 void func_8008D788(void);
-void *u_avdisp_alloc_matrix_lists(int count);
+void *avdisp_allocate_matrices(int count);
 struct GMA *load_gma(char *fileName, struct TPL *tpl);
 struct GMA *load_gma_from_aram(u32 aramSrc, u32 size, struct TPL *tpl);
 void free_gma(struct GMA *gma);

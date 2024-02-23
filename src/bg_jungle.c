@@ -10,6 +10,7 @@
 #include "background.h"
 #include "info.h"
 #include "lens_flare.h"
+#include "light.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "polydisp.h"

@@ -714,7 +714,7 @@ static void draw_live_arrow(void)
         mathutil_mtxA_get_translate_alt(&sp8);
         if (sp8.z < -4.0 * f27)
             mathutil_mtxA_scale_s(sp8.z / (-4.0 * f27));
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(commonGma->modelEntries[arrowModelIDs[i]].model);
     }
 }
@@ -741,7 +741,7 @@ static void draw_continue_scene(void)
         if (func != NULL)
             prevFunc = u_avdisp_set_some_func_1(func);
         mathutil_mtxA_from_mtxB();
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(u_stageBoxModel);
         if (func != NULL)
             u_avdisp_set_some_func_1(prevFunc);
@@ -1263,7 +1263,7 @@ static void draw_timer_bomb_fuse(void)
     mathutil_mtxA_translate_xyz(0.00094f, 0.00519f, -0.01f);
     scale = 0.0007f;
     mathutil_mtxA_scale_s(scale);
-    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+    gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
     avdisp_set_bound_sphere_scale(scale);
     avdisp_enable_custom_tex_mtx(1);
     avdisp_draw_model_unculled_sort_translucent(commonGma->modelEntries[BOMB_FUSE].model);

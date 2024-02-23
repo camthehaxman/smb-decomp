@@ -14,6 +14,7 @@
 #include "gxutil.h"
 #include "hud.h"
 #include "info.h"
+#include "light.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "name_entry.h"
@@ -431,6 +432,7 @@ static void (*s_effectDestroyFuncs[])(struct Effect *) =
     NULL,
 };
 
+// TODO: probably doesn't belong in this file
 void u_give_points(int arg0, int arg1)
 {
     int clearScore;
@@ -757,7 +759,7 @@ static void effect_dummy_draw(struct Effect *effect) {}
 
 static void effect_dummy_destroy(struct Effect *effect) {}
 
-u16 s_paperPieceModels[] =
+static u16 s_paperPieceModels[] =
 {
     PAPER_PIECE_DEEPGREEN,
     PAPER_PIECE_GREEN,
@@ -3207,7 +3209,7 @@ static void effect_banana_drop_draw(struct Effect *effect)
         mathutil_mtxA_rotate_x(effect->rotX);
         mathutil_mtxA_rotate_z(effect->rotZ);
         mathutil_mtxA_scale_s(0.65f);
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[OBJ_BANANA_01_LOD150].model);
         if (!(effect->state & 3))
         {
@@ -3218,7 +3220,7 @@ static void effect_banana_drop_draw(struct Effect *effect)
             mathutil_mtxA_translate_xyz(effect->pos.x, -0.45f, effect->pos.z);
             mathutil_mtxA_rotate_x(0x4000);
             mathutil_mtxA_scale_s(0.25f);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_none(commonGma->modelEntries[polyshadow01].model);
             avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
             avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_ENABLE);

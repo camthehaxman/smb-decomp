@@ -7,6 +7,7 @@
 #include "background.h"
 #include "camera.h"
 #include "gxcache.h"
+#include "light.h"
 #include "mathutil.h"
 #include "mode.h"
 #include "polydisp.h"

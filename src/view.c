@@ -489,7 +489,7 @@ void draw_items(void)
                 mathutil_mtxA_sq_from_identity();
                 mathutil_mtxA_rotate_y(stageViewInfo->frameCounter * sp10[r24->type]);
                 mathutil_mtxA_mult_left(mathutilData->mtxB);
-                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                 avdisp_draw_model_culled_sort_translucent(models[r24->type]);
             }
         }
@@ -535,7 +535,7 @@ void draw_banana_shadows(void)
                     mathutil_mtxA_from_quat(&sp50);
                     mathutil_mtxA_mult_left(sp20);
                     mathutil_mtxA_scale_s(0.45f);
-                    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                    gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                     avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[0x4E].model);
                 }
             }
@@ -569,7 +569,7 @@ void draw_stage_geometry(void)
             mathutil_mtxA_from_mtxB();
             if (i > 0)
                 mathutil_mtxA_mult_right(animGrp->transform);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             r26 = r29->unk0;
             for (j = 0; j < r29->unk4; j++, r26++)
             {
@@ -649,14 +649,14 @@ void draw_stage_objects(void)
             }
             if (goalModel != NULL)
             {
-                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                 avdisp_draw_model_culled_sort_translucent(goalModel);
             }
             nlObjPut(NLOBJ_MODEL(g_commonNlObj, 14));
 
             mathutil_mtxA_push();
             mathutil_mtxA_translate_xyz(0.0f, 2.8f, 0.0f);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[0x20].model);
             mathutil_mtxA_pop();
 
@@ -692,7 +692,7 @@ void draw_stage_objects(void)
             mathutil_mtxA_rotate_y(bumper->rotY);
             mathutil_mtxA_rotate_x(bumper->rotX);
             mathutil_mtxA_rotate_y(stageViewInfo->frameCounter << 8);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_translucent(lbl_8028C0B0.unk14[0]);
         }
     }
@@ -723,7 +723,7 @@ void draw_stage_objects(void)
             if (f0 >= 1.0)
                 f0 = 2.0 - f0;
             mathutil_mtxA_translate_xyz(0.0f, 0.0f, 2.5 * -f0);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_translucent(jamabarModel);
             totalJamas++;
         }

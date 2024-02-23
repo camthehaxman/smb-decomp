@@ -57,13 +57,13 @@ void gxutil_set_vtx_attrs(u32 attrs)
 void gxutil_dummy(void) {}
 
 #ifdef C_ONLY
-void u_gxutil_upload_some_mtx(register Mtx mtx, register int index)
+void gxutil_load_pos_nrm_matrix(register Mtx mtx, register int index)
 {
     GXLoadPosMtxImm(mtx, index * 3);
     GXLoadNrmMtxImm(mtx, index * 3);
 }
 #else
-asm void u_gxutil_upload_some_mtx(register Mtx mtx, register int index)
+asm void gxutil_load_pos_nrm_matrix(register Mtx mtx, register int index)
 {
     nofralloc
     mr r5, r4

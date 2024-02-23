@@ -1,3 +1,6 @@
+/**
+ * stobj.c - code for stage objects like bumpers and jamabars
+ */
 #include <stdio.h>
 #include <string.h>
 #include <dolphin.h>

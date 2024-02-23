@@ -1163,7 +1163,7 @@ void ball_draw(void)
         if (envFunc != NULL)
         {
             u_avdisp_set_some_func_1(envFunc);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_all(commonGma->modelEntries[ENV_ABSORBER].model);
             u_avdisp_set_some_func_1(NULL);
         }
@@ -3119,7 +3119,7 @@ static void ball_draw_callback(struct BallDrawNode *node)
     mathutil_mtxA_from_mtxB();
     mathutil_mtxA_mult_right(ball->unk30);
     mathutil_mtxA_scale_s(ball->modelScale);
-    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+    gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
 
     draw_ball_hemispheres(ball, node->ballId);
 
@@ -3143,7 +3143,7 @@ static void ball_draw_callback(struct BallDrawNode *node)
     if (envFunc != NULL)
     {
         u_avdisp_set_some_func_1(envFunc);
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_culled_sort_none(commonGma->modelEntries[ENV_ABSORBER].model);
         u_avdisp_set_some_func_1(NULL);
     }

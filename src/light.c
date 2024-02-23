@@ -137,6 +137,9 @@ struct Light s_perStageLights[512] =  // lots of empty space at the end
 // Light groups refer to lights by index in here
 struct Light s_u_lightPool[32];
 
+struct Light lbl_801F3A08;  // only used in window.c
+struct Color3f lbl_801F39FC;  // only used in window.c
+
 void print_light(struct Light *light)
 {
     printf("\x7B\t\n");

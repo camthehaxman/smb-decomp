@@ -891,14 +891,14 @@ static void func_8009CD5C(void)
             u_avdisp_set_some_func_1(temp_r26);
         mathutil_mtxA_from_mtxB();
         mathutil_mtxA_rotate_y(-0x8000);
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(miniCommendInfo.gma->modelEntries[8].model);
         for (i = 0; i < miniCommendInfo.unk24; i++)
         {
             func_8009D7FC(i, &sp80);
             mathutil_mtxA_from_mtxB_translate(&sp80);
             mathutil_mtxA_rotate_y(-0x8000);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[3].model);
             if (miniCommendInfo.unk25[i] < 5U)
             {
@@ -912,7 +912,7 @@ static void func_8009CD5C(void)
         {
             mathutil_mtxA_from_mtxB_translate(&miniCommendInfo.unk6C->pos);
             mathutil_mtxA_rotate_y(-0x8000);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[3].model);
             avdisp_draw_model_culled_sort_translucent(miniCommendInfo.gma->modelEntries[11].model);
         }
@@ -950,7 +950,7 @@ static void func_8009CD5C(void)
                     mathutil_mtxA_scale_s(0.25f);
                     break;
                 }
-                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                 avdisp_set_alpha(0.25f);
                 avdisp_draw_model_culled_sort_translucent(commonGma->modelEntries[78].model);
             }
@@ -997,7 +997,7 @@ static void func_8009CD5C(void)
                     break;
                 }
                 mathutil_mtxA_scale_xyz(0.1f, 0.1f, 0.1f);
-                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                 avdisp_draw_model_unculled_sort_translucent(miniCommendInfo.gma->modelEntries[7].model);
             }
         }
@@ -1014,7 +1014,7 @@ static void func_8009CD5C(void)
                 mathutil_mtxA_translate_xyz(0.3f, -0.125f, -0.4f);
                 mathutil_mtxA_rotate_y(-0x8000);
                 mathutil_mtxA_scale_s(0.25f);
-                u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                 if (miniCommendInfo.unk2D[i] != 0)
                 {
                     temp_r3_2 = &lbl_801B7CF8[miniCommendInfo.unk29[i]];

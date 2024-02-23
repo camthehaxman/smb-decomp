@@ -16,7 +16,7 @@ u32 gxutil_end_display_list(void);
 void gxutil_clear_vtx_attrs(void);
 void gxutil_set_vtx_attrs(u32);
 void gxutil_dummy(void);
-void u_gxutil_upload_some_mtx(Mtx, int);
+void gxutil_load_pos_nrm_matrix(Mtx, int);
 void u_init_bg_fog_params(void);
 void fog_main(void);
 void u_gxutil_set_fog_enabled(s8);

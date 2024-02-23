@@ -885,7 +885,7 @@ static void *u_find_some_mesh_with_red(struct GMAModel *model)
     struct GMAShape *mesh;
     int i;
 
-    mesh = (void *)((u8 *)model + model->headerSize);
+    mesh = (void *)((u8 *)model + model->shapeOffs);
     for (i = 0; i < model->opaqueShapeCount; i++)
     {
         if (mesh->materialColor.r == 0xFF)
@@ -1011,7 +1011,7 @@ void mot_ape_init(void)
     lbl_802F206C = 1;
     u_globalAnimSpeedScale = 1.0f;
     load_character_resources();
-    u_animTransformMatrices = u_avdisp_alloc_matrix_lists(30);
+    u_animTransformMatrices = avdisp_allocate_matrices(30);
     mathutil_mtxA_push();
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_z(0x2FA4);
@@ -1666,7 +1666,7 @@ static void u_draw_ape_transformed(struct Ape *ape, struct AnimJoint *joints)
             mathutil_mtxA_push();
             mathutil_mtxA_mult_right(joint->transformMtx);
             mathutil_mtxA_translate(&partDesc->offset);  // positions ears
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
 
             if (partDesc->draw != NULL)
                 partDesc->draw(ape, partDesc, *partsIter);
@@ -1813,7 +1813,7 @@ static struct GMATevLayer *find_material(struct GMAModel *model, u32 texIndex)
 
     for (i = 0; i < model->tevLayerCount; i++)
     {
-        if (texIndex == materials[i].texIndex)
+        if (texIndex == materials[i].tplIndex)
         {
             materials[i].texObj = &model->texObjs[i];
             materials[i].flags &= ~(1 << 16);

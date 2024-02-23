@@ -72,6 +72,9 @@ struct LightGroup
 
 extern struct Light s_u_lightPool[32];
 extern struct LightGroup s_lightGroups[22];
+extern struct Light lbl_801F3A08;
+extern struct Color3f lbl_801F39FC;
+extern struct BgLightInfo g_bgLightInfo;
 
 extern s32 s_lightPoolSize;
 extern s32 u_someLGIdx;

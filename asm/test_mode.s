@@ -5635,10 +5635,10 @@ lbl_000050A4:
 /* 00005100 4BFFB05D */ bl load_model
 /* 00005104 907F0160 */ stw r3, 0x160(r31)
 /* 00005108 807F0160 */ lwz r3, 0x160(r31)
-/* 0000510C 4BFFB051 */ bl func_8008E64C
+/* 0000510C 4BFFB051 */ bl avdisp_get_eff_vtxinfo
 /* 00005110 907F0168 */ stw r3, 0x168(r31)
 /* 00005114 807F0160 */ lwz r3, 0x160(r31)
-/* 00005118 4BFFB045 */ bl func_8008E5F8
+/* 00005118 4BFFB045 */ bl avdisp_get_eff_vertices
 /* 0000511C 907F0164 */ stw r3, 0x164(r31)
 /* 00005120 3C600000 */ lis r3, __OSCurrHeap@ha
 /* 00005124 38630000 */ addi r3, r3, __OSCurrHeap@l
@@ -5825,7 +5825,7 @@ lbl_00005384:
 /* 000053C4 3B230000 */ addi r25, r3, mathutilData@l
 /* 000053C8 80790000 */ lwz r3, 0(r25)
 /* 000053CC 38800000 */ li r4, 0
-/* 000053D0 4BFFAD8D */ bl u_gxutil_upload_some_mtx
+/* 000053D0 4BFFAD8D */ bl gxutil_load_pos_nrm_matrix
 /* 000053D4 C03D0078 */ lfs f1, 0x78(r29)
 /* 000053D8 4BFFAD85 */ bl mathutil_mtxA_scale_s
 /* 000053DC 480002E1 */ bl lbl_000056BC
@@ -5840,7 +5840,7 @@ lbl_00005384:
 /* 00005400 4BFFAD5D */ bl mathutil_mtxA_rotate_z
 /* 00005404 80790000 */ lwz r3, 0(r25)
 /* 00005408 38800000 */ li r4, 0
-/* 0000540C 4BFFAD51 */ bl u_gxutil_upload_some_mtx
+/* 0000540C 4BFFAD51 */ bl gxutil_load_pos_nrm_matrix
 /* 00005410 3B800000 */ li r28, 0
 /* 00005414 3C600000 */ lis r3, powerOnTimer@ha
 /* 00005418 3C805555 */ lis r4, 0x5555
@@ -8217,7 +8217,7 @@ lbl_00007598:
 /* 000075B4 41820010 */ beq lbl_000075C4
 /* 000075B8 387B0000 */ addi r3, r27, 0
 /* 000075BC 38800000 */ li r4, 0
-/* 000075C0 4BFF8B9D */ bl u_get_stitching_model_mtx
+/* 000075C0 4BFF8B9D */ bl avdisp_get_matrices
 lbl_000075C4:
 /* 000075C4 7F63DB78 */ mr r3, r27
 /* 000075C8 4BFF8B95 */ bl avdisp_draw_model_culled_sort_none
@@ -8244,7 +8244,7 @@ lbl_000075E8:
 /* 00007610 41820010 */ beq lbl_00007620
 /* 00007614 387B0000 */ addi r3, r27, 0
 /* 00007618 38800000 */ li r4, 0
-/* 0000761C 4BFF8B41 */ bl u_get_stitching_model_mtx
+/* 0000761C 4BFF8B41 */ bl avdisp_get_matrices
 lbl_00007620:
 /* 00007620 7F63DB78 */ mr r3, r27
 /* 00007624 4BFF8B39 */ bl avdisp_draw_model_culled_sort_none
@@ -8836,7 +8836,7 @@ lbl_00007E18:
 /* 00007E9C 38630000 */ addi r3, r3, mathutilData@l
 /* 00007EA0 80630000 */ lwz r3, 0(r3)
 /* 00007EA4 38800000 */ li r4, 0
-/* 00007EA8 4BFF82B5 */ bl u_gxutil_upload_some_mtx
+/* 00007EA8 4BFF82B5 */ bl gxutil_load_pos_nrm_matrix
 /* 00007EAC 807F0D5C */ lwz r3, 0xd5c(r31)
 /* 00007EB0 80630004 */ lwz r3, 4(r3)
 /* 00007EB4 80630008 */ lwz r3, 8(r3)
@@ -15711,7 +15711,7 @@ lbl_0000E458:
 /* 0000E474 38630000 */ addi r3, r3, mathutilData@l
 /* 0000E478 80630000 */ lwz r3, 0(r3)
 /* 0000E47C 38800000 */ li r4, 0
-/* 0000E480 4BFF1CDD */ bl u_gxutil_upload_some_mtx
+/* 0000E480 4BFF1CDD */ bl gxutil_load_pos_nrm_matrix
 /* 0000E484 807F0004 */ lwz r3, 4(r31)
 /* 0000E488 809D0000 */ lwz r4, 0(r29)
 /* 0000E48C 80BD0008 */ lwz r5, 8(r29)
@@ -15809,7 +15809,7 @@ lbl_0000E5DC:
 /* 0000E5EC 38810008 */ addi r4, r1, 8
 /* 0000E5F0 7FC4002E */ lwzx r30, r4, r0
 /* 0000E5F4 38800000 */ li r4, 0
-/* 0000E5F8 4BFF1B65 */ bl u_gxutil_upload_some_mtx
+/* 0000E5F8 4BFF1B65 */ bl gxutil_load_pos_nrm_matrix
 /* 0000E5FC 57C01838 */ slwi r0, r30, 3
 /* 0000E600 7C7D002E */ lwzx r3, r29, r0
 /* 0000E604 4BFF1B59 */ bl avdisp_draw_model_unculled_sort_none

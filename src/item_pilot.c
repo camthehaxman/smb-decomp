@@ -297,13 +297,13 @@ void item_pilot_draw(struct Item *item)
                 r30_ = 0x85;
             }
             avdisp_set_bound_sphere_scale(scale);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_unculled_sort_translucent(minigameGma->modelEntries[r30_].model);
         }
         else
         {
             avdisp_set_bound_sphere_scale(scale);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             if (f30 < 1.0f)
             {
                 if (f30 < 0.5)
@@ -345,7 +345,7 @@ void item_pilot_draw(struct Item *item)
             avdisp_set_post_mult_color(f1, f2, f3, 1.0f);
             mathutil_mtxA_sq_from_identity();
             mathutil_mtxA_scale_s(f30);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_draw_model_unculled_sort_translucent(minigameGma->modelEntries[0x77].model);
             avdisp_set_post_mult_color(1.0f, 1.0f, 1.0f, 1.0f);
         }

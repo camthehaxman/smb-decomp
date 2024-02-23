@@ -103,7 +103,6 @@ SOURCES := \
 	src/camera.c \
 	src/frustum.c \
 	src/light.c \
-	asm/code_0.s \
 	src/gxsync.c \
 	src/info.c \
 	src/code_7.c \
@@ -193,7 +192,7 @@ SOURCES := \
 	src/mini.c \
 	src/lens_flare.c \
 	src/code_9.c \
-	src/mini_3.c \
+	src/poly_shadow.c \
 	src/mouse.c \
 	src/rend_efc.c \
 	src/rend_efc_mirror.c \

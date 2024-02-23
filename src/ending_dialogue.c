@@ -114,7 +114,7 @@ static void ballfrag_draw_func(struct MyNode *node)
     mathutil_mtxA_rotate_y(effect->rotY);
     mathutil_mtxA_rotate_x(effect->rotX);
     mathutil_mtxA_rotate_z(effect->rotZ);
-    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+    gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
     modelEntries = commonGma->modelEntries;
     if (effect->unkA0 < 0)
     {

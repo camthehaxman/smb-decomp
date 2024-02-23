@@ -1099,7 +1099,7 @@ static inline void func_80085F94_sub(struct GMAModel *temp_r31, int temp_r10)
     var_r7 = temp_r31->tevLayers;
     for (var_r6 = 0; var_r6 < temp_r31->tevLayerCount; var_r6++)
     {
-        if (arr[0] != (u16) var_r7->texIndex)
+        if (arr[0] != (u16) var_r7->tplIndex)
         {
             if (temp_r10 != 0)
             {
@@ -1204,7 +1204,7 @@ static struct GMAShape *func_800862F4(struct GMAModel *model)
     int i;
 
     temp_r4 = model->opaqueShapeCount;
-    shape = (struct GMAShape *)((u8 *)model + model->headerSize);
+    shape = (struct GMAShape *)((u8 *)model + model->shapeOffs);
     while (temp_r4 > 0)
     {
         if (shape->tevLayerCount == 0)
@@ -1238,7 +1238,7 @@ static struct GMAShape *func_8008638C(struct GMAModel *model)
     int r7 = 0;
 
     temp_r4 = model->opaqueShapeCount;
-    shape = (struct GMAShape *)((u8 *)model + model->headerSize);
+    shape = (struct GMAShape *)((u8 *)model + model->shapeOffs);
     while (temp_r4 > 0)
     {
         if (shape->tevLayerCount == 0)
@@ -1272,7 +1272,7 @@ static struct GMAShape *u_get_shape_with_no_material(struct GMAModel *model)
     int i;
     struct GMAShape *shape;
 
-    shape = (struct GMAShape *)((u8 *)model + model->headerSize);
+    shape = (struct GMAShape *)((u8 *)model + model->shapeOffs);
     for (i = 0; i < model->opaqueShapeCount; i++)
     {
         if (shape->tevLayerCount == 0)
@@ -1289,7 +1289,7 @@ static struct GMAShape *func_80086434_sub2(struct GMAModel *model)
     struct GMAShape *shape;
 
     var_r30_2 = 0;
-    shape = (struct GMAShape *)((u8 *)model + model->headerSize);
+    shape = (struct GMAShape *)((u8 *)model + model->shapeOffs);
     for (i = 0; i < model->opaqueShapeCount; i++)
     {
         if (shape->tevLayerCount == 0)
@@ -1548,7 +1548,7 @@ static void draw_head(struct Ape *ape, struct BodyPartDesc *partDesc, struct Bod
         }
         nlObjPut(nlModel);
         mathutil_mtxA_pop();
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         if (var_r28 != 0)
             func_80086794_sub2(part->unk4, ape);
         if (s_somethingLightRelated == 0)
@@ -1654,7 +1654,7 @@ static void draw_ear(struct Ape *ape, struct BodyPartDesc *partDesc, struct Body
     }
     else if (part != NULL)
         mathutil_mtxA_rotate_z(DEGREES_TO_S16(part->unk4));
-    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+    gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
     if (ape->charaId == CHARACTER_BABY)
         assign_shape_colors_2(ape->colorId, model);
     avdisp_draw_model_unculled_sort_none(model);

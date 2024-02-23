@@ -257,7 +257,7 @@ void u_ending_draw(void)
     if (endingInfo.flags & 1)
     {
         mathutil_mtxA_from_mtxB();
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_culled_sort_translucent(decodedBgGma->modelEntries[INSIDE_BANANA].model);
     }
     ending_chara_draw();
@@ -2012,7 +2012,7 @@ static void ending_hgate_draw(void)
     {
         model = decodedBgGma->modelEntries[STONE_GATE].model;
         mathutil_mtxA_from_mtxB_translate(&temp_r31->unk8);
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(model);
         model = decodedBgGma->modelEntries[WALL_PARTS].model;
         mathutil_mtxA_from_mtxB_translate(&temp_r31->unk20);
@@ -2020,7 +2020,7 @@ static void ending_hgate_draw(void)
         mathutil_mtxA_rotate_y(temp_r31->unk3A);
         mathutil_mtxA_rotate_x(temp_r31->unk38);
         mathutil_mtxA_rotate_z(temp_r31->unk3C);
-        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
         avdisp_draw_model_unculled_sort_translucent(model);
     }
 }
@@ -2508,7 +2508,7 @@ static void ending_chara_draw(void)
             mathutil_mtxA_rotate_z(chara->unk54);
             mathutil_mtxA_rotate_y(chara->unk52);
             mathutil_mtxA_rotate_x(chara->unk50);
-            u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+            gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
             avdisp_set_bound_sphere_scale(temp_r26->modelScale);
             avdisp_draw_model_culled_sort_translucent(model);
         }
@@ -2572,7 +2572,7 @@ static void ending_chara_draw(void)
                         temp_f21 *= temp_f0;
                         mathutil_mtxA_scale_s(temp_f21);
                         mathutil_mtxA_rotate_x(0x4000);
-                        u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                        gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                         avdisp_set_bound_sphere_scale(temp_f21);
                         avdisp_draw_model_culled_sort_all(commonGma->modelEntries[polyshadow01].model);
                     }
@@ -2598,7 +2598,7 @@ static void lbl_800BCD30(struct MyDrawNode *node)
     mathutil_mtxA_rotate_y(chara->unk5A);
     mathutil_mtxA_rotate_x(chara->unk58);
     mathutil_mtxA_rotate_z(chara->unk5C);
-    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+    gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
     avdisp_set_z_mode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
     avdisp_draw_model_unculled_sort_none(modelEntries[clearHemisphereInsideParts[0]].model);
     avdisp_draw_model_unculled_sort_none(modelEntries[r29[0]].model);
@@ -3331,7 +3331,7 @@ static void ending_banana_draw(void)
                 }
                 if (!isNaomiModel)
                 {
-                    u_gxutil_upload_some_mtx(mathutilData->mtxA, 0);
+                    gxutil_load_pos_nrm_matrix(mathutilData->mtxA, 0);
                     if (opacity < 1.0f)
                     {
                         avdisp_set_alpha(opacity);
