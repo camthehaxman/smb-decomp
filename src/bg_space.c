@@ -293,31 +293,31 @@ static void lbl_800609AC(struct GCMMatState_Unit *arg0)
     if (arg0->unk0 == 0
      && sp14.tevStage == lbl_8027CC28.tevStage
      && sp14.texCoordId == lbl_8027CC28.texCoordId
-     && sp14.unk8 == lbl_8027CC28.unk8
+     && sp14.texMtxId == lbl_8027CC28.texMtxId
      && sp14.texMapId == lbl_8027CC28.texMapId
      && sp14.tevIndStage == lbl_8027CC28.tevIndStage
-     && sp14.unk1C == lbl_8027CC28.unk1C)
+     && sp14.indTexMtxId == lbl_8027CC28.indTexMtxId)
     {
         sp14.texCoordId += 1;
-        sp14.unk8 += 3;
+        sp14.texMtxId += 3;
         sp14.texMapId += 1;
         sp14.tevIndStage += 1;
-        sp14.unk1C += 1;
+        sp14.indTexMtxId += 1;
         arg0->unkC = sp14;
         return;
     }
     lbl_8027CC28 = sp14;
     GXLoadTexObj_cached(work->saturnIndMap, sp14.texMapId);
-    GXSetTexCoordGen(sp14.texCoordId, GX_TG_MTX2x4, GX_TG_TEX0, sp14.unk8);
-    GXLoadTexMtxImm(work->unk64, sp14.unk8, GX_MTX2x4);
+    GXSetTexCoordGen(sp14.texCoordId, GX_TG_MTX2x4, GX_TG_TEX0, sp14.texMtxId);
+    GXLoadTexMtxImm(work->unk64, sp14.texMtxId, GX_MTX2x4);
     GXSetIndTexOrder(sp14.tevIndStage, sp14.texCoordId, sp14.texMapId);
-    GXSetTevIndirect(sp14.tevStage - 1, sp14.tevIndStage, GX_ITF_8, GX_ITB_STU, sp14.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
-    GXSetIndTexMtx(sp14.unk1C, work->unk94, -3);
+    GXSetTevIndirect(sp14.tevStage - 1, sp14.tevIndStage, GX_ITF_8, GX_ITB_STU, sp14.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetIndTexMtx(sp14.indTexMtxId, work->unk94, -3);
     sp14.texCoordId += 1;
-    sp14.unk8 += 3;
+    sp14.texMtxId += 3;
     sp14.texMapId += 1;
     sp14.tevIndStage += 1;
-    sp14.unk1C += 1;
+    sp14.indTexMtxId += 1;
     arg0->unkC = sp14;
 }
 

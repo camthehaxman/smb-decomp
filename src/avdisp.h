@@ -187,17 +187,17 @@ struct GMA  // Deluxe: GMA_Manager
 
 struct TevStageInfo
 {
-    s32 tevStage;
-    GXTexCoordID texCoordId;
-    s32 unk8;
-    /*0x0C*/ GXTexMapID texMapId;
-    s32 tevIndStage;
-    s32 unk14;
-    u32 unk18;
-    s32 unk1C;
-    u32 unk20;
-    GXTexCoordID u_texCoordId2;
-    GXTexMapID u_someTexmapId2;
+    s32             tevStage;
+    GXTexCoordID    texCoordId;
+    GXTexMtx        texMtxId;
+    GXTexMapID      texMapId;
+    GXIndTexStageID tevIndStage;
+    GXPTTexMtx      ptTexMtxId;  // post-transform texture matrix (for GXSetTexCoordGen2)
+    u32 unk18;  // not used
+    GXIndTexMtxID   indTexMtxId;
+    BOOL            usedUnkLayer3;
+    GXTexCoordID    u_texCoordId2;
+    GXTexMapID      u_someTexmapId2;
 };
 
 struct GCMMatState_Unit

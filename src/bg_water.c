@@ -222,17 +222,17 @@ static void bg_water_envmap_stage(struct GCMMatState_Unit *arg0)
     if (arg0->unk0 == 0
      && sp24.tevStage == lbl_8027CBF8.tevStage
      && sp24.tevIndStage == lbl_8027CBF8.tevIndStage
-     && sp24.unk8 == lbl_8027CBF8.unk8
-     && sp24.unk14 == lbl_8027CBF8.unk14
-     && sp24.unk1C == lbl_8027CBF8.unk1C
+     && sp24.texMtxId == lbl_8027CBF8.texMtxId
+     && sp24.ptTexMtxId == lbl_8027CBF8.ptTexMtxId
+     && sp24.indTexMtxId == lbl_8027CBF8.indTexMtxId
      && sp24.texMapId == lbl_8027CBF8.texMapId)
     {
         arg0->unkC.tevStage += 2;
         arg0->unkC.tevIndStage += 1;
         arg0->unkC.texCoordId += 3;
-        arg0->unkC.unk8 += 9;
-        arg0->unkC.unk14 += 3;
-        arg0->unkC.unk1C += 1;
+        arg0->unkC.texMtxId += 9;
+        arg0->unkC.ptTexMtxId += 3;
+        arg0->unkC.indTexMtxId += 1;
         arg0->unkC.texMapId += 2;
         return;
     }
@@ -244,7 +244,7 @@ static void bg_water_envmap_stage(struct GCMMatState_Unit *arg0)
     spC[1][0] = 0.0f;
     spC[1][1] = 0.8f;
     spC[1][2] = 0.0f;
-    GXSetIndTexMtx(arg0->unkC.unk1C, spC, 0);
+    GXSetIndTexMtx(arg0->unkC.indTexMtxId, spC, 0);
     func_8005ED80(arg0);
 }
 
@@ -256,17 +256,17 @@ static void bg_water_envmap_background(struct GCMMatState_Unit *arg0)
     if (arg0->unk0 == 0
      && sp24.tevStage == lbl_8027CBF8.tevStage
      && sp24.tevIndStage == lbl_8027CBF8.tevIndStage
-     && sp24.unk8 == lbl_8027CBF8.unk8
-     && sp24.unk14 == lbl_8027CBF8.unk14
-     && sp24.unk1C == lbl_8027CBF8.unk1C
+     && sp24.texMtxId == lbl_8027CBF8.texMtxId
+     && sp24.ptTexMtxId == lbl_8027CBF8.ptTexMtxId
+     && sp24.indTexMtxId == lbl_8027CBF8.indTexMtxId
      && sp24.texMapId == lbl_8027CBF8.texMapId)
     {
         arg0->unkC.tevStage += 2;
         arg0->unkC.tevIndStage += 1;
         arg0->unkC.texCoordId += 3;
-        arg0->unkC.unk8 += 9;
-        arg0->unkC.unk14 += 3;
-        arg0->unkC.unk1C += 1;
+        arg0->unkC.texMtxId += 9;
+        arg0->unkC.ptTexMtxId += 3;
+        arg0->unkC.indTexMtxId += 1;
         arg0->unkC.texMapId += 2;
         return;
     }
@@ -278,7 +278,7 @@ static void bg_water_envmap_background(struct GCMMatState_Unit *arg0)
     spC[1][0] = 0.0f;
     spC[1][1] = 0.6f;
     spC[1][2] = 0.0f;
-    GXSetIndTexMtx(arg0->unkC.unk1C, spC, 0);
+    GXSetIndTexMtx(arg0->unkC.indTexMtxId, spC, 0);
     func_8005ED80(arg0);
 }
 
@@ -289,16 +289,16 @@ static void func_8005ED80(struct GCMMatState_Unit *arg0)
 
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unkFC);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId, GX_MTX3x4);
     mathutil_mtxA_pop();
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unk12C);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 3, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId + 3, GX_MTX3x4);
     mathutil_mtxA_pop();
-    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp2C.unk8);
-    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_POS, sp2C.unk8 + 3);
+    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp2C.texMtxId);
+    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_POS, sp2C.texMtxId + 3);
     GXSetIndTexOrder(sp2C.tevIndStage, sp2C.texCoordId + 1, sp2C.texMapId);
-    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_NONE, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_NONE, sp2C.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     GXSetTevOrder_cached(sp2C.tevStage, sp2C.texCoordId, sp2C.texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp2C.tevStage, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
     GXSetTevColorOp_cached(sp2C.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG1);
@@ -307,11 +307,11 @@ static void func_8005ED80(struct GCMMatState_Unit *arg0)
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unk15C);
     mathutil_mtxA_set_translate_xyz(0.0f, 0.0f, 0.0f);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 6, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId + 6, GX_MTX3x4);
     mathutil_mtxA_pop();
-    GXLoadTexMtxImm(work->unkCC, sp2C.unk14, GX_MTX3x4);
+    GXLoadTexMtxImm(work->unkCC, sp2C.ptTexMtxId, GX_MTX3x4);
     GXLoadTexObj_cached(work->lightmapGradTex, sp2C.texMapId + 2);
-    GXSetTexCoordGen2(sp2C.texCoordId + 2, GX_TG_MTX3x4, GX_TG_NRM, sp2C.unk8 + 6, GX_TRUE, sp2C.unk14);
+    GXSetTexCoordGen2(sp2C.texCoordId + 2, GX_TG_MTX3x4, GX_TG_NRM, sp2C.texMtxId + 6, GX_TRUE, sp2C.ptTexMtxId);
     GXSetTevDirect(sp2C.tevStage + 1);
     GXSetTevOrder_cached(sp2C.tevStage + 1, sp2C.texCoordId + 2, sp2C.texMapId + 2, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp2C.tevStage + 1, GX_CC_ZERO, GX_CC_TEXC, GX_CC_C1, GX_CC_CPREV);
@@ -321,9 +321,9 @@ static void func_8005ED80(struct GCMMatState_Unit *arg0)
     sp2C.tevStage += 2;
     sp2C.tevIndStage += 1;
     sp2C.texCoordId += 3;
-    sp2C.unk8 += 9;
-    sp2C.unk14 += 3;
-    sp2C.unk1C += 1;
+    sp2C.texMtxId += 9;
+    sp2C.ptTexMtxId += 3;
+    sp2C.indTexMtxId += 1;
     sp2C.texMapId += 2;
     arg0->unkC = sp2C;
 }
@@ -343,21 +343,21 @@ static void bg_water_envmap_ball(struct GCMMatState_Unit *arg0)
     sp14[1][0] = 0.0f;
     sp14[1][1] = 0.6f;
     sp14[1][2] = 0.0f;
-    GXSetIndTexMtx(sp2C.unk1C, sp14, 0);
+    GXSetIndTexMtx(sp2C.indTexMtxId, sp14, 0);
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unkFC);
     mathutil_mtxA_scale_s(3.0f);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId, GX_MTX3x4);
     mathutil_mtxA_pop();
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unk12C);
     mathutil_mtxA_scale_s(3.0f);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 3, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId + 3, GX_MTX3x4);
     mathutil_mtxA_pop();
-    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp2C.unk8);
-    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_POS, sp2C.unk8 + 3);
+    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp2C.texMtxId);
+    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_POS, sp2C.texMtxId + 3);
     GXSetIndTexOrder(sp2C.tevIndStage, sp2C.texCoordId + 1, sp2C.texMapId);
-    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_NONE, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_NONE, sp2C.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     GXSetTevOrder_cached(sp2C.tevStage, sp2C.texCoordId, sp2C.texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp2C.tevStage, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
     GXSetTevColorOp_cached(sp2C.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG1);
@@ -366,11 +366,11 @@ static void bg_water_envmap_ball(struct GCMMatState_Unit *arg0)
     mathutil_mtxA_push();
     mathutil_mtxA_mult_left(work->unk15C);
     mathutil_mtxA_set_translate_xyz(0.0f, 0.0f, 0.0f);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 6, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId + 6, GX_MTX3x4);
     mathutil_mtxA_pop();
-    GXLoadTexMtxImm(work->unkCC, sp2C.unk14, GX_MTX3x4);
+    GXLoadTexMtxImm(work->unkCC, sp2C.ptTexMtxId, GX_MTX3x4);
     GXLoadTexObj_cached(work->lightmapGradTex, sp2C.texMapId + 2);
-    GXSetTexCoordGen2(sp2C.texCoordId + 2, GX_TG_MTX3x4, GX_TG_NRM, sp2C.unk8 + 6, GX_TRUE, sp2C.unk14);
+    GXSetTexCoordGen2(sp2C.texCoordId + 2, GX_TG_MTX3x4, GX_TG_NRM, sp2C.texMtxId + 6, GX_TRUE, sp2C.ptTexMtxId);
     GXSetTevDirect(sp2C.tevStage + 1);
     GXSetTevOrder_cached(sp2C.tevStage + 1, sp2C.texCoordId + 2, sp2C.texMapId + 2, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp2C.tevStage + 1, GX_CC_ZERO, GX_CC_TEXC, GX_CC_C1, GX_CC_ZERO);
@@ -380,9 +380,9 @@ static void bg_water_envmap_ball(struct GCMMatState_Unit *arg0)
     sp2C.tevStage += 2;
     sp2C.tevIndStage += 1;
     sp2C.texCoordId += 3;
-    sp2C.unk8 += 9;
-    sp2C.unk14 += 3;
-    sp2C.unk1C += 1;
+    sp2C.texMtxId += 9;
+    sp2C.ptTexMtxId += 3;
+    sp2C.indTexMtxId += 1;
     arg0->unkC = sp2C;
 }
 
@@ -404,7 +404,7 @@ static void lbl_8005F520(struct GCMMatState_Unit *arg0)
         backgroundInfo.animTimer / 2160.0f,
         backgroundInfo.animTimer / -5280.0f);
     mathutil_mtxA_scale_s(1.0f / (214.0f + (20.0f * mathutil_sin(backgroundInfo.u_otherSeed << 6))));
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId, GX_MTX3x4);
     mathutil_mtxA_from_identity();
     mathutil_mtxA_rotate_x(0x4000);
     mathutil_mtxA_rotate_y(0x400);
@@ -413,7 +413,7 @@ static void lbl_8005F520(struct GCMMatState_Unit *arg0)
         backgroundInfo.animTimer / 360.0f,
         backgroundInfo.animTimer / 360.0f);
     mathutil_mtxA_scale_s(0.005f * (1.0f + (0.25f * mathutil_sin(backgroundInfo.u_otherSeed << 5))));
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 3, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId + 3, GX_MTX3x4);
     mathutil_mtxA_pop();
     sp14[0][0] = 0.6f;
     sp14[0][1] = -0.01f;
@@ -421,12 +421,12 @@ static void lbl_8005F520(struct GCMMatState_Unit *arg0)
     sp14[1][0] = 0.0f;
     sp14[1][1] = 0.6f;
     sp14[1][2] = 0.2f;
-    GXSetIndTexMtx(arg0->unkC.unk1C, sp14, 1);
-    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp2C.unk8);
+    GXSetIndTexMtx(arg0->unkC.indTexMtxId, sp14, 1);
+    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp2C.texMtxId);
     // NONMATCHING: need it to reload sp2C.texCoordId here instead of using r29
-    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_POS, sp2C.unk8 + 3);
+    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_POS, sp2C.texMtxId + 3);
     GXSetIndTexOrder(sp2C.tevIndStage, sp2C.texCoordId + 1, sp2C.texMapId + 1);
-    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_NONE, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_NONE, sp2C.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     GXSetTevOrder_cached(sp2C.tevStage, sp2C.texCoordId, sp2C.texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp2C.tevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO);
     GXSetTevColorOp_cached(sp2C.tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
@@ -435,9 +435,9 @@ static void lbl_8005F520(struct GCMMatState_Unit *arg0)
     sp2C.tevStage += 1;
     sp2C.tevIndStage += 1;
     sp2C.texCoordId += 2;
-    sp2C.unk8 += 6;
+    sp2C.texMtxId += 6;
     sp2C.texMapId += 2;
-    sp2C.unk1C += 1;
+    sp2C.indTexMtxId += 1;
     arg0->unkC = sp2C;
 }
 #else

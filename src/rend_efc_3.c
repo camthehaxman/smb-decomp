@@ -393,8 +393,8 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     temp_r31 = (struct BGPilotWork *)backgroundInfo.work;
     sp10 = arg0->unkC;
     GXLoadTexObj_cached(temp_r31->unk20, sp10.texMapId);
-    GXLoadTexMtxImm(temp_r31->unkE4[0].unk28, sp10.unk8, GX_MTX2x4);
-    GXSetTexCoordGen(sp10.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp10.unk8);
+    GXLoadTexMtxImm(temp_r31->unkE4[0].unk28, sp10.texMtxId, GX_MTX2x4);
+    GXSetTexCoordGen(sp10.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp10.texMtxId);
     GXSetTevSwapMode_cached(sp10.tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.tevStage, sp10.texCoordId, sp10.texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp10.tevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO);
@@ -404,9 +404,9 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     GXSetTevDirect(sp10.tevStage);
     sp10.tevStage += 1;
     sp10.texCoordId += 1;
-    sp10.unk8 += 3;
-    GXLoadTexMtxImm(temp_r31->unkE4[1].unk28, sp10.unk8, GX_MTX2x4);
-    GXSetTexCoordGen(sp10.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp10.unk8);
+    sp10.texMtxId += 3;
+    GXLoadTexMtxImm(temp_r31->unkE4[1].unk28, sp10.texMtxId, GX_MTX2x4);
+    GXSetTexCoordGen(sp10.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp10.texMtxId);
     GXSetTevSwapMode_cached(sp10.tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.tevStage, sp10.texCoordId, sp10.texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp10.tevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO);
@@ -416,9 +416,9 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     GXSetTevDirect(sp10.tevStage);
     sp10.tevStage += 1;
     sp10.texCoordId += 1;
-    sp10.unk8 += 3;
-    GXLoadTexMtxImm(temp_r31->unkE4[2].unk28, sp10.unk8, GX_MTX2x4);
-    GXSetTexCoordGen(sp10.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp10.unk8);
+    sp10.texMtxId += 3;
+    GXLoadTexMtxImm(temp_r31->unkE4[2].unk28, sp10.texMtxId, GX_MTX2x4);
+    GXSetTexCoordGen(sp10.texCoordId, GX_TG_MTX2x4, GX_TG_POS, sp10.texMtxId);
     GXSetTevSwapMode_cached(sp10.tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp10.tevStage, sp10.texCoordId, sp10.texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp10.tevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO);
@@ -428,7 +428,7 @@ void lbl_8009A31C(struct GCMMatState_Unit *arg0)
     GXSetTevDirect(sp10.tevStage);
     sp10.tevStage += 1;
     sp10.texCoordId += 1;
-    sp10.unk8 += 3;
+    sp10.texMtxId += 3;
     sp10.texMapId += 1;
     arg0->unkC = sp10;
 }

@@ -318,21 +318,21 @@ static void lbl_80063AD8(struct GCMMatState_Unit *arg0)
     texMtx[1][0] = 0.0f;
     texMtx[1][1] = 0.0f;
     texMtx[1][2] = 0.8f * mathutil_cos(backgroundInfo.u_otherSeed << 8);
-    GXSetIndTexMtx(sp2C.unk1C, texMtx, 0);
+    GXSetIndTexMtx(sp2C.indTexMtxId, texMtx, 0);
     mathutil_mtxA_push();
     mathutil_mtxA_from_mtx(work->unkB60);
     mathutil_mtxA_set_translate(&work->unkB48);
     mathutil_mtxA_scale_s(6.0f);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId, GX_MTX2x4);
     mathutil_mtxA_from_identity();
     mathutil_mtxA_translate(&work->unkB18);
     mathutil_mtxA_scale(&work->unkB3C);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8 + 3, GX_MTX2x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId + 3, GX_MTX2x4);
     mathutil_mtxA_pop();
-    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_NRM, sp2C.unk8);
-    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_TEX0, sp2C.unk8 + 3);
+    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_NRM, sp2C.texMtxId);
+    GXSetTexCoordGen(sp2C.texCoordId + 1, GX_TG_MTX2x4, GX_TG_TEX0, sp2C.texMtxId + 3);
     GXSetIndTexOrder(sp2C.tevIndStage, sp2C.texCoordId + 1, sp2C.texMapId + 1);
-    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevIndirect(sp2C.tevStage, sp2C.tevIndStage, GX_ITF_8, GX_ITB_STU, sp2C.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     GXSetTevSwapMode_cached(sp2C.tevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GXSetTevOrder_cached(sp2C.tevStage, sp2C.texCoordId, sp2C.texMapId, GX_COLOR_NULL);
     GXSetTevColorIn_cached(sp2C.tevStage, GX_CC_TEXC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
@@ -342,8 +342,8 @@ static void lbl_80063AD8(struct GCMMatState_Unit *arg0)
     sp2C.tevStage++;
     sp2C.tevIndStage++;
     sp2C.texCoordId += 2;
-    sp2C.unk8 += 6;
-    sp2C.unk1C++;
+    sp2C.texMtxId += 6;
+    sp2C.indTexMtxId++;
     sp2C.texMapId += 2;
     arg0->unkC = sp2C;
 }

@@ -1800,17 +1800,17 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
 
     tevStageInfo.tevStage = GX_TEVSTAGE0;
     tevStageInfo.texCoordId = GX_TEXCOORD0;
-    tevStageInfo.unk8 = 0x1E;
+    tevStageInfo.texMtxId = GX_TEXMTX0;
     tevStageInfo.texMapId = GX_TEXMAP0;
-    tevStageInfo.tevIndStage = 0;
-    tevStageInfo.unk14 = 0x40;
+    tevStageInfo.tevIndStage = GX_INDTEXSTAGE0;
+    tevStageInfo.ptTexMtxId = GX_PTTEXMTX0;
     tevStageInfo.unk18 = 0;
-    tevStageInfo.unk1C = 1;
-    tevStageInfo.unk20 = 0;
+    tevStageInfo.indTexMtxId = GX_ITM_0;
+    tevStageInfo.usedUnkLayer3 = FALSE;
 
     tevStageInfo.texMapId = GX_TEXMAP1;
-    tevStageInfo.unk8 = 0x24;
-    tevStageInfo.unk14 = 0x49;
+    tevStageInfo.texMtxId = GX_TEXMTX2;
+    tevStageInfo.ptTexMtxId = GX_PTTEXMTX3;
     tevStageInfo.unk18 = 4;
 
     if (s_materialCache.specularColor.r != shape->specularColor.r
@@ -1877,10 +1877,13 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
 
     colorIn = GX_CC_RASC;
     alphaIn = GX_CA_RASA;
+
+    // Configure lighting
     if (shape->flags & GMA_SHAPE_FLAG_UNLIT)
     {
         if (shape->flags & GMA_SHAPE_FLAG_VERT_COLORS)
         {
+            // disable lighting
             if (s_materialCache.chanConfig != TEVMATCACHE_CHAN_CONFIG_UNLIT_VERTCOLORS)
             {
                 s_materialCache.chanConfig = TEVMATCACHE_CHAN_CONFIG_UNLIT_VERTCOLORS;
@@ -1896,6 +1899,7 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
         }
         else
         {
+            // set reg0 to the material color
             s_materialCache.chanConfig = TEVMATCACHE_CHAN_CONFIG_UNLIT;
             if (shape->flags & (GMA_SHAPE_FLAG_CUSTOM_MAT_AMB_COLOR | GMA_SHAPE_FLAG_SIMPLE_MATERIAL))
             {
@@ -1919,6 +1923,7 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
     {
         if (shape->flags & GMA_SHAPE_FLAG_VERT_COLORS)
         {
+            // use vertex color for material color
             if (s_materialCache.chanConfig != TEVMATCACHE_CHAN_CONFIG_LIGHTS_VERTCOLORS)
             {
                 s_materialCache.chanConfig = TEVMATCACHE_CHAN_CONFIG_LIGHTS_VERTCOLORS;
@@ -1942,6 +1947,7 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
         }
         else
         {
+            // use reg for material color
             if (s_materialCache.chanConfig != TEVMATCACHE_CHAN_CONFIG_LIGHTS)
             {
                 s_materialCache.chanConfig = TEVMATCACHE_CHAN_CONFIG_LIGHTS;
@@ -2018,13 +2024,14 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
         u32 tevLayerFlags;
         u16 *cachedTevLayerIdx = s_materialCache.tevLayerIdxs;
 
+        // update color and alpha inputs for each TEV stage, without doing full initialization
         while (tevStageCounter > 0)
         {
             struct GMATevLayer *tevLayer = &modelTevLayers[*tevLayerIdx];
             tevLayerFlags = tevLayer->flags;
             tevLayerFlags &= (GMA_TEV_LAYER_FLAG_TYPE_ALPHA_BLEND | GMA_TEV_LAYER_FLAG_TYPE3 | GMA_TEV_LAYER_FLAG_TYPE_VIEW_SPECULAR |
                       GMA_TEV_LAYER_FLAG_TYPE_WORLD_SPECULAR);
-            if (*cachedTevLayerFlags != tevLayerFlags)
+            if (*cachedTevLayerFlags != tevLayerFlags)  // flags changed - need to do full TEV initialization
                 break;
             if (*cachedTevLayerIdx != *tevLayerIdx || (tevLayer->flags & GMA_TEV_LAYER_FLAG_UNK16))
             {
@@ -2088,6 +2095,7 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
             alphaIn = GX_CA_APREV;
         }
 
+        // do full TEV initialization if needed
         while (tevStageCounter > 0)
         {
             struct GMATevLayer *tevLayer = &modelTevLayers[*tevLayerIdx];
@@ -2166,7 +2174,7 @@ static void build_tev_material(struct GMAShape *shape, struct GMATevLayer *model
     {
         if (s_materialCache.postAddTevStageIdx != tevStageInfo.tevStage)
         {
-            // Bug?
+            // Bug? should be using postAddTevStageIdx instead?
             s_materialCache.postMultiplyTevStageIdx = tevStageInfo.tevStage;
             build_post_add_tev_stage(tevStageInfo.tevStage);
         }
@@ -2459,7 +2467,7 @@ static void build_unk3_layer_uncached(struct TevStageInfo *info, GXTevColorArg c
     GXSetTevAlphaIn_cached(info->tevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, alphaIn);
     GXSetTevAlphaOp_cached(info->tevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
 
-    info->unk20 = 1;
+    info->usedUnkLayer3 = TRUE;
     info->u_texCoordId2 = info->texCoordId;
     info->u_someTexmapId2 = info->texMapId;
 }

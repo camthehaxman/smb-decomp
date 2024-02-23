@@ -578,14 +578,14 @@ static void lbl_8005CEAC(struct GCMMatState_Unit *arg0)
      && sp64.tevStage == lbl_8027CBC8.tevStage
      && sp64.texCoordId == lbl_8027CBC8.texCoordId
      && sp64.tevIndStage == lbl_8027CBC8.tevIndStage
-     && sp64.unk8 == lbl_8027CBC8.unk8
-     && sp64.unk1C == lbl_8027CBC8.unk1C
+     && sp64.texMtxId == lbl_8027CBC8.texMtxId
+     && sp64.indTexMtxId == lbl_8027CBC8.indTexMtxId
      && sp64.texMapId == lbl_8027CBC8.texMapId)
     {
         sp64.tevIndStage += 2;
         sp64.texCoordId += 2;
-        sp64.unk8 += 6;
-        sp64.unk1C += 2;
+        sp64.texMtxId += 6;
+        sp64.indTexMtxId += 2;
         sp64.texMapId += 2;
         arg0->unkC = sp64;
         return;
@@ -598,14 +598,14 @@ static void lbl_8005CEAC(struct GCMMatState_Unit *arg0)
     sp4C[1][0] = 0.0f;
     sp4C[1][1] = temp_r26->unk30;
     sp4C[1][2] = 0.0f;
-    GXSetIndTexMtx(r27 = sp64.unk1C, sp4C, -2);
+    GXSetIndTexMtx(r27 = sp64.indTexMtxId, sp4C, -2);
     sp4C[0][0] = 0.6f * temp_r26->unk30;
     sp4C[0][1] = 0.0f;
     sp4C[0][2] = 0.0f;
     sp4C[1][0] = 0.0f;
     sp4C[1][1] = 0.8f * temp_r26->unk30;
     sp4C[1][2] = 0.0f;
-    GXSetIndTexMtx((r29 = *(s32 *)&sp64.unk1C) + 1, sp4C, -2);
+    GXSetIndTexMtx((r29 = *(s32 *)&sp64.indTexMtxId) + 1, sp4C, -2);
     sp4C[0][0] = 0.4f;
     sp4C[0][1] = 0.0f;
     sp4C[0][2] = 0.0f;
@@ -620,7 +620,7 @@ static void lbl_8005CEAC(struct GCMMatState_Unit *arg0)
     GXLoadTexObj_cached(work->fountainGradientTex, r29 + 2);
     mathutil_mtxA_push();
     mathutil_mtxA_from_translate(&temp_r26->unk18);
-    r29 = sp64.unk8;
+    r29 = sp64.texMtxId;
     GXLoadTexMtxImm(mathutilData->mtxA, r29, GX_MTX3x4);
     mathutil_mtxA_pop();
     r31 = sp64.texCoordId;
@@ -630,13 +630,13 @@ static void lbl_8005CEAC(struct GCMMatState_Unit *arg0)
     GXSetTevIndirect(sp64.tevStage - 1, r29, GX_ITF_8, GX_ITB_STU, r27, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     sp64.tevIndStage += 1;
     sp64.texCoordId += 1;
-    sp64.unk8 += 3;
-    sp64.unk1C += 1;
+    sp64.texMtxId += 3;
+    sp64.indTexMtxId += 1;
     sp64.texMapId += 1;
     r27_2 = sp64.tevIndStage;
     GXSetIndTexOrder(r27_2, sp64.texCoordId - 1, sp64.texMapId - 1);
-    GXSetTevIndirect(sp64.tevStage, r27_2, GX_ITF_8, GX_ITB_STU, sp64.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
-    r27_3 = sp64.unk8;
+    GXSetTevIndirect(sp64.tevStage, r27_2, GX_ITF_8, GX_ITB_STU, sp64.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    r27_3 = sp64.texMtxId;
     r28_2 = sp64.texCoordId;
     GXSetTexCoordGen(r28_2, GX_TG_MTX3x4, GX_TG_POS, r27_3);
     sp1C[0][0] = 1.05f * (-0.5f * currentCamera->sub28.unk3C * (1.0f / currentCamera->sub28.aspect));
@@ -669,8 +669,8 @@ static void lbl_8005CEAC(struct GCMMatState_Unit *arg0)
     sp64.tevIndStage += 1;
     sp64.texCoordId += 1;
     sp64.texMapId += 1;
-    sp64.unk1C += 1;
-    sp64.unk8 += 3;
+    sp64.indTexMtxId += 1;
+    sp64.texMtxId += 3;
     arg0->unkC = sp64;
 }
 
@@ -698,21 +698,21 @@ static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
      && sp64.tevStage == lbl_8027CBC8.tevStage
      && sp64.texCoordId == lbl_8027CBC8.texCoordId
      && sp64.tevIndStage == lbl_8027CBC8.tevIndStage
-     && sp64.unk8 == lbl_8027CBC8.unk8
-     && sp64.unk1C == lbl_8027CBC8.unk1C
+     && sp64.texMtxId == lbl_8027CBC8.texMtxId
+     && sp64.indTexMtxId == lbl_8027CBC8.indTexMtxId
      && sp64.texMapId == lbl_8027CBC8.texMapId)
     {
         sp64.tevIndStage += 2;
         sp64.texCoordId += 2;
-        sp64.unk8 += 6;
-        sp64.unk1C += 2;
+        sp64.texMtxId += 6;
+        sp64.indTexMtxId += 2;
         sp64.texMapId += 2;
         sp64.tevStage += 1;
         sp64.tevIndStage += 1;
         sp64.texCoordId += 2;
         sp64.texMapId += 1;
-        sp64.unk1C += 1;
-        sp64.unk8 += 3;
+        sp64.indTexMtxId += 1;
+        sp64.texMtxId += 3;
         arg0->unkC = sp64;
         return;
     }
@@ -725,14 +725,14 @@ static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
     sp4C[1][0] = 0.0f;
     sp4C[1][1] = temp_r26->unk30;
     sp4C[1][2] = 0.0f;
-    GXSetIndTexMtx(r27 = sp64.unk1C, sp4C, -2);
+    GXSetIndTexMtx(r27 = sp64.indTexMtxId, sp4C, -2);
     sp4C[0][0] = 0.6f * temp_r26->unk30;
     sp4C[0][1] = 0.0f;
     sp4C[0][2] = 0.0f;
     sp4C[1][0] = 0.0f;
     sp4C[1][1] = 0.8f * temp_r26->unk30;
     sp4C[1][2] = 0.0f;
-    GXSetIndTexMtx((r29 = *(s32 *)&sp64.unk1C) + 1, sp4C, -2);
+    GXSetIndTexMtx((r29 = *(s32 *)&sp64.indTexMtxId) + 1, sp4C, -2);
     sp4C[0][0] = 0.4f;
     sp4C[0][1] = 0.0f;
     sp4C[0][2] = 0.0f;
@@ -747,7 +747,7 @@ static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
     GXLoadTexObj_cached(work->fountainGradientTex, r29 + 2);
     mathutil_mtxA_push();
     mathutil_mtxA_from_translate(&temp_r26->unk18);
-    r29 = sp64.unk8;
+    r29 = sp64.texMtxId;
     GXLoadTexMtxImm(mathutilData->mtxA, r29, GX_MTX3x4);
     mathutil_mtxA_pop();
     r31 = sp64.texCoordId;
@@ -757,13 +757,13 @@ static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
     GXSetTevIndirect(sp64.tevStage - 1, r29, GX_ITF_8, GX_ITB_STU, r27, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     sp64.tevIndStage += 1;
     sp64.texCoordId += 1;
-    sp64.unk8 += 3;
-    sp64.unk1C += 1;
+    sp64.texMtxId += 3;
+    sp64.indTexMtxId += 1;
     sp64.texMapId += 1;
     r27_2 = sp64.tevIndStage;
     GXSetIndTexOrder(r27_2, sp64.texCoordId - 1, sp64.texMapId - 1);
-    GXSetTevIndirect(sp64.tevStage, r27_2, GX_ITF_8, GX_ITB_STU, sp64.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
-    r27_3 = sp64.unk8;
+    GXSetTevIndirect(sp64.tevStage, r27_2, GX_ITF_8, GX_ITB_STU, sp64.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    r27_3 = sp64.texMtxId;
     r28_2 = sp64.texCoordId;
     GXSetTexCoordGen(r28_2, GX_TG_MTX3x4, GX_TG_POS, r27_3);
     sp1C[0][0] = 1.05f * (-0.5f * currentCamera->sub28.unk3C * (1.0f / currentCamera->sub28.aspect));
@@ -796,12 +796,12 @@ static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
     sp64.tevIndStage += 1;
     sp64.texCoordId += 1;
     sp64.texMapId += 1;
-    sp64.unk1C += 1;
-    sp64.unk8 += 3;
+    sp64.indTexMtxId += 1;
+    sp64.texMtxId += 3;
     r27_4 = sp64.tevIndStage;
     GXSetIndTexOrder(r27_4, sp64.texCoordId - 2, sp64.texMapId - 2);
-    GXSetTevIndirect(sp64.tevStage, r27_4, GX_ITF_8, GX_ITB_NONE, sp64.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
-    r27_5 = sp64.unk8;
+    GXSetTevIndirect(sp64.tevStage, r27_4, GX_ITF_8, GX_ITB_NONE, sp64.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    r27_5 = sp64.texMtxId;
     r28_3 = sp64.texCoordId;
     GXSetTexCoordGen(r28_3, GX_TG_MTX2x4, GX_TG_POS, r27_5);
     mathutil_mtxA_push();
@@ -822,8 +822,8 @@ static void lbl_8005D4B0(struct GCMMatState_Unit *arg0)
     sp64.tevIndStage += 1;
     sp64.texCoordId += 1;
     sp64.texMapId += 1;
-    sp64.unk1C += 1;
-    sp64.unk8 += 3;
+    sp64.indTexMtxId += 1;
+    sp64.texMtxId += 3;
     arg0->unkC = sp64;
 }
 
@@ -839,14 +839,14 @@ static void lbl_8005DCA8(struct GCMMatState_Unit *arg0)
      && sp2C.tevStage == lbl_8027CBC8.tevStage
      && sp2C.texCoordId == lbl_8027CBC8.texCoordId
      && sp2C.tevIndStage == lbl_8027CBC8.tevIndStage
-     && sp2C.unk8 == lbl_8027CBC8.unk8
-     && sp2C.unk1C == lbl_8027CBC8.unk1C
+     && sp2C.texMtxId == lbl_8027CBC8.texMtxId
+     && sp2C.indTexMtxId == lbl_8027CBC8.indTexMtxId
      && sp2C.texMapId == lbl_8027CBC8.texMapId)
     {
         sp2C.tevIndStage += 1;
         sp2C.texCoordId += 1;
-        sp2C.unk8 += 3;
-        sp2C.unk1C += 1;
+        sp2C.texMtxId += 3;
+        sp2C.indTexMtxId += 1;
         sp2C.texMapId += 1;
         arg0->unkC = sp2C;
         return;
@@ -859,19 +859,19 @@ static void lbl_8005DCA8(struct GCMMatState_Unit *arg0)
     sp14[1][0] = 0.0f;
     sp14[1][1] = temp_r28->unk30;
     sp14[1][2] = 0.0f;
-    GXSetIndTexMtx(sp2C.unk1C, sp14, -2);
+    GXSetIndTexMtx(sp2C.indTexMtxId, sp14, -2);
     GXLoadTexObj_cached(work->fountainIndirectTex, sp2C.texMapId);
     mathutil_mtxA_push();
     mathutil_mtxA_from_translate(&temp_r28->unk18);
-    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.unk8, GX_MTX3x4);
+    GXLoadTexMtxImm(mathutilData->mtxA, sp2C.texMtxId, GX_MTX3x4);
     mathutil_mtxA_pop();
-    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_TEX0, sp2C.unk8);
+    GXSetTexCoordGen(sp2C.texCoordId, GX_TG_MTX2x4, GX_TG_TEX0, sp2C.texMtxId);
     GXSetIndTexOrder(sp2C.tevIndStage, sp2C.texCoordId, sp2C.texMapId);
-    GXSetTevIndirect(sp2C.tevStage - 1, sp2C.tevIndStage, GX_ITF_8, GX_ITB_STU, sp2C.unk1C, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevIndirect(sp2C.tevStage - 1, sp2C.tevIndStage, GX_ITF_8, GX_ITB_STU, sp2C.indTexMtxId, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
     sp2C.tevIndStage += 1;
     sp2C.texCoordId += 1;
-    sp2C.unk8 += 3;
-    sp2C.unk1C += 1;
+    sp2C.texMtxId += 3;
+    sp2C.indTexMtxId += 1;
     sp2C.texMapId += 1;
     arg0->unkC = sp2C;
 }
