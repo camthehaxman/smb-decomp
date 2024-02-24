@@ -26,6 +26,8 @@ typedef enum
     GX_TF_CMPR = 0xE,
 } GXTexFmt;
 
+struct Color { u8 r, g, b, a; };
+
 static u32 bswap32(u32 val)
 {
 	return ((val >> 24) & 0xFF) | ((val >> 8) & 0xFF00) | ((val << 8) & 0xFF0000) | ((val << 24) & 0xFF000000);
@@ -139,6 +141,16 @@ static void fix_mipmap(u8 *pixels, int width, int height, int lod, u8 *origMip)
 }
 */
 
+static struct Color rgb565_to_color(u16 pixel)
+{
+	struct Color color;
+	color.r = ((pixel >> 11) & 0x1F) << 3;
+	color.g = ((pixel >> 5) & 0x3F) << 2;
+	color.b = ((pixel >> 0) & 0x1F) << 3;
+	color.a = 255;
+	return color;
+}
+
 static void *decode_rgb565(const void *pixels, int width, int height)
 {
 	u8 *buffer = malloc(width * height * 4);
@@ -201,16 +213,130 @@ static void *encode_rgb565(const u8 *pixels, int width, int height, u32 *size)
 	return buffer;
 }
 
+static u8 s3tc_blend(u32 a, u32 b)
+{
+    return ((((a << 1) + a) + ((b << 2) + b)) >> 3);
+}
+
+static u8 half_blend(u32 a, u32 b)
+{
+    return (a + b) >> 1;
+}
+
+static void decode_cmpr_block(const u8 *restrict src, u8 *restrict dest, int x, int y, int width, int height)
+{
+    u16 c1 = (src[0] << 8) | src[1];
+    u16 c2 = (src[2] << 8) | src[3];
+    struct Color colors[4] = {0};
+    int tx, ty;
+
+    src += 4;
+    colors[0] = rgb565_to_color(c1);
+    colors[1] = rgb565_to_color(c2);
+    if (c1 > c2)
+    {
+        colors[2].r = s3tc_blend(colors[1].r, colors[0].r);
+        colors[2].g = s3tc_blend(colors[1].g, colors[0].g);
+        colors[2].b = s3tc_blend(colors[1].b, colors[0].b);
+        colors[2].a = 255;
+        colors[3].r = s3tc_blend(colors[0].r, colors[1].r);
+        colors[3].g = s3tc_blend(colors[0].g, colors[1].g);
+        colors[3].b = s3tc_blend(colors[0].b, colors[1].b);
+        colors[3].a = 255;
+    }
+    else
+    {
+        colors[2].r = half_blend(colors[0].r, colors[1].r);
+        colors[2].g = half_blend(colors[0].g, colors[1].g);
+        colors[2].b = half_blend(colors[0].b, colors[1].b);
+        colors[2].a = 255;
+        colors[3] = colors[2];
+        colors[3].a = 0;
+    }
+
+    for (ty = 0; ty < 4; ty++)
+    {
+        u32 val = *src++;
+        for (tx = 0; tx < 4; tx++)
+        {
+			if (x + tx >= width || y + ty >= height)
+				continue;
+            struct Color color = colors[(val >> 6) & 3];
+            int index = (y + ty) * width + (x + tx);
+            dest[index*4 + 0] = color.r;
+            dest[index*4 + 1] = color.g;
+            dest[index*4 + 2] = color.b;
+            dest[index*4 + 3] = color.a;
+            val <<= 2;
+        }
+    }
+}
+
+static void *decode_cmpr(const void *pixels, int width, int height)
+{
+    u8 *buffer = malloc(width * height * 4);
+    const u8 *in = pixels;
+
+    for (int y = 0; y < height; y += 8)
+    {
+        for (int x = 0; x < width; x += 8)
+        {
+            // decode block
+            decode_cmpr_block(in, buffer, x + 0, y + 0, width, height);
+            in += 8;
+            decode_cmpr_block(in, buffer, x + 4, y + 0, width, height);
+            in += 8;
+            decode_cmpr_block(in, buffer, x + 0, y + 4, width, height);
+            in += 8;
+            decode_cmpr_block(in, buffer, x + 4, y + 4, width, height);
+            in += 8;
+        }
+    }
+    return buffer;
+}
+
+static void *decode_i8(const void *pixels, int width, int height)
+{
+	u8 *buffer = malloc(width * height * 4);
+    const u8 *in = pixels;
+
+	for (int y = 0; y < height; y += 4)
+    {
+        for (int x = 0; x < width; x += 8)
+        {
+			// decode 8x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 8; tx++)
+				{
+					if (y + ty >= height || x + tx >= width)
+						continue;
+					u8 pixel = *in++;
+					u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
+					*out++ = pixel;
+					*out++ = pixel;
+					*out++ = pixel;
+					*out++ = 255;
+				}
+			}
+		}
+	}
+	return buffer;
+}
+
 struct TextureCodec
 {
 	const char *name;
+	int bpp;
 	void *(*decode)(const void *, int, int);
 	void *(*encode)(const u8 *, int, int, u32 *);
 };
 
 static const struct TextureCodec codecs[] =
 {
-	[GX_TF_RGB565] = { "rgb565", decode_rgb565, encode_rgb565 },
+	[GX_TF_RGB565] = { "rgb565", 16, decode_rgb565, encode_rgb565 },
+	[GX_TF_CMPR]   = { "cmpr",   4,  decode_cmpr,   NULL },
+	[GX_TF_I8]     = { "i8",     8,  decode_i8,     NULL },
 };
 
 static const struct TextureCodec *get_codec(unsigned int fmt)
@@ -265,19 +391,20 @@ static bool extract_tpl(FILE *tplFile)
 		 || !read_u16(tplFile, &dummy))
 			goto read_error;
 		printf("format: %u, offset: 0x%X, width: %u, height: %u, mipmaps: %u\n", format, imageOffset, width, height, mipmaps);
+		codec = get_codec(format);
+		if (codec == NULL)
+		{
+			fprintf(stderr, "Unsupported texture format %u\n", format);
+			return false;
+		}
+		
 		filePos = ftell(tplFile);
 		fseek(tplFile, imageOffset, SEEK_SET);
 		for (int j = 0; j < mipmaps; j++)
 		{
-			printf("mip %i: %ix%i\n", j, width, height);
-			switch (format)
-			{
-			case GX_TF_RGB565:
-				size = width * height * 2;
-				break;
-			default:
-				abort();
-			}
+			size = (width * height * codec->bpp + 7) / 8;
+			if (size < 8 * 8)
+				size = 8 * 8;  // make sure buffer is large enough for tile size
 			buffer = malloc(size);
 			if (buffer == NULL)
 			{
