@@ -16,6 +16,7 @@ mwcc_compiler/
 tools/elf2dol
 tools/elf2rel
 tools/lzss
+tools/tpltool
 *.exe
 
 # Temporary files

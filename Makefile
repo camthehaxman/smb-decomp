@@ -36,6 +36,7 @@ SHA1SUM := sha1sum
 ELF2DOL := tools/elf2dol$(EXE)
 ELF2REL := tools/elf2rel$(EXE)
 LZSS    := tools/lzss$(EXE)
+TPLTOOL := tools/tpltool$(EXE)
 
 # Game include directories
 INCLUDE_DIRS := src data
@@ -69,7 +70,7 @@ endif
 DOL_LDFLAGS := -nodefaults -fp hard
 REL_LDFLAGS := -nodefaults -fp hard -r1 -m _prolog -g
 
-HOSTCFLAGS   := -Wall -O3 -s
+HOSTCFLAGS   := -Wall -O0 -g -fsanitize=address
 
 CC_CHECK     := $(GCC) $(GCC_CFLAGS) -fsyntax-only $(GCC_CPPFLAGS)
 
@@ -630,6 +631,10 @@ $(ELF2REL): tools/elf2rel.c
 # Original source for lzss can be found at
 # https://web.archive.org/web/19990203141013/http://oak.oakland.edu/pub/simtelnet/msdos/arcutils/lz_comp2.zip
 $(LZSS): tools/lzss.c
+	@echo Building tool $@
+	$(QUIET) $(HOSTCC) $(HOSTCFLAGS) -o $@ $^
+
+$(TPLTOOL): tools/tpltool.c tools/lodepng.c
 	@echo Building tool $@
 	$(QUIET) $(HOSTCC) $(HOSTCFLAGS) -o $@ $^
 
