@@ -280,9 +280,10 @@ static void *decode_ia4(const void *pixels, int width, int height)
 
 static void *encode_rgb565(const u8 *pixels, int width, int height, u32 *size)
 {
-	*size = width * height * 2;
+	*size = ROUND_UP(width * height * 2, 4 * 4 * 2);
 	u16 *buffer = malloc(*size);
 	u16 *out = buffer;
+	u16 filler = 0;
 
 	for (int y = 0; y < height; y += 4)
 	{
@@ -293,14 +294,23 @@ static void *encode_rgb565(const u8 *pixels, int width, int height, u32 *size)
 			{
 				for (int tx = 0; tx < 4; tx++)
 				{
-					if (y + ty >= height || x + tx >= width)
-						continue;
-					const u8 *in = pixels + 4 * ((y + ty) * width + (x + tx));
-					u8 r = *in++;
-					u8 g = *in++;
-					u8 b = *in++;
-					u16 pixel = ((r >> 3) << 11) | ((g >> 2) << 5) | ((b >> 3) & 0x1F);
-					*out++ = bswap16(pixel);
+					if (y + ty < height && x + tx < width)
+					{
+						const u8 *in = pixels + 4 * ((y + ty) * width + (x + tx));
+						u8 r = *in++;
+						u8 g = *in++;
+						u8 b = *in++;
+						u16 pixel = ((r >> 3) << 11) | ((g >> 2) << 5) | ((b >> 3) & 0x1F);
+						*out++ = bswap16(pixel);
+
+						// fill the rest of the block with the first pixel?
+						if (tx == 0 && ty == 0)
+							filler = bswap16(pixel);
+					}
+					else
+					{
+						*out++ = filler;
+					}
 				}
 			}
 		}
@@ -323,20 +333,26 @@ static void *decode_rgb565(const void *pixels, int width, int height)
 				for (int tx = 0; tx < 4; tx++)
 				{
 					if (y + ty >= height || x + tx >= width)
-						continue;
-					u16 pixel = bswap16(*in++);
-					u8 r = ((pixel >> 11) & 0x1F) << 3;
-					u8 g = ((pixel >> 5) & 0x3F) << 2;
-					u8 b = ((pixel >> 0) & 0x1F) << 3;
-					u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
-					*out++ = r;
-					*out++ = g;
-					*out++ = b;
-					*out++ = 255;
+					{
+						in++;
+					}
+					else
+					{
+						u16 pixel = bswap16(*in++);
+						u8 r = ((pixel >> 11) & 0x1F) << 3;
+						u8 g = ((pixel >> 5) & 0x3F) << 2;
+						u8 b = ((pixel >> 0) & 0x1F) << 3;
+						u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
+						*out++ = r;
+						*out++ = g;
+						*out++ = b;
+						*out++ = 255;
+					}
 				}
 			}
 		}
 	}
+
 #ifdef VERIFY_ENCODER
 	u32 size;
 	void *encoded = encode_rgb565(buffer, width, height, &size);
@@ -347,6 +363,7 @@ static void *decode_rgb565(const void *pixels, int width, int height)
 	}
 	free(encoded);
 #endif
+
 	return buffer;
 }
 
@@ -603,7 +620,7 @@ static bool extract_tpl(FILE *tplFile)
 				fputs("Out of memory!\n", stderr);
 				return false;
 			}
-			printf("mip %i: %i x %i, %li bytes\n", j, width, height, size);
+			printf("mip %i: %i x %i, %li bytes at 0x%lX\n", j, width, height, size, ftell(tplFile));
 			//printf("reading %i bytes at 0x%X\n", size, ftell(tplFile));
 			if (fread(buffer, size, 1, tplFile) != 1)
 				goto read_error;
@@ -655,10 +672,12 @@ static bool create_tpl(FILE *tplFile, const struct InputDef *inputs, int inputsC
 	for (int i = 0; i < inputsCount; i++, input++)
 	{
 		u32 headerOffset = 4 + i * 0x10;
-		imageOffset = (imageOffset + 0x1F) & ~0x1F;
+		//imageOffset = (imageOffset + 0x1F) & ~0x1F;
 		const struct TextureCodec *codec = get_codec(input->format);
 
 		assert(codec != NULL);
+
+		imageOffset = ROUND_UP(imageOffset, codec->tileWidth * codec->tileHeight * codec->bpp / 8);
 
 		fseek(tplFile, headerOffset, SEEK_SET);
 		if (!write_u32(tplFile, input->format)
@@ -707,9 +726,10 @@ static bool create_tpl(FILE *tplFile, const struct InputDef *inputs, int inputsC
 					if (fwrite(encoded, size, 1, tplFile) != 1)
 						goto write_error;
 					free(encoded);
-					printf("at 0x%X\n", imageOffset);
+					printf("added %s (%i bytes) %i x %i at 0x%X\n", filename, size, width, height, imageOffset);
 					imageOffset += size;
-					printf("added %s\n", filename);
+
+					imageOffset = ROUND_UP(imageOffset, codec->tileWidth * codec->tileHeight * codec->bpp / 8);
 				}
 				else if (error != 78)  // some error other than failing to open the file
 					fprintf(stderr, "Error decoding %s: %s\n", inputs[i].filename, lodepng_error_text(error));
@@ -728,9 +748,16 @@ static bool create_tpl(FILE *tplFile, const struct InputDef *inputs, int inputsC
 			fseek(tplFile, headerOffset + 0xC, SEEK_SET);
 			if (!write_u16(tplFile, lod) || !write_u16(tplFile, 0x1234))
 				goto write_error;
-			imageOffset += 0x20;  // hmm there's some extra data here
+			//imageOffset += 0x20;  // hmm there's some extra data here
 		}
 	}
+
+	// fill empty space (needed for matching)
+	u32 headerOffset = 4 + inputsCount * 0x10;
+	int numBytes = ROUND_UP(headerOffset, 32) - headerOffset;
+	fseek(tplFile, headerOffset, SEEK_SET);
+	for (int i = 0; i < numBytes; i++)
+		fputc(i, tplFile);
 
 	return true;
 
