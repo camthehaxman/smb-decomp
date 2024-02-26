@@ -175,6 +175,45 @@ static struct Color rgb5a3_to_color(u16 pixel)
 	return color;
 }
 
+static u16 color_to_rgb5a3(struct Color color)
+{
+	u16 pixel = 0;
+	if (color.a == 255)
+	{
+		pixel |= 1 << 15;
+		pixel |= ((color.r >> 3) & 0x1F) << 10;
+		pixel |= ((color.g >> 3) & 0x1F) << 5;
+		pixel |= ((color.b >> 3) & 0x1F) << 0;
+	}
+	else
+	{
+		pixel |= ((color.a >> 5) & 0x7) << 12;
+		pixel |= ((color.r >> 4) & 0xF) << 8;
+		pixel |= ((color.g >> 4) & 0xF) << 4;
+		pixel |= ((color.b >> 4) & 0xF) << 0;
+	}
+	return pixel;
+}
+
+static void verify_encoder(const char *name, void *(*encode)(const u8 *, int, int, u32 *), const void *orig, const void *decoded, int width, int height)
+{
+	u32 size;
+	void *encoded = encode(decoded, width, height, &size);
+	if (memcmp(orig, encoded, size) != 0)
+	{
+		fprintf(stderr, "%s encoder does not match!!!\n", name);
+		FILE *f;
+		f = fopen("orig.bin", "wb");
+		fwrite(orig, width * height * 2, 1, f);
+		fclose(f);
+		f = fopen("new.bin", "wb");
+		fwrite(encoded, width * height * 2, 1, f);
+		fclose(f);
+		exit(1);
+	}
+	free(encoded);
+}
+
 //------------------------------------------------------------------------------
 // I8
 //------------------------------------------------------------------------------
@@ -235,12 +274,46 @@ static void *decode_i8(const void *pixels, int width, int height)
 			}
 		}
 	}
+#ifdef VERIFY_ENCODER
+	verify_encoder("I8", encode_i8, pixels, buffer, width, height);
+#endif
 	return buffer;
 }
 
 //------------------------------------------------------------------------------
 // IA4
 //------------------------------------------------------------------------------
+
+static void *encode_ia4(const u8 *pixels, int width, int height, u32 *size)
+{
+	*size = width * height;
+	u8 *buffer = malloc(*size);
+	u8 *out = buffer;
+
+	for (int y = 0; y < height; y += 4)
+    {
+        for (int x = 0; x < width; x += 8)
+        {
+			// encode 8x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 8; tx++)
+				{
+					if (y + ty >= height || x + tx >= width)
+						continue;
+					const u8 *in = pixels + 4 * ((y + ty) * width + (x + tx));
+					u8 r = *in++;
+					u8 g = *in++;
+					u8 b = *in++;
+					u8 a = *in++;
+					u8 i = (r + g + b) / 3;
+					*out++ = ((i / 0x11) & 0xF) | ((a / 0x11) << 4);
+				}
+			}
+		}
+	}
+	return buffer;
+}
 
 static void *decode_ia4(const void *pixels, int width, int height)
 {
@@ -271,6 +344,9 @@ static void *decode_ia4(const void *pixels, int width, int height)
 			}
 		}
 	}
+#ifdef VERIFY_ENCODER
+	verify_encoder("IA4", encode_ia4, pixels, buffer, width, height);
+#endif
 	return buffer;
 }
 
@@ -354,22 +430,44 @@ static void *decode_rgb565(const void *pixels, int width, int height)
 	}
 
 #ifdef VERIFY_ENCODER
-	u32 size;
-	void *encoded = encode_rgb565(buffer, width, height, &size);
-	if (memcmp(pixels, encoded, size) != 0)
-	{
-		fputs("RGB565 encoder does not match!!!\n", stderr);
-		exit(1);
-	}
-	free(encoded);
+	verify_encoder("RGB565", encode_rgb565, pixels, buffer, width, height);
 #endif
-
 	return buffer;
 }
 
 //------------------------------------------------------------------------------
 // RGB5A3
 //------------------------------------------------------------------------------
+
+static void *encode_rgb5a3(const u8 *pixels, int width, int height, u32 *size)
+{
+	*size = ROUND_UP(width * height * 2, 4 * 4 * 2);
+	u16 *buffer = malloc(*size);
+	u16 *out = buffer;
+
+	for (int y = 0; y < height; y += 4)
+	{
+		for (int x = 0; x < width; x += 4)
+		{
+			// encode 4x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 4; tx++)
+				{
+					// TODO: handle small images
+					const u8 *in = pixels + 4 * ((y + ty) * width + (x + tx));
+					struct Color color;
+					color.r = *in++;
+					color.g = *in++;
+					color.b = *in++;
+					color.a = *in++;
+					*out++ = bswap16(color_to_rgb5a3(color));
+				}
+			}
+		}
+	}
+	return buffer;
+}
 
 static void *decode_rgb5a3(const void *pixels, int width, int height)
 {
@@ -397,8 +495,16 @@ static void *decode_rgb5a3(const void *pixels, int width, int height)
 			}
 		}
 	}
+	
+#ifdef VERIFY_ENCODER
+	verify_encoder("RGB5A3", encode_rgb5a3, pixels, buffer, width, height);
+#endif
 	return buffer;
 }
+
+//------------------------------------------------------------------------------
+// RGBA8
+//------------------------------------------------------------------------------
 
 static void *decode_rgba8(const void *pixels, int width, int height)
 {
@@ -482,14 +588,15 @@ static void decode_cmpr_block(const u8 *restrict src, u8 *restrict dest, int x, 
         u32 val = *src++;
         for (tx = 0; tx < 4; tx++)
         {
-			if (x + tx >= width || y + ty >= height)
-				continue;
-            struct Color color = colors[(val >> 6) & 3];
-            int index = (y + ty) * width + (x + tx);
-            dest[index*4 + 0] = color.r;
-            dest[index*4 + 1] = color.g;
-            dest[index*4 + 2] = color.b;
-            dest[index*4 + 3] = color.a;
+			if (x + tx < width && y + ty < height)
+			{
+				struct Color color = colors[(val >> 6) & 3];
+				int index = (y + ty) * width + (x + tx);
+				dest[index*4 + 0] = color.r;
+				dest[index*4 + 1] = color.g;
+				dest[index*4 + 2] = color.b;
+				dest[index*4 + 3] = color.a;
+			}
             val <<= 2;
         }
     }
@@ -531,9 +638,9 @@ static const struct TextureCodec codecs[] =
 {
 	//                 name       bpp  tile width  tile height  decode         encode
 	[GX_TF_I8]     = { "i8",      8,   8,          4,           decode_i8,     encode_i8 },
-	[GX_TF_IA4]    = { "ia4",     8,   8,          4,           decode_ia4,    NULL },
+	[GX_TF_IA4]    = { "ia4",     8,   8,          4,           decode_ia4,    encode_ia4 },
 	[GX_TF_RGB565] = { "rgb565",  16,  4,          4,           decode_rgb565, encode_rgb565 },
-	[GX_TF_RGB5A3] = { "rgb5a3",  16,  4,          4,           decode_rgb5a3, NULL },
+	[GX_TF_RGB5A3] = { "rgb5a3",  16,  4,          4,           decode_rgb5a3, encode_rgb5a3 },
 	[GX_TF_RGBA8]  = { "rgba8",   32,  4,          4,           decode_rgba8,  NULL },
 	[GX_TF_CMPR]   = { "cmpr",    4,   8,          8,           decode_cmpr,   NULL },
 };
