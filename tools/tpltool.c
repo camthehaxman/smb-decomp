@@ -9,6 +9,10 @@
 #include "lodepng.h"
 
 #define ARRAY_COUNT(arr) (sizeof(arr)/sizeof(arr[0]))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define ROUND_UP(val, n) (((val) + (n) - 1) / (n) * (n))
+#define VERIFY_ENCODER
 
 typedef uint32_t u32;
 typedef uint16_t u16;
@@ -151,30 +155,81 @@ static struct Color rgb565_to_color(u16 pixel)
 	return color;
 }
 
-static void *decode_rgb565(const void *pixels, int width, int height)
+static struct Color rgb5a3_to_color(u16 pixel)
 {
-	u8 *buffer = malloc(width * height * 4);
-	const u16 *in = pixels;
+	struct Color color;
+	if (pixel & (1 << 15))  // no alpha
+	{
+		color.r = ((pixel >> 10) & 0x1F) << 3;
+		color.g = ((pixel >> 5) & 0x1F) << 3;
+		color.b = ((pixel >> 0) & 0x1F) << 3;
+		color.a = 255;
+	}
+	else
+	{
+		color.r = ((pixel >> 8) & 0xF) << 4;
+		color.g = ((pixel >> 4) & 0xF) << 4;
+		color.b = ((pixel >> 0) & 0xF) << 4;
+		color.a = ((pixel >> 12) & 0x7) << 5;
+	}
+	return color;
+}
+
+//------------------------------------------------------------------------------
+// I8
+//------------------------------------------------------------------------------
+
+static void *encode_i8(const u8 *pixels, int width, int height, u32 *size)
+{
+	*size = width * height;
+	u8 *buffer = malloc(*size);
+	u8 *out = buffer;
 
 	for (int y = 0; y < height; y += 4)
-	{
-		for (int x = 0; x < width; x += 4)
-		{
-			// decode 4x4 tile
+    {
+        for (int x = 0; x < width; x += 8)
+        {
+			// encode 8x4 tile
 			for (int ty = 0; ty < 4; ty++)
 			{
-				for (int tx = 0; tx < 4; tx++)
+				for (int tx = 0; tx < 8; tx++)
 				{
 					if (y + ty >= height || x + tx >= width)
 						continue;
-					u16 pixel = bswap16(*in++);
-					u8 r = ((pixel >> 11) & 0x1F) << 3;
-					u8 g = ((pixel >> 5) & 0x3F) << 2;
-					u8 b = ((pixel >> 0) & 0x1F) << 3;
+					const u8 *in = pixels + 4 * ((y + ty) * width + (x + tx));
+					u8 r = *in++;
+					u8 g = *in++;
+					u8 b = *in++;
+					in++;  // alpha not used
+					*out++ = (r + g + b) / 3;
+				}
+			}
+		}
+	}
+	return buffer;
+}
+
+static void *decode_i8(const void *pixels, int width, int height)
+{
+	u8 *buffer = malloc(width * height * 4);
+    const u8 *in = pixels;
+
+	for (int y = 0; y < height; y += 4)
+    {
+        for (int x = 0; x < width; x += 8)
+        {
+			// decode 8x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 8; tx++)
+				{
+					if (y + ty >= height || x + tx >= width)
+						continue;
+					u8 pixel = *in++;
 					u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
-					*out++ = r;
-					*out++ = g;
-					*out++ = b;
+					*out++ = pixel;
+					*out++ = pixel;
+					*out++ = pixel;
 					*out++ = 255;
 				}
 			}
@@ -182,6 +237,46 @@ static void *decode_rgb565(const void *pixels, int width, int height)
 	}
 	return buffer;
 }
+
+//------------------------------------------------------------------------------
+// IA4
+//------------------------------------------------------------------------------
+
+static void *decode_ia4(const void *pixels, int width, int height)
+{
+	u8 *buffer = malloc(width * height * 4);
+    const u8 *in = pixels;
+
+	for (int y = 0; y < height; y += 4)
+    {
+        for (int x = 0; x < width; x += 8)
+        {
+			// decode 8x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 8; tx++)
+				{
+					if (y + ty >= height || x + tx >= width)
+						continue;
+					u8 pixel = *in++;
+					u8 i = (pixel & 0xF) * 0x11;
+					u8 a = (pixel >> 4) * 0x11;
+
+					u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
+					*out++ = i;
+					*out++ = i;
+					*out++ = i;
+					*out++ = a;
+				}
+			}
+		}
+	}
+	return buffer;
+}
+
+//------------------------------------------------------------------------------
+// RGB565
+//------------------------------------------------------------------------------
 
 static void *encode_rgb565(const u8 *pixels, int width, int height, u32 *size)
 {
@@ -213,6 +308,116 @@ static void *encode_rgb565(const u8 *pixels, int width, int height, u32 *size)
 	return buffer;
 }
 
+static void *decode_rgb565(const void *pixels, int width, int height)
+{
+	u8 *buffer = malloc(width * height * 4);
+	const u16 *in = pixels;
+
+	for (int y = 0; y < height; y += 4)
+	{
+		for (int x = 0; x < width; x += 4)
+		{
+			// decode 4x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 4; tx++)
+				{
+					if (y + ty >= height || x + tx >= width)
+						continue;
+					u16 pixel = bswap16(*in++);
+					u8 r = ((pixel >> 11) & 0x1F) << 3;
+					u8 g = ((pixel >> 5) & 0x3F) << 2;
+					u8 b = ((pixel >> 0) & 0x1F) << 3;
+					u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
+					*out++ = r;
+					*out++ = g;
+					*out++ = b;
+					*out++ = 255;
+				}
+			}
+		}
+	}
+#ifdef VERIFY_ENCODER
+	u32 size;
+	void *encoded = encode_rgb565(buffer, width, height, &size);
+	if (memcmp(pixels, encoded, size) != 0)
+	{
+		fputs("RGB565 encoder does not match!!!\n", stderr);
+		exit(1);
+	}
+	free(encoded);
+#endif
+	return buffer;
+}
+
+//------------------------------------------------------------------------------
+// RGB5A3
+//------------------------------------------------------------------------------
+
+static void *decode_rgb5a3(const void *pixels, int width, int height)
+{
+	u8 *buffer = malloc(width * height * 4);
+	const u16 *in = pixels;
+
+	for (int y = 0; y < height; y += 4)
+	{
+		for (int x = 0; x < width; x += 4)
+		{
+			// decode 4x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 4; tx++)
+				{
+					if (y + ty >= height || x + tx >= width)
+						continue;
+					u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
+					struct Color color = rgb5a3_to_color(bswap16(*in++));
+					*out++ = color.r;
+					*out++ = color.g;
+					*out++ = color.b;
+					*out++ = color.a;
+				}
+			}
+		}
+	}
+	return buffer;
+}
+
+static void *decode_rgba8(const void *pixels, int width, int height)
+{
+	u8 *buffer = malloc(width * height * 4);
+	const u8 *in = pixels;
+
+	for (int y = 0; y < height; y += 4)
+	{
+		for (int x = 0; x < width; x += 4)
+		{
+			// decode 4x4 tile
+			for (int ty = 0; ty < 4; ty++)
+			{
+				for (int tx = 0; tx < 4; tx++)
+				{
+					if (tx < width && ty < height)
+					{
+						u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
+						*out++ = in[1];  // r
+						*out++ = in[32];  // g
+						*out++ = in[33];  // b
+						*out++ = in[0];  // a
+					}
+					in += 2;
+				}
+			}
+			in += 32;
+		}
+	}
+	return buffer;
+}
+
+//------------------------------------------------------------------------------
+// CMPR
+//------------------------------------------------------------------------------
+
 static u8 s3tc_blend(u32 a, u32 b)
 {
     return ((((a << 1) + a) + ((b << 2) + b)) >> 3);
@@ -223,6 +428,7 @@ static u8 half_blend(u32 a, u32 b)
     return (a + b) >> 1;
 }
 
+// Decodes a 4x4 compressed block
 static void decode_cmpr_block(const u8 *restrict src, u8 *restrict dest, int x, int y, int width, int height)
 {
     u16 c1 = (src[0] << 8) | src[1];
@@ -281,71 +487,45 @@ static void *decode_cmpr(const void *pixels, int width, int height)
     {
         for (int x = 0; x < width; x += 8)
         {
-            // decode block
+            // decode tile (split into 4x4 blocks)
             decode_cmpr_block(in, buffer, x + 0, y + 0, width, height);
             in += 8;
-            decode_cmpr_block(in, buffer, x + 4, y + 0, width, height);
+			decode_cmpr_block(in, buffer, x + 4, y + 0, width, height);
             in += 8;
-            decode_cmpr_block(in, buffer, x + 0, y + 4, width, height);
+			decode_cmpr_block(in, buffer, x + 0, y + 4, width, height);
             in += 8;
-            decode_cmpr_block(in, buffer, x + 4, y + 4, width, height);
+			decode_cmpr_block(in, buffer, x + 4, y + 4, width, height);
             in += 8;
         }
     }
     return buffer;
 }
 
-static void *decode_i8(const void *pixels, int width, int height)
-{
-	u8 *buffer = malloc(width * height * 4);
-    const u8 *in = pixels;
-
-	for (int y = 0; y < height; y += 4)
-    {
-        for (int x = 0; x < width; x += 8)
-        {
-			// decode 8x4 tile
-			for (int ty = 0; ty < 4; ty++)
-			{
-				for (int tx = 0; tx < 8; tx++)
-				{
-					if (y + ty >= height || x + tx >= width)
-						continue;
-					u8 pixel = *in++;
-					u8 *out = buffer + 4 * ((y + ty) * width + (x + tx));
-					*out++ = pixel;
-					*out++ = pixel;
-					*out++ = pixel;
-					*out++ = 255;
-				}
-			}
-		}
-	}
-	return buffer;
-}
-
 struct TextureCodec
 {
 	const char *name;
 	int bpp;
+	int tileWidth, tileHeight;
 	void *(*decode)(const void *, int, int);
 	void *(*encode)(const u8 *, int, int, u32 *);
 };
 
 static const struct TextureCodec codecs[] =
 {
-	[GX_TF_RGB565] = { "rgb565", 16, decode_rgb565, encode_rgb565 },
-	[GX_TF_CMPR]   = { "cmpr",   4,  decode_cmpr,   NULL },
-	[GX_TF_I8]     = { "i8",     8,  decode_i8,     NULL },
+	//                 name       bpp  tile width  tile height  decode         encode
+	[GX_TF_I8]     = { "i8",      8,   8,          4,           decode_i8,     encode_i8 },
+	[GX_TF_IA4]    = { "ia4",     8,   8,          4,           decode_ia4,    NULL },
+	[GX_TF_RGB565] = { "rgb565",  16,  4,          4,           decode_rgb565, encode_rgb565 },
+	[GX_TF_RGB5A3] = { "rgb5a3",  16,  4,          4,           decode_rgb5a3, NULL },
+	[GX_TF_RGBA8]  = { "rgba8",   32,  4,          4,           decode_rgba8,  NULL },
+	[GX_TF_CMPR]   = { "cmpr",    4,   8,          8,           decode_cmpr,   NULL },
 };
 
 static const struct TextureCodec *get_codec(unsigned int fmt)
 {
-	if (fmt >= ARRAY_COUNT(codecs))
-		return NULL;
-	if (codecs[fmt].name == NULL)
-		return NULL;
-	return &codecs[fmt];
+	if (fmt < ARRAY_COUNT(codecs) && codecs[fmt].name != NULL)
+		return &codecs[fmt];
+	return NULL;
 }
 
 static const struct TextureCodec *get_codec_by_name(const char *name)
@@ -383,6 +563,7 @@ static bool extract_tpl(FILE *tplFile)
 		char filename[64];
 		const struct TextureCodec *codec;
 
+		printf("header at 0x%lX\n", ftell(tplFile));
 		if (!read_u32(tplFile, &format)
 		 || !read_u32(tplFile, &imageOffset)
 		 || !read_u16(tplFile, &width)
@@ -390,27 +571,40 @@ static bool extract_tpl(FILE *tplFile)
 		 || !read_u16(tplFile, &mipmaps)
 		 || !read_u16(tplFile, &dummy))
 			goto read_error;
-		printf("format: %u, offset: 0x%X, width: %u, height: %u, mipmaps: %u\n", format, imageOffset, width, height, mipmaps);
 		codec = get_codec(format);
+		printf("format: %u (%s), offset: 0x%X, width: %u, height: %u, mipmaps: %u\n",
+			format, codec ? codec->name : "unknown", imageOffset, width, height, mipmaps);
+		// no idea what's the matter with these...
+		if (format == 0x100
+		 || format == 0x5F677573
+		 || format == 0xF2FF27D4
+		 || format == 0x6C5F7361
+		 || format == 0x73756F79
+		 || format == 0x0031315F
+		 || format == 0x2E31315F)
+			continue;
 		if (codec == NULL)
 		{
 			fprintf(stderr, "Unsupported texture format %u\n", format);
 			return false;
 		}
-		
+
 		filePos = ftell(tplFile);
 		fseek(tplFile, imageOffset, SEEK_SET);
 		for (int j = 0; j < mipmaps; j++)
 		{
-			size = (width * height * codec->bpp + 7) / 8;
-			if (size < 8 * 8)
-				size = 8 * 8;  // make sure buffer is large enough for tile size
+			int paddedWidth = ROUND_UP(width, codec->tileWidth);
+			int paddedHeight = ROUND_UP(height, codec->tileHeight);
+
+			size = (paddedWidth * paddedHeight * codec->bpp + 7) / 8;
 			buffer = malloc(size);
 			if (buffer == NULL)
 			{
 				fputs("Out of memory!\n", stderr);
 				return false;
 			}
+			printf("mip %i: %i x %i, %li bytes\n", j, width, height, size);
+			//printf("reading %i bytes at 0x%X\n", size, ftell(tplFile));
 			if (fread(buffer, size, 1, tplFile) != 1)
 				goto read_error;
 			sprintf(filename, "img%u.mip%u.png", i, j);
@@ -434,7 +628,7 @@ static bool extract_tpl(FILE *tplFile)
 	return true;
 
 read_error:
-	fprintf(stderr, "Error reading file: %s\n", strerror(errno));
+	fprintf(stderr, "Error reading file!: %s\n", feof(tplFile) ? "End of file reached" : "Unknown error");
 	return false;
 }
 
@@ -455,11 +649,6 @@ static bool create_tpl(FILE *tplFile, const struct InputDef *inputs, int inputsC
 	u32 imageOffset = 4 + inputsCount * 0x10;  // after headers
 	const struct InputDef *input = &inputs[0];
 
-	if (inputsCount == 0)
-	{
-		fputs("No image files specified\n", stderr);
-		return false;
-	}
 	if (!write_u32(tplFile, inputsCount))
 		goto write_error;
 
@@ -594,6 +783,14 @@ int main(int argc, char **argv)
 
 	if (tplFilename == NULL)
 		goto usage;
+
+	if (!extract && inputsCount == 0)
+	{
+		fputs("No image files specified\n", stderr);
+		return 1;
+	}
+
+	puts(tplFilename);
 
 	const char *mode = extract ? "rb" : "wb";
 	FILE *tplFile = fopen(tplFilename, mode);
