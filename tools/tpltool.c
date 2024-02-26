@@ -7,6 +7,8 @@
 #include <string.h>
 
 #include "lodepng.h"
+#define STB_DXT_IMPLEMENTATION
+#include "stb_dxt.h"
 
 #define ARRAY_COUNT(arr) (sizeof(arr)/sizeof(arr[0]))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -495,7 +497,7 @@ static void *decode_rgb5a3(const void *pixels, int width, int height)
 			}
 		}
 	}
-	
+
 #ifdef VERIFY_ENCODER
 	verify_encoder("RGB5A3", encode_rgb5a3, pixels, buffer, width, height);
 #endif
@@ -541,8 +543,109 @@ static void *decode_rgba8(const void *pixels, int width, int height)
 // CMPR
 //------------------------------------------------------------------------------
 
+static u8 swap_color_bits(u8 x)
+{
+	return (
+		((x & 0x03) << 6) | // XXXXXXDD -> DDXXXXXX
+		((x & 0x0C) << 2) | // XXXXCCXX -> XXCCXXXX
+		((x & 0x30) >> 2) | // XXBBXXXX -> XXXXBBXX
+		((x & 0xC0) >> 6));  // AAXXXXXX -> XXXXXXAA
+}
+
+static void encode_cmpr_block2(const u8 *restrict src, u8 *restrict dest, int x, int y, int width, int height)
+{
+	u8 buffer[4 * 4 * 4];
+	bool alphaBlock = false;
+
+	// copy the data into a contiguous array
+	for (int ty = 0; ty < 4; ty++)
+	{
+		const u8 *in = src + ((y + ty) * width + x) * 4;
+		memcpy(buffer + ty * 4 * 4, in, 4 * 4);
+	}
+	
+	int alphaCount = 0;
+	for (int i = 3; i < 64; i += 4)
+	{
+		if (buffer[i] <= 128)
+			alphaCount++;
+	}
+	
+	if (alphaCount >= 3)
+	{
+		alphaBlock = true;
+	}
+	else if (alphaCount > 0)
+	{
+		// If there are alpha pixels in a non-alpha block
+		// Change the alpha pixels to a color in the palette
+		u8 templateTile[4];
+		// Gets a template color to set the Alpha pixels to
+		for (int i = 0; i < 64; i += 4)
+		{
+			if (buffer[i + 3] == 255)
+			{
+				templateTile[0] = buffer[i];
+				templateTile[1] = buffer[i + 1];
+				templateTile[2] = buffer[i + 2];
+				templateTile[3] = buffer[i + 3];
+			}
+		}
+		// Go through and set the alpha pixels to the template color
+		for (int i = 0; i < 64; i += 4)
+		{
+			if (buffer[i + 3] <= 128)
+			{
+				buffer[i] = templateTile[0];
+				buffer[i + 1] = templateTile[1];
+				buffer[i + 2] = templateTile[2];
+				buffer[i + 3] = templateTile[3];
+			}
+		}
+	}
+	
+	stb_compress_dxt_block(dest, buffer, alphaBlock, STB_DXT_HIGHQUAL);
+	// convert from standard DXT format to GX format
+	u8 temp;
+	temp = dest[0];
+	dest[0] = dest[1];
+	dest[1] = temp;
+	temp = dest[2];
+	dest[2] = dest[3];
+	dest[3] = temp;
+	for (int i = 0; i < 4; i++)
+		dest[4 + i] = swap_color_bits(dest[4 + i]);
+}
+
+static void *encode_cmpr(const u8 *pixels, int width, int height, u32 *size)
+{
+	*size = width * height / 2;
+    u8 *buffer = malloc(*size);
+    u8 *out = buffer;
+
+	printf("%i x %i\n", width, height);
+
+    for (int y = 0; y < height; y += 8)
+    {
+        for (int x = 0; x < width; x += 8)
+        {
+            // encode tile (split into 4x4 blocks)
+            encode_cmpr_block2(pixels, out, x + 0, y + 0, width, height);
+            out += 8;
+			encode_cmpr_block2(pixels, out, x + 4, y + 0, width, height);
+            out += 8;
+			encode_cmpr_block2(pixels, out, x + 0, y + 4, width, height);
+            out += 8;
+			encode_cmpr_block2(pixels, out, x + 4, y + 4, width, height);
+            out += 8;
+        }
+    }
+    return buffer;
+}
+
 static u8 s3tc_blend(u32 a, u32 b)
 {
+	// (a * 3 + b * 5) / 8
     return ((((a << 1) + a) + ((b << 2) + b)) >> 3);
 }
 
@@ -564,10 +667,12 @@ static void decode_cmpr_block(const u8 *restrict src, u8 *restrict dest, int x, 
     colors[1] = rgb565_to_color(c2);
     if (c1 > c2)
     {
+		// 3/8 of 1, 5/8 of 0
         colors[2].r = s3tc_blend(colors[1].r, colors[0].r);
         colors[2].g = s3tc_blend(colors[1].g, colors[0].g);
         colors[2].b = s3tc_blend(colors[1].b, colors[0].b);
         colors[2].a = 255;
+        // 3/8 of 0, 5/8 of 1
         colors[3].r = s3tc_blend(colors[0].r, colors[1].r);
         colors[3].g = s3tc_blend(colors[0].g, colors[1].g);
         colors[3].b = s3tc_blend(colors[0].b, colors[1].b);
@@ -575,6 +680,7 @@ static void decode_cmpr_block(const u8 *restrict src, u8 *restrict dest, int x, 
     }
     else
     {
+		// in between both
         colors[2].r = half_blend(colors[0].r, colors[1].r);
         colors[2].g = half_blend(colors[0].g, colors[1].g);
         colors[2].b = half_blend(colors[0].b, colors[1].b);
@@ -582,6 +688,13 @@ static void decode_cmpr_block(const u8 *restrict src, u8 *restrict dest, int x, 
         colors[3] = colors[2];
         colors[3].a = 0;
     }
+
+	printf("alpha? %i\n", c1 <= c2);
+	printf("palette:\n");
+	for (int i = 0; i < 4; i++)
+	{
+		printf("  %i,%i,%i,%i\n", colors[i].r, colors[i].g, colors[i].b, colors[i].a);
+	}
 
     for (ty = 0; ty < 4; ty++)
     {
@@ -642,7 +755,7 @@ static const struct TextureCodec codecs[] =
 	[GX_TF_RGB565] = { "rgb565",  16,  4,          4,           decode_rgb565, encode_rgb565 },
 	[GX_TF_RGB5A3] = { "rgb5a3",  16,  4,          4,           decode_rgb5a3, encode_rgb5a3 },
 	[GX_TF_RGBA8]  = { "rgba8",   32,  4,          4,           decode_rgba8,  NULL },
-	[GX_TF_CMPR]   = { "cmpr",    4,   8,          8,           decode_cmpr,   NULL },
+	[GX_TF_CMPR]   = { "cmpr",    4,   8,          8,           decode_cmpr,   encode_cmpr },
 };
 
 static const struct TextureCodec *get_codec(unsigned int fmt)
