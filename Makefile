@@ -26,6 +26,7 @@ DEVKITPPC ?=
 
 COMPILER_DIR := mwcc_compiler/$(COMPILER_VERSION)
 AS      := $(DEVKITPPC)/bin/powerpc-eabi-as
+AR      := $(DEVKITPPC)/bin/powerpc-eabi-ar
 MWCC    := $(WINE) $(COMPILER_DIR)/mwcceppc.exe
 LD      := $(WINE) $(COMPILER_DIR)/mwldeppc.exe
 OBJCOPY := $(DEVKITPPC)/bin/powerpc-eabi-objcopy
@@ -212,8 +213,40 @@ SOURCES := \
 	src/vibration.c \
 	src/ending.c \
 	src/ending_camera.c \
-	src/ending_dialogue.c \
-	libraries/base/asm/PPCArch.s \
+	src/ending_dialogue.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES := $(O_FILES)
+$(ELF): $(O_FILES)
+
+$(ELF): \
+	libraries/base.a \
+	libraries/os.a \
+	libraries/db.a \
+	libraries/mtx.a \
+	libraries/dvd.a \
+	libraries/vi.a \
+	libraries/demo.a \
+	libraries/pad.a \
+	libraries/ai.a \
+	libraries/ar.a \
+	libraries/dsp.a \
+	libraries/card.a \
+	libraries/hio.a \
+	libraries/gx.a \
+	libraries/perf.a \
+	libraries/musyx.a \
+	libraries/dtk.a \
+	libraries/libc.a \
+	libraries/TRK_MINNOW_DOLPHIN.a \
+	libraries/lib1.a
+
+SOURCES := \
+	libraries/base/asm/PPCArch.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/base.a: $(O_FILES)
+
+SOURCES := \
 	libraries/os/__start.c \
 	libraries/os/asm/OS.s \
 	libraries/os/asm/OSAlarm.s \
@@ -238,26 +271,76 @@ SOURCES := \
 	libraries/os/OSThread.c \
 	libraries/os/asm/OSTime.s \
 	libraries/exi/asm/EXIUart.s \
-	libraries/os/__ppc_eabi_init.c \
-	libraries/db/db.c \
+	libraries/os/__ppc_eabi_init.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/os.a: $(O_FILES)
+
+SOURCES := \
+	libraries/db/db.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/db.a: $(O_FILES)
+
+SOURCES := \
 	libraries/mtx/asm/mtx.s \
 	libraries/mtx/mtx44.c \
-	libraries/mtx/asm/vec.s \
+	libraries/mtx/asm/vec.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/mtx.a: $(O_FILES)
+
+SOURCES := \
 	libraries/dvd/asm/dvdlow.s \
 	libraries/dvd/asm/dvdfs.s \
 	libraries/dvd/asm/dvd.s \
 	libraries/dvd/dvdqueue.c \
 	libraries/dvd/asm/dvderror.s \
-	libraries/dvd/fstload.c \
-	libraries/vi/asm/vi.s \
-	libraries/demo/DEMOFont.c \
-	libraries/pad/Pad.c \
-	libraries/ai/ai.c \
+	libraries/dvd/fstload.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/dvd.a: $(O_FILES)
+
+SOURCES := \
+	libraries/vi/asm/vi.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/vi.a: $(O_FILES)
+
+SOURCES := \
+	libraries/demo/DEMOFont.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/demo.a: $(O_FILES)
+
+SOURCES := \
+	libraries/pad/Pad.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/pad.a: $(O_FILES)
+
+SOURCES := \
+	libraries/ai/ai.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/ai.a: $(O_FILES)
+
+SOURCES := \
 	libraries/ar/asm/ar.s \
-	libraries/ar/asm/arq.s \
+	libraries/ar/asm/arq.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/ar.a: $(O_FILES)
+
+SOURCES := \
 	libraries/dsp/dsp.c \
 	libraries/dsp/dsp_debug.c \
-	libraries/dsp/dsp_task.c \
+	libraries/dsp/dsp_task.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/dsp.a: $(O_FILES)
+
+SOURCES := \
 	libraries/card/CARDBios.c \
 	libraries/card/CARDUnlock.c \
 	libraries/card/CARDRdwr.c \
@@ -272,8 +355,18 @@ SOURCES := \
 	libraries/card/CARDWrite.c \
 	libraries/card/CARDDelete.c \
 	libraries/card/CARDStat.c \
-	libraries/card/CARDRename.c \
-	libraries/hio/hio.c \
+	libraries/card/CARDRename.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/card.a: $(O_FILES)
+
+SOURCES := \
+	libraries/hio/hio.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/hio.a: $(O_FILES)
+
+SOURCES := \
 	libraries/gx/GXInit.c \
 	libraries/gx/GXFifo.c \
 	libraries/gx/asm/GXAttr.s \
@@ -289,9 +382,19 @@ SOURCES := \
 	libraries/gx/GXStubs.c \
 	libraries/gx/GXDisplayList.c \
 	libraries/gx/GXTransform.c \
-	libraries/gx/GXPerf.c \
+	libraries/gx/GXPerf.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/gx.a: $(O_FILES)
+
+SOURCES := \
 	libraries/perf/asm/perf.s \
-	libraries/perf/asm/perfdraw.s \
+	libraries/perf/asm/perfdraw.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/perf.a: $(O_FILES)
+
+SOURCES := \
 	libraries/musyx/asm/seq.s \
 	libraries/musyx/asm/synth.s \
 	libraries/musyx/seq_api.c \
@@ -317,8 +420,18 @@ SOURCES := \
 	libraries/musyx/hw_memory.c \
 	libraries/musyx/reverb_fx.c \
 	libraries/musyx/asm/reverb.s \
-	libraries/musyx/asm/chorus_fx.s \
-	libraries/dtk/asm/dtk.s \
+	libraries/musyx/asm/chorus_fx.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/musyx.a: $(O_FILES)
+
+SOURCES := \
+	libraries/dtk/asm/dtk.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/dtk.a: $(O_FILES)
+
+SOURCES := \
 	libraries/PowerPC_EABI_Support/Runtime/Src/__mem.c \
 	libraries/PowerPC_EABI_Support/Runtime/Src/__va_arg.c \
 	libraries/PowerPC_EABI_Support/Runtime/Src/global_destructor_chain.c \
@@ -357,7 +470,12 @@ SOURCES := \
 	libraries/PowerPC_EABI_Support/asm/math/inverse_trig.s \
 	libraries/PowerPC_EABI_Support/asm/math/trigf.s \
 	libraries/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common_Embedded/Math/Single_precision/common_float_tables.c \
-	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common_Embedded/Math/Single_precision/exponentialsf.s \
+	libraries/PowerPC_EABI_Support/asm/Msl/MSL_C/MSL_Common_Embedded/Math/Single_precision/exponentialsf.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/libc.a: $(O_FILES)
+
+SOURCES := \
 	libraries/TRK_MINNOW_DOLPHIN/asm/mainloop.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/nubevent.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/nubinit.s \
@@ -378,14 +496,20 @@ SOURCES := \
 	libraries/TRK_MINNOW_DOLPHIN/asm/mpc_7xx_603e.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/main_TRK.s \
 	libraries/TRK_MINNOW_DOLPHIN/asm/dolphin_trk_glue.s \
-	libraries/TRK_MINNOW_DOLPHIN/asm/targcont.s \
+	libraries/TRK_MINNOW_DOLPHIN/asm/targcont.s
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/TRK_MINNOW_DOLPHIN.a: $(O_FILES)
+
+# lib1 sources
+SOURCES := \
 	libraries/amcExi2/AmcExi.c \
 	libraries/amcExi2/AmcExi2Comm.c \
 	libraries/odemustubs/asm/odemustubs.s \
 	libraries/amcnotstub/amcnotstub.c
 O_FILES := $(addsuffix .o,$(SOURCES))
-ALL_O_FILES := $(O_FILES)
-$(ELF): $(O_FILES)
+ALL_O_FILES += $(O_FILES)
+libraries/lib1.a: $(O_FILES)
 
 # mkbe.sel_ngc.rel sources
 SOURCES := \
@@ -516,7 +640,7 @@ all: $(DOL) $(ALL_RELS)
 
 %.elf: $(DOL_LCF)
 	@echo Linking static module $@
-	$(QUIET) $(LD) -lcf $(DOL_LCF) $(DOL_LDFLAGS) $(filter %.o,$^) -map $(@:.elf=.map) -o $@
+	$(QUIET) $(LD) -lcf $(DOL_LCF) $(DOL_LDFLAGS) $(filter %.o,$^) $(filter %.a,$^) -map $(@:.elf=.map) -o $@
 
 # relocatable module (.rel file)
 %.rel: %.plf $(ELF) $(ELF2REL)
@@ -526,6 +650,11 @@ all: $(DOL) $(ALL_RELS)
 %.plf: $(REL_LCF)
 	@echo Linking relocatable module $@
 	$(QUIET) $(LD) -lcf $(REL_LCF) $(REL_LDFLAGS) $(filter %.o,$^) -map $(@:.plf=.map) -o $@
+
+# static library (.a file)
+%.a:
+	@echo Creating static library $@
+	$(QUIET) $(AR) r -c $@ $(filter %.o,$^)
 
 # Canned recipe for compiling C or C++
 # Uses CC_CHECK to check syntax and generate dependencies, compiles the file,
@@ -573,6 +702,7 @@ src/unk_anim_data.c.o: src/unk_anim_data.c
 
 clean:
 	$(RM) $(DOL) $(ELF) $(MAP) $(ALL_RELS) $(ELF2DOL) $(ELF2REL)
+	find . -name '*.a' -exec rm {} +
 	find . -name '*.o' -exec rm {} +
 	find . -name '*.dep' -exec rm {} +
 	find . -name '*.dump' -exec rm {} +

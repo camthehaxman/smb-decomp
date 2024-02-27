@@ -9,6 +9,7 @@ mwcc_compiler/
 *.o
 *.dep
 *.map
+*.a
 
 *.dmw
 

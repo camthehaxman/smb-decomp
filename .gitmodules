@@ -1,0 +1,3 @@
+[submodule "dolsdk2001"]
+	path = dolsdk2001
+	url = https://github.com/doldecomp/dolsdk2001
