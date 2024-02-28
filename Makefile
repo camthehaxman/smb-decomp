@@ -220,8 +220,8 @@ O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES := $(O_FILES)
 $(ELF): $(O_FILES)
 
-dolsdk2001/os.a:
-	$(MAKE) -C dolsdk2001/ COMPILER_DIR=$(COMPILER_DIR) CROSS=powerpc-eabi- DOLPHIN_REVISION=37
+dolsdk2001/%.a:
+	$(MAKE) -C dolsdk2001/ COMPILER_DIR=$(COMPILER_DIR) CROSS=powerpc-eabi- DOLPHIN_REVISION=37 $(@F)
 
 $(ELF): \
 	libraries/base.a \
@@ -243,7 +243,9 @@ $(ELF): \
 	libraries/dtk.a \
 	libraries/libc.a \
 	libraries/TRK_MINNOW_DOLPHIN.a \
-	libraries/lib1.a
+	libraries/lib1.a \
+	dolsdk2001/odemustubs.a \
+	dolsdk2001/amcnotstub.a
 
 SOURCES := \
 	libraries/base/asm/PPCArch.s
@@ -509,9 +511,7 @@ libraries/TRK_MINNOW_DOLPHIN.a: $(O_FILES)
 # lib1 sources
 SOURCES := \
 	libraries/amcExi2/AmcExi.c \
-	libraries/amcExi2/AmcExi2Comm.c \
-	libraries/odemustubs/asm/odemustubs.s \
-	libraries/amcnotstub/amcnotstub.c
+	libraries/amcExi2/AmcExi2Comm.c
 O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
 libraries/lib1.a: $(O_FILES)
