@@ -493,7 +493,7 @@ u32 PADRead(PADStatus *status)
             continue;
         }
 
-        cmd = SIGetCommand();
+        cmd = SIGetStatus();
         if (cmd & (8 << chanShift))
         {
             if (WaitingBits & chanBit)

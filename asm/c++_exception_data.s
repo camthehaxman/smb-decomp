@@ -1306,7 +1306,6 @@ __init_cpp_exceptions_reference:
 	# ROM: 0x10C860
 	.4byte __init_cpp_exceptions  ;# ptr
 	.4byte __sinit_trigf_c  ;# ptr
-	.4byte 0
 
 .section .dtors, "wa"  # 0x8010F880 - 0x8010F8A0
 __dtors:

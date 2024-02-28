@@ -10,8 +10,8 @@ OSDisableInterrupts:
 /* 800C60C0 000C1FE0  54 64 04 5E */	rlwinm r4, r3, 0, 0x11, 0xf
 /* 800C60C4 000C1FE4  7C 80 01 24 */	mtmsr r4
 /* 800C60C8 000C1FE8  54 63 8F FE */	rlwinm r3, r3, 0x11, 0x1f, 0x1f
-.global lbl_800C60CC
-lbl_800C60CC:
+.global __RAS_OSDisableInterrupts_end
+__RAS_OSDisableInterrupts_end:
 /* 800C60CC 000C1FEC  4E 80 00 20 */	blr
 
 .global OSEnableInterrupts

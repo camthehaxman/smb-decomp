@@ -12,7 +12,7 @@ __OSResetSWInterruptHandler:
 /* 800C759C 000C34BC  93 A1 00 1C */	stw r29, 0x1c(r1)
 /* 800C75A0 000C34C0  48 00 23 FD */	bl __OSGetSystemTime
 /* 800C75A4 000C34C4  3C A0 80 00 */	lis r5, 0x800000F8@ha
-/* 800C75A8 000C34C8  90 8D A1 64 */	stw r4, lbl_802F2344@sda21(r13)
+/* 800C75A8 000C34C8  90 8D A1 64 */	stw r4, HoldDown+4@sda21(r13)
 /* 800C75AC 000C34CC  80 05 00 F8 */	lwz r0, 0x800000F8@l(r5)
 /* 800C75B0 000C34D0  3C 80 43 1C */	lis r4, 0x431BDE83@ha
 /* 800C75B4 000C34D4  38 84 DE 83 */	addi r4, r4, 0x431BDE83@l
@@ -26,7 +26,7 @@ __OSResetSWInterruptHandler:
 /* 800C75D4 000C34F4  3F E0 CC 00 */	lis r31, 0xcc00
 lbl_800C75D8:
 /* 800C75D8 000C34F8  48 00 23 C5 */	bl __OSGetSystemTime
-/* 800C75DC 000C34FC  80 CD A1 64 */	lwz r6, lbl_802F2344@sda21(r13)
+/* 800C75DC 000C34FC  80 CD A1 64 */	lwz r6, HoldDown+4@sda21(r13)
 /* 800C75E0 000C3500  6F C5 80 00 */	xoris r5, r30, 0x8000
 /* 800C75E4 000C3504  80 0D A1 60 */	lwz r0, HoldDown@sda21(r13)
 /* 800C75E8 000C3508  7C 86 20 10 */	subfc r4, r6, r4
@@ -69,8 +69,8 @@ lbl_800C7654:
 /* 800C7674 000C3594  7C 08 03 A6 */	mtlr r0
 /* 800C7678 000C3598  4E 80 00 20 */	blr
 
-.global OSGetResetButtonState
-OSGetResetButtonState:
+.global OSGetResetSwitchState
+OSGetResetSwitchState:
 /* 800C767C 000C359C  7C 08 02 A6 */	mflr r0
 /* 800C7680 000C35A0  90 01 00 04 */	stw r0, 4(r1)
 /* 800C7684 000C35A4  94 21 FF E8 */	stwu r1, -0x18(r1)
@@ -88,7 +88,7 @@ OSGetResetButtonState:
 /* 800C76B4 000C35D4  40 82 00 44 */	bne lbl_800C76F8
 /* 800C76B8 000C35D8  80 0D A1 58 */	lwz r0, HoldUp@sda21(r13)
 /* 800C76BC 000C35DC  38 80 00 00 */	li r4, 0
-/* 800C76C0 000C35E0  80 6D A1 5C */	lwz r3, lbl_802F233C@sda21(r13)
+/* 800C76C0 000C35E0  80 6D A1 5C */	lwz r3, HoldUp+4@sda21(r13)
 /* 800C76C4 000C35E4  38 A0 00 01 */	li r5, 1
 /* 800C76C8 000C35E8  7C 00 22 78 */	xor r0, r0, r4
 /* 800C76CC 000C35EC  7C 63 22 78 */	xor r3, r3, r4
@@ -101,13 +101,13 @@ lbl_800C76E0:
 lbl_800C76E4:
 /* 800C76E4 000C3604  7C BE 2B 78 */	mr r30, r5
 /* 800C76E8 000C3608  48 00 22 B5 */	bl __OSGetSystemTime
-/* 800C76EC 000C360C  90 8D A1 64 */	stw r4, lbl_802F2344@sda21(r13)
+/* 800C76EC 000C360C  90 8D A1 64 */	stw r4, HoldDown+4@sda21(r13)
 /* 800C76F0 000C3610  90 6D A1 60 */	stw r3, HoldDown@sda21(r13)
 /* 800C76F4 000C3614  48 00 01 50 */	b lbl_800C7844
 lbl_800C76F8:
 /* 800C76F8 000C3618  80 0D A1 58 */	lwz r0, HoldUp@sda21(r13)
 /* 800C76FC 000C361C  3B E0 00 00 */	li r31, 0
-/* 800C7700 000C3620  80 6D A1 5C */	lwz r3, lbl_802F233C@sda21(r13)
+/* 800C7700 000C3620  80 6D A1 5C */	lwz r3, HoldUp+4@sda21(r13)
 /* 800C7704 000C3624  3B C0 00 01 */	li r30, 1
 /* 800C7708 000C3628  7C 00 FA 78 */	xor r0, r0, r31
 /* 800C770C 000C362C  7C 63 FA 78 */	xor r3, r3, r31
@@ -115,7 +115,7 @@ lbl_800C76F8:
 /* 800C7714 000C3634  40 82 00 5C */	bne lbl_800C7770
 /* 800C7718 000C3638  48 00 22 85 */	bl __OSGetSystemTime
 /* 800C771C 000C363C  3C A0 80 00 */	lis r5, 0x800000F8@ha
-/* 800C7720 000C3640  80 ED A1 64 */	lwz r7, lbl_802F2344@sda21(r13)
+/* 800C7720 000C3640  80 ED A1 64 */	lwz r7, HoldDown+4@sda21(r13)
 /* 800C7724 000C3644  80 05 00 F8 */	lwz r0, 0x800000F8@l(r5)
 /* 800C7728 000C3648  3C A0 43 1C */	lis r5, 0x431BDE83@ha
 /* 800C772C 000C364C  38 A5 DE 83 */	addi r5, r5, 0x431BDE83@l
@@ -156,20 +156,20 @@ lbl_800C778C:
 /* 800C77A8 000C36C8  3B C3 00 00 */	addi r30, r3, 0
 /* 800C77AC 000C36CC  41 82 00 98 */	beq lbl_800C7844
 /* 800C77B0 000C36D0  48 00 21 ED */	bl __OSGetSystemTime
-/* 800C77B4 000C36D4  90 8D A1 5C */	stw r4, lbl_802F233C@sda21(r13)
+/* 800C77B4 000C36D4  90 8D A1 5C */	stw r4, HoldUp+4@sda21(r13)
 /* 800C77B8 000C36D8  90 6D A1 58 */	stw r3, HoldUp@sda21(r13)
 /* 800C77BC 000C36DC  48 00 00 88 */	b lbl_800C7844
 lbl_800C77C0:
 /* 800C77C0 000C36E0  80 0D A1 58 */	lwz r0, HoldUp@sda21(r13)
 /* 800C77C4 000C36E4  3B C0 00 00 */	li r30, 0
-/* 800C77C8 000C36E8  80 6D A1 5C */	lwz r3, lbl_802F233C@sda21(r13)
+/* 800C77C8 000C36E8  80 6D A1 5C */	lwz r3, HoldUp+4@sda21(r13)
 /* 800C77CC 000C36EC  7C 00 F2 78 */	xor r0, r0, r30
 /* 800C77D0 000C36F0  7C 63 F2 78 */	xor r3, r3, r30
 /* 800C77D4 000C36F4  7C 60 03 79 */	or. r0, r3, r0
 /* 800C77D8 000C36F8  41 82 00 5C */	beq lbl_800C7834
 /* 800C77DC 000C36FC  48 00 21 C1 */	bl __OSGetSystemTime
 /* 800C77E0 000C3700  3C A0 80 00 */	lis r5, 0x800000F8@ha
-/* 800C77E4 000C3704  80 ED A1 5C */	lwz r7, lbl_802F233C@sda21(r13)
+/* 800C77E4 000C3704  80 ED A1 5C */	lwz r7, HoldUp+4@sda21(r13)
 /* 800C77E8 000C3708  80 05 00 F8 */	lwz r0, 0x800000F8@l(r5)
 /* 800C77EC 000C370C  3C A0 10 62 */	lis r5, 0x10624DD3@ha
 /* 800C77F0 000C3710  38 A5 4D D3 */	addi r5, r5, 0x10624DD3@l
@@ -191,7 +191,7 @@ lbl_800C77C0:
 /* 800C7830 000C3750  48 00 00 14 */	b lbl_800C7844
 lbl_800C7834:
 /* 800C7834 000C3754  38 00 00 00 */	li r0, 0
-/* 800C7838 000C3758  90 0D A1 5C */	stw r0, lbl_802F233C@sda21(r13)
+/* 800C7838 000C3758  90 0D A1 5C */	stw r0, HoldUp+4@sda21(r13)
 /* 800C783C 000C375C  3B C0 00 00 */	li r30, 0
 /* 800C7840 000C3760  90 0D A1 58 */	stw r0, HoldUp@sda21(r13)
 lbl_800C7844:
@@ -220,13 +220,7 @@ LastState:
 	.skip 0x8
 .global HoldUp
 HoldUp:
-	.skip 0x4
-.global lbl_802F233C
-lbl_802F233C:
-	.skip 0x4
+	.skip 8
 .global HoldDown
 HoldDown:
-	.skip 0x4
-.global lbl_802F2344
-lbl_802F2344:
-	.skip 0x4
+	.skip 8

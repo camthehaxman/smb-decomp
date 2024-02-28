@@ -512,7 +512,7 @@ void handle_reset_input(PADStatus *pads)
     int resetCode;
     int i;
 
-    if (lbl_802F1CD1 == 1 && !OSGetResetButtonState())
+    if (lbl_802F1CD1 == 1 && !OSGetResetSwitchState())
     {
         resetCounter = 0xFF;
         resetCode = 2;
@@ -520,7 +520,7 @@ void handle_reset_input(PADStatus *pads)
     else
         resetCode = 1;
 
-    if (OSGetResetButtonState())
+    if (OSGetResetSwitchState())
         lbl_802F1CD1 = 1;
 
     if (resetCounter > 30.0)

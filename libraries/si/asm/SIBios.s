@@ -4,8 +4,8 @@
 
 .global SIBusy
 SIBusy:
-/* 800C817C 000C409C  3C 60 80 1E */	lis r3, lbl_801E7500@ha
-/* 800C8180 000C40A0  80 03 75 00 */	lwz r0, lbl_801E7500@l(r3)
+/* 800C817C 000C409C  3C 60 80 1E */	lis r3, Si@ha
+/* 800C8180 000C40A0  80 03 75 00 */	lwz r0, Si@l(r3)
 /* 800C8184 000C40A4  2C 00 FF FF */	cmpwi r0, -1
 /* 800C8188 000C40A8  41 82 00 0C */	beq lbl_800C8194
 /* 800C818C 000C40AC  38 60 00 01 */	li r3, 1
@@ -21,11 +21,11 @@ CompleteTransfer:
 /* 800C81A4 000C40C4  38 C3 64 00 */	addi r6, r3, 0xCC006400@l
 /* 800C81A8 000C40C8  93 E1 00 14 */	stw r31, 0x14(r1)
 /* 800C81AC 000C40CC  3C 00 80 00 */	lis r0, 0x8000
-/* 800C81B0 000C40D0  3C 80 80 1E */	lis r4, lbl_801E7500@ha
+/* 800C81B0 000C40D0  3C 80 80 1E */	lis r4, Si@ha
 /* 800C81B4 000C40D4  93 C1 00 10 */	stw r30, 0x10(r1)
 /* 800C81B8 000C40D8  80 63 64 38 */	lwz r3, 0x6438(r3)
 /* 800C81BC 000C40DC  90 06 00 34 */	stw r0, 0x34(r6)
-/* 800C81C0 000C40E0  84 04 75 00 */	lwzu r0, lbl_801E7500@l(r4)
+/* 800C81C0 000C40E0  84 04 75 00 */	lwzu r0, Si@l(r4)
 /* 800C81C4 000C40E4  2C 00 FF FF */	cmpwi r0, -1
 /* 800C81C8 000C40E8  41 82 02 08 */	beq lbl_800C83D0
 /* 800C81CC 000C40EC  39 04 00 08 */	addi r8, r4, 8
@@ -175,11 +175,11 @@ lbl_800C83D0:
 .global SIInterruptHandler
 SIInterruptHandler:
 /* 800C83E0 000C4300  7C 08 02 A6 */	mflr r0
-/* 800C83E4 000C4304  3C 60 80 1E */	lis r3, lbl_801E7500@ha
+/* 800C83E4 000C4304  3C 60 80 1E */	lis r3, Si@ha
 /* 800C83E8 000C4308  90 01 00 04 */	stw r0, 4(r1)
 /* 800C83EC 000C430C  94 21 FF D0 */	stwu r1, -0x30(r1)
 /* 800C83F0 000C4310  BF 01 00 10 */	stmw r24, 0x10(r1)
-/* 800C83F4 000C4314  3B 63 75 00 */	addi r27, r3, lbl_801E7500@l
+/* 800C83F4 000C4314  3B 63 75 00 */	addi r27, r3, Si@l
 /* 800C83F8 000C4318  7C 9C 23 78 */	mr r28, r4
 /* 800C83FC 000C431C  83 FB 00 00 */	lwz r31, 0(r27)
 /* 800C8400 000C4320  4B FF FD 9D */	bl CompleteTransfer
@@ -285,7 +285,7 @@ lbl_800C852C:
 .global __SITransfer
 __SITransfer:
 /* 800C856C 000C448C  7C 08 02 A6 */	mflr r0
-/* 800C8570 000C4490  3D 20 80 1E */	lis r9, lbl_801E7500@ha
+/* 800C8570 000C4490  3D 20 80 1E */	lis r9, Si@ha
 /* 800C8574 000C4494  90 01 00 04 */	stw r0, 4(r1)
 /* 800C8578 000C4498  94 21 FF B8 */	stwu r1, -0x48(r1)
 /* 800C857C 000C449C  BF 21 00 2C */	stmw r25, 0x2c(r1)
@@ -295,7 +295,7 @@ __SITransfer:
 /* 800C858C 000C44AC  3B A6 00 00 */	addi r29, r6, 0
 /* 800C8590 000C44B0  3B C7 00 00 */	addi r30, r7, 0
 /* 800C8594 000C44B4  3B E8 00 00 */	addi r31, r8, 0
-/* 800C8598 000C44B8  3B 29 75 00 */	addi r25, r9, lbl_801E7500@l
+/* 800C8598 000C44B8  3B 29 75 00 */	addi r25, r9, Si@l
 /* 800C859C 000C44BC  4B FF DB 21 */	bl OSDisableInterrupts
 /* 800C85A0 000C44C0  80 19 00 00 */	lwz r0, 0(r25)
 /* 800C85A4 000C44C4  2C 00 FF FF */	cmpwi r0, -1
@@ -428,8 +428,8 @@ lbl_800C8760:
 /* 800C876C 000C468C  7C 08 03 A6 */	mtlr r0
 /* 800C8770 000C4690  4E 80 00 20 */	blr
 
-.global SIGetCommand
-SIGetCommand:
+.global SIGetStatus
+SIGetStatus:
 /* 800C8774 000C4694  3C 60 CC 00 */	lis r3, 0xCC006400@ha
 /* 800C8778 000C4698  38 63 64 00 */	addi r3, r3, 0xCC006400@l
 /* 800C877C 000C469C  80 63 00 38 */	lwz r3, 0x38(r3)
@@ -460,8 +460,8 @@ SISetXY:
 /* 800C87BC 000C46DC  54 7F 80 1E */	slwi r31, r3, 0x10
 /* 800C87C0 000C46E0  7F FF 03 78 */	or r31, r31, r0
 /* 800C87C4 000C46E4  4B FF D8 F9 */	bl OSDisableInterrupts
-/* 800C87C8 000C46E8  3C 80 80 1E */	lis r4, lbl_801E7500@ha
-/* 800C87CC 000C46EC  38 84 75 00 */	addi r4, r4, lbl_801E7500@l
+/* 800C87C8 000C46E8  3C 80 80 1E */	lis r4, Si@ha
+/* 800C87CC 000C46EC  38 84 75 00 */	addi r4, r4, Si@l
 /* 800C87D0 000C46F0  84 04 00 04 */	lwzu r0, 4(r4)
 /* 800C87D4 000C46F4  54 00 06 0A */	rlwinm r0, r0, 0, 0x18, 5
 /* 800C87D8 000C46F8  90 04 00 00 */	stw r0, 0(r4)
@@ -485,14 +485,14 @@ SIEnablePolling:
 /* 800C8814 000C4734  93 E1 00 14 */	stw r31, 0x14(r1)
 /* 800C8818 000C4738  7C 7F 1B 79 */	or. r31, r3, r3
 /* 800C881C 000C473C  40 82 00 14 */	bne lbl_800C8830
-/* 800C8820 000C4740  3C 60 80 1E */	lis r3, lbl_801E7500@ha
-/* 800C8824 000C4744  38 63 75 00 */	addi r3, r3, lbl_801E7500@l
+/* 800C8820 000C4740  3C 60 80 1E */	lis r3, Si@ha
+/* 800C8824 000C4744  38 63 75 00 */	addi r3, r3, Si@l
 /* 800C8828 000C4748  80 63 00 04 */	lwz r3, 4(r3)
 /* 800C882C 000C474C  48 00 00 64 */	b lbl_800C8890
 lbl_800C8830:
 /* 800C8830 000C4750  4B FF D8 8D */	bl OSDisableInterrupts
-/* 800C8834 000C4754  3C 80 80 1E */	lis r4, lbl_801E7500@ha
-/* 800C8838 000C4758  38 84 75 00 */	addi r4, r4, lbl_801E7500@l
+/* 800C8834 000C4754  3C 80 80 1E */	lis r4, Si@ha
+/* 800C8838 000C4758  38 84 75 00 */	addi r4, r4, Si@l
 /* 800C883C 000C475C  57 FF 46 3E */	srwi r31, r31, 0x18
 /* 800C8840 000C4760  80 04 00 04 */	lwz r0, 4(r4)
 /* 800C8844 000C4764  38 A4 00 04 */	addi r5, r4, 4
@@ -529,14 +529,14 @@ SIDisablePolling:
 /* 800C88B0 000C47D0  93 E1 00 14 */	stw r31, 0x14(r1)
 /* 800C88B4 000C47D4  7C 7F 1B 79 */	or. r31, r3, r3
 /* 800C88B8 000C47D8  40 82 00 14 */	bne lbl_800C88CC
-/* 800C88BC 000C47DC  3C 60 80 1E */	lis r3, lbl_801E7500@ha
-/* 800C88C0 000C47E0  38 63 75 00 */	addi r3, r3, lbl_801E7500@l
+/* 800C88BC 000C47DC  3C 60 80 1E */	lis r3, Si@ha
+/* 800C88C0 000C47E0  38 63 75 00 */	addi r3, r3, Si@l
 /* 800C88C4 000C47E4  80 63 00 04 */	lwz r3, 4(r3)
 /* 800C88C8 000C47E8  48 00 00 34 */	b lbl_800C88FC
 lbl_800C88CC:
 /* 800C88CC 000C47EC  4B FF D7 F1 */	bl OSDisableInterrupts
-/* 800C88D0 000C47F0  3C 80 80 1E */	lis r4, lbl_801E7500@ha
-/* 800C88D4 000C47F4  38 84 75 00 */	addi r4, r4, lbl_801E7500@l
+/* 800C88D0 000C47F0  3C 80 80 1E */	lis r4, Si@ha
+/* 800C88D4 000C47F4  38 84 75 00 */	addi r4, r4, Si@l
 /* 800C88D8 000C47F8  80 04 00 04 */	lwz r0, 4(r4)
 /* 800C88DC 000C47FC  57 FF 46 36 */	rlwinm r31, r31, 8, 0x18, 0x1b
 /* 800C88E0 000C4800  38 A4 00 04 */	addi r5, r4, 4
@@ -693,8 +693,8 @@ lbl_800C8AE8:
 
 .section .data
 
-.global lbl_801E7500
-lbl_801E7500:
+.global Si
+Si:
 	# ROM: 0x1E4500
 	.4byte 0xFFFFFFFF
 	.4byte 0

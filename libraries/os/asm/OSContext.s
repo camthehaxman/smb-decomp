@@ -233,8 +233,8 @@ OSLoadContext:
 /* 800C37B0 000BF6D0  38 A4 60 BC */	addi r5, r4, OSDisableInterrupts@l
 /* 800C37B4 000BF6D4  7C 06 28 40 */	cmplw r6, r5
 /* 800C37B8 000BF6D8  41 80 00 18 */	blt lbl_800C37D0
-/* 800C37BC 000BF6DC  3C 80 80 0C */	lis r4, lbl_800C60CC@ha
-/* 800C37C0 000BF6E0  38 04 60 CC */	addi r0, r4, lbl_800C60CC@l
+/* 800C37BC 000BF6DC  3C 80 80 0C */	lis r4, __RAS_OSDisableInterrupts_end@ha
+/* 800C37C0 000BF6E0  38 04 60 CC */	addi r0, r4, __RAS_OSDisableInterrupts_end@l
 /* 800C37C4 000BF6E4  7C 06 00 40 */	cmplw r6, r0
 /* 800C37C8 000BF6E8  41 81 00 08 */	bgt lbl_800C37D0
 /* 800C37CC 000BF6EC  90 A3 01 98 */	stw r5, 0x198(r3)

@@ -336,6 +336,7 @@ C_MTXLookAt:
 
 .section .sdata
 
+	.balign 8
 .global Unit01
 Unit01:
 	# ROM: 0x1EC088

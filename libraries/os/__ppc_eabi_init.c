@@ -7,6 +7,7 @@ extern void __OSCacheInit(void);
 extern void (*__init_cpp_exceptions_reference[])(void);
 
 void __init_cpp(void);
+void _ExitProcess(void);
 
 asm void __init_hardware(void)
 {
@@ -48,6 +49,8 @@ rept:
     blr
 }
 
+extern void (*_ctors[])(void);
+
 void __init_user(void)
 {
     __init_cpp();
@@ -55,13 +58,34 @@ void __init_user(void)
 
 void __init_cpp(void)
 {
-    void (**func)(void) = __init_cpp_exceptions_reference;
+    void (**func)(void) = _ctors;
 
     while (*func != NULL)
     {
         (*func)();
         func++;
     }
+}
+
+void __fini_cpp(void) {
+    void (* * destructor)();
+
+	/*
+	 *	call destructors
+	 */
+    /*for (destructor = _dtors; *destructor; destructor++) {
+        (*destructor)();
+    }*/
+}
+
+__declspec(weak) void abort () {
+    _ExitProcess();
+}
+
+__declspec(weak) void exit () {
+    int unused;
+    __fini_cpp();
+    _ExitProcess();
 }
 
 void _ExitProcess(void)

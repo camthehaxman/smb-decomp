@@ -1,3 +1,5 @@
+PROJECT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 ifneq (,$(findstring Windows,$(OS)))
   EXE := .exe
 else
@@ -24,7 +26,7 @@ default: all
 
 DEVKITPPC ?=
 
-COMPILER_DIR := mwcc_compiler/$(COMPILER_VERSION)
+COMPILER_DIR := $(PROJECT_DIR)/mwcc_compiler/$(COMPILER_VERSION)
 AS      := $(DEVKITPPC)/bin/powerpc-eabi-as
 AR      := $(DEVKITPPC)/bin/powerpc-eabi-ar
 MWCC    := $(WINE) $(COMPILER_DIR)/mwcceppc.exe
@@ -218,9 +220,12 @@ O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES := $(O_FILES)
 $(ELF): $(O_FILES)
 
+dolsdk2001/os.a:
+	$(MAKE) -C dolsdk2001/ COMPILER_DIR=$(COMPILER_DIR) CROSS=powerpc-eabi- DOLPHIN_REVISION=37
+
 $(ELF): \
 	libraries/base.a \
-	libraries/os.a \
+	dolsdk2001/os.a \
 	libraries/db.a \
 	libraries/mtx.a \
 	libraries/dvd.a \

@@ -410,7 +410,7 @@ extern struct ApeGfxFileInfo apeGfxFileInfo[8];
 // extern ? lbl_801E7444;
 // extern ? lbl_801E74B0;
 // extern ? lbl_801E74D8;
-// extern ? lbl_801E7500;
+// extern ? Si;
 // extern ? lbl_801E7518;
 // extern ? lbl_801E7548;
 // extern ? lbl_801E7578;
