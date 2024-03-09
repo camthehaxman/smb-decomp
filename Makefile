@@ -237,15 +237,13 @@ $(ELF): \
 	libraries/dsp.a \
 	libraries/card.a \
 	libraries/hio.a \
-	libraries/gx.a \
+	dolsdk2001/gx.a \
 	libraries/perf.a \
 	libraries/musyx.a \
 	libraries/dtk.a \
 	libraries/libc.a \
 	libraries/TRK_MINNOW_DOLPHIN.a \
-	libraries/lib1.a \
-	dolsdk2001/odemustubs.a \
-	dolsdk2001/amcnotstub.a
+	libraries/lib1.a
 
 SOURCES := \
 	libraries/base/asm/PPCArch.s
@@ -511,7 +509,9 @@ libraries/TRK_MINNOW_DOLPHIN.a: $(O_FILES)
 # lib1 sources
 SOURCES := \
 	libraries/amcExi2/AmcExi.c \
-	libraries/amcExi2/AmcExi2Comm.c
+	libraries/amcExi2/AmcExi2Comm.c \
+	libraries/odemustubs/asm/odemustubs.s \
+	libraries/amcnotstub/amcnotstub.c
 O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
 libraries/lib1.a: $(O_FILES)
@@ -706,6 +706,7 @@ src/unk_anim_data.c.o: src/unk_anim_data.c
 	$(OBJDUMP) -Drz $< > $@
 
 clean:
+	$(MAKE) -C dolsdk2001 clean
 	$(RM) $(DOL) $(ELF) $(MAP) $(ALL_RELS) $(ELF2DOL) $(ELF2REL)
 	find . -name '*.a' -exec rm {} +
 	find . -name '*.o' -exec rm {} +

@@ -56,6 +56,9 @@ FORCEACTIVE
     lbl_802F1FAC
     lbl_802F1FA8
     TODO_eti_init_info
+    GXDrawCube
+    GXDrawCylinder
+    GXPixModeSync
 }
 
 lbl_80292C00_alias = lbl_80292C00;

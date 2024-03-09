@@ -1479,6 +1479,7 @@ glabel string_PERF___AUTOSAMPLE___0_____SHOULD_NEVER_HAPPEN__n
 
 .section .sdata
 
+	.balign 8
 .global CurrAutoSample
 CurrAutoSample:
 	# ROM: 0x1EC140
