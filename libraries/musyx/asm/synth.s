@@ -3385,6 +3385,7 @@ lbl_800EE8F8:
 
 .section .sdata2
 
+	.balign 8
 .global lbl_802F68E0
 lbl_802F68E0:
 	# ROM: 0x1F0300

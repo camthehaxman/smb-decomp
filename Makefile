@@ -231,14 +231,14 @@ $(ELF): \
 	libraries/dvd.a \
 	libraries/vi.a \
 	libraries/demo.a \
-	libraries/pad.a \
+	dolsdk2001/pad.a \
 	libraries/ai.a \
 	libraries/ar.a \
 	libraries/dsp.a \
-	libraries/card.a \
+	dolsdk2001/card.a \
 	libraries/hio.a \
 	dolsdk2001/gx.a \
-	libraries/perf.a \
+	dolsdk2001/perf.a \
 	libraries/musyx.a \
 	libraries/dtk.a \
 	libraries/libc.a \

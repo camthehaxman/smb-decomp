@@ -47,7 +47,7 @@ error:
     callback(chan, result);
 }
 
-s32 __CARDFormatRegionAsync(s32 chan, CARDCallback callback)
+s32 CARDFormatAsync(s32 chan, CARDCallback callback)
 {
     CARDControl *card;
     CARDID *id;

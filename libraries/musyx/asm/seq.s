@@ -3719,6 +3719,7 @@ lbl_801E9338:
 
 .section .sbss
 
+	.balign 8
 .global cseq
 cseq:
 	.skip 0x4
@@ -3746,6 +3747,7 @@ seqActiveRoot:
 
 .section .bss
 
+	.balign 8
 .global seqNote
 seqNote:
 	.skip 0x1400

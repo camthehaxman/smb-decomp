@@ -25,7 +25,7 @@ static u32 ResettingChan = 0x20;
 static u32 XPatchBits = 0xF0000000;
 static u32 AnalogMode = 0x300;
 static u32 Spec = 5;
-static void (*MakeStatus_)(s32 chan, PADStatus *, u32[2]) = SPEC2_MakeStatus; // Spec
+static void (*MakeStatus)(s32 chan, PADStatus *, u32[2]) = SPEC2_MakeStatus; // Spec
 static u32 cmdReadOrigin = 0x41000000;
 static u32 cmdCalibrate = 0x42000000;
 
@@ -539,7 +539,7 @@ u32 PADRead(PADStatus *status)
             continue;
         }
 
-        MakeStatus_(chan, status, data);
+        MakeStatus(chan, status, data);
 
         // Check and clear PAD_ORIGIN bit
         if (status->button & 0x2000)
@@ -667,16 +667,16 @@ void PADSetSpec(u32 spec)
     switch (spec)
     {
     case PAD_SPEC_0:
-        MakeStatus_ = SPEC0_MakeStatus;
+        MakeStatus = SPEC0_MakeStatus;
         break;
     case PAD_SPEC_1:
-        MakeStatus_ = SPEC1_MakeStatus;
+        MakeStatus = SPEC1_MakeStatus;
         break;
     case PAD_SPEC_2:
     case PAD_SPEC_3:
     case PAD_SPEC_4:
     case PAD_SPEC_5:
-        MakeStatus_ = SPEC2_MakeStatus;
+        MakeStatus = SPEC2_MakeStatus;
         break;
     }
     Spec = spec;

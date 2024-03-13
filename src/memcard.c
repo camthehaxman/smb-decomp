@@ -1886,8 +1886,8 @@ void get_memcard_file_metadata(void)
 
 void format_memcard(void)
 {
-    extern s32 __CARDFormatRegionAsync(s32 chan, CARDCallback callback);
-    s32 result = __CARDFormatRegionAsync(0, 0);  // calling private SDK function?
+    extern s32 CARDFormatAsync(s32 chan, CARDCallback callback);
+    s32 result = CARDFormatAsync(0, 0);  // calling private SDK function?
 
     memcardInfo.unk42 = (memcardInfo.statusFlags & (1 << 6)) ? 0xB4 : 0;
     memcardInfo.statusFlags |= MC_STATUS_ERROR;

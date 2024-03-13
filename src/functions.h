@@ -705,7 +705,7 @@ void sel_stage_draw(void);
 // ? DoUnmount();
 // ? CARDUnmount();
 // ? FormatCallback();
-// ? __CARDFormatRegionAsync();
+// ? CARDFormatAsync();
 // ? __CARDCompareFileName();
 // ? __CARDAccess();
 // ? __CARDIsPublic();
