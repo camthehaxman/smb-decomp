@@ -1,6 +1,6 @@
 #include <dolphin.h>
 
-u32 DEMOFontBitmap[] =
+u32 DEMOFontBitmap[] ATTRIBUTE_ALIGN(32) =
 {
     0x00000000,
     0x00000000,

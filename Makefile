@@ -226,24 +226,26 @@ dolsdk2001/%.a:
 $(ELF): \
 	libraries/base.a \
 	dolsdk2001/os.a \
-	libraries/db.a \
+	dolsdk2001/db.a \
 	libraries/mtx.a \
 	libraries/dvd.a \
-	libraries/vi.a \
+	dolsdk2001/vi.a \
 	libraries/demo.a \
 	dolsdk2001/pad.a \
 	libraries/ai.a \
 	libraries/ar.a \
-	libraries/dsp.a \
+	dolsdk2001/dsp.a \
 	dolsdk2001/card.a \
-	libraries/hio.a \
+	dolsdk2001/hio.a \
 	dolsdk2001/gx.a \
 	dolsdk2001/perf.a \
 	libraries/musyx.a \
 	libraries/dtk.a \
 	libraries/libc.a \
 	libraries/TRK_MINNOW_DOLPHIN.a \
-	libraries/lib1.a
+	libraries/lib1.a \
+	dolsdk2001/amcnotstub.a \
+	dolsdk2001/odemustubs.a
 
 SOURCES := \
 	libraries/base/asm/PPCArch.s
@@ -509,9 +511,7 @@ libraries/TRK_MINNOW_DOLPHIN.a: $(O_FILES)
 # lib1 sources
 SOURCES := \
 	libraries/amcExi2/AmcExi.c \
-	libraries/amcExi2/AmcExi2Comm.c \
-	libraries/odemustubs/asm/odemustubs.s \
-	libraries/amcnotstub/amcnotstub.c
+	libraries/amcExi2/AmcExi2Comm.c
 O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
 libraries/lib1.a: $(O_FILES)
