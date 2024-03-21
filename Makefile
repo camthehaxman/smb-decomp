@@ -232,7 +232,7 @@ $(ELF): \
 	dolsdk2001/vi.a \
 	libraries/demo.a \
 	dolsdk2001/pad.a \
-	libraries/ai.a \
+	dolsdk2001/ai.a \
 	libraries/ar.a \
 	dolsdk2001/dsp.a \
 	dolsdk2001/card.a \
@@ -243,7 +243,9 @@ $(ELF): \
 	dolsdk2001/dtk.a \
 	libraries/libc.a \
 	libraries/TRK_MINNOW_DOLPHIN.a \
-	libraries/lib1.a
+	libraries/lib1.a \
+	dolsdk2001/amcnotstub.a \
+	dolsdk2001/odenotstub.a
 
 SOURCES := \
 	libraries/base/asm/PPCArch.s
@@ -510,8 +512,7 @@ libraries/TRK_MINNOW_DOLPHIN.a: $(O_FILES)
 SOURCES := \
 	libraries/amcExi2/AmcExi.c \
 	libraries/amcExi2/AmcExi2Comm.c \
-	libraries/odemustubs/asm/odemustubs.s \
-	libraries/amcnotstub/amcnotstub.c
+	libraries/odemustubs/asm/odemustubs.s
 O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
 libraries/lib1.a: $(O_FILES)
