@@ -221,14 +221,14 @@ ALL_O_FILES := $(O_FILES)
 $(ELF): $(O_FILES)
 
 dolsdk2001/%.a:
-	$(MAKE) -C dolsdk2001/ COMPILER_DIR=$(COMPILER_DIR) CROSS=powerpc-eabi- DOLPHIN_REVISION=37 $(@F)
+	$(MAKE) -C dolsdk2001/ COMPILER_DIR=$(COMPILER_DIR) CROSS=$(DEVKITPPC)/bin/powerpc-eabi- DOLPHIN_REVISION=37 $(@F)
 
 $(ELF): \
 	libraries/base.a \
 	dolsdk2001/os.a \
 	dolsdk2001/db.a \
 	libraries/mtx.a \
-	libraries/dvd.a \
+	dolsdk2001/dvd.a \
 	dolsdk2001/vi.a \
 	libraries/demo.a \
 	dolsdk2001/pad.a \
@@ -240,12 +240,10 @@ $(ELF): \
 	dolsdk2001/gx.a \
 	dolsdk2001/perf.a \
 	libraries/musyx.a \
-	libraries/dtk.a \
+	dolsdk2001/dtk.a \
 	libraries/libc.a \
 	libraries/TRK_MINNOW_DOLPHIN.a \
-	libraries/lib1.a \
-	dolsdk2001/amcnotstub.a \
-	dolsdk2001/odemustubs.a
+	libraries/lib1.a
 
 SOURCES := \
 	libraries/base/asm/PPCArch.s
@@ -511,7 +509,9 @@ libraries/TRK_MINNOW_DOLPHIN.a: $(O_FILES)
 # lib1 sources
 SOURCES := \
 	libraries/amcExi2/AmcExi.c \
-	libraries/amcExi2/AmcExi2Comm.c
+	libraries/amcExi2/AmcExi2Comm.c \
+	libraries/odemustubs/asm/odemustubs.s \
+	libraries/amcnotstub/amcnotstub.c
 O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
 libraries/lib1.a: $(O_FILES)
@@ -708,10 +708,10 @@ src/unk_anim_data.c.o: src/unk_anim_data.c
 clean:
 	$(MAKE) -C dolsdk2001 clean
 	$(RM) $(DOL) $(ELF) $(MAP) $(ALL_RELS) $(ELF2DOL) $(ELF2REL)
-	find . -name '*.a' -exec rm {} +
-	find . -name '*.o' -exec rm {} +
-	find . -name '*.dep' -exec rm {} +
-	find . -name '*.dump' -exec rm {} +
+	find libraries -name '*.a' -exec rm {} +
+	find libraries src -name '*.o' -exec rm {} +
+	find libraries src -name '*.dep' -exec rm {} +
+	find libraries src -name '*.dump' -exec rm {} +
 
 #-------------------------------------------------------------------------------
 # Test Recipes
