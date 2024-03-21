@@ -243,6 +243,7 @@ $(ELF): \
 	dolsdk2001/dtk.a \
 	libraries/libc.a \
 	libraries/TRK_MINNOW_DOLPHIN.a \
+	libraries/amcExi2.a \
 	libraries/lib1.a \
 	dolsdk2001/amcnotstub.a \
 	dolsdk2001/odenotstub.a
@@ -508,10 +509,16 @@ O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
 libraries/TRK_MINNOW_DOLPHIN.a: $(O_FILES)
 
-# lib1 sources
+# amcExi2 sources
 SOURCES := \
 	libraries/amcExi2/AmcExi.c \
-	libraries/amcExi2/AmcExi2Comm.c \
+	libraries/amcExi2/AmcExi2Comm.c
+O_FILES := $(addsuffix .o,$(SOURCES))
+ALL_O_FILES += $(O_FILES)
+libraries/amcExi2.a: $(O_FILES)
+
+# lib1 sources
+SOURCES := \
 	libraries/odemustubs/asm/odemustubs.s
 O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
