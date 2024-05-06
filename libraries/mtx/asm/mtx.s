@@ -152,8 +152,8 @@ lbl_800CA310:
 /* 800CA398 000C62B8  F0 E4 80 2C */	psq_st f7, 44(r4), 1, qr0
 /* 800CA39C 000C62BC  4E 80 00 20 */	blr
 
-.global C_MTXScale
-C_MTXScale:
+.global MTXScale
+MTXScale:
 /* 800CA3A0 000C62C0  D0 23 00 00 */	stfs f1, 0(r3)
 /* 800CA3A4 000C62C4  C0 02 BF 34 */	lfs f0, lbl_802F6734@sda21(r2)
 /* 800CA3A8 000C62C8  D0 03 00 04 */	stfs f0, 4(r3)
@@ -169,8 +169,8 @@ C_MTXScale:
 /* 800CA3D0 000C62F0  D0 03 00 2C */	stfs f0, 0x2c(r3)
 /* 800CA3D4 000C62F4  4E 80 00 20 */	blr
 
-.global C_MTXQuat
-C_MTXQuat:
+.global MTXQuat
+MTXQuat:
 /* 800CA3D8 000C62F8  94 21 FF D8 */	stwu r1, -0x28(r1)
 /* 800CA3DC 000C62FC  DB E1 00 20 */	stfd f31, 0x20(r1)
 /* 800CA3E0 000C6300  DB C1 00 18 */	stfd f30, 0x18(r1)
@@ -232,8 +232,8 @@ C_MTXQuat:
 /* 800CA4C0 000C63E0  38 21 00 28 */	addi r1, r1, 0x28
 /* 800CA4C4 000C63E4  4E 80 00 20 */	blr
 
-.global C_MTXLookAt
-C_MTXLookAt:
+.global MTXLookAt
+MTXLookAt:
 /* 800CA4C8 000C63E8  7C 08 02 A6 */	mflr r0
 /* 800CA4CC 000C63EC  90 01 00 04 */	stw r0, 4(r1)
 /* 800CA4D0 000C63F0  94 21 FF B0 */	stwu r1, -0x50(r1)

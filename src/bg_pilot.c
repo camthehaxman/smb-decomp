@@ -186,7 +186,7 @@ void bg_pilot_draw(void)
         temp_r29 = temp_r30->unkE0;
         if (temp_r29 != NULL)
         {
-            C_MTXPerspective(sp50, 0.005493164f * currentCamera->sub28.fov, currentCamera->sub28.aspect, 0.1f, 20000.0f);
+            MTXPerspective(sp50, 0.005493164f * currentCamera->sub28.fov, currentCamera->sub28.aspect, 0.1f, 20000.0f);
             mathutil_mtxA_from_identity();
             mathutilData->mtxA[0][2] = 0.5 - (0.5 * (currentCamera->sub28.unk38 * (currentCamera->sub28.aspect * (sp50[0][0] * currentCamera->sub28.unk28))));
             mathutilData->mtxA[1][2] = 0.5 - (0.5 * (currentCamera->sub28.unk38 * (sp50[1][1] * currentCamera->sub28.unk2C)));
@@ -232,7 +232,7 @@ void bg_pilot_draw(void)
             sp8.x = sp2C.x + sp44.x;
             sp8.y = sp2C.y + sp44.y;
             sp8.z = sp2C.z + sp44.z;
-            C_MTXLookAt(spC0, &sp2C, &sp20, &sp8);
+            MTXLookAt(spC0, &sp2C, &sp20, &sp8);
             mathutil_mtxA_from_translate_xyz(0.5f, 0.5f, 0.0f);
             mathutil_mtxA_scale_s(0.5f / (4.0f * temp_f31));
             mathutil_mtxA_mult_right(spC0);

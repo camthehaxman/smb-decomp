@@ -191,7 +191,7 @@ void u_draw_ball_shadow(void)
                     var_r29->unk40 = (temp_f0_2 - temp_f2_2) / (temp_f3 - temp_f2_2);
                 mathutil_mtxA_tf_point(&var_r29->unk0.unk0, &var_r29->unk5C);
                 mathutil_mtxA_tf_vec(&var_r29->unk0.unk20, &var_r29->unk74);
-                C_MTXLookAt(sp8, &var_r29->unk5C, &var_r29->unk74, &var_r29->unk68);
+                MTXLookAt(sp8, &var_r29->unk5C, &var_r29->unk74, &var_r29->unk68);
                 mathutil_mtxA_from_mtx(sp8);
                 lbl_802B57A0_0x3920[0][2] = -0.875f / var_r29->unk0.unkC;
                 lbl_802B57A0_0x3920[0][3] = 0.125f + ((-0.875f * var_r29->unk58) / var_r29->unk0.unkC);

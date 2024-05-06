@@ -77,7 +77,7 @@ lbl_800647B0:
 /* 80064808 00060728  C8 01 01 00 */	lfd f0, 0x100(r1)
 /* 8006480C 0006072C  EC 00 08 28 */	fsubs f0, f0, f1
 /* 80064810 00060730  EC 25 00 32 */	fmuls f1, f5, f0
-/* 80064814 00060734  48 06 5E DD */	bl C_MTXPerspective
+/* 80064814 00060734  48 06 5E DD */	bl MTXPerspective
 /* 80064818 00060738  4B FA 2D 4D */	bl mathutil_mtxA_from_identity
 /* 8006481C 0006073C  80 6D 9A 5C */	lwz r3, currentCamera  //@sda21(r13)
 /* 80064820 00060740  C0 21 00 50 */	lfs f1, 0x50(r1)
@@ -275,7 +275,7 @@ lbl_800647B0:
 /* 80064B20 00060A40  D0 81 00 08 */	stfs f4, 8(r1)
 /* 80064B24 00060A44  D0 41 00 0C */	stfs f2, 0xc(r1)
 /* 80064B28 00060A48  D0 01 00 10 */	stfs f0, 0x10(r1)
-/* 80064B2C 00060A4C  48 06 59 9D */	bl C_MTXLookAt
+/* 80064B2C 00060A4C  48 06 59 9D */	bl MTXLookAt
 /* 80064B30 00060A50  C0 22 9D D0 */	lfs f1, 0.5f
 /* 80064B34 00060A54  C0 62 9D 8C */	lfs f3, 0.0f
 /* 80064B38 00060A58  FC 40 08 90 */	fmr f2, f1

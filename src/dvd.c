@@ -143,7 +143,7 @@ static void func_800AC718_sub(void)
     Mtx44 spC;
     mathutil_mtxA_from_identity();
     GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
-    C_MTXOrtho(spC, 0.0f, 480.0f, 0.0f, 640.0f, 0.0f, 20000.0f);
+    MTXOrtho(spC, 0.0f, 480.0f, 0.0f, 640.0f, 0.0f, 20000.0f);
     GXSetProjection(spC, GX_ORTHOGRAPHIC);
 }
 
@@ -367,7 +367,7 @@ void init_loading_gct(void)
         beginframe_main();
         mathutil_mtxA_from_identity();
         GXLoadPosMtxImm(mathutilData->mtxA, GX_PNMTX0);
-        C_MTXOrtho(mtx, 0.0f, 480.0f, 0.0f, 640.0f, 0.0f, 20000.0f);
+        MTXOrtho(mtx, 0.0f, 480.0f, 0.0f, 640.0f, 0.0f, 20000.0f);
         GXSetProjection(mtx, GX_ORTHOGRAPHIC);
         bitmap_init_tev();
         preview_draw(&preview, -1, 0, 0.0f, 0.0f, 0.5f, 640.0f, 480.0f);

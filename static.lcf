@@ -59,6 +59,9 @@ FORCEACTIVE
     GXDrawCube
     GXDrawCylinder
     GXPixModeSync
+    PSMTXConcat
+    PSMTXCopy
+    PSMTXInverse
 }
 
 lbl_80292C00_alias = lbl_80292C00;

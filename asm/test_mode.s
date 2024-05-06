@@ -2331,7 +2331,7 @@ lbl_0000215C:
 /* 00002180 C05F0068 */ lfs f2, 0x68(r31)
 /* 00002184 C07F006C */ lfs f3, 0x6c(r31)
 /* 00002188 C09F0070 */ lfs f4, 0x70(r31)
-/* 0000218C 4BFFDFD1 */ bl C_MTXPerspective
+/* 0000218C 4BFFDFD1 */ bl MTXPerspective
 /* 00002190 38610010 */ addi r3, r1, 0x10
 /* 00002194 38800000 */ li r4, 0
 /* 00002198 4BFFDFC5 */ bl GXSetProjection
@@ -10307,7 +10307,7 @@ lbl_00009370:
 /* 000093E8 D01B0024 */ stfs f0, 0x24(r27)
 /* 000093EC C01E0010 */ lfs f0, 0x10(r30)
 /* 000093F0 D01B0028 */ stfs f0, 0x28(r27)
-/* 000093F4 4BFF6D69 */ bl C_MTXLookAt
+/* 000093F4 4BFF6D69 */ bl MTXLookAt
 /* 000093F8 C01E000C */ lfs f0, 0xc(r30)
 /* 000093FC 38000000 */ li r0, 0
 /* 00009400 38600100 */ li r3, 0x100
@@ -10506,7 +10506,7 @@ lbl_00009658:
 /* 000096E0 38DC000C */ addi r6, r28, 0xc
 /* 000096E4 C01F0010 */ lfs f0, 0x10(r31)
 /* 000096E8 D01C0028 */ stfs f0, 0x28(r28)
-/* 000096EC 4BFF6A71 */ bl C_MTXLookAt
+/* 000096EC 4BFF6A71 */ bl MTXLookAt
 /* 000096F0 809E0000 */ lwz r4, 0(r30)
 /* 000096F4 387C002C */ addi r3, r28, 0x2c
 /* 000096F8 38840030 */ addi r4, r4, 0x30
@@ -10544,7 +10544,7 @@ lbl_0000974C:
 /* 00009770 FC400850 */ fneg f2, f1
 /* 00009774 FC800890 */ fmr f4, f1
 /* 00009778 FC601090 */ fmr f3, f2
-/* 0000977C 4BFF69E1 */ bl C_MTXFrustum
+/* 0000977C 4BFF69E1 */ bl MTXFrustum
 /* 00009780 38610084 */ addi r3, r1, 0x84
 /* 00009784 38800000 */ li r4, 0
 /* 00009788 4BFF69D5 */ bl GXSetProjection
@@ -11027,7 +11027,7 @@ lbl_00009CEC:
 /* 00009ED0 3861018C */ addi r3, r1, 0x18c
 /* 00009ED4 FC400890 */ fmr f2, f1
 /* 00009ED8 FC600890 */ fmr f3, f1
-/* 00009EDC 4BFF6281 */ bl C_MTXScale
+/* 00009EDC 4BFF6281 */ bl MTXScale
 /* 00009EE0 C01F0034 */ lfs f0, 0x34(r31)
 /* 00009EE4 3861018C */ addi r3, r1, 0x18c
 /* 00009EE8 3880001E */ li r4, 0x1e
@@ -11076,7 +11076,7 @@ lbl_00009CEC:
 /* 00009F94 3861018C */ addi r3, r1, 0x18c
 /* 00009F98 FC400890 */ fmr f2, f1
 /* 00009F9C FC600890 */ fmr f3, f1
-/* 00009FA0 4BFF61BD */ bl C_MTXScale
+/* 00009FA0 4BFF61BD */ bl MTXScale
 /* 00009FA4 C01F000C */ lfs f0, 0xc(r31)
 /* 00009FA8 3861018C */ addi r3, r1, 0x18c
 /* 00009FAC 38800021 */ li r4, 0x21
@@ -11315,7 +11315,7 @@ lbl_0000A304:
 /* 0000A340 C03F0000 */ lfs f1, 0(r31)
 /* 0000A344 FC400890 */ fmr f2, f1
 /* 0000A348 FC600890 */ fmr f3, f1
-/* 0000A34C 4BFF5E11 */ bl C_MTXScale
+/* 0000A34C 4BFF5E11 */ bl MTXScale
 /* 0000A350 C01F000C */ lfs f0, 0xc(r31)
 /* 0000A354 3C600000 */ lis r3, lbl_10000E00@ha
 /* 0000A358 38030000 */ addi r0, r3, lbl_10000E00@l
@@ -11902,7 +11902,7 @@ lbl_0000AC10:
 /* 0000AC14 38610048 */ addi r3, r1, 0x48
 /* 0000AC18 FC400890 */ fmr f2, f1
 /* 0000AC1C FC600890 */ fmr f3, f1
-/* 0000AC20 4BFF553D */ bl C_MTXScale
+/* 0000AC20 4BFF553D */ bl MTXScale
 /* 0000AC24 807E0000 */ lwz r3, 0(r30)
 /* 0000AC28 38810048 */ addi r4, r1, 0x48
 /* 0000AC2C 38A10018 */ addi r5, r1, 0x18
@@ -11935,7 +11935,7 @@ lbl_0000AC10:
 /* 0000AC98 38610048 */ addi r3, r1, 0x48
 /* 0000AC9C C07F0074 */ lfs f3, 0x74(r31)
 /* 0000ACA0 FC400890 */ fmr f2, f1
-/* 0000ACA4 4BFF54B9 */ bl C_MTXScale
+/* 0000ACA4 4BFF54B9 */ bl MTXScale
 /* 0000ACA8 807E0000 */ lwz r3, 0(r30)
 /* 0000ACAC 38810048 */ addi r4, r1, 0x48
 /* 0000ACB0 38A10018 */ addi r5, r1, 0x18
@@ -12304,7 +12304,7 @@ lbl_0000B210:
 /* 0000B228 EC210032 */ fmuls f1, f1, f0
 /* 0000B22C FC400890 */ fmr f2, f1
 /* 0000B230 FC600890 */ fmr f3, f1
-/* 0000B234 4BFF4F29 */ bl C_MTXScale
+/* 0000B234 4BFF4F29 */ bl MTXScale
 /* 0000B238 3C600000 */ lis r3, mathutilData@ha
 /* 0000B23C 3B830000 */ addi r28, r3, mathutilData@l
 /* 0000B240 807C0000 */ lwz r3, 0(r28)
@@ -12355,7 +12355,7 @@ lbl_0000B2BC:
 /* 0000B2F0 EC2100B2 */ fmuls f1, f1, f2
 /* 0000B2F4 EC6000B2 */ fmuls f3, f0, f2
 /* 0000B2F8 FC400890 */ fmr f2, f1
-/* 0000B2FC 4BFF4E61 */ bl C_MTXScale
+/* 0000B2FC 4BFF4E61 */ bl MTXScale
 /* 0000B300 807C0000 */ lwz r3, 0(r28)
 /* 0000B304 38810074 */ addi r4, r1, 0x74
 /* 0000B308 38A30000 */ addi r5, r3, 0
@@ -12826,7 +12826,7 @@ lbl_0000B6B0:
 /* 0000BA18 3861000C */ addi r3, r1, 0xc
 /* 0000BA1C FC400890 */ fmr f2, f1
 /* 0000BA20 FC600890 */ fmr f3, f1
-/* 0000BA24 4BFF4739 */ bl C_MTXScale
+/* 0000BA24 4BFF4739 */ bl MTXScale
 /* 0000BA28 3C600000 */ lis r3, gxCache@ha
 /* 0000BA2C C01F0000 */ lfs f0, 0(r31)
 /* 0000BA30 38630000 */ addi r3, r3, gxCache@l
@@ -13427,7 +13427,7 @@ lbl_0000C260:
 /* 0000C30C C05E0014 */ lfs f2, 0x14(r30)
 /* 0000C310 C07E0018 */ lfs f3, 0x18(r30)
 /* 0000C314 C09E001C */ lfs f4, 0x1c(r30)
-/* 0000C318 4BFF3E45 */ bl C_MTXPerspective
+/* 0000C318 4BFF3E45 */ bl MTXPerspective
 /* 0000C31C 3861000C */ addi r3, r1, 0xc
 /* 0000C320 38800000 */ li r4, 0
 /* 0000C324 4BFF3E39 */ bl GXSetProjection
@@ -13495,7 +13495,7 @@ lbl_0000C3F0:
 /* 0000C418 C05F0014 */ lfs f2, 0x14(r31)
 /* 0000C41C C07F0018 */ lfs f3, 0x18(r31)
 /* 0000C420 C09F001C */ lfs f4, 0x1c(r31)
-/* 0000C424 4BFF3D39 */ bl C_MTXPerspective
+/* 0000C424 4BFF3D39 */ bl MTXPerspective
 /* 0000C428 38610040 */ addi r3, r1, 0x40
 /* 0000C42C 38800000 */ li r4, 0
 /* 0000C430 4BFF3D2D */ bl GXSetProjection

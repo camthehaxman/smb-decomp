@@ -1,7 +1,7 @@
 #include <math.h>
 #include <dolphin.h>
 
-void C_MTXFrustum(Mtx44 m, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
+void MTXFrustum(Mtx44 m, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
 {
     f32 temp_f8;
     f32 temp_f6;
@@ -34,7 +34,7 @@ void C_MTXFrustum(Mtx44 m, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
     m[3][3] = 0.0f;
 }
 
-void C_MTXPerspective(Mtx44 m, f32 fovY, f32 aspect, f32 n, f32 f)
+void MTXPerspective(Mtx44 m, f32 fovY, f32 aspect, f32 n, f32 f)
 {
     f32 temp_f3;
     f32 temp_f4;
@@ -65,7 +65,7 @@ void C_MTXPerspective(Mtx44 m, f32 fovY, f32 aspect, f32 n, f32 f)
     m[3][3] = 0.0f;
 }
 
-void C_MTXOrtho(Mtx44 m, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
+void MTXOrtho(Mtx44 m, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
 {
     f32 temp_f8;
     f32 temp_f10;

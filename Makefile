@@ -224,16 +224,16 @@ dolsdk2001/%.a:
 	$(MAKE) -C dolsdk2001/ COMPILER_DIR=$(COMPILER_DIR) CROSS=$(DEVKITPPC)/bin/powerpc-eabi- DOLPHIN_REVISION=37 $(@F)
 
 $(ELF): \
-	libraries/base.a \
+	dolsdk2001/base.a \
 	dolsdk2001/os.a \
 	dolsdk2001/db.a \
-	libraries/mtx.a \
+	dolsdk2001/mtx.a \
 	dolsdk2001/dvd.a \
 	dolsdk2001/vi.a \
-	libraries/demo.a \
+	dolsdk2001/demo.a \
 	dolsdk2001/pad.a \
 	dolsdk2001/ai.a \
-	libraries/ar.a \
+	dolsdk2001/ar.a \
 	dolsdk2001/dsp.a \
 	dolsdk2001/card.a \
 	dolsdk2001/hio.a \
@@ -244,7 +244,7 @@ $(ELF): \
 	libraries/libc.a \
 	libraries/TRK_MINNOW_DOLPHIN.a \
 	libraries/amcExi2.a \
-	libraries/lib1.a \
+	libraries/NdevExi2A.a \
 	dolsdk2001/amcnotstub.a \
 	dolsdk2001/odenotstub.a
 
@@ -517,12 +517,12 @@ O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
 libraries/amcExi2.a: $(O_FILES)
 
-# lib1 sources
+# NdevExi2A sources
 SOURCES := \
-	libraries/odemustubs/asm/odemustubs.s
+	libraries/NdevExi2A/asm/DebuggerDriver.s
 O_FILES := $(addsuffix .o,$(SOURCES))
 ALL_O_FILES += $(O_FILES)
-libraries/lib1.a: $(O_FILES)
+libraries/NdevExi2A.a: $(O_FILES)
 
 # mkbe.sel_ngc.rel sources
 SOURCES := \
